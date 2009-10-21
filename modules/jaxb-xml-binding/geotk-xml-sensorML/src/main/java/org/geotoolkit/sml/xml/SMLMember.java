@@ -20,6 +20,7 @@ package org.geotoolkit.sml.xml;
  * Abstract super class for all the version of a SensorML Member.
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface SMLMember {
 

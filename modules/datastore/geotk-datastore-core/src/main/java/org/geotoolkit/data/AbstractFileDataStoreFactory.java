@@ -31,6 +31,7 @@ import org.opengis.parameter.ParameterValueGroup;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFactory implements FileDataStoreFactory{
 

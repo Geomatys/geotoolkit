@@ -58,6 +58,7 @@ import org.geotoolkit.gml.xml.v311.CodeType;
  * </pre>
  * 
  * @author Guilhem Legal 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GridCrsType", propOrder = {

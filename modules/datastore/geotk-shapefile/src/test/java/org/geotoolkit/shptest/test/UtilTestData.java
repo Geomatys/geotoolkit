@@ -68,6 +68,7 @@ import java.util.zip.ZipFile;
  * {@link org.geotools.TestData} class from the {@code sample-module} instead
  * of this one.
  *
+ * @module pending
  * @since 2.4
  * @source $URL$
  * @version $Id$

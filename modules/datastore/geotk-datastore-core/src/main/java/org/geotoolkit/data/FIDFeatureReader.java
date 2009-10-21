@@ -50,6 +50,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Chris Holmes, TOPP
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class FIDFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 

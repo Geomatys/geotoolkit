@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.TransformException;
  * {@linkplain MathTransform transformation} to a
  * {@linkplain CoordinateSequence coordinate sequence}.
  *
+ * @module pending
  * @since 2.1
  * @source $URL$
  * @version $Id$

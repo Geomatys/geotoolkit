@@ -51,6 +51,7 @@ import org.geotoolkit.util.Multiplicity;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {

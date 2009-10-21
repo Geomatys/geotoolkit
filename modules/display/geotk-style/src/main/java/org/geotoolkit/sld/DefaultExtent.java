@@ -23,6 +23,7 @@ import org.opengis.sld.SLDVisitor;
  * Default imumutable extent, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultExtent implements Extent{
 

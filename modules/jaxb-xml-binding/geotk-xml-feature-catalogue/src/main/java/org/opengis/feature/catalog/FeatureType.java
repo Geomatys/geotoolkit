@@ -21,6 +21,7 @@ import static org.opengis.annotation.Specification.*;
  * class of real world phenomena with common properties.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_FeatureType", specification=ISO_19110)
 public interface FeatureType {

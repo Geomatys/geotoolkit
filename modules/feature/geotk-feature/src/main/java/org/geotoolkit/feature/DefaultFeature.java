@@ -42,6 +42,7 @@ import org.opengis.geometry.BoundingBox;
  * @author Johann Sorel (Geomatys)
  *
  * TODO : Make this class thread safe or not ?
+ * @module pending
  */
 public class DefaultFeature extends DefaultComplexAttribute<FeatureId> implements Feature {
 

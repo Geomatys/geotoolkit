@@ -121,6 +121,7 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
  *
  * @author Justin Deoliveira, The Open Planning Project
  *
+ * @module pending
  */
 public final class JDBCDataStore extends ContentDataStore implements GmlObjectStore {
 

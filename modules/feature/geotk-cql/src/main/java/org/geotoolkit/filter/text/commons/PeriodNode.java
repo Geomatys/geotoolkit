@@ -31,6 +31,7 @@ import org.opengis.filter.expression.Literal;
  * Client module should not use this feature.
  * </p>
  *
+ * @module pending
  * @since 2.4
  * @author Mauricio Pazos - Axios Engineering
  * @author Gabriel Roldan - Axios Engineering

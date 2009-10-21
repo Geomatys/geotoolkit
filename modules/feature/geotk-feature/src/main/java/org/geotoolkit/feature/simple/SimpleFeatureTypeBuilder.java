@@ -104,6 +104,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @author Justin Deolivera
  * @author Jody Garnett
+ * @module pending
  */
 public class SimpleFeatureTypeBuilder {
 

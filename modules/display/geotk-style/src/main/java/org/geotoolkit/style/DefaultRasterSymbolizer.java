@@ -36,6 +36,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI raster symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultRasterSymbolizer extends AbstractSymbolizer implements RasterSymbolizer{
 

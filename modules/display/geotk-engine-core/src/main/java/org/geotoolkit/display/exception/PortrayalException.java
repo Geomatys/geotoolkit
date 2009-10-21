@@ -22,6 +22,7 @@ package org.geotoolkit.display.exception;
  * 
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public class PortrayalException extends Exception{
 

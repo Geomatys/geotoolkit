@@ -41,6 +41,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/RTree.java $
+ * @module pending
  */
 public class RTree {
     private Logger logger = org.geotoolkit.util.logging.Logging

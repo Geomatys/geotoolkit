@@ -23,6 +23,7 @@ import org.opengis.display.primitive.Graphic;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public abstract class A3DGraphic extends Node implements Graphic{
 

@@ -81,6 +81,7 @@ import org.opengis.referencing.operation.TransformException;
  * &nbsp; {@code deviceCRS}
  * </p>
  * 
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

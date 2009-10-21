@@ -63,6 +63,7 @@ import org.opengis.filter.expression.Expression;
  * @author Jody Garnett
  * @author Mauricio Pazos (Axios Engineering)
  *
+ * @module pending
  * @since 2.6
  */
 public class ECQL {

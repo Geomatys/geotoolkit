@@ -39,6 +39,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @author SYS Technologies
  * @author dillard
  * @version $Revision $
+ * @module pending
  */
 public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {
     private static final long serialVersionUID = 4153619785904408034L;

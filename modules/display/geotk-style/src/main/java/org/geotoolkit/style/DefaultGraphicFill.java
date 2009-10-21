@@ -31,6 +31,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of GeoAPI Graphic.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGraphicFill extends DefaultGraphic implements GraphicFill{
 

@@ -34,6 +34,7 @@ import org.geotoolkit.wms.xml.AbstractLayer;
 /**
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Layer", propOrder = {

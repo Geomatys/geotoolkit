@@ -55,6 +55,7 @@ import org.geotoolkit.ows.xml.v110.UnNamedDomainType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FieldType", propOrder = {

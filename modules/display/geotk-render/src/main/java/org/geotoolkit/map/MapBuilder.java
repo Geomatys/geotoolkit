@@ -39,6 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * This class is thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final class MapBuilder {
 

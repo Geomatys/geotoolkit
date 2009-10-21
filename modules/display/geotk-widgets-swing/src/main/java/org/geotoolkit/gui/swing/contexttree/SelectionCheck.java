@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  * Component used to present layer selectability
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 final class SelectionCheck extends JCheckBox {
 

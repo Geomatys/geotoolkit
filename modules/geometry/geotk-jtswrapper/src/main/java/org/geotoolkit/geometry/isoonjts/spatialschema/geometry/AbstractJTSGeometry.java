@@ -40,6 +40,7 @@ import org.opengis.util.Cloneable;
  * Base class for our JTS-based implementation of the various ISO 19107 geometry classes.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractJTSGeometry implements Geometry, Serializable, Cloneable, JTSGeometry {
 

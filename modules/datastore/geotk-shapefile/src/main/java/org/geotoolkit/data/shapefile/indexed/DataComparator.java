@@ -27,6 +27,7 @@ import org.geotoolkit.index.Data;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/indexed/DataComparator.java $
+ * @module pending
  */
 public class DataComparator implements Comparator {
     /**

@@ -57,6 +57,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class FeatureUtilities {
 

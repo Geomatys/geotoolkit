@@ -48,6 +48,7 @@ import org.geotoolkit.dublincore.xml.v1.elements.SimpleLiteral;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BriefRecordType", propOrder = {

@@ -31,6 +31,7 @@ import java.util.Collection;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/index/rtree/RTreeTest.java $
+ * @module pending
  */
 public class RTreeTest extends TestCase {
     private static final short FILE = 0;

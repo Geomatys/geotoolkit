@@ -36,6 +36,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SvgUtils {
 

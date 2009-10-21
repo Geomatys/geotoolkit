@@ -53,6 +53,7 @@ import org.opengis.util.InternationalString;
  * Transform a SLD v1.0.0 in GT classes.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SLD100toGTTransformer extends SE100toGTTransformer{
 

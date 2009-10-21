@@ -20,6 +20,7 @@ package org.geotoolkit.swe.xml;
  * Abstract basic ResponseType definition and commonly used sensor characteristics.
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface AbstractEncoding {
     

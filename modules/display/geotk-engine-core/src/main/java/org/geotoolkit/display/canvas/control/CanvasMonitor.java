@@ -24,6 +24,7 @@ import java.util.logging.Level;
  * and may stop it at any time.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface CanvasMonitor {
 

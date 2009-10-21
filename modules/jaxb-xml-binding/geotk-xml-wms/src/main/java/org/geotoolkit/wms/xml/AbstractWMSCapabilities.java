@@ -24,6 +24,7 @@ import org.geotoolkit.wms.xml.v130.WMSCapabilities;
  * Abstract main class which describe a capabilities document  for all version of WMS.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlSeeAlso({WMT_MS_Capabilities.class, WMSCapabilities.class})
 public abstract class AbstractWMSCapabilities {

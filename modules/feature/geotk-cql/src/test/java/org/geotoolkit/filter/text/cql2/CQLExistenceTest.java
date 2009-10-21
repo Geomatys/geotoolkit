@@ -41,6 +41,7 @@ import org.opengis.filter.PropertyIsEqualTo;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class CQLExistenceTest {

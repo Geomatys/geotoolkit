@@ -41,6 +41,7 @@ import java.util.Collection;
  * locality of the last edge found.
  * 
  * @author Martin Davis
+ * @module pending
  */
 public class LastFoundQuadEdgeLocator implements QuadEdgeLocator {
     private QuadEdgeSubdivision subdiv;

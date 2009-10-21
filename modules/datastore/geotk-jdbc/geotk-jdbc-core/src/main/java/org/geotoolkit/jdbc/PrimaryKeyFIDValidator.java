@@ -23,6 +23,7 @@ import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor.FIDValidator;
  * Fid validator which validates with respect to a primary key.
  *
  * @author Justin Deoliveira, OpenGeo
+ * @module pending
  */
 public class PrimaryKeyFIDValidator implements FIDValidator {
 

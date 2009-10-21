@@ -52,6 +52,7 @@ import org.geotoolkit.ogc.xml.v110.GmlObjectIdType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetGmlObjectType", propOrder = {

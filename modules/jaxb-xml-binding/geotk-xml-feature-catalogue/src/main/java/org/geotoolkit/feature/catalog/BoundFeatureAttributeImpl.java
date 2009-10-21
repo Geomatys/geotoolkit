@@ -22,6 +22,7 @@ import org.opengis.feature.catalog.FeatureType;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_BoundFeature_Type", propOrder = {

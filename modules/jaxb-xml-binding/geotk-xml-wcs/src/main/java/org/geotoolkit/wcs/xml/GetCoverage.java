@@ -29,6 +29,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Guilhem Legal
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public interface GetCoverage extends Versioned {
 

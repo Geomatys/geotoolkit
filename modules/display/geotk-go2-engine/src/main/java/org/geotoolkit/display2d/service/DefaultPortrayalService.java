@@ -65,6 +65,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
 /**
  * Default implementation of portrayal service.
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPortrayalService implements PortrayalService{
         

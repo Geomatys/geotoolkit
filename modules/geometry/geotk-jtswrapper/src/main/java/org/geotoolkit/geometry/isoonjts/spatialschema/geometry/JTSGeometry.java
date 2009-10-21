@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * a user to retrieve the equivalent JTS geometry.  The coordinate reference
  * system of the geometry is attached as the "userData" property of the
  * returned JTS object.
+ * @module pending
  */
 public interface JTSGeometry {
     

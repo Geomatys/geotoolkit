@@ -48,6 +48,7 @@ import org.opengis.style.ExternalGraphic;
  * External graphic panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]> {
 

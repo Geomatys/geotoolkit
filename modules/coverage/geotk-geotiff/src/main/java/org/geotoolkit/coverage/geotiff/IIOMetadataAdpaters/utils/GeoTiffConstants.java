@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.utils;
 /**
  * @author simone
  *
+ * @module pending
  */
 public final class GeoTiffConstants {
 

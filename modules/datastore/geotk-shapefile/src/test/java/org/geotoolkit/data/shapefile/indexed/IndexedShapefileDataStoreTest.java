@@ -84,6 +84,7 @@ import org.geotoolkit.feature.FeatureCollectionUtilities;
  *         http://svn.geotools.org/geotools/branches/shpLazyLoadingIndex/ext/shape/test/org/geotools/data/shapefile/indexed/ShapefileDataStoreTest.java $
  * @version $Id$
  * @author Ian Schneider
+ * @module pending
  */
 public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String STATE_POP = "shapes/statepop.shp";

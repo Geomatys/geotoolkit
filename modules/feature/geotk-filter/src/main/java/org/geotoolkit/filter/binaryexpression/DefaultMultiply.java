@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Multiply;
  * Immutable "multiply" expression.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultMultiply extends AbstractBinaryExpression<Expression,Expression> implements Multiply{
 

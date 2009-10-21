@@ -27,6 +27,7 @@ import org.opengis.style.Symbolizer;
  * Mutable interface of geoAPI Style.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MutableStyle extends MutableLayerStyle,Style{
 

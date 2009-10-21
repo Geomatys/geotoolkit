@@ -28,6 +28,7 @@ import static org.opengis.annotation.Specification.*;
  * @author <A HREF="http://www.opengeospatial.org/standards/as# 02-112">ISO 19119</A>
  * @author Guilhem Legal
  * 
+ * @module pending
  */
 //@UML(identifier="SV_ServiceIdentification", specification=ISO_19119)
 public interface ServiceIdentification extends Identification {

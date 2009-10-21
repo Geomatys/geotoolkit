@@ -41,6 +41,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
  * values.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ShadedReliefOp extends AreaOpImage{
 

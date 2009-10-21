@@ -27,6 +27,7 @@ import org.apache.lucene.store.RAMDirectory;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public abstract class IndexLucene {
 

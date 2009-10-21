@@ -21,6 +21,7 @@ import org.geotoolkit.gml.xml.v311.PointType;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public interface AbstractLocation {
     

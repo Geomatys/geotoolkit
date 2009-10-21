@@ -24,6 +24,7 @@ import java.util.EventListener;
  * Listener for Style.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface StyleListener extends EventListener{
 

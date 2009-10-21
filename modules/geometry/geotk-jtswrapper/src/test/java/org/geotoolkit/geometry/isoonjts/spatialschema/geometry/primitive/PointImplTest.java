@@ -28,6 +28,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 /**
  * @author gdavis
  * 
+ * @module pending
  */
 public class PointImplTest extends TestCase {
 

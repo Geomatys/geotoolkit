@@ -26,6 +26,7 @@ import org.geotoolkit.util.logging.Logging;
  * Utility class to converter objects.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final class Converters {
 

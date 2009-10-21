@@ -39,6 +39,7 @@ import java.nio.channels.ReadableByteChannel;
  * need this directory, then use the {@link org.geotools.test.TestData}
  * class provided in the {@code org.geotools.resources} directory.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

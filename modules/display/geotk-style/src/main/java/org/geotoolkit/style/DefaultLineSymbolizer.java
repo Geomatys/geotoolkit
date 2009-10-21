@@ -34,6 +34,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI Line symbolizer.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSymbolizer{
 

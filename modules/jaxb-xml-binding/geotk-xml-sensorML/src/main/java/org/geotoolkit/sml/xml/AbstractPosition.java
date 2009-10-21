@@ -21,6 +21,7 @@ import org.geotoolkit.swe.xml.Position;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface AbstractPosition {
 

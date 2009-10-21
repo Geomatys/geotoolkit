@@ -32,6 +32,7 @@ import org.opengis.filter.expression.Expression;
  * @author Rob Hranac, Vision for New York
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class DefaultPropertyIsLike implements PropertyIsLike {
 

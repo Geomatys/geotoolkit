@@ -23,6 +23,7 @@ import java.io.IOException;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public class SchemaNotFoundException extends IOException {
 

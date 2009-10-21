@@ -18,6 +18,7 @@ import static org.opengis.annotation.Specification.*;
  * Value for an enumerated feature attribute domain including its codes and interpretation.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_ListedValue", specification=ISO_19110)
 public interface ListedValue {

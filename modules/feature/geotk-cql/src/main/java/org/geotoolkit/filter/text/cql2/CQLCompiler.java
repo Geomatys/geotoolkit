@@ -62,6 +62,7 @@ import org.opengis.filter.spatial.DistanceBufferOperator;
  * @author Mauricio Pazos (Axios Engineering)
  *
  * @version $Id$
+ * @module pending
  * @since 2.5
  */
 public class CQLCompiler extends CQLParser implements ICompiler{

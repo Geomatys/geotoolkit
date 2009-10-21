@@ -42,6 +42,7 @@ import org.opengis.display.canvas.Canvas;
  * Jasper Report renderer used to render scale bar graphic.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ScaleBarRenderer implements JRRenderable{
 

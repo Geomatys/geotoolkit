@@ -51,6 +51,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @see PrimitiveFactory#createSurface(List)
  * @see PrimitiveFactory#createSurface(SurfaceBoundary)
+ * @module pending
  */
 public class JTSSurface extends AbstractJTSGeometry implements Surface {
     protected List<JTSSurfacePatch> patches;

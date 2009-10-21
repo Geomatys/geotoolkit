@@ -19,6 +19,7 @@ import static org.opengis.annotation.Specification.*;
  *
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_Constraint", specification=ISO_19110)
 public interface Constraint {

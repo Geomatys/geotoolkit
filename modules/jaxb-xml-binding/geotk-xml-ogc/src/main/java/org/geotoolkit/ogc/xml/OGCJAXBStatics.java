@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml;
 /**
  *
  * @author sorel
+ * @module pending
  */
 public class OGCJAXBStatics {
 

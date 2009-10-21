@@ -25,6 +25,7 @@ import org.opengis.sld.StyledLayerDescriptor;
  * Default immutable implementation of SLD library. thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultSLDLibrary implements SLDLibrary{
 

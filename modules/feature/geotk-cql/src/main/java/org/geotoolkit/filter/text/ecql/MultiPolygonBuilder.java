@@ -31,6 +31,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * parsing process.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since
  */
 final class MultiPolygonBuilder extends GeometryBuilder {

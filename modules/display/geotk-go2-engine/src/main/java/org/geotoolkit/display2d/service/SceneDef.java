@@ -28,6 +28,7 @@ import org.geotoolkit.map.MapContext;
  * rendered in the portrayal service.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SceneDef {
 

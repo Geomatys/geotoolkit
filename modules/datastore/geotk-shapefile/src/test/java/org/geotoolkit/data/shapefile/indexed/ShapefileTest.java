@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
+ * @module pending
  */
 public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 

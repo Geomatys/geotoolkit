@@ -19,6 +19,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 
 /**
  * LiteGO1 implementation of the SurfaceBoundary interface.
+ * @module pending
  */
 public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceBoundary {
     private static final long serialVersionUID = 8658623156496260842L;

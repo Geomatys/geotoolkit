@@ -22,6 +22,7 @@ import java.util.logging.Level;
  * TODO: document me, pretty please.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StopOnErrorMonitor extends FailOnErrorMonitor {
 

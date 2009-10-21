@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.LineString;
  * Builds a {@link #MultiLineString}  using the {@link LineString} made in the parsing process.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since
  */
 final class MultiLineStringBuilder extends GeometryBuilder {

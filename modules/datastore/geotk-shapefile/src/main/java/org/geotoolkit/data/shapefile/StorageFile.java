@@ -35,6 +35,7 @@ import org.geotoolkit.data.DataUtilities;
  * Encapsulates the idea of a file for writing data to and then later updating the original.
  * 
  * @author jesse
+ * @module pending
  */
 public final class StorageFile implements Comparable<StorageFile>, FileWriter {
     private final ShpFiles shpFiles;

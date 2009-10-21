@@ -26,6 +26,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  * Utility class to obtain a propertyAccesor.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class Accessors {
 

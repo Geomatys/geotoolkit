@@ -62,6 +62,7 @@ import org.opengis.referencing.operation.TransformException;
  * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux
+ * @module pending
  */
 public abstract class RenderedMarks extends AbstractGraphicJ2D {
     

@@ -31,6 +31,7 @@ import org.opengis.feature.type.Schema;
  * Implementation of Schema.
  *
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class DefaultSchema implements Schema {
 

@@ -28,6 +28,7 @@ import org.opengis.filter.expression.PropertyName;
  * 
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public class OtherFunctionFactory implements FunctionFactory{
 

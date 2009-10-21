@@ -50,6 +50,7 @@ import org.geotoolkit.wms.xml.AbstractOperation;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "OperationType", propOrder = {

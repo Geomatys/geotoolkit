@@ -50,6 +50,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer>{
 

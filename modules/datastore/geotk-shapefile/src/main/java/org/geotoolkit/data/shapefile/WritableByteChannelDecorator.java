@@ -27,6 +27,7 @@ import java.nio.channels.WritableByteChannel;
  * ShapefileFiles.unlock method to release the lock on the URL.
  * 
  * @author jesse
+ * @module pending
  */
 public class WritableByteChannelDecorator implements WritableByteChannel {
 

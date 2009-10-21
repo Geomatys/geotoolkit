@@ -39,6 +39,7 @@ import org.opengis.referencing.operation.TransformException;
  * Default implementation of label renderer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLabelRenderer implements LabelRenderer{
 

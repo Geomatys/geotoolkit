@@ -53,6 +53,7 @@ import static org.opengis.filter.expression.Expression.*;
  * In reality any expression will do.
  * @author Jody Garnett
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultCategorize implements Categorize {
     

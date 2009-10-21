@@ -50,6 +50,7 @@ import org.geotoolkit.csw.xml.GetRecordById;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetRecordByIdType", propOrder = {

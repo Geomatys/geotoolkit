@@ -35,6 +35,7 @@ import org.opengis.util.GenericName;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SurveyProcedure")

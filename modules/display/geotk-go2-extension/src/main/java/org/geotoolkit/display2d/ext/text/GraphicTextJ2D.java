@@ -36,6 +36,7 @@ import static javax.swing.SwingConstants.*;
  * "<html><b><font color=\"red\">Bla Bla bla bla bla bla<br/>et blablabla</font></b></html>";
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GraphicTextJ2D extends PositionedGraphic2D{
 

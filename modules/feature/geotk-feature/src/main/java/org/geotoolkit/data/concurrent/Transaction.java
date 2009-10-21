@@ -116,6 +116,7 @@ import java.util.Set;
  * @author Chris Holmes, TOPP
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public interface Transaction {
 

@@ -37,6 +37,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/PolygonHandler.java $
  * @version $Id$
+ * @module pending
  */
 public class PolygonHandler implements ShapeHandler {
 

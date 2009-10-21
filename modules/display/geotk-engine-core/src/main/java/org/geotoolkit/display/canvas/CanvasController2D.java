@@ -37,6 +37,7 @@ import org.opengis.geometry.Envelope;
  * navigate in the canvas.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface CanvasController2D extends CanvasController{
     

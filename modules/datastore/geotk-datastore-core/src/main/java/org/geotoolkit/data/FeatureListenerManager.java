@@ -46,6 +46,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public class FeatureListenerManager {
 

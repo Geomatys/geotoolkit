@@ -23,6 +23,7 @@ import org.opengis.filter.capability.Operator;
  * Immutable operator.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultOperator implements Operator{
 

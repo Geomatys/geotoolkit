@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.MathTransform;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class StatefullContextParams {
 

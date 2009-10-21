@@ -41,6 +41,7 @@ package com.vividsolutions.jts.triangulate.quadedge;
  * optimizing locating containing edges/triangles.
  * 
  * @author Martin Davis
+ * @module pending
  */
 public interface QuadEdgeLocator {
     QuadEdge locate(Vertex v);

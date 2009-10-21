@@ -40,6 +40,7 @@ import org.geotoolkit.csw.xml.AbstractQuery;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractQueryType")

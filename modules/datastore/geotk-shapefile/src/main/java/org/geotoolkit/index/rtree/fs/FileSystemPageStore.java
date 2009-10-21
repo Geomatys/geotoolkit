@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/fs/FileSystemPageStore.java $
+ * @module pending
  */
 public class FileSystemPageStore extends PageStore {
     protected static final byte B_SHORT = (byte) 1;

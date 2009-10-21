@@ -24,6 +24,7 @@ import org.geotoolkit.map.MapContext;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ContextGraphicBuilder {
 

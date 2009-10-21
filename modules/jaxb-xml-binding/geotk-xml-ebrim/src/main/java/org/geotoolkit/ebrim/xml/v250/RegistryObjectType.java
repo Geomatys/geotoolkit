@@ -80,6 +80,7 @@ import org.geotoolkit.ebrim.xml.RegistryObject;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RegistryObjectType", propOrder = {

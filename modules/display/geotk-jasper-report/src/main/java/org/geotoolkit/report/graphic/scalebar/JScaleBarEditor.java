@@ -20,6 +20,7 @@ package org.geotoolkit.report.graphic.scalebar;
  * Scale bar mapper edition widget.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JScaleBarEditor extends javax.swing.JPanel {
 

@@ -26,6 +26,7 @@ import org.geotoolkit.style.StyleConstants;
  * VectorField symbolizer, to render wind arrows
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class VectorFieldSymbolizer extends AbstractExtensionSymbolizer{
 

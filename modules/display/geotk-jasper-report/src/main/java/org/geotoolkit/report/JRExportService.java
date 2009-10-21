@@ -39,6 +39,7 @@ import org.geotoolkit.map.MapContext;
  * Field names must match the existing mappers favorites names.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JRExportService {
 

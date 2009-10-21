@@ -32,6 +32,7 @@ import org.geotoolkit.display.canvas.DisplayObject;
  * The root abstraction of a graphic object taxonomy, specifying the methods common to a
  * lightweight set of graphic objects.
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

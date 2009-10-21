@@ -49,6 +49,7 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

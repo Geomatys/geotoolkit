@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * layer filter panel
  * 
  * @author  Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class LayerFilterPropertyPanel extends MultiPropertyPanel {
 

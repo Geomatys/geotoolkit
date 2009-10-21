@@ -54,6 +54,7 @@ import org.geotoolkit.util.Version;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

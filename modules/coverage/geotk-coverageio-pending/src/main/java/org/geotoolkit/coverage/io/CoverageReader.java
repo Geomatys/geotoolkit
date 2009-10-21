@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  * different parameters.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface CoverageReader {
     

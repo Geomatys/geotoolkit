@@ -47,6 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * CRS list
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JCRSList extends JComponent{
 

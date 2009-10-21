@@ -24,6 +24,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * Description of a process input and output parameters.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ProcessDescriptor {
 

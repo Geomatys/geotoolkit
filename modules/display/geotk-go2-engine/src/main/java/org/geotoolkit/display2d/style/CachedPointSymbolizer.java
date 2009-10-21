@@ -27,6 +27,7 @@ import org.opengis.style.PointSymbolizer;
  * Cached point symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
 

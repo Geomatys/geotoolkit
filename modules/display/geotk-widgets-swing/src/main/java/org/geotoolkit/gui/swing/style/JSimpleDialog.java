@@ -35,6 +35,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  * Simple dialog
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JSimpleDialog extends javax.swing.JDialog {
 

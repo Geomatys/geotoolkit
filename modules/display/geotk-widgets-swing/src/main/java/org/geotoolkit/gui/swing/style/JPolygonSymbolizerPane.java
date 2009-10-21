@@ -37,6 +37,7 @@ import org.opengis.style.PolygonSymbolizer;
  * Polygon symbolizer edition panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer> {
 

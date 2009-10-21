@@ -51,6 +51,7 @@ import org.geotoolkit.util.Version;
  * 
  * @author Guilhem Legal
  * @author Cédric Briançon
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"coverage"})

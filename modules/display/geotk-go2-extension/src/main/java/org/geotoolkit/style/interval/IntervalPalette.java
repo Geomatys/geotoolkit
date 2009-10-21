@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface IntervalPalette extends Palette{
 

@@ -31,6 +31,7 @@ import org.opengis.display.canvas.Canvas;
  * Java2D north arrow mapper.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class NorthArrowMapper extends JRRendererMapper{
 

@@ -99,6 +99,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * while Style, FeatureTypeStyle and Rule are mutable.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultStyleFactory extends Factory implements MutableStyleFactory {
 

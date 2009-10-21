@@ -29,6 +29,7 @@ import org.opengis.geometry.DirectPosition;
  * It is possible to ask for a grid coverage or a single elevation.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ElevationModel {
 

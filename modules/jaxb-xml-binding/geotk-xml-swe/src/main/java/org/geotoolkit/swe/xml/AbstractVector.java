@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml;
 /**
  *
  * @author guilhem Legal
+ * @module pending
  */
 public interface AbstractVector extends AbstractDataRecord {
 

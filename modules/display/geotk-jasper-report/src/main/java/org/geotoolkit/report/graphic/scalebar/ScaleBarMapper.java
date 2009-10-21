@@ -31,6 +31,7 @@ import org.opengis.display.canvas.Canvas;
  * Java2D scale bar mapper.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ScaleBarMapper extends JRRendererMapper{
 

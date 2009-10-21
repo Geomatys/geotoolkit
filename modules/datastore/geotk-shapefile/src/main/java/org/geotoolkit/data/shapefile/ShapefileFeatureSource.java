@@ -32,6 +32,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * Allows transaction control when editing a shapefile.
  * 
  * @author Jody Garnett (Refractions Research Inc)
+ * @module pending
  */
 class ShapefileFeatureSource extends AbstractFeatureSource {
 

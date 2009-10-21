@@ -20,6 +20,7 @@ package org.geotoolkit.report.graphic.northarrow;
  * North arrow mapper edition widget.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JNorthArrowEditor extends javax.swing.JPanel {
 

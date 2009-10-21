@@ -26,6 +26,7 @@ import java.util.Map;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class AbstractRequest implements Request{
 

@@ -25,6 +25,7 @@ import org.opengis.feature.type.Name;
 
 /**
  * Dummy implementation of {@link AttributeDescriptor}.
+ * @module pending
  */
 public final class DummyDescriptor implements AttributeDescriptor {
 

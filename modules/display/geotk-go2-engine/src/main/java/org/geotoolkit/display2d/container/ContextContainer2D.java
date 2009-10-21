@@ -62,6 +62,7 @@ import org.opengis.style.Style;
  * features.ContextContainer2D
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract  class ContextContainer2D extends AbstractContainer2D{
 

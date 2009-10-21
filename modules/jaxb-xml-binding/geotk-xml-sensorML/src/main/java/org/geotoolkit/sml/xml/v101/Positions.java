@@ -58,6 +58,7 @@ import org.geotoolkit.sml.xml.AbstractPositions;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

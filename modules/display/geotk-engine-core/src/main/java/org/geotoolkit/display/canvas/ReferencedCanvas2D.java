@@ -56,6 +56,7 @@ import org.geotoolkit.util.Utilities;
  * toward AWT toolkit in this class (which means that this class can be used as a basis for
  * SWT renderer as well), and this class does not assume a rectangular widget.
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

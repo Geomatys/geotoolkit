@@ -52,6 +52,7 @@ import org.opengis.feature.type.Name;
  *
  * @author Jody Garnett, Refractions Research Inc.
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public final class ContentEntry {
 

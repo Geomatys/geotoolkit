@@ -24,6 +24,7 @@ import javax.swing.tree.TreePath;
 /**
  *
  * @author eclesia
+ * @module pending
  */
 public abstract class AbstractTreePopupItem extends JMenuItem implements TreePopupItem{
 

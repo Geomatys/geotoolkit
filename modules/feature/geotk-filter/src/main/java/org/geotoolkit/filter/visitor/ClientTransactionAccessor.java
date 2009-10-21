@@ -25,6 +25,7 @@ import org.opengis.filter.Filter;
  * client and the server is unaware of it. For example PostGIS would not need to create one.
  * 
  * @author Jesse
+ * @module pending
  */
 public interface ClientTransactionAccessor {
 

@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "overlaps" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultOverlaps extends AbstractBinarySpatialOperator<Expression,Expression> implements Overlaps {
 

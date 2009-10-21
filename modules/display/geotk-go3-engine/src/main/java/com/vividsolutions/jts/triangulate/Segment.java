@@ -43,6 +43,7 @@ import com.vividsolutions.jts.geom.LineSegment;
  * 
  * @author David Skea
  * @author Martin Davis
+ * @module pending
  */
 public class Segment 
 {

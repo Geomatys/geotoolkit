@@ -50,6 +50,7 @@ import org.opengis.referencing.operation.TransformException;
  * Provide convinient methods to handle properties, hints add methods
  * related to graphics.
  * 
+ * @module pending
  * @since 2.5
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)

@@ -27,6 +27,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * Dummy implementation of {@link AttributeType}.
+ * @module pending
  */
 public final class DummyAttributeType implements AttributeType {
     private final Name name;

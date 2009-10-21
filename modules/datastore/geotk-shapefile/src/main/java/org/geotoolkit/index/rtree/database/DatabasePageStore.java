@@ -38,6 +38,7 @@ import org.geotoolkit.index.rtree.PageStore;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/database/DatabasePageStore.java $
+ * @module pending
  */
 public class DatabasePageStore extends PageStore {
     protected static final int DEF_MAX = 50;

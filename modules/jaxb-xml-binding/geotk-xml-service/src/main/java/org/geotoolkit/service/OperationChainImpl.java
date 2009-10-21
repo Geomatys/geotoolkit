@@ -34,6 +34,7 @@ import org.opengis.service.OperationChain;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(name = "SV_OperationChain_Type", propOrder = {
     "name",

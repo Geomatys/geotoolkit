@@ -48,6 +48,7 @@ import org.opengis.filter.capability.SpatialOperators;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Spatial_CapabilitiesType", propOrder = {

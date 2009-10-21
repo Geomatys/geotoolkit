@@ -30,6 +30,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
  * uses the tree structure which matches approximatively with the
  * <a href="http://www.opengeospatial.org/standards/gmljp2">GML in JPEG 2000</a> standard.
  *
+ * @module pending
  * @since 2.5
  * @source $URL$
  * @version $Id$

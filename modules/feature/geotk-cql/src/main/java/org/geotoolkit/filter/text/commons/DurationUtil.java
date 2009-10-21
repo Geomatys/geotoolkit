@@ -26,6 +26,7 @@ import java.util.Date;
  * Maintains convenient methods to manipulate the duration information.
  * </p>
  *
+ * @module pending
  * @since 2.5
  *
  * @author Mauricio Pazos - Axios Engineering

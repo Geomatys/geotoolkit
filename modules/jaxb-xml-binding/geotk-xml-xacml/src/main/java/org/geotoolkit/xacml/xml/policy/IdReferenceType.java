@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlValue;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "IdReferenceType", propOrder =

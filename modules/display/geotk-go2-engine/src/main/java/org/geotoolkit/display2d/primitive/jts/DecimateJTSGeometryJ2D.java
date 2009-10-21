@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.Polygon;
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @version 2.9
+ * @module pending
  */
 public class DecimateJTSGeometryJ2D extends JTSGeometryJ2D {
 

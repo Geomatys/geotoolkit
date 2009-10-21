@@ -41,6 +41,7 @@ import org.geotoolkit.util.logging.Logging;
  * 
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/dbf/DbaseFileHeader.java $
+ * @module pending
  */
 public class DbaseFileHeader {
 

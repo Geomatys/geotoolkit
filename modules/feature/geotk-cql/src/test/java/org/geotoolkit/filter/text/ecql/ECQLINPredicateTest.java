@@ -39,6 +39,7 @@ import org.opengis.filter.expression.PropertyName;
  * </pre>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLINPredicateTest {

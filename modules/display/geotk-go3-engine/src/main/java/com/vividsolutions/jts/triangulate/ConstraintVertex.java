@@ -42,6 +42,7 @@ import com.vividsolutions.jts.triangulate.quadedge.Vertex;
  * If it does it may carry extra information about the original constraint.
  * 
  * @author Martin Davis
+ * @module pending
  */
 public class ConstraintVertex extends Vertex {
     private boolean isOnConstraint;

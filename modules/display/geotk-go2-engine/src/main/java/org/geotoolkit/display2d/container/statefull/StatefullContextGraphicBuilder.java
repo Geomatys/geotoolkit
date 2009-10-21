@@ -27,6 +27,7 @@ import org.geotoolkit.map.MapContext;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class StatefullContextGraphicBuilder implements ContextGraphicBuilder{
 

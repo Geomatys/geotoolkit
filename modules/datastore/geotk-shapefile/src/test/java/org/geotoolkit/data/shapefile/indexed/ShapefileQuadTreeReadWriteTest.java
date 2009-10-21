@@ -53,6 +53,7 @@ import org.geotoolkit.shptest.test.UtilTestData;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/indexed/ShapefileQuadTreeReadWriteTest.java $
  * @version $Id$
  * @author Ian Schneider
+ * @module pending
  */
 public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     final String[] files = {"shapes/statepop.shp", "shapes/polygontest.shp",

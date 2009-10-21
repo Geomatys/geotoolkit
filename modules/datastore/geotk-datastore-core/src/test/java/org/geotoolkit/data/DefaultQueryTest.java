@@ -31,6 +31,7 @@ import org.opengis.filter.Filter;
  *
  * @author jamesm
  * @source $URL$
+ * @module pending
  */
 public class DefaultQueryTest extends TestCase {
 

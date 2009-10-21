@@ -41,6 +41,7 @@ import com.vividsolutions.jts.io.WKTWriter;
  * 
  * @author Martin Davis
  * @version 1.0
+ * @module pending
  */
 public class ConstraintEnforcementException extends RuntimeException {
 

@@ -56,6 +56,7 @@ import org.opengis.referencing.operation.CoordinateOperationFactory;
  * &nbsp; {@code deviceCRS}
  * </p>
  * 
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

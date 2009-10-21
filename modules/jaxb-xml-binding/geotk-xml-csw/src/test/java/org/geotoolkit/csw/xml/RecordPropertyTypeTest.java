@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public class RecordPropertyTypeTest {
 

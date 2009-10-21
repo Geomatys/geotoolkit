@@ -25,6 +25,7 @@ import org.geotoolkit.map.FeatureMapLayer;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class ClearSelectionAction extends JFeaturePanelAction{
 

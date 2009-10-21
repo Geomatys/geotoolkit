@@ -47,6 +47,7 @@ import org.w3c.dom.Element;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetaDataPropertyType", propOrder = {

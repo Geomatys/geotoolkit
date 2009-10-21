@@ -51,6 +51,7 @@ import org.geotoolkit.gml.xml.v311.MultiSurfacePropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractOpeningType", propOrder = {

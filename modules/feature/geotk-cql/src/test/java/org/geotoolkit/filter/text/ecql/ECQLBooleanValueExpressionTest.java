@@ -29,6 +29,7 @@ import org.geotoolkit.filter.text.cql2.CQLBooleanValueExpressionTest;
  * @see CQLBooleanValueExpression
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLBooleanValueExpressionTest extends CQLBooleanValueExpressionTest {

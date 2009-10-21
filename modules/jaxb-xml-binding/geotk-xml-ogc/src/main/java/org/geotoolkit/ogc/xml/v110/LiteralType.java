@@ -47,6 +47,7 @@ import org.opengis.filter.expression.Literal;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LiteralType", propOrder = {

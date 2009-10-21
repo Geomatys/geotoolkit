@@ -50,6 +50,7 @@ import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

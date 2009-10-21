@@ -27,6 +27,7 @@ import static org.geotoolkit.filter.FilterTestConstants.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class FeaturePropertyAccessorTest {
 

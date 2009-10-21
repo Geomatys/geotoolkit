@@ -77,6 +77,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Selection handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class DefaultSelectionHandler implements CanvasHandler {
 

@@ -54,6 +54,7 @@ import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BuildingFurnitureType", propOrder = {

@@ -58,6 +58,7 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WFS_CapabilitiesType", propOrder = {

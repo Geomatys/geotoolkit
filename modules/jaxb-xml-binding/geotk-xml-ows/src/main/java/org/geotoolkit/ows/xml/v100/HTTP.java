@@ -48,6 +48,7 @@ import org.geotoolkit.ows.xml.AbstractHTTP;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

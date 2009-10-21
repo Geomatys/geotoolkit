@@ -56,6 +56,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Martin Desruisseaux
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class J2DScaleBarUtilities {
 

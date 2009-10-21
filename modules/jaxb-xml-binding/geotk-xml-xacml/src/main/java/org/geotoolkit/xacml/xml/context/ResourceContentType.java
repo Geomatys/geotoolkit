@@ -46,6 +46,7 @@ import javax.xml.namespace.QName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResourceContentType", propOrder =

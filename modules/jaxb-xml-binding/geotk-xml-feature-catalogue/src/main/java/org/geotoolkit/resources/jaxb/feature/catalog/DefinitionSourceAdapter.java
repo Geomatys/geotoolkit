@@ -27,6 +27,7 @@ import org.opengis.feature.catalog.DefinitionSource;
  * JAXB adapter in order to map implementing class with the GeoAPI DefinitionSource. See
  * package documentation for more infoFeatureTypermation about JAXB and DefinitionSource.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/DefinitionSourceAdapter.java $
  * @author Guilhem Legal

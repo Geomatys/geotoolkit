@@ -38,6 +38,7 @@ import org.geotoolkit.legacy.array.DynamicArray;
  * Test the <code>org.geotoolkit.display.array</code> package.
  *
  * @author Martin Desruisseaux
+ * @module pending
  */
 public class PointArrayTest extends TestCase {
     /**

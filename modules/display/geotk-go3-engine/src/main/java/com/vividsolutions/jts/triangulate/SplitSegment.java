@@ -41,6 +41,7 @@ import com.vividsolutions.jts.geom.LineSegment;
  * according to certain geometric constraints.
  * 
  * @author Martin Davis
+ * @module pending
  */
 public class SplitSegment {
     /**

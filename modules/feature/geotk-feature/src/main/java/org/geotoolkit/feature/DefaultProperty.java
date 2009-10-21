@@ -32,6 +32,7 @@ import org.opengis.feature.type.PropertyType;
  *
  * @author Johann Sorel (Geomatys)
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class DefaultProperty<V extends Object, D extends PropertyDescriptor> implements Property {
 

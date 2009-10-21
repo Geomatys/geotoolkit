@@ -47,6 +47,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JCoordinateBar extends JToolBar {
 

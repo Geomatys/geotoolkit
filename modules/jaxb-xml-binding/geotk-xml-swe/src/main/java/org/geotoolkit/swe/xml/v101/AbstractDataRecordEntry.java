@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlSeeAlso({SimpleDataRecordEntry.class})
 @XmlType(name="AbstractDataRecord")

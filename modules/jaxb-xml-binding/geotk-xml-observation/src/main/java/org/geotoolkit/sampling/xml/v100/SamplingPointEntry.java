@@ -36,6 +36,7 @@ import org.opengis.observation.sampling.SamplingPoint;
  * Description of a station localised.
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlRootElement( name="SamplingPoint" )
 @XmlAccessorType(XmlAccessType.FIELD)

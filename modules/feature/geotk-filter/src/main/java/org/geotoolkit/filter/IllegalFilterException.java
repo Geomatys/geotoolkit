@@ -25,6 +25,7 @@ package org.geotoolkit.filter;
  * TODO: JD: Changed this exception to runtime exception. Go through all methods
  * that throw this expception and reflect the new geoapi method throws it with
  * a javadoc.
+ * @module pending
  */
 public class IllegalFilterException extends RuntimeException {
 

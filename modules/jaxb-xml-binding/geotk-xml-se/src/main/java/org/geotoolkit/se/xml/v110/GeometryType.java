@@ -41,6 +41,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GeometryType", propOrder = {

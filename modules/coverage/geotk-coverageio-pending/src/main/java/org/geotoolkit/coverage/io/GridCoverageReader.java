@@ -38,6 +38,7 @@ import org.opengis.referencing.operation.MathTransform;
  * GridCoverage coverage = reader.{@linkplain #getGridCoverage getGridCoverage}(0);
  * </pre></blockquote>
  *
+ * @module pending
  * @since 2.4
  * @source $URL$
  * @version $Id$

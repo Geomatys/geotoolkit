@@ -36,6 +36,7 @@ import org.geotoolkit.csw.xml.v202.Capabilities;
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
+ * @module pending
  */
 @XmlRegistry
 public class ObjectFactory {

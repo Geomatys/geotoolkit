@@ -34,6 +34,7 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  * Zoom pan decoration
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class ZoomDecoration extends JComponent implements MapDecoration{
 

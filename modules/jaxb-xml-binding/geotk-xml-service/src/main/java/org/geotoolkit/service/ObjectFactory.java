@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
  * provided in this class.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlRegistry
 public class ObjectFactory {

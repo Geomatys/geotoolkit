@@ -50,6 +50,7 @@ import org.opengis.referencing.operation.MathTransform;
  * special mouse listener
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public abstract class AbstractMouseDelegate extends MouseNavigatonListener implements MouseInputListener,KeyListener {
 

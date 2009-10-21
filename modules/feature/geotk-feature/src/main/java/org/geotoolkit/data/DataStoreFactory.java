@@ -81,6 +81,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * @author Jody Garnett, Refractions Research
  * @author Johann Sorel (Geomatys)
  * @source $URL$
+ * @module pending
  */
 public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
 

@@ -25,6 +25,7 @@ import org.opengis.filter.FilterFactory;
  * Provides an implementation of CQLCompiler
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class CQLCompilerFactory extends AbstractCompilerFactory {

@@ -36,6 +36,7 @@ import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
  * Default implementation of Map2D
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public abstract class AbstractMap2D extends JPanel implements Map2D {
     

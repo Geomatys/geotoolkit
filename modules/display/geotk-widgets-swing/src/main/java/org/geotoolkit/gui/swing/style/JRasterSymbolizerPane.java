@@ -45,6 +45,7 @@ import org.opengis.style.Symbolizer;
  * Raster Sybolizer edition panel
  *
  * @author  Johann Sorel
+ * @module pending
  */
 public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> {
 

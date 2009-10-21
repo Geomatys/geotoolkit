@@ -30,6 +30,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author dzwiers
  * @source $URL$
+ * @module pending
  */
 public interface FileDataStoreFactory extends DataStoreFactory<SimpleFeatureType,SimpleFeature> {
 

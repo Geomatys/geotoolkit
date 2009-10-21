@@ -44,6 +44,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @version $Id: Polygon.java 19515 2006-05-17 06:07:00Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 public class Polygon extends Polyline {
     /**

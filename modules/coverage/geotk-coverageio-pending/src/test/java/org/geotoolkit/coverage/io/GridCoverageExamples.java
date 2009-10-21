@@ -44,6 +44,7 @@ import org.geotoolkit.util.NumberRange;
  * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
+ * @module pending
  */
 public final class GridCoverageExamples {
     /**

@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * Builds a LineString
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class LineStringBuilder extends GeometryBuilder {

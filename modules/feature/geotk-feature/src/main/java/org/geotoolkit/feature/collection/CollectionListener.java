@@ -22,6 +22,7 @@ package org.geotoolkit.feature.collection;
  * @author Ray Gallagher
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public interface CollectionListener {
     

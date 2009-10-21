@@ -24,6 +24,7 @@ import java.util.Date;
 /**
  *
  * @author johann sorel
+ * @module pending
  */
 public interface TimeLineItem extends Comparable<TimeLineItem>{
 

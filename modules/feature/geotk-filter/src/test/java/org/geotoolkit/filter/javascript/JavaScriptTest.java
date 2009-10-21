@@ -35,6 +35,7 @@ import org.opengis.filter.expression.PropertyName;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JavaScriptTest {
 

@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
  * </code></pre>
  * </p>
  * @author jeichar
+ * @module pending
  * @since 0.6.0
  * @source $URL$
  */

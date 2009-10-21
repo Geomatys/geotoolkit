@@ -21,6 +21,7 @@ package org.geotoolkit.gui.swing.go2.decoration;
  * Information decoration
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public interface InformationDecoration extends MapDecoration{
 

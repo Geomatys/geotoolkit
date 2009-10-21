@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  * ISO/JTS geometries for intersections tests.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ProjectedGeometry  {
 

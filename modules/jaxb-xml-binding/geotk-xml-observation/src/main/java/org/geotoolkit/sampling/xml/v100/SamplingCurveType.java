@@ -48,6 +48,7 @@ import org.geotoolkit.gml.xml.v311.MeasureType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SamplingCurveType", propOrder = {

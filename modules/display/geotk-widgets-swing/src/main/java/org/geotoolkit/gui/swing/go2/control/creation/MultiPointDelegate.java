@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
  * multipoint creation handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class MultiPointDelegate extends AbstractMouseDelegate {
 

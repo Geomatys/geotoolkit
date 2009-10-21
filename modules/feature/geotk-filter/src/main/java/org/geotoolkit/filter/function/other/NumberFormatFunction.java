@@ -26,6 +26,7 @@ import org.opengis.filter.expression.Expression;
  * by {@link DecimalFormat}}
  * @author Andrea Aime - OpenGeo
  *
+ * @module pending
  */
 public class NumberFormatFunction extends AbstractFunction {
 

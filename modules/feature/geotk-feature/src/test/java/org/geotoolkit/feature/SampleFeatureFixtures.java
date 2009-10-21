@@ -34,6 +34,7 @@ import org.opengis.feature.type.GeometryDescriptor;
  *
  * @author jamesm
  * @source $URL$
+ * @module pending
  */
 public class SampleFeatureFixtures {
     /**

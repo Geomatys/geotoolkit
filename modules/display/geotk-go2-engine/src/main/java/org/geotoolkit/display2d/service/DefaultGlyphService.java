@@ -38,6 +38,7 @@ import org.opengis.style.Symbolizer;
  * Factory to create small glyphs used in map or application legends.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGlyphService {
 

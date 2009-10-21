@@ -71,6 +71,7 @@ import org.opengis.filter.FilterFactory2;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGraphic{
 

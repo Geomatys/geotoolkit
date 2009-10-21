@@ -43,6 +43,7 @@ import org.opengis.feature.catalog.FeatureOperation;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {

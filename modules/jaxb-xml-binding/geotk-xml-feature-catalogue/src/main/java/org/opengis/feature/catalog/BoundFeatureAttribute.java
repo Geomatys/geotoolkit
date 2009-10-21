@@ -20,6 +20,7 @@ import static org.opengis.annotation.Specification.*;
  * in order that operational effect information may be supplied for feature operations.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_BoundFeatureAttribute", specification=ISO_19110)
 public interface BoundFeatureAttribute {

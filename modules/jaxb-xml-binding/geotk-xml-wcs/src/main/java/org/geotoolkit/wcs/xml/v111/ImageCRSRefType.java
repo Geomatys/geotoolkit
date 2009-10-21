@@ -46,6 +46,7 @@ import org.geotoolkit.gml.xml.v311.ImageCRSType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ImageCRSRefType", propOrder = {

@@ -27,6 +27,7 @@ import org.opengis.filter.expression.Function;
  * Builds a Relate Pattern function using the expressions presents in the result stack.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class RelatePatternBuilder extends FunctionBuilder {

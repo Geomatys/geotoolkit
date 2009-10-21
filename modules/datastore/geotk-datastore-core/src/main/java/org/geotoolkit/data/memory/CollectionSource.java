@@ -37,6 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Please note that this is read-only access.
  * 
  * @author Jody Garnett
+ * @module pending
  */
 public final class CollectionSource {
 

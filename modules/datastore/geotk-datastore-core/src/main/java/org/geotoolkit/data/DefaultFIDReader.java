@@ -28,6 +28,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Chris Holmes
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class DefaultFIDReader implements FIDReader {
 

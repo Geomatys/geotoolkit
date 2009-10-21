@@ -79,6 +79,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * This is a Stateless graphic object.
  *
  * @author johann sorel (Geomatys)
+ * @module pending
  */
 public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     

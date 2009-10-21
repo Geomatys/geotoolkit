@@ -105,6 +105,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
  * @todo fix file creation bug
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/ShapefileDataStore.java $
+ * @module pending
  */
 public class ShapefileDataStore extends AbstractDataStore {
     

@@ -26,6 +26,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  *
  * @version $Id: JTSIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 final class JTSIterator extends PointIterator {
     /**

@@ -50,6 +50,7 @@ import org.opengis.referencing.IdentifiedObject;
  * ContextCRS property panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class ContextCRSPropertyPanel extends javax.swing.JPanel implements PropertyPane {
 

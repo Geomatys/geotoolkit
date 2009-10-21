@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * JAXB adapter in order to map implementing class with the GeoAPI Multiplicity. See
  * package documentation for more information about JAXB and Multiplicity.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/MultiplicityAdapter.java $
  * @author Guilhem Legal

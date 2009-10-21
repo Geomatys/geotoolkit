@@ -27,6 +27,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
  * system.
  * 
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultTemporalCoordinate extends DefaultTemporalPosition implements TemporalCoordinate {
 

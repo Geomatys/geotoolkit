@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * JaxB adapter to marshall String to internationalString.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ObjectAdapter extends XmlAdapter<String,Object>{
 

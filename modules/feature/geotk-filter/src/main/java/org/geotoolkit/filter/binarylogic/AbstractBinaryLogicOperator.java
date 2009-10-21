@@ -28,6 +28,7 @@ import org.opengis.filter.Filter;
  * Immutable abstract binary logic operator.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator{
 

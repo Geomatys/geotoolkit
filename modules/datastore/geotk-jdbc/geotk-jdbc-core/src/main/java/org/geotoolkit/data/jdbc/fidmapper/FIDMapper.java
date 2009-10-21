@@ -67,6 +67,7 @@ import java.sql.Statement;
  * @author Dani Daniele Franzoni
  * @author aaime Andrea Aime
  * @source $URL$
+ * @module pending
  */
 public interface FIDMapper extends Serializable {
     /**

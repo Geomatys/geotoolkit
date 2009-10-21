@@ -30,6 +30,7 @@ import javax.imageio.stream.ImageOutputStream;
  * Useful methods for image writing.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ImageIOUtilities {
 

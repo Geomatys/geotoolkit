@@ -22,6 +22,7 @@ import org.opengis.filter.spatial.Crosses;
 /**
  *
  * @author Guilhem Legal 
+ * @module pending
  */
 public class CrossesType extends BinarySpatialOpType implements Crosses {
 

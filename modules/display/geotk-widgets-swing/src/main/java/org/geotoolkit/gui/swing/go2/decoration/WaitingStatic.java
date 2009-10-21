@@ -41,6 +41,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class WaitingStatic extends JPanel{
 

@@ -34,6 +34,7 @@ import com.vividsolutions.jts.geom.Coordinate;  // For javadoc only
  * the (<var>x</var>,<var>y</var>) ordinates in a {@code float[]} array, loosing the <var>z</var>
  * value and some precision due to the conversion of {@code double} to {@code float} values.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

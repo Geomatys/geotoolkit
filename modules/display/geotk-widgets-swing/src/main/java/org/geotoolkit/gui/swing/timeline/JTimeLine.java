@@ -46,6 +46,7 @@ import javax.swing.JComponent;
 /**
  *
  * @author johann sorel
+ * @module pending
  */
 public class JTimeLine extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 

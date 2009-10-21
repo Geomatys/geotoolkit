@@ -29,6 +29,7 @@ import org.opengis.util.InternationalString;
  * Factory to create java2d north arrow mappers.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class NorthArrowMapperFactory implements JRMapperFactory<JRRenderable,MapContext>{
 

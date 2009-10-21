@@ -21,6 +21,7 @@ import static org.opengis.annotation.Specification.*;
  * since it can be easily derived from combining the Role and MemberOf  associations.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_FeatureAssociation", specification=ISO_19110)
 public interface FeatureAssociation extends FeatureType {

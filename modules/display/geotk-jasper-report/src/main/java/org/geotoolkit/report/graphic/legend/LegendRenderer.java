@@ -45,6 +45,7 @@ import org.opengis.display.canvas.Canvas;
  * Jasper Report renderer used to render legend graphic.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class LegendRenderer implements JRRenderable{
 

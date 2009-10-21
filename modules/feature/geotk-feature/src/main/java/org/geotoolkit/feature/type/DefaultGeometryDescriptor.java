@@ -26,6 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Default implementation of a geometry descriptor.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGeometryDescriptor extends DefaultAttributeDescriptor<GeometryType>
         implements GeometryDescriptor {

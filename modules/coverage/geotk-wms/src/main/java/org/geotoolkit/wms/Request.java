@@ -22,6 +22,7 @@ import java.net.URL;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface Request {
 

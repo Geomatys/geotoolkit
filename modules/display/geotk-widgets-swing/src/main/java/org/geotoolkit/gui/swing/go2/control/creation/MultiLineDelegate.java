@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
  * multiline creation handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class MultiLineDelegate extends AbstractMouseDelegate {
 

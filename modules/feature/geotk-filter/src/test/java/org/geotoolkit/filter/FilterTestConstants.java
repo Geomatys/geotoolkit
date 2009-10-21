@@ -51,6 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public class FilterTestConstants {
 

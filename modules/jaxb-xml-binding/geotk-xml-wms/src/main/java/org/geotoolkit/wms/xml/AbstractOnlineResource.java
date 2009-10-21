@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * Abstract class for Online resource object.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlTransient
 public abstract class AbstractOnlineResource {

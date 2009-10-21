@@ -51,6 +51,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * 
  * @author Martin Davis
  * @version 1.0
+ * @module pending
  */
 public class QuadEdgeTriangle {
 

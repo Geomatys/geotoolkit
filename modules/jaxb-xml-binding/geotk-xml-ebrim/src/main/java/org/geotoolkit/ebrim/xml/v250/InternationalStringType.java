@@ -43,6 +43,7 @@ import org.geotoolkit.ebrim.xml.EbrimInternationalString;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "InternationalStringType", propOrder = {

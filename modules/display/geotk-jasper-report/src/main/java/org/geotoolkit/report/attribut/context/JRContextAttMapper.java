@@ -25,6 +25,7 @@ import org.geotoolkit.report.JRMapperFactory;
  * Abstract JRMapper for String values and MapContext records.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class JRContextAttMapper implements JRMapper<String,MapContext> {
 

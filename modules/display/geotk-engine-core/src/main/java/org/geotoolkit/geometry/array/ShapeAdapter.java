@@ -39,6 +39,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * @author Martin Desruisseaux (PMO, IRD)
  *
  * @see PointArray2D#toShape
+ * @module pending
  */
 final class ShapeAdapter implements Shape, Serializable {
     /**

@@ -63,6 +63,7 @@ import org.opengis.display.container.ContainerListener;
  * &nbsp; {@linkplain #getDeviceCRS       device CRS}
  * </p>
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

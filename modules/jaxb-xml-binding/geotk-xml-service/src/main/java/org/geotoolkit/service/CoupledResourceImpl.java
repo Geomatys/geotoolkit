@@ -28,6 +28,7 @@ import org.opengis.util.ScopedName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(name = "SV_CoupledResource_Type", propOrder = {
     "operationName",

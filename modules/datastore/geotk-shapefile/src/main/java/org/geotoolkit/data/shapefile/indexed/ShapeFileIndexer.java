@@ -49,6 +49,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/indexed/ShapeFileIndexer.java $
+ * @module pending
  */
 public class ShapeFileIndexer implements FileWriter {
     private IndexType idxType;

@@ -39,6 +39,7 @@ import org.opengis.filter.PropertyIsLike;
  * </pre>
  * <p>
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLLikePredicateTest extends CQLLikePredicateTest {

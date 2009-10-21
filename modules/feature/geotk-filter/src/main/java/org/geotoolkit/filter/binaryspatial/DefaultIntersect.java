@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "intersect" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,Expression> implements Intersects {
 

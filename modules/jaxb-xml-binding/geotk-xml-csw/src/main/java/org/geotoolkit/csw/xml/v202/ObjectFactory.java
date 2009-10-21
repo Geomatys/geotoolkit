@@ -30,6 +30,7 @@ import javax.xml.namespace.QName;
  * type definitions, element declarations and model groups.  
  * Factory methods for each of these are provided in this class.
  * 
+ * @module pending
  */
 @XmlRegistry
 public class ObjectFactory {

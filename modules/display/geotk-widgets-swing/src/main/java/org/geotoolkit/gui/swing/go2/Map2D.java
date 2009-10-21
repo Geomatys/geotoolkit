@@ -26,6 +26,7 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 /**
  *
  * @author Johann Sorel
+ * @module pending
  */
 public interface Map2D {
 

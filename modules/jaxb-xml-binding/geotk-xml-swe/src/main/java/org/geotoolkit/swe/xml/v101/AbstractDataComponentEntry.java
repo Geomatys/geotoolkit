@@ -28,6 +28,7 @@ import org.geotoolkit.swe.xml.AbstractDataComponent;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlSeeAlso({AbstractDataRecordEntry.class, TimeType.class, BooleanType.class, QuantityType.class, Text.class})
 @XmlType(name="AbstractDataComponent")

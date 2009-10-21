@@ -36,6 +36,7 @@ import org.opengis.filter.expression.PropertyName;
  * Wrap an OGC filter object in a Lucene filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
 

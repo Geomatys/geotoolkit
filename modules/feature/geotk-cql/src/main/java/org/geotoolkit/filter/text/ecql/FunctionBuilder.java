@@ -26,6 +26,7 @@ import org.opengis.filter.expression.Function;
  * Abstract class for function builder
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 abstract class FunctionBuilder {

@@ -24,6 +24,7 @@ import org.geotoolkit.display3d.canvas.A3DCanvas;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class SceneScalingSlider extends JSlider{
 

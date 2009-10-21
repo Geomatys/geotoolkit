@@ -32,6 +32,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  * Default information decoration
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class DefaultInformationDecoration extends JPanel implements InformationDecoration {
 

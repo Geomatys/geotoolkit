@@ -61,6 +61,7 @@ import org.geotoolkit.resources.Errors;
  *             together. Because the new GO-1 rendering engine is a work in progress, see
  *             <A HREF="http://jira.codehaus.org/browse/GEOT-776">GEOT-776</A> in order to determine
  *             if enough functionalites have been ported for yours need.
+ * @module pending
  */
 public abstract class PointArray implements Serializable {
     /**

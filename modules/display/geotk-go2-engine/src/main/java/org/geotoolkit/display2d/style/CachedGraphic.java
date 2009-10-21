@@ -41,6 +41,7 @@ import org.opengis.style.Mark;
  * Cached graphic.
  *  
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedGraphic extends Cache<Graphic>{
 

@@ -38,6 +38,7 @@ import org.opengis.display.canvas.Canvas;       //for javadoc
  * basic services particular to the Geotools implementation like {@linkplain #getLogger logging},
  * <cite>etc.</cite>
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

@@ -19,6 +19,7 @@ import static org.opengis.annotation.Specification.*;
  * Role of the feature association.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_AssociationRole", specification=ISO_19110)
 public interface AssociationRole extends PropertyType {

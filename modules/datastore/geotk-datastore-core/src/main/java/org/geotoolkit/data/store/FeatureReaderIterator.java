@@ -34,6 +34,7 @@ import org.opengis.feature.type.FeatureType;
  * to work with a custom iterator need just that - a custom iterator.
  * <p>
  * @author jgarnett
+ * @module pending
  * @since 2.1.RC0
  * @source $URL$
  */

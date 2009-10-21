@@ -36,6 +36,7 @@ import org.opengis.util.InternationalString;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Element")

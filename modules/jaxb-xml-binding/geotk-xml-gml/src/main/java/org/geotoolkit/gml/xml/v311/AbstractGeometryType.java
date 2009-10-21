@@ -63,6 +63,7 @@ import org.opengis.referencing.operation.TransformException;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGeometryType")

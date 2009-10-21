@@ -36,6 +36,7 @@ import org.opengis.style.Symbolizer;
  * Mutable implementation of GeoAPI style.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultMutableStyle implements MutableStyle{
     

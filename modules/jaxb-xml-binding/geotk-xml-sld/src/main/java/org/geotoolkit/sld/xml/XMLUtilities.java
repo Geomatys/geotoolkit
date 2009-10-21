@@ -62,6 +62,7 @@ import org.xml.sax.InputSource;
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final class XMLUtilities {
 

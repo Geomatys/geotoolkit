@@ -45,6 +45,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *
  * @see SurfaceBoundary
  * @see Shell
+ * @module pending
  */
 public class JTSRing extends JTSCompositeCurve implements Ring {
 

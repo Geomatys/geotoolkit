@@ -51,6 +51,7 @@ import org.opengis.display.canvas.RenderingState;
  * Special canvas used to render maps in JasperReport templates.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 

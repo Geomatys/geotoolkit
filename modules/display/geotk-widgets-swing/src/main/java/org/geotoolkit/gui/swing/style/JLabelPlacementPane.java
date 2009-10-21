@@ -33,6 +33,7 @@ import org.opengis.style.LabelPlacement;
  * Label placement panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
 

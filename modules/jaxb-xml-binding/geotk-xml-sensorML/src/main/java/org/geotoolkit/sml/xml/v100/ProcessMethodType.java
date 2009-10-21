@@ -152,6 +152,7 @@ import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessMethodType", propOrder = {

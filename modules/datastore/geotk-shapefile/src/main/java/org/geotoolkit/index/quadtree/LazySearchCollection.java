@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  * @author Jesse
  * 
+ * @module pending
  */
 public class LazySearchCollection extends AbstractCollection<Data> implements
         CloseableCollection<Data> {

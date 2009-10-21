@@ -27,6 +27,7 @@ import org.opengis.filter.FilterFactory;
  * Creates the compiler required for the specific language.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class CompilerFactory {

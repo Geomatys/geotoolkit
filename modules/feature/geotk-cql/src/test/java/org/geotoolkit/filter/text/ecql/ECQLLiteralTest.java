@@ -44,6 +44,7 @@ import com.vividsolutions.jts.io.WKTReader;
  * Literal Test Cases
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLLiteralTest extends CQLLiteralTest {

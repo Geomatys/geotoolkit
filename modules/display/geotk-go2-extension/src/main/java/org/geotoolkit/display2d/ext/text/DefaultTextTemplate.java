@@ -22,6 +22,7 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultTextTemplate implements TextTemplate {
 

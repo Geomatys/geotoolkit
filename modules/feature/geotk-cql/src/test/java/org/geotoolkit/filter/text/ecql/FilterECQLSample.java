@@ -36,6 +36,7 @@ import org.opengis.filter.expression.Subtract;
  * Filter Samples for ECQL language
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class FilterECQLSample {

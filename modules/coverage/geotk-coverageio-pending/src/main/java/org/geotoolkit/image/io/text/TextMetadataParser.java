@@ -99,6 +99,7 @@ import org.opengis.referencing.operation.Projection;
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon
  *
+ * @module pending
  * @since 2.5
  */
 public abstract class TextMetadataParser {

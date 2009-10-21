@@ -22,6 +22,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class BackgroundPainterGroup implements BackgroundPainter{
 

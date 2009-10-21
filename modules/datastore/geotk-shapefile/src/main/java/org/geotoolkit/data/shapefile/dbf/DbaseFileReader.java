@@ -64,6 +64,7 @@ import org.geotoolkit.resources.NIOUtilities;
  * @author Ian Schneider
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/dbf/DbaseFileReader.java $
+ * @module pending
  */
 public class DbaseFileReader implements FileReader {
 

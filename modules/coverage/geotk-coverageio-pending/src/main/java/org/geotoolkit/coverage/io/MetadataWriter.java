@@ -44,6 +44,7 @@ import org.opengis.referencing.operation.Projection;
  * @version $Id$
  * @author Cédric Briançon
  *
+ * @module pending
  * @since 2.5
  */
 class MetadataWriter {

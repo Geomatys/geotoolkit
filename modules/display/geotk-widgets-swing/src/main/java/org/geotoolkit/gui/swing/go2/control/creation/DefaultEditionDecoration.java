@@ -107,6 +107,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 

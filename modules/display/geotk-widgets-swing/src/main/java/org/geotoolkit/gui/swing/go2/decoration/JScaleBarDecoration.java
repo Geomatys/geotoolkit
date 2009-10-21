@@ -43,6 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Decoration displaying a scale bar
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JScaleBarDecoration extends JComponent implements MapDecoration{
 

@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable "is between" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyIsBetween implements PropertyIsBetween{
 

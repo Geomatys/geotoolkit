@@ -40,6 +40,7 @@ import org.opengis.style.Stroke;
  * for a given feature.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedStroke extends Cache<Stroke>{
 

@@ -27,6 +27,7 @@ import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
  *
  * @source $URL$
  * @author Cédric Briançon
+ * @module pending
  */
 public class NamespacePrefixMapperImpl extends NamespacePrefixMapper {
     /**

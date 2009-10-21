@@ -41,6 +41,7 @@ import org.opengis.referencing.operation.TransformException;
  * arrows or cercles.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 

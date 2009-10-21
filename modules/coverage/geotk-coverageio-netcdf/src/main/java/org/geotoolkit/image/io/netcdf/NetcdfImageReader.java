@@ -96,6 +96,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
  *
+ * @module pending
  * @since 2.4
  * @module
  */

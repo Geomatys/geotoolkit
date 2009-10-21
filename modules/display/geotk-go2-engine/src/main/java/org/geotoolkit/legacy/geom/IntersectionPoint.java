@@ -46,6 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @version $Id: IntersectionPoint.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 final class IntersectionPoint extends Point2D.Double implements Comparable {
     /**

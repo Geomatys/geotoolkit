@@ -34,6 +34,7 @@ import org.opengis.util.MemberName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SV_Operation_Type", propOrder = {

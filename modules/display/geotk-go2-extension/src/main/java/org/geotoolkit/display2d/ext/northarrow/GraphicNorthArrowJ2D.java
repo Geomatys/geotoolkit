@@ -33,6 +33,7 @@ import static javax.swing.SwingConstants.*;
  * Java2D graphic object displaying a north arrow.
  *
  * @author Johann sorel (Geomatys)
+ * @module pending
  */
 public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
 

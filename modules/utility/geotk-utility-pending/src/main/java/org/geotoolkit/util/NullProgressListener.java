@@ -28,6 +28,7 @@ import org.opengis.util.ProgressListener;
  * The default implementations of the other methods do nothing.
  * </p>
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

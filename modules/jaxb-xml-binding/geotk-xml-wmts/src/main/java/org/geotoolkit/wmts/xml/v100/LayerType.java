@@ -48,6 +48,7 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerType", propOrder = {

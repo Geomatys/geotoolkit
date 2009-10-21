@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author johann sorel
+ * @module pending
  */
 public class CRSAction extends AbstractAction {
 

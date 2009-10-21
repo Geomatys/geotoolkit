@@ -43,6 +43,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
  *
  * @author Andrea Aime
  * @version $Id: Point.java 19519 2006-05-17 10:55:42Z desruisseaux $
+ * @module pending
  */
 public class Point extends Geometry {
     /**

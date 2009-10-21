@@ -42,6 +42,7 @@ import org.geotoolkit.resources.NIOUtilities;
 /**
  * Class used to create an index for an dbf attribute 
  * @author Manuele Ventoruzzo
+ * @module pending
  */
 public class AttributeIndexWriter {
 

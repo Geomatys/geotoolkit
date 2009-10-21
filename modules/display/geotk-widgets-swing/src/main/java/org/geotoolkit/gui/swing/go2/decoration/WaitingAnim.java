@@ -46,6 +46,7 @@ import org.jdesktop.animation.timing.interpolation.PropertySetter;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class WaitingAnim extends JPanel{
 

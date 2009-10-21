@@ -39,6 +39,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * a temporary file (when the user may not even modify anything).
  * </p>
  * @author jgarnett
+ * @module pending
  * @since 2.1.RC0
  * @source $URL$
  */

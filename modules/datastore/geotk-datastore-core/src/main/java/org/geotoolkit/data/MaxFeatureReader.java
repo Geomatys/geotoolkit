@@ -30,6 +30,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Chris Holmes
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class MaxFeatureReader<T extends FeatureType, F extends Feature> implements DelegatingFeatureReader<T, F> {
 

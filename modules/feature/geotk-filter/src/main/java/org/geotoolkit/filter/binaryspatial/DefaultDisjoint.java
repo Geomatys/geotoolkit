@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "disjoint" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Expression> implements Disjoint {
 

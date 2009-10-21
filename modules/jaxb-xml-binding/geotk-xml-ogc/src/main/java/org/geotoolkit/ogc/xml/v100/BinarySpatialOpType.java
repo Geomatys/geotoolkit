@@ -48,6 +48,7 @@ import org.geotoolkit.gml.xml.v212.BoxType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BinarySpatialOpType", propOrder = {

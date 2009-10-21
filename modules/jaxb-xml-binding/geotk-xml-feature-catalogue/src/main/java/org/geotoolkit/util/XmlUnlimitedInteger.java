@@ -19,6 +19,7 @@ import org.opengis.util.UnlimitedInteger;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)

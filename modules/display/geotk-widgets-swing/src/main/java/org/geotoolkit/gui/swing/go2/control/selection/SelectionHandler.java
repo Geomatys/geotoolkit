@@ -25,6 +25,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  * selection handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public interface SelectionHandler {
 

@@ -26,6 +26,7 @@ import org.opengis.filter.Filter;
  * Filter panel interface
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public interface FilterPanel {
 

@@ -34,6 +34,7 @@ import org.geotoolkit.gui.swing.style.StyleElementEditor;
 /**
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class JUOMPane extends StyleElementEditor<Unit<Length>>{
 

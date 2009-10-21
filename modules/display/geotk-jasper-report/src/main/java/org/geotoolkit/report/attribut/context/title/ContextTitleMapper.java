@@ -27,6 +27,7 @@ import org.geotoolkit.report.attribut.context.JRContextAttMapper;
  * Mapper to extract the map context title value.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ContextTitleMapper extends JRContextAttMapper{
 

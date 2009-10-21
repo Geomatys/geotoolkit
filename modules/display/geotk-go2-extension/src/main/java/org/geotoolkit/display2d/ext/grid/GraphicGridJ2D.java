@@ -33,6 +33,7 @@ import org.opengis.display.primitive.Graphic;
  * Graphic decoration to paint a grid.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GraphicGridJ2D extends AbstractGraphicJ2D{
 

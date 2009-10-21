@@ -72,6 +72,7 @@ import org.geotoolkit.atom.xml.Link;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractFeatureType", propOrder = {

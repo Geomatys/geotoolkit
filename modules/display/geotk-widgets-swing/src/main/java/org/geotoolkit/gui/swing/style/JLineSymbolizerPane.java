@@ -39,6 +39,7 @@ import org.opengis.style.LineSymbolizer;
  * Line symbolizer edition panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JLineSymbolizerPane extends  StyleElementEditor<LineSymbolizer> {
     

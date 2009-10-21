@@ -28,6 +28,7 @@ import org.opengis.filter.FilterFactory;
  * Client module should not use this feature.
  * </p>
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public abstract class AbstractCompilerFactory {

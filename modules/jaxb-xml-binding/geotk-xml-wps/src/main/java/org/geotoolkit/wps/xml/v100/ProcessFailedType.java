@@ -43,6 +43,7 @@ import org.geotoolkit.ows.xml.v110.ExceptionReport;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ProcessFailedType", propOrder = {

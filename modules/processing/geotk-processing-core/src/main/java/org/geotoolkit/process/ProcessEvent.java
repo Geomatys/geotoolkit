@@ -23,6 +23,7 @@ import org.opengis.util.InternationalString;
 /**
  * Event send by the process when it is running.
  * @author johann Sorel (Geomatys)
+ * @module pending
  */
 public class ProcessEvent extends EventObject {
 

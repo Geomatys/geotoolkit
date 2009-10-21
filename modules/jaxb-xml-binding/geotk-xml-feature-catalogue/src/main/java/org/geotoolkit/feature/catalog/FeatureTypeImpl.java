@@ -61,6 +61,7 @@ import org.opengis.feature.catalog.PropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_FeatureType_Type", propOrder = {

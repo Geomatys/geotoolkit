@@ -35,6 +35,7 @@ import org.geotoolkit.map.MapLayer;
  * layer list renderer
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class LayerListRenderer extends DefaultListCellRenderer {
 

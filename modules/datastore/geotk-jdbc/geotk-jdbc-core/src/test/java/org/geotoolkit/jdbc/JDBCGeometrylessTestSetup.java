@@ -21,6 +21,7 @@ import java.sql.SQLException;
 /**
  *  
  * @author Andrea Aime
+ * @module pending
  */
 public abstract class JDBCGeometrylessTestSetup extends JDBCDelegatingTestSetup {
 

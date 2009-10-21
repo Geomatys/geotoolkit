@@ -31,6 +31,7 @@ import org.opengis.feature.type.PropertyType;
  * Default implementation of a property descriptor
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyDescriptor<T extends PropertyType> implements PropertyDescriptor {
 

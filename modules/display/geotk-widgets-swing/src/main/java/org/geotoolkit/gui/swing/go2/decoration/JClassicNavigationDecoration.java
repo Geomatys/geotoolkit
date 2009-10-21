@@ -53,6 +53,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  *
  * @author johann sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JClassicNavigationDecoration extends JComponent implements MapDecoration {
 

@@ -40,6 +40,7 @@ import org.opengis.sld.SLDLibrary;
  * Default immplementation of SLD Factory.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
     

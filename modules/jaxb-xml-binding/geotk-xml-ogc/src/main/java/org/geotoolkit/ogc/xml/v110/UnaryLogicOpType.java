@@ -49,6 +49,7 @@ import org.opengis.filter.FilterVisitor;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "UnaryLogicOpType", propOrder = {

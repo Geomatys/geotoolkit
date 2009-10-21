@@ -32,6 +32,7 @@ import org.opengis.style.Displacement;
  * Displacement panel
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class JDisplacementPane extends StyleElementEditor<Displacement>{
 

@@ -7,6 +7,7 @@ import org.opengis.geometry.primitive.Primitive;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JTSMultiPrimitive extends AbstractJTSAggregate<Primitive> implements MultiPrimitive {
 

@@ -45,6 +45,7 @@ import org.opengis.filter.capability.ScalarCapabilities;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Scalar_CapabilitiesType", propOrder = {

@@ -21,6 +21,7 @@ import org.geotoolkit.ogc.xml.OGCJAXBStatics;
 /**
  *
  * @author sorel
+ * @module pending
  */
 public class SEJAXBStatics extends OGCJAXBStatics {
 

@@ -33,6 +33,7 @@ import org.opengis.style.PointPlacement;
  * Point placement panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     

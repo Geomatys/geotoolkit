@@ -61,6 +61,7 @@ import org.opengis.filter.Filter;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public abstract class AbstractFeatureLocking extends AbstractFeatureStore
         implements FeatureLocking<SimpleFeatureType, SimpleFeature> {

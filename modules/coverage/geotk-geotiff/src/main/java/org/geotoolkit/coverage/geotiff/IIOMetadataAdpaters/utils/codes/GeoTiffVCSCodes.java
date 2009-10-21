@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.utils.codes;
 /**
  * 
  * @author Simone Giannecchini
+ * @module pending
  * @since 2.3
  * 
  */

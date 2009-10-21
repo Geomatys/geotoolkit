@@ -22,6 +22,7 @@ import org.opengis.geometry.Geometry;
  * Default implementation of search area.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSearchArea implements SearchArea{
 

@@ -47,6 +47,7 @@ import org.opengis.style.PolygonSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<PolygonSymbolizer, CachedPolygonSymbolizer>{
 

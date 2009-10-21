@@ -45,6 +45,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * constraints, it is sometimes possible to choose better locations for splitting.
  * 
  * @author mbdavis
+ * @module pending
  */
 public interface ConstraintSplitPointFinder {
     /**

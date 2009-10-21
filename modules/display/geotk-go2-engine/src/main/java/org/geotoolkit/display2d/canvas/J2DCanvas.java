@@ -60,6 +60,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class J2DCanvas extends ReferencedCanvas2D{
 

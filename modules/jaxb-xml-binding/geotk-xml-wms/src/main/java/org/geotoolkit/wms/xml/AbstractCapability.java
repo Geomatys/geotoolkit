@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * Abstract main class for capabilities service part.
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlTransient
 public abstract class AbstractCapability {

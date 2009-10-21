@@ -32,6 +32,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultClockTimeTest {
 

@@ -32,6 +32,7 @@ import org.opengis.display.canvas.Canvas;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 

@@ -28,6 +28,7 @@ import org.geotoolkit.wms.xml.AbstractProtocol;
  * <p>Java class for anonymous complex type.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

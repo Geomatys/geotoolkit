@@ -59,6 +59,7 @@ import org.netbeans.swing.outline.RowModel;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JRConfigTree<C> extends Outline{
 

@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "crosses" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultCrosses extends AbstractBinarySpatialOperator<Expression,Expression> implements Crosses {
 

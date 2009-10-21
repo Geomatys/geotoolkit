@@ -32,6 +32,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * @task REVISIT: The generation code can move to the parent. Even if other
  *       implementations come along we do not want the to implement the
  *       generation differently.
+ * @module pending
  */
 public class DefaultFeatureLockFactory extends FeatureLockFactory {
 

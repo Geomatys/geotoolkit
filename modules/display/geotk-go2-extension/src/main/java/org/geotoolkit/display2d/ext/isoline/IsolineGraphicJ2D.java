@@ -72,6 +72,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Sorel Johann (Geomatys)
+ * @module pending
  */
 public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 

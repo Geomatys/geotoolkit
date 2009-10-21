@@ -44,6 +44,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "BBOX" filter.
  *
  * @author Johann Sorel (Geomatys).
+ * @module pending
  */
 public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,DefaultLiteral<Envelope>> implements BBOX {
 

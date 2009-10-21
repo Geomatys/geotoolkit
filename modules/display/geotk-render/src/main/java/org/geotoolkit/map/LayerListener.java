@@ -25,6 +25,7 @@ import java.util.EventObject;
  * Listener for MapLayer. This listener is for PropertyChanges or style change.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface LayerListener extends EventListener {
 

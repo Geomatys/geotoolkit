@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  * Component used to present layer visibility
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 final class VisibleCheck extends JCheckBox {
 

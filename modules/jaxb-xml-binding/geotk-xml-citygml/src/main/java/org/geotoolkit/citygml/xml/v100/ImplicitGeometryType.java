@@ -64,6 +64,7 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ImplicitGeometryType", propOrder = {

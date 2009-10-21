@@ -10,6 +10,7 @@ import org.opengis.feature.catalog.Binding;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_Binding_Type")

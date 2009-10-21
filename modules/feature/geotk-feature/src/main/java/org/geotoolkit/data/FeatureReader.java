@@ -79,6 +79,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Sean Geoghegan, Defence Science and Technology Organisation.
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public interface FeatureReader<T extends FeatureType, F extends Feature> {
 

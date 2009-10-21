@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
  * polygon creation gandler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class PolygonDelegate extends AbstractMouseDelegate {
 

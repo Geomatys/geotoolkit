@@ -56,6 +56,7 @@ import org.opengis.style.PointSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSymbolizer, CachedPointSymbolizer>{
 

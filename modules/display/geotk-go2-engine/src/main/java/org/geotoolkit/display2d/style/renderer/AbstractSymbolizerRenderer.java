@@ -46,6 +46,7 @@ import org.opengis.style.Symbolizer;
  * Abstract symbolizer renderer, has a few utility static methods.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends CachedSymbolizer<S>> implements SymbolizerRenderer<S, C>{
 

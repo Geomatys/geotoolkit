@@ -22,6 +22,7 @@ import org.opengis.filter.spatial.Intersects;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 public class IntersectsType extends BinarySpatialOpType implements Intersects {
     

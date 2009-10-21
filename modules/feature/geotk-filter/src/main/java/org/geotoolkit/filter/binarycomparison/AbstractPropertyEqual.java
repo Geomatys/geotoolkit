@@ -26,6 +26,7 @@ import org.opengis.filter.expression.Expression;
  * duplicaton the same test in both classes.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOperator<Expression,Expression> {
 

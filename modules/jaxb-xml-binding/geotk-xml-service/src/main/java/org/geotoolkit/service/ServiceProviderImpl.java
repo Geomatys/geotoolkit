@@ -14,6 +14,7 @@ import org.opengis.service.ServiceProvider;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlType(name = "SV_ServiceProvider_Type", propOrder = {
     "serviceContact",

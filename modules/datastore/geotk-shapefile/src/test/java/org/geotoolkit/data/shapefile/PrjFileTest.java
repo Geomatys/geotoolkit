@@ -25,6 +25,7 @@ import java.io.IOException;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
+ * @module pending
  */
 public class PrjFileTest extends AbstractTestCaseSupport {
 

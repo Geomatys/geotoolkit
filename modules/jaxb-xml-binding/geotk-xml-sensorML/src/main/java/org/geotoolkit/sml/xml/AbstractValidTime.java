@@ -22,6 +22,7 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface AbstractValidTime {
 

@@ -30,6 +30,7 @@ import org.opengis.util.InternationalString;
  * Base class for attribute types.
  *
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class DefaultAttributeType<T extends AttributeType> extends DefaultPropertyType<T> implements AttributeType {
 

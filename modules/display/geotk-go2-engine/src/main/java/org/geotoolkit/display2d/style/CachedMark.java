@@ -37,6 +37,7 @@ import org.opengis.style.Mark;
  * Cached Mark.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedMark extends Cache<Mark>{
     

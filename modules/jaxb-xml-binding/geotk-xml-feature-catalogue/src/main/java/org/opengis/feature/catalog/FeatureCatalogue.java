@@ -23,6 +23,7 @@ import static org.opengis.annotation.Specification.*;
  * and definition of some number of feature types with other information necessary for those definitions.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_FeatureCatalogue", specification=ISO_19110)
 public interface FeatureCatalogue {

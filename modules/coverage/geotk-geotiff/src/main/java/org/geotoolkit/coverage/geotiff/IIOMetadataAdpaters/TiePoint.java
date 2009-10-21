@@ -76,6 +76,7 @@ import org.geotoolkit.util.Utilities;
  * 
  * 
  * @author Simone Giannecchini, GeoSolutions
+ * @module pending
  * @since 2.3
  */
 public final class TiePoint {

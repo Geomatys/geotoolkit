@@ -59,6 +59,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public class DataUtilitiesTest extends DataTestCase {
 

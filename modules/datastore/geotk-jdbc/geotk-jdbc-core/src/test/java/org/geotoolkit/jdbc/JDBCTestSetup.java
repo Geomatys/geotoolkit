@@ -47,6 +47,7 @@ import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
  *
  * @author Justin Deoliveira, The Open Planning Project
  *
+ * @module pending
  */
 public abstract class JDBCTestSetup {
     static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger(

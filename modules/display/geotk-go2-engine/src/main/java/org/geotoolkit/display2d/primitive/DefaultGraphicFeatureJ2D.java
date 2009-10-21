@@ -58,6 +58,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * operation. The objective and display crs may be obsolete if use a second time.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements ProjectedFeature {
 

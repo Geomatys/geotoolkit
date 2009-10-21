@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  * Java2D canvas mapper.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CanvasMapper extends JRRendererMapper{
 

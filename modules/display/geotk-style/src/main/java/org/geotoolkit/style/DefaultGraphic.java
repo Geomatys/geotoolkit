@@ -36,6 +36,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI Graphic.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGraphic implements Graphic{
 

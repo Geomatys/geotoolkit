@@ -27,6 +27,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI Line placement.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLinePlacement implements LinePlacement{
 

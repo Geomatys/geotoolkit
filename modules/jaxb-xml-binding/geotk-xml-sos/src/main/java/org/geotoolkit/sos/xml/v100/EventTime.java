@@ -27,6 +27,7 @@ import org.geotoolkit.util.Utilities;
 /**
  *
  * @author Guilhem legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EventTime", propOrder = {

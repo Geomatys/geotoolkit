@@ -24,6 +24,7 @@ import org.junit.Test;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SRIDTest extends TestCase{
 

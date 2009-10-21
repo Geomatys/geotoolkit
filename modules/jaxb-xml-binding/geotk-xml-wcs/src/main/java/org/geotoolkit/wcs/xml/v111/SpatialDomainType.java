@@ -53,6 +53,7 @@ import org.geotoolkit.ows.xml.v110.BoundingBoxType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialDomainType", propOrder = {

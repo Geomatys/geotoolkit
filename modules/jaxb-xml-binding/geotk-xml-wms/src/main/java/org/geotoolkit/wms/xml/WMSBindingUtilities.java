@@ -38,6 +38,7 @@ import org.xml.sax.InputSource;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
  public class WMSBindingUtilities {
 

@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
  * multipolygon creation handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class MultiPolygonDelegate extends AbstractMouseDelegate {
 

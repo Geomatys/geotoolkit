@@ -24,6 +24,7 @@ import org.opengis.filter.identity.GmlObjectId;
  * Immutable gml object id.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGmlObjectId implements GmlObjectId {
 

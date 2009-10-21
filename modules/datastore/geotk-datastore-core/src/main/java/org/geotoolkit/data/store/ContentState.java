@@ -84,6 +84,7 @@ import org.opengis.filter.identity.FeatureId;
  *
  * @author Jody Garnett, Refractions Research Inc.
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class ContentState {
 

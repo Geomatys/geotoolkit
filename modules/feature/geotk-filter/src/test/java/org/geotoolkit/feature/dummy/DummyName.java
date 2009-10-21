@@ -22,6 +22,7 @@ import org.opengis.feature.type.Name;
 
 /**
  * Dummy implementation of {@link Name}.
+ * @module pending
  */
 public final class DummyName implements Name {
     private final String name;

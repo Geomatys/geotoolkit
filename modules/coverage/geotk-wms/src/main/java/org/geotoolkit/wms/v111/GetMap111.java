@@ -27,6 +27,7 @@ import org.opengis.referencing.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GetMap111 extends AbstractGetMap {
 

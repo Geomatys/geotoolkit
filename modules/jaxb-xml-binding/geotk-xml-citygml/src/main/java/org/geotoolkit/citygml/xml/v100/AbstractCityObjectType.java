@@ -56,6 +56,7 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractCityObjectType", propOrder = {

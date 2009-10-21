@@ -36,6 +36,7 @@ import org.geotoolkit.gui.swing.go2.control.navigation.AbstractNavigationHandler
  * Information handler.
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class InformationHandler extends AbstractNavigationHandler {
 

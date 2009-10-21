@@ -75,6 +75,7 @@ import org.opengis.filter.identity.FeatureId;
  * </p>
  *
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public abstract class ContentFeatureStore extends ContentFeatureSource implements
         FeatureStore<SimpleFeatureType, SimpleFeature>,

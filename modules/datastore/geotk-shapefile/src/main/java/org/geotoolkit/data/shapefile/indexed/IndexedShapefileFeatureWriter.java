@@ -41,6 +41,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * require header information which can only be obtained by reading the entire
  * series of Features, the headers are updated after the initial write
  * completes.
+ * @module pending
  */
 class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter implements
         FileWriter {

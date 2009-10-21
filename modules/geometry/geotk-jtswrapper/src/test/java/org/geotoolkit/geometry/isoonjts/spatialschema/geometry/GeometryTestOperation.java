@@ -27,6 +27,7 @@ import java.util.HashMap;
 /**
  * @author Jody Garnett
  * @author Joel Skelton
+ * @module pending
  */
 public class GeometryTestOperation {
     private String operation;

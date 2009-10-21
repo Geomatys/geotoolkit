@@ -41,6 +41,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/cachefs/FileSystemPageStore.java $
+ * @module pending
  */
 public class FileSystemPageStore extends PageStore {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging

@@ -78,6 +78,7 @@ import org.opengis.filter.PropertyIsBetween;
  * Test class for XMLUtilities.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class XMLUtilitiesTest extends TestCase{
 

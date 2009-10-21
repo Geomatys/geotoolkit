@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  * An utilies class containing methods to calculate distance between geometric object.
  * @author Guilhem Legal
+ * @module pending
  */
 public class GeometricUtilities {
     

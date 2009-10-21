@@ -45,6 +45,7 @@ import org.geotoolkit.util.logging.Logging;
  * Lenght mesure handler
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class LenghtHandler implements CanvasHandler {
 

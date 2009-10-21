@@ -26,6 +26,7 @@ import org.opengis.feature.type.FeatureType;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public class EmptyFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 

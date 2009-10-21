@@ -34,6 +34,7 @@ import org.opengis.style.Symbolizer;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class StyleTreeModel extends DefaultTreeModel {
 

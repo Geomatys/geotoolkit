@@ -33,6 +33,7 @@ import org.opengis.geometry.primitive.Primitive;
  * Simple and efficient path iterator for ISO MultiPrimitive.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final class ISOMultiPrimitiveIterator extends ISOGeometryIterator<MultiPrimitive> {
 

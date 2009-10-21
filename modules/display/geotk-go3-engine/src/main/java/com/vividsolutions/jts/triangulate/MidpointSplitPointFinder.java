@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * </ul>
  * 
  * @author Martin Davis
+ * @module pending
  */
 public class MidpointSplitPointFinder implements ConstraintSplitPointFinder {
     /**

@@ -43,6 +43,7 @@ import org.geotoolkit.gml.xml.v311.SolidPropertyType;
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
+ * @module pending
  */
 @XmlRegistry
 public class ObjectFactory {

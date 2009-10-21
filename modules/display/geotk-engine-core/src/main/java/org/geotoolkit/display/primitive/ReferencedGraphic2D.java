@@ -30,6 +30,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
  * which are somewhat lightweight objects. There is no dependency toward AWT toolkit in
  * this class, which means that this class can be used as a basis for SWT renderer as well.
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

@@ -52,6 +52,7 @@ import org.opengis.geometry.primitive.Point;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PointType", propOrder = {

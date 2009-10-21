@@ -23,6 +23,7 @@ package org.geotoolkit.legacy.array;
  *
  * @version $Id: CompressedIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 final class CompressedIterator extends PointIterator {
     /**

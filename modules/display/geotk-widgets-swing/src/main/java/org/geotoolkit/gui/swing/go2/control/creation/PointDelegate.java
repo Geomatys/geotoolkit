@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
  * point creation handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class PointDelegate extends AbstractMouseDelegate {
 

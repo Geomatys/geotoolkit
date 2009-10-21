@@ -58,6 +58,7 @@ import org.opengis.style.TextSymbolizer;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implements PropertyPane {
 

@@ -34,6 +34,7 @@ import org.opengis.filter.identity.Identifier;
  * that both are unique within this filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultId implements Id{
 

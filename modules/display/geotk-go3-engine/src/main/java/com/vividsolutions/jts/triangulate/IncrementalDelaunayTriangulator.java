@@ -47,6 +47,7 @@ import com.vividsolutions.jts.triangulate.quadedge.Vertex;
  * 
  * @author Martin Davis
  * @version 1.0
+ * @module pending
  */
 public class IncrementalDelaunayTriangulator 
 {

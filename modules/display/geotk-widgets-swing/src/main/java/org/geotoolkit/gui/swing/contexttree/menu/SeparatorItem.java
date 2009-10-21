@@ -30,6 +30,7 @@ import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
  * Default popup control separator, use for JContextTreePopup
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class SeparatorItem extends JSeparator implements TreePopupItem{
 

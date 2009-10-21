@@ -34,6 +34,7 @@ import static org.junit.Assert.*;
  * @version $Id: TestGetCapabilities.java 1542 2009-04-20 14:57:56Z glegal $
  *
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public class TestGetCapabilities {
     /**

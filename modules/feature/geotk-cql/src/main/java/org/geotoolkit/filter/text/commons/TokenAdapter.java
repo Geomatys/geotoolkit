@@ -40,6 +40,7 @@ import org.geotoolkit.filter.text.generated.parsers.Token;
  * @see CQLParser
  * 
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.5
  */
 public class TokenAdapter implements IToken {

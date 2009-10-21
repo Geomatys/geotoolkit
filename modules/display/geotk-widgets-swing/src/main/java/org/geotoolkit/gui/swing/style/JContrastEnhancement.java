@@ -36,6 +36,7 @@ import org.opengis.style.ContrastMethod;
  * ContrastEnchancement panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement>{
 

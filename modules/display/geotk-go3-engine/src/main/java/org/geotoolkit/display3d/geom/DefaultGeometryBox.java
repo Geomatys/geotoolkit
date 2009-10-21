@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class DefaultGeometryBox extends Box{
 

@@ -27,6 +27,7 @@ import java.util.ArrayList;
  * 
  * @author Jody Garnett
  * @author Joel Skelton
+ * @module pending
  */
 public class GeometryTestContainer {
     private List testCases;

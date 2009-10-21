@@ -33,6 +33,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * Simple and efficient path iterator for ISO PolyhedralSurface.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<PolyhedralSurface> {
 

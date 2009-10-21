@@ -50,6 +50,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author John Meagher
  * @source $URL$
+ * @module pending
  */
 public class BasicFeatureTypes {
     /**

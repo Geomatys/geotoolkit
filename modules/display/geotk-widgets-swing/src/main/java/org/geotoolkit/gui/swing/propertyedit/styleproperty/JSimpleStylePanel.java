@@ -65,6 +65,7 @@ import org.opengis.style.TextSymbolizer;
  * Simple style panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
 

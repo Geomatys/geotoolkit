@@ -34,6 +34,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * its schema based on attributes specified in a query.
  * 
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class ReTypingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
 

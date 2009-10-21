@@ -29,6 +29,7 @@ import org.opengis.util.InternationalString;
  * Factory to create java2d canvas mappers.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CanvasMapperFactory implements JRMapperFactory<JRRenderable,MapContext>{
 

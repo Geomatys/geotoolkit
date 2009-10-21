@@ -39,6 +39,7 @@ import org.opengis.filter.expression.PropertyName;
  * requiered feature properties.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JavaScriptFunction extends AbstractFunction {
 

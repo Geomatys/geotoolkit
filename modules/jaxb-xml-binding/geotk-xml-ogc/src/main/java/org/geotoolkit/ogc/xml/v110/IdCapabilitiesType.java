@@ -42,6 +42,7 @@ import org.opengis.filter.capability.IdCapabilities;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Id_CapabilitiesType", propOrder = {

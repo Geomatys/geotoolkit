@@ -48,6 +48,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Justin Deoliveira
  * 
  * @version $Id$
+ * @module pending
  */
 public abstract class AbstractFeatureFactory implements FeatureFactory {
 

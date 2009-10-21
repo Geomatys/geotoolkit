@@ -51,6 +51,7 @@ import org.geotoolkit.util.logging.Logging;
  * @author Ian Schneider
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/ShapefileReader.java $
+ * @module pending
  */
 public class ShapefileReader implements FileReader {
 

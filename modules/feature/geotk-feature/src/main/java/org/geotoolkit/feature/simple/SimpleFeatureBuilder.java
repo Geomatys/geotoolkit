@@ -127,6 +127,7 @@ import org.opengis.filter.identity.FeatureId;
  *
  * @author Justin Deoliveira
  * @author Jody Garnett
+ * @module pending
  */
 public class SimpleFeatureBuilder {
 

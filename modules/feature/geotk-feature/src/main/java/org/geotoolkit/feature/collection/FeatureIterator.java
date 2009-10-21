@@ -23,6 +23,7 @@ import org.opengis.feature.Feature;
  * 
  * @author Ian Schneider
  * @source $URL$
+ * @module pending
  */
 public interface FeatureIterator<F extends Feature> {
     /**

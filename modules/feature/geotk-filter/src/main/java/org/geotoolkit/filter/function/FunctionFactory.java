@@ -26,6 +26,7 @@ import org.opengis.filter.expression.Literal;
  * a specific number and order of expressions.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface FunctionFactory {
 

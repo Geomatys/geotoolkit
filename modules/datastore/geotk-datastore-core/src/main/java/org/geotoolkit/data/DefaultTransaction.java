@@ -34,6 +34,7 @@ import org.geotoolkit.data.concurrent.Transaction;
  * </p>
  *
  * @author Jody Garnett, Refractions Research
+ * @module pending
  */
 public class DefaultTransaction implements Transaction {
 

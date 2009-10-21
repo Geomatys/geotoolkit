@@ -25,6 +25,7 @@ import org.opengis.style.Symbolizer;
  * Listener for Rule.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface RuleListener extends EventListener{
 

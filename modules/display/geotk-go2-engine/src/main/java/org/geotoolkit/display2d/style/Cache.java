@@ -27,6 +27,7 @@ import org.opengis.feature.Feature;
  * General interface for cached style element.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class Cache<T extends Object> {
     /**

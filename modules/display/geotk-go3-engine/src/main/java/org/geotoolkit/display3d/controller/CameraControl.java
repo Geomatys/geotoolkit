@@ -36,6 +36,7 @@ import com.google.common.base.Predicates;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class CameraControl {
 

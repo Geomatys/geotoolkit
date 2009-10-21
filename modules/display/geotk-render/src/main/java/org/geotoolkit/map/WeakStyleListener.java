@@ -27,6 +27,7 @@ import org.geotoolkit.style.StyleListener;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class WeakStyleListener implements StyleListener{
 

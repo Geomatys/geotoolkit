@@ -34,6 +34,7 @@ import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
  * a Zoom-Pan decoration.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class AbstractNavigationHandler implements CanvasHandler{
 

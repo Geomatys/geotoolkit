@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * seen as a process.
  *
  * @author johann Sorel (Geomatys)
+ * @module pending
  */
 public interface Process extends Runnable {
 

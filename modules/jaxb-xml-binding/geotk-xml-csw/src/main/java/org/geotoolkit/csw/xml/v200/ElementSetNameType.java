@@ -43,6 +43,7 @@ import org.geotoolkit.csw.xml.ElementSetName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ElementSetNameType", propOrder = {

@@ -35,6 +35,7 @@ import javax.vecmath.MismatchedSizeException;
  *
  * @version 1.0
  * @author Martin Desruisseaux
+ * @module pending
  */
 public abstract class Table1D implements Extrapolation{
 

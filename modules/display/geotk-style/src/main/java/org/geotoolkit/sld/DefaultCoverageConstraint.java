@@ -26,6 +26,7 @@ import org.opengis.sld.SLDVisitor;
  * Default imumutable coverage constraint, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultCoverageConstraint implements CoverageConstraint{
 

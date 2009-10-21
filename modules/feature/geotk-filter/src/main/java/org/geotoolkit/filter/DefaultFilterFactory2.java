@@ -125,6 +125,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * All objects created by this factory are immutable.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultFilterFactory2 implements FilterFactory2{
 

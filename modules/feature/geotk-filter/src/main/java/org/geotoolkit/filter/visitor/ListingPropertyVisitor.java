@@ -64,6 +64,7 @@ import org.opengis.filter.spatial.Within;
  * Expression visitor that returns a list of all Feature attributs requiered by this expression.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
     

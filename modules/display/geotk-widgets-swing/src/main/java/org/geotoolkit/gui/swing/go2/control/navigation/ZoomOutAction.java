@@ -32,6 +32,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ZoomOutAction extends AbstractAction {
 

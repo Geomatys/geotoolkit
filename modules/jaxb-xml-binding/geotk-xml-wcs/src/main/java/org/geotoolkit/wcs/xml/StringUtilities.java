@@ -33,6 +33,7 @@ import org.opengis.referencing.ReferenceIdentifier;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StringUtilities {
 

@@ -51,6 +51,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

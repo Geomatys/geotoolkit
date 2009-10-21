@@ -60,6 +60,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author $Author: jive $ (last modification)
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class ForceCoordinateSystemFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 

@@ -25,6 +25,7 @@ import org.opengis.util.InternationalString;
  * Immutable implementation of GeoAPI description.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultDescription implements Description{
 

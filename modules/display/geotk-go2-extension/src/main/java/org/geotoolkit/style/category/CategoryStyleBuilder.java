@@ -68,6 +68,7 @@ import org.opengis.style.Symbolizer;
  * This class will provide you simple et good looking styles for your maps.
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class CategoryStyleBuilder extends Factory {
 

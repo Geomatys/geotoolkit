@@ -65,6 +65,7 @@ import org.geotoolkit.data.DataUtilities;
  * </p>
  * 
  * @author jesse
+ * @module pending
  */
 public class ShpFiles {
     /**

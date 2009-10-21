@@ -52,6 +52,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * it return one image by z order.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class WebLayeredCanvas2D extends J2DCanvas{
 

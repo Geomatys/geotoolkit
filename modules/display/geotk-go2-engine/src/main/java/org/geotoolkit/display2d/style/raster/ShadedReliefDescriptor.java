@@ -29,6 +29,7 @@ import org.geotoolkit.resources.Errors;
  * Description of the shading operation.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ShadedReliefDescriptor extends OperationDescriptorImpl {
     

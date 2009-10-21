@@ -32,6 +32,7 @@ import org.opengis.util.Cloneable;
  * be invoked in this order: {@link #nextX} first, and {@link #nextY} after. The iterator
  * behavior is undertermined if those methods are not invoked in this order.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

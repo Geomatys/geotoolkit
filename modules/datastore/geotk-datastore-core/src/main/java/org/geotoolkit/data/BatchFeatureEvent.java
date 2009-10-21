@@ -40,6 +40,7 @@ import org.opengis.filter.identity.Identifier;
  * were represented as an change event with no known bounds.
  * 
  * @author Jody Garnett
+ * @module pending
  */
 public class BatchFeatureEvent extends FeatureEvent {
 

@@ -49,6 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * CRSChooser component
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JCRSChooser extends javax.swing.JDialog {
 

@@ -86,6 +86,7 @@ import com.vividsolutions.jts.io.WKTWriter;
  * String cql = output.toString();
  * </code></pre>
  * @author Johann Sorel
+ * @module pending
  */
 class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     /** Standard java logger */

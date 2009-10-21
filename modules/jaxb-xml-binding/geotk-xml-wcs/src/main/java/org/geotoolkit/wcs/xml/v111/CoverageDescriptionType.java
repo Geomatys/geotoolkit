@@ -56,6 +56,7 @@ import org.geotoolkit.ows.xml.v110.MetadataType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CoverageDescriptionType", propOrder = {

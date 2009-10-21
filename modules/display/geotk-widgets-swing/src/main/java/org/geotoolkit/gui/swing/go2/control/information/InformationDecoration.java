@@ -40,6 +40,7 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  * Infomation decoration
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class InformationDecoration extends JComponent implements MapDecoration{
 

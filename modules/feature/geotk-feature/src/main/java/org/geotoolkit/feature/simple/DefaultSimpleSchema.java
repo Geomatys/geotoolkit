@@ -55,6 +55,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * </p>
  *
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
+ * @module pending
  */
 public class DefaultSimpleSchema extends DefaultSchema {
 

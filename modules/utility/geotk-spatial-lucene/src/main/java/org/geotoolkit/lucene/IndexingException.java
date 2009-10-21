@@ -21,6 +21,7 @@ package org.geotoolkit.lucene;
  * Exceptions thrown by lucene indexing should be instances of this type.
  * 
  * @author Adrian Custer (Geomatys)
+ * @module pending
  * @since 0.3
  */
 public class IndexingException extends Exception {

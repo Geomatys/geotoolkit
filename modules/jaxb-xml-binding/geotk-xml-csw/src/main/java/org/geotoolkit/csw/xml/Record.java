@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml;
 /**
  *
  * @author Mehdi Sidhoum
+ * @module pending
  */
 public interface Record extends DCMIRecord {
     

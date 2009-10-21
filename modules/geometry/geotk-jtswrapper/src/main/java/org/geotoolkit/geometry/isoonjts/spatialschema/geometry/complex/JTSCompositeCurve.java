@@ -41,6 +41,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  *          of some set theoretic operation. Specifically, {@code Primitive.contains(...)}
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
  *          (returns TRUE for end points).
+ * @module pending
  */
 public class JTSCompositeCurve extends AbstractJTSComposite implements CompositeCurve {
     

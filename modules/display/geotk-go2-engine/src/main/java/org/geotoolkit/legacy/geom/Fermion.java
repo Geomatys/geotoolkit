@@ -29,6 +29,7 @@ package org.geotoolkit.legacy.geom;
  *
  * @version $Id: Fermion.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 final class Fermion {
     /**

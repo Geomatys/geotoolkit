@@ -35,6 +35,7 @@ import org.geotoolkit.data.shapefile.dbf.DbaseFileWriter;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
+ * @module pending
  */
 public class DbaseFileTest extends AbstractTestCaseSupport {
 

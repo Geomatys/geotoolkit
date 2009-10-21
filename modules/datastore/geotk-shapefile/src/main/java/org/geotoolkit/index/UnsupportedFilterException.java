@@ -23,6 +23,7 @@ package org.geotoolkit.index;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/UnsupportedFilterException.java $
+ * @module pending
  */
 public class UnsupportedFilterException extends Exception {
     private static final long serialVersionUID = 3292904738782996000L;

@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
  * Simple accessor for lucene documents.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class LucenePropertyAccessor implements PropertyAccessor {
 

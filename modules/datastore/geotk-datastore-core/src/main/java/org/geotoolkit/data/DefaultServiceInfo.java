@@ -25,6 +25,7 @@ import java.util.Set;
  * Implementation of DefaultServiceInfo as a java bean.
  * 
  * @author Jody Garnett (Refractions Research)
+ * @module pending
  */
 public class DefaultServiceInfo implements ServiceInfo, Serializable {
 

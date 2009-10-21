@@ -59,6 +59,7 @@ import org.opengis.geometry.BoundingBox;
  * @author Ian Schneider
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class DefaultFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {
 

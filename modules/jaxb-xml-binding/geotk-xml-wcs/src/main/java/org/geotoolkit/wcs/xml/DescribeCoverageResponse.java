@@ -21,6 +21,7 @@ package org.geotoolkit.wcs.xml;
  * @version $Id: DescribeCoverageResponse.java 1407 2009-02-24 17:30:00Z cedricbr $
  *
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public interface DescribeCoverageResponse {
 

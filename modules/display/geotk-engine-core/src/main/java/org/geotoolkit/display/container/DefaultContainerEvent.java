@@ -28,6 +28,7 @@ import org.opengis.display.primitive.Graphic;
  * Default implementation of ContainerEvent.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultContainerEvent extends ContainerEvent{
     private static final long serialVersionUID = -5439770733913262681L;

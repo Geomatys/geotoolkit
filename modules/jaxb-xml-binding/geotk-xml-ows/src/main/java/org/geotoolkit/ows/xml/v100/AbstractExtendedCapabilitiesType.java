@@ -23,6 +23,7 @@ import org.geotoolkit.inspire.xml.MultiLingualCapabilities;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 @XmlType(name="AbstractExtendedCapabilities")
 @XmlSeeAlso({MultiLingualCapabilities.class})

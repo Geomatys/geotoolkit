@@ -40,6 +40,7 @@ import java.util.Map;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class DefaultPolygonMesh extends Mesh {
 

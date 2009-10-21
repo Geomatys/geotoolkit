@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable "is equal to" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyIsEqualTo extends AbstractPropertyEqual implements PropertyIsEqualTo{
 

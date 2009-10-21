@@ -39,6 +39,7 @@ import static javax.swing.SwingConstants.*;
  * Java2D graphic object displaying a scalebar.
  *
  * @author Johann sorel (Geomatys)
+ * @module pending
  */
 public class GraphicScaleBarJ2D extends PositionedGraphic2D{
 

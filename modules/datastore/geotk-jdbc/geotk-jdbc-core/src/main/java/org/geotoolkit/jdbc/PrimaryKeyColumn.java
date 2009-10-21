@@ -21,6 +21,7 @@ package org.geotoolkit.jdbc;
  * Represents a column in a primary key.
  *
  * @author Justin Deoliveira, OpenGEO
+ * @module pending
  */
 public abstract class PrimaryKeyColumn {
 

@@ -24,6 +24,7 @@ import org.geotoolkit.csw.xml.v202.GetDomainResponseType;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public class CswXmlFactory {
 

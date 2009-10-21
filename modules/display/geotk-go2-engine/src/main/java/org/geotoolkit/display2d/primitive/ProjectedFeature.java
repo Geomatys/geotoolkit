@@ -30,6 +30,7 @@ import org.opengis.filter.identity.FeatureId;
  * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ProjectedFeature extends Graphic {
 

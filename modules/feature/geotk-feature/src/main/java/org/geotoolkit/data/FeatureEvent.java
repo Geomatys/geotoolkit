@@ -47,6 +47,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * BatchFeatureEvent.
  * </p>
  * 
+ * @module pending
  * @since GeoTools 2.0
  * @source $URL$
  */

@@ -51,6 +51,7 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DistanceBufferType", propOrder = {

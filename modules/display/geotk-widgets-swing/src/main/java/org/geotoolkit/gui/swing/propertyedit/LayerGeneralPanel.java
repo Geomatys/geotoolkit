@@ -46,6 +46,7 @@ import org.geotoolkit.map.MapLayer;
  * layer general information panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPane {
 

@@ -50,6 +50,7 @@ import org.opengis.style.Description;
  * interface
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 final class DefaultMapContext implements MapContext {
 

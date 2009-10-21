@@ -37,6 +37,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * A dummy implementation of {@link SimpleFeature}.
+ * @module pending
  */
 public final class DummySimpleFeatureType implements SimpleFeatureType {
     private final GeometryDescriptor defaultGeometry;

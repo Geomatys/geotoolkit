@@ -48,6 +48,7 @@ import org.opengis.util.InternationalString;
  * </p>
  *
  * @author Jody Garnett
+ * @module pending
  */
 public class DefaultFeatureTypeFactory implements FeatureTypeFactory {
 

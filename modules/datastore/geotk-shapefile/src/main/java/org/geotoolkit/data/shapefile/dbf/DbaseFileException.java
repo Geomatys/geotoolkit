@@ -23,6 +23,7 @@ import org.geotoolkit.data.DataSourceException;
  * 
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/dbf/DbaseFileException.java $
+ * @module pending
  */
 public class DbaseFileException extends DataSourceException {
 

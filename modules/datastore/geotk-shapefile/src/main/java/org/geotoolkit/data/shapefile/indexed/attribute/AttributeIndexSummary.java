@@ -39,6 +39,7 @@ import java.text.DecimalFormat;
  * </P>
  * 
  * @author Manuele Ventoruzzo
+ * @module pending
  */
 public class AttributeIndexSummary {
 

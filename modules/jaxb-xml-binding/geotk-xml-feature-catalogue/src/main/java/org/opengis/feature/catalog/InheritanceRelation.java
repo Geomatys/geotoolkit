@@ -19,6 +19,7 @@ import static org.opengis.annotation.Specification.*;
  * Realizes GF_InheritanceRelation.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_InheritanceRelation", specification=ISO_19110)
 public interface InheritanceRelation {

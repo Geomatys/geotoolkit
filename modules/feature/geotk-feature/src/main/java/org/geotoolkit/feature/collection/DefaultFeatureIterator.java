@@ -28,6 +28,7 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  * @author Ian Schneider
  * @source $URL$
+ * @module pending
  */
 public class DefaultFeatureIterator<F extends Feature> implements FeatureIterator<F> {
 

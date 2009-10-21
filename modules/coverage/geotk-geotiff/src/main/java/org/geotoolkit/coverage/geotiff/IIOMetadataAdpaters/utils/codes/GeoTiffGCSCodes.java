@@ -30,6 +30,7 @@ package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.utils.codes;
  * user-defined GCS [32768, 65535] = Private User 
  * 
  * @author Simone Giannecchini
+ * @module pending
  * @since 2.3
  * 
  */

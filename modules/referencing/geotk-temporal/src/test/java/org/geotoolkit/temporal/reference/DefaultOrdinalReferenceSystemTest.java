@@ -32,6 +32,7 @@ import org.opengis.temporal.OrdinalReferenceSystem;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultOrdinalReferenceSystemTest {
 

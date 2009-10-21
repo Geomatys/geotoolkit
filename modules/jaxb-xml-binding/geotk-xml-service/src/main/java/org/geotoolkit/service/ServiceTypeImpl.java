@@ -25,6 +25,7 @@ import org.opengis.service.ServiceType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SV_ServiceType_Type")

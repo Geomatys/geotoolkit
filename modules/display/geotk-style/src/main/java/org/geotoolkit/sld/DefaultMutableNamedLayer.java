@@ -40,6 +40,7 @@ import org.opengis.style.Description;
  * Default mutable named layer, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultMutableNamedLayer implements MutableNamedLayer{
 

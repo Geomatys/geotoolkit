@@ -84,6 +84,7 @@ import org.opengis.util.InternationalString;
  * Transform old SLD v1.0.0 symbology in GT classes.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SE100toGTTransformer extends OGC100toGTTransformer {
 

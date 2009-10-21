@@ -81,6 +81,7 @@ import org.opengis.referencing.operation.OperationMethod;
  * 
  * @author Simone Giannecchini
  * 
+ * @module pending
  * @since 2.2
  */
 public final class CRS2GeoTiffMetadataAdapter {

@@ -54,6 +54,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  * Tests the ability of the datastore to cope with 3D data
  * 
  * @author Andrea Aime - OpenGeo
+ * @module pending
  */
 public abstract class JDBC3DTest extends JDBCTestSupport {
 

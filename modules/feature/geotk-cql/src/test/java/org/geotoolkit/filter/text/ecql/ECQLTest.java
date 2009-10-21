@@ -58,6 +58,7 @@ import org.opengis.filter.spatial.Intersects;
  * @author Mauricio Pazos (Axios Engineering)
  *
  * @version Revision: 1.9
+ * @module pending
  * @since 2.6
  */
 public final class ECQLTest  {

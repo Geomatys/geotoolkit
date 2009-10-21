@@ -49,6 +49,7 @@ import org.jdesktop.swingx.JXTree;
  * Multiproperty panel
  *
  * @author  Johann Sorel
+ * @module pending
  */
 public abstract class MultiPropertyPanel extends javax.swing.JPanel implements PropertyPane {
 

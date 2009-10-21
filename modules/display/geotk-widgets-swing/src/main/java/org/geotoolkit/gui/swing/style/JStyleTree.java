@@ -67,6 +67,7 @@ import org.opengis.style.Symbolizer;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JStyleTree extends JTree implements DragGestureListener, DragSourceListener, DropTargetListener {
 

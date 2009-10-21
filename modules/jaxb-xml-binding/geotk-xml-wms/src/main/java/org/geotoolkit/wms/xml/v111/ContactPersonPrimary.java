@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p>Java class for anonymous complex type.
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

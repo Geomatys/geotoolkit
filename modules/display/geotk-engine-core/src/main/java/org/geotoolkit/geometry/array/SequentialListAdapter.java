@@ -33,6 +33,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
  * @author Martin Desruisseaux (IRD)
  *
  * @see PointArray2D#positions
+ * @module pending
  */
 final class SequentialListAdapter extends AbstractList implements Serializable {
     /**

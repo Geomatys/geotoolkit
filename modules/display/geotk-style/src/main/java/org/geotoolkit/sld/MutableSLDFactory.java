@@ -22,6 +22,7 @@ import org.geotoolkit.style.MutableStyle;
  * SLD factory.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MutableSLDFactory extends org.opengis.sld.SLDFactory {
     

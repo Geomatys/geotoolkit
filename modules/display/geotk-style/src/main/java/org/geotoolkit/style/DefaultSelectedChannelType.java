@@ -26,6 +26,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * Immutable implementation of GeoAPI SelectedChannelType.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSelectedChannelType implements SelectedChannelType{
 

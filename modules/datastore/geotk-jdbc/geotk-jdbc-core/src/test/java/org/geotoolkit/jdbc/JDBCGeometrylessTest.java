@@ -29,6 +29,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * Checks the datastore can operate against geometryless tables
  * @author Andrea Aime - OpenGeo
  *
+ * @module pending
  */
 public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
 

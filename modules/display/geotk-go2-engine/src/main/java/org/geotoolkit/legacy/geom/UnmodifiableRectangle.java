@@ -28,6 +28,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
  *
  * @version $Id: UnmodifiableRectangle.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 final class UnmodifiableRectangle extends XRectangle2D {
     /**

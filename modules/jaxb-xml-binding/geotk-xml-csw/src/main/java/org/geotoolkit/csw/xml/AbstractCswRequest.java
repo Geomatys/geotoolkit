@@ -20,6 +20,7 @@ package org.geotoolkit.csw.xml;
  * An interface containing the common methods to the different version of the operation GetRecords.
  *
  *  * @author Guilhem Legal
+ * @module pending
  */
 public interface AbstractCswRequest {
 

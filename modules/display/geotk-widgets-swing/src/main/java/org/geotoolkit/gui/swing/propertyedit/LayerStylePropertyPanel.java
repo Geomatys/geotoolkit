@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * layer style panel
  *
  * @author  Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class LayerStylePropertyPanel extends MultiPropertyPanel {
 

@@ -24,6 +24,7 @@ import static org.opengis.annotation.Obligation.*;
  * Base type for all data components. 
  *
  * @author legal
+ * @module pending
  */
 @UML(identifier="AbstractDataComponent", specification=UNSPECIFIED)
 public interface AbstractDataComponent {

@@ -42,6 +42,7 @@ import org.opengis.referencing.datum.Datum;
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon
+ * @module pending
  */
 public final class MetadataReaderTest {
     /**

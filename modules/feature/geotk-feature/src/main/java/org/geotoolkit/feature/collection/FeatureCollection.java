@@ -95,6 +95,7 @@ import org.opengis.util.ProgressListener;
  * @source $URL$
  * @version $Id$
  *
+ * @module pending
  */
 public interface FeatureCollection<T extends FeatureType, F extends Feature> {
 

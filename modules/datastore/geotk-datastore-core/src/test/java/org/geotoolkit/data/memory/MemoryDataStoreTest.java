@@ -73,6 +73,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
  * @author Jody Garnett, Refractions Research
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/library/main/src/test/java/org/geotools/data/memory/MemoryDataStoreTest.java $
+ * @module pending
  */
 public class MemoryDataStoreTest extends DataTestCase {
 

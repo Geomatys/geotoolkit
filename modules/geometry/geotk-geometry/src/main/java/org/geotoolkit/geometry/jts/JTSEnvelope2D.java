@@ -45,6 +45,7 @@ import org.geotoolkit.resources.Errors;
  * {@linkplain org.opengis.geometry.coordinate.Envelope envelope} interface
  * for interoperability with GeoAPI.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

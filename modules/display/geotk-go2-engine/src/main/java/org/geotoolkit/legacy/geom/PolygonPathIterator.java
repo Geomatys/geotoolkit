@@ -31,6 +31,7 @@ import org.geotoolkit.legacy.array.ArrayData;
  *
  * @version $Id: PolygonPathIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 final class PolygonPathIterator extends ArrayData implements PathIterator {
     /**

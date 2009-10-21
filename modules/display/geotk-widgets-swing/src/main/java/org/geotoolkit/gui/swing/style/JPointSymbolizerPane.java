@@ -35,6 +35,7 @@ import org.opengis.style.PointSymbolizer;
  * Point symbolizer edition panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
 

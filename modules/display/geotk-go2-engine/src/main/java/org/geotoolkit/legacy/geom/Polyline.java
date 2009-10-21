@@ -90,6 +90,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @see Polygon
  * @see GeometryCollection
+ * @module pending
  */
 public class Polyline extends Geometry {
     /**

@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
  * @TODO class description
  * 
  * @author jeichar
+ * @module pending
  * @since 2.1.x
  * @source $URL$
  */

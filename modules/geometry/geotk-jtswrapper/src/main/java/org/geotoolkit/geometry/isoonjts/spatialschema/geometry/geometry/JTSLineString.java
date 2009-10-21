@@ -36,6 +36,7 @@ import org.opengis.geometry.primitive.CurveSegment;
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
+ * @module pending
  */
 public class JTSLineString extends AbstractJTSGenericCurve
 	implements LineString, JTSGeometry {

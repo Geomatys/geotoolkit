@@ -49,6 +49,7 @@ import org.geotoolkit.sld.xml.v100.StyledLayerDescriptor;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SLDType", propOrder = {

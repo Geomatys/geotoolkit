@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlTransient
 public abstract class AbstractOperation {

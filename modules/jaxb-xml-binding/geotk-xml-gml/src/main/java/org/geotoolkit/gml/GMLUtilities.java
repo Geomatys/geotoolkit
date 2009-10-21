@@ -67,6 +67,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public class GMLUtilities {
 

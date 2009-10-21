@@ -24,6 +24,7 @@ import org.opengis.filter.capability.Functions;
  * Immutable arithmetic operators.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultArithmeticOperators implements ArithmeticOperators {
 

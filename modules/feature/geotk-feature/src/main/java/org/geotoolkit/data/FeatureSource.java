@@ -68,6 +68,7 @@ import org.opengis.filter.Filter;
  * @author Chris Holmes, TOPP
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public interface FeatureSource<T extends FeatureType, F extends Feature> {
 

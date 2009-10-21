@@ -21,6 +21,7 @@ import static org.opengis.annotation.Specification.*;
  * @author <A HREF="http://www.opengeospatial.org/standards/as# 02-112">ISO 19119</A>
  * @author Guilhem Legal
  * 
+ * @module pending
  * * @since GeoAPI 2.1
  */
 //@UML(identifier="SV_PlatformNeutralServiceSpecification", specification=ISO_19119)

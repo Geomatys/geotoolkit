@@ -63,6 +63,7 @@ import org.opengis.observation.sampling.SamplingFeature;
  * @author Martin Desruisseaux
  * @author Antoine Hnawia
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Observation", propOrder = {

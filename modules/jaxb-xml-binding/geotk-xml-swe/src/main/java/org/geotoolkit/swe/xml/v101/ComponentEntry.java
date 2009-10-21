@@ -23,6 +23,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 public class ComponentEntry {
     

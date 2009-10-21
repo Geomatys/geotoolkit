@@ -52,6 +52,7 @@ import org.opengis.referencing.operation.MathTransform;
  * Utility class to render grid on J2DCanvas.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class J2DGridUtilities {
 

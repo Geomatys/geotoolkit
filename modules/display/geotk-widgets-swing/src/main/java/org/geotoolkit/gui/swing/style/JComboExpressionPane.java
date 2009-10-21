@@ -38,6 +38,7 @@ import org.opengis.filter.expression.Literal;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JComboExpressionPane extends StyleElementEditor<Expression>{
 

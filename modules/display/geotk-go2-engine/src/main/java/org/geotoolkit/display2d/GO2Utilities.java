@@ -97,6 +97,7 @@ import org.opengis.style.Symbolizer;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final class GO2Utilities {
 

@@ -29,6 +29,7 @@ import org.opengis.filter.expression.PropertyName;
  * Expression Test
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class CQLExpressionTest {

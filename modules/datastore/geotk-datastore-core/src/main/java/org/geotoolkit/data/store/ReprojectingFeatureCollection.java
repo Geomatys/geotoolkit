@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * FeatureCollection<SimpleFeatureType, SimpleFeature> decorator that reprojects the default geometry.
  * 
  * @author Justin
+ * @module pending
  */
 public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
 

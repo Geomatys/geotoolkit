@@ -29,6 +29,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @version $Id: ProcessEntry.java 1559 2009-04-23 14:42:42Z glegal $
  * @author Antoine Hnawia
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name="Process")

@@ -43,6 +43,7 @@ import org.oasis.xal.v20.AddressDetails;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "xalAddressPropertyType", propOrder = {

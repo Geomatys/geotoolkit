@@ -27,6 +27,7 @@ import org.opengis.filter.expression.Function;
  * Makes a relate filter function
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class RelateBuilder extends FunctionBuilder{

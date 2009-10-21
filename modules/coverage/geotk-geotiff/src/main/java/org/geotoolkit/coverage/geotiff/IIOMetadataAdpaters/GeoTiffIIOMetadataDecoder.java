@@ -66,6 +66,7 @@ import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
  * @author Simone Giannecchini, GeoSolutions
  *
  * @todo we can improve a little bt this class caching the pixel scale, the transformation, etc...
+ * @module pending
  */
 public final class GeoTiffIIOMetadataDecoder {
 

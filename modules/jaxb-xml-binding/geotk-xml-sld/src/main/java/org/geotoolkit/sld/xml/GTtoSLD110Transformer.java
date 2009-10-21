@@ -41,6 +41,7 @@ import org.opengis.style.Style;
  * Transform a GT SLD in a jaxb SLD v1.1.0 object
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GTtoSLD110Transformer extends GTtoSE110Transformer implements SLDVisitor {
 

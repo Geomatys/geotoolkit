@@ -29,6 +29,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultClock extends DefaultTemporalReferenceSystem implements Clock {
 

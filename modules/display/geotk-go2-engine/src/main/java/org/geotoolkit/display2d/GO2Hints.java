@@ -24,6 +24,7 @@ import org.geotoolkit.display.canvas.HintKey;
  * Set of hints used by the Go2 Renderer
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GO2Hints {
 

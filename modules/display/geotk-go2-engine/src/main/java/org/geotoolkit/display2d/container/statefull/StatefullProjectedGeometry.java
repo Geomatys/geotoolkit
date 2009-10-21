@@ -31,6 +31,7 @@ import org.opengis.referencing.operation.TransformException;
  * GraphicJ2D for feature objects.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StatefullProjectedGeometry implements ProjectedGeometry {
 

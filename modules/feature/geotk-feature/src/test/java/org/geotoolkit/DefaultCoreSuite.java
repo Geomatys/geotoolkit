@@ -28,6 +28,7 @@ import org.geotoolkit.feature.FeatureFlatTest;
  *
  * @author jamesm
  * @source $URL$
+ * @module pending
  */                                
 public class DefaultCoreSuite extends TestCase {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.core");

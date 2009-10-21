@@ -36,6 +36,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultTemporalCoordinateSystemTest {
 

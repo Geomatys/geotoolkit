@@ -40,6 +40,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux
  *
  * @see Geometry#clip
+ * @module pending
  */
 public final class Clipper {
     /**

@@ -25,6 +25,7 @@ import org.geotoolkit.map.MapContext;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class ZoomAllAction extends AbstractAction {
 

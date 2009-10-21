@@ -35,6 +35,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * Geometrie box attribut
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JGeomBox extends JComboBox {
 

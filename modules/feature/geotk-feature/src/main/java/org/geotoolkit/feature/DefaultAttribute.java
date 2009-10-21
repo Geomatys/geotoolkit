@@ -35,6 +35,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Ian Schneider
  * @author Jody Garnett
  * @author Gabriel Roldan
+ * @module pending
  */
 public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I extends Identifier>
         extends DefaultProperty<V,D> implements Attribute {

@@ -94,6 +94,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  * 
  * @source $URL:
  *         http://svn.geotools.org/geotools/branches/constantTimeFid/src/org/geotools/data/shapefile/indexed/IndexedShapefileDataStore.java $
+ * @module pending
  */
 public class IndexedShapefileDataStore extends ShapefileDataStore implements FileWriter {
     private static final class IdentifierComparator implements Comparator<Identifier>

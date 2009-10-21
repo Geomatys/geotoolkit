@@ -79,6 +79,7 @@ import org.opengis.filter.spatial.Within;
  * entire Filter.
  *
  * @author Jody Garnett (Refractions Research)
+ * @module pending
  */
 public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisitor {
 

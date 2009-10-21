@@ -36,6 +36,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *
  * @author jones
  * @source $URL$
+ * @module pending
  */
 public class ArrayFeatureReaderTest extends TestCase {
 

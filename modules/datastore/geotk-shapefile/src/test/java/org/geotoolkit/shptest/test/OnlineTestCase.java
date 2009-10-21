@@ -58,6 +58,7 @@ import junit.framework.TestCase;
  * traditional behaviour of unit tests, that is, that exceptions cause unit tests to fail.
  * </p>
  *
+ * @module pending
  * @since 2.4
  * @source $URL$
  * @version $Id$

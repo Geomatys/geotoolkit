@@ -25,6 +25,7 @@ import org.opengis.referencing.Factory;
  * Each process might be reusable or not depending on the implementation.
  *
  * @author johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ProcessFactory extends Factory{
 

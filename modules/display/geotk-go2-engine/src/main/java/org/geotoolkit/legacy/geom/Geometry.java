@@ -73,6 +73,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
  *
  * @version $Id: Geometry.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 public abstract class Geometry implements Shape, Cloneable, Serializable {
     /**

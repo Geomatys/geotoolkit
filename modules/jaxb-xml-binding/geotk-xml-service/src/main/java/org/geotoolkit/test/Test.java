@@ -8,6 +8,7 @@ package org.geotoolkit.test;
 
 /**
  * Unmarshalles the given XML Document.
+ * @module pending
  */
 public class Test {
 

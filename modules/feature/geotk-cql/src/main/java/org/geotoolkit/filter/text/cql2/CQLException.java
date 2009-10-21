@@ -26,6 +26,7 @@ import org.geotoolkit.filter.text.generated.parsers.ParseException;
  * @author Mauricio Pazos (Axios Engineering)
  *
  * @version $Id$
+ * @module pending
  * @since 2.4
  */
 public class CQLException extends ParseException {

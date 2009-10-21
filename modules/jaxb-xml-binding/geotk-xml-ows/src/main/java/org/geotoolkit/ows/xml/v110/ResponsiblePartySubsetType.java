@@ -46,6 +46,7 @@ import org.geotoolkit.util.Utilities;
  * </pre>
  * 
  * @atuhor Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ResponsiblePartySubsetType", propOrder = {

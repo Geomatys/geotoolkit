@@ -33,6 +33,7 @@ import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
  * Listener to handle mouse drag, move zoom.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class MouseNavigatonListener implements MouseInputListener, MouseWheelListener {
 

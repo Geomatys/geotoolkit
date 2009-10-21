@@ -35,6 +35,7 @@ import org.opengis.filter.sort.SortBy;
  * Implement a feature collection just based on provision of iterator.
  *
  * @author Jody Garnett (Refractions Research Inc)
+ * @module pending
  */
 public abstract class AbstractFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {
 

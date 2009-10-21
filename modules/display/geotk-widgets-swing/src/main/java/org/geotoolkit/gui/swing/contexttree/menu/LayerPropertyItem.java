@@ -40,6 +40,7 @@ import org.geotoolkit.map.MapLayer;
  * Default popup control for property page of MapLayer, use for JContextTreePopup
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class LayerPropertyItem extends AbstractTreePopupItem {
 

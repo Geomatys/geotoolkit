@@ -53,6 +53,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * layer CRS panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class LayerCRSPropertyPanel extends javax.swing.JPanel implements PropertyPane {
 

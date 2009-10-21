@@ -36,6 +36,7 @@ import org.opengis.filter.expression.Expression;
  * @author Mauricio Pazos - Axios Engineering
  * @author Gabriel Roldan - Axios Engineering
  * @version $Id$
+ * @module pending
  * @since 2.4
  */
 public final class BuildResultStack {

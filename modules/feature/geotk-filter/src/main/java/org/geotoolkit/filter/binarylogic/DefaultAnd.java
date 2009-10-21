@@ -26,6 +26,7 @@ import org.opengis.filter.FilterVisitor;
  * Immutable "And" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
 

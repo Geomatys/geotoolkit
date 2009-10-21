@@ -124,6 +124,7 @@ import org.opengis.referencing.operation.MathTransformFactory;
  * 
  * @author Bryce Nordgren / USDA Forest Service
  * @author Simone Giannecchini
+ * @module pending
  */
 public final class GeoTiffMetadata2CRSAdapter {
 

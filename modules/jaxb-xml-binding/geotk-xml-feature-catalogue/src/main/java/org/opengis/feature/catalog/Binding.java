@@ -19,6 +19,7 @@ import static org.opengis.annotation.Specification.*;
  * used as an association class for the association MemberOf between feature type and property type.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_Binding", specification=ISO_19110)
 public interface Binding {

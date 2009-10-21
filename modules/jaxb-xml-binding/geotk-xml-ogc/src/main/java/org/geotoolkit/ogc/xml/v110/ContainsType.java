@@ -22,6 +22,7 @@ import org.opengis.filter.spatial.Contains;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public class ContainsType extends BinarySpatialOpType implements Contains {
 

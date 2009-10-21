@@ -45,6 +45,7 @@ import org.opengis.geometry.complex.Composite;
  * @author crossley
  * @author cdillard
  * @version $Revision $
+ * @module pending
  */
 public class JTSPoint extends AbstractJTSGeometry implements Point {
 

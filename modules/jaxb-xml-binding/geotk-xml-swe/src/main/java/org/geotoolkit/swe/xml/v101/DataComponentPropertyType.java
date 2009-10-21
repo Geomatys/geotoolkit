@@ -29,6 +29,7 @@ import org.geotoolkit.util.Utilities;
 /**
  *
  * @author Guilhem Legal (Geomatys).
+ * @module pending
  */
 public class DataComponentPropertyType implements DataComponentProperty {
 

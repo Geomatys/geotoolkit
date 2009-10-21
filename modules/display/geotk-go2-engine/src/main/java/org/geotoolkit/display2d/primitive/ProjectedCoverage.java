@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ProjectedCoverage extends Graphic {
 

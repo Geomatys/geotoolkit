@@ -37,6 +37,7 @@ import org.opengis.referencing.FactoryException;
  * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
+ * @module pending
  */
 final class CodeList extends AbstractListModel {
 

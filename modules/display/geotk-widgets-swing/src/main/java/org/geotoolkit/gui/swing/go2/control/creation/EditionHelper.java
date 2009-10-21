@@ -32,6 +32,7 @@ import java.util.List;
 /**
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class EditionHelper {
 

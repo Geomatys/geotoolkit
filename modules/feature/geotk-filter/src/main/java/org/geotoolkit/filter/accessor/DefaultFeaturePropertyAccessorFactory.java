@@ -40,6 +40,7 @@ import org.opengis.feature.type.FeatureType;
  * </p>
  * 
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFactory {
 

@@ -32,6 +32,7 @@ import org.geotoolkit.data.shapefile.shp.IndexFile;
  * Creates a .fix file (fid index).
  * 
  * @author Jesse
+ * @module pending
  */
 public class FidIndexer {
     static Logger LOGGER = org.geotoolkit.util.logging.Logging

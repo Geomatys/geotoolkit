@@ -19,6 +19,7 @@ import org.opengis.geometry.coordinate.GenericCurve;
  * @author SYS Technologies
  * @author crossley
  * @version $Revision $
+ * @module pending
  */
 public abstract class AbstractJTSGenericCurve implements GenericCurve, JTSGeometry {
 

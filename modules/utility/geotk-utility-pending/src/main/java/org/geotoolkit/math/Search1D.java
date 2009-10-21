@@ -24,6 +24,7 @@ package org.geotoolkit.math;
  *
  * @version 1.0
  * @author Martin Desruisseaux
+ * @module pending
  */
 public class Search1D extends Table1D {
 

@@ -76,6 +76,7 @@ import static org.junit.Assert.*;
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 public class CswXMLBindingTest {
     

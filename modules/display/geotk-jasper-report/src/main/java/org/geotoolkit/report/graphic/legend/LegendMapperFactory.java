@@ -29,6 +29,7 @@ import org.opengis.util.InternationalString;
  * Factory to create java2d legend mappers.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class LegendMapperFactory implements JRMapperFactory<JRRenderable,MapContext>{
 

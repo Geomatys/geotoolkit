@@ -46,6 +46,7 @@ import org.geotoolkit.resources.Errors;
  * text file. The text file is parsed by a {@link TextMetadataParser} object, while the pixel
  * values are read by a {@link ImageReader} object.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

@@ -30,6 +30,7 @@ import static org.junit.Assert.*;
 /**
  * Tests the {@link DefaultTextMetadataParser} class.
  *
+ * @module pending
  * @since 2.5
  * @source $URL$
  * @version $Id$

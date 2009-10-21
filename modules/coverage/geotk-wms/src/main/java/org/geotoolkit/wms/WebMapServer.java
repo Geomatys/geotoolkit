@@ -38,6 +38,7 @@ import org.geotoolkit.wms.xml.WMSVersion;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class WebMapServer {
 

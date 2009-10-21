@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable "is less or equal" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyIsLessThanOrEqualTo extends AbstractBinaryComparisonOperator<Expression,Expression> implements PropertyIsLessThanOrEqualTo{
 

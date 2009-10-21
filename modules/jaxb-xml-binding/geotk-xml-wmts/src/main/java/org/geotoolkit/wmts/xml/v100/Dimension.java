@@ -51,6 +51,7 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DimensionType", propOrder = {

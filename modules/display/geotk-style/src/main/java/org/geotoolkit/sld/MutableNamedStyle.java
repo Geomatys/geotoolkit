@@ -24,6 +24,7 @@ import org.opengis.style.Description;
  * Mutable named style.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MutableNamedStyle extends MutableLayerStyle,NamedStyle{
 

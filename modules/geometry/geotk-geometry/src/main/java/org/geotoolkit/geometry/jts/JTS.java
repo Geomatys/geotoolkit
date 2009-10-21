@@ -66,6 +66,7 @@ import com.vividsolutions.jts.geom.Polygon;
  *   <li>common coordinate sequence implementations for specific uses</li>
  * </ul>
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

@@ -29,6 +29,7 @@ import org.opengis.util.InternationalString;
  * Factory to create context title mappers.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ContextTitleMapperFactory implements JRMapperFactory<String,MapContext>{
 

@@ -38,6 +38,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @version $Id: JTSGeometries.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 public class JTSGeometries extends org.geotoolkit.legacy.geom.GeometryCollection {
     /**

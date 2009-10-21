@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * in the parsing process.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class PointBuilder extends GeometryBuilder {

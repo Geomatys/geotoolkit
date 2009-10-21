@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author Gabriel Roldan (TOPP)
  * @author Andrea Aime (OpenGeo)
  * @version $Id$
+ * @module pending
  * @since 2.5.4
  */
 class JDBCQueryCapabilities extends QueryCapabilities {

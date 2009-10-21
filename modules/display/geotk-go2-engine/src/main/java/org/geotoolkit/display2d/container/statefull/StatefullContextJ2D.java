@@ -52,6 +52,7 @@ import org.opengis.referencing.operation.TransformException;
  * This is a Stateless graphic object.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StatefullContextJ2D extends AbstractGraphicJ2D{
 

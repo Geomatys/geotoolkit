@@ -28,6 +28,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * AttributeType for hold geometry implementations, maintains CRS information.
+ * @module pending
  */
 public class DefaultGeometryType extends DefaultAttributeType<AttributeType> implements GeometryType {
 

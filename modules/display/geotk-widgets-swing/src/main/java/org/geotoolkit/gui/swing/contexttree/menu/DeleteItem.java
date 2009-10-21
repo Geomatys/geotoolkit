@@ -35,6 +35,7 @@ import org.geotoolkit.map.MapLayer;
  * delete item for JContextTree
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class DeleteItem extends AbstractTreePopupItem{
 

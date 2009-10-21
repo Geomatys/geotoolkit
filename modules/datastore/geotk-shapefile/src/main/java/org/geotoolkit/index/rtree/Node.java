@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/Node.java $
+ * @module pending
  */
 public abstract class Node implements EntryBoundsChangeListener {
     private boolean leaf;

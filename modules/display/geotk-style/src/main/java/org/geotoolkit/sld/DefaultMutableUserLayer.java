@@ -42,6 +42,7 @@ import org.opengis.style.Description;
  * Default mutable user layer, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultMutableUserLayer implements MutableUserLayer{
 

@@ -22,6 +22,7 @@ import org.geotoolkit.util.Versioned;
  *  Super abstract type for all the different versions of DescribeCoverage request.
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public interface DescribeCoverage extends Versioned {
     String toKvp();

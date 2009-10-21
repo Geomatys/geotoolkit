@@ -86,6 +86,7 @@ import org.opengis.util.ProgressListener;
  *             it restart from 0 many times (it is pretty hard to guess in advance how much
  *             pass will be needed). Empirical tests suggest that there is about 4 long passes
  *             and hundred of very short (almost instantaneous) passes.
+ * @module pending
  */
 final class PolygonAssembler implements Comparator {
     /**

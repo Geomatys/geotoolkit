@@ -23,6 +23,7 @@ import static org.opengis.annotation.Specification.*;
  * Abstract class for feature properties.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_PropertyType", specification=ISO_19110)
 public interface PropertyType {

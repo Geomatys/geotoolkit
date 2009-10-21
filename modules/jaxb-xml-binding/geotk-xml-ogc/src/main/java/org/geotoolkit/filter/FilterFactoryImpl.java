@@ -143,6 +143,7 @@ import org.opengis.geometry.Geometry;
  * A factory used by a CQL parser to build filter. 
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 public class FilterFactoryImpl implements FilterFactory2 {
 

@@ -45,6 +45,7 @@ import org.opengis.filter.identity.Identifier;
  * Transform OGC jaxb xml in GT classes.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class OGC110toGTTransformer {
 

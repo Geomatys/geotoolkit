@@ -108,6 +108,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperators;
  * </p>
  * @author Justin Deoliveira, The Open Planning Project
  *
+ * @module pending
  */
 public abstract class SQLDialect {
     protected static final Logger LOGGER = Logging.getLogger(SQLDialect.class);

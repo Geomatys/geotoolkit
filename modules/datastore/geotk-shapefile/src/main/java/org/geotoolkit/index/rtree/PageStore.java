@@ -28,6 +28,7 @@ import org.geotoolkit.index.TreeException;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/PageStore.java $
+ * @module pending
  */
 public abstract class PageStore {
     public static final short SPLIT_QUADRATIC = 1;

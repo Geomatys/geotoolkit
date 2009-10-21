@@ -28,6 +28,7 @@ import org.opengis.geometry.Envelope;
  * It can be used for different purposes in applications.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class EmptyMapLayer extends AbstractMapLayer{
 

@@ -20,6 +20,7 @@ import org.geotoolkit.wms.AbstractGetCapabilities;
 
 /**
  * @author Olivier Terral (Geomatys)
+ * @module pending
  */
 public class GetCapabilities111 extends AbstractGetCapabilities {
 

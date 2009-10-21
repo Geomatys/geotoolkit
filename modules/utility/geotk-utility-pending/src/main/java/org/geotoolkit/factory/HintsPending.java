@@ -40,6 +40,7 @@ import java.util.Map;
  * allow application code to effect service discovery we allow client code to
  * retarget the geotools library for their needs.
  *
+ * @module pending
  * @since 2.1
  * @source $URL$
  * @version $Id$

@@ -41,6 +41,7 @@ import org.opengis.style.Description;
  * Abstract implementation of the MapLayer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractMapLayer implements MapLayer {
 

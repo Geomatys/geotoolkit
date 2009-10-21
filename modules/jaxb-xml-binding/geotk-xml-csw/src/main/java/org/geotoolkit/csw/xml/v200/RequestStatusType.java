@@ -47,6 +47,7 @@ import org.geotoolkit.csw.xml.RequestStatus;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestStatusType")

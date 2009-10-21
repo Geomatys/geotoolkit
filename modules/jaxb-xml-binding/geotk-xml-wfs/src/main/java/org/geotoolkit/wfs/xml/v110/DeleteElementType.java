@@ -45,6 +45,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DeleteElementType", propOrder = {

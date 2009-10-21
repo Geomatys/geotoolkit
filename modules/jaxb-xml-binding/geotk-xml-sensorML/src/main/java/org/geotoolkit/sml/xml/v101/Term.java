@@ -49,6 +49,7 @@ import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

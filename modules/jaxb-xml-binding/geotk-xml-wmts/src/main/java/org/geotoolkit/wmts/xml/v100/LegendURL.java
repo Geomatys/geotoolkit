@@ -50,6 +50,7 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LegendURLType", propOrder = {

@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/quadtree/Node.java $
+ * @module pending
  */
 public class Node {
     private Envelope bounds;

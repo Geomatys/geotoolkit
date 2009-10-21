@@ -53,6 +53,7 @@ import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PresentationLayerPropertyType", propOrder = {

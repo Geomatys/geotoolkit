@@ -51,6 +51,7 @@ import com.vividsolutions.jts.io.WKTReader;
  * @version $Id$
  * @author Ian Schneider
  * @author Martin Desruisseaux
+ * @module pending
  */
 public abstract class AbstractTestCaseSupport extends TestCase {
     /**

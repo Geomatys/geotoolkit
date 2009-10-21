@@ -46,6 +46,7 @@ import org.geotoolkit.se.xml.v110.OnlineResourceType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerDescriptionType", propOrder = {

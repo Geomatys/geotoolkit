@@ -28,6 +28,7 @@ import java.util.Set;
  * It is a NullObject and we feel no need to make this class public.
  * </p>
  * @source $URL$
+ * @module pending
  */
 class AutoCommitTransaction implements Transaction {
 

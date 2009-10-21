@@ -25,6 +25,7 @@ import org.opengis.util.UnlimitedInteger;
  * JAXB adapter in order to map implementing class with the GeoAPI String. See
  * package documentation for more information about JAXB and String.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/UnlimitedIntegerAdapter.java $
  * @author Guilhem Legal

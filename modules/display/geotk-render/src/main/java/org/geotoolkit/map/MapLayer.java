@@ -31,6 +31,7 @@ import org.opengis.style.Description;
  * {@link FeatureSource}, a {@link MutableStyle} and, optionally, a {@link Query}
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MapLayer {
     

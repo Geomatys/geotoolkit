@@ -30,6 +30,7 @@ import org.opengis.style.Description;
  * This class does not store information about the map view.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MapContext {
 

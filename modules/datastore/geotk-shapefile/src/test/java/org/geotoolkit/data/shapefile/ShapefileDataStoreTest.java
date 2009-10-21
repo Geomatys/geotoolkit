@@ -72,6 +72,7 @@ import org.geotoolkit.feature.FeatureCollectionUtilities;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/ShapefileDataStoreTest.java $
  * @version $Id$
  * @author Ian Schneider
+ * @module pending
  */
 public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 

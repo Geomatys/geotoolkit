@@ -46,6 +46,7 @@ import org.opengis.style.LineSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbolizer, CachedLineSymbolizer>{
 

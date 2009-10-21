@@ -54,6 +54,7 @@ import com.vividsolutions.jts.io.WKTWriter;
  * 
  * @author David Skea
  * @author Martin Davis
+ * @module pending
  */
 public class QuadEdge 
 {

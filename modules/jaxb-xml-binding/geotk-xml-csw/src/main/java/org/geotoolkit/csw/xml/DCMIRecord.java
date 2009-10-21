@@ -23,6 +23,7 @@ import org.geotoolkit.dublincore.xml.AbstractSimpleLiteral;
  *
  * @author Mehdi Sidhoum (Geomatys).
  * @author Guilhem Legal (Geomatys).
+ * @module pending
  */
 public interface DCMIRecord extends AbstractRecord {
     

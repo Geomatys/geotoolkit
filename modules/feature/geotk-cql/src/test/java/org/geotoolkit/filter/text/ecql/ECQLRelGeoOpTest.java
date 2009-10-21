@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * Relation geo operation
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLRelGeoOpTest extends CQLRelGeoOpTest {

@@ -40,6 +40,7 @@ import org.geotoolkit.sml.xml.Component;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComponentType")

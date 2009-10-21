@@ -90,6 +90,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon
  *
+ * @module pending
  * @since 2.2
  */
 public class MetadataReader {

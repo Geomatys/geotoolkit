@@ -26,6 +26,7 @@ import org.opengis.sld.SLDLibrary;
  * Listener for style layer descriptor.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface SLDListener extends EventListener{
 

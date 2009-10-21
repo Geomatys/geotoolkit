@@ -31,6 +31,7 @@ import java.util.RandomAccess;
  * @author Martin Desruisseaux (IRD)
  *
  * @see PointArray2D#positions
+ * @module pending
  */
 final class ListAdapter extends AbstractList implements RandomAccess, Serializable {
     /**

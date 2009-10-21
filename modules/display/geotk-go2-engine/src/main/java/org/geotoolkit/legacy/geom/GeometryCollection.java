@@ -83,6 +83,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @see Polyline
  * @see Polygon
+ * @module pending
  */
 public class GeometryCollection extends Geometry implements Comparable {
     /**

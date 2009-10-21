@@ -34,6 +34,7 @@ import org.geotoolkit.display.canvas.RenderingContext;
  * This class provides some methods specific to the Geotools implementation of graphic primitive.
  * The {@link org.geotools.display.canvas.ReferencedCanvas} expects instances of this class.
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

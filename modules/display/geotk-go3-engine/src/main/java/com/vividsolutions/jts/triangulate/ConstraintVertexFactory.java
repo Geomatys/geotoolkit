@@ -41,6 +41,7 @@ import com.vividsolutions.jts.triangulate.quadedge.Vertex;
  * An interface for factories which create a {@link ConstraintVertex}
  * 
  * @author Martin Davis
+ * @module pending
  */
 public interface ConstraintVertexFactory {
     ConstraintVertex createVertex(Coordinate p, Segment constraintSeg);

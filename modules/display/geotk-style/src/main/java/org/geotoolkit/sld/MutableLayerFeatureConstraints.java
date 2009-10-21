@@ -24,6 +24,7 @@ import org.opengis.sld.LayerFeatureConstraints;
  * Mutable layer feature constraints
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  * @since GeoAPI 2.2
  */
 public interface MutableLayerFeatureConstraints extends MutableConstraints, LayerFeatureConstraints {

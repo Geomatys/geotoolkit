@@ -25,6 +25,7 @@ package org.geotoolkit.filter.text.generated.parsers;
  * a new SimpleNode.          
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since
  */
 public class SimpleNode implements  Node {

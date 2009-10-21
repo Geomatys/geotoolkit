@@ -60,6 +60,7 @@ import org.geotoolkit.ogc.xml.v100.FilterType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerType", propOrder = {

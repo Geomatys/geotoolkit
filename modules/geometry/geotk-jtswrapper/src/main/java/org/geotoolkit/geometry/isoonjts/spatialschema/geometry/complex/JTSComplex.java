@@ -53,6 +53,7 @@ import org.opengis.geometry.primitive.Primitive;
  * @version 2.0
  *
  * @revisit Some associations are commented out for now.
+ * @module pending
  */
 public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implements Complex {
 

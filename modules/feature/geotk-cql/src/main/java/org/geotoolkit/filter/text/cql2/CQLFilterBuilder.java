@@ -31,6 +31,7 @@ import org.opengis.filter.FilterFactory;
  *
  * @author Mauricio Pazos (Axios Engineering)
  * @version Revision: 1.9
+ * @module pending
  * @since 2.5
  */
 final class CQLFilterBuilder extends AbstractFilterBuilder {

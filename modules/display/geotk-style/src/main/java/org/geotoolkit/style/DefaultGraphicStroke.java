@@ -34,6 +34,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI Graphic Stroke.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStroke{
 

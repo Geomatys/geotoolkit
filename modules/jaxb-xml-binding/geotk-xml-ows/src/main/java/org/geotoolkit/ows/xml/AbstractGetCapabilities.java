@@ -23,6 +23,7 @@ import org.geotoolkit.util.Versioned;
  *  Super abstract type for all the different versions of GetCapabilities request.
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface AbstractGetCapabilities extends Versioned {
 

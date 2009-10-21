@@ -51,6 +51,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  * 
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/ShapefileWriter.java $
+ * @module pending
  */
 public class ShapefileWriter {
 

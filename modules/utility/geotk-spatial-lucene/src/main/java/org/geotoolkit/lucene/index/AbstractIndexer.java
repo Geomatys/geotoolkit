@@ -54,6 +54,7 @@ import org.geotoolkit.resources.NIOUtilities;
  *
  * @author Mehdi Sidhoum
  * @author Guilhem Legal
+ * @module pending
  */
 public abstract class AbstractIndexer<E> extends IndexLucene {
 

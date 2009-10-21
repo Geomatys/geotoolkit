@@ -29,6 +29,7 @@ import org.opengis.filter.expression.Literal;
  * Immutable abstract function.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractFunction extends AbstractExpression implements Function {
 

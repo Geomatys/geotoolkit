@@ -46,6 +46,7 @@ import org.jfree.data.xy.XYSeriesCollection;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JAnalizePanel extends javax.swing.JPanel {
 

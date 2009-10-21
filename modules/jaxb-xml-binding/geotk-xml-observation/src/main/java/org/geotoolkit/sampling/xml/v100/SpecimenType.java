@@ -68,6 +68,7 @@ import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpecimenType", propOrder = {

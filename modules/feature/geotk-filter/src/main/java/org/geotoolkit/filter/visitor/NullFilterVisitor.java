@@ -83,6 +83,7 @@ import org.opengis.filter.spatial.Within;
  * </ul>
  * 
  * @author Jody Garnett (Refractions Research)
+ * @module pending
  */
 public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisitor {
     static public NullFilterVisitor NULL_VISITOR = new NullFilterVisitor(){

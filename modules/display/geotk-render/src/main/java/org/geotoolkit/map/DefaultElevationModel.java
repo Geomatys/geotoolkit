@@ -29,6 +29,7 @@ import org.opengis.geometry.DirectPosition;
  * Default implementation of elevation model.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 final class DefaultElevationModel implements ElevationModel{
 

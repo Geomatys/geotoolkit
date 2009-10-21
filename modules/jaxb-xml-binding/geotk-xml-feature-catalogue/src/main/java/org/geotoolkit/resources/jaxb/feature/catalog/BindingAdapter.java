@@ -25,6 +25,7 @@ import org.opengis.feature.catalog.Binding;
  * JAXB adapter in order to map implementing class with the GeoAPI Binding. See
  * package documentation for more information about JAXB and Binding.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/BindingAdapter.java $
  * @author Guilhem Legal

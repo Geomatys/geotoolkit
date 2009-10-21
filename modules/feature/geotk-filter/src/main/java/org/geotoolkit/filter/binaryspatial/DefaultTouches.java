@@ -31,6 +31,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "touches" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultTouches extends AbstractBinarySpatialOperator<Expression,Expression> implements Touches {
 

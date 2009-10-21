@@ -25,6 +25,7 @@ import org.opengis.referencing.operation.TransformException;
  * A Label renderer is used to render labels on top of the image.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface LabelRenderer {
 

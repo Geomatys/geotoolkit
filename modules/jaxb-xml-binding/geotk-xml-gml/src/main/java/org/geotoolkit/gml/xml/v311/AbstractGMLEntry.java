@@ -51,6 +51,7 @@ import org.geotoolkit.gml.xml.AbstractGML;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractGMLType", propOrder = {

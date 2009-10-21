@@ -30,6 +30,7 @@ import org.opengis.style.Description;
  * Default mutable named Style, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultMutableNamedStyle implements MutableNamedStyle{
 

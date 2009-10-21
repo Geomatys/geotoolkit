@@ -34,6 +34,7 @@ import org.geotoolkit.display2d.ext.BackgroundUtilities;
  * Utility class to render north arrow using a provided template.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class J2DNorthArrowUtilities {
 

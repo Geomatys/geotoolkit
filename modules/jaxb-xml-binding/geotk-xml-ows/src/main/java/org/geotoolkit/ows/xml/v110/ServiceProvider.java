@@ -44,6 +44,7 @@ import org.geotoolkit.util.Utilities;
  * </pre>
  * 
  *  @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

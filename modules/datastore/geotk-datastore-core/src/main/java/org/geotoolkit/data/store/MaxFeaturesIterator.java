@@ -24,6 +24,7 @@ import org.opengis.feature.Feature;
  * Iterator wrapper which caps the number of returned features;
  * 
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public class MaxFeaturesIterator<F extends Feature> implements Iterator<F> {
 

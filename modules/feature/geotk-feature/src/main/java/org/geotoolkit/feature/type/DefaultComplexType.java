@@ -41,6 +41,7 @@ import org.opengis.util.InternationalString;
  * @author gabriel
  * @author Ben Caradoc-Davies, CSIRO Exploration and Mining
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultComplexType extends DefaultAttributeType<AttributeType> implements ComplexType {
 

@@ -27,6 +27,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI AnchorPoint.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultAnchorPoint implements AnchorPoint{
 

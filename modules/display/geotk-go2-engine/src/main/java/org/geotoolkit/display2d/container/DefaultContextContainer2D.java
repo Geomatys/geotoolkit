@@ -31,6 +31,7 @@ import org.geotoolkit.map.MapContext;
  * builder if statefull or not.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultContextContainer2D extends ContextContainer2D{
 

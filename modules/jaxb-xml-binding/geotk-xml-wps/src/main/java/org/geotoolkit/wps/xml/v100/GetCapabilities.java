@@ -45,6 +45,7 @@ import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

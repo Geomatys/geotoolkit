@@ -47,6 +47,7 @@ import org.geotoolkit.csw.xml.DescribeRecordResponse;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DescribeRecordResponseType", propOrder = {

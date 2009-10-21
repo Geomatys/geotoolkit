@@ -27,6 +27,7 @@ import org.opengis.geometry.Envelope;
  * geographic area to be rendered.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ViewDef {
 

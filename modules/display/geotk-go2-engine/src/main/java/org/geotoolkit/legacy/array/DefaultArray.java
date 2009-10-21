@@ -35,6 +35,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux
  *
  * @see #getInstance
+ * @module pending
  */
 public class DefaultArray extends PointArray implements RandomAccess {
     /**

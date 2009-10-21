@@ -28,6 +28,7 @@ import org.geotoolkit.filter.text.cql2.CQLTemporalPredicateTest;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLTemporalPredicateTest extends CQLTemporalPredicateTest {

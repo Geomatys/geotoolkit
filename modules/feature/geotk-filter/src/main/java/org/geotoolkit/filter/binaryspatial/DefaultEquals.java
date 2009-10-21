@@ -31,6 +31,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "equals" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expression> implements Equals {
 

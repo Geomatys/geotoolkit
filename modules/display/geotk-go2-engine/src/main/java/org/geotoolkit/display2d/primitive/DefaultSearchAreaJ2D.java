@@ -28,6 +28,7 @@ import org.opengis.geometry.Geometry;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAreaJ2D{
     

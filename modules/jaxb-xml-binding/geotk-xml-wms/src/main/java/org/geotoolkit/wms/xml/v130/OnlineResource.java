@@ -40,6 +40,7 @@ import org.geotoolkit.wms.xml.AbstractOnlineResource;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

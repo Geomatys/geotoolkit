@@ -29,6 +29,7 @@ import org.geotoolkit.index.rtree.PageStore;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/memory/MemoryPageStore.java $
+ * @module pending
  */
 public class MemoryPageStore extends PageStore {
     private static final int DEF_MAX = 50;

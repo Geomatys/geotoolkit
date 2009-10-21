@@ -42,6 +42,7 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * Simple data store wrapper for feature collections. Allows to use feature collections in the user
  * interface layer and everything else where a data store or a feature source is needed.
+ * @module pending
  */
 public class CollectionDataStore extends AbstractDataStore {
 

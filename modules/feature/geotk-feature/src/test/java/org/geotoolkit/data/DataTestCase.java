@@ -63,6 +63,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
  * @author Jody Garnett, Refractions Research
  *
  * @todo It should be possible to move this class in the {@code sample-data} module.
+ * @module pending
  */
 public abstract class DataTestCase extends TestCase {
     protected GeometryFactory gf;

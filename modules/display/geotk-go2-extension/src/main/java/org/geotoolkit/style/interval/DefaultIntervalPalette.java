@@ -27,6 +27,7 @@ import java.awt.geom.Point2D;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultIntervalPalette implements IntervalPalette{
 

@@ -27,6 +27,7 @@ import org.opengis.style.Font;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedFont extends Cache<Font>{
 

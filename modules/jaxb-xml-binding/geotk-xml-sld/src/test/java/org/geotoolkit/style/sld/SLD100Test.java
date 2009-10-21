@@ -51,6 +51,7 @@ import org.opengis.sld.UserLayer;
  * Test class for sld jaxb marshelling and unmarshelling.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SLD100Test extends TestCase{
 

@@ -45,6 +45,7 @@ import org.opengis.filter.expression.PropertyName;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.5
  */
 public class CQLLikePredicateTest {

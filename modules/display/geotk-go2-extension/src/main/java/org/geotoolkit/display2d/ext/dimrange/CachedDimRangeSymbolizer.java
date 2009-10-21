@@ -24,6 +24,7 @@ import org.opengis.feature.Feature;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolizer>{
 

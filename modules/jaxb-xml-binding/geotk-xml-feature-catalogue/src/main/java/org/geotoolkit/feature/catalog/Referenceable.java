@@ -8,6 +8,7 @@ package org.geotoolkit.feature.catalog;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 public interface Referenceable {
     

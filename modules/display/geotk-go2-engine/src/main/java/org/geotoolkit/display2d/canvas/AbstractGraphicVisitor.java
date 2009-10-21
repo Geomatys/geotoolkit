@@ -52,6 +52,7 @@ import org.opengis.referencing.operation.TransformException;
  * {@link org.opengis.coverage.grid.GridCoverage}.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 

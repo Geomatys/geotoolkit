@@ -41,6 +41,7 @@ import java.util.LinkedList;
  * 
  * @author Martin Davis
  * @version 1.0
+ * @module pending
  */
 public class EdgeConnectedTriangleTraversal {
     private LinkedList triQueue = new LinkedList();

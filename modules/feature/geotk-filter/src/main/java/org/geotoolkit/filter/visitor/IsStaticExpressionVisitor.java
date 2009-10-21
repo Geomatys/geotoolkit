@@ -45,6 +45,7 @@ import org.opengis.filter.expression.Subtract;
  * 
  * @author Jody
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class IsStaticExpressionVisitor implements ExpressionVisitor {
 

@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Point;
  * Tests that geometry types can be properly created and retrieved back from the
  * database. You might need to override some of the tests method to fix the expectations
  * for specific geometry class types.
+ * @module pending
  */
 public abstract class JDBCGeometryTest extends JDBCTestSupport {
 

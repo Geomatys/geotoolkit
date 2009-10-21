@@ -46,6 +46,7 @@ import org.opengis.referencing.operation.TransformException;
  * Default Coverage Reader using ImageReader.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultCoverageReader implements CoverageReader{
 

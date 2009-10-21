@@ -49,6 +49,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultController2D implements CanvasController2D{
 

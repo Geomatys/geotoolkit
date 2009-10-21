@@ -42,6 +42,7 @@ import com.vividsolutions.jts.geom.LineSegment;
  * segments while preventing further encroachment. (This is not always possible for narrow angles).
  * 
  * @author Martin Davis
+ * @module pending
  */
 public class NonEncroachingSplitPointFinder implements ConstraintSplitPointFinder {
 

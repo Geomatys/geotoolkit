@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 /**
  * The default JTS handler for shapefile. Currently uses the default JTS
  * GeometryFactory, since it doesn't seem to matter.
+ * @module pending
  */
 public class MultiLineHandler implements ShapeHandler {
 

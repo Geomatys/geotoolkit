@@ -26,6 +26,7 @@ import org.opengis.geometry.primitive.Primitive;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJTSGeometry implements Aggregate {
 

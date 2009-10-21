@@ -38,6 +38,7 @@ import org.opengis.display.primitive.Graphic;
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)
  *
+ * @module pending
  * @since 2.5
  */
 public abstract class AbstractContainer2D extends AbstractContainer{

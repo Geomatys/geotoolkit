@@ -22,6 +22,7 @@ import java.util.List;
  * Abstract super class for all the version of a SensorML document.
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public abstract class AbstractSensorML {
 

@@ -40,6 +40,7 @@ import org.opengis.style.Symbolizer;
  * Mutable implementation of GeoAPI FeatureTypeStyle.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
     

@@ -37,6 +37,7 @@ import org.opengis.filter.identity.FeatureId;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public abstract class AbstractFeatureStore extends AbstractFeatureSource
         implements FeatureStore<SimpleFeatureType, SimpleFeature> {

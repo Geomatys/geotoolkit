@@ -33,6 +33,7 @@ import org.geotoolkit.util.Utilities;
  * The value of the gml:location property describes the extent, position or relative location of the feature.
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractFeatureType", propOrder = {

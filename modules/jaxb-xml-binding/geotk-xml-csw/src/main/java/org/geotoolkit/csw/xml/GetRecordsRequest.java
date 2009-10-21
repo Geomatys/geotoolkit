@@ -24,6 +24,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 /**
  * An interface containing the common methods to the different version of the operation GetRecords.
  * 
+ * @module pending
  */
 public interface GetRecordsRequest extends RequestBase {
 

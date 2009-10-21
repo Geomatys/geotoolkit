@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * An iterator for empty geometries
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  * @since 2.9
  */
 public class JTSEmptyIterator extends JTSGeometryIterator<Geometry> {

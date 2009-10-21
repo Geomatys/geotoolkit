@@ -49,6 +49,7 @@ import org.opengis.style.Symbolizer;
  * And you can generate glyphs using the glyph method.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface SymbolizerRenderer<S extends Symbolizer, C extends CachedSymbolizer<S>> {
 

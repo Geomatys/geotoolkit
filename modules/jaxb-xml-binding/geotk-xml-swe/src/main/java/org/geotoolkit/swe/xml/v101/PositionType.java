@@ -47,6 +47,7 @@ import org.geotoolkit.swe.xml.Position;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PositionType", propOrder = {

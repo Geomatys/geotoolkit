@@ -33,6 +33,7 @@ import org.opengis.util.TypeName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(name = "SV_Parameter_Type", propOrder = {
     "name",

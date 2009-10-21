@@ -28,6 +28,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class InformationAction extends AbstractAction {
 

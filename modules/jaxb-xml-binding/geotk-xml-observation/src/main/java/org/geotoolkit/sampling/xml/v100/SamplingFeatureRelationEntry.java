@@ -25,6 +25,7 @@ import org.opengis.util.GenericName;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlType(name="SamplingFeatureRelation")
 public class SamplingFeatureRelationEntry implements SamplingFeatureRelation {

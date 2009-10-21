@@ -52,6 +52,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AuditableEventType", propOrder = {

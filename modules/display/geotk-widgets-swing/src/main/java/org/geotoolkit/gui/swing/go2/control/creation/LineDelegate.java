@@ -24,6 +24,7 @@ import java.awt.event.MouseEvent;
  * line creation handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class LineDelegate extends AbstractMouseDelegate {
 

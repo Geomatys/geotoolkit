@@ -54,6 +54,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class MapContextExtractor extends AbstractGraphicVisitor {
 

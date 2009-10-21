@@ -25,6 +25,7 @@ import org.geotoolkit.report.JRMapperFactory;
  * Static String mapper for fields of type String.
  *
  * @author Johann sorel (Geomatys)
+ * @module pending
  */
 public class StaticStringMapper implements JRMapper<String,Object> {
 

@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public interface Vector {
 

@@ -33,6 +33,7 @@ import org.geotoolkit.renderer.svg.SvgUtils;
  * Default north arrow template, immutable.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
 

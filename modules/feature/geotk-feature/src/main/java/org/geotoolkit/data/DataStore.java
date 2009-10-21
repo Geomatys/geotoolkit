@@ -115,6 +115,7 @@ import org.geotoolkit.feature.SchemaException;
  * @author Jody Garnett, Refractions Research
  * @param <T> Type of Feature Content, may be SimpleFeatureType
  * @param <F> Feature Content, may be SimpleFetaure
+ * @module pending
  */
 public interface DataStore<T extends FeatureType, F extends Feature> {
 

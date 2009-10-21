@@ -43,6 +43,7 @@ import org.geotoolkit.swe.xml.Coordinate;
  * </pre>
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

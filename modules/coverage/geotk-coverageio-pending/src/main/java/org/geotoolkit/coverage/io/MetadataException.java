@@ -28,6 +28,7 @@ import org.geotoolkit.image.io.text.DefaultTextMetadataParser;
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  *
+ * @module pending
  * @since 2.2
  */
 public class MetadataException extends IIOException {

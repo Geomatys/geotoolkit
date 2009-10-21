@@ -78,6 +78,7 @@ import org.opengis.referencing.operation.MathTransform;
  * However, other methods may be overriden too in order to get finner control
  * on the result.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

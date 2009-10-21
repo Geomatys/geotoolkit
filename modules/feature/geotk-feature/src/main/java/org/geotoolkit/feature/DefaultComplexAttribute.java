@@ -35,6 +35,7 @@ import org.opengis.filter.identity.Identifier;
  * Default implementation of a complexeAttribut.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultComplexAttribute<I extends Identifier> extends DefaultAttribute<Collection<Property>,AttributeDescriptor,I>
         implements ComplexAttribute {

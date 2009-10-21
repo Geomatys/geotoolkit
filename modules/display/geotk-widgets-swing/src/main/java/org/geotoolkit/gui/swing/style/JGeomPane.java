@@ -29,6 +29,7 @@ import org.geotoolkit.map.MapLayer;
  * Geometrie panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JGeomPane extends javax.swing.JPanel {
      

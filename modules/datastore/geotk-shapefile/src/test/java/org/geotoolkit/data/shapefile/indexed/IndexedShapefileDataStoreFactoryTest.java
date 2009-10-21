@@ -32,6 +32,7 @@ import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 /**
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/indexed/IndexedShapefileDataStoreFactoryTest.java $
+ * @module pending
  */
 public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSupport {
     private ShapefileDataStoreFactory factory;

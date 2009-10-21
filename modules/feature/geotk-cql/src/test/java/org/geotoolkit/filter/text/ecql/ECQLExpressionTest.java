@@ -24,6 +24,7 @@ import org.geotoolkit.filter.text.cql2.CQLExpressionTest;
  * Expression Test
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLExpressionTest extends CQLExpressionTest {

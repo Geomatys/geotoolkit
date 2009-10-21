@@ -33,6 +33,7 @@ import org.geotoolkit.util.XArrays;
  * {@link org.opengis.referencing.operation.MathTransform} without any side effect
  * on the original {@code PointArray2D}.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

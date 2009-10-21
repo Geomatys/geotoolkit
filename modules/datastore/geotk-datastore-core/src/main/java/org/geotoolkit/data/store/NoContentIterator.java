@@ -35,6 +35,7 @@ import org.opengis.feature.simple.SimpleFeature;
  * of asking for content that is supposed to be there and failing to aquire it.
  * </p>
  * @author jgarnett
+ * @module pending
  * @since 2.1.RC0
  * @source $URL$
  */

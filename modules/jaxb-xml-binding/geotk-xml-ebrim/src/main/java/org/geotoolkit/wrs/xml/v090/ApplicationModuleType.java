@@ -53,6 +53,7 @@ import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ApplicationModuleType", propOrder = {

@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Point;
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/PointHandler.java $
  * 
+ * @module pending
  */
 public class PointHandler implements ShapeHandler {
 

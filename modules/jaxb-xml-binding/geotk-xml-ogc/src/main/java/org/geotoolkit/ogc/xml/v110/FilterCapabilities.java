@@ -49,6 +49,7 @@ import org.opengis.filter.capability.SpatialCapabilities;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

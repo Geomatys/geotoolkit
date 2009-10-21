@@ -42,6 +42,7 @@ import org.geotoolkit.gml.xml.v311.TemporalCRSType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

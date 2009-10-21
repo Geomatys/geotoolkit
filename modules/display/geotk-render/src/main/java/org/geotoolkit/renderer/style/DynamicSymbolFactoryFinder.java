@@ -48,6 +48,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  * <p>
  * Example:<br/><code>org.geotools.data.jdbc.DBCPDataSourceFactory</code>
  * </p>
+ * @module pending
  */
 public final class DynamicSymbolFactoryFinder {
     /** The logger for the filter module. */

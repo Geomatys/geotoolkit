@@ -30,6 +30,7 @@ import org.opengis.filter.Id;
  * Abstract implementation of the MapLayer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implements FeatureMapLayer {
 

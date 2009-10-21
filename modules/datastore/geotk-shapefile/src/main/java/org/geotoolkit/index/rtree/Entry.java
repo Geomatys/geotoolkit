@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/Entry.java $
+ * @module pending
  */
 public class Entry<T> implements Cloneable {
     private Envelope bounds;

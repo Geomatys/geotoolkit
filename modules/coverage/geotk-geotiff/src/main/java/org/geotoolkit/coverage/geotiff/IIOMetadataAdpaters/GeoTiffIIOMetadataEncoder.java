@@ -39,6 +39,7 @@ import org.geotoolkit.util.collection.KeySortedList;
  * 
  * 
  * @author Simone Giannecchini, GeoSolutions
+ * @module pending
  * @since 2.3
  * 
  */

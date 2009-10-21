@@ -21,6 +21,7 @@ package org.geotoolkit.lucene;
  * Exceptions thrown by lucene searching should be instances of this type.
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  * @since 0.3
  *
  */

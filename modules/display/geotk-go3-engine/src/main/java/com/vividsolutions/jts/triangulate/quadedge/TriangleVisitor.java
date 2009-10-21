@@ -38,6 +38,7 @@ package com.vividsolutions.jts.triangulate.quadedge;
  * 
  * @author Martin Davis
  * @version 1.0
+ * @module pending
  */
 public interface TriangleVisitor {
     /**

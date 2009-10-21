@@ -56,6 +56,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *       I'm not sure of the solution, but there should be something that is
  *       less confusing.
  * @source $URL$
+ * @module pending
  */
 public class InProcessLockingManager implements LockingManager {
 

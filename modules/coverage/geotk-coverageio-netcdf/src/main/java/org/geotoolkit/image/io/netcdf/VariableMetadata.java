@@ -47,6 +47,7 @@ import org.geotoolkit.image.io.metadata.Band;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.0
  *
+ * @module pending
  * @since 2.4
  * @module
  */

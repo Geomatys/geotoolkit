@@ -29,6 +29,7 @@ import org.opengis.temporal.Position;
  * in space.
  * 
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements Instant {
 

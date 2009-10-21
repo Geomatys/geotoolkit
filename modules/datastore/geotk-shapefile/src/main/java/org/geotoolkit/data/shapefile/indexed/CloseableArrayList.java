@@ -27,6 +27,7 @@ import org.geotoolkit.index.Data;
 /**
  * Currently just wraps ArrayList and delegates to that class
  * @author jesse
+ * @module pending
  */
 public class CloseableArrayList extends AbstractList<Data> implements
         CloseableCollection<Data> {

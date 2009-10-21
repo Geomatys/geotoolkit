@@ -49,6 +49,7 @@ import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WMS_Capabilities", propOrder = {

@@ -49,6 +49,7 @@ import org.geotoolkit.feature.collection.FeatureCollection;
  * @author Johann Sorel, Geomatys
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public interface FeatureStore<T extends FeatureType, F extends Feature> extends FeatureSource<T, F> {
 

@@ -44,6 +44,7 @@ import org.geotoolkit.swe.xml.AbstractEncoding;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractEncodingType")

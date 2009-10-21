@@ -38,6 +38,7 @@ import javax.media.jai.EnumeratedParameter;
  * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux
+ * @module pending
  */
 public final class LegendPosition extends EnumeratedParameter {
     /**

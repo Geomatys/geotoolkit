@@ -23,6 +23,7 @@ import org.opengis.sld.SLDVisitor;
  * Default imumutable range axis, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultRangeAxis implements RangeAxis {
 

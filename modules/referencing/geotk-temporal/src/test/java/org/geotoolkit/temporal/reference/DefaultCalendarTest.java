@@ -48,6 +48,7 @@ import org.opengis.temporal.JulianDate;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultCalendarTest {
 

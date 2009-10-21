@@ -31,6 +31,7 @@ import org.opengis.filter.expression.Expression;
  * 
  * @param T : style element class edited
  * @author Johann Sorel
+ * @module pending
  */
 public abstract class StyleElementEditor<T> extends JPanel {
 

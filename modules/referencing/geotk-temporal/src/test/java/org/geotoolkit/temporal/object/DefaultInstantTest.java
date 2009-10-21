@@ -33,6 +33,7 @@ import org.opengis.temporal.Position;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultInstantTest {
 

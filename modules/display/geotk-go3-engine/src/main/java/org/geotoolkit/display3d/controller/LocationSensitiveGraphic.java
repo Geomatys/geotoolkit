@@ -21,6 +21,7 @@ import com.ardor3d.math.type.ReadOnlyVector3;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public interface LocationSensitiveGraphic {
 

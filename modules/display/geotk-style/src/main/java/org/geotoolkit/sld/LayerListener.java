@@ -26,6 +26,7 @@ import org.opengis.sld.Constraint;
  * Listener for user layer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface LayerListener extends EventListener{
 

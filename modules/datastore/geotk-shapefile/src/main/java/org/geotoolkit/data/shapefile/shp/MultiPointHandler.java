@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/shp/MultiPointHandler.java $
  * 
+ * @module pending
  */
 public class MultiPointHandler implements ShapeHandler {
     final ShapeType shapeType;

@@ -45,6 +45,7 @@ import org.geotoolkit.csw.xml.RequestBase;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestBaseType")

@@ -47,6 +47,7 @@ import org.opengis.style.Rule;
  * Utility class to render legend using a provided template.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class J2DLegendUtilities {
 

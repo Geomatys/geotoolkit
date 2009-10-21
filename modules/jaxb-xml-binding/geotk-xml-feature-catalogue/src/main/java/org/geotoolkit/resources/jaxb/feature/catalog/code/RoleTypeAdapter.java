@@ -25,6 +25,7 @@ import org.opengis.feature.catalog.RoleType;
  * respecting the ISO-19139 standard. See package documentation to have more information
  * about the handling of CodeList in ISO-19139.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/code/RoleTypeAdapter.java $
  * @author Guilhem Legal

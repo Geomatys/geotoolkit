@@ -37,6 +37,7 @@ import org.opengis.display.canvas.Canvas;
  * Jasper Report renderer used to render north arrow graphic.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class NorthArrowRenderer implements JRRenderable{
 

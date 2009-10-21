@@ -42,6 +42,7 @@ import org.opengis.filter.expression.Expression;
  * 
  * @author Andrea Aime - TOPP
  * 
+ * @module pending
  */
 public class ImageGraphicFactory implements ExternalGraphicFactory {
 

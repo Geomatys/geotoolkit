@@ -26,6 +26,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
  * {@link org.geotoolkit.display2d.canvas.J2DCanvas}.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface GraphicJ2D extends ReferencedGraphic2D {
 

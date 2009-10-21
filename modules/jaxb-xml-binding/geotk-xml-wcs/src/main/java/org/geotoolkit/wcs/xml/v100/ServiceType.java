@@ -52,6 +52,7 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ServiceType")

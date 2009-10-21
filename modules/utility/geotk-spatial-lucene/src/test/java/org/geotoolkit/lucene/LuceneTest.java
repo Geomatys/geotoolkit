@@ -67,6 +67,7 @@ import static org.geotoolkit.lucene.filter.LuceneOGCFilter.*;
  * A Test classes testing the different spatial filters.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 public class LuceneTest {
 

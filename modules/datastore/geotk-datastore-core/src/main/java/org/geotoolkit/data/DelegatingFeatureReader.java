@@ -23,6 +23,7 @@ import org.opengis.feature.type.FeatureType;
  * Interface for wrapping feature readers which delegate to another feature reader.
  *
  * @author Justin Deoliveira, OpenGEO
+ * @module pending
  * @since 2.5
  */
 public interface DelegatingFeatureReader<T extends FeatureType, F extends Feature> extends FeatureReader<T, F> {

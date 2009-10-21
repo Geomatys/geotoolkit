@@ -46,6 +46,7 @@ import org.geotoolkit.util.logging.Logging;
  * Panoramic handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class AreaHandler implements CanvasHandler {
 

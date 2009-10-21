@@ -46,6 +46,7 @@ import org.geotoolkit.data.DataStore;
  *
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
  *
+ * @module pending
  */
 public abstract class JDBCTestSupport extends TestCase {
     /**

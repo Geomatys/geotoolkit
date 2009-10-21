@@ -58,6 +58,7 @@ import org.opengis.geometry.DirectPosition;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LineStringSegmentType", propOrder = {

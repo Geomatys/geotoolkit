@@ -23,6 +23,7 @@ import java.awt.Shape;
  * Label descriptor for a text along a shape.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface LinearLabelDescriptor extends LabelDescriptor{
     

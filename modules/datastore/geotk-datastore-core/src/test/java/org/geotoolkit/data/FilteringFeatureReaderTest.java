@@ -29,6 +29,7 @@ import org.opengis.filter.Filter;
  * 
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public class FilteringFeatureReaderTest extends DataTestCase {
 

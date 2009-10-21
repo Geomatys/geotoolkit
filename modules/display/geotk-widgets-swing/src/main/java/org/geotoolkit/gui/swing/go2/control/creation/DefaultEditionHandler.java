@@ -27,6 +27,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 /**
  *
  * @author eclesia
+ * @module pending
  */
 public class DefaultEditionHandler implements CanvasHandler {
     

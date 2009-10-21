@@ -74,6 +74,7 @@ import org.geotoolkit.sml.xml.AbstractClassifierList;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

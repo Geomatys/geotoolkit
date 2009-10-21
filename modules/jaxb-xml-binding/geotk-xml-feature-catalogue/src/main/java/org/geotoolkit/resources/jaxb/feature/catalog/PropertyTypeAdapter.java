@@ -27,6 +27,7 @@ import org.opengis.feature.catalog.PropertyType;
  * JAXB adapter in order to map implementing class with the GeoAPI PropertyType. See
  * package documentation for more infoFeatureTypermation about JAXB and PropertyType.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/PropertyTypeAdapter.java $
  * @author Guilhem Legal

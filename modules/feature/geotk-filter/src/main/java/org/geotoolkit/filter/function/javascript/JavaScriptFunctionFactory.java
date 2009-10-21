@@ -27,6 +27,7 @@ import org.opengis.filter.expression.Literal;
  * Factory registering javascript functions.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JavaScriptFunctionFactory implements FunctionFactory{
 

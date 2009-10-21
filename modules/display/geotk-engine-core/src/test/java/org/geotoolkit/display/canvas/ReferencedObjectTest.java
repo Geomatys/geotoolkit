@@ -47,6 +47,7 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
  * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
+ * @module pending
  */
 public class ReferencedObjectTest {
     

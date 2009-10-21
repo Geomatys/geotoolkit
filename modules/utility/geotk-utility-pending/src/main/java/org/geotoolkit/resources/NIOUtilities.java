@@ -29,6 +29,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * Utility class for managing memory mapped buffers.
  *
+ * @module pending
  * @since 2.0
  * @source $URL$
  * @version $Id$

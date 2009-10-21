@@ -27,6 +27,7 @@ import org.opengis.feature.catalog.FeatureAssociation;
  * JAXB adapter in order to map implementing class with the GeoAPI FeatureAssociation. See
  * package documentation for more information about JAXB and FeatureAssociation.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/FeatureAssociationAdapter.java $
  * @author Guilhem Legal

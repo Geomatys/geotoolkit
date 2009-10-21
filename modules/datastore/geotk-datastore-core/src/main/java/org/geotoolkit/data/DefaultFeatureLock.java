@@ -43,6 +43,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * @author jgarnett, Refractions Research, Inc.
  * </p> 
  * @source $URL$
+ * @module pending
  */
 public class DefaultFeatureLock implements FeatureLock {
 

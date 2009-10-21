@@ -38,6 +38,7 @@ import org.opengis.util.InternationalString;
  *
  * @author Justin
  * @author Ben Caradoc-Davies, CSIRO Exploration and Mining
+ * @module pending
  */
 public class DefaultSimpleFeatureType extends DefaultFeatureType implements SimpleFeatureType {
 

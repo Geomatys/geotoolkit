@@ -26,6 +26,7 @@ import org.geotoolkit.ows.xml.v110.ReferenceGroupType;
 /**
  * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wcs.v111
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlRegistry
 public class ObjectFactory {

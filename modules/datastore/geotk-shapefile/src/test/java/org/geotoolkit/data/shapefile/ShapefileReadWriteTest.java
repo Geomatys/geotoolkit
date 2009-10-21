@@ -43,6 +43,7 @@ import java.util.Map;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/ShapefileReadWriteTest.java $
  * @version $Id$
  * @author Ian Schneider
+ * @module pending
  */
 public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
     final String[] files = { "shapes/statepop.shp", "shapes/polygontest.shp",

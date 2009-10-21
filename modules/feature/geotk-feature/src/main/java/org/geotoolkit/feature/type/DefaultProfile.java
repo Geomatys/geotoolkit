@@ -43,6 +43,7 @@ import org.opengis.feature.type.Schema;
  * a non conflicting set of "bindings" for the TypeBuilder(s).
  * </p>
  * @author Jody Garnett, Refractions Research Inc.
+ * @module pending
  */
 public class DefaultProfile implements Schema {
     /**

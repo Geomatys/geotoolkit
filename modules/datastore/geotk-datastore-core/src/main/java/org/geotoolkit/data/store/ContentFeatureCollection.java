@@ -54,6 +54,7 @@ import org.opengis.filter.identity.FeatureId;
  * A FeatureCollection that completly delegates to a backing FetaureSource.
  *
  * @author Jody Garnett (Refractions Research, Inc.)
+ * @module pending
  */
 public class ContentFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {
 

@@ -28,6 +28,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * Abstract implementation of GeoAPI symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractSymbolizer implements Symbolizer{
     

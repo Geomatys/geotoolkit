@@ -26,6 +26,7 @@ import javax.swing.tree.TreePath;
  * Interface used to build a Popup control for JContextTree
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public interface TreePopupItem {
 

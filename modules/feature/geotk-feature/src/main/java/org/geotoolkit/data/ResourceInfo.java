@@ -37,6 +37,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Jody Garnett, Refractions Research
  * @author David Zwiers, Refractions Research
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  * @since 2.5
  */
 public interface ResourceInfo {

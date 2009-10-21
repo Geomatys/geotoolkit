@@ -26,6 +26,7 @@ import org.geotoolkit.report.JRMapperFactory;
  * Constants values for reports.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JRMappingUtils {
 

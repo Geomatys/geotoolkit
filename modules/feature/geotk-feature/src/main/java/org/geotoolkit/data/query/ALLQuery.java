@@ -40,6 +40,7 @@ import org.geotoolkit.factory.Hints;
  * featureSource.getFeatures( Query.FIDS );
  * </code></pre>
  * @source $URL$
+ * @module pending
  */
 class ALLQuery implements Query {
 

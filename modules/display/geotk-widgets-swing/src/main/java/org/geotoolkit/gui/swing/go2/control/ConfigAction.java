@@ -27,6 +27,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ConfigAction extends AbstractAction {
 

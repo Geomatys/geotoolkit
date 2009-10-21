@@ -25,6 +25,7 @@ import org.opengis.sld.Constraints;
  * MutableLayerCoverageConstraints
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MutableConstraints extends Constraints{
 

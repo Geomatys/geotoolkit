@@ -33,6 +33,7 @@ import org.opengis.style.Graphic;
  * Graphic panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JGraphicPane extends StyleElementEditor<Graphic> {
 

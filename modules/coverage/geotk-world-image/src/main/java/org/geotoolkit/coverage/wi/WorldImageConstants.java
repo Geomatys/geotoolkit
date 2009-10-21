@@ -25,6 +25,7 @@ import java.util.Set;
  * Constants for world image.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public final class WorldImageConstants {
 

@@ -25,6 +25,7 @@ import java.util.Collection;
  * complexe record (candidate) object.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface JRMapper<V,C> {
 

@@ -29,6 +29,7 @@ import static org.opengis.filter.expression.Expression.*;
  * Immutable implementation of GeoAPI Fill.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultFill implements Fill{
 

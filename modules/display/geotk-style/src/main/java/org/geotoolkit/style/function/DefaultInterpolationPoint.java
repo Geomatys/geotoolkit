@@ -21,6 +21,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultInterpolationPoint implements InterpolationPoint{
 

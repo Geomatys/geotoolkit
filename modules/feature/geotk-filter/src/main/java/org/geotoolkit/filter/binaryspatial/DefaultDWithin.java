@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "dwithin" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements DWithin {
 

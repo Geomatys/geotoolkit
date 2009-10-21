@@ -35,6 +35,7 @@ import org.opengis.util.InternationalString;
  * Default implementation of a property type
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyType<T extends PropertyType> implements PropertyType {
 

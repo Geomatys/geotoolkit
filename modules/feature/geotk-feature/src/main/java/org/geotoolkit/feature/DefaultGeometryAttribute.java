@@ -52,6 +52,7 @@ import com.vividsolutions.jts.geom.MultiPolygon;
  *
  * @author Leprosy
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDescriptor,Identifier> implements GeometryAttribute {
 

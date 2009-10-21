@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable "is null" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyIsNull implements PropertyIsNull {
 

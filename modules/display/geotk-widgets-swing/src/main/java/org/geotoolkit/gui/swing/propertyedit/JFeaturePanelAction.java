@@ -22,6 +22,7 @@ import javax.swing.JMenuItem;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JFeaturePanelAction extends JMenuItem{
 

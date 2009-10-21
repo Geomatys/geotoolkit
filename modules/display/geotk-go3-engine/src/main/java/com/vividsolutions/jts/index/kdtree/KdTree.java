@@ -50,6 +50,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  * @author David Skea
  * @author Martin Davis
+ * @module pending
  */
 public class KdTree 
 {

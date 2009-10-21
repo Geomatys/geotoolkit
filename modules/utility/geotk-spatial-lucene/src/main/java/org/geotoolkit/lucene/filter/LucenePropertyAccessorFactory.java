@@ -26,6 +26,7 @@ import org.geotoolkit.filter.accessor.PropertyAccessorFactory;
  * Lucene accessor factory.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class LucenePropertyAccessorFactory implements PropertyAccessorFactory{
 

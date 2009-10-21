@@ -48,6 +48,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class WorldImageFactory {
     

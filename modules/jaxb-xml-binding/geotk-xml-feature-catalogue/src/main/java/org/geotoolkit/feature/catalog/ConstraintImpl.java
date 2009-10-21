@@ -30,6 +30,7 @@ import org.opengis.feature.catalog.Constraint;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_Constraint_Type", propOrder = {

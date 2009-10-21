@@ -23,6 +23,7 @@ package org.geotoolkit.filter.text.commons;
  * Warning: This component is not published. It is part of module implementation.
  * Client module should not use this feature.
  * </p>
+ * @module pending
  * @since 2.4
  * @author Mauricio Pazos - Axios Engineering
  * @author Gabriel Roldan - Axios Engineering

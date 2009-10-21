@@ -48,6 +48,7 @@ import org.geotoolkit.citygml.xml.v100.AddressPropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DoorType", propOrder = {

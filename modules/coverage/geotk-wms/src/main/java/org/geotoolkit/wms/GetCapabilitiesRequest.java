@@ -22,6 +22,7 @@ import java.net.URL;
 /**
  *
  * @author Olivier Terral (Geomatys)
+ * @module pending
  */
 public interface GetCapabilitiesRequest {
 

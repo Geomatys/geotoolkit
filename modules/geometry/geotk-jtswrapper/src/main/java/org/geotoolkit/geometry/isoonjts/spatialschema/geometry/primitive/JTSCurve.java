@@ -36,6 +36,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  * of the (hard) math functions like intersection, etc.  A curve consists of
  * any number of CurveSegment objects (such as LineStrings) that must be
  * connected end-to-end.
+ * @module pending
  */
 public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**

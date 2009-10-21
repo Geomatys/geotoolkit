@@ -49,6 +49,7 @@ import org.opengis.observation.sampling.SamplingFeatureRelation;
  * @todo L'implémentation actuelle n'est pas <cite>serializable</cite> du fait qu'elle nécessite
  *       une connexion à la base de données. Une version future devrait rétablir la connexion au
  *       moment de la <cite>deserialization</cite>.
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SamplingFeature", namespace="http://www.opengis.net/sampling/1.0")

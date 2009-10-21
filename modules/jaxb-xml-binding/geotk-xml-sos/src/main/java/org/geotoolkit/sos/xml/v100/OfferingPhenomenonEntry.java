@@ -22,6 +22,7 @@ import org.geotoolkit.util.Utilities;
 /**
  *
  * @author Guilhem legal
+ * @module pending
  */
 public class OfferingPhenomenonEntry {
     

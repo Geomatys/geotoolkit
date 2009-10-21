@@ -46,6 +46,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * @author Jody Garnett
  * @author Joel Skelton
+ * @module pending
  */
 public class GeometryTestParser {
 

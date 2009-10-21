@@ -27,6 +27,7 @@ import org.opengis.temporal.TemporalPrimitive;
  * An abstract class that represents a non-decomposed element of geometry or topology of time.
  * 
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public abstract class DefaultTemporalPrimitive extends DefaultTemporalObject implements TemporalPrimitive, TemporalOrder {
 

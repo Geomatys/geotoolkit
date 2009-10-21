@@ -22,6 +22,7 @@ import javax.vecmath.MismatchedSizeException;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel, portage geotoolkit (Geomatys)
+ * @module pending
  */
 public interface Extrapolation {
 

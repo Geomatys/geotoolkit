@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "beyond" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expression> implements Beyond {
 

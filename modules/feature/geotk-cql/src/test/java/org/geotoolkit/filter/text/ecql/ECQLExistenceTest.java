@@ -28,6 +28,7 @@ import org.geotoolkit.filter.text.cql2.CQLExistenceTest;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLExistenceTest extends CQLExistenceTest {

@@ -29,6 +29,7 @@ import java.awt.geom.Point2D;
  * @author Martin Desruisseaux
  *
  * @deprecated No replacement. See <A HREF="http://jira.codehaus.org/browse/GEOT-776">GEOT-776</A>.
+ * @module pending
  */
 public interface RandomAccess {
     /**

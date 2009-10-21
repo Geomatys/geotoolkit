@@ -33,6 +33,7 @@ import org.geotoolkit.util.logging.Logging;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class ZoomAllAction extends AbstractAction {
 

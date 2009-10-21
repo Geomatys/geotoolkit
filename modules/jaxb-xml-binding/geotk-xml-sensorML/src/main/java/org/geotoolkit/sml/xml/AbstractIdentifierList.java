@@ -21,6 +21,7 @@ import java.util.List;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public interface AbstractIdentifierList {
 

@@ -26,6 +26,7 @@ import org.geotoolkit.index.rtree.Node;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/memory/MemoryNode.java $
+ * @module pending
  */
 public class MemoryNode extends Node {
     private Node parent;

@@ -35,6 +35,7 @@ import org.opengis.display.primitive.Graphic;
  * This is a Stateless graphic object.
  *
  * @author johann sorel (Geomatys)
+ * @module pending
  */
 public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<DynamicMapLayer>{
     

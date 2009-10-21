@@ -33,6 +33,7 @@ import org.opengis.filter.Filter;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class DeleteSelectionAction extends JFeaturePanelAction{
 

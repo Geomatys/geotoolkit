@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class ZoomInAction extends AbstractAction {
 

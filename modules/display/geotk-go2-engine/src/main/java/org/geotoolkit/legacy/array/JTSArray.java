@@ -39,6 +39,7 @@ import org.geotoolkit.legacy.geom.CompressionLevel;
  * @see DefaultArray
  * @see GenericArray
  * @see DefaultArray#getInstance
+ * @module pending
  */
 public final class JTSArray extends PointArray implements RandomAccess {
     /**

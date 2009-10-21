@@ -25,6 +25,7 @@ package org.geotoolkit.data.concurrent;
  * <code>FeatureLock.TRANSACTION</code>.
  * </p>
  * @source $URL$
+ * @module pending
  */
 class CurrentTransactionLock implements FeatureLock {
 

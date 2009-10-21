@@ -20,6 +20,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 
 /**
  * Provides support for creating AttributeReaders.
+ * @module pending
  * @since 2.0
  * @source $URL$
  * @version $Id$

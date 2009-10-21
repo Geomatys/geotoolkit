@@ -34,6 +34,7 @@ import org.opengis.sld.SLDVisitor;
  * Default mutable coverage constraints, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageConstraints{
 

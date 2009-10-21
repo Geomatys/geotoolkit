@@ -21,6 +21,7 @@ import java.util.List;
 /**
  *
  * @author legal
+ * @module pending
  */
 public abstract class AbstractHTTP {
     

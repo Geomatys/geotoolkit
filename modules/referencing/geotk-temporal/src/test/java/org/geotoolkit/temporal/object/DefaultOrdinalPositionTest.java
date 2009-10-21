@@ -37,6 +37,7 @@ import org.opengis.temporal.TemporalReferenceSystem;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultOrdinalPositionTest {
 

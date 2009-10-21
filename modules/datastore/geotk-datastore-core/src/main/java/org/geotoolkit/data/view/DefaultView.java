@@ -71,6 +71,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Gabriel Roldï¿½n
  * @source $URL$
+ * @module pending
  */
 public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeature> {
 

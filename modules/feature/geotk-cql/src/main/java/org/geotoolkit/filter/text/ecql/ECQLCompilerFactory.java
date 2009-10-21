@@ -25,6 +25,7 @@ import org.opengis.filter.FilterFactory;
  * Provides the implementation of {@link ECQLCompiler}
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class ECQLCompilerFactory extends AbstractCompilerFactory {

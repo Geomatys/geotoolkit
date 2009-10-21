@@ -54,6 +54,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * completes.
  * 
  * @author Jesse Eichar
+ * @module pending
  */
 public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleFeature> {
 

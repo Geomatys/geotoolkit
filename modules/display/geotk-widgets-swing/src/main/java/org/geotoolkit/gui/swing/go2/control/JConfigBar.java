@@ -33,6 +33,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * JMap2DControlBar is a JPanel to handle Navigation decoration
  *
  * @author johann sorel
+ * @module pending
  */
 public class JConfigBar extends JToolBar {
 

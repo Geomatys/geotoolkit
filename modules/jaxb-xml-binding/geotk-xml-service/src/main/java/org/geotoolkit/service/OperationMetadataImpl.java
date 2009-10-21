@@ -39,6 +39,7 @@ import org.opengis.service.Parameter;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(propOrder = {
     "operationName",

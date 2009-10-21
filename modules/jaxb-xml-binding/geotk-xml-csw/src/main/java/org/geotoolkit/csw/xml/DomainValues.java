@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface DomainValues {
 

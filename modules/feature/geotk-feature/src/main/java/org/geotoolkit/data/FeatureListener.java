@@ -25,6 +25,7 @@ package org.geotoolkit.data;
  * </p>
  *
  * @author Jody Garnett, Refractions Research, Inc.
+ * @module pending
  * @since GeoTools 2.0
  * @source $URL$
  */

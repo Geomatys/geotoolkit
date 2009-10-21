@@ -25,6 +25,7 @@ import org.opengis.filter.sort.SortOrder;
  * Immutable "sort by".
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSortBy implements SortBy{
 

@@ -64,6 +64,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @author Martin Desruisseaux
  *
  * @see Geometry#compress
+ * @module pending
  */
 public final class CompressionLevel extends EnumeratedParameter {
     /**

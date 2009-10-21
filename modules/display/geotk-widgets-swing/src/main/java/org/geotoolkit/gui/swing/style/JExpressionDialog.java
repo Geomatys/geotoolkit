@@ -49,6 +49,7 @@ import org.opengis.filter.expression.Expression;
  * Expression dialog
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JExpressionDialog extends javax.swing.JDialog {
 

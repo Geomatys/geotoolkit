@@ -48,6 +48,7 @@ import java.util.List;
  * </pre>
  * 
  * @author Guilhem Legal 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RangeSetType")

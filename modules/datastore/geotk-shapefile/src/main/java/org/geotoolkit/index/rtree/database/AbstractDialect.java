@@ -27,6 +27,7 @@ import java.sql.SQLException;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/database/AbstractDialect.java $
+ * @module pending
  */
 public abstract class AbstractDialect implements Dialect {
     protected static final String CAT_TABLE = "rtrees_cat";

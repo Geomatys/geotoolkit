@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "contains" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultContains extends AbstractBinarySpatialOperator<Expression,Expression> implements Contains {
 

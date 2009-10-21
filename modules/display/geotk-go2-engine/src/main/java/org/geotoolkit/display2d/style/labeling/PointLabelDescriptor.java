@@ -21,6 +21,7 @@ package org.geotoolkit.display2d.style.labeling;
  * Point Label descriptor.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface PointLabelDescriptor extends LabelDescriptor {
         

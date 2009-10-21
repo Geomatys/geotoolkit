@@ -25,6 +25,7 @@ import java.awt.geom.PathIterator;
  * Simple abstract path iterator for JTS Geometry.
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  * @since 2.9
  */
 public abstract class JTSGeometryIterator<T extends Geometry> implements PathIterator {

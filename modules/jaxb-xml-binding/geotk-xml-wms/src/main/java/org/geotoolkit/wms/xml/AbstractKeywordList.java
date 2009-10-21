@@ -21,6 +21,7 @@ import java.util.List;
 /**
  *
  * @author Mehdi Sidhoum
+ * @module pending
  */
 public interface AbstractKeywordList {
     

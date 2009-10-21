@@ -38,6 +38,7 @@ import org.opengis.util.InternationalString;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class A3DController implements Updater,CanvasController3D {
 

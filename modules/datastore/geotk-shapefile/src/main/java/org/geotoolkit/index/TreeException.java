@@ -24,6 +24,7 @@ import java.io.IOException;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/TreeException.java $
+ * @module pending
  */
 public class TreeException extends IOException {
 

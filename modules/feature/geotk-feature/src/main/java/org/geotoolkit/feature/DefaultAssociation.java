@@ -27,6 +27,7 @@ import org.opengis.feature.type.AttributeType;
  * Default implementation of an association.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultAssociation extends DefaultProperty<Attribute,AssociationDescriptor> implements Association {
 

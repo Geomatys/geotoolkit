@@ -24,6 +24,7 @@ import org.opengis.feature.type.Name;
  * MapLayer handeling coverages.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface CoverageMapLayer extends MapLayer{
 

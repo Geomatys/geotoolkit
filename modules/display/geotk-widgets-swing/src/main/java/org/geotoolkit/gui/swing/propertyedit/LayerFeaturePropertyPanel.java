@@ -71,6 +71,7 @@ import org.opengis.filter.identity.Identifier;
  * layer feature panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements PropertyPane {
 

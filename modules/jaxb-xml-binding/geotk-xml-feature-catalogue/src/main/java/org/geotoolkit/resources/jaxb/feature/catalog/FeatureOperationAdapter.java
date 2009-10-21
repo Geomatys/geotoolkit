@@ -25,6 +25,7 @@ import org.opengis.feature.catalog.FeatureOperation;
  * JAXB adapter in order to map implementing class with the GeoAPI FeatureOperation. See
  * package documentation for more information about JAXB and FeatureOperation.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/FeatureOperationAdapter.java $
  * @author Guilhem Legal

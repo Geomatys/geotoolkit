@@ -30,6 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * {@link org.geotoolkit.display2d.canvas.J2DCanvas}.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractGraphicJ2D extends AbstractReferencedGraphic2D implements GraphicJ2D {
 

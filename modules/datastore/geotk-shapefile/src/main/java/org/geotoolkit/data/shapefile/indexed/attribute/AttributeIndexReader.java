@@ -28,6 +28,7 @@ import org.geotoolkit.data.shapefile.StreamLogging;
  * Class to read an attribute index file
  * 
  * @author Manuele Ventoruzzo
+ * @module pending
  */
 public class AttributeIndexReader {
 

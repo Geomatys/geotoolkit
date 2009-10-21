@@ -50,6 +50,7 @@ import org.opengis.style.Mark;
  * mark table
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
 

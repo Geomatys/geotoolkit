@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.Point;
  * Builds a {@link MultiPoint} using the points made in previous steps of parsing processS
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class MultiPointBuilder extends GeometryBuilder {

@@ -31,6 +31,7 @@ import org.opengis.style.ColorMap;
  * ColorMap panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class JColorMapPane extends StyleElementEditor<ColorMap>{
 

@@ -45,6 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * </p>
  * @author Justin Deoliveira, The Open Planning Project
  *
+ * @module pending
  */
 public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 

@@ -44,6 +44,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
  * random access may be very costly for some {@code PointArray} implementations, especially
  * the ones that compress their data.
  *
+ * @module pending
  * @since 2.2
  * @source $URL$
  * @version $Id$

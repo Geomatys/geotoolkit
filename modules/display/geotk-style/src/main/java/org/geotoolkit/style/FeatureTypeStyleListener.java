@@ -26,6 +26,7 @@ import org.opengis.style.SemanticType;
  * Listener for FeatureTypeStyle.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface FeatureTypeStyleListener extends EventListener{
 

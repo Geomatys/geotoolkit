@@ -28,6 +28,7 @@ import java.io.InputStreamReader;
  * affine transform.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class WorldFileReader {
 

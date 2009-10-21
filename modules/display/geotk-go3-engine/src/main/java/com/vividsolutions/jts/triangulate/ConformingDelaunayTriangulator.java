@@ -84,6 +84,7 @@ import com.vividsolutions.jts.triangulate.quadedge.Vertex;
  * 
  * @author David Skea
  * @author Martin Davis
+ * @module pending
  */
 public class ConformingDelaunayTriangulator 
 {

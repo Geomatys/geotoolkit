@@ -122,6 +122,7 @@ import org.opengis.style.TextSymbolizer;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GTtoSE100Transformer implements StyleVisitor{
 

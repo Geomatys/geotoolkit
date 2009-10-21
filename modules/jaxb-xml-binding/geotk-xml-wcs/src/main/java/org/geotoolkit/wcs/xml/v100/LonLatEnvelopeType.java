@@ -46,6 +46,7 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LonLatEnvelopeType", propOrder = {

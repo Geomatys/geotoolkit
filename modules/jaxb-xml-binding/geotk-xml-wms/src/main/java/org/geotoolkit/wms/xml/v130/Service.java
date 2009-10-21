@@ -59,6 +59,7 @@ import org.geotoolkit.wms.xml.AbstractService;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

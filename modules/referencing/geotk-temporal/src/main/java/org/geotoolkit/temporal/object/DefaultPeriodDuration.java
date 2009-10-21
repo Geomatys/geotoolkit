@@ -27,6 +27,7 @@ import org.opengis.util.InternationalString;
  * about the duration of a period.
  * 
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultPeriodDuration extends DefaultDuration implements PeriodDuration {
 

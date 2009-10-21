@@ -26,6 +26,7 @@ import java.awt.geom.AffineTransform;
  * Simple and efficient path iterator for JTS LineString.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  * @since 2.9
  */
 public final class JTSLineIterator extends JTSGeometryIterator<LineString> {

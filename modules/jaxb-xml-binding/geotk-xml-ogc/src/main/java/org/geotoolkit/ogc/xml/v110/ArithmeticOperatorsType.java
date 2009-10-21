@@ -43,6 +43,7 @@ import org.opengis.filter.capability.Functions;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ArithmeticOperatorsType", propOrder = {

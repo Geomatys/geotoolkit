@@ -29,6 +29,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * Dummy implementation of {@link GeometryType}.
+ * @module pending
  */
 public final class DummyGeometryType implements GeometryType {
     private final CoordinateReferenceSystem crs;

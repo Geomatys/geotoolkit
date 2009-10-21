@@ -70,6 +70,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * This is a Stateless graphic object.
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 

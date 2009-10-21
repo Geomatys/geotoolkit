@@ -48,6 +48,7 @@ import org.geotoolkit.gml.xml.v311.TimePositionType;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TimePeriodType", propOrder = {

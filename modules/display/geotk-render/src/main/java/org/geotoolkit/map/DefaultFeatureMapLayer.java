@@ -38,6 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Default implementation of the MapLayer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
 

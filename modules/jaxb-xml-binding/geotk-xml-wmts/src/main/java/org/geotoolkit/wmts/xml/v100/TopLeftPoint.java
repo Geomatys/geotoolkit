@@ -30,6 +30,7 @@ import org.geotoolkit.util.Utilities;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {

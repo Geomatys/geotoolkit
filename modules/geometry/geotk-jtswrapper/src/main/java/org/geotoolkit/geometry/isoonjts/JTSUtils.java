@@ -51,6 +51,7 @@ import org.opengis.geometry.primitive.CurveSegment;
 /**
  * Class with static methods to help the conversion process between JTS
  * geometries and ISO geometries.
+ * @module pending
  */
 public final class JTSUtils {
 

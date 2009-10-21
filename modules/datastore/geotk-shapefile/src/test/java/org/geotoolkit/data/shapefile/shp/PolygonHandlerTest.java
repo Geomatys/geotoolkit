@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/shp/PolygonHandlerTest.java $
  * @version $Id$
  * @author Ian Schneider
+ * @module pending
  */
 public class PolygonHandlerTest extends AbstractTestCaseSupport {
 

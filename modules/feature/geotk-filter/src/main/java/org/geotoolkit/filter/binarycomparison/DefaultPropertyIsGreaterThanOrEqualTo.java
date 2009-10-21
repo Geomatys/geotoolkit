@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Expression;
  * Immutable "is greater than or equal" fitler.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyIsGreaterThanOrEqualTo extends AbstractBinaryComparisonOperator<Expression,Expression> implements PropertyIsGreaterThanOrEqualTo{
 

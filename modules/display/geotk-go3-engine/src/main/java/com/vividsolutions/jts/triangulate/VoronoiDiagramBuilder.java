@@ -46,6 +46,7 @@ import com.vividsolutions.jts.triangulate.quadedge.*;
  * 
  * @author Martin Davis
  *
+ * @module pending
  */
 public class VoronoiDiagramBuilder 
 {

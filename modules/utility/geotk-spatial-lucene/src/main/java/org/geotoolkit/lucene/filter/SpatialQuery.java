@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author guilhem
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SpatialQuery {
     

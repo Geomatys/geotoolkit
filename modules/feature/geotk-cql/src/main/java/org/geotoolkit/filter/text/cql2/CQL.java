@@ -78,6 +78,7 @@ import org.opengis.filter.expression.Expression;
  * </code>
  * </pre>
  *
+ * @module pending
  * @since 2.5
  * @author Mauricio Pazos (Axios Engineering)
  * @author Gabriel Roldan (Axios Engineering)

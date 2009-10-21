@@ -64,6 +64,7 @@ import org.opengis.geometry.Envelope;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> {
 

@@ -15,6 +15,7 @@ import org.opengis.geometry.aggregate.MultiPoint;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JTSMultiPoint extends AbstractJTSAggregate<Point>	implements MultiPoint {
 

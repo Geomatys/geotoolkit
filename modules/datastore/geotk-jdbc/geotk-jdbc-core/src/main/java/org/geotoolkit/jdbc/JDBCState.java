@@ -30,6 +30,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Jody Garnett, Refractions Research Inc.
  * @author Justin Deoliveira, The Open Planning Project
+ * @module pending
  */
 public final class JDBCState extends ContentState {
     /**

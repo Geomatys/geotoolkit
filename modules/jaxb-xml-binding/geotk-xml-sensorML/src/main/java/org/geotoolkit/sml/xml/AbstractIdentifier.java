@@ -19,6 +19,7 @@ package org.geotoolkit.sml.xml;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public interface AbstractIdentifier {
 

@@ -22,6 +22,7 @@ package org.geotoolkit.feature;
  * @author Andrea Aime
  *
  * @version $Id$
+ * @module pending
  */
 public class LenientFeatureFactory extends AbstractFeatureFactory {
 

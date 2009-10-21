@@ -54,6 +54,7 @@ import org.geotoolkit.gml.xml.v311.ObjectFactory;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SpatialDomainType", propOrder = {

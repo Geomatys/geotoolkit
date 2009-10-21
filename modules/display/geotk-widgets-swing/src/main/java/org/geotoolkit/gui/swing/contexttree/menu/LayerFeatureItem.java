@@ -37,6 +37,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * Default popup control for property page of MapLayer, use for JContextTreePopup
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class LayerFeatureItem extends AbstractTreePopupItem{
     

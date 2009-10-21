@@ -38,6 +38,7 @@ import org.opengis.service.ServiceSpecification;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(name = "SV_ServiceSpecification_Type", propOrder = {
     "name",

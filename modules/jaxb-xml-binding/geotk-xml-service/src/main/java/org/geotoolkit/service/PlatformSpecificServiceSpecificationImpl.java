@@ -33,6 +33,7 @@ import org.opengis.service.Service;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(name = "SV_PlatformSpecificServiceSpecification_Type", propOrder = {
     "DCP",

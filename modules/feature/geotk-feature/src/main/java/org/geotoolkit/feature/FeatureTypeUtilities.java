@@ -84,6 +84,7 @@ import org.opengis.referencing.ReferenceIdentifier;
  * </ul>
  *
  * @author Jody Garnett, Refractions Research
+ * @module pending
  * @since 2.1.M3
  * @source $URL$
  */

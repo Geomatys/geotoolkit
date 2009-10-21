@@ -25,6 +25,7 @@ import org.opengis.feature.catalog.DefinitionReference;
  * JAXB adapter in order to map implementing class with the GeoAPI DefinitionReference. See
  * package documentation for more information about JAXB and DefinitionReference.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/DefinitionReferenceAdapter.java $
  * @author Guilhem Legal

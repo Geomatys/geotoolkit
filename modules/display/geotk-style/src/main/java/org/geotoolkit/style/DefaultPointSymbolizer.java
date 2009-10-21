@@ -32,6 +32,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * Immutable implementation of GeoAPI point symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointSymbolizer{
 

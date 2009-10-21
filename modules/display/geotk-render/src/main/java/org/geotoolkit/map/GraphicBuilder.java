@@ -28,6 +28,7 @@ import org.opengis.display.primitive.Graphic;
  * and another one for 3D rendering.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface GraphicBuilder<T extends Graphic> {
 

@@ -34,6 +34,7 @@ import java.util.NoSuchElementException;
  * <p align="center">The <code>Arrow2D</code> shape</p>
  * <p>&nbsp;</p>
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

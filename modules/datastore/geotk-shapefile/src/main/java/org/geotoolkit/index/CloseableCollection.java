@@ -24,6 +24,7 @@ import java.util.Iterator;
  * Tag interface for collection that must be closed 
  * 
  * @author jesse
+ * @module pending
  */
 public interface CloseableCollection<T> extends Collection<T>{
 

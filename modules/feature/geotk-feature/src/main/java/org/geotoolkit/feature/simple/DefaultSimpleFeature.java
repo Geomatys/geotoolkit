@@ -49,6 +49,7 @@ import org.opengis.geometry.BoundingBox;
  *
  * @author Justin
  * @author Andrea Aime
+ * @module pending
  */
 public class DefaultSimpleFeature implements SimpleFeature {
 

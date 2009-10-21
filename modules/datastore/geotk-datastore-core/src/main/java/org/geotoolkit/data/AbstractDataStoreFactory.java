@@ -45,6 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  *
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory<SimpleFeatureType,SimpleFeature> {
 

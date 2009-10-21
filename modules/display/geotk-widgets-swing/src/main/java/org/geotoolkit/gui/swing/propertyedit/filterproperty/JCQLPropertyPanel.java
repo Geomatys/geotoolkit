@@ -26,6 +26,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * CQL property panel
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
 

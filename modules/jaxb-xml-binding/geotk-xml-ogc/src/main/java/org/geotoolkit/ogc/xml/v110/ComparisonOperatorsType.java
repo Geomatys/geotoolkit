@@ -46,6 +46,7 @@ import org.opengis.filter.capability.Operator;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ComparisonOperatorsType", propOrder = {

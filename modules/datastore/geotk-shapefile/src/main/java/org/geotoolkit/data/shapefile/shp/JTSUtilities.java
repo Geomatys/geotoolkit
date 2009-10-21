@@ -34,6 +34,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * 
  * @author aaime
  * @author Ian Schneider
+ * @module pending
  */
 public final class JTSUtilities {
 

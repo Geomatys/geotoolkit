@@ -22,6 +22,7 @@ import java.awt.image.RenderedImage;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface WebLayeredCanvasMonitor {
         

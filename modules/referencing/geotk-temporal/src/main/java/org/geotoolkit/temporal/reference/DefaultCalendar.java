@@ -40,6 +40,7 @@ import org.opengis.temporal.TemporalCoordinateSystem;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 public class DefaultCalendar extends DefaultTemporalReferenceSystem implements Calendar {
 

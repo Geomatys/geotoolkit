@@ -29,6 +29,7 @@ import org.geotoolkit.util.NumberRange;
  * by Style implementations : Rule, FeatureTypeStyle and Style.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CollectionChangeEvent<T> extends EventObject{
 

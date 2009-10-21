@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Literal;
  * Immutable generic Literal.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLiteral<T> extends AbstractExpression implements Literal{
 

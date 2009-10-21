@@ -35,6 +35,7 @@ import org.opengis.style.ExternalGraphic;
  * External graphic panel
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
 

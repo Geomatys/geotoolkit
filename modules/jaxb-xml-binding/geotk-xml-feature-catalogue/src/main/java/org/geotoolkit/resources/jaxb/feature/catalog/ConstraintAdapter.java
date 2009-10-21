@@ -25,6 +25,7 @@ import org.opengis.feature.catalog.Constraint;
  * JAXB adapter in order to map implementing class with the GeoAPI Constraint. See
  * package documentation for more infoFeatureTypermation about JAXB and Constraint.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/ConstraintAdapter.java $
  * @author Guilhem Legal

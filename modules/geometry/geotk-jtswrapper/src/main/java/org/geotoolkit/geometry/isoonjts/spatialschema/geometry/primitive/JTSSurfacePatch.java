@@ -29,6 +29,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.Abstract
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
+ * @module pending
  */
 public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implements SurfacePatch, JTSGeometry {
     private Surface surface;

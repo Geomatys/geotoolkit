@@ -45,6 +45,7 @@ import com.vividsolutions.jts.io.WKTReader;
  * 
  * @author mbdavis
  * 
+ * @module pending
  */
 public class QuadEdgeUtil 
 {

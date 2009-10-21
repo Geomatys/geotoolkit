@@ -54,6 +54,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * Builds the filters required by the {@link ECQLCompiler}.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class ECQLFilterBuilder extends AbstractFilterBuilder {

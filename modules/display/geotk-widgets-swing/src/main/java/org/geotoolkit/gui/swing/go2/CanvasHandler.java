@@ -24,6 +24,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface CanvasHandler {
     

@@ -19,6 +19,7 @@ package org.geotoolkit.swe.xml;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 public interface Coordinate {
 

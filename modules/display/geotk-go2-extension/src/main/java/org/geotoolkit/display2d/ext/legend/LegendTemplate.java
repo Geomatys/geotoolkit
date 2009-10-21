@@ -26,6 +26,7 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
  * Template holding informations about the design of the legend to paint.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface LegendTemplate {
 

@@ -27,6 +27,7 @@ import org.geotoolkit.index.rtree.PageStore;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/index/rtree/memory/MemoryPageStoreTest.java $
+ * @module pending
  */
 public class MemoryPageStoreTest extends TestCase {
     /**

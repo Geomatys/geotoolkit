@@ -26,6 +26,7 @@ import org.opengis.filter.expression.Literal;
  * Factory registering the commun mathematical functions.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class MathFunctionFactory implements FunctionFactory{
 

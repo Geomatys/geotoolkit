@@ -29,6 +29,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
  * be called at the last moment in the portrayal service.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface PortrayalExtension {
 

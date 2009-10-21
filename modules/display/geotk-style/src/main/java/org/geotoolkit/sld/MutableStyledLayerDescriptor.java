@@ -25,6 +25,7 @@ import org.opengis.util.Cloneable;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface MutableStyledLayerDescriptor extends StyledLayerDescriptor, Cloneable{
     

@@ -28,6 +28,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest{
 

@@ -36,6 +36,7 @@ import org.opengis.filter.identity.FeatureId;
  * GraphicJ2D for feature objects.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 

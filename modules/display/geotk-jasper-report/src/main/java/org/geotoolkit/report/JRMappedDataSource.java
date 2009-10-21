@@ -35,6 +35,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
  * Implementation of a JRDataSource backed by a Map of JRMappers and an Iterator.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JRMappedDataSource<C> implements JRDataSource{
 

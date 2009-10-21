@@ -48,6 +48,7 @@ import org.opengis.filter.Filter;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JRulePane extends StyleElementEditor<MutableRule> {
 

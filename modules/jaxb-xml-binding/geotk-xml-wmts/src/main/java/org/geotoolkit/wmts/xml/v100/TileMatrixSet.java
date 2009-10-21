@@ -53,6 +53,7 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TileMatrixSetType", propOrder = {

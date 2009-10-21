@@ -44,6 +44,7 @@ import org.opengis.filter.identity.FeatureId;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeatureIdType")

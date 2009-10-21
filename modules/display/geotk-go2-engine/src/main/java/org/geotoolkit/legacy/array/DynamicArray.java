@@ -25,6 +25,7 @@ import org.geotoolkit.legacy.geom.CompressionLevel;
  *
  * @version $Id: DynamicArray.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
+ * @module pending
  */
 public final class DynamicArray extends SubArray {
     /**

@@ -30,6 +30,7 @@ import org.geotoolkit.resources.Errors;
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  *
+ * @module pending
  * @since 2.2
  */
 public class AmbiguousMetadataException extends MetadataException {

@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * A node of a {@link KdTree}, which represents one or more points in the same location.
  * 
  * @author dskea
+ * @module pending
  */
 public class KdNode {
 

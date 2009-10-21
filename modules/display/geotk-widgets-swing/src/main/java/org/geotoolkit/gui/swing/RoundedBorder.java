@@ -25,6 +25,7 @@ import javax.swing.border.AbstractBorder;
 /**
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class RoundedBorder extends AbstractBorder {
 

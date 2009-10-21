@@ -31,6 +31,7 @@ import org.junit.Test;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public class CityGMLXMLBindingTest {
 

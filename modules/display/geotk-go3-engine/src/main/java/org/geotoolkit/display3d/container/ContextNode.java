@@ -45,6 +45,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class ContextNode extends A3DGraphic{
 

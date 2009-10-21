@@ -24,6 +24,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of GeoAPI ColorReplacement.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultColorReplacement implements ColorReplacement{
 

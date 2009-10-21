@@ -31,6 +31,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
  * @version $Id$
  * @task REVISIT: Combine this with a factory to also make Query objects?
  * @author Chris Holmes, TOPP
+ * @module pending
  */
 public abstract class FeatureLockFactory extends Factory {
 

@@ -22,6 +22,7 @@ package org.geotoolkit.index;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/LockTimeoutException.java $
+ * @module pending
  */
 public class LockTimeoutException extends Exception {
     /**

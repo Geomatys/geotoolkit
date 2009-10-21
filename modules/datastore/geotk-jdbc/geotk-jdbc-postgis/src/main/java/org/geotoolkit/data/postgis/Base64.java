@@ -75,6 +75,7 @@ import java.io.UnsupportedEncodingException;
  * @author Robert Harder
  * @author rob@iharder.net
  * @version 2.1
+ * @module pending
  */
 public class Base64 {
 

@@ -38,6 +38,7 @@ package com.vividsolutions.jts.triangulate.quadedge;
  * {@link QuadEdgeSubdivision}
  * 
  * @author Martin Davis
+ * @module pending
  */
 public interface TraversalVisitor {
     /**

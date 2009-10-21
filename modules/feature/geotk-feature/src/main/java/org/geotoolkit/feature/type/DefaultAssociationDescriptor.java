@@ -24,6 +24,7 @@ import org.opengis.feature.type.Name;
  * Default implementation of a asociation descriptor
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor<AssociationType>
         implements AssociationDescriptor {

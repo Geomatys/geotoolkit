@@ -42,6 +42,7 @@ import org.opengis.feature.type.Name;
  * namespace and name.
  * </p>
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
+ * @module pending
  */
 public class DefaultName implements Name {
     /**

@@ -57,6 +57,7 @@ import org.geotoolkit.util.logging.Logging;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestStatusType")

@@ -30,6 +30,7 @@ import org.opengis.util.InternationalString;
  * Default implementation of a association type
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultAssociationType extends DefaultPropertyType<AssociationType> implements AssociationType {
 

@@ -30,6 +30,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class JOffSetPane extends StyleElementEditor<Expression> {
 

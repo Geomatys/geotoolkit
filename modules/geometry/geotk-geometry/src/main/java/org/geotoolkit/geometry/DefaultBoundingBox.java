@@ -27,6 +27,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,Envelope{
 

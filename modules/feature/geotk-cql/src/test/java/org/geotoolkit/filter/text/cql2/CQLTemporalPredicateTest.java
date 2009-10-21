@@ -36,6 +36,7 @@ import org.opengis.filter.expression.Literal;
  * Test for Temporal Predicate
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.5
  */
 public class CQLTemporalPredicateTest {

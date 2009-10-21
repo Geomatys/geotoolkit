@@ -47,6 +47,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
  *
  * @see DefaultArray
  * @see JTSArray
+ * @module pending
  */
 public class GenericArray extends PointArray implements RandomAccess {
     /**

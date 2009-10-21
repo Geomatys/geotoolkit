@@ -22,6 +22,7 @@ import java.lang.ref.ReferenceQueue;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ActiveReferenceQueue extends ReferenceQueue implements Runnable{
     private static ActiveReferenceQueue singleton = null;

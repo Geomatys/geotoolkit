@@ -33,6 +33,7 @@ import org.opengis.sld.StyledLayerDescriptor;
  * Utility class to read and write XML OGC SLD files.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JAXBSLDUtilities {
 

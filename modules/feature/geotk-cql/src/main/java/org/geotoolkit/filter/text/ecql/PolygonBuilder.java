@@ -32,6 +32,7 @@ import com.vividsolutions.jts.geom.LinearRing;
  * Builds a Polygon using the lines (shell and Holes) made in the parsing process.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 class PolygonBuilder extends GeometryBuilder {

@@ -37,6 +37,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JMap2D extends AbstractMap2D{
 

@@ -79,6 +79,7 @@ import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
  * or zoom factor. Subclasses like {@link ReferencedCanvas2D} will restrict that to an envelope
  * that encloses only the visible part of this canvas.
  *
+ * @module pending
  * @since 2.3
  * @source $URL$
  * @version $Id$

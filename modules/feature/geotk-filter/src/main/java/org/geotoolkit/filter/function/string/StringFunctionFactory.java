@@ -27,6 +27,7 @@ import org.opengis.filter.expression.Literal;
  * 
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public class StringFunctionFactory implements FunctionFactory{
 

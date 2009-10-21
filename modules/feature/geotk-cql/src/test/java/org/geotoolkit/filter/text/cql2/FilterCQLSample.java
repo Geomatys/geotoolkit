@@ -49,6 +49,7 @@ import org.opengis.filter.expression.PropertyName;
  *
  * @author Mauricio Pazos - Axios Engineering
  * @author Gabriel Roldan - Axios Engineering
+ * @module pending
  * @since 2.5
  *
  */

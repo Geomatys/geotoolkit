@@ -21,6 +21,7 @@ package org.geotoolkit.process;
  * Monitor informed of the process progression.
  *
  * @author johann Sorel (Geomatys)
+ * @module pending
  */
 public interface ProcessMonitor {
 

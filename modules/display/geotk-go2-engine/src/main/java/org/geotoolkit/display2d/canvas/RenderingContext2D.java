@@ -36,6 +36,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Rendering Context for Java2D.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface RenderingContext2D extends RenderingContext{
 

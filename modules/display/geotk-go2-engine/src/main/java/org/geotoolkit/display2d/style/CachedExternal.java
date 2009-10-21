@@ -35,6 +35,7 @@ import org.opengis.style.ExternalGraphic;
  * Cached External graphic
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedExternal extends Cache<ExternalGraphic>{
 

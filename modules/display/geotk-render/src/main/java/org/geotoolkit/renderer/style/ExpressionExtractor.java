@@ -53,6 +53,7 @@ import org.opengis.filter.expression.Expression;
  * 
  * @author Andrea Aime - TOPP
  * 
+ * @module pending
  */
 public class ExpressionExtractor {
     static final FilterFactory FF = FactoryFinder.getFilterFactory(null);

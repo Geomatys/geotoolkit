@@ -22,6 +22,7 @@ import org.geotoolkit.util.Utilities;
 /**
  *
  * @author legal
+ * @module pending
  */
 public class OfferingProcedureEntry {
 

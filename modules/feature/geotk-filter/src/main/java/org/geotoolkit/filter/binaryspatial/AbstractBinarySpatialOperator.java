@@ -39,6 +39,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @param <E> Expression or subclass
  * @param <F> Expression or subclass
+ * @module pending
  */
 public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> implements BinarySpatialOperator {
 

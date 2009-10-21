@@ -30,6 +30,7 @@ import org.geotoolkit.gui.swing.go2.control.information.MesureLenghtAction;
  * Information bar
  *
  * @author johann sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JInformationBar extends JToolBar implements MapControlBar{
 

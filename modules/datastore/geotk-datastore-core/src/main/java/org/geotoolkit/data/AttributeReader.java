@@ -31,6 +31,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @version $Id$
  *
  * @see AttributeAcceptor
+ * @module pending
  */
 public interface AttributeReader {
 

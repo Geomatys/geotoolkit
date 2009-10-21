@@ -24,6 +24,7 @@ import java.sql.SQLException;
  *
  * @author Justin Deoliveira, The Open Planning Project
  *
+ * @module pending
  */
 public abstract class JDBCDataStoreAPITestSetup extends JDBCDelegatingTestSetup {
    

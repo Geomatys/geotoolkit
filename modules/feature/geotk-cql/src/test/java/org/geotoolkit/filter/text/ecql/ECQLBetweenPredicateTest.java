@@ -31,6 +31,7 @@ import org.opengis.filter.Filter;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class ECQLBetweenPredicateTest extends CQLBetweenPredicateTest{

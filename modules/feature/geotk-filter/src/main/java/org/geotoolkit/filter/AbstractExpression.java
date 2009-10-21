@@ -27,6 +27,7 @@ import org.opengis.filter.expression.Expression;
  * Override evaluate(Object,Class) by using the converters system.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 @XmlTransient
 public abstract class AbstractExpression implements Expression {

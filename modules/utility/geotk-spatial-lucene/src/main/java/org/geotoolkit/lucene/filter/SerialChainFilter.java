@@ -38,6 +38,7 @@ import org.apache.lucene.search.Filter;
  * 
  * @author Patrick O'Leary
  * @author Guilhem Legal
+ * @module pending
  */
 public class SerialChainFilter extends Filter {
 

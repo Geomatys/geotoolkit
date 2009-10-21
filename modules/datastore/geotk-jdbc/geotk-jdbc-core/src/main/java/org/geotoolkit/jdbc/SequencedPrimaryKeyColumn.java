@@ -26,6 +26,7 @@ package org.geotoolkit.jdbc;
  * </p>
  * @author Justin Deoliveira, OpenGEO
  *
+ * @module pending
  */
 public class SequencedPrimaryKeyColumn extends PrimaryKeyColumn {
 

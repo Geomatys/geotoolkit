@@ -40,6 +40,7 @@ import org.opengis.temporal.TemporalObject;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTimeObjectType")

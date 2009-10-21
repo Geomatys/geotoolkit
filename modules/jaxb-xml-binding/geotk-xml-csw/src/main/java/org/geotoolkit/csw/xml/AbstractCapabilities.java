@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml;
 /**
  *
  * @author Guilhem legal (Geomatys)
+ * @module pending
  */
 public interface AbstractCapabilities {
 

@@ -47,6 +47,7 @@ import org.opengis.feature.catalog.InheritanceRelation;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

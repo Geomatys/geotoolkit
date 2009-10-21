@@ -21,6 +21,7 @@ import static org.opengis.annotation.Specification.*;
  *
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_DefinitionSource", specification=ISO_19110)
 public interface DefinitionSource {

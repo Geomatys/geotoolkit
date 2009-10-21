@@ -50,6 +50,7 @@ import org.opengis.util.GenericName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(propOrder = {
     "serviceType",

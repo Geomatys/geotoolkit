@@ -46,6 +46,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Canvas based on a VolatileImage.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class J2DCanvasVolatile extends J2DCanvas{
 

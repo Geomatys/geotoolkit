@@ -23,6 +23,7 @@ import org.junit.runners.Suite;
 /**
  *
  * @author Mehdi Sidhoum (Geomatys)
+ * @module pending
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({org.geotoolkit.temporal.object.DefaultTemporalCoordinateTest.class, org.geotoolkit.temporal.object.DefaultOrdinalPositionTest.class, org.geotoolkit.temporal.object.DefaultInstantTest.class, org.geotoolkit.temporal.object.DefaultPeriodTest.class, org.geotoolkit.temporal.object.DefaultPeriodDurationTest.class, org.geotoolkit.temporal.object.DefaultTemporalPositionTest.class, org.geotoolkit.temporal.object.DefaultTemporalPrimitiveTest.class, org.geotoolkit.temporal.object.DefaultClockTimeTest.class, org.geotoolkit.temporal.object.DefaultDateAndTimeTest.class, org.geotoolkit.temporal.object.DefaultIntervalLengthTest.class, org.geotoolkit.temporal.object.DefaultCalendarDateTest.class, org.geotoolkit.temporal.object.DefaultTemporalGeometricPrimitiveTest.class, org.geotoolkit.temporal.object.DefaultPositionTest.class})

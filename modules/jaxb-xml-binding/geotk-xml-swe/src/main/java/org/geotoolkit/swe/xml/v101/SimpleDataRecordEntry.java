@@ -32,6 +32,7 @@ import org.geotoolkit.util.Utilities;
  * 
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SimpleDataRecord")

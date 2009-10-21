@@ -26,6 +26,7 @@ import java.awt.Stroke;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class BackgroundUtilities {
 

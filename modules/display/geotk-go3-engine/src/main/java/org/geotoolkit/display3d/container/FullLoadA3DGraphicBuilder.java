@@ -31,6 +31,7 @@ import org.opengis.display.canvas.Canvas;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class FullLoadA3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
 

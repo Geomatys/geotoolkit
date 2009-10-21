@@ -49,6 +49,7 @@ import org.geotoolkit.swe.xml.AbstractEncodingProperty;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BlockEncodingPropertyType", propOrder = {

@@ -46,6 +46,7 @@ import org.opengis.filter.expression.Literal;
  * In reality any expression will do.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class RecodeFunction implements Function {
     

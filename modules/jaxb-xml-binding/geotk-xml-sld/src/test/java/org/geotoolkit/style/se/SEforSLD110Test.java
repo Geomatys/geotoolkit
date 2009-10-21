@@ -62,6 +62,7 @@ import org.opengis.style.TextSymbolizer;
  * Test class for style jaxb marshelling and unmarshelling.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SEforSLD110Test extends TestCase{
 

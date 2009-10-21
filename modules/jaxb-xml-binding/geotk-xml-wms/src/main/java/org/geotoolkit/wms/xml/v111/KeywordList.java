@@ -32,6 +32,7 @@ import org.geotoolkit.wms.xml.AbstractKeywordList;
  * 
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

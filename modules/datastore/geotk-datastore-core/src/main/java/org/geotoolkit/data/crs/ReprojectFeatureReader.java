@@ -72,6 +72,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author $Author: jive $ (last modification)
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {
 

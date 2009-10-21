@@ -42,6 +42,7 @@ import org.opengis.geometry.BoundingBox;
 
 /**
  * A dummy implementation of {@link SimpleFeature}.
+ * @module pending
  */
 public final class DummySimpleFeature implements SimpleFeature {
     private final String id;

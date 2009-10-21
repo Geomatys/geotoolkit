@@ -26,6 +26,7 @@ import org.opengis.feature.type.PropertyType;
 
 /**
  * Dummy implementation of {@link Property}.
+ * @module pending
  */
 public final class DummyProperty implements Property {
     private final Object value;

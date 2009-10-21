@@ -47,6 +47,7 @@ import com.vividsolutions.jts.algorithm.NotRepresentableException;
  * 
  * @author David Skea
  * @author Martin Davis
+ * @module pending
  */
 public class Vertex 
 {

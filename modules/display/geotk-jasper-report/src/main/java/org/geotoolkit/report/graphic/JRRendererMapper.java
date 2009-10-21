@@ -26,6 +26,7 @@ import org.geotoolkit.report.JRMapperFactory;
  * Abstract JRMapper for JRRenderable values and MapContext records.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class JRRendererMapper implements JRMapper<JRRenderable,MapContext> {
 

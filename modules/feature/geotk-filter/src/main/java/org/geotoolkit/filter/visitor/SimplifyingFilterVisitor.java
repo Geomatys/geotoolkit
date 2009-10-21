@@ -50,6 +50,7 @@ import org.opengis.filter.identity.Identifier;
  * 
  * @author Andrea Aime - OpenGeo
  * @author Gabriel Roldan (OpenGeo)
+ * @module pending
  * @since 2.5.x
  * @version $Id$
  * @source $URL$

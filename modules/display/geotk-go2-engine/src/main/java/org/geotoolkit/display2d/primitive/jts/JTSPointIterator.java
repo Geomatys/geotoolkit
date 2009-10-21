@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
  * Simple and efficient path iterator for JTS Point.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  * @since 2.9
  */
 public final class JTSPointIterator extends JTSGeometryIterator<Point> {

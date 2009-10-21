@@ -24,6 +24,7 @@ import org.geotoolkit.util.NumberRange;
  * objects are added or removed.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
     

@@ -20,6 +20,7 @@ package org.geotoolkit.feature;
 /**
  * Indicates client class has attempted to create an invalid schema.
  * @source $URL$
+ * @module pending
  */
 public class SchemaException extends Exception {
     

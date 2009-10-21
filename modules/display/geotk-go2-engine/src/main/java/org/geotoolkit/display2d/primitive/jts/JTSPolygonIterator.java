@@ -27,6 +27,7 @@ import java.awt.geom.AffineTransform;
  * Simple and efficient path iterator for JTS Polygon.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  * @since 2.9
  */
 public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {

@@ -31,6 +31,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * @author Jody Garnett
  * @author Joel Skelton
+ * @module pending
  */
 public class RunStoredTest extends TestCase {
     private static final Logger LOG = Logging.getLogger(RunStoredTest.class);

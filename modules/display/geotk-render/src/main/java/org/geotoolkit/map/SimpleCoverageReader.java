@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.TransformException;
  * Wrapper class around a Gridcoverage2D.
  *
  * @author Johann Sorel (Geomtays)
+ * @module pending
  */
 public class SimpleCoverageReader implements CoverageReader{
 

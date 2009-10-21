@@ -40,6 +40,7 @@ import org.opengis.referencing.operation.TransformException;
  * Renderer for vector field arrows.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolizer,CachedVectorFieldSymbolizer>{
 

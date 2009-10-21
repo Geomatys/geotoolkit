@@ -26,6 +26,7 @@ import org.geotoolkit.display.primitive.SearchArea;
  * Convinient methods to obtain JTS and Java2D equivalent of the ISO search area.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface SearchAreaJ2D extends SearchArea {
 

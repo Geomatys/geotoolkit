@@ -35,6 +35,7 @@ import org.geotoolkit.map.MapContext;
  * Context general panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class ContextGeneralPanel extends javax.swing.JPanel implements PropertyPane{
     

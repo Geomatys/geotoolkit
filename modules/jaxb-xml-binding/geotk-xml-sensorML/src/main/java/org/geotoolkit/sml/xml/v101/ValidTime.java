@@ -46,6 +46,7 @@ import org.geotoolkit.sml.xml.AbstractValidTime;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

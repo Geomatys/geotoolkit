@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
  * Iterator ite = SingletonIterator.wrap(object);
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class SingletonIterator<E> implements Iterator<E> {
 

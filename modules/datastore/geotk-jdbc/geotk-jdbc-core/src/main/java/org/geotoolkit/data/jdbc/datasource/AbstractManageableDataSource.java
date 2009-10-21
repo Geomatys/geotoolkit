@@ -30,6 +30,7 @@ import javax.sql.DataSource;
  *
  * @author Andrea Aime - TOPP
  *
+ * @module pending
  */
 public abstract class AbstractManageableDataSource implements ManageableDataSource {
 

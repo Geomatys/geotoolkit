@@ -48,6 +48,7 @@ import org.geotoolkit.feature.collection.FeatureIterator;
  *
  * @author  en
  * @source $URL$
+ * @module pending
  */
 public class FeatureCollectionTest extends TestCase {
   

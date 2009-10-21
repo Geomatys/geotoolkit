@@ -22,6 +22,7 @@ package org.geotoolkit.index;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/LockManager.java $
+ * @module pending
  */
 public class LockManager {
     private static final int EXCLUSIVE_LOCK_TIMEOUT = 20;

@@ -55,6 +55,7 @@ import org.geotoolkit.se.xml.v110.OnlineResourceType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -29,6 +29,7 @@ import org.opengis.filter.expression.Expression;
  * @see SimpleDateFormat
  * @author Andrea Aime - TOPP
  *
+ * @module pending
  */
 public class DateParseFunction extends AbstractFunction {
 

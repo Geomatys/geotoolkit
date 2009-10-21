@@ -46,6 +46,7 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class AreaDecoration extends AbstractGeometryDecoration {
 

@@ -72,6 +72,7 @@ import org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.TiePoint;
  * @author Simone Giannecchini
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/plugin/geotiff/src/org/geotools/gce/geotiff/GeoTiffException.java $
+ * @module pending
  */
 public final class GeoTiffException extends IOException {
 

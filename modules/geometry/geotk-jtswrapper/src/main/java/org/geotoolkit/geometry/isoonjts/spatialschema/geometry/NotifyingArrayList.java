@@ -23,6 +23,7 @@ import java.util.Collection;
 /**
  * Helper class that notifies the containing geometry when the list has changed
  * so that it can invalidate any cached JTS objects it had.
+ * @module pending
  */
 public class NotifyingArrayList<T> extends ArrayList<T> {
     private static final long serialVersionUID = 4564579379192943141L;

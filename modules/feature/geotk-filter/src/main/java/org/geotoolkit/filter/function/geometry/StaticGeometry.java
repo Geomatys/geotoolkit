@@ -27,6 +27,7 @@ import com.vividsolutions.jts.io.WKTReader;
 
 /**
  * @author David Blasby (The Open Planning Project)
+ * @module pending
  */
 public class StaticGeometry {
 

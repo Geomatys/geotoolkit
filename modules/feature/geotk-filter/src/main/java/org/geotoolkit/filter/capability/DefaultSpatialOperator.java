@@ -27,6 +27,7 @@ import org.opengis.filter.capability.SpatialOperator;
  * Immutable spatial operator.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSpatialOperator extends DefaultOperator implements SpatialOperator{
 

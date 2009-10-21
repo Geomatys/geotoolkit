@@ -25,6 +25,7 @@ import org.opengis.service.Parameter;
  * JAXB adapter in order to map implementing class with the GeoAPI interface. See
  * package documentation for more information about JAXB and interface.
  *
+ * @module pending
  * @since 2.5
  * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/ParameterAdapter.java $
  * @author Guilhem Legal

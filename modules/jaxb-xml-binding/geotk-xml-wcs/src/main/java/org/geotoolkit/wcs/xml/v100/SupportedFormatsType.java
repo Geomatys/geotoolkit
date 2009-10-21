@@ -47,6 +47,7 @@ import org.geotoolkit.gml.xml.v311.CodeListType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SupportedFormatsType", propOrder = {

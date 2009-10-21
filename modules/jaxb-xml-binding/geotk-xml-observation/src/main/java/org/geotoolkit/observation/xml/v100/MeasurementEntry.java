@@ -35,6 +35,7 @@ import org.opengis.observation.Measure;
  * @version $Id: MeasurementEntry.java 1559 2009-04-23 14:42:42Z glegal $
  * @author Antoine Hnawia
  * @author Martin Desruisseaux
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Measurement")

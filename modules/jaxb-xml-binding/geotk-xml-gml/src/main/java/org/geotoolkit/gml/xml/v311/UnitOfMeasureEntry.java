@@ -28,6 +28,7 @@ import org.opengis.observation.BaseUnit;
  *
  * @version $Id:
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BaseUnit")

@@ -21,6 +21,7 @@ package org.geotoolkit.data.shapefile;
  * controlled by {@link ShpFiles}
  * 
  * @author jesse
+ * @module pending
  */
 public interface FileWriter extends FileReader {
     /**

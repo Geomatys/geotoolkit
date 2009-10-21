@@ -32,6 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  * Immutable "within" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expression> implements Within {
 

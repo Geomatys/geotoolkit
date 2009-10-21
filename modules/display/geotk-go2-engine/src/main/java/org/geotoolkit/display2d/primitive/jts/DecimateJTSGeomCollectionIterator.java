@@ -30,6 +30,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * Simple and efficient path iterator for JTS GeometryCollection.
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  * @since 2.9
  */
 public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIterator {

@@ -37,6 +37,7 @@ import org.opengis.filter.spatial.Within;
  * Builds an instance of one {@link BinarySpatialOperator} subclass.
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 class SpatialOperationBuilder {

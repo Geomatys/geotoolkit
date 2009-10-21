@@ -30,6 +30,7 @@ import org.opengis.util.InternationalString;
 
 /**
  * Dummy implementation of {@link GeometryDescriptor}.
+ * @module pending
  */
 public final class DummyGeometryDescriptor implements GeometryDescriptor {
 

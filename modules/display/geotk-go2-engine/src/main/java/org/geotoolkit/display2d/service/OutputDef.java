@@ -22,6 +22,7 @@ package org.geotoolkit.display2d.service;
  * to configure the ImageIO writer, like compression or progressive.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class OutputDef {
 

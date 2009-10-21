@@ -26,6 +26,7 @@ import javax.media.jai.CRIFImpl;
  * The image factory for the {@link ShadedRelief} operation.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ShadedReliefCRIF extends CRIFImpl {
 

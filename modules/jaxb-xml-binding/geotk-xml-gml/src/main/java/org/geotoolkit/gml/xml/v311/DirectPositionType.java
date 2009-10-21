@@ -56,6 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DirectPositionType", propOrder = {

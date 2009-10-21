@@ -40,6 +40,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  * Default edition handler
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class ModificationDelegate extends AbstractMouseDelegate {
 

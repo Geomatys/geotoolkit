@@ -53,6 +53,7 @@ import org.geotoolkit.util.Utilities;
  * determine the relationship between raster and model space
  * 
  * @author Simone Giannecchini, GeoSolutions
+ * @module pending
  * @since 2.3
  * 
  */

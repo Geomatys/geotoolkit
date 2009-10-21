@@ -32,6 +32,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of GeoAPI External graphic.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultExternalGraphic implements ExternalGraphic{
 

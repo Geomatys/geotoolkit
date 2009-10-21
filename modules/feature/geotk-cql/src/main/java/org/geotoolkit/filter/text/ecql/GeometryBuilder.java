@@ -39,6 +39,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 abstract class GeometryBuilder {

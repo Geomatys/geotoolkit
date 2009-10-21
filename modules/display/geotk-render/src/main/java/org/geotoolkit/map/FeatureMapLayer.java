@@ -27,6 +27,7 @@ import org.opengis.filter.Id;
  * MapLayer holding Features.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface FeatureMapLayer extends MapLayer{
 

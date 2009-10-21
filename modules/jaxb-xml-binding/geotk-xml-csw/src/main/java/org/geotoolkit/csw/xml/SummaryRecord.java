@@ -24,6 +24,7 @@ import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 /**
  *
  * @author Mehdi Sidhoum
+ * @module pending
  */
 public interface SummaryRecord extends AbstractRecord {
     /**

@@ -45,6 +45,7 @@ import org.geotoolkit.gml.xml.v311.SolidPropertyType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SamplingSolidType", propOrder = {

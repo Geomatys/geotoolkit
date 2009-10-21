@@ -42,6 +42,7 @@ import org.geotoolkit.util.Utilities;
 /**
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ObservationOfferingType", propOrder = {

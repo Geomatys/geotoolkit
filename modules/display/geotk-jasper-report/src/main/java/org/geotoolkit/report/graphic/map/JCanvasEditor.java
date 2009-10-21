@@ -20,6 +20,7 @@ package org.geotoolkit.report.graphic.map;
  * Canvas mapper edition widget.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JCanvasEditor extends javax.swing.JPanel {
 

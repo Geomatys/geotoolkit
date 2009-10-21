@@ -83,6 +83,7 @@ import org.opengis.style.Symbolizer;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JClassificationSingleStylePanel extends JPanel implements PropertyPane{
 

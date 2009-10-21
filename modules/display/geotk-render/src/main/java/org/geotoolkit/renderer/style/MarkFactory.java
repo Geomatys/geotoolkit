@@ -25,6 +25,7 @@ import org.opengis.filter.expression.Expression;
 
 /**
  * Symbol handler for a Mark.
+ * @module pending
  */
 public interface MarkFactory {
     /**

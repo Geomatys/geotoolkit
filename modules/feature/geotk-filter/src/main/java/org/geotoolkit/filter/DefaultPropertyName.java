@@ -27,6 +27,7 @@ import org.opengis.filter.expression.PropertyName;
  * Immutable property name expression.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultPropertyName extends AbstractExpression implements PropertyName{
 

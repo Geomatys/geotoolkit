@@ -20,6 +20,7 @@ package org.geotoolkit.report.graphic.legend;
  * Legend mapper edition widget.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JLegendEditor extends javax.swing.JPanel {
 

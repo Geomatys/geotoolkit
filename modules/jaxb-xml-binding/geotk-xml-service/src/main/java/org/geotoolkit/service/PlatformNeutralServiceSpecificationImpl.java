@@ -30,6 +30,7 @@ import org.opengis.service.ServiceType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlType(name = "SV_PlatformNeutralServiceSpecification_Type", propOrder = {
     "serviceType",

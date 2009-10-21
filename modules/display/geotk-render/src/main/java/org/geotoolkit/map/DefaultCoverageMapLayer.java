@@ -27,6 +27,7 @@ import org.opengis.geometry.Envelope;
  * Default implementation of the coverage MapLayer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 final class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
 

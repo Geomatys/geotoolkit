@@ -59,6 +59,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 public class SmlXMLBindingTest {
     private MarshallerPool  pool;

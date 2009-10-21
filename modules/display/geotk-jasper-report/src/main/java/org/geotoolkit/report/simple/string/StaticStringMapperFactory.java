@@ -26,6 +26,7 @@ import org.opengis.util.InternationalString;
  * against any kind of records.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class StaticStringMapperFactory implements JRMapperFactory<String,Object>{
 

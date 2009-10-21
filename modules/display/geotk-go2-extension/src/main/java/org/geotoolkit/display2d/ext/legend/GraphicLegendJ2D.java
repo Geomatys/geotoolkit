@@ -41,6 +41,7 @@ import org.opengis.referencing.operation.TransformException;
  * MapContext object.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GraphicLegendJ2D extends PositionedGraphic2D{
 

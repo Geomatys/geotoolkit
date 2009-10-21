@@ -47,6 +47,7 @@ import org.opengis.style.TextSymbolizer;
  * Simple style panel
  * 
  * @author  Johann Sorel
+ * @module pending
  */
 public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
 

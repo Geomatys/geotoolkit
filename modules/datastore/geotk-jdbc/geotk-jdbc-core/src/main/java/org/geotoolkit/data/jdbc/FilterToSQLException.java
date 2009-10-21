@@ -23,6 +23,7 @@ package org.geotoolkit.data.jdbc;
  *
  * @author Chris Holmes, TOPP
  * @source $URL$
+ * @module pending
  */
 public class FilterToSQLException extends Exception {
     private static final long serialVersionUID = -8594167338539818013L;

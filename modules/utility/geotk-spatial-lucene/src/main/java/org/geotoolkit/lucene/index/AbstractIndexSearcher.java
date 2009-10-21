@@ -49,6 +49,7 @@ import org.geotoolkit.lucene.filter.SpatialQuery;
 /**
  *
  * @author Guilhem legal (Geomatys)
+ * @module pending
  */
 public abstract class AbstractIndexSearcher extends IndexLucene {
 

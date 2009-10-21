@@ -25,6 +25,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
  * Immutable default linear label descriptor.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
 

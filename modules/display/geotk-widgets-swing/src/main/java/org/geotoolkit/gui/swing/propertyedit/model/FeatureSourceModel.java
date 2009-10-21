@@ -51,6 +51,7 @@ import org.opengis.filter.FilterFactory;
  * Feature source model
  * 
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class FeatureSourceModel extends DefaultTableModel {
 

@@ -24,6 +24,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * Monitor which tryes to never fail the rendering.
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class NeverFailMonitor extends AbstractCanvasMonitor{
 

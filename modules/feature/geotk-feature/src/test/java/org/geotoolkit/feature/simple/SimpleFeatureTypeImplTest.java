@@ -33,6 +33,7 @@ import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
  * Tests for {@link SimpleFeatureImpl}.
  * 
  * @author Ben Caradoc-Davies, CSIRO Exploration and Mining
+ * @module pending
  */
 public class SimpleFeatureTypeImplTest extends TestCase {
 

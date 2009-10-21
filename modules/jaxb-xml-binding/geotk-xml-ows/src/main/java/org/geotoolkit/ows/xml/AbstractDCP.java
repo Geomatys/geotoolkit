@@ -18,6 +18,7 @@ package org.geotoolkit.ows.xml;
 
 /**
  *
+ * @module pending
  */
 public abstract class AbstractDCP {
     

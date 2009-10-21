@@ -30,6 +30,7 @@ import org.geotoolkit.util.Utilities;
  * since the element name specifies the specific operation. 
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RequestBaseType", namespace="http://www.opengis.net/sos/1.0")

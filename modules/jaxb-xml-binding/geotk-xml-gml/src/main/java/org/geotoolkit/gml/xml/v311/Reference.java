@@ -22,6 +22,7 @@ import java.util.List;
  * gml:ReferenceType is intended to be used in application schemas directly, if a property element shall use a "by-reference only" encoding.
  *
  * @author Guilhem Legal
+ * @module pending
  */
 interface Reference {
     

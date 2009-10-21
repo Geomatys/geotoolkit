@@ -29,6 +29,7 @@ import org.opengis.geometry.primitive.Bearing;
  * @version 2.0
  *
  * @revisit Should we move this interface elsewhere (e.g. in some kind of units package)?
+ * @module pending
  */
 public class JTSBearing implements Bearing {
     

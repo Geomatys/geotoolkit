@@ -33,6 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Jody Garnett (Refractions Reserach Inc)
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ShapefileResourceInfo implements ResourceInfo {
 

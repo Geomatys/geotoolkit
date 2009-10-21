@@ -25,6 +25,7 @@ import org.opengis.filter.Not;
  * Immutable "not" filter.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultNot implements Not{
 

@@ -56,6 +56,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class A3DCanvas extends ReferencedCanvas{
 

@@ -30,6 +30,7 @@ import org.opengis.service.Port;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SV_Port_Type", propOrder = {

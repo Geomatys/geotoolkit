@@ -47,6 +47,7 @@ import org.geotoolkit.wms.xml.AbstractDimension;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

@@ -31,6 +31,7 @@ import org.opengis.filter.spatial.BinarySpatialOperator;
  * Literal parser test
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public class CQLLiteralTest {

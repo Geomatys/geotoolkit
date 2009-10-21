@@ -24,6 +24,7 @@ import static org.opengis.annotation.Obligation.*;
  * Abstract type for Data record type.
  *
  * @author legal
+ * @module pending
  */
 @UML(identifier="AbstractDataRecord", specification=UNSPECIFIED)
 public interface AbstractDataRecord extends AbstractDataComponent {

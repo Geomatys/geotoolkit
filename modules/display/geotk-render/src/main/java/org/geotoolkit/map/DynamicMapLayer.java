@@ -24,6 +24,7 @@ import org.geotoolkit.display.exception.PortrayalException;
  *
  * @author Johann Sorel (Geomatys)
  * @author olivier terral (Geomatys)
+ * @module pending
  */
 public interface DynamicMapLayer extends MapLayer{
 

@@ -46,6 +46,7 @@ import org.opengis.display.canvas.CanvasListener;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JScaleCombo extends JComboBox {
 

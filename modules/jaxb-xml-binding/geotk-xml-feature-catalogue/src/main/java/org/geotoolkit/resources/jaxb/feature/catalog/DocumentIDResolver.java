@@ -15,6 +15,7 @@ import org.geotoolkit.feature.catalog.Referenceable;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 public class DocumentIDResolver extends IDResolver {
   Map<String, Referenceable> referenceables = new HashMap<String, Referenceable>();

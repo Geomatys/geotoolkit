@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p>Java class for anonymous complex type.
  *
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

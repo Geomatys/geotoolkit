@@ -20,6 +20,7 @@ import static org.opengis.annotation.Specification.*;
  * characteristic of a feature type.
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 //@UML(identifier="FC_FeatureAttribute", specification=ISO_19110)
 public interface FeatureAttribute extends PropertyType {

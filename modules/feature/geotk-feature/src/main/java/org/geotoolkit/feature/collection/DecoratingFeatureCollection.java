@@ -35,6 +35,7 @@ import org.opengis.util.ProgressListener;
  * another FeatureCollection<SimpleFeatureType, SimpleFeature> and override the relevant methods. 
  * </p>
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
+ * @module pending
  * @since 2.5
  *
  */

@@ -36,6 +36,7 @@ import org.jdesktop.swingx.JXTitledPanel;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JStylePane extends StyleElementEditor<MutableStyle>{
     

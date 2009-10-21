@@ -22,6 +22,7 @@ import org.opengis.filter.spatial.Touches;
 /**
  *
  * @author Guilhem Legal
+ * @module pending
  */
 public class TouchesType extends BinarySpatialOpType implements Touches {
     

@@ -31,6 +31,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  *
  * @author Jody Garnett (Refractions Research)
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ShapefileServiceInfo implements ServiceInfo {
     private final ShapefileDataStore shapefile;

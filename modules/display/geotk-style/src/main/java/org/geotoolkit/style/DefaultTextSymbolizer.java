@@ -35,6 +35,7 @@ import static org.geotoolkit.style.StyleConstants.*;
  * Immutable implementation of GeoAPI text symbolizer.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultTextSymbolizer implements TextSymbolizer{
 

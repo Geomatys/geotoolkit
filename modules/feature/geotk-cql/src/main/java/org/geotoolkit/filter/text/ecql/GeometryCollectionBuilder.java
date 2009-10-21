@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  * Builds a {@link GeometryCollection} using the
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final class GeometryCollectionBuilder extends GeometryBuilder {

@@ -23,6 +23,7 @@ import org.opengis.feature.type.FeatureType;
  * Interface for wrapping feature writers which delegate to another feature writer.
  *
  * @author Justin Deoliveira, OpenGEO
+ * @module pending
  * @since 2.5
  */
 public interface DelegatingFeatureWriter<T extends FeatureType, F extends Feature> extends FeatureWriter<T, F> {

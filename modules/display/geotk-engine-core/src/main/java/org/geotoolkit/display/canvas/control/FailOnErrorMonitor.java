@@ -24,6 +24,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * Monitor which fail on first rendering error.
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class FailOnErrorMonitor extends AbstractCanvasMonitor{
 

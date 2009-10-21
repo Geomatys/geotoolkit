@@ -27,6 +27,7 @@ import java.util.logging.Logger;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/cachefs/NodeCache.java $
+ * @module pending
  */
 public class NodeCache extends LinkedHashMap {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging

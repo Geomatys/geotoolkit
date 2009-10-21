@@ -50,6 +50,7 @@ import org.geotoolkit.wrs.xml.v090.ApplicationModuleType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "RegistryPackageType", propOrder = {

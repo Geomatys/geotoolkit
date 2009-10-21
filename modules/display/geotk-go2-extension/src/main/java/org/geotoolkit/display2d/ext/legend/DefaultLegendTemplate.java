@@ -25,6 +25,7 @@ import org.geotoolkit.display2d.ext.BackgroundTemplate;
  * Default legend template, immutable.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultLegendTemplate implements LegendTemplate{
 

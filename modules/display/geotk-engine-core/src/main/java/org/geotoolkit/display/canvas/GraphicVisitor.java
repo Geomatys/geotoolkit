@@ -25,6 +25,7 @@ import org.opengis.display.primitive.Graphic;
  * getGraphicIn method from ReferencedCanvas.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface GraphicVisitor {
 

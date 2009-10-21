@@ -19,6 +19,7 @@ package org.geotoolkit.csw.xml;
 /**
  *
  * @author Guilhem Legal (Geomatys)
+ * @module pending
  */
 public interface DistributedSearch {
 

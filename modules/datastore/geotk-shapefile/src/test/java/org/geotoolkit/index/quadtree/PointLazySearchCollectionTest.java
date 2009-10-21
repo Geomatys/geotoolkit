@@ -27,6 +27,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * @author Jesse
+ * @module pending
  */
 public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
 

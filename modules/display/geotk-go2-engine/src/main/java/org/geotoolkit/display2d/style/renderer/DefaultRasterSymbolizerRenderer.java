@@ -91,6 +91,7 @@ import org.opengis.style.ShadedRelief;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
 

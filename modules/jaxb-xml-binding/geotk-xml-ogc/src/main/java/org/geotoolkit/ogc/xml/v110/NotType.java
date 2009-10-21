@@ -21,6 +21,7 @@ import org.opengis.filter.Not;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 public class NotType extends UnaryLogicOpType implements Not {
 

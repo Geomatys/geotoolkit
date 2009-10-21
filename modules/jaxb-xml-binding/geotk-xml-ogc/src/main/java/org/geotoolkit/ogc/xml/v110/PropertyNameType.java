@@ -40,6 +40,7 @@ import org.opengis.filter.expression.PropertyName;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "PropertyNameType", propOrder = {

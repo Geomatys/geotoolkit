@@ -72,6 +72,7 @@ import org.opengis.referencing.crs.VerticalCRS;
  * 
  * @author Guilhem Legal
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {

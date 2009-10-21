@@ -26,6 +26,7 @@ import org.opengis.style.StyleVisitor;
  * Immutable implementation of GeoAPI ColorMap.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultColorMap implements ColorMap{
 

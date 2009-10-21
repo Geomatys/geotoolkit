@@ -72,6 +72,7 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DataSourceType", propOrder = {

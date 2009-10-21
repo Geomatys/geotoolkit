@@ -36,6 +36,7 @@ import org.opengis.style.GraphicFill;
  * Cached Fill.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedFill extends Cache<Fill>{
 

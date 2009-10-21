@@ -26,6 +26,7 @@ import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 /**
  * Geographic bounding box for 1.1.1 version of WMS
  * @author legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")

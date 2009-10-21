@@ -39,6 +39,7 @@ import org.geotoolkit.resources.NIOUtilities;
  * This object reads from a file the fid of a feature in a shapefile.
  * 
  * @author Jesse
+ * @module pending
  */
 public class IndexedFidReader implements FIDReader, FileReader {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging

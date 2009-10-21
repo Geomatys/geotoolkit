@@ -66,6 +66,7 @@ import org.opengis.filter.sort.SortBy;
  * Enjoy.
  * </p>
  * @author jgarnett
+ * @module pending
  * @since 2.1.RC0
  * @source $URL$
  */

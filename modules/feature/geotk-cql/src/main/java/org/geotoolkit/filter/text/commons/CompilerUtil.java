@@ -37,6 +37,7 @@ import org.opengis.filter.expression.Expression;
  *
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 final public class CompilerUtil {

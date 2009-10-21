@@ -49,6 +49,7 @@ import org.geotoolkit.swe.xml.v101.Category;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerPropertyType", propOrder = {

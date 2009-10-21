@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class IsAsignableFromTest extends TestCase{
 

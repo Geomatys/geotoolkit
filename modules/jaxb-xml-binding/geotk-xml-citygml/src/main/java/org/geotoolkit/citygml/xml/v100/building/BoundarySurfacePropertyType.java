@@ -47,6 +47,7 @@ import org.geotoolkit.gml.xml.v311.AssociationType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoundarySurfacePropertyType")

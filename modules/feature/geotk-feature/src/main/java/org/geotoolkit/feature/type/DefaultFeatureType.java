@@ -37,6 +37,7 @@ import org.opengis.util.InternationalString;
  * Base implementation of FeatureType.
  * 
  * @author gabriel
+ * @module pending
  */
 public class DefaultFeatureType extends DefaultComplexType implements FeatureType {
 

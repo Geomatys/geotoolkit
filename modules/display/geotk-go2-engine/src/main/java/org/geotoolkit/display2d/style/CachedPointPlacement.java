@@ -26,6 +26,7 @@ import org.opengis.style.PointPlacement;
  * Cached Point placement.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
 

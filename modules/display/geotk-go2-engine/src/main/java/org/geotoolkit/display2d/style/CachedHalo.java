@@ -26,6 +26,7 @@ import org.opengis.style.Halo;
 
 /**
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class CachedHalo extends Cache<Halo>{
 

@@ -34,6 +34,7 @@ import org.opengis.style.Font;
  * Font panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JFontPane extends StyleElementEditor<Font>{
     

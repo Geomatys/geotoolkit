@@ -24,6 +24,7 @@ import org.opengis.filter.identity.FeatureId;
  * Immutable feature id.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultFeatureId implements FeatureId {
 

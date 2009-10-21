@@ -36,6 +36,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  * Zoom in Handler for GoMap2D.
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class ZoomInHandler extends AbstractNavigationHandler {
 

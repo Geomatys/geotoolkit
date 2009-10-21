@@ -35,6 +35,7 @@ import org.geotoolkit.util.Utilities;
  * 
  * @author Simone Giannecchini, GeoSolutions
  * @author Mike Nidel
+ * @module pending
  */
 public final class GeoKeyEntry implements Comparable<GeoKeyEntry> {
 

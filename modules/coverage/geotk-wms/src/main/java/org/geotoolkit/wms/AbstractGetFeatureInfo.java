@@ -19,6 +19,7 @@ package org.geotoolkit.wms;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class AbstractGetFeatureInfo {
 

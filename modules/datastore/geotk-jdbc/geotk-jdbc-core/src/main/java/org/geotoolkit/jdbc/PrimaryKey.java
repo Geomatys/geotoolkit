@@ -23,6 +23,7 @@ import java.util.List;
  * Primary key of a table.
  *
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
+ * @module pending
  */
 public class PrimaryKey {
     /**

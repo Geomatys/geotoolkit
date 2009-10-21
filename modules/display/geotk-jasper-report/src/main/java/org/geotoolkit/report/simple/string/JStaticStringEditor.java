@@ -20,6 +20,7 @@ package org.geotoolkit.report.simple.string;
  * Static String mapper edition widget.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JStaticStringEditor extends javax.swing.JPanel {
 

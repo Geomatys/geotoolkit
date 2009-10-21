@@ -27,6 +27,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * @author jgarnett, Refractions Reasearch Inc.
  * @source $URL$
  * @version CVS Version
+ * @module pending
  */
 public class FeatureLockTest extends TestCase {
 

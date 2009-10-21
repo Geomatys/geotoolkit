@@ -26,6 +26,7 @@ import org.opengis.util.InternationalString;
  * Second generic is the record class that can handle the mapper object.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface JRMapperFactory<V,C> {
 

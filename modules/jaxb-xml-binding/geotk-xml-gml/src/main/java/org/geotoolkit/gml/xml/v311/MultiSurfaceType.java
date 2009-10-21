@@ -45,6 +45,7 @@ import org.opengis.filter.expression.ExpressionVisitor;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiSurfaceType", propOrder = {

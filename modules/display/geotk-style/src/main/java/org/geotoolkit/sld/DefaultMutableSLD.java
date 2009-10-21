@@ -37,6 +37,7 @@ import org.opengis.style.Description;
  * Default mutable Style Layer Descriptor, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 

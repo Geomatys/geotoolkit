@@ -37,6 +37,7 @@ import org.opengis.filter.expression.Expression;
  * </pre>
  * 
  * @author Guilhem Legal
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ExpressionType")

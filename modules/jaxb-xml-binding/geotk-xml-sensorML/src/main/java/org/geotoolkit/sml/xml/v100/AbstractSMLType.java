@@ -49,6 +49,7 @@ import org.geotoolkit.sml.xml.AbstractSML;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSMLType")

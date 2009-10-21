@@ -77,6 +77,7 @@ import com.vividsolutions.jts.io.WKTReader;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.6
  */
 public abstract class AbstractFilterBuilder {

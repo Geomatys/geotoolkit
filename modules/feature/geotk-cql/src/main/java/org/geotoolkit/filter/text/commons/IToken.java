@@ -29,6 +29,7 @@ import org.geotoolkit.filter.text.generated.parsers.Token;
  * </p>
  *
  * @author Mauricio Pazos (Axios Engineering)
+ * @module pending
  * @since 2.5
  */
 public interface IToken {

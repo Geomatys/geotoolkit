@@ -28,6 +28,7 @@ import org.geotoolkit.gui.swing.go3.control.navigation.ZoomAllAction;
  * ZoomIn/Out, pan, selection, refresh ...
  *
  * @author johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JNavigationBar extends JToolBar {
 

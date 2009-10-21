@@ -41,6 +41,7 @@ import org.opengis.style.Symbolizer;
  * Property panel
  * 
  * @author Johann Sorel
+ * @module pending
  */
 public class JPropertyDialog extends JDialog{
         

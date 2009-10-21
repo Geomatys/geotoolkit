@@ -34,6 +34,7 @@ import org.opengis.service.OperationMetadata;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SV_OperationChainMetadata_Type", propOrder = {

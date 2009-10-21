@@ -38,6 +38,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
 

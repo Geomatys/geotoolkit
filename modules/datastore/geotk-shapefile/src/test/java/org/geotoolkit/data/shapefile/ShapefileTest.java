@@ -46,6 +46,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill
+ * @module pending
  */
 public class ShapefileTest extends AbstractTestCaseSupport {
 

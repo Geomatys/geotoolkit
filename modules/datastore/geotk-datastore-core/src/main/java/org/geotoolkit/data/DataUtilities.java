@@ -61,6 +61,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * </p>
  * @author Jody Garnett, Refractions Research
  * @source $URL$
+ * @module pending
  */
 public final class DataUtilities extends FeatureCollectionUtilities {
 

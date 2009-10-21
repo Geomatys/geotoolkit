@@ -34,6 +34,7 @@ import com.vividsolutions.jts.util.Assert;
  * Unit test for FilterToCQL
  *
  * @author Johann Sorel
+ * @module pending
  */
 public class FilterToCQLTest extends TestCase {
 

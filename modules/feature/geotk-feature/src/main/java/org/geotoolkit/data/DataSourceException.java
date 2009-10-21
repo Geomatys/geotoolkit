@@ -25,6 +25,7 @@ package org.geotoolkit.data;
  * important.
  * </p>
  * @source $URL$
+ * @module pending
  */
 public class DataSourceException extends java.io.IOException {
 

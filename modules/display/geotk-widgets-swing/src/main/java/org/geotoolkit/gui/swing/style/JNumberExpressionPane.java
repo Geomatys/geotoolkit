@@ -33,6 +33,7 @@ import org.opengis.filter.expression.Expression;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class JNumberExpressionPane extends StyleElementEditor<Expression>{
 

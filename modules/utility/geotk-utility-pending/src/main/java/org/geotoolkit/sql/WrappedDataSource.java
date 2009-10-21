@@ -27,6 +27,7 @@ import javax.sql.DataSource;
  * Wrap a ConnectionPoolDataSource in a DataSource interface.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class WrappedDataSource implements DataSource{
 

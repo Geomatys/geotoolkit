@@ -30,6 +30,7 @@ import org.jfree.chart.JFreeChart;
  * Jasper Report renderer used to render JFreechart graphics.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class JFreeJasperMapper implements JRRenderable{
 

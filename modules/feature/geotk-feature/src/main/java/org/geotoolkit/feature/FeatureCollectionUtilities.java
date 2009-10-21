@@ -37,6 +37,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @version $Id$
  *
  * @author Cédric Briançon (Geomatys)
+ * @module pending
  */
 public class FeatureCollectionUtilities {
 

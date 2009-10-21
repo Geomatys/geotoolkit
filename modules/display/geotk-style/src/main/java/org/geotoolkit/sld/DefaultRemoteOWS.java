@@ -25,6 +25,7 @@ import org.opengis.sld.SLDVisitor;
  * Default immutable implementation of remoteOWS. thread safe.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultRemoteOWS implements RemoteOWS{
 

@@ -37,6 +37,7 @@ import com.vividsolutions.jts.io.WKBWriter;
  *
  * @author Andrea Aime
  * @source $URL$
+ * @module pending
  * @since 2.4.1
  */
 public class WKBAttributeIO {

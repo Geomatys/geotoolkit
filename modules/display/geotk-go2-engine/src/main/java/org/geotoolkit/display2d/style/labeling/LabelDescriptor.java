@@ -26,6 +26,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
  * in the rendering context, like size,color, halo, ...
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public interface LabelDescriptor {
 

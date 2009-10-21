@@ -46,6 +46,7 @@ import org.geotoolkit.citygml.xml.v100.AbstractCityObjectType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractTransportationObjectType", propOrder = {

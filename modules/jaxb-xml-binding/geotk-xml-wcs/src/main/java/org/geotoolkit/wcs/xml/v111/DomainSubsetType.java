@@ -47,6 +47,7 @@ import org.geotoolkit.ows.xml.v110.WGS84BoundingBoxType;
  * </pre>
  * 
  * 
+ * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainSubsetType", propOrder = {

@@ -27,6 +27,7 @@ import org.geotoolkit.index.DataDefinition;
  * @author Tommaso Nolli
  * @source $URL:
  *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/fs/Parameters.java $
+ * @module pending
  */
 public class Parameters {
     private int maxNodeEntries;

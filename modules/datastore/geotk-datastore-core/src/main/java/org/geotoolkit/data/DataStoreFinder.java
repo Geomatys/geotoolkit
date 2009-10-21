@@ -55,6 +55,7 @@ import org.opengis.feature.type.FeatureType;
  * <p>
  * Example:<br/><code>org.geotoolkit.data.mytype.MyTypeDataStoreFactory</code>
  * </p>
+ * @module pending
  */
 public final class DataStoreFinder{
 

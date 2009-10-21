@@ -30,6 +30,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Utility class to parse a projection file.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class PrjFileReader {
 

@@ -40,6 +40,7 @@ import org.opengis.filter.Filter;
  * @author Chris Holmes
  * @source $URL$
  * @version $Id$
+ * @module pending
  */
 public class FilteringFeatureReader<T extends FeatureType, F extends Feature> implements DelegatingFeatureReader<T, F> {
 

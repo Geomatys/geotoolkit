@@ -31,6 +31,7 @@ import org.opengis.util.UnlimitedInteger;
 /**
  *
  * @author guilhem
+ * @module pending
  */
 @Ignore
 public class Test_Multiplicity {

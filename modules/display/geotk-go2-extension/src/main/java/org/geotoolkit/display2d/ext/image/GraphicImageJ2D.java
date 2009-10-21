@@ -32,6 +32,7 @@ import static javax.swing.SwingConstants.*;
  * Graphic decoration to paint an Image.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GraphicImageJ2D extends PositionedGraphic2D{
 
