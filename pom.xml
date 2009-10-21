@@ -29,7 +29,7 @@
   <packaging>pom</packaging>
   <version>SNAPSHOT</version>
   <name>Geotoolkit-pending</name>
-  <url>http://www.geotoolkit.org/</url>
+  <url>http://pending.geotoolkit.org/</url>
 
   <description>
     Geotoolkit-pending groups module in preparation for integration in geotoolkit.
@@ -710,9 +710,9 @@
   <!-- ==================================================== -->
   <distributionManagement>
     <site>
-      <id>geotoolkit</id>
-      <name>Geotoolkit web site</name>
-      <url>dav:http://www.geotoolkit.org/</url>
+      <id>geotoolkit-pending</id>
+      <name>Geotoolkit-pending web site</name>
+      <url>dav:http://pending.geotoolkit.org/</url>
     </site>
     <repository>
        <id>geotoolkit</id>
