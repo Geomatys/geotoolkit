@@ -29,6 +29,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public abstract class AbstractEditionDelegate implements MouseInputListener,KeyListener,MouseWheelListener{
 

@@ -63,6 +63,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
+ * @module pending
  */
 public class DefaultEditionHandler implements CanvasHandler {
 
