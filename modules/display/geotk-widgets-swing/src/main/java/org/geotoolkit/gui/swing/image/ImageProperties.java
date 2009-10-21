@@ -42,6 +42,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
 import java.awt.image.renderable.RenderableImage;
+import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.media.jai.IHSColorSpace;
 import javax.media.jai.OperationNode;
 import javax.media.jai.PropertySource;
@@ -133,6 +134,11 @@ public class ImageProperties extends JPanel {
     private final ColorRamp colorRamp;
 
     /**
+     * The label for {@link #colorRamp}.
+     */
+    private final JLabel colorRampLabel;
+
+    /**
      * The table model for image's properties.
      */
     private final Table properties;
@@ -145,7 +151,7 @@ public class ImageProperties extends JPanel {
     /**
      * The viewer for an image quick look.
      */
-    private final ImagePane viewer;
+    protected final ImagePane viewer;
 
     /**
      * Creates a new instance of {@code ImageProperties} with no image.
@@ -153,16 +159,14 @@ public class ImageProperties extends JPanel {
      * be invoked in order to set the properties source.
      */
     public ImageProperties() {
-        this(false);
+        this((JPanel) null);
     }
 
     /**
-     * Creates a new instance.
-     *
-     * @param file {@code true} if and only if this constructor is invoked from
-     *        {@link ImageFileProperties}.
+     * Creates a new instance with the given panel as an additional "metadata" tab.
+     * This is used for the {@link ImageFileProperties} constructor only.
      */
-    ImageProperties(final boolean file) {
+    ImageProperties(final JPanel metadata) {
         super(new BorderLayout());
         description = new JLabel(" ");
         imageSize   = new JLabel();
@@ -175,6 +179,7 @@ public class ImageProperties extends JPanel {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         final JTabbedPane     tabs = new JTabbedPane();
         final GridBagConstraints c = new GridBagConstraints();
+        colorRampLabel = getLabel(Vocabulary.Keys.COLORS, resources);
         /*
          * Build the informations tab.
          */
@@ -192,7 +197,7 @@ public class ImageProperties extends JPanel {
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.SAMPLE_MODEL, resources), c);
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLOR_MODEL,  resources), c);
             c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLOR_SPACE,  resources), c);
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLORS,       resources), c);
+            c.gridy++; panel.add(colorRampLabel, c);
 
             c.gridx=1; c.gridy=ytop; c.weightx=1; c.insets.left=9;
             c.gridy++; panel.add(imageSize,   c);
@@ -207,24 +212,21 @@ public class ImageProperties extends JPanel {
             tabs.addTab(resources.getString(Vocabulary.Keys.INFORMATIONS), panel);
         }
         /*
-         * Build the image's properties tab.
+         * Build the image's properties tab and the image sample value tab.
+         * In the particular case of ImageFileProperties, those two tabs
+         * are replaced by a metadata tab.
          */
-        if (!file) {
+        if (metadata == null) {
             properties = new Table(resources);
             final JTable table = new JTable(properties);
             table.setAutoCreateRowSorter(true);
             tabs.addTab(resources.getString(Vocabulary.Keys.PROPERTIES), new JScrollPane(table));
-        } else {
-            properties = null;
-        }
-        /*
-         * Build the image sample value tab.
-         */
-        if (!file) {
             samples = new ImageSampleValues();
             tabs.addTab(resources.getString(Vocabulary.Keys.PIXELS), samples);
         } else {
-            samples = null;
+            properties = null;
+            samples    = null;
+            tabs.addTab(resources.getString(Vocabulary.Keys.METADATA), metadata);
         }
         /*
          * Build the image preview tab.
@@ -262,16 +264,22 @@ public class ImageProperties extends JPanel {
      * Sets the operation name, description and version for the given image. If the image is
      * an instance of {@link OperationNode}, then a description of the operation will be fetch
      * from its resources bundle.
+     * <p>
+     * This method accepts also instances of {@link ImageReaderWriterSpi},
+     * for the specific needs of {@link ImageFileProperties} only.
      *
      * @param image The image, or {@code null} if none.
      */
-    private void setDescription(final Object image) {
-        String name        = " ";
-        String description = " ";
-        String version     = " ";
+    final void setDescription(final Object image) {
         final Locale     locale    = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
+        String name        = resources.getString(Vocabulary.Keys.UNDEFINED);
+        String description = null;
+        String version     = null;
         if (image instanceof OperationNode) {
+            /*
+             * JAI operation - get the information from the descriptor.
+             */
             final String mode;
             final RegistryElementDescriptor descriptor;
             final OperationNode operation = (OperationNode) image;
@@ -288,10 +296,33 @@ public class ImageProperties extends JPanel {
                               bundle   .getString("Vendor") + ')';
                 name = resources.getString(Vocabulary.Keys.OPERATION_$1, name);
             }
+        } else if (image instanceof ImageReaderWriterSpi) {
+            /*
+             * Image Reader or Writer provider - for ImageFileProperties only.
+             */
+            final ImageReaderWriterSpi spi = (ImageReaderWriterSpi) image;
+            description = spi.getDescription(locale);
+            version = resources.getString(Vocabulary.Keys.VERSION_$1,
+                    spi.getVersion()) + " (" + spi.getVendorName() + ')';
+            String[] names = spi.getMIMETypes();
+            if (names != null && names.length != 0) {
+                name = names[0];
+            } else {
+                names = spi.getFormatNames();
+                if (names != null && names.length != 0) {
+                    name = names[0];
+                }
+            }
         } else if (image != null) {
+            /*
+             * Unknown case - typically a BufferedImage.
+             */
             name = Classes.getShortClassName(image);
             name = resources.getString(Vocabulary.Keys.IMAGE_CLASS_$1, name);
         }
+        /*
+         * Formats the description field using the information fetched above.
+         */
         final StringBuilder html = new StringBuilder("<html>");
         html.append("<h2>").append(name).append("</h2>");
         if (version != null) {
@@ -337,9 +368,9 @@ public class ImageProperties extends JPanel {
         setDescription(image);
         if (properties != null) {
             properties.setSource(image);
-            viewer    .setImage((RenderedImage) null);
             samples   .setImage((RenderedImage) null);
         }
+        viewer.setImage((RenderedImage) null);
     }
 
     /**
@@ -357,9 +388,9 @@ public class ImageProperties extends JPanel {
         setDescription(image);
         if (properties != null) {
             properties.setSource(image);
-            viewer    .setImage (image);
             samples   .setImage ((RenderedImage) null);
         }
+        viewer.setImage(image);
     }
 
     /**
@@ -379,9 +410,9 @@ public class ImageProperties extends JPanel {
         setDescription(image);
         if (properties != null) {
             properties.setSource(image);
-            viewer    .setImage (image);
             samples   .setImage (image);
         }
+        viewer.setImage(image);
     }
 
     /**
@@ -393,17 +424,15 @@ public class ImageProperties extends JPanel {
             final int numXTiles, final int numYTiles)
     {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
+        final IndexColorModel icm = (cm instanceof IndexColorModel) ? (IndexColorModel) cm : null;
         imageSize  .setText(resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height, sm.getNumBands()));
         tileSize   .setText(resources.getString(Vocabulary.Keys.TILE_SIZE_$4, numXTiles, numYTiles, tileWidth, tileHeight));
         dataType   .setText(getDataType(sm.getDataType(), cm, resources));
         sampleModel.setText(formatClassName(sm, resources));
         colorModel .setText(formatClassName(cm, resources));
         colorSpace .setText(getColorSpace  (cm, resources));
-        if (cm instanceof IndexColorModel) {
-            colorRamp.setColors((IndexColorModel) cm);
-        } else {
-            colorRamp.setColors((IndexColorModel) null);
-        }
+        colorRamp  .setColors(icm);
+        colorRampLabel.setEnabled(icm != null);
     }
 
     /**

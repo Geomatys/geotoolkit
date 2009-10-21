@@ -8,9 +8,9 @@ Maven plugins for Geotk
 
   The main Maven plugins are:
 
-  * {{{geotk-resource-compiler/index.jar}Resources compiler}} for creating the binary files used for
+  * {{{geotk-resource-compiler/index.html}Resources compiler}} for creating the binary files used for
     internationalization in Geotk.
 
-  * {{{geotk-javadoc/index.jar}JAR collector}} for custom taglets.
+  * {{{geotk-javadoc/index.html}Javadoc plugins}} for custom taglets.
 
-  * {{{geotk-jar-collector/index.jar}JAR collector}}, which can also create PACK200 files.
+  * {{{geotk-jar-collector/index.html}JAR collector}}, which can also create PACK200 files.

@@ -24,8 +24,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.w3c.dom.Node;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.AnyConverter;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
 
 /**
@@ -116,7 +118,12 @@ public class MetadataTreeTable {
         ensureNonNull("format", format);
         this.format = format;
         locale = Locale.getDefault();
-        converters = new AnyConverter();
+        converters = new AnyConverter() {
+            @Override
+            protected void conversionFailed(final NonconvertibleObjectException exception) {
+                Logging.recoverableException(MetadataTreeNode.class, "getValue", exception);
+            }
+        };
     }
 
     /**

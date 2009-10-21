@@ -35,8 +35,9 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * A simple image viewer. This widget accepts either {@linkplain RenderedImage rendered} or
  * {@linkplain RenderableImage renderable} image. Rendered image are display immediately,
  * while renderable image will be rendered in a background thread when first requested.
+ * <p>
  * This widget may scale down images for faster rendering. This is convenient for image
- * previews, but should not be used as a "real" renderer for full precision images.
+ * previews, but should not be used as a "real" (i.e. robust and accurate) renderer.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -98,8 +99,9 @@ public class ImagePane extends ZoomPane implements Runnable {
 
     /**
      * Sets the source renderable image.
+     * A {@code null} value remove the current image.
      *
-     * @param image The image to display.
+     * @param image The image to display, or {@code null} if none.
      */
     public void setImage(final RenderableImage image) {
         renderable = image;
@@ -111,8 +113,9 @@ public class ImagePane extends ZoomPane implements Runnable {
 
     /**
      * Sets the source rendered image.
+     * A {@code null} value remove the current image.
      *
-     * @param image The image to display.
+     * @param image The image to display, or {@code null} if none.
      */
     public void setImage(RenderedImage image) {
         if (image != null) {

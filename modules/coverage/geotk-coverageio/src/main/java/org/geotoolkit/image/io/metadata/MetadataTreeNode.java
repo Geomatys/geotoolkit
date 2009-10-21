@@ -20,8 +20,11 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Set;
 import java.util.Locale;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
@@ -360,10 +363,9 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             } else {
                 value = format.getAttributeDefaultValue(element, attribute);
             }
+            value = convert(value);
             if (value == null) {
                 value = "";
-            } else {
-                value = convert(value);
             }
             defaultValue = value;
         }
@@ -378,8 +380,27 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
         Object value = super.getUserObject();
         if (value == null) {
             Node node = tree.getRootIIO();
-            if (node != null) {
-                value = ""; // TODO
+            if (node instanceof Element) {
+                final NodeList elements = ((Element) node).getElementsByTagName(element);
+                if (elements != null && elements.getLength() != 0) {
+                    node = elements.item(0);
+                    if (attribute != null) {
+                        if (node instanceof Element) {
+                            value = ((Element) node).getAttribute(attribute);
+                        }
+                    } else {
+                        if (node instanceof IIOMetadataNode) {
+                            value = ((IIOMetadataNode) node).getUserObject();
+                        }
+                        if (value == null) {
+                            value = node.getNodeValue();
+                        }
+                    }
+                }
+            }
+            value = convert(value);
+            if (value == null) {
+                value = ""; // Means "no value".
             }
             super.setUserObject(value);
         }

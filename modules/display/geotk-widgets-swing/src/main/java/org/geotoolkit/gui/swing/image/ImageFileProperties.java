@@ -20,19 +20,18 @@ package org.geotoolkit.gui.swing.image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
-import javax.imageio.IIOException;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
 import java.awt.Dimension;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -66,22 +65,66 @@ public class ImageFileProperties extends ImageProperties {
     private Dimension preferredThumbnailSize = new Dimension(256, 256);
 
     /**
+     * The panel for image I/O metadata.
+     */
+    private final IIOMetadataPanel metadata;
+
+    /**
      * Creates a new instance of {@code ImageFileProperties} with no image.
      * One of {@link #setImage(File) setImage(...)} methods must be
      * invoked in order to set the properties source.
      */
     public ImageFileProperties() {
-        super(true);
+        this(new IIOMetadataPanel());
+    }
+
+    /**
+     * Creates a new instance using the given metadata panel.
+     */
+    private ImageFileProperties(final IIOMetadataPanel metadata) {
+        super(metadata);
+        this.metadata = metadata;
     }
 
     /**
      * Sets the image to the given info. At the contrary of public {@code setImage} methods,
      * <strong>this method must be invoked in the Swing thread</strong>.
+     *
+     * @param streamMetadata The stream metadata, or {@code null} if none.
+     * @param images The informations about each image.
      */
-    private void setImage(final IIOMetadata metadata, final Info[] images) {
+    private void setImage(final IIOMetadata streamMetadata, final Info[] images) {
         assert EventQueue.isDispatchThread();
-        // TODO: allow to select the image index, and show stream metadata.
+        metadata.clear();
+        if (images.length == 0) {
+            super.setImage((RenderedImage) null);
+            return;
+        }
         images[0].show(this);
+        /*
+         * Add non-null metadata.
+         */
+        IIOMetadata[] metadata = new IIOMetadata[images.length];
+        int count = 0;
+        for (final Info info : images) {
+            final IIOMetadata m = info.metadata;
+            if (m != null) {
+                metadata[count++] = m;
+            }
+        }
+        metadata = XArrays.resize(metadata, count);
+        this.metadata.addMetadata(streamMetadata, metadata);
+        /*
+         * Sets the overview to the first image having a thumbnail.
+         */
+        BufferedImage thumbnail = null;
+        for (final Info info : images) {
+            thumbnail = info.thumbnail;
+            if (thumbnail != null) {
+                break;
+            }
+        }
+        viewer.setImage(thumbnail);
     }
 
     /**
@@ -167,63 +210,17 @@ public class ImageFileProperties extends ImageProperties {
      *         given input, or if an error occured while reading the metadata or the thumbnails.
      */
     public void setImageInput(final Object input) throws IOException {
-        boolean     success = false;
-        IOException failure = null;
-        Object      stream  = input;
-attmpt: while (stream != null) { // This loop will be executed at most twice.
-            final Iterator<ImageReader> it = ImageIO.getImageReaders(stream);
-            while (it.hasNext()) {
-                if (stream instanceof ImageInputStream) {
-                    ((ImageInputStream) stream).mark();
-                }
-                final ImageReader reader = it.next();
-                reader.setInput(stream, true, false);
-                try {
-                    reader.setLocale(getLocale());
-                } catch (IllegalArgumentException e) {
-                    // Unsupported locale. Not a big deal, so ignore...
-                }
-                try {
-                    setImage(reader);
-                    success = true;
-                    break attmpt;
-                } catch (IOException e) {
-                    if (failure == null) {
-                        failure = e; // Remember only the first failure.
-                    }
-                } finally {
-                    reader.dispose();
-                    // Don't bother to reset the stream if we succeeded
-                    // and the stream was created by ourself.
-                    if (!success || stream == input) {
-                        if (stream instanceof ImageInputStream) {
-                            ((ImageInputStream) stream).reset();
-                        }
-                    }
-                }
+        Formats.selectImageReader(input, getLocale(), new Formats.ReadCall() {
+            @Override
+            public void read(final ImageReader reader) throws IOException {
+                setImage(reader);
             }
-            /*
-             * If we have tried every image readers for the given input, wraps the
-             * input in an ImageInputStream (if not already done) and try again.
-             */
-            if (stream instanceof ImageInputStream) {
-                break;
+
+            @Override
+            public void recoverableException(final Throwable error) {
+                Logging.recoverableException(ImageFileProperties.class, "setImageInput", error);
             }
-            stream = ImageIO.createImageInputStream(input);
-        }
-        /*
-         * We got a success, or we tried every image readers.
-         * Closes the stream only if we created it ourself.
-         */
-        if (stream != input && stream instanceof ImageInputStream) {
-            ((ImageInputStream) stream).close();
-        }
-        if (!success) {
-            if (failure == null) {
-                failure = new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
-            }
-            throw failure;
-        }
+        });
     }
 
     /**
@@ -264,14 +261,21 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
      */
     private static final class Info {
         /**
+         * The provider of the image reader. This information is not really image-specific,
+         * but it is cheap to keep a reference here anyway since the same instance will be
+         * shared by many {@code Info} structures.
+         */
+        private final ImageReaderSpi provider;
+
+        /**
          * The image size and tile size.
          */
-        final int width, height, tileWidth, tileHeight;
+        private final int width, height, tileWidth, tileHeight;
 
         /**
          * The color and sample models.
          */
-        final ImageTypeSpecifier type;
+        private final ImageTypeSpecifier type;
 
         /**
          * The metadata, or {@code null} if none.
@@ -291,6 +295,7 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
         Info(final ImageReader reader, final int index, final Dimension preferredThumbnailSize)
                 throws IOException
         {
+            provider    = reader.getOriginatingProvider();
             width       = reader.getWidth(index);
             height      = reader.getHeight(index);
             tileWidth   = reader.getTileWidth(index);
@@ -324,7 +329,19 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
                     break;
                 }
                 case 0: {
-                    thumbnail = null;
+                    /*
+                     * Special case in the absence of thumbnail: if the image is small enough,
+                     * read it and use it directly as the thumbnail. If the image is too big,
+                     * we don't read it even with subsampling because it may be a too costly
+                     * operation.
+                     */
+                    if (width  / 2 <= preferredThumbnailSize.width &&
+                        height / 2 <= preferredThumbnailSize.height)
+                    {
+                        thumbnail = reader.read(index);
+                    } else {
+                        thumbnail = null;
+                    }
                     break;
                 }
             }
@@ -338,6 +355,7 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
                     width, height, tileWidth, tileHeight,
                     (width  + tileWidth -1) / tileWidth,
                     (height + tileHeight-1) / tileHeight);
+            properties.setDescription(provider);
         }
     }
 }

@@ -17,6 +17,11 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.util.Map;
+import java.util.List;
+import java.util.Locale;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,7 +57,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
  *    </li>
  *    <li>The metadata part to display:
  *     <ul>
- *      <li><cite>Stream</cite> metadata which apply to a file as a whole</li>
+ *      <li><cite>Stream</cite> metadata which apply to a file as a whole.</li>
  *      <li>At least one <cite>image</cite> metadata which apply to an individual image in the
  *          file. More than one image metadata may be present if the file contains many images.</li>
  *     </ul>
@@ -364,6 +369,82 @@ public class IIOMetadataPanel extends JPanel {
     }
 
     /**
+     * Adds to this panel the values of the given <em>stream</em> and <em>image</em> metadata.
+     * Note that this method is typically invoked alone; there is no need to invoke
+     * {@link #addMetadataFormat addMetadataFormat} prior this method.
+     *
+     * @param stream The stream metadata (mandatory).
+     * @param image  The image metadata for each image in a file.
+     */
+    public void addMetadata(final IIOMetadata stream, final IIOMetadata... image) {
+        final Map<String, List<IIOMetadata>> metadataForNames =
+                new LinkedHashMap<String, List<IIOMetadata>>();
+        addFormatNames(stream, metadataForNames);
+        if (image != null) {
+            for (final IIOMetadata metadata : image) {
+                addFormatNames(metadata, metadataForNames);
+            }
+        }
+        final Locale locale = getLocale();
+        for (final Map.Entry<String, List<IIOMetadata>> entry : metadataForNames.entrySet()) {
+            formatChoices.addElement(new IIOMetadataChoice(locale, entry.getKey(), stream, entry.getValue()));
+        }
+    }
+
+    /**
+     * Adds the metadata format names to the keys of the given map, and the metadata
+     * to the values. The given metadata can be {@code null} (as authorized by the
+     * {@link #addMetadata} method contract), in which case it is ignored.
+     */
+    private static void addFormatNames(final IIOMetadata metadata,
+            final Map<String, List<IIOMetadata>> metadataForNames)
+    {
+        if (metadata != null) {
+            final String[] formats = metadata.getMetadataFormatNames();
+            moveAtEnd(formats, IIOMetadataFormatImpl.standardMetadataFormatName);
+            moveAtEnd(formats, metadata.getNativeMetadataFormatName());
+            for (final String format : formats) {
+                List<IIOMetadata> list = metadataForNames.get(format);
+                if (list == null) {
+                    list = new ArrayList<IIOMetadata>();
+                    metadataForNames.put(format, list);
+                }
+                list.add(metadata);
+            }
+        }
+    }
+
+    /**
+     * If the {@code toMove} name is found in the given array, move it at the end of the array.
+     */
+    private static void moveAtEnd(final String[] names, final String toMove) {
+        if (toMove != null) {
+            for (int i=0; i<names.length; i++) {
+                final String name = names[i];
+                if (toMove.equals(name)) {
+                    System.arraycopy(names, i+1, names, i, names.length - (i+1));
+                    names[names.length - 1] = name;
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds to this panel the description of the given <em>stream</em> and <em>image</em>
+     * metadata formats. The descriptions contain no metadata value, only the name of the
+     * nodes together with a few additional information (type, valid values, <i>etc.</i>).
+     *
+     * @param stream The stream metadata format (mandatory).
+     * @param image  The image metadata format, or {@code null} if none.
+     */
+    public void addMetadataFormat(final IIOMetadataFormat stream, final IIOMetadataFormat image) {
+        if (stream != null || image != null) {
+            formatChoices.addElement(new IIOMetadataChoice(getLocale(), stream, image));
+        }
+    }
+
+    /**
      * Adds to this panel the description of
      * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} and
      * {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName} formats.
@@ -372,40 +453,6 @@ public class IIOMetadataPanel extends JPanel {
      */
     public void addDefaultMetadataFormats() {
         addMetadataFormat(SpatialMetadataFormat.STREAM, SpatialMetadataFormat.IMAGE);
-        addMetadataFormat(IIOMetadataFormatImpl.getStandardFormatInstance(), null);
-    }
-
-    /**
-     * Adds to this panel the description of the given <em>stream</em> and <em>image</em>
-     * metadata formats. The descriptions contain no metadata value, only the name of the
-     * nodes together with a few additional information (type, valid values, <i>etc.</i>).
-     * <p>
-     * The stream metadata is mandatory and can not be null. The image metadata is optional.
-     *
-     * @param stream The stream metadata format (mandatory).
-     * @param image  The image metadata format, or {@code null} if none.
-     */
-    public void addMetadataFormat(final IIOMetadataFormat stream, final IIOMetadataFormat image) {
-        formatChoices.addElement(new IIOMetadataChoice(getLocale(), stream, image));
-    }
-
-    /**
-     * Returns the <em>stream</em> metadata format of the given name, or {@code null} if none.
-     * The format name is typically
-     * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} or
-     * {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}.
-     *
-     * @param  name The format name.
-     * @return The stream metadata format for the given name, or {@code null} if none.
-     */
-    public IIOMetadataFormat getStreamMetadataFormat(final String name) {
-        for (int i=formatChoices.getSize(); --i>=0;) {
-            final IIOMetadataChoice choice = (IIOMetadataChoice) formatChoices.getElementAt(i);
-            final IIOMetadataFormat format = choice.getMetadataFormat();
-            if (name.equals(format.getRootName())) {
-                return format;
-            }
-        }
-        return null;
+        addMetadataFormat(null, IIOMetadataFormatImpl.getStandardFormatInstance());
     }
 }

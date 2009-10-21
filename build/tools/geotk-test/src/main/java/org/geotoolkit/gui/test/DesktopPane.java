@@ -26,6 +26,10 @@ import javax.swing.JFileChooser;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.AbstractAction;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
+import javax.swing.ButtonGroup;
+import javax.swing.UIManager;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameAdapter;
 import java.util.concurrent.CountDownLatch;
@@ -40,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.prefs.Preferences;
+import java.util.Locale;
 
 
 /**
@@ -106,18 +111,68 @@ final class DesktopPane extends JDesktopPane {
     final JFrame createFrame() {
         final JMenuBar menuBar = new JMenuBar();
         menuBar.add(newMenu);
-        final JMenu menu = new JMenu("Tools");
-        menu.add(new AbstractAction("Screenshot") {
-            @Override public void actionPerformed(final ActionEvent event) {
-                screenshot();
+        if (true) {
+            final JMenu menu = new JMenu("View");
+            if (true) {
+                final JMenu sub = new JMenu("L&F");
+                final ButtonGroup group = new ButtonGroup();
+                final String current = UIManager.getLookAndFeel().getName();
+                for (final UIManager.LookAndFeelInfo lf : UIManager.getInstalledLookAndFeels()) {
+                    final String cn = lf.getClassName();
+                    final String name = lf.getName();
+                    final JRadioButtonMenuItem item = new JRadioButtonMenuItem(new AbstractAction(name) {
+                        @Override public void actionPerformed(final ActionEvent event) {
+                            try {
+                                UIManager.setLookAndFeel(cn);
+                                SwingUtilities.updateComponentTreeUI(DesktopPane.this);
+                            } catch (Exception e) {
+                                warning(e);
+                            }
+                        }
+                    });
+                    item.setSelected(name.equals(current));
+                    group.add(item);
+                    sub.add(item);
+                }
+                menu.add(sub);
             }
-        });
-        menu.add(new AbstractAction("Preferences") {
-            @Override public void actionPerformed(final ActionEvent event) {
-                preferences();
+            if (false) { // Doesn't seem to work...
+                final JMenu sub = new JMenu("Language");
+                final Locale[] locales = new Locale[] {
+                    Locale.CANADA,
+                    Locale.FRANCE
+                };
+                final String current = Locale.getDefault().getDisplayLanguage();
+                final ButtonGroup group = new ButtonGroup();
+                for (final Locale locale : locales) {
+                    final String name = locale.getDisplayLanguage();
+                    final JRadioButtonMenuItem item = new JRadioButtonMenuItem(new AbstractAction(name) {
+                        @Override public void actionPerformed(final ActionEvent event) {
+                            setLocale(locale);
+                        }
+                    });
+                    item.setSelected(name.equals(current));
+                    group.add(item);
+                    sub.add(item);
+                }
+                menu.add(sub);
             }
-        });
-        menuBar.add(menu);
+            menuBar.add(menu);
+        }
+        if (true) {
+            final JMenu menu = new JMenu("Tools");
+            menu.add(new AbstractAction("Screenshot") {
+                @Override public void actionPerformed(final ActionEvent event) {
+                    screenshot();
+                }
+            });
+            menu.add(new AbstractAction("Preferences") {
+                @Override public void actionPerformed(final ActionEvent event) {
+                    preferences();
+                }
+            });
+            menuBar.add(menu);
+        }
         final JFrame frame = new JFrame("Geotoolkit.org widget tests");
         frame.addWindowListener(new WindowAdapter() {
             @Override public void windowClosed(final WindowEvent event) {
@@ -155,9 +210,16 @@ final class DesktopPane extends JDesktopPane {
         try {
             show(testCase.create());
         } catch (Exception e) {
-            JOptionPane.showInternalMessageDialog(this, e.getLocalizedMessage(),
-                    e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
+            warning(e);
         }
+    }
+
+    /**
+     * Show a warning dialog box for the given exception.
+     */
+    private void warning(final Exception e) {
+        JOptionPane.showInternalMessageDialog(this, e.getLocalizedMessage(),
+                e.getClass().getSimpleName(), JOptionPane.ERROR_MESSAGE);
     }
 
     /**

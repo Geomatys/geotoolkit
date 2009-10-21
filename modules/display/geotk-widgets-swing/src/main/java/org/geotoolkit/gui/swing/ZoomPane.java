@@ -48,7 +48,7 @@ import static java.awt.GridBagConstraints.*;
 /**
  * Base class for widget with a zoomable content. User can perform zooms using keyboard, menu
  * or mouse. Subclasses must provide the content to be paint with the following methods, which
- * needs to be overriden:
+ * need to be overriden:
  *
  * <ul>
  *   <li><p>{@link #getArea()}, which must return a bounding box for the content to paint. This
@@ -58,7 +58,7 @@ import static java.awt.GridBagConstraints.*;
  *
  * {@preformat java
  *     public Rectangle2D getArea() {
- *         return new Rectangle2D.Double(10, 40, 5, 5);
+ *         return new Rectangle2D.Double(10, 40, 15-10, 45-40);
  *     }
  * }</p></li>
  *
@@ -68,7 +68,7 @@ import static java.awt.GridBagConstraints.*;
  *   that the <var>y</var> axis points upwards, like the convention in geometry. This is opposed to
  *   the default Java2D axis orientation, where the <var>y</var> axis points downwards. The Java2D
  *   convention is appropriate for text rendering - consequently implementations wanting to paint
- *   text should uses the default transform (the one provided by {@link Graphics2D}) for that
+ *   text should use the default transform (the one provided by {@link Graphics2D}) for that
  *   purpose. Example:
  *
  * {@preformat java
@@ -85,15 +85,15 @@ import static java.awt.GridBagConstraints.*;
  *
  *   <li><p>{@link #reset}, which sets up the initial {@linkplain #zoom}. Overriding this method
  *   is optional since the default implementation is appropriate in many cases. This default
- *   implementation sets up the initial zoom in such a way that the following relation
+ *   implementation setups the initial zoom in such a way that the following relation
  *   approximately hold: <cite>Logical coordinates provided by {@link #getPreferredArea()},
  *   after an affine transform described by {@link #zoom}, match pixel coordinates provided
  *   by {@link #getZoomableBounds(Rectangle)}.</cite></p></li>
  * </ul>
  *
  * The "preferred area" is initially the same as {@link #getArea()}. The user can specify a
- * different preferred area with {@link #setPreferredArea}. The user can also reduce zoomable
- * bounds by inserting an empty border around the widget, e.g.:
+ * different preferred area with {@link #setPreferredArea(Rectangle2D)}. The user can also
+ * reduce zoomable bounds by inserting an empty border around the widget, e.g.:
  *
  * {@preformat java
  *     setBorder(BorderFactory.createEmptyBorder(top, left, bottom, right));
@@ -101,9 +101,9 @@ import static java.awt.GridBagConstraints.*;
  *
  * {@section Zoom actions}
  * Whatever action is performed by the user, all zoom commands are translated as calls to
- * {@link #transform}. Derived classes can redefine this method if they want to take particular
- * actions during zooms, for example, modifying the minimum and maximum of a graph's axes.
- * The table below shows the keyboard presses assigned to each zoom:
+ * {@link #transform(AffineTransform)}. Derived classes can redefine this method if they want
+ * to take particular actions during zooms, for example, modifying the minimum and maximum of
+ * a graph's axes. The table below shows the keyboard presses assigned to each zoom:
  * <p>
  * <TABLE ALIGN="CENTER" CELLPADDING="16"><TR>
  * <TD><TABLE ALIGN="CENTER" BORDER="2">
@@ -124,15 +124,23 @@ import static java.awt.GridBagConstraints.*;
  * <TR><TD>Ctrl+<IMG SRC="doc-files/key-right.png"></TD><TD>Clockwise rotation</TD><TD><code>"RotateRight"</code></TD></TR>
  * </TABLE></TD></TR></TABLE>
  * <p>
- * In this table, the last column gives the Strings by which the different actions
+ * In this table, the last column gives the Strings that identify the different actions
  * which manage the zooms. For example, to zoom in, we must write
  * <code>{@linkplain #getActionMap() getActionMap()}.get("ZoomIn")</code>.
  *
+ * <table><tr valign="top"><td>
  * {@section Scroll pane}
  * <strong>{@link JScrollPane} objects are not suitable for adding scrollbars to a
  * {@code ZoomPane} object.</strong> Instead, use {@link #createScrollPane}. Once again, all
  * movements performed by the user through the scrollbars will be translated by calls to
- * {@link #transform}.
+ * {@link #transform(AffineTransform)}.
+ * <p>
+ * The image on the right side gives an example with a simple implementation drawing a
+ * few geometric shapes. The menu and the optional magnifier glass are produced by this
+ * {@code ZoomPane} class.
+ * </td><td>
+ * <img src="doc-files/ZoomPane.png">
+ * </td></tr></table>
  *
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.00
