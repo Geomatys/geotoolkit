@@ -47,7 +47,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
     public static final OWSExceptionCode INVALID_FORMAT = new OWSExceptionCode("InvalidFormat");
     
     /**
-     * Invalid format.
+     * Invalid request.
      */
     public static final OWSExceptionCode INVALID_REQUEST = new OWSExceptionCode("InvalidRequest");
 

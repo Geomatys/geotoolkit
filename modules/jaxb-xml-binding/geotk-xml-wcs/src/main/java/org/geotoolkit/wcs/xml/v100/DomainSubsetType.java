@@ -69,9 +69,7 @@ public class DomainSubsetType {
     /**
      * An empty constructor used by JAXB
      */
-    DomainSubsetType() {
-        
-    }
+    DomainSubsetType() {}
     
     /**
      * Build a new Domain subset with the specified spatial
@@ -80,10 +78,12 @@ public class DomainSubsetType {
     public DomainSubsetType(TimeSequenceType temporalSubset, SpatialSubsetType spatialSubset) {
         this.content = new ArrayList<JAXBElement<?>>();
         ObjectFactory factory = new ObjectFactory();
-        if (temporalSubset != null)
+        if (temporalSubset != null) {
             content.add(factory.createTemporalSubset(temporalSubset));
-        if (spatialSubset != null)
-        content.add(factory.createSpatialSubset(spatialSubset));
+        }
+        if (spatialSubset != null) {
+            content.add(factory.createSpatialSubset(spatialSubset));
+        }
     }
     
     /**

@@ -224,6 +224,9 @@ public class GetCoverageType implements GetCoverage {
         }
         final EnvelopeEntry env = domainSubset.getSpatialSubSet().getEnvelope();
         final List<DirectPositionType> positions = env.getPos();
+        if (positions == null || positions.size() == 0) {
+            return null;
+        }
         final DirectPositionType lonPos = positions.get(0);
         final DirectPositionType latPos = positions.get(1);
         final CoordinateReferenceSystem crs = getCRS();

@@ -80,11 +80,12 @@ public class SpatialDomainType {
     /**
      * An empty constructor used by JAXB.
      */
-    SpatialDomainType(){
-    }
+    SpatialDomainType(){}
     
     /**
      * Build a new light Spatial Domain type version 1.0.0
+     *
+     * @param envelope An envelope that should not be null.
      */
     public SpatialDomainType(EnvelopeEntry envelope) {
        ObjectFactory gmlFactory = new ObjectFactory();
@@ -96,11 +97,15 @@ public class SpatialDomainType {
      * Build a new light Spatial Domain type version 1.0.0
      */
     public SpatialDomainType(EnvelopeEntry envelope, GridType grid) {
-       ObjectFactory gmlFactory = new ObjectFactory();
-       this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
-       this.envelope.add(gmlFactory.createEnvelope(envelope));
-       this.grid     = new ArrayList<JAXBElement<? extends GridType>>();
-       this.grid.add(gmlFactory.createGrid(grid));
+        ObjectFactory gmlFactory = new ObjectFactory();
+        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
+        if (envelope != null) {
+            this.envelope.add(gmlFactory.createEnvelope(envelope));
+        }
+        this.grid = new ArrayList<JAXBElement<? extends GridType>>();
+        if (grid != null) {
+            this.grid.add(gmlFactory.createGrid(grid));
+        }
     }
     
     /**
