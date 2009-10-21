@@ -35,9 +35,10 @@ import org.opengis.display.primitive.Graphic;
  * Abstract Container 2D extends Abstract container by providing a convinient method
  * to grab a sorted list of graphic sorted on Z order.
  *
- * @since 2.5
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)
+ *
+ * @since 2.5
  */
 public abstract class AbstractContainer2D extends AbstractContainer{
     /**

@@ -55,30 +55,29 @@
   <!--     Issue managements and mailing lists.                    -->
   <!-- =========================================================== -->
   <scm>
-    <connection>scm:hg:http://hg.geotoolkit.org/geotoolkit/</connection>
-    <url>http://hg.geotoolkit.org/geotoolkit/</url>
+    <connection>scm:hg:http://hg.geotoolkit.org/geotoolkit-pending/</connection>
+    <url>http://hg.geotoolkit.org/geotoolkit-pending/</url>
   </scm>
 
   <ciManagement>
     <system>hudson</system>
-    <url>http://hudson.geomatys.com/job/Geotoolkit/</url>
+    <url>http://hudson.geomatys.com/job/Geotoolkit-pending/</url>
   </ciManagement>
 
   <issueManagement>
     <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/GEOT</url>
+    <url>http://jira.codehaus.org/browse/PENDING</url>
   </issueManagement>
 
-<!--
   <mailingLists>
     <mailingList>
-      <name>geotoolkit-devel</name>
-      <subscribe>http://lists.sourceforge.net/lists/listinfo/geotoolkit-devel</subscribe>
-      <post>geotoolkit-devel@lists.sourceforge.net</post>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum=geotoolkit-devel</archive>
+      <name>geotoolkit</name>
+      <subscribe>http://lists.osgeo.org/mailman/listinfo/geotoolkit</subscribe>
+      <unsubscribe>http://lists.osgeo.org/mailman/listinfo/geotoolkit</unsubscribe>
+      <post>geotoolkit@lists.osgeo.org</post>
+      <archive>http://lists.osgeo.org/pipermail/geotoolkit</archive>
     </mailingList>
   </mailingLists>
--->
 
 
   <!-- =========================================================== -->
@@ -86,9 +85,9 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
@@ -97,9 +96,9 @@
       </roles>
     </developer>
     <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
@@ -379,14 +378,18 @@
 
 
   <!-- ======================================================= -->
-  <!--     Compilation.                                        -->
-  <!--                                                         -->
-  <!-- Note: experimentation suggests that <debug>false</..>   -->
-  <!-- is equivalent to <compilerArgument>-g:source,lines</..> -->
-  <!-- which is what we actually want.                         -->
+  <!--     Build setting.                                      -->
   <!-- ======================================================= -->
+  <!-- sourceEncoding>UTF-8</sourceEncoding -->
   <build>
     <plugins>
+      <!-- ======================================================= -->
+      <!--     Compilation.                                        -->
+      <!--                                                         -->
+      <!-- Note: experimentation suggests that <debug>false</..>   -->
+      <!-- is equivalent to <compilerArgument>-g:source,lines</..> -->
+      <!-- which is what we actually want.                         -->
+      <!-- ======================================================= -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -396,6 +399,7 @@
           <debug>false</debug>       <!-- Whether to include debugging information.     -->
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
+          <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
 
@@ -537,10 +541,10 @@
           <aggregate>true</aggregate>      <!-- Build an aggregated report at the root.                    -->
           <maxmemory>512M</maxmemory>      <!-- maximum Java heap size to be used when launching the tool. -->
           <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
-          <additionalparam>-keywords</additionalparam>
+          <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
           <excludePackageNames>
-            org.geotoolkit.test:org.geotoolkit.maven:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra
+            org.geotoolkit.coverage.geotiff:org.geotoolkit.display3d:org.geotoolkit.gui.swing.go3:com.vividsolutions:org.geotoolkit.legacy
           </excludePackageNames>
 
           <!-- Custom taglets implemented in Java. -->
@@ -563,53 +567,88 @@
             <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
+            <link>http://swinglabs.org/hudson/job/SwingX%20Continuous%20Build/javadoc</link>
             <link>http://jscience.org/api/</link>
-            <link>http://geoapi.sourceforge.net/snapshot/pending</link>
+            <link>http://www.geoapi.org/snapshot/pending</link>
           </links>
 
-          <!-- Separates packages on the overview page into the    -->
-          <!-- groups specified.                                   -->
+          <!-- Separates packages on the overview page into the groups specified. -->
           <groups>
+            <group>
+              <title>Feature</title>
+              <packages>
+                org.geotoolkit.feature*
+              </packages>
+            </group>
+            <group>
+              <title>Feature DataStore</title>
+              <packages>
+                org.geotoolkit.data*
+              </packages>
+            </group>
+            <group>
+              <title>Filter and Expression</title>
+              <packages>
+                org.geotoolkit.filter*
+              </packages>
+            </group>
+
             <group>
               <title>Geometry</title>
               <packages>
                 org.geotoolkit.geometry*:org.geotoolkit.topology*
               </packages>
             </group>
+
             <group>
               <title>Coverage and Raster</title>
               <packages>
                 org.geotoolkit.coverage*:org.geotoolkit.image*
               </packages>
             </group>
+
             <group>
-              <title>Referencing</title>
+              <title>Processing</title>
               <packages>
-                org.geotoolkit.referencing*:org.geotoolkit.parameter*
+                org.geotoolkit.process*
+              </packages>
+            </group>
+
+            <group>
+              <title>Indexing and Searching</title>
+              <packages>
+                org.geotoolkit.index*:org.geotoolkit.lucene*
+              </packages>
+            </group>
+
+
+            <group>
+              <title>Rendering</title>
+              <packages>
+                  org.geotoolkit.display*:org.geotoolkit.map*:org.geotoolkit.renderer*
               </packages>
             </group>
             <group>
-              <title>Metadata</title>
-              <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
+              <title>Rendering 2D : Go2 Engine</title>
+              <packages>org.geotoolkit.display2d*</packages>
             </group>
             <group>
-              <title>Input/Output (except Raster)</title>
+              <title>Reporting : JasperReport</title>
               <packages>
-                org.geotoolkit.console*:org.geotoolkit.io*:org.geotoolkit.sql*:org.geotoolkit.xml*
+                org.geotoolkit.report*
               </packages>
             </group>
             <group>
-              <title>Utilities</title>
+              <title>Styling</title>
               <packages>
-                org.geotoolkit.factory*:org.geotoolkit.index*:org.geotoolkit.lang*:org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.util*
+                org.geotoolkit.style*:org.geotoolkit.sld*:org.geotoolkit.se.*
               </packages>
             </group>
             <group>
-              <title>Display</title>
-              <packages>
-                org.geotoolkit.display*:org.geotoolkit.gui*
-              </packages>
+              <title>User Interface : Swing</title>
+              <packages>org.geotoolkit.gui.swing*</packages>
             </group>
+
           </groups>
 
           <!-- Enables the Javadoc tool to interpret a simple, one-argument -->
@@ -662,12 +701,6 @@
       <name>Geotoolkit repository</name>
       <url>http://maven.geotoolkit.org/</url>
     </repository>
-    <!--repository>
-      <id>jfreechart</id>
-      <name>JFreeChart repository</name>
-      <url>http://repo1.maven.org/maven2/jfree/jfreechart/</url>
-    </repository-->
-
   </repositories>
 
 
