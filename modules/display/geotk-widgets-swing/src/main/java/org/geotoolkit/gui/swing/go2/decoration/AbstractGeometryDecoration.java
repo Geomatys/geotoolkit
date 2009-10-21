@@ -71,7 +71,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         return coords;
     }
 
-    public void setGeometries(Collection<Geometry> geoms){
+    public void setGeometries(Collection<? extends Geometry> geoms){
         geometries.clear();
 
         if(geoms != null){

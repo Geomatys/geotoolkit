@@ -89,7 +89,7 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     }
 
     @Override
-    public void setGeometries(Collection<Geometry> geoms) {
+    public void setGeometries(Collection<? extends Geometry> geoms) {
         super.setGeometries(geoms);
         updateArea();
     }

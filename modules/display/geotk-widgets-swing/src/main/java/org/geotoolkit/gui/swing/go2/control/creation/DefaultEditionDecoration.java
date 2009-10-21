@@ -38,7 +38,6 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -59,9 +58,7 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToggleButton;
 import javax.swing.event.MouseInputListener;
 
 import org.geotoolkit.display.container.AbstractContainer2D;
@@ -74,7 +71,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
-import org.geotoolkit.gui.swing.misc.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
@@ -126,206 +122,212 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     private static final Color MAIN_COLOR = Color.RED;
 
-    private final Action startAction = new AbstractAction("Start") {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            final Object candidate = guiLayers.getSelectedItem();
-            if(candidate instanceof FeatureMapLayer){
-                FeatureMapLayer layer = (FeatureMapLayer)candidate;
-                FeatureSource fs = layer.getFeatureSource();
-                if(fs instanceof FeatureStore){
-                    final Class c = fs.getSchema().getGeometryDescriptor().getType().getBinding();
-                    guiLayers.setEnabled(false);
-                    startAction.setEnabled(false);
-                    guiEnd.setEnabled(true);
-                    editAction.setEnabled(true);
-                    if(c == Point.class){
-                        pointAction.setEnabled(true);
-                    }else if(c == LineString.class){
-                        lineAction.setEnabled(true);
-                    }else if(c == Polygon.class){
-                        polygonAction.setEnabled(true);
-                    }else if(c == MultiPoint.class){
-                        multiPointAction.setEnabled(true);
-                    }else if(c == MultiLineString.class){
-                        multiLineAction.setEnabled(true);
-                    }else if(c == MultiPolygon.class){
-                        multiPolygonAction.setEnabled(true);
-                    }else if(c == Geometry.class){
-                        pointAction.setEnabled(true);
-                        lineAction.setEnabled(true);
-                        polygonAction.setEnabled(true);
-                        multiPointAction.setEnabled(true);
-                        multiLineAction.setEnabled(true);
-                        multiPolygonAction.setEnabled(true);
-                    }
-                }
-            }
+//    private final Action startAction = new AbstractAction("Start") {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            final Object candidate = guiLayers.getSelectedItem();
+//            if(candidate instanceof FeatureMapLayer){
+//                FeatureMapLayer layer = (FeatureMapLayer)candidate;
+//                FeatureSource fs = layer.getFeatureSource();
+//                if(fs instanceof FeatureStore){
+//                    final Class c = fs.getSchema().getGeometryDescriptor().getType().getBinding();
+//                    guiLayers.setEnabled(false);
+//                    startAction.setEnabled(false);
+//                    guiEnd.setEnabled(true);
+//                    editAction.setEnabled(true);
+//                    if(c == Point.class){
+//                        pointAction.setEnabled(true);
+//                    }else if(c == LineString.class){
+//                        lineAction.setEnabled(true);
+//                    }else if(c == Polygon.class){
+//                        polygonAction.setEnabled(true);
+//                    }else if(c == MultiPoint.class){
+//                        multiPointAction.setEnabled(true);
+//                    }else if(c == MultiLineString.class){
+//                        multiLineAction.setEnabled(true);
+//                    }else if(c == MultiPolygon.class){
+//                        multiPolygonAction.setEnabled(true);
+//                    }else if(c == Geometry.class){
+//                        pointAction.setEnabled(true);
+//                        lineAction.setEnabled(true);
+//                        polygonAction.setEnabled(true);
+//                        multiPointAction.setEnabled(true);
+//                        multiLineAction.setEnabled(true);
+//                        multiPolygonAction.setEnabled(true);
+//                    }
+//                }
+//            }
+//
+//        }
+//    };
 
-        }
-    };
-    private final Action editAction = new AbstractAction("", ICON_EDIT) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            final ModificationDelegate delegate = new ModificationDelegate(DefaultEditionDecoration.this);
-            eventProxy.delegate = delegate;
-            setToolsPane(null);
-            delegate.prepare(panDetail);
-        }
-    };
-    private final Action pointAction = new AbstractAction("", ICON_SINGLE_POINT) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            eventProxy.delegate = new PointDelegate(DefaultEditionDecoration.this);
-            setToolsPane(null);
-        }
-    };
-    private final Action lineAction = new AbstractAction("", ICON_SINGLE_LINE) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            eventProxy.delegate = new LineDelegate(DefaultEditionDecoration.this);
-            setToolsPane(null);
-        }
-    };
-    private final Action polygonAction = new AbstractAction("", ICON_SINGLE_POLYGON) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            eventProxy.delegate = new PolygonDelegate(DefaultEditionDecoration.this);
-            setToolsPane(null);
-        }
-    };
-    private final Action multiPointAction = new AbstractAction("", ICON_MULTI_POINT) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            eventProxy.delegate = new MultiPointDelegate(DefaultEditionDecoration.this);
-            setToolsPane(null);
-        }
-    };
-    private final Action multiLineAction = new AbstractAction("", ICON_MULTI_LINE) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            eventProxy.delegate = new MultiLineDelegate(DefaultEditionDecoration.this);
-            setToolsPane(null);
-        }
-    };
-    private final Action multiPolygonAction = new AbstractAction("", ICON_MULTI_POLYGON) {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            eventProxy.delegate = new MultiPolygonDelegate(DefaultEditionDecoration.this);
-            setToolsPane(null);
-        }
-    };
-    private final Action endAction = new AbstractAction("End") {
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-            reset();
-        }
-    };
+//    private final Action editAction = new AbstractAction("", ICON_EDIT) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            final ModificationDelegate delegate = new ModificationDelegate(DefaultEditionDecoration.this);
+//            eventProxy.delegate = delegate;
+//            setToolsPane(null);
+//            delegate.prepare(panDetail);
+//        }
+//    };
+//    private final Action pointAction = new AbstractAction("", ICON_SINGLE_POINT) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+////            eventProxy.delegate = new PointDelegate(DefaultEditionDecoration.this);
+//            setToolsPane(null);
+//        }
+//    };
+//    private final Action lineAction = new AbstractAction("", ICON_SINGLE_LINE) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            eventProxy.delegate = new LineDelegate(DefaultEditionDecoration.this);
+//            setToolsPane(null);
+//        }
+//    };
+//    private final Action polygonAction = new AbstractAction("", ICON_SINGLE_POLYGON) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            eventProxy.delegate = new PolygonDelegate(DefaultEditionDecoration.this);
+//            setToolsPane(null);
+//        }
+//    };
+//    private final Action multiPointAction = new AbstractAction("", ICON_MULTI_POINT) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            eventProxy.delegate = new MultiPointDelegate(DefaultEditionDecoration.this);
+//            setToolsPane(null);
+//        }
+//    };
+//    private final Action multiLineAction = new AbstractAction("", ICON_MULTI_LINE) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            eventProxy.delegate = new MultiLineDelegate(DefaultEditionDecoration.this);
+//            setToolsPane(null);
+//        }
+//    };
+//    private final Action multiPolygonAction = new AbstractAction("", ICON_MULTI_POLYGON) {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            eventProxy.delegate = new MultiPolygonDelegate(DefaultEditionDecoration.this);
+//            setToolsPane(null);
+//        }
+//    };
+//    private final Action endAction = new AbstractAction("End") {
+//        @Override
+//        public void actionPerformed(ActionEvent arg0) {
+//            reset();
+//        }
+//    };
 
     private final UIEventProxy eventProxy = new UIEventProxy();
     private final ButtonGroup group = new ButtonGroup();
     private final JComboBox guiLayers = new JComboBox();
     
-    private final JButton guiStart = new JButton(startAction);
-    private final JButton guiEnd = new JButton(endAction);
+//    private final JButton guiStart = new JButton(startAction);
+//    private final JButton guiEnd = new JButton(endAction);
 
-    private final JPanel panDetail = new JPanel(new BorderLayout());
+    
 
     DefaultEditionDecoration() {
-        final JToggleButton guiEdit = new JToggleButton(editAction);
-        final JToggleButton guiSinglePoint = new JToggleButton(pointAction);
-        final JToggleButton guiSingleLine = new JToggleButton(lineAction);
-        final JToggleButton guiSinglePolygon = new JToggleButton(polygonAction);
-        final JToggleButton guiMultiPoint = new JToggleButton(multiPointAction);
-        final JToggleButton guiMultiLine = new JToggleButton(multiLineAction);
-        final JToggleButton guiMultiPolygon = new JToggleButton(multiPolygonAction);
-
-        group.add(guiEdit);
-        group.add(guiSingleLine);
-        group.add(guiSinglePoint);
-        group.add(guiSinglePolygon);
-        group.add(guiMultiLine);
-        group.add(guiMultiPoint);
-        group.add(guiMultiPolygon);
-
-        guiLayers.setRenderer(new LayerListRenderer());
-
-        guiLayers.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                final Object candidate = guiLayers.getSelectedItem();
-            if(candidate instanceof FeatureMapLayer){
-                FeatureMapLayer layer = (FeatureMapLayer)candidate;
-                FeatureSource fs = layer.getFeatureSource();
-                if(fs instanceof FeatureStore){
-                    guiStart.setEnabled(true);
-                }
-            }
-            }
-        });
-
-
         setLayout(new BorderLayout());
 
-        final JPanel panNorth = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panNorth.setOpaque(false);
-        final JPanel panTools = new JPanel();
-        panTools.setLayout(new FlowLayout());
-        panTools.setOpaque(false);
-        panTools.setBorder(new RoundedBorder());
-
-        panTools.setOpaque(false);
-        panTools.add(guiLayers);
-        panTools.add(guiStart);
-        panTools.add(new JLabel("      "));
-        panTools.add(guiEdit);
-        panTools.add(guiSinglePoint);
-        panTools.add(guiSingleLine);
-        panTools.add(guiSinglePolygon);
-        panTools.add(guiMultiPoint);
-        panTools.add(guiMultiLine);
-        panTools.add(guiMultiPolygon);
-        panTools.add(new JLabel("      "));
-        panTools.add(guiEnd);
-        panNorth.add(panTools);
-
-        final JPanel panEast = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        panEast.setOpaque(false);
-        panEast.add(panDetail);
-        setToolsPane(null);
-
-        add(BorderLayout.NORTH, panNorth);
-        add(BorderLayout.EAST, panEast);
+//        final JToggleButton guiEdit = new JToggleButton(editAction);
+//        final JToggleButton guiSinglePoint = new JToggleButton(pointAction);
+//        final JToggleButton guiSingleLine = new JToggleButton(lineAction);
+//        final JToggleButton guiSinglePolygon = new JToggleButton(polygonAction);
+//        final JToggleButton guiMultiPoint = new JToggleButton(multiPointAction);
+//        final JToggleButton guiMultiLine = new JToggleButton(multiLineAction);
+//        final JToggleButton guiMultiPolygon = new JToggleButton(multiPolygonAction);
+//
+//        group.add(guiEdit);
+//        group.add(guiSingleLine);
+//        group.add(guiSinglePoint);
+//        group.add(guiSinglePolygon);
+//        group.add(guiMultiLine);
+//        group.add(guiMultiPoint);
+//        group.add(guiMultiPolygon);
+//
+//        guiLayers.setRenderer(new LayerListRenderer());
+//
+//        guiLayers.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent arg0) {
+//                final Object candidate = guiLayers.getSelectedItem();
+//            if(candidate instanceof FeatureMapLayer){
+//                FeatureMapLayer layer = (FeatureMapLayer)candidate;
+//                FeatureSource fs = layer.getFeatureSource();
+//                if(fs instanceof FeatureStore){
+//                    guiStart.setEnabled(true);
+//                }
+//            }
+//            }
+//        });
+//
+//
+        
+//
+//        final JPanel panNorth = new JPanel(new FlowLayout(FlowLayout.CENTER));
+//        panNorth.setOpaque(false);
+//        final JPanel panTools = new JPanel();
+//        panTools.setLayout(new FlowLayout());
+//        panTools.setOpaque(false);
+//        panTools.setBorder(new RoundedBorder());
+//
+//        panTools.setOpaque(false);
+//        panTools.add(guiLayers);
+//        panTools.add(guiStart);
+//        panTools.add(new JLabel("      "));
+//        panTools.add(guiEdit);
+//        panTools.add(guiSinglePoint);
+//        panTools.add(guiSingleLine);
+//        panTools.add(guiSinglePolygon);
+//        panTools.add(guiMultiPoint);
+//        panTools.add(guiMultiLine);
+//        panTools.add(guiMultiPolygon);
+//        panTools.add(new JLabel("      "));
+//        panTools.add(guiEnd);
+//        panNorth.add(panTools);
+//
+        
+//
+//        add(BorderLayout.NORTH, panNorth);
+        
     }
 
     public void reset(){
         setMap2D(map);
-        guiStart.setEnabled(false);
-        editAction.setEnabled(false);
-        lineAction.setEnabled(false);
-        pointAction.setEnabled(false);
-        polygonAction.setEnabled(false);
-        multiLineAction.setEnabled(false);
-        multiPointAction.setEnabled(false);
-        multiPolygonAction.setEnabled(false);
-        guiEnd.setEnabled(false);
+//        guiStart.setEnabled(false);
+//        editAction.setEnabled(false);
+//        lineAction.setEnabled(false);
+//        pointAction.setEnabled(false);
+//        polygonAction.setEnabled(false);
+//        multiLineAction.setEnabled(false);
+//        multiPointAction.setEnabled(false);
+//        multiPolygonAction.setEnabled(false);
+//        guiEnd.setEnabled(false);
         eventProxy.delegate = null;
-        setToolsPane(null);
+//        setToolsPane(null);
     }
 
     public void setToolsPane(JComponent comp){
+        final JPanel panEast = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        final JPanel panDetail = new JPanel(new BorderLayout());
+        panEast.setOpaque(false);
+        panEast.add(panDetail);
+
         panDetail.removeAll();
         panDetail.revalidate();
-        panDetail.setVisible(false);
         panDetail.setOpaque(false);
         panDetail.setBorder(new RoundedBorder());
 
         if(comp != null){
             panDetail.add(comp);
             panDetail.revalidate();
-            panDetail.setVisible(true);
         }
+
+        add(BorderLayout.EAST, panEast);
+        revalidate();
     }
 
     @Override
