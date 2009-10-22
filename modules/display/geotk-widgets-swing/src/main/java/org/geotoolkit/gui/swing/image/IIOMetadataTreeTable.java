@@ -28,11 +28,13 @@ import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.internal.swing.table.BooleanRenderer;
+import org.geotoolkit.internal.swing.table.JTables;
 
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.COLUMN_COUNT;
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
@@ -76,8 +78,9 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
      *
      * @param identifier An identifier, which must be unique for a given {@link IIOMetadataPanel}.
      * @param root The output of {@link MetadataTreeTable#getRootNode()}.
+     * @param settings The column model from which to copy the setting, or {@code null} if none.
      */
-    IIOMetadataTreeTable(final String identifier, final TreeTableNode root) {
+    IIOMetadataTreeTable(final String identifier, final TreeTableNode root, final TableColumnModel settings) {
         super(new Model(root));
         final Model model = (Model) getTreeTableModel();
         model.owner = this;
@@ -88,6 +91,17 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         booleanRenderer = new BooleanRenderer();
         /*
+         * Assign programmatic identifiers to the columns, for handling by JTables static
+         * methods. We need to remove the "value" column if there is no such column.
+         */
+        final TableColumnModel columns = getColumnModel();
+        int c = columns.getColumnCount();
+        String[] identifiers = Model.IDENTIFIERS;
+        if (c != COLUMN_COUNT) {
+            identifiers = XArrays.remove(identifiers, VALUE_COLUMN, 1);
+        }
+        JTables.setIdentifiers(columns, (Object[]) identifiers);
+        /*
          * Hide every columns except the one for the names and only one additional column:
          *
          *   - For IIOMetadataFormat, the type
@@ -97,17 +111,22 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
          * non-null values are usually "false" for the boolean type. The user can select
          * columns to be made visible with the icon in the upper-right corner.
          */
-        final TableColumnModel columns = getColumnModel();
-        int c = columns.getColumnCount();
-        final int keep = (c == COLUMN_COUNT) ? VALUE_COLUMN : 2;
-        while (--c >= 1) {
-            if (c != keep) {
-                ((TableColumnExt) columns.getColumn(c)).setVisible(false);
+        if (settings == null) {
+            final int keep = (c == COLUMN_COUNT) ? VALUE_COLUMN : 2;
+            while (--c >= 1) {
+                if (c != keep) {
+                    ((TableColumnExt) columns.getColumn(c)).setVisible(false);
+                }
             }
+            // If the preferred colum width below is modified, consider
+            // updating the preferred panel width in IIOMetadataPanel.
+            columns.getColumn(0).setPreferredWidth(240);
+        } else {
+            /*
+             * Just replicate the settings of the given column model.
+             */
+            JTables.copyConfiguration(settings, columns);
         }
-        // If the preferred colum width below is modified, consider
-        // updating the preferred widget width in IIOMetadataPanel.
-        columns.getColumn(0).setPreferredWidth(240);
     }
 
     /**
@@ -121,6 +140,14 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
      * @module
      */
     private static final class Model extends org.geotoolkit.gui.swing.TreeTableModelAdapter {
+        /**
+         * Columns identifiers for programmatic purpose.
+         * Shall be consistent with {@link #getColumnName}.
+         */
+        static final String[] IDENTIFIERS = {
+            "name", "description", "type", "occurence", "value", "default", "validValues"
+        };
+
         /**
          * The component which own this model.
          * This is used only for fetching the locale.

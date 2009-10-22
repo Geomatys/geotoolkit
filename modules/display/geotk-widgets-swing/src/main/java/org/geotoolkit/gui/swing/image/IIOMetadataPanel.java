@@ -286,7 +286,7 @@ public class IIOMetadataPanel extends JPanel {
             /*
              * Make visible the new format or the new part.
              */
-            visibleTable = selectedFormat.show(tables, this);
+            visibleTable = selectedFormat.show(tables, this, visibleTable);
             showProperties(visibleTable.selectedNode);
         }
 

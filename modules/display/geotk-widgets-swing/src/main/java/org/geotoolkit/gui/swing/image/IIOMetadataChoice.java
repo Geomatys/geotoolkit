@@ -136,6 +136,7 @@ final class IIOMetadataChoice implements Serializable {
             final MetadataTreeTable tree = new MetadataTreeTable(im.getMetadataFormat(format));
             tree.setMetadata(im);
             tree.setLocale(locale);
+            tree.setSimplificationAllowed(true);
             metadata[i] = tree;
             final String name;
             if (im == stream) {
@@ -205,11 +206,12 @@ final class IIOMetadataChoice implements Serializable {
      * @param  panel The component which contain the collection of tables.
      * @param  The tree selection listener to be registered to the {@code TreeTable}
      *         if a new one is created. Otherwise ignored.
+     * @param  The table which was visible before this method call, or {@code null} if unknown.
      * @return The table which is now visible.
      * @throws IndexOutOfBoundsException If the given image index is positive but out of bounds.
      */
-    final IIOMetadataTreeTable show(final JComponent panel, final TreeSelectionListener listener)
-            throws IndexOutOfBoundsException
+    final IIOMetadataTreeTable show(final JComponent panel, final TreeSelectionListener listener,
+            final IIOMetadataTreeTable visibleTable) throws IndexOutOfBoundsException
     {
         final int index = selectedPart;
         IIOMetadataTreeTable table = tables[index];
@@ -220,7 +222,8 @@ final class IIOMetadataChoice implements Serializable {
             if (index >= offset) {
                 identifier = identifier + ':' + (index - offset + 1);
             }
-            table = new IIOMetadataTreeTable(identifier, metadata.getRootNode());
+            table = new IIOMetadataTreeTable(identifier, metadata.getRootNode(),
+                    (visibleTable != null) ? visibleTable.getColumnModel() : null);
             panel.add(new JScrollPane(table), identifier);
             table.getTreeSelectionModel().addTreeSelectionListener(listener);
             tables[index] = table;
