@@ -100,7 +100,7 @@ public class DefaultClockTest {
      */
     @Test
     public void testClkTrans() {
-        //@TODO this method is not implemented yet!
+        //@todo this method is not implemented yet!
     }
 
     /**
@@ -108,7 +108,7 @@ public class DefaultClockTest {
      */
     @Test
     public void testUtcTrans() {
-        //@TODO this method is not implemented yet!
+        //@todo this method is not implemented yet!
     }
 
     /**

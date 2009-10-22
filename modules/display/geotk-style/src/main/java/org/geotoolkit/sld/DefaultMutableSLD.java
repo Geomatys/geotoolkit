@@ -412,7 +412,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     
     /**
      * {@inheritDoc }
-     * @TODO the complete clone must be applied on the attributes.
+     * @todo the complete clone must be applied on the attributes.
      */
     @Override
     public DefaultMutableSLD clone() {

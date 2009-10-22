@@ -67,7 +67,7 @@ public class DefaultOrdinalReferenceSystemTest {
      */
     @Test
     public void testToWKT() {
-        //@TODO this method is not implemented yet!
+        //@todo this method is not implemented yet!
     }
 
     /**

@@ -99,7 +99,7 @@ public class DefaultCalendarTest {
      */
     @Test
     public void testJulTrans() {
-        //@TODO this method is not supported yet!
+        //@todo this method is not supported yet!
     }
 
     /**

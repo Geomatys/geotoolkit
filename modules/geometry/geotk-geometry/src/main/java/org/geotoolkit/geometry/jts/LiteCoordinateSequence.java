@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 
 /**
- * @TODO class description
+ * @todo class description
  * 
  * @author jeichar
  * @module pending

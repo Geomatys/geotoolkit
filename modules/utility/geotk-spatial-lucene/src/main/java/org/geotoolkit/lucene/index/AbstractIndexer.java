@@ -24,7 +24,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.io.WKBWriter;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +41,6 @@ import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
@@ -142,14 +139,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * Create a new Index.
      *
-     * @throws java.sql.SQLException
+     * @throws IndexingException
      */
     public abstract void createIndex() throws IndexingException;
 
     /**
      * Create a new Index with the specified list of object.
      *
-     * @throws java.sql.SQLException
+     * @throws IndexingException
      */
     public abstract void createIndex(List<? extends Object> toIndex) throws IndexingException;
 
@@ -211,7 +208,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
     * Makes a document from the specified object.
     *
-    * @param Form An MDweb formular to index.
+    * @param object an object to index.
     * @return A Lucene document.
     */
     protected abstract Document createDocument(E object) throws IndexingException;
@@ -274,7 +271,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
 
     /**
      * Return the service ID of this index or "" if there is not explicit service ID.
-     * @return
+     * @return service id
      */
     protected String getServiceID() {
         File directory = getFileDirectory();

@@ -50,8 +50,6 @@ public abstract class IndexLucene {
     
    /**
      * Creates a new Lucene Index.
-     * 
-     * @param configDirectory A directory where the index can write indexation file. 
      */
     public IndexLucene() {
         analyzer = new StandardAnalyzer();
@@ -59,8 +57,6 @@ public abstract class IndexLucene {
 
     /**
      * Creates a new Lucene Index with the specified Analyzer.
-     *
-     * @param configDirectory A directory where the index can write indexation file.
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null)
@@ -79,7 +75,7 @@ public abstract class IndexLucene {
     /**
      * The RAMdirectory setter for this Index object.
      *
-     * @param RAMDirectory a RAMDirectory object.
+     * @param ramDirectory a RAMDirectory object.
      */
     public void setRAMdirectory(final RAMDirectory ramDirectory) {
         this.ramDirectory = ramDirectory;

@@ -75,9 +75,7 @@ public class SpatialQuery {
     /**
      * Build a new Query combinating a lucene query and a spatial filter.
      * 
-     * @param geometry   A geometry object.
-     * @param crsName    A corrdinate Reference System name
-     * @param filterType A flag correspounding to the type of the spatial filter
+     * @param spatialFilter spatial filter
      * 
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
      * @throws org.opengis.referencing.FactoryException
@@ -92,7 +90,7 @@ public class SpatialQuery {
      * 
      * @param query  A well-formed Lucene query. 
      * @param filter A lucene filter (spatial, serialChain, ...)
-     * @pram  logicalOperator The logical operator to apply between the query and the spatialFilter.
+     * @param logicalOperator The logical operator to apply between the query and the spatialFilter.
      */
     public SpatialQuery(String query, Filter filter, int logicalOperator) {
         this(query,filter,logicalOperator,null);

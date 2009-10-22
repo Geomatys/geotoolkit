@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 
 /**
- * @TODO class description
+ * @todo class description
  *
  * @author jeichar
  * @module pending

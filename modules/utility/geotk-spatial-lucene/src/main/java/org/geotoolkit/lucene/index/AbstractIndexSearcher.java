@@ -93,7 +93,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
      *
      * @param configDir The configuration Directory where to build the indexDirectory.
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
-     * @param analizer  A lucene Analyzer
+     * @param analyzer  A lucene Analyzer
      */
     public AbstractIndexSearcher(File configDir, String serviceID, Analyzer analyzer) throws IndexingException {
         super(analyzer);
@@ -169,7 +169,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
      * This method proceed a lucene search and to verify that the identifier exist.
      * If it exist it return the database ID.
      *
-     * @param query A simple Term query on "indentifier field".
+     * @param id A simple Term query on "indentifier field".
      *
      * @return A database id.
      */
@@ -187,9 +187,9 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
     /**
      * This method proceed a lucene search and returns a list of ID.
      *
-     * @param query The lucene query string with spatials filters.
+     * @param spatialQuery The lucene query string with spatials filters.
      *
-     * @return      A List of metadata identifiers.
+     * @return A List of metadata identifiers.
      */
     public List<String> doSearch(SpatialQuery spatialQuery) throws SearchingException {
         try {
