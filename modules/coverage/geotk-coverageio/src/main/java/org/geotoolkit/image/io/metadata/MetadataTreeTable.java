@@ -32,7 +32,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
 /**
  * A view of an {@link IIOMetadata} instance as a tree table. The tree structure is determined by
- * a {@link IIOMetadataFormat}, which must be provided to the constructor. After the construction,
+ * an {@link IIOMetadataFormat}, which must be provided to the constructor. After the construction,
  * different instances of {@code IIOMetadata} can be given to this {@code MetadataTreeTable} in
  * order to generate tables with different values. If no {@code IIOMetadata} instance is given,
  * then this object represents only the structure of the format with its restrictions (expected
@@ -41,14 +41,14 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  * The root of the tree is obtained by {@link #getRootNode()}. The table contains at most
  * {@value #COLUMN_COUNT} columns, described below:
  * <ol>
- *   <li>A human-readeable name of the nodes</li>
+ *   <li>A human-readeable name of the nodes.</li>
  *   <li>A description of the node.</li>
+ *   <li>The {@linkplain Class#getSimpleName() simple class names} of values.</li>
+ *   <li>The range of occurences (how many time the node can be repeated).</li>
  *   <li>The node value (this column is omitted if the tree is for
- *       {@link IIOMetadataFormat} instead than {@link IIOMetadata})</li>
- *   <li>The simple class names of value types</li>
- *   <li>The range of occurences (how many time the node can be repeated)</li>
- *   <li>A description of valid values (either as a range or as an enumeration)</li>
- *   <li>The default value</li>
+ *       {@link IIOMetadataFormat} instead than {@link IIOMetadata}).</li>
+ *   <li>The default value.</li>
+ *   <li>A description of valid values (either as a range or as an enumeration).</li>
  * </ol>
  * <p>
  * This class works with arbitrary implementations of {@code IIOMetadata};
@@ -66,18 +66,18 @@ public class MetadataTreeTable {
     /**
      * The number of columns in the table ({@value}), when every columns are present. Note that
      * the {@linkplain #VALUE_COLUMN value column} is omitted if this {@code MetadataTreeTable}
-     * is given only a {@link IIOMetadataFormat} without any {@link IIOMetadata} instance for
+     * is given only an {@link IIOMetadataFormat} without any {@link IIOMetadata} instance for
      * providing the actual values.
      */
     public static final int COLUMN_COUNT = 7;
 
     /**
      * The column which contains the values. This is the column which is ommited if this
-     * table is for {@link IIOMetadataFormat} instead than {@link IIOMetadata}.
+     * table describe only an {@link IIOMetadataFormat} without {@link IIOMetadata}.
      *
      * @since 3.05
      */
-    public static final int VALUE_COLUMN = 2;
+    public static final int VALUE_COLUMN = 4;
 
     /**
      * The expected format of {@code IIOMetadata} instances.

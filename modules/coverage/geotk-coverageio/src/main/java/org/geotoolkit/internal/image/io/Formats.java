@@ -19,6 +19,8 @@ package org.geotoolkit.internal.image.io;
 
 import java.util.Locale;
 import java.util.Iterator;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
@@ -163,7 +165,11 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
         }
         if (!success) {
             if (failure == null) {
-                failure = new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+                if (input instanceof File && !((File) input).exists()) {
+                    failure = new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, input));
+                } else {
+                    failure = new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+                }
             }
             throw failure;
         }

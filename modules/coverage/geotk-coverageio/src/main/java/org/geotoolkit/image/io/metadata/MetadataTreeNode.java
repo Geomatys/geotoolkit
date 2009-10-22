@@ -49,11 +49,11 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * <ol>
  *   <li>{@link #getLabel()}</li>
  *   <li>{@link #getDescription()}</li>
- *   <li>{@link #getUserObject()} (this column may be omitted - see {@link MetadataTreeTable})</li>
  *   <li>{@link #getValueType()}</li>
  *   <li>{@link #getOccurences()}</li>
- *   <li>{@link #getValueRestriction()}</li>
+ *   <li>{@link #getUserObject()} (this column may be omitted - see {@link MetadataTreeTable})</li>
  *   <li>{@link #getDefaultValue()}</li>
+ *   <li>{@link #getValueRestriction()}</li>
  * </ol>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -509,11 +509,11 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
         switch (canonical(column)) {
             case 0:                                 // The label.
             case 1:  return String.class;           // The description.
-            case 3:  return Class.class;            // The base type of values.
-            case 4:  return NumberRange.class;      // The range of occurences
-            case 5:  return ValueRestriction.class; // The restrictions on valid values.
-            case 6:                                 // The default value.
-            case 2: {                               // The actual value.
+            case 2:  return Class.class;            // The base type of values.
+            case 3:  return NumberRange.class;      // The range of occurences
+            case 6:  return ValueRestriction.class; // The restrictions on valid values.
+            case 5:                                 // The default value.
+            case VALUE_COLUMN: {                    // The actual value.
                 final Class<?> type = getValueType();
                 if (type != null) {
                     return type;
@@ -532,18 +532,18 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      * <ol>
      *   <li>{@link #getLabel()}</li>
      *   <li>{@link #getDescription()}</li>
-     *   <li>{@link #getUserObject()} (this column may be omitted - see below)</li>
      *   <li>{@link #getValueType()}</li>
      *   <li>{@link #getOccurences()}</li>
-     *   <li>{@link #getValueRestriction()}</li>
+     *   <li>{@link #getUserObject()} (this column may be omitted - see below)</li>
      *   <li>{@link #getDefaultValue()}</li>
+     *   <li>{@link #getValueRestriction()}</li>
      * </ol>
      * <p>
      * Note that if the tree table does not map a {@link IIOMetadata} object, then there is
      * no column for {@code getUserObject()} and the number of all following columns are
      * shifted by one.
      *
-     * {@note If the behavior of this method is changed, then <code>IIOMetadataPanel</code>
+     * {@note If the behavior of this method is changed, then <code>IIOMetadataTreeTable</code>
      *        implementation needs to be modified accordingly.}
      *
      * @param  column The column to query.
@@ -552,13 +552,13 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     @Override
     public Object getValueAt(final int column) {
         switch (canonical(column)) {
-            case 0: return getLabel();
-            case 1: return getDescription();
-            case 2: return getUserObject();
-            case 3: return getValueType();
-            case 4: return getOccurences();
-            case 5: return getValueRestriction();
-            case 6: return getDefaultValue();
+            case 0:            return getLabel();
+            case 1:            return getDescription();
+            case 2:            return getValueType();
+            case 3:            return getOccurences();
+            case VALUE_COLUMN: return getUserObject();
+            case 5:            return getDefaultValue();
+            case 6:            return getValueRestriction();
             case COLUMN_COUNT:
             // The later is added only for making sure at compile-time that
             // we are not declaring more columns than the expected number.

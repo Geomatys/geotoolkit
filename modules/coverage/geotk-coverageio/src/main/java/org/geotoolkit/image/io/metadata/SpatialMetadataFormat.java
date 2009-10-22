@@ -517,7 +517,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 elementName = identifier;
             } else {
                 // This is used only as a fallback.
-                elementName = identifier + " element";
+                elementName = identifier + " entry";
             }
         }
         /*
