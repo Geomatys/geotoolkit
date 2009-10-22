@@ -24,7 +24,6 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
@@ -87,6 +86,30 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     private final String attribute;
 
     /**
+     * If this {@code MetadataTreeNode} is associated with a XML tree node, that node.
+     * Otherwise {@code null}. This is non-null only if an {@link IIOMetadata} instance
+     * has been given to the {@link MetadataTreeTable}.
+     * <p>
+     * Many instances of {@link MetadataTreeNode} with identical {@link #tree}, {@link #element}
+     * and {@link #attribute} values but different {@code xmlNode} may occur if:
+     * <p>
+     * <ul>
+     *   <li>An {@link IIOMetadata} instance have been assigned to {@link MetadataTreeTable}.</li>
+     *   <li>The child policy for this node is {@link IIOMetadataFormat#CHILD_POLICY_REPEAT}.</li>
+     * </ul>
+     * <p>
+     * <b>Example:</b> enumerating the RGB entries in a color palette.
+     */
+    final Node xmlNode;
+
+    /**
+     * {@code true} if the tree that contains this node is expected to have value. Note that
+     * this boolean may be {@code true} even if {@code xmlNode} is {@code null}, because the
+     * values can be in other nodes.
+     */
+    final boolean hasValue;
+
+    /**
      * The label to show in the first column.
      */
     private transient String label;
@@ -125,29 +148,36 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     /**
      * Creates a new node for a metadata element.
      *
-     * @param tree The tree which is the owner of this node.
-     * @param element The element name.
+     * @param tree      The tree which is the owner of this node.
+     * @param element   The element name.
+     * @param node      The XML node, or {@code null}.
+     * @param hasValue  {@code true} if the tree that contains this node has a value column.
      */
-    MetadataTreeNode(final MetadataTreeTable tree, final String element) {
+    MetadataTreeNode(final MetadataTreeTable tree, final String element,
+            final Node xmlNode, final boolean hasValue)
+    {
         super(element);
         this.tree      = tree;
         this.element   = element;
         this.attribute = null;
+        this.xmlNode   = xmlNode;
+        this.hasValue  = hasValue;
         setAllowsChildren(true);
     }
 
     /**
      * Creates a new node for a metadata attribute.
      *
-     * @param tree The tree which is the owner of this node.
-     * @param element The element name which own the attribute.
+     * @param element   The element which own the attribute.
      * @param attribute The attribute name.
      */
-    MetadataTreeNode(final MetadataTreeTable tree, final String element, final String attribute) {
+    MetadataTreeNode(final MetadataTreeNode element, final String attribute) {
         super(attribute);
-        this.tree      = tree;
-        this.element   = element;
+        this.tree      = element.tree;
+        this.element   = element.element;
         this.attribute = attribute;
+        this.xmlNode   = element.xmlNode;
+        this.hasValue  = element.hasValue;
         setAllowsChildren(false);
     }
 
@@ -157,19 +187,30 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      * @return The parent of this node, or {@code null} if none.
      */
     @Override
-    public MetadataTreeNode getParent() {
+    public final MetadataTreeNode getParent() {
         return (MetadataTreeNode) super.getParent();
     }
 
     /**
-     * Returns the display label. It will be constructed from the programmatic name
-     * (usually the UML identifier) when first needed and cached for future reuse.
+     * Returns the programmatic name of this node.
+     * This is for example the UML identifier as defined ISO 19115.
+     *
+     * @return The programmatic name of this node.
+     */
+    public final String getName() {
+        return super.toString();
+    }
+
+    /**
+     * Returns the display label. It will be constructed from the {@linkplain #getName
+     * programmatic name} (often the UML identifier) when first needed and cached for
+     * future reuse.
      *
      * @return The label inferred from the programmatic node name (never null).
      */
     public String getLabel() {
         if (label == null) {
-            final StringBuilder buffer = StringUtilities.separateWords(toString());
+            final StringBuilder buffer = StringUtilities.separateWords(getName());
             if (buffer.length() != 0) {
                 buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
             }
@@ -179,10 +220,10 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     }
 
     /**
-     * Returns the description.
+     * Returns the description, or {@code null} if none. The description will be localized
+     * in the {@linkplain MetadataTreeTable#getLocale() Tree Table locale}, if possible.
      *
-     * @return The description, or the {@linkplain #getLabel label}
-     *         if there is no explicit description.
+     * @return The description, or {@code null} if none.
      */
     public String getDescription() {
         String description = this.description;
@@ -373,28 +414,29 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     }
 
     /**
-     * Returns the value of this node, or {@code null} if none.
+     * Returns the value of this node, or {@code null} if none. This property is the only one
+     * which can be modified by a {@linkplain #setUserObject(Object) setter method}. If the
+     * {@link MetadataTreeTable} contains an {@link IIOMetadata} instance, then the user object
+     * is initialized to the value extracted from the {@code IIOMetadata}.
+     *
+     * @return The user object, or {@code null}.
      */
     @Override
     public Object getUserObject() {
         Object value = super.getUserObject();
         if (value == null) {
-            Node node = tree.getRootIIO();
-            if (node instanceof Element) {
-                final NodeList elements = ((Element) node).getElementsByTagName(element);
-                if (elements != null && elements.getLength() != 0) {
-                    node = elements.item(0);
-                    if (attribute != null) {
-                        if (node instanceof Element) {
-                            value = ((Element) node).getAttribute(attribute);
-                        }
-                    } else {
-                        if (node instanceof IIOMetadataNode) {
-                            value = ((IIOMetadataNode) node).getUserObject();
-                        }
-                        if (value == null) {
-                            value = node.getNodeValue();
-                        }
+            final Node node = xmlNode;
+            if (node != null) {
+                if (attribute != null) {
+                    if (node instanceof Element) {
+                        value = ((Element) node).getAttribute(attribute);
+                    }
+                } else {
+                    if (node instanceof IIOMetadataNode) {
+                        value = ((IIOMetadataNode) node).getUserObject();
+                    }
+                    if (value == null) {
+                        value = node.getNodeValue();
                     }
                 }
             }
@@ -425,6 +467,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_$2, value));
         }
         if (value != null) {
+            value = convert(value);
             if (!type.isInstance(value)) {
                 throw new IllegalArgumentException(error(Errors.Keys.BAD_PARAMETER_TYPE_$2, value.getClass()));
             }
@@ -445,6 +488,13 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
         } else {
             value = ""; // Sentinal value meaning "evaluated to null".
         }
+        super.setUserObject(value);
+    }
+
+    /**
+     * Sets the user object without argument check.
+     */
+    private void setUserObjectUnsafe(final Object value) {
         super.setUserObject(value);
     }
 
@@ -471,13 +521,50 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     }
 
     /**
+     * Copies the user object from this node to the parent node if the slot is empty.
+     * This method should be invoked for attribute nodes, when the attribute name is
+     * not really interresting (e.g. {@code "Value"} or {@code "Name"}).
+     *
+     * @return {@code true} if the copy has been performed.
+     */
+    final boolean copyToParent(final MetadataTreeNode parent) {
+        if (getUserObject() != null) { // Force computation.
+            if (parent.getUserObject()       == null &&
+                parent.getValueType()        == null &&
+                parent.getDefaultValue()     == null &&
+                parent.getValueRestriction() == null)
+            {
+                parent.setUserObjectUnsafe(super.getUserObject());
+                /*
+                 * The getter methods below are mostly for forcing computation.
+                 * Note that we don't change the occurence on purpose, since the
+                 * occurence of attribute is always 1 while the occurence of the
+                 * parent name is more informatives (e.g. [0..1] is the element
+                 * is optional).
+                 */
+                if (getValueType()        != null) parent.valueType    = valueType;
+                if (getDefaultValue()     != null) parent.defaultValue = defaultValue;
+                if (getValueRestriction() != null) parent.validValues  = validValues;
+                if (getDescription()      != null) {
+                    // This particular case is often defined in the parent node.
+                    if (parent.getDescription() == null) {
+                        parent.description = description;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns the column number to use in {@code switch} statements.
      *
      * @param  column The column visible in public API.
      * @return The column number to use in {@code switch} statements.
      */
     private int canonical(int column) {
-        if (column >= VALUE_COLUMN && tree.getRootIIO() == null) {
+        if (!hasValue && column >= VALUE_COLUMN) {
             column++; // Skip the "value" column if it doesn't exist.
         }
         return column;
@@ -492,7 +579,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      */
     @Override
     public int getColumnCount() {
-        return (tree.getRootIIO() != null) ? COLUMN_COUNT : COLUMN_COUNT-1;
+        return hasValue ? COLUMN_COUNT : COLUMN_COUNT-1;
     }
 
     /**
@@ -587,7 +674,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      */
     @Override
     public void setValueAt(final Object value, final int column) {
-        if (column == VALUE_COLUMN && tree.getRootIIO() != null) {
+        if (hasValue && column == VALUE_COLUMN) {
             try {
                 setUserObject(value);
             } catch (IllegalArgumentException e) {
@@ -614,6 +701,6 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      */
     @Override
     public boolean isEditable(final int column) {
-        return column == VALUE_COLUMN && tree.getRootIIO() != null;
+        return hasValue && column == VALUE_COLUMN;
     }
 }

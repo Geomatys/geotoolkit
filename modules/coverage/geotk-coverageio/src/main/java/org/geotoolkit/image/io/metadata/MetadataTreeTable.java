@@ -20,8 +20,9 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Locale;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
-import javax.swing.tree.DefaultMutableTreeNode;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
@@ -90,24 +91,28 @@ public class MetadataTreeTable {
     private IIOMetadata metadata;
 
     /**
-     * The root node of the current {@linkplain #metadata}.
-     */
-    private Node root;
-
-    /**
-     * The root of the tree table. Will be created only when first needed.
-     */
-    private transient MetadataTreeNode tree;
-
-    /**
      * The Locale for which localization will be attempted.
      */
     private Locale locale;
 
     /**
+     * {@code true} if the tree returned by {@link #getRootNode()} is allowed to prune empty
+     * nodes and merge singleton attributes with the parent node. This parameter has no effect
+     * if this {@code MetatataTreeTable} is used for an {@link IIOMetadataFormat} only.
+     */
+    private boolean simplificationAllowed;
+
+    /**
      * The converter from {@link String} to values.
      */
     final AnyConverter converters;
+
+    /**
+     * The root of the tree table. This is the result of {@link #getRootNode()}, which use all
+     * the above fields. It will be created only when first needed and reset to {@code null} if
+     * one of the above field change, in order to force the creation of a new tree.
+     */
+    private transient MetadataTreeNode tree;
 
     /**
      * Creates a new metadata tree for the given format.
@@ -133,27 +138,6 @@ public class MetadataTreeTable {
         if (object == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
-    }
-
-    /**
-     * Returns the locale for which localization will be attempted.
-     *
-     * @return The locale for which localization will be attempted.
-     */
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * Sets the locale for which localization will be attempted. This method invalidates
-     * any {@linkplain #getRootNode() root node} obtained before the call to this method.
-     *
-     * @param locale The locale for which localization will be attempted.
-     */
-    public void setLocale(final Locale locale) {
-        ensureNonNull("locale", locale);
-        tree = null; // Will force new calculation.
-        this.locale = locale;
     }
 
     /**
@@ -185,31 +169,85 @@ public class MetadataTreeTable {
      *         the format given to the {@code MetadataTreeTable} constructor.
      */
     public void setMetadata(final IIOMetadata metadata) throws IllegalArgumentException {
-        root = (metadata != null) ? metadata.getAsTree(format.getRootName()) : null;
-        tree = null; // Will force new calculation.
         this.metadata = metadata;
+        tree = null; // Will force new calculation.
     }
 
     /**
-     * Returns the root Image I/O node, or {@code null} if none.
+     * Returns the locale for which localization will be attempted.
+     *
+     * @return The locale for which localization will be attempted.
      */
-    final Node getRootIIO() {
-        return root;
+    public Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Sets the locale for which localization will be attempted. This change applies to
+     * future {@link MetadataTreeNode} instances to be created by {@link #getRootNode()}.
+     * The effect on previous instances (if any) is undefined - some will take the change
+     * in account, other will ignore.
+     *
+     * @param locale The locale for which localization will be attempted.
+     */
+    public void setLocale(final Locale locale) {
+        ensureNonNull("locale", locale);
+        if (!locale.equals(this.locale)) {
+            this.locale = locale;
+            tree = null; // Will force new calculation.
+        }
+    }
+
+    /**
+     * Returns {@code true} if the tree returned by {@link #getRootNode()} can be simplifed.
+     * Simplification are convenient for GUI purpose, but usually not appropriate for
+     * programmatic purpose. The simplifications, if allowed, are:
+     * <p>
+     * <ul>
+     *   <li>If a node has only one attribute, do not add that attribute to the tree.
+     *       Instead, move its {@linkplain MetadataTreeNode#getUserObject() value} in
+     *       the parent element.</li>
+     *   <li>Prune empty nodes.</li>
+     * </ul>
+     * </p>
+     * The default value is {@code false}.
+     *
+     * @return {@code true} if the tree can be simplified.
+     *
+     * @since 3.05
+     */
+    public boolean getSimplificationAllowed() {
+        return simplificationAllowed;
+    }
+
+    /**
+     * Sets whatever the tree returned by {@link #getRootNode()} can be simplified. This
+     * parameter is ignored if there is no {@link IIOMetadata} instance associated with
+     * this {@code MetadataTreeTable}.
+     *
+     * @param allowed {@code true} if the tree can be simplified.
+     *
+     * @since 3.05
+     */
+    public void setSimplificationAllowed(final boolean allowed) {
+        if (allowed != simplificationAllowed) {
+            simplificationAllowed = allowed;
+            tree = null; // Will force new calculation.
+        }
     }
 
     /**
      * Returns the root of the Tree Table representation of the metadata. If there is
-     * no metadata currently set, then returns a representation of the metadata format.
-     * <p>
-     * The state of this {@code MetadataTreeNode} should not be modified after the call
-     * to this method (i.e. {@code setLocale} and {@code setMetadata} methods should not
-     * be invoked), otherwise the content of the returned node may become invalid.
+     * no {@link IIOMetadata} instance currently set, then returns a representation of
+     * the {@link IIOMetadataFormat}.
      *
      * @return The root of a tree representation of the metadata.
      */
     public MetadataTreeNode getRootNode() {
         if (tree == null) {
-            final MetadataTreeNode root = new MetadataTreeNode(this, format.getRootName());
+            final boolean hasValue = (metadata != null);
+            final Node xmlNode = hasValue ? metadata.getAsTree(format.getRootName()) : null;
+            final MetadataTreeNode root = new MetadataTreeNode(this, format.getRootName(), xmlNode, hasValue);
             addChilds(root);
             tree = root;
         }
@@ -220,17 +258,34 @@ public class MetadataTreeTable {
      * Adds attributes and child elements to the given parent.
      * This method invokes itself recursively.
      *
-     * @param parent The parent into which the childs need to be added.
+     * @param  addTo The parent into which the childs need to be added.
+     * @param  xmlNode If {@code addTo} is associated with a XML tree node, that node.
+     * @return {@code true} if at least one element or attribute has been added.
      */
-    private void addChilds(final DefaultMutableTreeNode parent) {
-        final String name = parent.toString();
+    private boolean addChilds(final MetadataTreeNode addTo) {
+        boolean added = false;
+        final boolean includeEmpty = !addTo.hasValue || !simplificationAllowed;
         /*
          * Adds the attributes first. They will be children of the parent node.
          */
+        final String name = addTo.getName();
         String[] childs = format.getAttributeNames(name);
         if (childs != null) {
             for (final String childName : childs) {
-                parent.add(new MetadataTreeNode(this, name, childName));
+                final MetadataTreeNode child = new MetadataTreeNode(addTo, childName);
+                if (includeEmpty || child.getUserObject() != null) {
+                    added = true;
+                    if (simplificationAllowed && childs.length == 1) {
+                        /*
+                         * Attempt a simplification as documented in the getSimplificationAllowed()
+                         * method. If the simplification succeed, do not add the attribute as a child.
+                         */
+                        if (child.copyToParent(addTo)) {
+                            break;
+                        }
+                    }
+                    addTo.add(child);
+                }
             }
         }
         /*
@@ -240,11 +295,31 @@ public class MetadataTreeTable {
         if (childs != null) {
             for (final String childName : childs) {
                 if (childName != null) {
-                    final MetadataTreeNode child = new MetadataTreeNode(this, childName);
-                    addChilds(child);
-                    parent.add(child);
+                    /*
+                     * Get the number of elements having the child name. This method does not verify
+                     * if the elements are childs of this node; they could be childs of an unrelated
+                     * node. However the IIOMetadataFormat API is defined in such a way that we shall
+                     * not define different elements with the same name.
+                     */
+                    int count = 1;
+                    NodeList elements = null;
+                    if (addTo.xmlNode instanceof Element) {
+                        elements = ((Element) addTo.xmlNode).getElementsByTagName(childName);
+                        if (elements != null) {
+                            count = elements.getLength();
+                        }
+                    }
+                    for (int i=0; i<count; i++) {
+                        final Node xmlChild = (elements != null) ? elements.item(i) : null;
+                        final MetadataTreeNode child = new MetadataTreeNode(this, childName, xmlChild, addTo.hasValue);
+                        if (addChilds(child) || includeEmpty || child.getUserObject() != null) {
+                            addTo.add(child);
+                            added = true;
+                        }
+                    }
                 }
             }
         }
+        return added;
     }
 }
