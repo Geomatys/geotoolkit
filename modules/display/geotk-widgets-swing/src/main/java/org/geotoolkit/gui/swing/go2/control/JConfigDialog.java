@@ -17,17 +17,32 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
+import org.geotoolkit.display2d.canvas.painter.GradiantColorPainter;
+import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
+import org.geotoolkit.display2d.ext.grid.GridPainter;
+import org.geotoolkit.display2d.ext.grid.GridTemplate;
+import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
+import org.geotoolkit.gui.swing.crschooser.JCRSChooser.ACTION;
 import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JNorthArrowDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -37,6 +52,8 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
 public class JConfigDialog extends javax.swing.JDialog {
 
     private final Map2D map;
+
+    private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
 
     /** Creates new form JConfigDialog */
     public JConfigDialog(java.awt.Frame parent,Map2D map) {
@@ -62,6 +79,8 @@ public class JConfigDialog extends javax.swing.JDialog {
         list.add(NonSI.MILE);
 
         guiUnit.setModel(new ListComboBoxModel(list));
+
+        guiCRS.setText(crs.getName().toString());
 
     }
 
@@ -94,6 +113,11 @@ public class JConfigDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel3 = new javax.swing.JPanel();
+        guiColor = new javax.swing.JColorChooser();
+        colorApply = new javax.swing.JButton();
+        guiGrid = new javax.swing.JCheckBox();
+        guiCRS = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         guiScaleActivate = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
@@ -104,6 +128,52 @@ public class JConfigDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+
+        colorApply.setText(MessageBundle.getString("apply")); // NOI18N
+        colorApply.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                colorApplyActionPerformed(evt);
+            }
+        });
+
+        guiGrid.setText(MessageBundle.getString("grid")); // NOI18N
+
+        guiCRS.setText(MessageBundle.getString("crs")); // NOI18N
+        guiCRS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                choose(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(guiColor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(guiGrid)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(guiCRS))
+                    .addComponent(colorApply, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(guiColor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiGrid)
+                    .addComponent(guiCRS))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addComponent(colorApply)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Background", jPanel3);
 
         guiScaleActivate.setText(MessageBundle.getString("map_control_activate")); // NOI18N
         guiScaleActivate.addActionListener(new java.awt.event.ActionListener() {
@@ -132,7 +202,7 @@ public class JConfigDialog extends javax.swing.JDialog {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(guiUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(209, Short.MAX_VALUE))
+                .addContainerGap(405, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,7 +213,7 @@ public class JConfigDialog extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(guiUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(243, Short.MAX_VALUE))
+                .addContainerGap(326, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Scale bar", jPanel2);
@@ -162,14 +232,14 @@ public class JConfigDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiNorthActivate)
-                .addContainerGap(217, Short.MAX_VALUE))
+                .addContainerGap(413, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(guiNorthActivate)
-                .addContainerGap(286, Short.MAX_VALUE))
+                .addContainerGap(373, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("North arrow", jPanel1);
@@ -178,11 +248,11 @@ public class JConfigDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 716, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
 
         jTabbedPane1.getAccessibleContext().setAccessibleName("ScaleBar");
@@ -214,13 +284,65 @@ public class JConfigDialog extends javax.swing.JDialog {
 
     }//GEN-LAST:event_guiUnitItemStateChanged
 
+    private void colorApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorApplyActionPerformed
+
+        BackgroundPainter deco = new SolidColorPainter(guiColor.getColor());
+
+        if(guiGrid.isSelected()){
+            GridTemplate template = new DefaultGridTemplate(
+                    crs,
+
+                    new BasicStroke(2),
+                    Color.DARK_GRAY,
+                    new BasicStroke(1),
+                    Color.GRAY,
+
+                    new Font("Arial", Font.BOLD, 12),
+                    Color.DARK_GRAY,
+                    2,
+                    Color.white,
+
+                    new Font("Arial", Font.PLAIN, 11),
+                    Color.GRAY,
+                    2,
+                    Color.white
+                    );
+
+            BackgroundPainter gridPaint = new GridPainter(template);
+
+            map.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(deco,gridPaint));
+        }else{
+            map.getCanvas().setBackgroundPainter(deco);
+        }
+
+        map.getCanvas().getController().repaint();
+
+    }//GEN-LAST:event_colorApplyActionPerformed
+
+    private void choose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_choose
+        JCRSChooser chooser = new JCRSChooser(null, true);
+        chooser.setCRS(map.getCanvas().getObjectiveCRS());
+        ACTION act = chooser.showDialog();
+
+        if(ACTION.APPROVE.equals(act)){
+            crs = chooser.getCRS();
+            guiCRS.setText(crs.getName().toString());
+        }
+    
+    }//GEN-LAST:event_choose
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton colorApply;
+    private javax.swing.JButton guiCRS;
+    private javax.swing.JColorChooser guiColor;
+    private javax.swing.JCheckBox guiGrid;
     private javax.swing.JCheckBox guiNorthActivate;
     private javax.swing.JCheckBox guiScaleActivate;
     private javax.swing.JComboBox guiUnit;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 
