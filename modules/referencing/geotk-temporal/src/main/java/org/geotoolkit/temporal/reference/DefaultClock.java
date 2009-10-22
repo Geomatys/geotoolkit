@@ -57,14 +57,17 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
         this.utcReference = utcReference;
     }
 
+    @Override
     public InternationalString getReferenceEvent() {
         return referenceEvent;
     }
 
+    @Override
     public ClockTime getReferenceTime() {
         return referenceTime;
     }
 
+    @Override
     public ClockTime getUTCReference() {
         return utcReference;
     }
@@ -72,8 +75,9 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     /**
      * Takes a 24-hour local or UTC time and return the equivalent time of day expressed in terms of the specified clock.
      * @param uTime
-     * @return
+     * @return ClickTime
      */
+    @Override
     public ClockTime clkTrans(ClockTime uTime) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -81,8 +85,9 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
     /**
      * Takes a time of day expressed in terms of the specified clock and return the equivalent time of day in 24-hour local or UTC time.
      * @param clkTime
-     * @return
+     * @return ClockTime
      */
+    @Override
     public ClockTime utcTrans(ClockTime clkTime) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

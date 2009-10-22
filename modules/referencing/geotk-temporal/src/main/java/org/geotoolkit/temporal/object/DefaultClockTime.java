@@ -24,8 +24,8 @@ import org.opengis.temporal.TemporalReferenceSystem;
 
 /**
  *A data type that shall be used to identify a temporal position within a day.
- * Because {@linkplain TemporalPosition temporal position} cannot by itself completely
- * identify a single temporal position; it shall be used with {@linkplain CalendarDate
+ * Because {@linkplain org.opengis.temporal.TemporalPosition temporal position} cannot by itself completely
+ * identify a single temporal position; it shall be used with {@linkplain org.opengis.temporal.CalendarDate
  * calendar date} for that purpose. It may be also used to identify the time of occurrence
  * of an event that recurs every day.
  * 
@@ -45,13 +45,14 @@ public class DefaultClockTime extends DefaultTemporalPosition implements ClockTi
     }
 
     /**
-     * A sequence of numbers with a structure similar to that of {@link CalendarDate#getCalendarDate
+     * A sequence of numbers with a structure similar to that of {@link org.opengis.temporal.CalendarDate#getCalendarDate
      * CalendarDate}. The first number integer identifies a specific instance of the unit used at the
      * highest level of the clock hierarchy, the second number identifies a specific instance of the
      * unit used at the next lower level, and so on. All but the last number in the sequence shall be
      * integers; the last number may be integer or real.
      *
      */
+    @Override
     public Number[] getClockTime() {
         return clockTime;
     }

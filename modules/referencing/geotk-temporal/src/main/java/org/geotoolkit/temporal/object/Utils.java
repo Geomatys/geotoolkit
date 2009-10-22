@@ -88,7 +88,7 @@ public final class Utils {
     /**
      * Returns a Date object from an ISO-8601 representation string. (String defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
      * @param dateString
-     * @return
+     * @return Date result of parsing the given string
      */
     public static Date getDateFromString(String dateString) throws ParseException {
         final String dateFormat1 = "yyyy-MM-dd'T'HH:mm:ssZ";
@@ -154,7 +154,7 @@ public final class Utils {
      * Return a Date (long time) from a String description
      * 
      * @param periodDuration
-     * @return
+     * @return duration in millisenconds represented by this string duration.
      */
     public static long getTimeInMillis(String periodDuration) {
 
@@ -265,7 +265,6 @@ public final class Utils {
     /**
      * Convert a CalendarDate object to java.util.Date.
      * @param calDate
-     * @return
      */
     public static Date calendarDateToDate(final CalendarDate calDate) {
         if (calDate == null || !(calDate instanceof DefaultCalendarDate)){
@@ -298,7 +297,7 @@ public final class Utils {
     /**
      * Convert a DateAndTime object to Date.
      * @param dateAndTime
-     * @return
+     * @return converted DateAndTime in Date
      */
     public static Date dateAndTimeToDate(final DateAndTime dateAndTime) {
         if (dateAndTime == null && !(dateAndTime instanceof DefaultDateAndTime)) {
@@ -404,7 +403,7 @@ public final class Utils {
     }
 
     /**
-     * This method returns the nearest Unit of a Duration.
+     * @return the nearest Unit of a Duration.
      */
     public static Unit getUnitFromDuration(Duration duration) {
         if (duration == null) {
@@ -446,7 +445,7 @@ public final class Utils {
     /**
      * this method creates a date from a string, support for many formats.
      * @param date
-     * @return
+     * @return Date
      */
     public static Date createDate(String date) {
         if (date == null) {

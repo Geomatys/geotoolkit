@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.temporal.object;
 
-import java.util.Calendar;
 import java.util.Collection;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
@@ -34,12 +33,12 @@ import org.opengis.temporal.Position;
 public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements Instant {
 
     /**
-     * This is the Collection of temporal {@link Period}s,
+     * This is the Collection of temporal {@link org.opengis.temporal.Period}s,
      * for which this Instant is the beginning. The collection may be empty.
      */
     private Collection<Period> begunBy;
     /**
-     * This is the Collection of temporal {@link Period}s,
+     * This is the Collection of temporal {@link org.opengis.temporal.Period}s,
      * for which this Instant is the end. The collection may be empty.
      */
     private Collection<Period> endBy;
@@ -62,24 +61,27 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     /**
      * Get the position of this instant.
      */
+    @Override
     public Position getPosition() {
         return position;
     }
 
     /**
-     * Get the Collection of temporal {@link Period}s,
+     * Get the Collection of temporal {@link org.opengis.temporal.Period}s,
      * for which this Instant is the beginning. The collection may be empty.
-     * @see Period#begin
+     * @see org.opengis.temporal.Period#getBeginning()
      */
+    @Override
     public Collection<Period> getBegunBy() {
         return begunBy;
     }
 
     /**
-     * Get the Collection of temporal {@link Period}s,
+     * Get the Collection of temporal {@link org.opengis.temporal.Period}s,
      * for which this Instant is the end. The collection may be empty.
-     * @see Period#end
+     * @see org.opengis.temporal.Period#getEnding()
      */
+    @Override
     public Collection<Period> getEndedBy() {
         return endBy;
     }

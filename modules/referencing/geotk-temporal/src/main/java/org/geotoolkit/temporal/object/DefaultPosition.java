@@ -63,7 +63,7 @@ public class DefaultPosition implements Position {
     /**
      * This constructor replace the constructor with further DateTime object which will be included in the futur version of jdk (jdk7).
      * example of datetime argument: format specified by the ISO8601 yyyy-mm-DDTHH:MM:SSZ - example : 2003-02-13T12:28:00.000GMT-08:00.
-     * @param dateTime
+     * @param datetime
      * @throws java.text.ParseException
      */
     public DefaultPosition(final InternationalString datetime) throws ParseException {
@@ -79,11 +79,12 @@ public class DefaultPosition implements Position {
     }
 
     /**
-     * {@linkplain TemporalPosition} and its subtypes shall be used
+     * {@linkplain org.opengis.temporal.TemporalPosition} and its subtypes shall be used
      * for describing temporal positions referenced to other reference systems, and may be used for
      * temporal positions referenced to any calendar or clock, including the Gregorian calendar and UTC.
      * @return TemporalPosition
      */
+    @Override
     public TemporalPosition anyOther() {
         return (this.position instanceof TemporalPosition) ? (TemporalPosition) position : null;
     }
@@ -93,8 +94,9 @@ public class DefaultPosition implements Position {
      * Gregorian calendar and UTC.
      * @return {@linkplain InternationalString}
      * 
-     * @TODO all subtypes of TemporalPosition must be implemented.
+     * @todo all subtypes of TemporalPosition must be implemented.
      */
+    @Override
     public Date getDate() {
         if (this.position instanceof Date) {
             return (Date) position;
@@ -124,6 +126,7 @@ public class DefaultPosition implements Position {
      * Gregorian calendar and UTC.
      * @return {@linkplain InternationalString}
      */
+    @Override
     public Time getTime() {
         return (this.position instanceof Time) ? (Time) position : null;
     }
@@ -133,6 +136,7 @@ public class DefaultPosition implements Position {
      * Gregorian calendar and UTC.
      * @return {@linkplain InternationalString}
      */
+    @Override
     public InternationalString getDateTime() {
         if (this.position instanceof Date) {
             String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";

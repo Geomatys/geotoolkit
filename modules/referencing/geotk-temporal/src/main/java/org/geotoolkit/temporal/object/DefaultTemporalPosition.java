@@ -57,16 +57,15 @@ public class DefaultTemporalPosition implements TemporalPosition {
     /**
      * When this attribute is used with a subtype of {@code TemporalPosition}, it provides a qualifier to the specific value
      * for temporal position provided by the subtype.
-     *
      */
+    @Override
     public IndeterminateValue getIndeterminatePosition() {
         return this.indeterminatePosition;
     }
 
     /**
      * Returns the TM_ReferenceSystem associated with this TM_TemporalPosition, 
-     * if not specified, it is assumed to be an association to the Gregorian calendar and UTC. 
-     * @return
+     * if not specified, it is assumed to be an association to the Gregorian calendar and UTC.
      */
     public TemporalReferenceSystem getFrame() {
         if (frame == null) {
