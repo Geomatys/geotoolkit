@@ -27,7 +27,6 @@ import org.opengis.service.Interface;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/InterfaceAdapter.java $
  * @author Guilhem Legal
  */
 public class InterfaceAdapter extends XmlAdapter<InterfaceAdapter, Interface> {

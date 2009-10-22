@@ -92,8 +92,6 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
  * @author Tommaso Nolli
  * @author jesse eichar
  * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/branches/constantTimeFid/src/org/geotools/data/shapefile/indexed/IndexedShapefileDataStore.java $
  * @module pending
  */
 public class IndexedShapefileDataStore extends ShapefileDataStore implements FileWriter {

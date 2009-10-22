@@ -47,7 +47,6 @@ import com.vividsolutions.jts.geom.Geometry;
  * AbstractDataStore.
  *
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public class TransactionStateDiff implements State {

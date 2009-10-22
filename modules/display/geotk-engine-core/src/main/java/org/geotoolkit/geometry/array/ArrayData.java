@@ -35,7 +35,6 @@ import org.geotoolkit.util.XArrays;
  *
  * @module pending
  * @since 2.2
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  *

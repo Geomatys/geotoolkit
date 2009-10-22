@@ -28,7 +28,6 @@ import org.opengis.service.CouplingType;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/code/couplingTypeAdapter.java $
  * @author Guilhem Legal
  */
 public final class CouplingTypeAdapter extends CodeListAdapter<CouplingTypeAdapter, CouplingType> {

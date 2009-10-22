@@ -55,7 +55,6 @@ import org.opengis.feature.type.AttributeDescriptor;
  * on descriptor name.
  * 
  * @author Jody Garnett (Refractions Research)
- * @source $URL$
  * @module pending
  */
 public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {

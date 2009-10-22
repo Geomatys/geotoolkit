@@ -27,7 +27,6 @@ import org.opengis.service.Port;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/PortAdapter.java $
  * @author Guilhem Legal
  */
 public class PortAdapter extends XmlAdapter<PortAdapter, Port> {

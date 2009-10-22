@@ -28,7 +28,6 @@ import org.opengis.feature.type.FeatureType;
  * features passed in.
  *
  * @author Chris Holmes
- * @source $URL$
  * @version $Id$
  * @module pending
  */

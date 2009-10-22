@@ -34,7 +34,6 @@ import org.opengis.util.Cloneable;
  *
  * @module pending
  * @since 2.2
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (PMO, IRD)
  *

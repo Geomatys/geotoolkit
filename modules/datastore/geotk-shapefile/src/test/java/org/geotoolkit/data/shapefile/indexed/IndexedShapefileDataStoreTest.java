@@ -80,8 +80,6 @@ import org.geotoolkit.feature.FeatureCollectionUtilities;
 
 /**
  * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/branches/shpLazyLoadingIndex/ext/shape/test/org/geotools/data/shapefile/indexed/ShapefileDataStoreTest.java $
  * @version $Id$
  * @author Ian Schneider
  * @module pending

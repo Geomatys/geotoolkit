@@ -29,7 +29,6 @@ import org.opengis.feature.catalog.InheritanceRelation;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/inheritanceRelationAdapter.java $
  * @author Guilhem Legal
  */
 public class InheritanceRelationAdapter extends XmlAdapter<InheritanceRelationAdapter, InheritanceRelation> {

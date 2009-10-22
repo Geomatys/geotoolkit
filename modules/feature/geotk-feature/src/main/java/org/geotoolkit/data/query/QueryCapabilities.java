@@ -31,8 +31,6 @@ import org.opengis.filter.sort.SortBy;
  * @version $Id$
  * @module pending
  * @since 2.5.x
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/library/api/src/main/java/org/geotools/data/QueryCapabilities.java $
  */
 public class QueryCapabilities {
 

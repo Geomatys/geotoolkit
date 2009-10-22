@@ -59,7 +59,6 @@ import org.opengis.referencing.operation.TransformException;
  * Subclasses must override the {@link #getMarkIterator} method in order to returns informations
  * about marks.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux
  * @module pending

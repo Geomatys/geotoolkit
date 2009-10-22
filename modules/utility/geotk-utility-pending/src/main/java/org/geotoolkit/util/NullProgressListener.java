@@ -30,7 +30,6 @@ import org.opengis.util.ProgressListener;
  *
  * @module pending
  * @since 2.2
- * @source $URL$
  * @version $Id$
  */
 public class NullProgressListener implements ProgressListener {

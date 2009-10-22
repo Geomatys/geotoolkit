@@ -20,8 +20,6 @@ package org.geotoolkit.index.rtree;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/EntryBoundsChangeListener.java $
  * @module pending
  */
 public interface EntryBoundsChangeListener {

@@ -27,7 +27,6 @@ import org.geotoolkit.feature.FeatureFlatTest;
 /**
  *
  * @author jamesm
- * @source $URL$
  * @module pending
  */                                
 public class DefaultCoreSuite extends TestCase {

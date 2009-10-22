@@ -49,8 +49,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.shptest.test.UtilTestData;
 
 /**
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/indexed/ShapefileQuadTreeReadWriteTest.java $
  * @version $Id$
  * @author Ian Schneider
  * @module pending

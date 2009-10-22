@@ -27,7 +27,6 @@ import org.opengis.feature.type.FeatureType;
  * be a drop in replacement when Geotoolkit is able to upgrade to Java 5.
  * </p>
  * @author Ian Schneider
- * @source $URL$
  * @module pending
  */
 public class DefaultFeatureIterator<F extends Feature> implements FeatureIterator<F> {

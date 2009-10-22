@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequenceFactory;
  * An implementation of a JTS CSBuilder which uses a PackedCoordinateSequence.
  * 
  * @author wolf
- * @source $URL$
  * @module pending
  */
 public abstract class PackedCSBuilder implements CSBuilder {

@@ -27,7 +27,6 @@ import org.opengis.service.Operation;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/OperationAdapter.java $
  * @author Guilhem Legal
  */
 public class OperationAdapter extends XmlAdapter<OperationAdapter, Operation> {

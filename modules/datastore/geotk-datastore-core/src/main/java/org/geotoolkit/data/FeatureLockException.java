@@ -23,7 +23,6 @@ import java.io.IOException;
  * out Authroization.
  *
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public class FeatureLockException extends IOException {

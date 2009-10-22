@@ -47,7 +47,6 @@ import org.geotoolkit.feature.collection.FeatureCollection;
  * @author Rob Hranac, TOPP
  * @author Chris Holmes, TOPP
  * @author Johann Sorel, Geomatys
- * @source $URL$
  * @version $Id$
  * @module pending
  */

@@ -31,7 +31,6 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @module pending
  * @since 2.0
- * @source $URL$
  * @version $Id$
  * @author Andrea Aimes
  */

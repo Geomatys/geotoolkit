@@ -27,7 +27,6 @@ import org.opengis.feature.type.AttributeDescriptor;
  * row-based approach for accessing the data.
  *
  * @author Ian Schneider
- * @source $URL$
  * @version $Id$
  *
  * @see AttributeAcceptor

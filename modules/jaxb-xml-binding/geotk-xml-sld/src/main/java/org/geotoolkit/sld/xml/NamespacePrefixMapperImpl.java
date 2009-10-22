@@ -25,7 +25,6 @@ import com.sun.xml.internal.bind.marshaller.NamespacePrefixMapper;
  * It is possible to specify a root namespace, which will be used if no namespace
  * is specified.
  *
- * @source $URL$
  * @author Cédric Briançon
  * @module pending
  */

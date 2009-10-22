@@ -21,8 +21,6 @@ package org.geotoolkit.index;
  * contain a geometry literal (or anything else we can guess a bounds for).
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/UnsupportedFilterException.java $
  * @module pending
  */
 public class UnsupportedFilterException extends Exception {

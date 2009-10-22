@@ -22,7 +22,6 @@ import org.opengis.feature.Feature;
  * A drop in replacement for Iterator<Feature> supporting a close method.
  * 
  * @author Ian Schneider
- * @source $URL$
  * @module pending
  */
 public interface FeatureIterator<F extends Feature> {

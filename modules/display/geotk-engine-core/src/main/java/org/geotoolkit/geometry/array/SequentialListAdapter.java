@@ -28,7 +28,6 @@ import org.geotoolkit.geometry.DirectPosition2D;
 /**
  * Exposes a {@link PointArray2D} as a list of positions with sequential access.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  *

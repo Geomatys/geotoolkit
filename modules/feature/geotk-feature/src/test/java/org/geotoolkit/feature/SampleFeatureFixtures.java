@@ -33,7 +33,6 @@ import org.opengis.feature.type.GeometryDescriptor;
  * This is a support class which creates test features for use in testing.
  *
  * @author jamesm
- * @source $URL$
  * @module pending
  */
 public class SampleFeatureFixtures {

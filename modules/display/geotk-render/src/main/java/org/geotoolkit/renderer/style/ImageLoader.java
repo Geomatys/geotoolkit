@@ -34,7 +34,6 @@ import java.util.logging.Logger;
  * $Id$
  *
  * @author Ian Turton
- * @source $URL$
  * @module pending
  */
 class ImageLoader implements Runnable {

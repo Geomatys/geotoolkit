@@ -22,7 +22,6 @@ package org.geotoolkit.data.jdbc;
  * the SQLEncoder being used, or that there were io problems.
  *
  * @author Chris Holmes, TOPP
- * @source $URL$
  * @module pending
  */
 public class FilterToSQLException extends Exception {

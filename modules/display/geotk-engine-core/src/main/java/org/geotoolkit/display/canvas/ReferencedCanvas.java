@@ -81,7 +81,6 @@ import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
  *
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @author johann Sorel (Geomatys)

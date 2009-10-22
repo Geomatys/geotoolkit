@@ -39,7 +39,6 @@ import org.opengis.filter.sort.SortBy;
  *
  * @author Jody Garnett, Refractions Research, Inc.
  *
- * @source $URL$
  * @module pending
  */
 public class SubFeatureCollection extends AbstractFeatureCollection {

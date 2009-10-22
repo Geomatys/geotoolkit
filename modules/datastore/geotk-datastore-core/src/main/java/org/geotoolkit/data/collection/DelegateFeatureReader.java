@@ -35,7 +35,6 @@ import org.opengis.feature.type.FeatureType;
  * will be duplicated.
  * </p>
  * @author Jody Garnett, Refractions Research, Inc.
- * @source $URL$
  * @module pending
  */
 public class DelegateFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {

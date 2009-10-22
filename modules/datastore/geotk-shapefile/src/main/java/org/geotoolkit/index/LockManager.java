@@ -20,8 +20,6 @@ package org.geotoolkit.index;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/LockManager.java $
  * @module pending
  */
 public class LockManager {

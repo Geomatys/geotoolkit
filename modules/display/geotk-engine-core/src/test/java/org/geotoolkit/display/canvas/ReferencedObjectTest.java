@@ -44,7 +44,6 @@ import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 /**
  * Tests {@link ReferencedCanvas} and {@link ReferencedGraphic}.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @module pending

@@ -37,7 +37,6 @@ import org.opengis.feature.simple.SimpleFeature;
  * @author jgarnett
  * @module pending
  * @since 2.1.RC0
- * @source $URL$
  */
 public class NoContentIterator implements Iterator<SimpleFeature> {
 

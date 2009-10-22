@@ -36,8 +36,6 @@ import org.opengis.util.ProgressListener;
 
 /**
  * @author jamesm
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/library/main/src/test/java/org/geotools/feature/MockFeatureCollection.java $
  * @module pending
  */
 public class MockFeatureCollection implements FeatureCollection<SimpleFeatureType, SimpleFeature> {

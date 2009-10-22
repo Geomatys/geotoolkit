@@ -41,7 +41,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * reached.
  *
  * @author Chris Holmes
- * @source $URL$
  * @module pending
  */
 public class DefaultQuery implements Query {

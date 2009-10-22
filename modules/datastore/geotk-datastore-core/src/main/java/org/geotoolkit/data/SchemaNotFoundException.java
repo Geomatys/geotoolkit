@@ -22,7 +22,6 @@ import java.io.IOException;
  * Indicates a FeatureType could not be found.
  *
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public class SchemaNotFoundException extends IOException {

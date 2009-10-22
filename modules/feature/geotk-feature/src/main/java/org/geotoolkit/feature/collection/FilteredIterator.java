@@ -39,7 +39,6 @@ import org.opengis.filter.Filter;
  * </p>
  *
  * @author Jody Garnett, Refractions Research, Inc.
- * @source $URL$
  * @module pending
  */
 public class FilteredIterator<F extends Feature> implements Iterator<F> {

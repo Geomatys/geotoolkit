@@ -26,7 +26,6 @@ import org.geotoolkit.resources.Errors;
  * thrown when a metadata is defined twice with different values.  It may also be thrown
  * if a metadata can be computed from other metadata, but their values are inconsistent.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  *

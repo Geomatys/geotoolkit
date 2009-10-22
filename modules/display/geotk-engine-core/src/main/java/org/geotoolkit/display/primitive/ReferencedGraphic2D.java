@@ -32,7 +32,6 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
  *
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  */

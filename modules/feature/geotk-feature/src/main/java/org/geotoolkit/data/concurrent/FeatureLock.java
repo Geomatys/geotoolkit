@@ -35,7 +35,6 @@ package org.geotoolkit.data.concurrent;
  * </p>
  *
  * @author Jody Garnett, Refractions Research, Inc.
- * @source $URL$
  * @version $Id$
  *
  * @see <a

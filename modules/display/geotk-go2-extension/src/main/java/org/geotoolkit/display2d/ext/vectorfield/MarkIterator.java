@@ -61,7 +61,6 @@ import org.opengis.referencing.operation.TransformException;
  *   <li>{@link #labelPosition}</li>
  * </ul>
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux
  * @module pending

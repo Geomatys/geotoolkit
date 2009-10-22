@@ -32,7 +32,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
  *
  * @module pending
  * @since 2.5
- * @source $URL$
  * @version $Id$
  * @author Cédric Briançon
  */

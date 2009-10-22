@@ -45,7 +45,6 @@ import org.opengis.feature.type.FeatureType;
  * in order to cut down on memory leaks.
  *
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public class FeatureListenerManager {

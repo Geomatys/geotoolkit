@@ -32,7 +32,6 @@ import org.opengis.feature.type.FeatureType;
  * see ResourceFetaureIterator.
  * </p>
  * @author Jody Garnett, Refractions Research, Inc.
- * @source $URL$
  * @module pending
  */
 public class DelegateFeatureIterator<F extends Feature> implements FeatureIterator<F> {

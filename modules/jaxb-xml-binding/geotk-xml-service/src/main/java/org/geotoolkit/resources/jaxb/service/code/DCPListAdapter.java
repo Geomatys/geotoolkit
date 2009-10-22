@@ -28,7 +28,6 @@ import org.opengis.service.DCPList;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/code/DCPListAdapter.java $
  * @author Guilhem Legal
  */
 public final class DCPListAdapter extends CodeListAdapter<DCPListAdapter, DCPList> {

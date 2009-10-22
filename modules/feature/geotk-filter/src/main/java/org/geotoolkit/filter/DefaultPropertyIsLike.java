@@ -30,7 +30,6 @@ import org.opengis.filter.expression.Expression;
  * Defines a like filter, which checks to see if an attribute matches a REGEXP.
  *
  * @author Rob Hranac, Vision for New York
- * @source $URL$
  * @version $Id$
  * @module pending
  */

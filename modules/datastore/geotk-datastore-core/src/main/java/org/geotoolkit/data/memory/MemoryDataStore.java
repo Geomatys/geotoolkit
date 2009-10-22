@@ -65,7 +65,6 @@ import com.vividsolutions.jts.geom.Geometry;
  * </p>
  *
  * @author jgarnett
- * @source $URL$
  * @module pending
  */
 public final class MemoryDataStore extends AbstractDataStore {

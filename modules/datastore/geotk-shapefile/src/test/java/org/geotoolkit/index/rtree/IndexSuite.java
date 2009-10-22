@@ -25,8 +25,6 @@ import org.geotoolkit.index.rtree.memory.MemoryPageStoreTest;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/index/rtree/IndexSuite.java $
  * @module pending
  */
 public class IndexSuite extends TestCase {

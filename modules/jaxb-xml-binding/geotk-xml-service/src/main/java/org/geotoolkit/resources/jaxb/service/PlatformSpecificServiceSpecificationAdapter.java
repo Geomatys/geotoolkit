@@ -27,7 +27,6 @@ import org.opengis.service.PlatformSpecificServiceSpecification;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/PlatformSpecificServiceSpecificationAdapter.java $
  * @author Guilhem Legal
  */
 public class PlatformSpecificServiceSpecificationAdapter extends XmlAdapter<PlatformSpecificServiceSpecificationAdapter, PlatformSpecificServiceSpecification> {

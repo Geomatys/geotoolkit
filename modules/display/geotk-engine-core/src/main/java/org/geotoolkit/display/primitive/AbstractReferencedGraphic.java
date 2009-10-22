@@ -51,7 +51,6 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  */

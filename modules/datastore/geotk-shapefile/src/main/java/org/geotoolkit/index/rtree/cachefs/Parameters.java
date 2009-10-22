@@ -28,8 +28,6 @@ import org.geotoolkit.index.TreeException;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/cachefs/Parameters.java $
  * @module pending
  */
 public class Parameters {

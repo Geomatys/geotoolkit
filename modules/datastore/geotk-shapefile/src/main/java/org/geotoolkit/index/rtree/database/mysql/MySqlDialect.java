@@ -22,8 +22,6 @@ import org.geotoolkit.index.rtree.database.AbstractDialect;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/database/mysql/MySqlDialect.java $
  * @module pending
  */
 public class MySqlDialect extends AbstractDialect {

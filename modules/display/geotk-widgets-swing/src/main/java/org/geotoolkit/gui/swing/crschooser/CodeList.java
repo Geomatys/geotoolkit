@@ -34,7 +34,6 @@ import org.opengis.referencing.FactoryException;
  * database backed (not a usual implementation from {@code java.util} package), so it
  * is worth to do lazy loading here.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @module pending

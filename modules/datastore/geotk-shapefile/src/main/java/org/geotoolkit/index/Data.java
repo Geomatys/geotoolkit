@@ -22,8 +22,6 @@ import java.util.ArrayList;
  * Holds values (with associated DataDefinition)
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/Data.java $
  * @module pending
  */
 public class Data {

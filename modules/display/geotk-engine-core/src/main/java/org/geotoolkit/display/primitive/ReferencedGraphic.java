@@ -36,7 +36,6 @@ import org.geotoolkit.display.canvas.RenderingContext;
  *
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  */

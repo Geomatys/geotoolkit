@@ -20,7 +20,6 @@ package org.geotoolkit.feature.collection;
  * Interface to be implemented by all listeners of CollectionEvents.
  *
  * @author Ray Gallagher
- * @source $URL$
  * @version $Id$
  * @module pending
  */

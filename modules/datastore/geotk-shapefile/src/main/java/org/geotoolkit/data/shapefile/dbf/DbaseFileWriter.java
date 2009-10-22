@@ -48,8 +48,6 @@ import org.geotoolkit.resources.NIOUtilities;
  * <CODE>getMyRecord()</CODE> logic...
  * 
  * @author Ian Schneider
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/dbf/DbaseFileWriter.java $
  * @module pending
  */
 public class DbaseFileWriter {

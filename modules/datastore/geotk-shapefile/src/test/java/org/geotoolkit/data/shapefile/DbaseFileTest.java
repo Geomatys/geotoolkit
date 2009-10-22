@@ -30,8 +30,6 @@ import org.geotoolkit.data.shapefile.dbf.DbaseFileWriter;
 
 /**
  * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/DbaseFileTest.java $
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill

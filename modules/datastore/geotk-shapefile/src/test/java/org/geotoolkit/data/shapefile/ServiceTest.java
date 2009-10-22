@@ -27,8 +27,6 @@ import org.geotoolkit.ShapeTestData;
 
 /**
  * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/ServiceTest.java $
  * @version $Id$
  * @author ian
  * @module pending

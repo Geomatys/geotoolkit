@@ -65,7 +65,6 @@ import org.opengis.display.container.ContainerListener;
  *
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)

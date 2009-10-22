@@ -30,8 +30,6 @@ import org.geotoolkit.index.TreeException;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/index/rtree/cachefs/FileSystemPageStoreTest.java $
  * @module pending
  */
 public class FileSystemPageStoreTest extends TestCase {

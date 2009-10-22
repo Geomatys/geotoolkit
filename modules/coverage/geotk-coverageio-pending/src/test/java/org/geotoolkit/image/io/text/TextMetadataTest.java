@@ -32,7 +32,6 @@ import static org.junit.Assert.*;
  *
  * @module pending
  * @since 2.5
- * @source $URL$
  * @version $Id$
  * @author Cédric Briançon
  */

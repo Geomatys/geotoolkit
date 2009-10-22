@@ -27,7 +27,6 @@ import org.opengis.feature.catalog.RoleType;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/code/RoleTypeAdapter.java $
  * @author Guilhem Legal
  */
 public final class RoleTypeAdapter extends CodeListAdapter<RoleTypeAdapter, RoleType> {

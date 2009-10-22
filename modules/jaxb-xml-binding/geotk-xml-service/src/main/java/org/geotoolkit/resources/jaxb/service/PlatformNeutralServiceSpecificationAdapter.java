@@ -27,7 +27,6 @@ import org.opengis.service.PlatformNeutralServiceSpecification;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/PlatformNeutralServiceSpecificationAdapter.java $
  * @author Guilhem Legal
  */
 public class PlatformNeutralServiceSpecificationAdapter extends XmlAdapter<PlatformNeutralServiceSpecificationAdapter, PlatformNeutralServiceSpecification> {

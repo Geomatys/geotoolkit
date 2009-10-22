@@ -23,7 +23,6 @@ import java.awt.RenderingHints;
 /**
  * The key for hints enumerated in the {@link AbstractCanvas} insteface.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @module pending

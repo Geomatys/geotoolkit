@@ -86,7 +86,6 @@ import org.opengis.referencing.ReferenceIdentifier;
  * @author Jody Garnett, Refractions Research
  * @module pending
  * @since 2.1.M3
- * @source $URL$
  */
 public class FeatureTypeUtilities {
 

@@ -25,7 +25,6 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * 
  * @see org.geotools.data
  * @author jgarnett, Refractions Reasearch Inc.
- * @source $URL$
  * @version CVS Version
  * @module pending
  */

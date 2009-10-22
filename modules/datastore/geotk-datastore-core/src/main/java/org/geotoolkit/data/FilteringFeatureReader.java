@@ -38,7 +38,6 @@ import org.opengis.filter.Filter;
  * </p>
  *
  * @author Chris Holmes
- * @source $URL$
  * @version $Id$
  * @module pending
  */

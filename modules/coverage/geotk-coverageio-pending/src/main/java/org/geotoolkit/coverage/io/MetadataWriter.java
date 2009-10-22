@@ -40,7 +40,6 @@ import org.opengis.referencing.operation.Projection;
  * @todo Uses those information, gotten from getters, to write into a
  *       {@link GeographicMetadata}.
  *
- * @source $URL$
  * @version $Id$
  * @author Cédric Briançon
  *

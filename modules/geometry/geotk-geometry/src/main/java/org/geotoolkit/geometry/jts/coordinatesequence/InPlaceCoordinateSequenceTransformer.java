@@ -46,7 +46,6 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
  * @author jeichar
  * @module pending
  * @since 0.6.0
- * @source $URL$
  */
 public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceTransformer {
 

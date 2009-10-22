@@ -35,7 +35,6 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @module pending
  * @since 2.1
- * @source $URL$
  * @version $Id$
  * @author Andrea Aime
  * @author Martin Desruisseaux

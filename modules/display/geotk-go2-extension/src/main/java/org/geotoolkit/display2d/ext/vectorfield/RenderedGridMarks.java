@@ -73,7 +73,6 @@ import org.opengis.referencing.operation.TransformException;
  *       Arrows sizes and direction depends of the sample values.</li>
  * </ul>
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux
  * @module pending

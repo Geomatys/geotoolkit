@@ -60,8 +60,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * 
  * @author Chris Holmes, TOPP
  * @author Johann Sorel (Geomatys)
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/data/shapefile/ShapefileDataStoreFactory.java $
  * @version $Id: ShapefileDataStoreFactory.java 27856 2007-11-12 17:23:35Z
  *          desruisseaux $
  * @module pending

@@ -39,8 +39,6 @@ import com.vividsolutions.jts.geom.Envelope;
  * Relational index.
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/RTree.java $
  * @module pending
  */
 public class RTree {

@@ -36,7 +36,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * are kept in memory.
  * </p>
  * @author Jody Garnett, Refractions Research Inc.
- * @source $URL$
  * @module pending
  */
 public interface RandomAccessFeatureCollection extends FeatureCollection<SimpleFeatureType, SimpleFeature> {

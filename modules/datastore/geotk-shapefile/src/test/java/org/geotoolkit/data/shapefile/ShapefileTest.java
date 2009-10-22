@@ -41,8 +41,6 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * 
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/ShapefileTest.java $
  * @version $Id$
  * @author Ian Schneider
  * @author James Macgill

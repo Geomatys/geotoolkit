@@ -41,7 +41,6 @@ import org.geotoolkit.util.NumberRange;
  * name in the {@code coverage} module. We made this copy because we currently
  * can't leverage test classes defined in an other module.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @module pending

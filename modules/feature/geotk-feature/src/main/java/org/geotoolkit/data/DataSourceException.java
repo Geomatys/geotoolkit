@@ -24,7 +24,6 @@ package org.geotoolkit.data;
  * problems from external services, providing the root cause is
  * important.
  * </p>
- * @source $URL$
  * @module pending
  */
 public class DataSourceException extends java.io.IOException {

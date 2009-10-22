@@ -114,7 +114,6 @@ import java.util.Set;
  * </ol>
  * @author Jody Garnett
  * @author Chris Holmes, TOPP
- * @source $URL$
  * @version $Id$
  * @module pending
  */

@@ -25,7 +25,6 @@ import org.opengis.feature.type.Name;
 
 /**
  * Indicates client class has attempted to create an invalid feature.
- * @source $URL$
  * @module pending
  */
 public class SimpleIllegalAttributeException extends IllegalAttributeException {

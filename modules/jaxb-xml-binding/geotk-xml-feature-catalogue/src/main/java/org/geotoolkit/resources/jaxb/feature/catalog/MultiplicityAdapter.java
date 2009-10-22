@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/MultiplicityAdapter.java $
  * @author Guilhem Legal
  */
 public class MultiplicityAdapter extends XmlAdapter<MultiplicityAdapter, Multiplicity> {

@@ -49,7 +49,6 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  * @module pending
  * @since GeoTools 2.0
- * @source $URL$
  */
 public class FeatureEvent extends EventObject {
 

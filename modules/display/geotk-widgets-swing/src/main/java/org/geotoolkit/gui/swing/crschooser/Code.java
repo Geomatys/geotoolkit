@@ -26,7 +26,6 @@ import org.opengis.referencing.FactoryException;
  * An element in a {@link CodeList}. This element stores the {@linkplain #code code value}.
  * The description name will be fetched when first needed and returned by {@link #toString}.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @module pending

@@ -39,7 +39,6 @@ import org.geotoolkit.factory.Hints;
  * <pre><code>
  * featureSource.getFeatures( Query.FIDS );
  * </code></pre>
- * @source $URL$
  * @module pending
  */
 class FIDSQuery implements Query {

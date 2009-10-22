@@ -34,7 +34,6 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * Exposes a {@link PointArray2D} as a Java2D shape. This shape is not designed for map rendering.
  * It is rather used for debugging purpose, as well as rendering lines in some simplier context.
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (PMO, IRD)
  *

@@ -39,7 +39,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * </p>
  *   
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public class MemoryFeatureCollection extends AbstractFeatureCollection implements RandomAccessFeatureCollection {

@@ -25,8 +25,6 @@ import org.geotoolkit.index.DataDefinition;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/rtree/fs/Parameters.java $
  * @module pending
  */
 public class Parameters {

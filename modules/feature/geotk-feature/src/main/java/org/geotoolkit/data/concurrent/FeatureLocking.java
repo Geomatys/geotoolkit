@@ -46,7 +46,6 @@ import org.opengis.filter.Filter;
  * @author Ray Gallagher
  * @author Rob Hranac, TOPP
  * @author Chris Holmes, TOPP
- * @source $URL$
  * @version $Id$
  * @module pending
  */

@@ -41,7 +41,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
  *
- * @source $URL$
  * @module pending
  */
 public class TransactionTest extends TestCase {

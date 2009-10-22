@@ -83,7 +83,6 @@ import org.opengis.referencing.operation.TransformException;
  * 
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)

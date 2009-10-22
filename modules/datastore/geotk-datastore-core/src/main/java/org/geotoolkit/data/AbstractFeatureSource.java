@@ -72,7 +72,6 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  * @author Jody Garnett, Refractions Research Inc
  * @author Johann Sorel (Geomatys)
- * @source $URL$
  * @module pending
  */
 public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatureType, SimpleFeature> {

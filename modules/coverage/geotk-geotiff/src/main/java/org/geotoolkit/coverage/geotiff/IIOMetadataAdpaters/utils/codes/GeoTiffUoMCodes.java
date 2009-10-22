@@ -22,7 +22,6 @@ package org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.utils.codes;
  * @module pending
  * @since 2.3
  *
- * @source $URL$
  */
 public final class GeoTiffUoMCodes {
 

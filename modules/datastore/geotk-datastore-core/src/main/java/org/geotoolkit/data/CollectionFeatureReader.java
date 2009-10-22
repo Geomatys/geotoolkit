@@ -33,7 +33,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * an array of features or a FeatureCollection.
  *
  * @author jones
- * @source $URL$
  * @module pending
  */
 public class CollectionFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {

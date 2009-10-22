@@ -26,7 +26,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * ResultSetFIDReader should be used.
  *
  * @author Chris Holmes
- * @source $URL$
  * @version $Id$
  * @module pending
  */

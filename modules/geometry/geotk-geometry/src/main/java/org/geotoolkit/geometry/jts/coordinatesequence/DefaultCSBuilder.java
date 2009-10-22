@@ -27,7 +27,6 @@ import com.vividsolutions.jts.geom.DefaultCoordinateSequenceFactory;
  * A CSBuilder that generates DefaultCoordinateSequence objects, that is, 
  * coordinate sequences backed by a Coordinate[] array.
  * @author wolf
- * @source $URL$
  * @module pending
  */
 public class DefaultCSBuilder implements CSBuilder {

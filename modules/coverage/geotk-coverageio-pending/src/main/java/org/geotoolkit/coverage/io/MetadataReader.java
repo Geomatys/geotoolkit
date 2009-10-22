@@ -85,7 +85,6 @@ import org.opengis.referencing.operation.TransformException;
  *    those information. For example, the {@link #getCoordinateReferenceSystem} method
  *    constructs a {@link CoordinateReferenceSystem} object using available information.</p>
  *
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon

@@ -60,7 +60,6 @@ import junit.framework.TestCase;
  *
  * @module pending
  * @since 2.4
- * @source $URL$
  * @version $Id$
  * @author Justin Deoliveira, The Open Planning Project
  */

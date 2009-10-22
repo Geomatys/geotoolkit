@@ -52,7 +52,6 @@ import org.opengis.referencing.operation.MathTransform;
  * </p>
  *
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public class DefaultFeatureResults extends DataFeatureCollection {

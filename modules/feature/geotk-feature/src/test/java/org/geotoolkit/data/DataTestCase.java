@@ -58,7 +58,6 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
  * a starting point for test cases involving Data constructs.
  * </p>
  *
- * @source $URL$
  * @version $Id$
  * @author Jody Garnett, Refractions Research
  *

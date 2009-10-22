@@ -42,7 +42,6 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * @see <a href="http://vwfs.refractions.net/docs/Design_Implications.pdf">Design_Implications.pdf</a>
  * @author jgarnett, Refractions Research, Inc.
  * </p> 
- * @source $URL$
  * @module pending
  */
 public class DefaultFeatureLock implements FeatureLock {

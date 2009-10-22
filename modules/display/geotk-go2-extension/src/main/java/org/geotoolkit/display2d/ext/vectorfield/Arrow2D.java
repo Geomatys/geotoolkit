@@ -36,7 +36,6 @@ import java.util.NoSuchElementException;
  *
  * @module pending
  * @since 2.3
- * @source $URL$
  * @version $Id$
  * @author Martin Desruisseaux (PMO, IRD)
  */

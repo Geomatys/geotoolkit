@@ -29,7 +29,6 @@ import org.opengis.feature.catalog.FeatureAssociation;
  *
  * @module pending
  * @since 2.5
- * @source $URL: http://svn.geotools.org/trunk/modules/library/metadata/src/main/java/org/geotools/resources/jaxb/metadata/FeatureAssociationAdapter.java $
  * @author Guilhem Legal
  */
 public class FeatureAssociationAdapter extends XmlAdapter<FeatureAssociationAdapter, FeatureAssociation> {

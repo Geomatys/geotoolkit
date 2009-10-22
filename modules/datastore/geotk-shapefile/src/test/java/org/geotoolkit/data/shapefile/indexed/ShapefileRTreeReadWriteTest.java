@@ -35,8 +35,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/test/java/org/geotools/data/shapefile/indexed/ShapefileRTreeReadWriteTest.java $
  * @version $Id: ShapefileRTreeReadWriteTest.java 27228 2007-09-29 20:24:08Z
  *          jgarnett $
  * @author Ian Schneider

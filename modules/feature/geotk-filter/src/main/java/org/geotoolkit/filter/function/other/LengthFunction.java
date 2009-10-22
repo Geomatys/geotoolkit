@@ -26,7 +26,6 @@ import org.opengis.filter.expression.PropertyName;
  *
  * @author dzwiers
  *
- * @source $URL$
  * @module pending
  */
 public class LengthFunction extends AbstractFunction {

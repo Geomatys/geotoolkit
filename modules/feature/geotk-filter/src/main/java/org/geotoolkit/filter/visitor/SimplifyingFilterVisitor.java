@@ -53,7 +53,6 @@ import org.opengis.filter.identity.Identifier;
  * @module pending
  * @since 2.5.x
  * @version $Id$
- * @source $URL$
  */
 public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
 

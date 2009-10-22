@@ -31,8 +31,6 @@ import com.vividsolutions.jts.geom.Envelope;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
- * @source $URL:
- *         http://svn.geotools.org/geotools/trunk/gt/modules/plugin/shapefile/src/main/java/org/geotools/index/quadtree/fs/FileSystemNode.java $
  * @module pending
  */
 public class FileSystemNode extends Node {

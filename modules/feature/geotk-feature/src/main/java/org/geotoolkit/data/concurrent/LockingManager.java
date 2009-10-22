@@ -31,7 +31,6 @@ import java.io.IOException;
  * </p>
  *
  * @author Jody Garnett, Refractions Research
- * @source $URL$
  * @module pending
  */
 public interface LockingManager {

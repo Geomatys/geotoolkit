@@ -41,7 +41,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author jgarnett
  * @module pending
  * @since 2.1.RC0
- * @source $URL$
  */
 final class FeatureWriterIterator implements Iterator<SimpleFeature> {
 

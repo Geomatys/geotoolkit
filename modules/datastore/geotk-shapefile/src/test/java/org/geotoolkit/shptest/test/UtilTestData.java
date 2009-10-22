@@ -70,7 +70,6 @@ import java.util.zip.ZipFile;
  *
  * @module pending
  * @since 2.4
- * @source $URL$
  * @version $Id$
  * @author James McGill
  * @author Simone Giannecchiin

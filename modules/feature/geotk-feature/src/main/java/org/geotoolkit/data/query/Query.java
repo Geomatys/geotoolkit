@@ -60,7 +60,6 @@ import org.geotoolkit.factory.Hints;
  *
  *
  * @author Chris Holmes
- * @source $URL$
  * @version $Id$
  * @module pending
  */
