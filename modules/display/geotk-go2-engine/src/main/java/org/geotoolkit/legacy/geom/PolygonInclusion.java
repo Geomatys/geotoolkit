@@ -36,7 +36,7 @@ import org.opengis.util.ProgressListener;
  * vers d'autres objets <code>PolygonInclusion</code> dont les polygones sont enti�rement compris
  * � l'int�rieur de celui de cet objet <code>PolygonInclusion</code>.
  *
- * @task TODO: This class is not yet used. It should be part of <code>PolygonAssembler</code>,
+ * @todo     : This class is not yet used. It should be part of <code>PolygonAssembler</code>,
  *             work, but is not yet finished neither tested.
  *
  * @version $Id: PolygonInclusion.java 17672 2006-01-19 00:25:55Z desruisseaux $

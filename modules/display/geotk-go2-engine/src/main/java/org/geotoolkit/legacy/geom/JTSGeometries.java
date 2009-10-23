@@ -72,7 +72,7 @@ public class JTSGeometries extends org.geotoolkit.legacy.geom.GeometryCollection
      *
      * @param geometry The geometry to wrap, or <code>null</code> if none.
      *
-     * @task TODO: The coordinate system currently default to PROMISCUOUS.
+     * @todo     : The coordinate system currently default to PROMISCUOUS.
      *             We should find it from the SRID code.
      */
     public JTSGeometries(final Geometry geometry) {
@@ -92,7 +92,7 @@ public class JTSGeometries extends org.geotoolkit.legacy.geom.GeometryCollection
     /**
      * Returns the coordinate system for the specified JTS geometry.
      *
-     * @task TODO: We should construct the coordinate system from SRID using
+     * @todo      : We should construct the coordinate system from SRID using
      *             {@link org.geotoolkit.cs.CoordinateSystemAuthorityFactory}.
      */
     private CoordinateReferenceSystem getCoordinateReferenceSystem(final Geometry geometry) {

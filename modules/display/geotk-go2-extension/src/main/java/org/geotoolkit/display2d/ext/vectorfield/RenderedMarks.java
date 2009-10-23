@@ -109,7 +109,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      * {@link #markTransforms}, {@link #glyphVectors} and {@link #glyphPositions}
      * are valids.
      *
-     * @task TODO: Current implementation doesn't yet support "partial" revalidation (e.g.
+     * @todo     : Current implementation doesn't yet support "partial" revalidation (e.g.
      *             revalidating MARKS_MASK without GLYPHS_MASK). We invalidate/revalidate
      *             everything or nothing. Future implementations may add more fine grain
      *             validations.
@@ -693,7 +693,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      * @param iterator An iterator over the mark to be repainted.
      *                 Only the current mark will be repainted.
      *
-     * @task TODO: If the shape expanded or if the mark moved, we would need to repaint
+     * @todo     : If the shape expanded or if the mark moved, we would need to repaint
      *             a bigger area. We can do this with the information provided by the
      *             iterator.
      */

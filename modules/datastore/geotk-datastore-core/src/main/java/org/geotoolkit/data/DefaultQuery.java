@@ -226,7 +226,7 @@ public class DefaultQuery implements Query {
      *        schema. If null then all attributes will be returned.  If a List
      *        of size 0 is used then only the featureIDs should be used.
      *
-     * @task REVISIT: This syntax is really obscure.  Consider having an fid or
+     * @todo REVISIT: This syntax is really obscure.  Consider having an fid or
      *       featureID propertyName that datasource implementors look for
      *       instead of looking to see if the list size is 0.
      */

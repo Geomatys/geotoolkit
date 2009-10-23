@@ -1595,7 +1595,7 @@ public class Polyline extends Geometry {
      * @return <code>null</code> if this polyline doesn't intersect the clip, <code>this</code>
      *         if no clip has been performed, or a new clipped polyline otherwise.
      *
-     * @task TODO: Change the returns type to Polyline when we will be allowed to use the J2SE 1.5
+     * @todo     : Change the returns type to Polyline when we will be allowed to use the J2SE 1.5
      *             compiler. Then remove the cast in Polygon.clip(Clipper).
      */
     @Override

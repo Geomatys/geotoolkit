@@ -92,7 +92,7 @@ public class DefaultFeature extends DefaultComplexAttribute<FeatureId> implement
      *
      * @return An Envelope containing the total bounds of this Feature.
      *
-     * @task REVISIT: what to return if there are no geometries in the feature?
+     * @todo REVISIT: what to return if there are no geometries in the feature?
      *       For now we'll return a null envelope, make this part of interface?
      *       (IanS - by OGC standards, all Feature must have geom)
      */

@@ -48,7 +48,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Jody Garnett, Refractions Research
  * @author Chris Holmes, TOPP
  *
- * @task REVISIT: I'm not sure that the map within a map is a good idea, it
+ * @todo REVISIT: I'm not sure that the map within a map is a good idea, it
  *       makes things perhaps too complicated.  A nasty bug came about with
  *       releasing, as allLocks put locks into a new collection, and the
  *       iterator just removed them from that set instead of from the storage.

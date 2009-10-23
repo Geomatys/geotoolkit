@@ -34,7 +34,7 @@ import org.opengis.util.Cloneable;
  * @version $Id: PointIterator.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *
- * @task TODO: Once J2SE 1.5 will be available, this class should implements
+ * @todo     : Once J2SE 1.5 will be available, this class should implements
  *             Iterator<Point2D> and method next() should returns Point2D.
  *             Method clone() should returns PointIterator.
  *

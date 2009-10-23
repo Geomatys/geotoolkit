@@ -77,7 +77,7 @@ import org.geotoolkit.util.Utilities;
  * @version $Id: GeometryCollection.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *
- * @task TODO: Add a 'getTree(boolean)' method returning a TreeNode. Would be usefull for debugging.
+ * @todo     : Add a 'getTree(boolean)' method returning a TreeNode. Would be usefull for debugging.
  *             Node contains GeometryCollection only if boolean argument is false, GeometryCollection
  *             and Polygons if true (not Polylines). Node.toString returns Geometry.getName().
  *
@@ -209,7 +209,7 @@ public class GeometryCollection extends Geometry implements Comparable {
      *         for this locale, a default locale will be used.
      * @return The geometry's name, localized if possible.
      *
-     * @task TODO: We should find a way to avoid the creation of Format object at each
+     * @todo     : We should find a way to avoid the creation of Format object at each
      *             invocation.
      */
     @Override

@@ -25,10 +25,10 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * @author Chris Holmes, TOPP.
  * @version $Id$
  *
- * @task REVISIT: Should more of this code move to the parent?  I guess if
+ * @todo REVISIT: Should more of this code move to the parent?  I guess if
  *       other implementations came along they may want to implement
  *       differently.
- * @task REVISIT: The generation code can move to the parent. Even if other
+ * @todo REVISIT: The generation code can move to the parent. Even if other
  *       implementations come along we do not want the to implement the
  *       generation differently.
  * @module pending

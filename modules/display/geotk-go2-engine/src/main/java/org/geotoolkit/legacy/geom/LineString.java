@@ -97,7 +97,7 @@ final class LineString implements Serializable {
     /**
      * Set to <code>true</code> for removing doublons in borders as well.
      *
-     * @task TODO: Current algorithm prevent the creation of curved line. The algorithm
+     * @todo     : Current algorithm prevent the creation of curved line. The algorithm
      *             should be modified in such a way that  doublons are removed from the
      *             first of last points of the main data instead of from the border (the
      *             should not be modified by '[append|prepend]Border'. The work done by

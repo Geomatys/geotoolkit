@@ -644,7 +644,9 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     /*
-     * Test for FeatureWriter getFeatureWriter(String, boolean, Transaction) @task REVISIT:
+     * Test for FeatureWriter getFeatureWriter(String, boolean, Transaction) 
+     *
+     * @todo REVISIT:
      * JDBCDataStore currently does not return these proper instanceof's. If we want to guarantee
      * that people can't append to a request with a FeatureWriter then we could add the
      * functionality to JDBCDataStore by having getFeatureWriter(.. Filter ...) check to see if the

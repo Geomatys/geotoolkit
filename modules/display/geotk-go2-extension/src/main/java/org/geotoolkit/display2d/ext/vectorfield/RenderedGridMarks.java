@@ -83,7 +83,7 @@ public class RenderedGridMarks extends RenderedMarks {
      * This is needed since a mark located outside the clip area may have a part showing in the
      * visible area if the mark is big enough.
      *
-     * @task REVISIT: This number should be computed rather than hard-coded.
+     * @todo : This number should be computed rather than hard-coded.
      */
     private static final int VISIBLE_AREA_EXTENSION = 10;
 

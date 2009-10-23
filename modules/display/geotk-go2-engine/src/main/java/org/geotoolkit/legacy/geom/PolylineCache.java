@@ -212,7 +212,7 @@ final class PolylineCache {
      *
      * @param array The array to release (got from {@link #getRenderingArray}).
      *
-     * @task TODO: in some future version, we should wait a little bit longer
+     * @todo     : in some future version, we should wait a little bit longer
      *             before to change a strong reference into a soft one.
      */
     final void releaseRenderingArray(final float[] array) {

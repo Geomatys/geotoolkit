@@ -77,12 +77,12 @@ import org.opengis.util.ProgressListener;
  * @version $Id: PolygonAssembler.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *
- * @task TODO: L'impl�mentation actuelle de cette m�thode ne prend pas en compte les
+ * @todo     : L'impl�mentation actuelle de cette m�thode ne prend pas en compte les
  *             cas o� deux polylignes se chevaucheraient. (En fait, un d�but de prise
  *             en compte est fait et concerne les cas o� des polylignes se chevauchent
  *             d'un seul point).
  *
- * @task TODO: Localize logging and progress messages. Improves the progres bar: for now,
+ * @todo     : Localize logging and progress messages. Improves the progres bar: for now,
  *             it restart from 0 many times (it is pretty hard to guess in advance how much
  *             pass will be needed). Empirical tests suggest that there is about 4 long passes
  *             and hundred of very short (almost instantaneous) passes.

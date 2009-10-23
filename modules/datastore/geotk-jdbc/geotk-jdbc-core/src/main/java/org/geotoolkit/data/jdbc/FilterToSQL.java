@@ -113,7 +113,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @author originally by Chris Holmes, TOPP
  * @author ported by Saul Farber, MassGIS
  *
- * @task REVISIT: need to figure out exceptions, we're currently eating io
+ * @todo REVISIT: need to figure out exceptions, we're currently eating io
  *       errors, which is bad. Probably need a generic visitor exception.
  *
  * @module pending
@@ -445,7 +445,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      *
      * @param filter the Like Filter to be visited.
      *
-     * @task REVISIT: Need to think through the escape char, so it works  right
+     * @todo REVISIT: Need to think through the escape char, so it works  right
      *       when Java uses one, and escapes correctly with an '_'.
      */
     @Override

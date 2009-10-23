@@ -27,12 +27,12 @@ import org.geotoolkit.resources.Errors;
 /**
  * Tableaux de points compress�s. Les objets de cette classe sont immutables.
  *
- * @task TODO: The compression algorithm (as computed in the constructor) should be improved.
+ * @todo     : The compression algorithm (as computed in the constructor) should be improved.
  *             The {@link #scaleX} and {@link #scaleY} values doesn't need to macth the widest
  *             range of values. Instead, we should select some value close to the mean and allow
  *             the constructor to create intermediate points if needed.
  *
- * @task TODO: An other algorithm should be implemented in a new class: <code>ClockArray</code>
+ * @todo     : An other algorithm should be implemented in a new class: <code>ClockArray</code>
  *             or something like that. Instead of storing (dx,dy) value for each point, we should
  *             store only the angle (theta) in a 0-255 range (resolution of 1.41�). It should
  *             work providing that each points are approximatively equidistant. The current

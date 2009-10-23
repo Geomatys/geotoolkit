@@ -28,7 +28,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
  * FeatureLock lock = FeatureLockFactory.generate( "MyLock", 3600 );
  * </pre></code>
  * @version $Id$
- * @task REVISIT: Combine this with a factory to also make Query objects?
+ * @todo REVISIT: Combine this with a factory to also make Query objects?
  * @author Chris Holmes, TOPP
  * @module pending
  */

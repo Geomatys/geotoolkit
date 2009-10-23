@@ -169,7 +169,7 @@ public class Polygon extends Polyline {
      * @throws UnmodifiableGeometryException if modifying this geometry would corrupt a container.
      *         To avoid this exception, {@linkplain #clone clone} this geometry before to modify it.
      *
-     * @task TODO: The check for hole inclusion should use 'contains(Shape)'. However, this is an
+     * @todo     : The check for hole inclusion should use 'contains(Shape)'. However, this is an
      *             expensive check in current version. We just check the bounding box for now. We
      *             should make a stricter check when Polyline.contains will be optimized.
      *             We should also make sure that the new hole doesn't intersect an existing hole.

@@ -314,7 +314,7 @@ public abstract class PointArray implements Serializable {
      *         filled with the last <var>y</var> ordinate.
      * @param  resolution2 The minimum squared distance desired between points.
      *
-     * @task REVISIT: Current implementations compute distance using Pythagoras formulas, which
+     * @todo        : Current implementations compute distance using Pythagoras formulas, which
      *                is okay for projected coordinates but not right for geographic (longitude
      *                / latitude) coordinates. This is not a real problem when the rendering CS
      *                is the same than the data CS,  since the decimation performed here target
