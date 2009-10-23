@@ -24,24 +24,20 @@ package org.geotoolkit.display.exception;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class PortrayalException extends Exception{
+public final class PortrayalException extends Exception{
 
     private static final String ERROR = "Portrayal exception";
     private static final long serialVersionUID = 3200411272785006830L;
-
-    public PortrayalException(){
-        super(ERROR);
-    }
     
     public PortrayalException(String message){
         super(ERROR +" : "+ message);
     }
-    
+
     public PortrayalException(Throwable throwable){
-        super(ERROR, throwable);
+        super(ERROR+" : " + throwable.getMessage(), throwable);
     }
     
     public PortrayalException(String message, Throwable throwable){
-        super(ERROR +" : "+ ((message != null) ? message : ""), throwable);
+        super(ERROR +" : "+ ((message != null) ? message : "no message"), throwable);
     }
 }

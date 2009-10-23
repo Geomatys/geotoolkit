@@ -61,6 +61,7 @@ public abstract class Table1D implements Extrapolation{
      *  les deux vecteurs n'ont pas la
      *  même longueur.
      */
+    @Override
     public void setData(double[] x, double[] y) throws MismatchedSizeException {
         this.x = x;
         this.y = y;
@@ -95,12 +96,12 @@ public abstract class Table1D implements Extrapolation{
     /**
      * Indique si les interpolations devront ignorer les NaN dans le vecteur des <var>y</var>.
      * Par défaut, les NaN ne seront pas ignorés de sorte qu'ils pourront être retournés par la
-     * méthode {@link #interpole(double)} s'ils apparaissent dans le vecteur des <var>y</var>.
+     * méthode {@link #interpolate(double)} s'ils apparaissent dans le vecteur des <var>y</var>.
      * Si vous demandez à ignorer les NaN, alors la méthode <code>interpole</code> tentera de
      * toujours utiliser des données valides pour ses calculs. Cette méthode n'a aucun effet
      * sur les vecteur des <var>x</var>. Pour ce dernier, les NaN seront toujours ignorés.
      *
-     * @param <code>true</code> si la méthode {@link #interpolate} doit agir comme si elle
+     * @param ignore <code>true</code> si la méthode {@link #interpolate(double)} doit agir comme si elle
      *        utilisait des copies des données dans lesquelles on avait retiré tout les NaN.
      *
      * @return l'ancien état.

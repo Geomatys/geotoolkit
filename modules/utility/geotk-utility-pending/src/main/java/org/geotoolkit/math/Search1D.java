@@ -220,7 +220,7 @@ public class Search1D extends Table1D {
      * Interpole les NaN trouvés dans le vecteur des <var>y</var>, en les remplaçant directement
      * dans le vecteur des <var>y</var> si possible. Le fait de ne pas avoir à créer de vecteur
      * temporaire peut rendre cette méthode plus rapide et plus économe en mémoire que l'autre
-     * méthode {@link #interpolateNaN(double,double,float[])}.
+     * méthode {@link #interpolateNaN(double,double,double[])}.
      *
      * Si votre vecteur de données est si gros que vous ne pouvez vous permettre de
      * créer de vecteur temporaire, vous pouvez envisager d'utiliser la méthode
@@ -236,8 +236,8 @@ public class Search1D extends Table1D {
      * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
      * @return			Le tableau des <var>y</var>.
      *
-     * @see #interpolateNaN(double,double,float[])
-     * @see #interpolateInPlaceNaN(double,double)
+     * @see #interpolateNaN(double, double, double[])
+     * @see #interpolateInPlaceNaN(double, double)
      */
     public double[] interpolateNaN(double dxStart, double dxStop) {
         return interpolateNaN(dxStart, dxStop, null);
@@ -830,10 +830,10 @@ public class Search1D extends Table1D {
     /**
      * Ajuste les index {@link #klo} et {@link #khi} de façon à ce qu'ils
      * pointent vers des données valides. Cette méthode est très similaire
-     * à l'autre méthode {@link #validateIndex(int[],float[])}, excepté qu'elle agit directement
+     * à l'autre méthode {@link #validateIndex(int[], double[])}, excepté qu'elle agit directement
      * sur {@link #klo} et {@link #khi} plutôt que sur un tableau passé
      * en argument. On y gagne ainsi en rapidité d'exécution (on évite de
-     * faire un appel à {@link #copyIndexInto)}, mais ça ne gère toujours
+     * faire un appel à {@link #copyIndexInto(int[])}, mais ça ne gère toujours
      * que ces deux index.<p>
      *
      * Tout ce qui était entre <code>klo</code> et <code>khi</code> avant l'appel de
@@ -845,7 +845,7 @@ public class Search1D extends Table1D {
      * @return  <code>true</code> si des changements ont été fait, <code>false</code> sinon.
      * @throws  ExtrapolationException s'il n'y a pas suffisament de données valides.
      *
-     * @see #validateIndex(int[],float[])
+     * @see #validateIndex(int[], double[])
      * @see #locateAt(int)
      * @see #locate(double)
      */
