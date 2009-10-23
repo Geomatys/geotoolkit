@@ -19,7 +19,6 @@ package org.geotoolkit.feature;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.IllegalAttributeException;
@@ -258,9 +257,9 @@ public class FeatureValidationUtilities {
      *
      * @param expected Expected FeatureType being used to compare against
      * @param actual Actual FeatureType
-     * @return true if actual is equal to or a subset of the expected feature type.
+     * @throws SimpleIllegalAttributeException if assertion is false
      */
-    public static void assertNameAssignable(final FeatureType expected, final FeatureType actual) {
+    public static void assertNameAssignable(final FeatureType expected, final FeatureType actual) throws SimpleIllegalAttributeException{
         // check feature type name
         String expectedName = expected.getName().getLocalPart();
         final String actualName = actual.getName().getLocalPart();
@@ -310,7 +309,6 @@ public class FeatureValidationUtilities {
      *
      * @param expected
      * @param actual
-     * @return
      */
     public static void assertOrderAssignable(final SimpleFeatureType expected, final SimpleFeatureType actual) {
         // check feature type name

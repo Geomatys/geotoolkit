@@ -82,8 +82,7 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
     /**
      * item at the specified index.
      *
-     * @param index
-     *            index of item
+     * @param position index of item
      * @return the item at the specified index.
      * @throws IndexOutOfBoundsException
      *             if index is not between 0 and size
@@ -183,8 +182,7 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
      * <tt>UnsupportedOperationException</tt> unless <tt>add(int, Object)</tt>
      * is overridden.
      *
-     * @param item
-     *            the Object element to be appended to this list.
+     * @param feature the feature element to be appended to this list.
      * @return <tt>true</tt> (as per the general contract of
      *         <tt>Collection.add</tt>).
      * @throws UnsupportedOperationException
@@ -301,7 +299,6 @@ public class SubFeatureList extends SubFeatureCollection implements RandomAccess
      * </p>
      *
      * @return an iterator over the elements in this list in proper sequence.
-     * @see #modCount
      */
     @Override
     public Iterator<SimpleFeature> openIterator() {

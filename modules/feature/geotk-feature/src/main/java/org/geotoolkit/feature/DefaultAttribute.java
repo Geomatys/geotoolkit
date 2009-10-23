@@ -50,7 +50,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      * @param content
      * @param type
      * @param id
-     * @return
+     * @return An attribute
      */
     public static DefaultAttribute<Object,AttributeDescriptor,Identifier> create(Object content, AttributeType type, Identifier id){
         return new DefaultAttribute<Object,AttributeDescriptor,Identifier>(
@@ -113,12 +113,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
     }
 
     /**
-     * Override of equals.
-     *
-     * @param other
-     *            the object to be tested for equality.
-     *
-     * @return whether other is equal to this attribute Type.
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(final Object obj) {

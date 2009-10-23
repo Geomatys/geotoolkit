@@ -79,7 +79,7 @@ public class FeatureCollectionUtilities {
      * <p>
      * Often used when gathering a FeatureCollection<SimpleFeatureType, SimpleFeature> into memory.
      *
-     * @param FeatureCollection<SimpleFeatureType, SimpleFeature> the features to add to a new feature collection.
+     * @param featureCollection the features to add to a new feature collection.
      * @return FeatureCollection
      */
     public static DefaultFeatureCollection collection(final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection) {
@@ -91,7 +91,7 @@ public class FeatureCollectionUtilities {
      * <p>
      * This method can be slurp an in memory record of the contents of a
      * @param featureCollection
-     * @return
+     * @return set of all ids
      */
     public static Set<String> fidSet(final FeatureCollection<?, ?> featureCollection) {
         final HashSet<String> fids = new HashSet<String>();

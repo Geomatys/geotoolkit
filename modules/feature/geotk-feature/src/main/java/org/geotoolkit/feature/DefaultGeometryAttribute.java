@@ -87,7 +87,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
      * geometry is <code>null</code> the returned Envelope
      * <code>isNull()</code> is true.
      *
-     * @return
+     * @return Bounds of the geometry
      */
     @Override
     public synchronized BoundingBox getBounds() {

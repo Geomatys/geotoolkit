@@ -231,8 +231,6 @@ public interface Transaction {
      * </p>
      *
      * @throws DataSourceException if there are any datasource errors.
-     *
-     * @see #setAutoCommit(boolean)
      */
     void commit() throws IOException;
 
@@ -248,8 +246,6 @@ public interface Transaction {
      * @throws DataSourceException if there are problems with the datasource.
      * @throws UnsupportedOperationException if the rollback method is not
      *         supported by this datasource.
-     *
-     * @see #setAutoCommit(boolean)
      */
     void rollback() throws IOException;
 

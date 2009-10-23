@@ -370,7 +370,7 @@ public class SimpleFeatureTypeBuilder {
      *
      * @param schema The schema containing the attribute types.
      *
-     * @see {@link #addBinding(AttributeType)}.
+     * @see #addBinding(org.opengis.feature.type.AttributeType)
      */
     public void addBindings(final Schema schema) {
         for (Iterator itr = schema.values().iterator(); itr.hasNext();) {
@@ -385,7 +385,7 @@ public class SimpleFeatureTypeBuilder {
      *
      * @param schema The schema contianing attribute types.
      *
-     * @see {@link #addBinding(AttributeType)}.
+     * @see #addBinding(org.opengis.feature.type.AttributeType)
      */
     public void setBindings(final Schema schema) {
         bindings().clear();
@@ -606,8 +606,7 @@ public class SimpleFeatureTypeBuilder {
      * If not such binding exists then an attribute type is created on the fly.
      * </p>
      * @param name The name of the attribute.
-     * @param bind The class the attribute is bound to.
-     *
+     * @param binding The class the attribute is bound to.
      */
     public void add(final String name, final Class binding) {
 
@@ -946,10 +945,9 @@ public class SimpleFeatureTypeBuilder {
     }
 
     /**
-     * H
      * @param original
      * @param types
-     * @return
+     * @return SimpleFeatureType
      */
     public static SimpleFeatureType retype(final SimpleFeatureType original, final String[] types) {
         final SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();

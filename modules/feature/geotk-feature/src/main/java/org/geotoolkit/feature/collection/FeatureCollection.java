@@ -87,7 +87,8 @@ import org.opengis.util.ProgressListener;
  * level.
  * </p>
  *
- * @see java.util.Collection, org.geotoolkit.Feature
+ * @see java.util.Collection
+ * @see org.opengis.feature.Feature
  * @author Ian Turton, CCG
  * @author Rob Hranac, VFNY
  * @author Ian Schneider, USDA-ARS
@@ -310,7 +311,6 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * <li>may be an ordered FeatureList if requested when sortBy is indicated
      * </ul>
      * </p>
-     * @see FeatureList
      * @param filter
      * @return FeatureCollection<SimpleFeatureType, SimpleFeature> identified as subset.
      */

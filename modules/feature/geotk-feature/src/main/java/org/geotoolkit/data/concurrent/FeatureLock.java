@@ -46,7 +46,6 @@ package org.geotoolkit.data.concurrent;
  * @see <a
  *      href="http://vwfs.refractions.net/docs/Design_Implications.pdf">Design
  *      Implications</a>
- * @see FeatureLockFactory
  * @module pending
  */
 public interface FeatureLock {

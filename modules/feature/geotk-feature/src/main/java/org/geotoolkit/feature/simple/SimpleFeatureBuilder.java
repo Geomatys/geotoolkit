@@ -173,7 +173,7 @@ public class SimpleFeatureBuilder {
 
     /**
      * Returns the simple feature type used by this builder as a feature template
-     * @return
+     * @return SimpleFeatureType
      */
     public SimpleFeatureType getFeatureType() {
         return featureType;
@@ -358,7 +358,7 @@ public class SimpleFeatureBuilder {
      * Quickly builds the feature using the specified values and id
      * @param id
      * @param values
-     * @return
+     * @return SimpleFeature
      */
     public SimpleFeature buildFeature(final String id, final Object[] values) {
         addAll(values);
@@ -479,7 +479,7 @@ public class SimpleFeatureBuilder {
      * Builds a new feature whose attribute values are the default ones
      * @param featureType
      * @param featureId
-     * @return
+     * @return SimpleFeature
      */
     public static SimpleFeature template(final SimpleFeatureType featureType, final String featureId) {
         final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
@@ -523,7 +523,7 @@ public class SimpleFeatureBuilder {
      * <code>null</code>.
      * </p>
      * @param feature The original feature.
-     * @param SimpleFeatureBuilder A builder for the target feature type
+     * @param builder A builder for the target feature type
      *
      * @return The copied feature, with a new type.
      * @since 2.5.3

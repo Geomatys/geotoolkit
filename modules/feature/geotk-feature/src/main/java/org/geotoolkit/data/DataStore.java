@@ -20,6 +20,7 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.List;
 
+import org.geotoolkit.data.concurrent.FeatureLocking;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -29,6 +30,7 @@ import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.collection.FeatureCollection;
 
 /**
  * Access to Feature content from a service or file.
@@ -36,9 +38,9 @@ import org.geotoolkit.feature.SchemaException;
  * <h2>Description</h2>
  * The DataAccess interface provides the following information about its contents:
  * <ul>
- * <li>{@link DataAccess.getInfo()} - information about the file or server itself
- * <li>{@link DataAccess.getNames()} - list of the available contents (each is an individual resource)
- * <li>{@link DataAccess.getSchema( Name )} - FeatureType describing the information available in the named resource
+ * <li>{@link DataStore#getInfo()} - information about the file or server itself
+ * <li>{@link DataStore#getNames()} - list of the available contents (each is an individual resource)
+ * <li>{@link DataStore#getSchema(org.opengis.feature.type.Name)} - FeatureType describing the information available in the named resource
  * </ul>
  * <p>
  * <h2>Contents</h2>
@@ -73,15 +75,15 @@ import org.geotoolkit.feature.SchemaException;
  * <li>Application is responsible for holding a single instance to the service or file, DataAccess
  * implementations will hold onto database connections, internal caches and so on - and as such
  * should not be duplicated.
- * <li>DataAccess.dispose() is called when the application is shut down
+ * <li>{@link DataStore#dispose()} is called when the application is shut down
  * </ul>
  *
  * Creation:
  * <ul>
  * <li>Created using a DataStoreFactory.createNewDataStore using a set of creation parameters
- * <li>DataAccess.createSchema( T ) is called to set up the contents
- * <li>DataAccess.getFetaureSource( Name ) is called, and FeatureStore.addFeatures( collection ) used to populate the contents
- * <li>DataAccess.dispose() is called when the application is shut down
+ * <li>{@link DataStore#createSchema(org.opengis.feature.type.FeatureType)} is called to set up the contents
+ * <li>{@link DataStore#getFeatureSource(org.opengis.feature.type.Name)} is called, and FeatureStore.addFeatures( collection ) used to populate the contents
+ * <li>{@link DataStore#dispose()} is called when the application is shut down
  * </ul>
  * <p>
  * Applications are responsible for holding a single instance to the service or file, The

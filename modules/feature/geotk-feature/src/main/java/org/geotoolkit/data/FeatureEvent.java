@@ -136,9 +136,10 @@ public class FeatureEvent extends EventObject {
      * Constructs a new FeatureEvent.
      *
      * @param source The writer or feature store that fired the event
-     * @param eventType One of FEATURE_CHANGED, FEATURE_REMOVED or
+     * @param type One of FEATURE_CHANGED, FEATURE_REMOVED or
      *        FEATURE_ADDED
      * @param bounds The area modified by this change
+     * @param filter The affected features
      */
     public FeatureEvent(Object source, Type type, JTSEnvelope2D bounds, Filter filter) {
         super(source);
@@ -153,7 +154,7 @@ public class FeatureEvent extends EventObject {
     /**
      * Constructs a new FeatureEvent.
      *
-     * @param FeatureSource<SimpleFeatureType, SimpleFeature> The DataStore that fired the event
+     * @param featureSource The DataStore that fired the event
      * @param eventType One of FEATURE_CHANGED, FEATURE_REMOVED or
      *        FEATURE_ADDED
      * @param bounds The area modified by this change

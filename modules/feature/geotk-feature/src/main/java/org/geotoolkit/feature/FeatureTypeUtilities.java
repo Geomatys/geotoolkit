@@ -380,10 +380,9 @@ public class FeatureTypeUtilities {
      * </ul>
      * </p>
      *
-     * @param identification identification of FeatureType:
-     *        (<i>namesapce</i>).<i>typeName</i>
+     * @param namespace
+     * @param typeName
      * @param typeSpec Specification for FeatureType
-     *
      *
      * @throws SchemaException
      */
@@ -614,7 +613,7 @@ public class FeatureTypeUtilities {
      * Cholmes is providing documentation.
      * </p>
      *
-     * @param type the AttributeType
+     * @param descriptor the AttributeDescriptor
      *
      * @return an int indicating the max length of field in characters, or ANY_LENGTH
      */
@@ -650,7 +649,7 @@ public class FeatureTypeUtilities {
      * Forces the specified CRS on all geometry attributes
      * @param schema the original schema
      * @param crs the forced crs
-     * @return
+     * @return {@link SimpleFeatureType}
      * @throws SchemaException
      */
     public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs)
@@ -664,7 +663,7 @@ public class FeatureTypeUtilities {
      * @param crs the forced crs
      * @param forceOnlyMissing if true, will force the specified crs only on the attributes that
      *        do miss one
-     * @return
+     * @return {@link SimpleFeatureType}
      * @throws SchemaException
      */
     public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs,

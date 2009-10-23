@@ -95,7 +95,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * So, even if implementors are allowed to delegate to
      * {@code getSchema().getName()} if they want to call the fatures and their
      * type the same, client code asking a
-     * {@link DataAccess#getFeatureSource(Name)} shall use this name to request
+     * {@link DataStore#getFeatureSource(org.opengis.feature.type.Name)} shall use this name to request
      * for a FeatureSource, rather than the type name, as used in pre 2.5
      * versions of GeoToolkit. For example, if we have a FeatureSource named
      * {@code Roads} and its type is named {@code Roads_Type}, the
@@ -298,7 +298,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * may be required.<br>
      * Depending on the actual value provide by the user, the {@link FeatureSource}
      * may decide not to honor the hint.
-     * @return a set of {@link RenderingHints#Key} objects (eventually empty, never null).
+     * @return a set of {@link RenderingHints} keys objects (eventually empty, never null).
      */
     public Set<RenderingHints.Key> getSupportedHints();
     

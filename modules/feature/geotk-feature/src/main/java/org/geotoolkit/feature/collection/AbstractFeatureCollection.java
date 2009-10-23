@@ -164,7 +164,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
      *         support the <tt>addAll</tt> method.
      * @throws NullPointerException if the specified collection is null.
      *
-     * @see #add(Object)
+     * @see #add(org.opengis.feature.simple.SimpleFeature)
      */
     @Override
     public boolean addAll(final Collection<? extends SimpleFeature> c) {

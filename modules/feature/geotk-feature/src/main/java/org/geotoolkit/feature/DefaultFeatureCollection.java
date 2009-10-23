@@ -106,7 +106,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * </p>
      *
      * @param id may be null ... feature id
-     * @param featureType optional, may be null
+     * @param memberType optional, may be null
      */
     public DefaultFeatureCollection(final String id, final SimpleFeatureType memberType) {
         this.id = (id == null) ? "featureCollection" : id;
@@ -235,7 +235,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      *
      * @return <tt>true</tt> if this collection changed as a result of the call
      *
-     * @see #add(Object)
+     * @see #add(org.opengis.feature.simple.SimpleFeature)
      */
     @Override
     public boolean addAll(final Collection collection) {

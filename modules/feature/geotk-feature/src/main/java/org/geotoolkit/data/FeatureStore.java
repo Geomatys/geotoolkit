@@ -100,7 +100,7 @@ public interface FeatureStore<T extends FeatureType, F extends Feature> extends 
      * Please note that these FeatureIds may not be assigned until after
      * a commit has been performed.
      * </p>
-     * @param collection The collection of features to add.
+     * @param reader The reader of features to add.
      * @return the FeatureIds of the newly added features.
      *
      * @throws IOException if anything goes wrong.

@@ -18,6 +18,7 @@ package org.geotoolkit.data.query;
 
 import java.net.URI;
 
+import org.geotoolkit.data.FeatureSource;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -315,7 +316,7 @@ public interface Query {
      * distance to be applied right in the data store, to data store specific
      * things such as the fetch size to be used in JDBC queries.
      * The set of hints supported can be fetched by calling
-     * {@links FeatureSource#getSupportedHints()}.
+     * {@link FeatureSource#getSupportedHints()}.
      * Depending on the actual values of the hints, the data store is free to ignore them.
      * No mechanism is in place, at the moment, to figure out which hints where
      * actually used during the query execution.

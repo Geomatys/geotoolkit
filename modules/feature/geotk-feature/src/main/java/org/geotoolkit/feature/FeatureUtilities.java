@@ -76,7 +76,7 @@ public class FeatureUtilities {
      *
      *
      * @param type
-     * @return
+     * @return a default value for the given class.
      */
     public static Object defaultValue(final Class type) {
         if (type == String.class || type == Object.class) {

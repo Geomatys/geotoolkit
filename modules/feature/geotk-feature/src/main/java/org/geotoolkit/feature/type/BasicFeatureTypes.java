@@ -33,7 +33,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * Annotations represent a text based geographic feature.
  * The geometry stored in the feature indicates where the
  * text should be drawn and the attribute indicated by
- * the {@link #ANNOTATION_ATTRIBUTE_NAME} attribute holds
+ * the {@link #GEOMETRY_ATTRIBUTE_NAME} attribute holds
  * the text to be displayed for the feature.
  * </p>
  *

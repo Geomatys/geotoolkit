@@ -33,7 +33,7 @@ import org.opengis.feature.type.Schema;
  * A "sub" Schema used to select types for a specific use.
  * <p>
  * This class uses a custom key set to subset a parent Schema, and
- * is used as the return type of {@link SchemaImpl.profile}.
+ * is used as the return type of {@link Schema }.
  * <p>
  * This Schema is <b>not</b> mutable, serving only as a view, you
  * may however define a more specific subset if needed.
