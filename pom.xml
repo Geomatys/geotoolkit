@@ -710,7 +710,7 @@
   <!-- ==================================================== -->
   <distributionManagement>
     <site>
-      <id>geotoolkit-pending</id>
+      <id>geotoolkit</id>
       <name>Geotoolkit-pending web site</name>
       <url>dav:http://pending.geotoolkit.org/</url>
     </site>
