@@ -20,7 +20,7 @@ package org.geotoolkit.filter.visitor;
 import org.opengis.filter.Filter;
 
 /**
- * Provides access to certain transaction state for the {@link PostPreProcessFilterSplittingVisitor}
+ * Provides access to certain transaction state for the PostPreProcessFilterSplittingVisitor
  * and {@link CapabilitiesFilterSplitter}. This is only required if the transaction is kept on the
  * client and the server is unaware of it. For example PostGIS would not need to create one.
  * 

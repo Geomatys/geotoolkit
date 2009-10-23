@@ -23,6 +23,7 @@ import org.geotoolkit.filter.function.AbstractFunction;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
@@ -113,21 +114,21 @@ public class PropertyExistsFunction extends AbstractFunction {
     @Override
     public boolean equals(Object obj) {
 
-        if (obj == this)
+        if (obj == this) {
             return true;
+        }
         if (!(obj instanceof PropertyExistsFunction)) {
 
             return false;
         }
         PropertyExistsFunction other = (PropertyExistsFunction) obj;
 
-        if (other.getParameters().size() != this.getParameters().size())
+        if (other.getParameters().size() != this.getParameters().size()) {
             return false;
+        }
         if (other.getParameters().size() > 0) {
             final String propName = getPropertyName();
-
-            Expression otherPropNameExpr = (Expression) other.getParameters()
-                    .get(0);
+            final Expression otherPropNameExpr = (Expression) other.getParameters().get(0);
             final String otherPropName = getPropertyName(otherPropNameExpr);
 
             return Utilities.equals(propName, otherPropName);

@@ -42,7 +42,7 @@ public interface PropertyAccessor {
     /**
      * Accesses a property of <param>object</param> via xpath expression.
      * <p>
-     * {@link #canHandle(Object, String)} should be called before calling this method to ensure
+     * {@link #canHandle(java.lang.Object, java.lang.String, java.lang.Class)} should be called before calling this method to ensure
      * that the property can be safely accessed.
      * </p>
      * @param object The target object.
@@ -52,13 +52,12 @@ public interface PropertyAccessor {
      *
      * @throws IllegalArgumentException In the even that xpath is not supported.
      */
-    Object get(Object object, String xpath, Class target)
-        throws IllegalArgumentException;
+    Object get(Object object, String xpath, Class target) throws IllegalArgumentException;
 
     /**
      * Sets a property of <param>object</param> via xpath expression.
      * <p>
-     * {@link #canHandle(Object, String)} should be called before calling this method to ensure
+     * {@link #canHandle(java.lang.Object, java.lang.String, java.lang.Class)} should be called before calling this method to ensure
      * that the property can be safely accessed.
      * </p>
      * @param object The target object.
@@ -68,6 +67,5 @@ public interface PropertyAccessor {
      *
      * @throws IllegalArgumentException In the even that xpath is not supported.
      */
-    void set(Object object, String xpath, Object value, Class target)
-        throws IllegalArgumentException;
+    void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException;
 }

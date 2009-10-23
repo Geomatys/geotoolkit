@@ -885,8 +885,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     /**
-     * 
-     * @see org.geotools.filter.FilterVisitor#visit(org.geotools.filter.FunctionExpression)
+     * {@inheritDoc }
      */
     @Override
     public Object visit(Function expression, Object notUsed) {
