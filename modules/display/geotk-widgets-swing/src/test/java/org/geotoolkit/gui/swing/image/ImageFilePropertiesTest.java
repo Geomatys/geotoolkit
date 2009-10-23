@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.io.File;
 import java.io.IOException;
+import org.geotoolkit.test.TestData;
 import org.geotoolkit.gui.test.SwingBase;
 
 
@@ -38,14 +40,23 @@ public class ImageFilePropertiesTest extends SwingBase<ImageFileProperties> {
     }
 
     /**
-     * Creates the widget.
+     * Creates the widget. This method loads {@code "QL95209.png"} if it is accessible as a file
+     * (not as a URL to an entry in a JAR file). This is the case when testing from an IDE like
+     * NetBeans, but not during Maven test phase because the {@code "QL95209.png"} file is stored
+     * in a different module (geotk-coverage).
      *
      * @throws IOException If an error occured while reading the test file.
      */
     @Override
     protected ImageFileProperties create() throws IOException {
         final ImageFileProperties test = new ImageFileProperties();
-        // TODO: set a file here.
+        final File file;
+        try {
+            file = TestData.file(org.geotoolkit.image.ImageInspector.class, "QL95209.png");
+        } catch (IOException e) {
+            return test;
+        }
+        test.setImage(file);
         return test;
     }
 }

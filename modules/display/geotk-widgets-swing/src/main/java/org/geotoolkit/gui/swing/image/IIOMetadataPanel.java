@@ -141,13 +141,15 @@ public class IIOMetadataPanel extends JPanel {
         if (true) {
             final JPanel controls = new JPanel(new GridBagLayout());
             final GridBagConstraints c = new GridBagConstraints();
+            final Insets ci = c.insets;
+            ci.left = 12;
             c.gridx=0; c.weightx=0; c.anchor=GridBagConstraints.WEST;
-            c.gridy=0; controls.add(label(resources, Vocabulary.Keys.FORMAT, formats), c);
-            c.gridy++; controls.add(label(resources, Vocabulary.Keys.PART,   parts),   c);
+            c.gridy=0; ci.top=6; ci.bottom=0; controls.add(label(resources, Vocabulary.Keys.FORMAT, formats), c);
+            c.gridy++; ci.top=0; ci.bottom=6; controls.add(label(resources, Vocabulary.Keys.PART,   parts),   c);
+            c.insets.right = 12; c.insets.left = 0;
             c.gridx=1; c.weightx=1; c.fill=GridBagConstraints.BOTH;
-            c.gridy=0; controls.add(formats, c);
-            c.gridy++; controls.add(parts,   c);
-            controls.setBorder(BorderFactory.createEmptyBorder(6, 0, 6, 0));
+            c.gridy=0; ci.top=6; ci.bottom=0; controls.add(formats, c);
+            c.gridy++; ci.top=0; ci.bottom=6; controls.add(parts,   c);
             add(controls, BorderLayout.NORTH);
         }
         /*
@@ -156,12 +158,14 @@ public class IIOMetadataPanel extends JPanel {
         if (true) {
             final JPanel properties = new JPanel(new GridBagLayout());
             final GridBagConstraints c = new GridBagConstraints();
+            final Insets ci = c.insets;
             c.gridx=1; c.weightx=1; c.anchor=GridBagConstraints.WEST;
-            c.gridy=0; properties.add(description = new JLabel(), c);
-            c.gridy++; properties.add(validValues = new JLabel(), c);
-            c.gridx=0; c.weightx=0; c.insets.right=9;
-            c.gridy=0; properties.add(label(resources, Vocabulary.Keys.DESCRIPTION,  description), c);
-            c.gridy++; properties.add(label(resources, Vocabulary.Keys.VALID_VALUES, validValues), c);
+            c.gridy=0; ci.top=3; ci.bottom=0; properties.add(description = new JLabel(), c);
+            c.gridy++; ci.top=0; ci.bottom=3; properties.add(validValues = new JLabel(), c);
+            ci.left = 6;
+            c.gridx=0; c.weightx=0; ci.right=9;
+            c.gridy=0; ci.top=3; ci.bottom=0; properties.add(label(resources, Vocabulary.Keys.DESCRIPTION,  description), c);
+            c.gridy++; ci.top=0; ci.bottom=3; properties.add(label(resources, Vocabulary.Keys.VALID_VALUES, validValues), c);
             add(properties, BorderLayout.SOUTH);
         }
         /*

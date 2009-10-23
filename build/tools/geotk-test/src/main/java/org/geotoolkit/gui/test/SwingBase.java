@@ -17,8 +17,12 @@
  */
 package org.geotoolkit.gui.test;
 
+import java.io.File;
+import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import java.awt.Graphics2D;
 import java.awt.HeadlessException;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 
 import org.junit.*;
@@ -29,7 +33,13 @@ import static org.junit.Assume.*;
 
 /**
  * Base class for tests on widgets. By default this test suite displays nothing;
- * it merely checks that no exception is thrown during widget construction.
+ * it merely:
+ * <p>
+ * <ul>
+ *   <li>Ensure that no exception is thrown while creating the widget</li>
+ *   <li>Ensure that no exception is thrown while painting in a buffered image</li>
+ * </ul>
+ * <p>
  * However if the "{@code org.geotoolkit.showWidgetTests}" system property is
  * set to "{@code true}", then the widgets will be shown as an internal frame.
  *
@@ -112,7 +122,30 @@ public abstract class SwingBase<T extends JComponent> {
     public void display() throws Exception {
         final JComponent component = create();
         assumeNotNull(component);
-        show(this, component);
+        if (!show(this, component)) {
+            component.setSize(component.getPreferredSize());
+            component.setVisible(true);
+            final int width  = component.getWidth();
+            final int height = component.getHeight();
+            final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D gr = image.createGraphics();
+            try {
+                component.print(gr);
+            } finally {
+                gr.dispose();
+            }
+            /*
+             * Optionnaly save to a file in the current directory, for checking purpose.
+             * Actually the image is empty if we didn't overrided the Component.paint method,
+             * so the above check is useful only for widgets doing their own painting like
+             * ColorRamp.
+             */
+            if (false) {
+                final File file = new File(DesktopPane.getTitle(component.getClass()) + ".png");
+                ImageIO.write(image, "png", file);
+                System.out.println("Image saved in " + file.getAbsolutePath());
+            }
+        }
     }
 
     /**
@@ -121,17 +154,20 @@ public abstract class SwingBase<T extends JComponent> {
      *
      * @param  testCase The test case for which the component is added.
      * @param  component The component to show, or {@code null} if none.
+     * @return {@code true} if the component has been shown.
      * @throws PropertyVetoException Should not happen.
      */
-    static synchronized void show(final SwingBase<?> testCase, final JComponent component)
+    static synchronized boolean show(final SwingBase<?> testCase, final JComponent component)
             throws PropertyVetoException
     {
         if (desktop != null) {
             desktop.addTestCase(testCase);
             if (component != null) {
                 desktop.show(component);
+                return true;
             }
         }
+        return false;
     }
 
     /**

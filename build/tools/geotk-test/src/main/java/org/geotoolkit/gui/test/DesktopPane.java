@@ -196,7 +196,7 @@ final class DesktopPane extends JDesktopPane {
      * @param  type The widget class.
      * @return The frame title, or screenshot filename (without extension).
      */
-    private static String getTitle(Class<?> type) {
+    static String getTitle(Class<?> type) {
         while (type.isAnonymousClass()) {
             type = type.getSuperclass();
         }

@@ -274,11 +274,15 @@ public class ImageProperties extends JPanel {
         final Locale     locale    = getLocale();
         final Vocabulary resources = Vocabulary.getResources(locale);
         String name        = resources.getString(Vocabulary.Keys.UNDEFINED);
-        String description = null;
         String version     = null;
+        String description = null;
+        String extra       = null;
         if (image instanceof OperationNode) {
             /*
              * JAI operation - get the information from the descriptor.
+             * We put the version number just below the operation name,
+             * before the description, since the version applies to the
+             * operation.
              */
             final String mode;
             final RegistryElementDescriptor descriptor;
@@ -299,10 +303,13 @@ public class ImageProperties extends JPanel {
         } else if (image instanceof ImageReaderWriterSpi) {
             /*
              * Image Reader or Writer provider - for ImageFileProperties only.
+             * We put the version number after the description, since the description
+             * is actually the decodeur implementation. The "name" is the MIME type,
+             * which doesn't have a version number.
              */
             final ImageReaderWriterSpi spi = (ImageReaderWriterSpi) image;
             description = spi.getDescription(locale);
-            version = resources.getString(Vocabulary.Keys.VERSION_$1,
+            extra = resources.getString(Vocabulary.Keys.VERSION_$1,
                     spi.getVersion()) + " (" + spi.getVendorName() + ')';
             String[] names = spi.getMIMETypes();
             if (names != null && names.length != 0) {
@@ -330,6 +337,9 @@ public class ImageProperties extends JPanel {
         }
         if (description != null) {
             html.append("<p><cite>").append(description).append("</cite></p>");
+        }
+        if (extra != null) {
+            html.append("<p>").append(extra).append("</p>");
         }
         this.description.setText(html.append("</html>").toString());
     }
