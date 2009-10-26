@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.RequestBase;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -120,4 +121,40 @@ public abstract class RequestBaseType implements RequestBase {
         this.version = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof RequestBaseType) {
+            final RequestBaseType that = (RequestBaseType) object;
+            return Utilities.equals(this.service,  that.service) &&
+                   Utilities.equals(this.version,  that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 59 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]").append('\n');
+
+        if (service != null) {
+            s.append("service: ").append(service).append('\n');
+        }
+        if (version != null) {
+            s.append("version: ").append(version).append('\n');
+        }
+        return s.toString();
+    }
 }

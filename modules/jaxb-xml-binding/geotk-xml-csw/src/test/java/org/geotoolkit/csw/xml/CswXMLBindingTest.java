@@ -926,15 +926,6 @@ public class CswXMLBindingTest {
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);
         
-        /*
-         * Second filter a special case for some unstandardized CSW : < title IS NOT LIKE 'something' >
-         */
-        typeNames          = new ArrayList<QName>();
-        pname              = new PropertyNameType("title");
-        pil                = new PropertyIsLikeType(pname, "something", null, null, null);
-        n                  = new NotType(pil);
-        FilterType filter2 = new FilterType(n);
-        
         QueryConstraintType constraint = new QueryConstraintType(filter1, "1.1.0");
         typeNames.add(_Record_QNAME);
         QueryType query = new QueryType(typeNames, new ElementSetNameType(ElementSetType.FULL), null, constraint); 
@@ -977,8 +968,55 @@ public class CswXMLBindingTest {
         LOGGER.finer("RESULT:" + '\n' + result);
         LOGGER.finer("EXPRESULT:" + '\n' + expResult);
         assertEquals(expResult, result);
-        
- 
+
+         /*
+         * Test marshalling csw getRecordByIdResponse v2.0.0
+         */
+
+
+        org.geotoolkit.csw.xml.v200.QueryConstraintType constraint200 = new org.geotoolkit.csw.xml.v200.QueryConstraintType(filter1, "1.1.0");
+        typeNames  = new ArrayList<QName>();
+        typeNames.add( org.geotoolkit.csw.xml.v200.ObjectFactory._Record_QNAME);
+        org.geotoolkit.csw.xml.v200.QueryType query200 = new org.geotoolkit.csw.xml.v200.QueryType(typeNames, new org.geotoolkit.csw.xml.v200.ElementSetNameType(org.geotoolkit.csw.xml.v200.ElementSetType.FULL), constraint200);
+
+        org.geotoolkit.csw.xml.v200.GetRecordsType getRecordsRequest200 = new org.geotoolkit.csw.xml.v200.GetRecordsType("CSW", "2.0.0", org.geotoolkit.csw.xml.v200.ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw", 1, 20, query200, null);
+
+
+        sw = new StringWriter();
+        recordMarshaller200.marshal(getRecordsRequest200, sw);
+
+        result = sw.toString();
+
+
+        expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
+        "    <cat:Query typeNames=\"cat:Record\">" + '\n' +
+        "        <cat:ElementSetName>full</cat:ElementSetName>"                         + '\n' +
+        "        <cat:Constraint version=\"1.1.0\">"                                    + '\n' +
+        "            <ogc:Filter>"                                                      + '\n' +
+        "                <ogc:Not>"                                                     + '\n' +
+        "                    <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">"    + '\n' +
+        "                        <ogc:PropertyName>dc:Title</ogc:PropertyName>"         + '\n' +
+        "                        <ogc:Literal>something?</ogc:Literal>"                 + '\n' +
+        "                    </ogc:PropertyIsLike>"                                     + '\n' +
+        "                </ogc:Not>"                                                    + '\n' +
+        "            </ogc:Filter>"                                                     + '\n' +
+        "        </cat:Constraint>"                                                     + '\n' +
+        "    </cat:Query>"                                                              + '\n' +
+        "</cat:GetRecords>" + '\n';
+        LOGGER.finer("RESULT:" + '\n' + result);
+
+        //we remove the 2 first line because the xlmns are not always in the same order.
+        expResult = expResult.substring(expResult.indexOf('\n') + 1);
+        expResult = expResult.substring(expResult.indexOf('\n') + 1);
+
+        result = result.substring(result.indexOf('\n') + 1);
+        result = result.substring(result.indexOf('\n') + 1);
+
+        LOGGER.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
+        assertEquals(expResult, result);
     }
     
     /**
@@ -1024,15 +1062,6 @@ public class CswXMLBindingTest {
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);
         
-        /*
-         * Second filter a special case for some unstandardized CSW : < title IS NOT LIKE 'something' >
-         
-        typeNames          = new ArrayList<QName>();
-        pname              = new PropertyNameType("title");
-        pil                = new PropertyIsLikeType(pname, "something", null, null, null);
-        n                  = new NotType(pil);
-        FilterType filter2 = new FilterType(n);*/
-        
         QueryConstraintType constraint = new QueryConstraintType(filter1, "1.1.0");
         typeNames.add(_Record_QNAME);
         QueryType query = new QueryType(typeNames, new ElementSetNameType(ElementSetType.FULL), null, constraint); 
@@ -1041,8 +1070,8 @@ public class CswXMLBindingTest {
          
         
         
-        LOGGER.info("RESULT:" + '\n' + result);
-        LOGGER.info("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
         GetRecordsType gres = (GetRecordsType)result;
         QueryType expQT = (QueryType) expResult.getAbstractQuery();
         QueryType resQT = (QueryType) gres.getAbstractQuery();
@@ -1052,8 +1081,41 @@ public class CswXMLBindingTest {
         assertEquals(expQT.getConstraint(), resQT.getConstraint());
         assertEquals(expResult.getAbstractQuery(), gres.getAbstractQuery());
         assertEquals(expResult, result);
-        
- 
+
+        xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<cat:GetRecords maxRecords=\"20\" startPosition=\"1\" outputSchema=\"http://www.opengis.net/cat/csw\" outputFormat=\"application/xml\" resultType=\"results\" version=\"2.0.0\" service=\"CSW\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:cat=\"http://www.opengis.net/cat/csw\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
+        "    <cat:Query typeNames=\"cat:Record\">" + '\n' +
+        "        <cat:ElementSetName>full</cat:ElementSetName>"                         + '\n' +
+        "        <cat:Constraint version=\"1.1.0\">"                                    + '\n' +
+        "            <ogc:Filter>"                                                      + '\n' +
+        "                <ogc:Not>"                                                     + '\n' +
+        "                    <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"?\" escapeChar=\"\\\">"    + '\n' +
+        "                        <ogc:PropertyName>dc:Title</ogc:PropertyName>"         + '\n' +
+        "                        <ogc:Literal>something?</ogc:Literal>"                 + '\n' +
+        "                    </ogc:PropertyIsLike>"                                     + '\n' +
+        "                </ogc:Not>"                                                    + '\n' +
+        "            </ogc:Filter>"                                                     + '\n' +
+        "        </cat:Constraint>"                                                     + '\n' +
+        "    </cat:Query>"                                                              + '\n' +
+        "</cat:GetRecords>" + '\n';
+
+        org.geotoolkit.csw.xml.v200.QueryConstraintType constraint200 = new org.geotoolkit.csw.xml.v200.QueryConstraintType(filter1, "1.1.0");
+        typeNames  = new ArrayList<QName>();
+        typeNames.add( org.geotoolkit.csw.xml.v200.ObjectFactory._Record_QNAME);
+        org.geotoolkit.csw.xml.v200.QueryType query200 = new org.geotoolkit.csw.xml.v200.QueryType(typeNames, new org.geotoolkit.csw.xml.v200.ElementSetNameType(org.geotoolkit.csw.xml.v200.ElementSetType.FULL), constraint200);
+
+        org.geotoolkit.csw.xml.v200.GetRecordsType expResult200 = new org.geotoolkit.csw.xml.v200.GetRecordsType("CSW", "2.0.0", org.geotoolkit.csw.xml.v200.ResultType.RESULTS, null, "application/xml", "http://www.opengis.net/cat/csw", 1, 20, query200, null);
+
+        sr = new StringReader(xml);
+
+        result = recordUnmarshaller200.unmarshal(sr);
+
+        assertTrue(result instanceof JAXBElement);
+
+        org.geotoolkit.csw.xml.v200.GetRecordsType result200 = (org.geotoolkit.csw.xml.v200.GetRecordsType) ((JAXBElement)result).getValue();
+
+        assertEquals(expResult200.getAbstractQuery(), result200.getAbstractQuery());
+        assertEquals(expResult200, result200);
     }
 
 

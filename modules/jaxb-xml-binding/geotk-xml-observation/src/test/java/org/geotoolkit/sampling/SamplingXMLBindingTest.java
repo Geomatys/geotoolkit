@@ -78,7 +78,7 @@ public class SamplingXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(null), new PointPropertyType(location));
+        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(sp, sw);
@@ -99,7 +99,7 @@ public class SamplingXMLBindingTest {
                            "    <gml:boundedBy>" + '\n' +
                            "        <gml:Null>not_bounded</gml:Null>" + '\n' +
                            "    </gml:boundedBy>" + '\n' +
-                           "    <sampling:sampledFeature/>" + '\n' +
+                           "    <sampling:sampledFeature xlink:href=\"\"/>" + '\n' +
                            "    <sampling:position>" + '\n' +
                            "        <gml:Point gml:id=\"point-ID\">" + '\n' +
                            "            <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
@@ -124,13 +124,13 @@ public class SamplingXMLBindingTest {
 
         String xml =
        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-       "<sa:SamplingPoint xmlns:sa=\"http://www.opengis.net/sampling/1.0\"  xmlns:gml=\"http://www.opengis.net/gml\" gml:id=\"samplingID-007\">" + '\n' +
+       "<sa:SamplingPoint xmlns:sa=\"http://www.opengis.net/sampling/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" gml:id=\"samplingID-007\">" + '\n' +
        "    <gml:description>a sampling Test</gml:description>" + '\n' +
        "    <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
        "   <gml:boundedBy>" + '\n' +
        "        <gml:Null>not_bounded</gml:Null>" + '\n' +
        "    </gml:boundedBy>" + '\n' +
-       "    <sa:sampledFeature/>" + '\n' +
+       "    <sa:sampledFeature xlink:href=\"\"/>" + '\n' +
        "    <sa:position>" + '\n' +
        "        <gml:Point gml:id=\"point-ID\">" + '\n' +
        "            <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
@@ -145,7 +145,7 @@ public class SamplingXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry expResult = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(null), new PointPropertyType(location));
+        SamplingPointEntry expResult = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
 
         assertEquals(expResult.getPosition(), result.getPosition());
         assertEquals(expResult, result);

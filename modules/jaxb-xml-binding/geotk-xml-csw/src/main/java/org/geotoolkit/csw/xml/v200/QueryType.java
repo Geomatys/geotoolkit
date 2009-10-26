@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -174,6 +175,53 @@ public class QueryType extends AbstractQueryType {
      */
     public SortByType getSortBy() {
         return null;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof QueryType) {
+            final QueryType that = (QueryType) object;
+            return Utilities.equals(this.constraint,  that.constraint)   &&
+                   Utilities.equals(this.elementName,  that.elementName)   &&
+                   Utilities.equals(this.elementSetName,  that.elementSetName)   &&
+                   Utilities.equals(this.typeNames,  that.typeNames);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.elementSetName != null ? this.elementSetName.hashCode() : 0);
+        hash = 23 * hash + (this.elementName != null ? this.elementName.hashCode() : 0);
+        hash = 23 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 23 * hash + (this.typeNames != null ? this.typeNames.hashCode() : 0);
+        return hash;
+    }
+
+     @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[QueryType]").append('\n');
+
+        if (elementName != null) {
+            s.append("elementName: ").append(elementName).append('\n');
+        }
+        if (elementSetName != null) {
+            s.append("elementSetName: ").append(elementSetName).append('\n');
+        }
+        if (constraint != null) {
+            s.append("constraint: ").append(constraint).append('\n');
+        }
+        if (typeNames != null) {
+            s.append("typeNames: ").append(typeNames).append('\n');
+        }
+        return s.toString();
     }
 
 }

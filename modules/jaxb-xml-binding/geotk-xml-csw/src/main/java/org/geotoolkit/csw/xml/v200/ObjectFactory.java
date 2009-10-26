@@ -44,7 +44,7 @@ public class ObjectFactory {
     private static final QName _GetRecordByIdResponse_QNAME  = new QName("http://www.opengis.net/cat/csw", "GetRecordByIdResponse");
     private static final QName _SummaryRecord_QNAME          = new QName("http://www.opengis.net/cat/csw", "SummaryRecord");
     private static final QName _Query_QNAME                  = new QName("http://www.opengis.net/cat/csw", "Query");
-    private static final QName _Record_QNAME                 = new QName("http://www.opengis.net/cat/csw", "Record");
+    public  static final QName _Record_QNAME                 = new QName("http://www.opengis.net/cat/csw", "Record");
     private static final QName _BriefRecord_QNAME            = new QName("http://www.opengis.net/cat/csw", "BriefRecord");
     private static final QName _GetCapabilities_QNAME        = new QName("http://www.opengis.net/cat/csw", "GetCapabilities");
     private static final QName _DCMIRecord_QNAME             = new QName("http://www.opengis.net/cat/csw", "DCMIRecord");
@@ -366,7 +366,7 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw", name = "Query", substitutionHeadNamespace = "http://www.opengis.net/cat/csw", substitutionHeadName = "AbstractQuery")
     public JAXBElement<QueryType> createQuery(QueryType value) {
         return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
-    } */
+    } 
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link RecordType }{@code >}}

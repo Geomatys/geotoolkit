@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.QueryConstraint;
 import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -137,4 +138,45 @@ public class QueryConstraintType implements QueryConstraint {
         this.version = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof QueryConstraintType) {
+            final QueryConstraintType that = (QueryConstraintType) object;
+            return Utilities.equals(this.cqlText,  that.cqlText)   &&
+                   Utilities.equals(this.filter,  that.filter)   &&
+                   Utilities.equals(this.version,  that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 61 * hash + (this.cqlText != null ? this.cqlText.hashCode() : 0);
+        hash = 61 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
+     @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[QueryConstraintType]").append('\n');
+
+        if (filter != null) {
+            s.append("filter: ").append(filter).append('\n');
+        }
+        if (cqlText != null) {
+            s.append("cqlText: ").append(cqlText).append('\n');
+        }
+        if (version != null) {
+            s.append("version: ").append(version).append('\n');
+        }
+        return s.toString();
+    }
 }

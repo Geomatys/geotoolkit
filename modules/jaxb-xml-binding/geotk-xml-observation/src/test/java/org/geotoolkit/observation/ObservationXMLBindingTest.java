@@ -93,7 +93,7 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location     = new PointType("point-ID", pos);
-        SamplingPointEntry sp  = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(null), new PointPropertyType(location));
+        SamplingPointEntry sp  = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
 
         PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessEntry procedure           = new ProcessEntry("urn:sensor:007");
@@ -143,7 +143,7 @@ public class ObservationXMLBindingTest {
                            "            <gml:boundedBy>" + '\n' +
                            "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                            "            </gml:boundedBy>" + '\n' +
-                           "            <sampling:sampledFeature/>" + '\n' +
+                           "            <sampling:sampledFeature xlink:href=\"\"/>" + '\n' +
                            "            <sampling:position>" + '\n' +
                            "                <gml:Point gml:id=\"point-ID\">" + '\n' +
                            "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
@@ -215,7 +215,7 @@ public class ObservationXMLBindingTest {
                            "            <gml:boundedBy>" + '\n' +
                            "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                            "            </gml:boundedBy>" + '\n' +
-                           "            <sampling:sampledFeature/>" + '\n' +
+                           "            <sampling:sampledFeature xlink:href=\"\"/>" + '\n' +
                            "            <sampling:position>" + '\n' +
                            "                <gml:Point gml:id=\"point-ID\">" + '\n' +
                            "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
@@ -290,7 +290,7 @@ public class ObservationXMLBindingTest {
                 "            <gml:boundedBy>" + '\n' +
                 "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                 "            </gml:boundedBy>" + '\n' +
-                "            <sampling:sampledFeature/>" + '\n' +
+                "            <sampling:sampledFeature xlink:href=\"urn:sampling:sampledFeature\"/>" + '\n' +
                 "            <sampling:position gml:id=\"point-ID\">" + '\n' +
                 "                <gml:Point gml:id=\"point-ID\">" + '\n' +
                 "                   <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +
@@ -329,7 +329,7 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(null), new PointPropertyType(location));
+        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), new PointPropertyType(location));
 
         PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
         ProcessEntry procedure = new ProcessEntry("urn:sensor:007");
@@ -389,7 +389,7 @@ public class ObservationXMLBindingTest {
                "            <gml:boundedBy>" + '\n' +
                "                <gml:Null>not_bounded</gml:Null>" + '\n' +
                "            </gml:boundedBy>" + '\n' +
-               "            <sampling:sampledFeature>urn:sampling:sampledFeature</sampling:sampledFeature>" + '\n' +
+               "            <sampling:sampledFeature xlink:href=\"urn:sampling:sampledFeature\"/>" + '\n' +
                "            <sampling:position gml:id=\"point-ID\">" + '\n' +
                "                <gml:Point gml:id=\"point-ID\">" + '\n' +
                "                    <gml:pos srsName=\"urn:ogc:crs:espg:4326\" srsDimension=\"2\">3.2 6.5</gml:pos>" + '\n' +

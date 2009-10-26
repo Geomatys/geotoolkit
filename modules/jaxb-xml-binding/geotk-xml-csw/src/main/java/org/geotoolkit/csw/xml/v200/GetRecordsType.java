@@ -25,12 +25,14 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.GetRecordsRequest;
 import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -79,7 +81,10 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     @XmlElement(name = "ResponseHandler")
     @XmlSchemaType(name = "anyURI")
     private List<String> responseHandler;
-    @XmlElementRef(name = "AbstractQuery", namespace = "http://www.opengis.net/cat/csw", type = JAXBElement.class)
+    @XmlElementRefs({
+        @XmlElementRef(name = "AbstractQuery", namespace = "http://www.opengis.net/cat/csw", type = AbstractQueryType.class),
+        @XmlElementRef(name = "Query", namespace = "http://www.opengis.net/cat/csw", type = QueryType.class)
+    })
     private AbstractQueryType abstractQuery;
     @XmlAnyElement(lax = true)
     private Object any;
@@ -316,4 +321,80 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         abstractQuery.setConstraint(new QueryConstraintType(filter, "1.1.0"));
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof GetRecordsType && super.equals(object)) {
+            final GetRecordsType that = (GetRecordsType) object;
+            return Utilities.equals(this.abstractQuery,  that.abstractQuery)   &&
+                   Utilities.equals(this.distributedSearch,  that.distributedSearch)   &&
+                   Utilities.equals(this.maxRecords,  that.maxRecords)   &&
+                   Utilities.equals(this.outputFormat,  that.outputFormat)   &&
+                   Utilities.equals(this.outputSchema,  that.outputSchema)   &&
+                   Utilities.equals(this.requestId,  that.requestId)   &&
+                   Utilities.equals(this.responseHandler,  that.responseHandler)   &&
+                   Utilities.equals(this.resultType,  that.resultType)   &&
+                   Utilities.equals(this.startPosition,  that.startPosition)   &&
+                   Utilities.equals(this.any ,  that.any);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.distributedSearch != null ? this.distributedSearch.hashCode() : 0);
+        hash = 79 * hash + (this.responseHandler != null ? this.responseHandler.hashCode() : 0);
+        hash = 79 * hash + (this.abstractQuery != null ? this.abstractQuery.hashCode() : 0);
+        hash = 79 * hash + (this.any != null ? this.any.hashCode() : 0);
+        hash = 79 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
+        hash = 79 * hash + (this.resultType != null ? this.resultType.hashCode() : 0);
+        hash = 79 * hash + (this.outputFormat != null ? this.outputFormat.hashCode() : 0);
+        hash = 79 * hash + (this.outputSchema != null ? this.outputSchema.hashCode() : 0);
+        hash = 79 * hash + (this.startPosition != null ? this.startPosition.hashCode() : 0);
+        hash = 79 * hash + (this.maxRecords != null ? this.maxRecords.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+
+        if (distributedSearch != null) {
+            s.append("distributedSearch: ").append(distributedSearch).append('\n');
+        }
+        if (responseHandler != null) {
+            s.append("responseHandler: ").append(responseHandler).append('\n');
+        }
+        if (abstractQuery != null) {
+            s.append("abstractQuery: ").append(abstractQuery).append('\n');
+        }
+        if (any != null) {
+            s.append("any: ").append(any).append('\n');
+        }
+        if (requestId != null) {
+            s.append("requestId: ").append(requestId).append('\n');
+        }
+        if (resultType != null) {
+            s.append("resultType: ").append(resultType).append('\n');
+        }
+        if (outputFormat != null) {
+            s.append("outputFormat: ").append(outputFormat).append('\n');
+        }
+        if (outputSchema != null) {
+            s.append("outputSchema: ").append(outputSchema).append('\n');
+        }
+        if (startPosition != null) {
+            s.append("startPosition: ").append(startPosition).append('\n');
+        }
+        if (maxRecords != null) {
+            s.append("maxRecords: ").append(maxRecords).append('\n');
+        }
+        return s.toString();
+    }
 }
