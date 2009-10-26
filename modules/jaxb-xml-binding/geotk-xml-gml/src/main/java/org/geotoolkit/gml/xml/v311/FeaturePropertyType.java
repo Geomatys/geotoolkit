@@ -99,6 +99,13 @@ public class FeaturePropertyType {
     }
 
     /**
+     * Build a new feature.
+     */
+    public FeaturePropertyType(String href) {
+        this.href = href;
+    }
+
+    /**
      * Set the feature into href mode.
      */
     public void setToHref() {
