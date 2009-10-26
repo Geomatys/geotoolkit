@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://download.geotoolkit.org/packs/"
+      href="http://www.geotoolkit.org/demos/geotk-simples/applet/ZoomPane.jnlp">
+
+  <information>
+    <title>ZoomPane demo</title>
+    <vendor>Geotoolkit.org</vendor>
+    <homepage>http://www.geotoolkit.org/demos</homepage>
+    <offline-allowed/>
+  </information>
+
+  <resources>
+    <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="geotk-simples-3.04.jar" main="true"/>
+    <property name="jnlp.packEnabled" value="true"/>
+  </resources>
+
+  <applet-desc name="ZoomPane demo" main-class="org.geotoolkit.demo.swing.ZoomPaneApplet" width="600" height="400"/>
+  <update check="background"/>
+
+</jnlp>
