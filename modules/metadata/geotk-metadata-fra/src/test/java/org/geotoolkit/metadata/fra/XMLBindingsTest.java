@@ -20,7 +20,6 @@ package org.geotoolkit.metadata.fra;
 import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedReader;
 import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.xml.XML;

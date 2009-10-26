@@ -52,7 +52,7 @@ import org.geotoolkit.internal.StringUtilities;
  * purpose, a little bit like the <cite>Java Beans</cite> framework.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 2.4
  * @module
@@ -508,6 +508,21 @@ final class PropertyAccessor {
             return index;
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, key));
+    }
+
+    /**
+     * Returns the declaring class of the getter at the given index.
+     *
+     * @param  index The index of the property for which to get the declaring class.
+     * @return The declaring class at the given index, or {@code null} if the index is out of bounds.
+     *
+     * @since 3.05
+     */
+    final Class<?> getDeclaringClass(final int index) {
+        if (index >= 0 && index < names.length) {
+            return getters[index].getDeclaringClass();
+        }
+        return null;
     }
 
     /**

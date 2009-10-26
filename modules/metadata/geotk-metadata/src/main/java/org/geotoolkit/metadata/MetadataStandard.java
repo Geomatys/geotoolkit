@@ -20,7 +20,10 @@ package org.geotoolkit.metadata;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
 import java.text.ParseException;
+import java.util.MissingResourceException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultTreeModel;
@@ -54,7 +57,7 @@ import org.geotoolkit.util.NullArgumentException;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 2.4
  * @module
@@ -313,7 +316,7 @@ public final class MetadataStandard {
      * @param  typeValues Whatever the values should be property types, the element types
      *         (same as property types except for collections) or the declaring class.
      * @param  keyNames Determines the string representation of map keys.
-     * @return The types for the given property.
+     * @return The types for the the properties of the given class.
      * @throws ClassCastException if the specified interface or implementation class does
      *         not extend or implement a metadata interface of the expected package.
      *
@@ -348,7 +351,7 @@ public final class MetadataStandard {
      * @param  type The interface or implementation class.
      * @param  valueNames Determines the string representation of map values.
      * @param  keyNames Determines the string representation of map keys.
-     * @return The types for the given property.
+     * @return The names for the properties of the given class.
      * @throws ClassCastException if the specified interface or implementation class does
      *         not extend or implement a metadata interface of the expected package.
      *
@@ -362,6 +365,52 @@ public final class MetadataStandard {
         ensureNonNull("keyNames",   keyNames);
         type = getImplementation(type);
         return new NameMap(getAccessor(type), valueNames, keyNames);
+    }
+
+    /**
+     * Returns a view as a {@linkplain Map map} of the property descriptions for the specified
+     * metadata type. The keys are the same than {@link #asNameMap asNameMap}, except that only
+     * the keys for which a description is available are declared in the map. The values are
+     * descriptions localized in the given locale if possible, or in the default locale otherwise.
+     * <p>
+     * <b>Example:</b> The following code returns "<cite>Short name or other language name by
+     * which the cited information is known.</cite>"
+     *
+     * {@preformat java
+     *   ISO_19115.asDescriptionMap(Citation.class, Locale.ENGLISH, UML_IDENTIFIER).get("alternateTitle");
+     * }
+     *
+     * As a special case, the {@code "class"} value can be used for fetching the description
+     * of the class rather than a specific method of that class.
+     *
+     * {@note We could have provided a method without <code>Locale</code> argument and returning
+     *        a map with <code>InternationalString</code> values. However the method defined below
+     *        is slightly more efficient if the descriptions are going to be asked for more than
+     *        one property, because it fetches the <code>ResourceBundle</code> only once.}
+     *
+     * @param  type The interface or implementation class.
+     * @param  locale Determines the locale of map values.
+     * @param  keyNames Determines the string representation of map keys.
+     * @return The descriptions for the properties of the given class, or an empty map
+     *         if there is no description for the given class in this metadata standard.
+     * @throws ClassCastException if the specified interface or implementation class does
+     *         not extend or implement a metadata interface of the expected package.
+     *
+     * @since 3.05
+     */
+    public Map<String,String> asDescriptionMap(Class<?> type, final Locale locale,
+            final KeyNamePolicy keyNames) throws ClassCastException
+    {
+        ensureNonNull("type",     type);
+        ensureNonNull("locale",   locale);
+        ensureNonNull("keyNames", keyNames);
+        type = getImplementation(type);
+        try {
+            return new DescriptionMap(getAccessor(type), interfacePackage, locale, keyNames);
+        } catch (MissingResourceException e) {
+            Logging.recoverableException(MetadataStandard.class, "asDescriptionMap", e);
+            return Collections.emptyMap();
+        }
     }
 
     /**

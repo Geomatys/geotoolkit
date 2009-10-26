@@ -79,6 +79,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.io.LineWriter;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Errors;
@@ -112,7 +113,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.2
  * @module
  */
-public abstract class AbstractCoverage extends PropertySourceImpl implements Coverage {
+public abstract class AbstractCoverage extends PropertySourceImpl implements Coverage, Localized {
     /**
      * For compatibility during cross-version serialization.
      */
@@ -1227,6 +1228,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      *
      * @return The default locale for logging and error message.
      */
+    @Override
     public Locale getLocale() {
         return Locale.getDefault();
     }

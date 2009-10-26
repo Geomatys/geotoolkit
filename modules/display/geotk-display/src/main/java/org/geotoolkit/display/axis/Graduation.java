@@ -24,6 +24,8 @@ import java.awt.RenderingHints;
 import java.beans.PropertyChangeListener;
 import javax.measure.unit.Unit;
 
+import org.geotoolkit.util.Localized;
+
 
 /**
  * An axis's graduation. A {@code Graduation} object encompass minimal and maximal values
@@ -39,7 +41,7 @@ import javax.measure.unit.Unit;
  * @since 2.0
  * @module
  */
-public interface Graduation {
+public interface Graduation extends Localized {
     /**
      * Rendering hint for the axis length, in pixels or points (1/72 of inch).
      * Values for this key must be {@link Number} objects. This hint is used
@@ -129,6 +131,7 @@ public interface Graduation {
      *
      * @return The locale for formatting title and labels.
      */
+    @Override
     Locale getLocale();
 
     /**

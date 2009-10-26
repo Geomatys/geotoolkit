@@ -51,6 +51,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.util.Localized;
 
 
 /**
@@ -92,7 +93,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-public abstract class AbstractCoverageProcessor extends Factory implements GridCoverageProcessor {
+public abstract class AbstractCoverageProcessor extends Factory implements GridCoverageProcessor, Localized {
     /**
      * The logger for coverage processing operations.
      */
@@ -169,6 +170,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
      *
      * @return The locale for logging message.
      */
+    @Override
     public Locale getLocale() {
         return Locale.getDefault();
     }

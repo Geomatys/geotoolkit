@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Locale;
 import javax.imageio.metadata.IIOMetadataFormat;
+import org.opengis.metadata.Identifier;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -34,13 +36,34 @@ import static javax.imageio.metadata.IIOMetadataFormat.*;
  */
 public final class SpatialMetadataFormatTest {
     /**
-     * Tests the default instance.
+     * Tests the elements in the image metadata format instance.
      */
     @Test
-    public void testDefaultInstance() {
-        final IIOMetadataFormat format = SpatialMetadataFormat.INSTANCE;
-        assertEquals(DATATYPE_BOOLEAN, format.getAttributeDataType("ImageDescription", "cameraCalibrationInformationAvailable"));
-        assertEquals(DATATYPE_DOUBLE,  format.getAttributeDataType("ImageDescription", "cloudCoverPercentage"));
+    public void testImageElements() {
+        final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        assertEquals(Identifier.class, format.getObjectClass("processingLevelCode"));
+    }
+
+    /**
+     * Tests the attributes in the image metadata format instance.
+     */
+    @Test
+    public void testImageAttributes() {
+        final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        assertEquals(DATATYPE_BOOLEAN,    format.getAttributeDataType("ImageDescription", "cameraCalibrationInformationAvailable"));
+        assertEquals(DATATYPE_DOUBLE,     format.getAttributeDataType("ImageDescription", "cloudCoverPercentage"));
         assertEquals(CHILD_POLICY_REPEAT, format.getChildPolicy("dimensions"));
+    }
+
+    /**
+     * Tests the descriptions in the image metadata format instance.
+     */
+    @Test
+    public void testImageDescriptions() {
+        final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        assertEquals("Image distributor's code that identifies the level of radiometric and geometric processing that has been applied.",
+                format.getElementDescription("processingLevelCode", Locale.ENGLISH));
+        assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
+                format.getAttributeDescription("ImageDescription", "cloudCoverPercentage", Locale.ENGLISH));
     }
 }

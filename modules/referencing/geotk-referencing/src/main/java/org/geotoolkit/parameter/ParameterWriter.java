@@ -43,6 +43,7 @@ import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.Localized;
 
 import static org.geotoolkit.util.Utilities.hashMapCapacity;
 
@@ -60,7 +61,7 @@ import static org.geotoolkit.util.Utilities.hashMapCapacity;
  * @module
  */
 @Decorator(Writer.class)
-public class ParameterWriter extends FilterWriter {
+public class ParameterWriter extends FilterWriter implements Localized {
     /**
      * Special authority name for requesting the display of EPSG codes.
      */
@@ -717,6 +718,7 @@ header: for (int i=0; ; i++) {
      *
      * @return The current locale.
      */
+    @Override
     public Locale getLocale() {
         synchronized (lock) {
             return locale;

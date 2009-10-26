@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collection;
+import java.util.Collections;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
@@ -51,6 +52,7 @@ import org.opengis.metadata.content.Band; // Override the package class.
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.TypeValuePolicy;
@@ -58,6 +60,7 @@ import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -241,6 +244,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     protected final MetadataStandard standard;
 
     /**
+     * The last value returned by {@link #getDescriptions}, cached on the assumption
+     * that the description of different attributes of the same element are likely
+     * to be asked a few consecutive time.
+     */
+    private volatile transient MetadataDescriptions descriptions;
+
+    /**
      * Creates a new format for the {@linkplain MetadataStandard#ISO_19115 ISO 19115}
      * metadata standard, and declare the default structure. If the default structure
      * (illustrated in the class javadoc) is not wanted, then callers should use the
@@ -269,6 +279,20 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     protected SpatialMetadataFormat(final MetadataStandard standard, final String rootName) {
         super(rootName, CHILD_POLICY_SOME);
         this.standard = standard;
+        ensureNonNull("standard", standard);
+    }
+
+    /**
+     * Makes sure an argument is non-null.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws NullArgumentException if {@code object} is null.
+     */
+    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
+        if (object == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
     }
 
     /**
@@ -370,6 +394,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param substitution The map of children types to substitute by other types, or {@code null}.
      */
     protected void addTree(final Class<?> type, final Map<Class<?>,Class<?>> substitution) {
+        ensureNonNull("type", type);
         addTree(type, type.getSimpleName(), getRootName(), substitution);
     }
 
@@ -415,6 +440,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     protected void addTree(final Class<?> type, final String elementName, final String parentName,
             final Map<Class<?>,Class<?>> substitution)
     {
+        ensureNonNull("type",        type);
+        ensureNonNull("elementName", elementName);
+        ensureNonNull("parentName",  parentName);
         final Set<Class<?>> exclude = new HashSet<Class<?>>();
         if (substitution != null) {
             for (final Map.Entry<Class<?>,Class<?>> entry : substitution.entrySet()) {
@@ -677,6 +705,146 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     @Override
     public boolean canNodeAppear(final String elementName, final ImageTypeSpecifier imageType) {
         return true;
+    }
+
+    /**
+     * Returns the element which is the parent of the named element, or {@code null} if none.
+     *
+     * @param  elementName The element for which the parent is desired.
+     * @return The parent of the given element, or {@code null}.
+     *
+     * @since 3.05
+     */
+    public String getParent(final String elementName) {
+        ensureNonNull("elementName", elementName);
+        return getParent(getRootName(), elementName);
+    }
+
+    /**
+     * Returns the element which is the parent of the named element, or {@code null} if none.
+     *
+     * @todo Current implementation is somewhat inefficient. Maybe we should maintains a map
+     *       of parents when new elements are added.
+     *
+     * @param  root The root element from which to starts the scan.
+     * @param  elementName The element for which the parent is desired.
+     * @return The parent of the given element, or {@code null}.
+     */
+    private String getParent(final String root, final String elementName) {
+        final String[] childs = getChildNames(root);
+        if (childs != null) {
+            for (final String child : childs) {
+                if (child.equals(elementName)) {
+                    return root;
+                }
+            }
+            // Do recursive call only after we checked every childs at the root. If a name
+            // appears twice (it should not), we will favor the one at the lowest depth.
+            for (final String child : childs) {
+                final String candidate = getParent(child, elementName);
+                if (candidate != null) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns a description of the named element, or {@code null}. The desciption will be
+     * localized for the supplied Locale if possible.
+     * <p>
+     * The default implementation first queries the
+     * {@linkplain MetadataStandard#asDescriptionMap description map} associated with the
+     * {@linkplain #standard metadata standard}. If no description is found, then the
+     * {@linkplain IIOMetadataFormatImpl#getElementDescription super-class implementation}
+     * is used.
+     *
+     * @param  elementName The name of the element.
+     * @param  locale The Locale for which localization will be attempted, or null.
+     * @return The attribute description.
+     *
+     * @since 3.05
+     */
+    @Override
+    public String getElementDescription(final String elementName, final Locale locale) {
+        ensureNonNull("elementName", elementName);
+        String description = getDescription(elementName, null, locale);
+        if (description == null) {
+            description = super.getElementDescription(elementName, locale);
+        }
+        return description;
+    }
+
+    /**
+     * Returns a description of the named attribute, or {@code null}. The desciption will be
+     * localized for the supplied Locale if possible.
+     * <p>
+     * The default implementation first queries the
+     * {@linkplain MetadataStandard#asDescriptionMap description map} associated with the
+     * {@linkplain #standard metadata standard}. If no description is found, then the
+     * {@linkplain IIOMetadataFormatImpl#getAttributeDescription super-class implementation}
+     * is used.
+     *
+     * @param  elementName The name of the element.
+     * @param  attrName    The name of the attribute.
+     * @param  locale      The Locale for which localization will be attempted, or null.
+     * @return The attribute description.
+     *
+     * @since 3.05
+     */
+    @Override
+    public String getAttributeDescription(final String elementName, final String attrName, final Locale locale) {
+        ensureNonNull("elementName", elementName);
+        ensureNonNull("attrName",    attrName);
+        String description = getDescription(elementName, attrName, locale);
+        if (description == null) {
+            description = super.getAttributeDescription(elementName, attrName, locale);
+        }
+        return description;
+    }
+
+    /**
+     * Returns the description of the given attribute of the given element, in the given locale.
+     * If the attribute is null, then this method assumes that the caller want the description
+     * of the element itself. If there is no description available, returns {@code null}.
+     *
+     * @param  elementName The name of the element in which to search for attributes.
+     * @param  attrName The name of the attribute for which the descriptions is desired, or {@code null}.
+     * @param  locale The locale of the descriptions, or {@code null} for the default.
+     * @return The requested description, or {@code null} if none.
+     */
+    private String getDescription(String elementName, String attrName, Locale locale) {
+        if (locale == null) {
+            locale = Locale.getDefault();
+        }
+        if (attrName == null) {
+            attrName = elementName;
+            elementName = getParent(elementName);
+            if (elementName == null) {
+                return null;
+            }
+        }
+        MetadataDescriptions candidate = descriptions;
+        if (candidate == null || !locale.equals(candidate.locale) || !elementName.equals(candidate.elementName)) {
+            Class<?> type = null;
+            try {
+                type = getObjectClass(elementName);
+            } catch (IllegalArgumentException e) {
+                // The given element does not allow the storage of objects.
+                // We will set the description map to an empty map.
+            }
+            Map<String,String> desc = Collections.emptyMap();
+            if (type != null) try {
+                desc = standard.asDescriptionMap(type, locale, NAME_POLICY);
+            } catch (ClassCastException e) {
+                // The element type is not an instance of the expected standard.
+                // We will set the description map to an empty map.
+            }
+            candidate = new MetadataDescriptions(desc, elementName, locale);
+            descriptions = candidate;
+        }
+        return candidate.descriptions.get(attrName);
     }
 
     /**

@@ -37,6 +37,8 @@ import org.geotoolkit.lang.Immutable;
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
+ * @see Versioned
+ *
  * @since 2.4
  * @module
  */

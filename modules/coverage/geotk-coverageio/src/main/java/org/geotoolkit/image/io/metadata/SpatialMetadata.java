@@ -36,6 +36,7 @@ import org.w3c.dom.Node;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.GeographicImageReader;
@@ -63,7 +64,7 @@ import org.geotoolkit.image.io.GeographicImageWriter;
  * @since 3.04 (derived from 2.4)
  * @module
  */
-public class SpatialMetadata extends IIOMetadata {
+public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
      * The metadata format.
      */
@@ -90,7 +91,7 @@ public class SpatialMetadata extends IIOMetadata {
      * The only format defined is the {@link SpatialMetadataFormat} default instance
      */
     public SpatialMetadata() {
-        this(SpatialMetadataFormat.INSTANCE, (Object) null);
+        this(SpatialMetadataFormat.IMAGE, (Object) null);
     }
 
     /**
@@ -101,7 +102,7 @@ public class SpatialMetadata extends IIOMetadata {
      * @param reader The source image reader, or {@code null} if none.
      */
     public SpatialMetadata(final ImageReader reader) {
-        this(SpatialMetadataFormat.INSTANCE, (Object) reader);
+        this(SpatialMetadataFormat.IMAGE, (Object) reader);
     }
 
     /**
@@ -112,7 +113,7 @@ public class SpatialMetadata extends IIOMetadata {
      * @param writer The target image writer, or {@code null} if none.
      */
     public SpatialMetadata(final ImageWriter writer) {
-        this(SpatialMetadataFormat.INSTANCE, (Object) writer);
+        this(SpatialMetadataFormat.IMAGE, (Object) writer);
     }
 
     /**
@@ -159,6 +160,7 @@ public class SpatialMetadata extends IIOMetadata {
      *
      * @return The locale for formatting messages.
      */
+    @Override
     public Locale getLocale() {
         if (owner instanceof ImageReader) {
             return ((ImageReader) owner).getLocale();

@@ -25,6 +25,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.AnyConverter;
@@ -63,7 +64,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  * @since 3.04
  * @module
  */
-public class MetadataTreeTable {
+public class MetadataTreeTable implements Localized {
     /**
      * The number of columns in the table ({@value}), when every columns are present. Note that
      * the {@linkplain #VALUE_COLUMN value column} is omitted if this {@code MetadataTreeTable}
@@ -178,6 +179,7 @@ public class MetadataTreeTable {
      *
      * @return The locale for which localization will be attempted.
      */
+    @Override
     public Locale getLocale() {
         return locale;
     }

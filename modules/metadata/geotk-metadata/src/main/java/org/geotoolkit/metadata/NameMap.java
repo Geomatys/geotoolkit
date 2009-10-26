@@ -38,7 +38,7 @@ final class NameMap extends MetadataMap<String> {
     final KeyNamePolicy valueNames;
 
     /**
-     * Creates a type map for the specified accessor.
+     * Creates a name map for the specified accessor.
      *
      * @param accessor   The accessor to use for the metadata.
      * @param valueNames Determines the string representation of values in this map.
@@ -73,7 +73,9 @@ final class NameMap extends MetadataMap<String> {
     public String get(final Object key) {
         if (key instanceof String) {
             final int index = accessor.indexOf((String) key);
-            return (index >= 0) ? accessor.name(index, valueNames) : null;
+            if (index >= 0) {
+                return accessor.name(index, valueNames);
+            }
         }
         return null;
     }
