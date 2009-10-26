@@ -14,12 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw.xml.v200;
+package org.geotoolkit.csw.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.csw.xml.ElementSet;
 
 
 /**
@@ -40,7 +39,7 @@ import org.geotoolkit.csw.xml.ElementSet;
  */
 @XmlType(name = "ElementSetType")
 @XmlEnum
-public enum ElementSetType implements ElementSet {
+public enum ElementSetType {
 
     @XmlEnumValue("brief")
     BRIEF("brief"),

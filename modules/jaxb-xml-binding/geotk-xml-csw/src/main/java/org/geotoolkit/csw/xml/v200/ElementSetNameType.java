@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.ElementSetName;
+import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.util.Utilities;
 
 

@@ -23,6 +23,6 @@ package org.geotoolkit.csw.xml;
  */
 public interface ElementSetName {
 
-    public ElementSet getValue();
+    public ElementSetType getValue();
 
 }

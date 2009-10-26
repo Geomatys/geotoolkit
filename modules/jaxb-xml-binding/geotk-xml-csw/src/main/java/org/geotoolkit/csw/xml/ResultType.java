@@ -14,43 +14,58 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw.xml.v202;
+package org.geotoolkit.csw.xml;
 
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.csw.xml.ElementSet;
 
 
 /**
- * <p>Java class for ElementSetType.
+ * <p>Java class for ResultType.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="ElementSetType">
+ * &lt;simpleType name="ResultType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="brief"/>
- *     &lt;enumeration value="summary"/>
- *     &lt;enumeration value="full"/>
+ *     &lt;enumeration value="results"/>
+ *     &lt;enumeration value="hits"/>
+ *     &lt;enumeration value="validate"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
  * 
  */
-@XmlType(name = "ElementSetType")
+@XmlType(name = "ResultType")
 @XmlEnum
-public enum ElementSetType implements ElementSet {
+public enum ResultType {
 
-    @XmlEnumValue("brief")
-    BRIEF("brief"),
-    @XmlEnumValue("summary")
-    SUMMARY("summary"),
-    @XmlEnumValue("full")
-    FULL("full");
+
+    /**
+     * Include results in the response.
+     * 
+     */
+    @XmlEnumValue("results")
+    RESULTS("results"),
+
+    /**
+     * Provide a result set summary, but no results.
+     * 
+     */
+    @XmlEnumValue("hits")
+    HITS("hits"),
+
+    /**
+     * Validate the request and return an Acknowledgement message if it is valid.
+     * Continue processing the request asynchronously.
+     * 
+     */
+    @XmlEnumValue("validate")
+    VALIDATE("validate");
     private final String value;
 
-    ElementSetType(String v) {
+    ResultType(String v) {
         value = v;
     }
 
@@ -58,8 +73,8 @@ public enum ElementSetType implements ElementSet {
         return value;
     }
 
-    public static ElementSetType fromValue(String v) {
-        for (ElementSetType c: ElementSetType.values()) {
+    public static ResultType fromValue(String v) {
+        for (ResultType c: ResultType.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

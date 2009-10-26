@@ -109,7 +109,7 @@ public interface GetRecordsRequest extends RequestBase {
     /**
      * Get the output result type.
      */
-    public AbstractResultType getResultType();
+    public ResultType getResultType();
 
     /**
      * Get the query filter of the request.

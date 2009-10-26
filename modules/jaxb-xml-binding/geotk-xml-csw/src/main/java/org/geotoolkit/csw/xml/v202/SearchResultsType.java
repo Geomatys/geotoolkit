@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.SearchResults;
 import org.geotoolkit.util.Utilities;
 

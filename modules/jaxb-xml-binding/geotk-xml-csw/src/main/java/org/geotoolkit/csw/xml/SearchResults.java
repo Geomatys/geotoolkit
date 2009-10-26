@@ -54,7 +54,7 @@ public interface SearchResults {
      * Gets the value of the elementSet property.
      * 
      */
-    public ElementSet getElementSet();
+    public ElementSetType getElementSet();
 
     /**
      * Gets the value of the recordSchema property.
