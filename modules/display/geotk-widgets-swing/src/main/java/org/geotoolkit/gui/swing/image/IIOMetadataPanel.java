@@ -113,7 +113,7 @@ public class IIOMetadataPanel extends JPanel {
     private final JLabel description, validValues;
 
     /**
-     * The unique instance of {@link Controller} which is associated to this panel.
+     * The unique instance of the set of listeners which is associated to this panel.
      */
     private final Controller controller;
 

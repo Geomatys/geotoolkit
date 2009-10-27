@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Date;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.Map;
@@ -31,6 +32,7 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
+import org.opengis.util.RecordType;
 import org.opengis.annotation.Obligation;
 
 // We use a lot of different metadata interfaces in this class.
@@ -39,6 +41,7 @@ import org.opengis.metadata.*;
 import org.opengis.metadata.extent.*;
 import org.opengis.metadata.spatial.*;
 import org.opengis.metadata.quality.*;
+import org.opengis.metadata.lineage.*;
 import org.opengis.metadata.content.*;
 import org.opengis.metadata.citation.*;
 import org.opengis.metadata.constraint.*;
@@ -89,67 +92,77 @@ import org.geotoolkit.resources.Errors;
 <tr bgcolor="lightblue"><th>Stream metadata</th><th>Image metadata</th></tr>
 <tr><td nowrap valign="top" width="50%">
 <pre>geotk-coverageio_3.05
-└───MetaData
-    ├───dateStamp
-    ├───hierarchyLevels
-    ├───hierarchyLevelNames
-    ├───parentIdentifier
-    ├───dataSetUri
-    ├───fileIdentifier
-    ├───metadataStandardName
-    ├───metadataStandardVersion
-    ├───referenceSystemInfo
-    ├───identificationInfo
-    │   ├───abstract
-    │   ├───topicCategories
-    │   ├───credits
-    │   ├───environmentDescription
-    │   ├───purpose
-    │   ├───status
-    │   ├───supplementalInformation
-    │   ├───extent
-    │   │   ├───description
-    │   │   ├───geographicElement
-    │   │   │   ├───eastBoundLongitude
-    │   │   │   ├───northBoundLatitude
-    │   │   │   ├───southBoundLatitude
-    │   │   │   ├───westBoundLongitude
-    │   │   │   └───inclusion
-    │   │   └───verticalElement
-    │   │       ├───maximumValue
-    │   │       ├───minimumValue
-    │   │       └───verticalCRS
-    │   ├───descriptiveKeywords
-    │   │   └───descriptiveKeywords element
-    │   │       ├───keywords
-    │   │       └───type
-    │   └───spatialResolution
-    │       ├───distance
-    │       └───equivalentScale
-    │           ├───doubleValue
-    │           └───denominator
-    └───spatialRepresentationInfo
-        ├───cellGeometry
-        ├───numberOfDimensions
-        ├───transformationParameterAvailable
-        └───axisDimensionProperties
-            └───axisDimensionProperties element
-                ├───dimensionName
-                ├───dimensionSize
-                └───resolution</pre>
+├───DiscoveryMetadata
+│   ├───citation
+│   ├───abstract
+│   ├───purpose
+│   ├───credits
+│   ├───status
+│   ├───descriptiveKeywords
+│   │   └───descriptiveKeywords entry
+│   │       ├───keywords
+│   │       ├───thesaurusName
+│   │       └───type
+│   ├───spatialResolution
+│   │   ├───distance
+│   │   └───equivalentScale
+│   │       └───denominator
+│   ├───topicCategories
+│   ├───environmentDescription
+│   ├───extent
+│   │   ├───description
+│   │   ├───geographicElement
+│   │   │   ├───inclusion
+│   │   │   ├───westBoundLongitude
+│   │   │   ├───eastBoundLongitude
+│   │   │   ├───southBoundLatitude
+│   │   │   └───northBoundLatitude
+│   │   └───verticalElement
+│   │       ├───minimumValue
+│   │       ├───maximumValue
+│   │       └───verticalCRS
+│   └───supplementalInformation
+├───AcquisitionMetadata
+│   ├───environmentalConditions
+│   │   ├───averageAirTemperature
+│   │   ├───maxRelativeHumidity
+│   │   ├───maxAltitude
+│   │   └───meteorologicalConditions
+│   └───platform
+│       ├───citation
+│       ├───identifier
+│       ├───description
+│       └───Instruments
+│           └───Instrument
+│               ├───citation
+│               ├───identifier
+│               │   ├───code
+│               │   └───authority
+│               ├───type
+│               └───description
+└───QualityMetadata
+    └───report
+        ├───namesOfMeasure
+        ├───measureIdentification
+        ├───measureDescription
+        ├───evaluationMethodType
+        ├───evaluationMethodDescription
+        ├───evaluationProcedure
+        └───date</pre>
 </td><td nowrap valign="top" width="50%">
 <pre>geotk-coverageio_3.05
 └───ImageDescription
-    ├───attributeDescription
     ├───contentType
     ├───illuminationElevationAngle
     ├───illuminationAzimuthAngle
     ├───imagingCondition
     ├───imageQualityCode
-    │   └───code
+    │   ├───code
+    │   └───authority
     ├───cloudCoverPercentage
     ├───processingLevelCode
-    │   └───code
+    │   ├───code
+    │   └───authority
     ├───compressionGenerationQuantity
     ├───triangulationIndicator
     ├───radiometricCalibrationDataAvailable
@@ -307,54 +320,63 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(20);
         /*
          * Metadata excluded because they are redundant with standard API.
-         *
-         * - The Locale is specified in ImageReader.
-         * - The CharacterSet is fixed to Unicode (at least for String objects) by Java.
-         * - The Format is redundant with ImageReaderWriterSpi.
-         * - The BrowseGraphic is redundant with Image I/O Thumbnails
          */
-        substitution.put(Format.class,        null);
-        substitution.put(Locale.class,        null);
-        substitution.put(CharacterSet.class,  null);
-        substitution.put(BrowseGraphic.class, null);
+        substitution.put(Format.class,                    null);  // Redundant with ImageReaderWriterSpi.
+        substitution.put(Locale.class,                    null);  // Specified in ImageReader.getLocale().
+        substitution.put(CharacterSet.class,              null);  // Fixed to Unicode in java.lang.String.
+        substitution.put(BrowseGraphic.class,             null);  // Redundant with Image I/O Thumbnails.
+        substitution.put(SpatialRepresentationType.class, null);  // Fixed to "grid" for Image I/O.
         /*
-         * Metadata excluded because we are not interrested in (at this time):
-         *
-         * - The ContentInformation is provided in image metadata.
-         * - SpatialRepresentationType is fixed to "grid" for Image I/O, so is useless.
-         * - The Citation is repeated in too many places with large dependencies tree.
-         * - The ResponsibleParty is repeated in too many places.
-         * - The DataQuality branch is very large and we have not yet determined what to keep.
+         * Metadata excluded because we are not interrested in (at this time). Their
+         * inclusion introduce large sub-trees that would need to be simplified.  We
+         * may revisit some of those exclusion in a future version, when we get more
+         * experience about what are needed.
          */
-        substitution.put(Usage.class,                        null);
-        substitution.put(Citation.class,                     null);
-        substitution.put(ResponsibleParty.class,             null);
-        substitution.put(Distribution.class,                 null);
-        substitution.put(Constraints.class,                  null);
-        substitution.put(MaintenanceInformation.class,       null);
-        substitution.put(PortrayalCatalogueReference.class,  null);
-        substitution.put(ApplicationSchemaInformation.class, null);
-        substitution.put(MetadataExtensionInformation.class, null);
-        substitution.put(SpatialRepresentationType.class,    null);
-        substitution.put(ContentInformation.class,           null);
-        substitution.put(AggregateInformation.class,         null);
-        substitution.put(AcquisitionInformation.class,       null);
-        substitution.put(RepresentativeFraction.class,       null);
-        substitution.put(DataQuality.class,                  null);
+        substitution.put(Usage.class,                  null);  // MD_DataIdentification.resourceSpecificUsage
+        substitution.put(ResponsibleParty.class,       null);  // MD_DataIdentification.pointOfContact
+        substitution.put(Constraints.class,            null);  // MD_DataIdentification.resourceConstraints
+        substitution.put(MaintenanceInformation.class, null);  // MD_DataIdentification.resourceMaintenance
+        substitution.put(AggregateInformation.class,   null);  // MD_DataIdentification.aggregationInfo
+        substitution.put(Plan.class,                   null);  // MI_AcquisitionInformation.acquisitionPlan
+        substitution.put(Objective.class,              null);  // MI_AcquisitionInformation.objective
+        substitution.put(Operation.class,              null);  // MI_AcquisitionInformation.operation
+        substitution.put(Requirement.class,            null);  // MI_AcquisitionInformation.acquisitionRequirement
+        substitution.put(Scope.class,                  null);  // DQ_DataQuality.scope
+        substitution.put(Lineage.class,                null);  // DQ_DataQuality.lineage
+        substitution.put(Result.class,                 null);  // DQ_DataQuality.report.result
         /*
          * Metadata excluded because not yet implemented.
          */
         substitution.put(TemporalExtent.class, null);
         /*
+         * Metadata simplification, where elements are replaced by attributes. The simplification
+         * is especially important for Citation because they appear in many different places with
+         * the same name ("citation"),  while Image I/O does not allow many element nodes to have
+         * the same name (this is not strictly forbidden, but the getter methods return information
+         * only about the first occurence of the given name. Note however that having the same name
+         * under different element node is not an issue for attributes). In addition, the Citation
+         * sub-tree is very large and we don't want to allow the tree to growth that big.
+         */
+        substitution.put(Citation.class,   String.class);
+        substitution.put(Citation[].class, String.class);
+        substitution.put(Identifier.class, String.class);
+        /*
+         * Metadata excluded because they introduce circularity or because
+         * they appear more than once (we shall not declare two nodes with
+         * the same name in Image I/O). Some will be added by hand later.
+         */
+        substitution.put(Instrument.class, null);  // MI_AcquisitionInformation.instrument
+        /*
          * Collections replaced by singletons, because only one
          * instance is enough for the purpose of stream metadata.
          */
-        substitution.put(Resolution[].class,            Resolution.class);
-        substitution.put(Extent[].class,                Extent.class);
-        substitution.put(VerticalExtent[].class,        VerticalExtent.class);
-        substitution.put(GeographicExtent[].class,      GeographicExtent.class);
-        substitution.put(SpatialRepresentation[].class, SpatialRepresentation.class);
-        substitution.put(Identification[].class,        Identification.class);
+        substitution.put(Extent[].class,           Extent.class);            // MD_DataIdentification.extent
+        substitution.put(GeographicExtent[].class, GeographicExtent.class);  // MD_DataIdentification.extent.geographicElement
+        substitution.put(VerticalExtent[].class,   VerticalExtent.class);    // MD_DataIdentification.extent.verticalElement
+        substitution.put(Resolution[].class,       Resolution.class);        // MD_DataIdentification.spatialResolution
+        substitution.put(Platform[].class,         Platform.class);          // MI_AcquisitionInformation.platform
+        substitution.put(Element[].class,          Element.class);           // DQ_DataQuality.report
+        substitution.put(Date[].class,             Date.class);              // DQ_DataQuality.report.dateTime
         /*
          * Since this set of metadata is about gridded data,
          * replace the generic interfaces by specialized ones.
@@ -362,11 +384,22 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         substitution.put(Identification.class,        DataIdentification.class);
         substitution.put(SpatialRepresentation.class, GridSpatialRepresentation.class);
         substitution.put(GeographicExtent.class,      GeographicBoundingBox.class);
-        substitution.put(Result.class,                CoverageResult.class);
         /*
          * Build the tree.
          */
-        addTree(MetaData.class, substitution);
+        final String root = getRootName();
+        addTree(DataIdentification.class,     "DiscoveryMetadata",   root, substitution);
+        addTree(AcquisitionInformation.class, "AcquisitionMetadata", root, substitution);
+        addTree(DataQuality.class,            "QualityMetadata",     root, substitution);
+        removeAttribute("equivalentScale", "doubleValue");
+        /*
+         * Add by hand a node in the place where it would have been added if we didn't
+         * excluded it. We do this addition because Instruments appear in two places,
+         * while we want only the occurence that appear under the "Platform" node.
+         */
+        substitution.put(Platform.class, null);
+        substitution.remove(Identifier.class); // Allow full expansion.
+        addTree(Instrument[].class, "Instruments", "platform", substitution);
     }
 
     /**
@@ -379,7 +412,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     protected void addTreeForImage() {
         final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(4);
-        substitution.put(Citation.class, null);
+        substitution.put(Citation.class,       String.class);
+        substitution.put(RecordType.class,     null);
         substitution.put(RangeDimension.class, Band.class);
         addTree(ImageDescription.class, substitution);
     }
@@ -406,7 +440,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * <p>
      * This method can be given an optional <cite>substitution map</cite>. If this map is non
      * null, then every occurence of a class in the set of keys is replaced by the associated
-     * class in the set of values. The purpose of this map is to:
+     * class in the collection of values. The purpose of this map is to:
      *
      * <ul>
      *   <li><p>Replace a base class by some specialized subclass. Since {@code IIOMetadata} are
@@ -416,10 +450,21 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class);</pre></blockquote></li>
      *
      *   <li><p>Exclude a particular class. This is conceptually equivalent to setting the target
-     *   type to {@code null}. This is used typically for excluding {@code Citation.class}, because
-     *   introducing this metadata type brings a large tree of dependencies. Example:</p>
+     *   type to {@code null}. This is used for excluding metadata type which bring a large tree
+     *   of dependencies that we may not be interrested in. Example:</p>
      *
-     * <blockquote><pre>substitution.put({@linkplain Citation}.class, null);</pre></blockquote></li>
+     * <blockquote><pre>substitution.put({@linkplain Objective}.class, null);</pre></blockquote></li>
+     *
+     *   <li><p>Replace an element class (including the whole tree behind it) by a single attribute.
+     *   This simplification is especially useful for {@code Citation} because they typically appear
+     *   in many different places with the same name ("<cite>citation</cite>"), while Image I/O does
+     *   not allow many elements to have the same name (actually this is not strictly forbidden, but
+     *   the getter methods return information only about the first occurence of a given name).
+     *   Converting an element to an attribute allow it to appear with the same name under different
+     *   nodes, and can make the tree considerably simplier (at the cost of losing all the sub-tree
+     *   below the converted element). Example:</p>
+     *
+     * <blockquote><pre>substitution.put({@linkplain Citation}.class, String.class);</pre></blockquote></li>
      *
      *   <li><p>Replace a collection by a singleton. This is conceptually equivalent to setting the
      *   source type to an array, and the target type to the element of that array. This is useful
@@ -437,7 +482,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param parentName    The name of the parent node to where to add the child.
      * @param substitution  The map of children types to substitute by other types, or {@code null}.
      */
-    protected void addTree(final Class<?> type, final String elementName, final String parentName,
+    protected void addTree(Class<?> type, final String elementName, final String parentName,
             final Map<Class<?>,Class<?>> substitution)
     {
         ensureNonNull("type",        type);
@@ -451,7 +496,25 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 }
             }
         }
-        addTree(type, null, elementName, parentName, 0, 1, null, exclude, substitution);
+        /*
+         * If the given type is an arrray, handle as a collection  (i.e. we will add a
+         * "Elements" parent node, and declare in that parent a single "Element" child
+         * which can be repeated many time).
+         */
+        int max = 1;
+        String identifier = null;
+        if (type.isArray()) {
+            type = type.getComponentType();
+            max = Integer.MAX_VALUE;
+            try {
+                identifier = standard.getInterface(type).getSimpleName();
+            } catch (ClassCastException e) {
+                // Not an implementation of the expected standard.
+                // It may be an "ordinary" object from the JDK.
+                identifier = elementName;
+            }
+        }
+        addTree(type, identifier, elementName, parentName, 0, max, null, exclude, substitution);
     }
 
     /**
@@ -752,7 +815,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns a description of the named element, or {@code null}. The desciption will be
-     * localized for the supplied Locale if possible.
+     * localized for the supplied locale if possible.
      * <p>
      * The default implementation first queries the
      * {@linkplain MetadataStandard#asDescriptionMap description map} associated with the
@@ -778,7 +841,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns a description of the named attribute, or {@code null}. The desciption will be
-     * localized for the supplied Locale if possible.
+     * localized for the supplied locale if possible.
      * <p>
      * The default implementation first queries the
      * {@linkplain MetadataStandard#asDescriptionMap description map} associated with the

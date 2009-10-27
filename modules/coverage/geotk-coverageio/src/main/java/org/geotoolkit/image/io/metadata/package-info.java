@@ -34,7 +34,9 @@
  * {@section Relationship with the ISO-19129 standard}
  * The ISO 19129 standard (<cite>Geographic information — Imagery, gridded and coverage data
  * framework</cite>) defines the metadata that are expected to exist in every coverage format.
- * The table below gives the relationship between ISO 19129 constructs and Java or GeoAPI:
+ * The table below gives the relationship between ISO 19129 constructs and Java or GeoAPI. Not
+ * all ISO constructs are implemented; see {@link org.geotoolkit.image.io.metadata.SpatialMetadataFormat}
+ * for the list of constructs available in Geotk.
  * <p>
  * <table border="1" cellspacing="0">
  *   <tr bgcolor="lightblue">

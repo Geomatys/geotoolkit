@@ -18,6 +18,10 @@
 package org.geotoolkit.image.io.metadata;
 
 import java.util.Locale;
+import java.io.Writer;
+import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import javax.imageio.metadata.IIOMetadataFormat;
 import org.opengis.metadata.Identifier;
 
@@ -30,7 +34,7 @@ import static javax.imageio.metadata.IIOMetadataFormat.*;
  * Tests {@link SpatialMetadataFormat}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 3.04
  */
@@ -65,5 +69,27 @@ public final class SpatialMetadataFormatTest {
                 format.getElementDescription("processingLevelCode", Locale.ENGLISH));
         assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
                 format.getAttributeDescription("ImageDescription", "cloudCoverPercentage", Locale.ENGLISH));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadataFormat#toString()} method.
+     * This is also used for producing the tree to copy in the javadoc.
+     *
+     * @throws IOException If an I/O error occured while writting the tree to disk.
+     *         This is normally not enabled.
+     */
+    @Test
+    public void testToString() throws IOException {
+        final String stream = SpatialMetadataFormat.STREAM.toString();
+        final String image  = SpatialMetadataFormat.IMAGE .toString();
+        assertTrue(stream.length() != 0); // Dummy check. The real interresting part is the write to a file.
+        assertTrue(image .length() != 0);
+        if (false) {
+            final Writer out = new OutputStreamWriter(new FileOutputStream("SpatialMetadataFormat.txt"), "UTF-8");
+            out.write(stream);
+            out.write(System.getProperty("line.separator", "\n"));
+            out.write(image);
+            out.close();
+        }
     }
 }
