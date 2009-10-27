@@ -92,7 +92,7 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
     /**
      * Like calling DbaseFileReader(ReadableByteChannel, true);
      * 
-     * @param channel
+     * @param shpFiles
      * @throws IOException
      */
     public IndexedDbaseFileReader(ShpFiles shpFiles) throws IOException {
@@ -102,12 +102,9 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
     /**
      * Creates a new instance of DBaseFileReader
      * 
-     * @param channel
-     *                The readable channel to use.
-     * @param useMemoryMappedBuffer
-     *                Wether or not map the file in memory
-     * @throws IOException
-     *                 If an error occurs while initializing.
+     * @param shpFiles The file to use.
+     * @param useMemoryMappedBuffer Wether or not map the file in memory
+     * @throws IOException If an error occurs while initializing.
      */
     public IndexedDbaseFileReader(ShpFiles shpFiles,
             boolean useMemoryMappedBuffer) throws IOException {

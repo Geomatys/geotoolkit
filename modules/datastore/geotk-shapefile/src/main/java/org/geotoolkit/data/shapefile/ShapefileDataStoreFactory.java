@@ -51,17 +51,15 @@ import org.opengis.parameter.ParameterValueGroup;
  * not specified. For more information on the connection parameters please
  * review the following public Param constants.
  * <ul>
- * <li>{@link URLP}
- * <li>{@link NAMESPACEP}
- * <li>{@link CREATE_SPATIAL_INDEX}
- * <li>{@link MEMORY_MAPPED}
- * <li>{@link DBFCHARSET}
+ * <li>{@link #URLP}
+ * <li>{@link #NAMESPACEP}
+ * <li>{@link #CREATE_SPATIAL_INDEX}
+ * <li>{@link #MEMORY_MAPPED}
+ * <li>{@link #DBFCHARSET}
  * </ul>
  * 
  * @author Chris Holmes, TOPP
  * @author Johann Sorel (Geomatys)
- * @version $Id: ShapefileDataStoreFactory.java 27856 2007-11-12 17:23:35Z
- *          desruisseaux $
  * @module pending
  */
 public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {

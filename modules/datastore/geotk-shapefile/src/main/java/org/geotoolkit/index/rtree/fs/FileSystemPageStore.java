@@ -312,15 +312,17 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getRoot()
+     * {@inheritDoc }
      */
+    @Override
     public Node getRoot() {
         return this.root;
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#setRoot(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void setRoot(Node node) throws TreeException {
         try {
             FileSystemNode n = (FileSystemNode) node;
@@ -346,8 +348,9 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getEmptyNode(boolean)
+     * {@inheritDoc }
      */
+    @Override
     public Node getEmptyNode(boolean isLeaf) {
         FileSystemNode node = new FileSystemNode(params);
         node.setLeaf(isLeaf);
@@ -356,9 +359,9 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getNode(long,
-     *      org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public Node getNode(Entry parentEntry, Node parent) throws TreeException {
         Node node = null;
         long offset = ((Long) parentEntry.getData()).longValue();
@@ -374,8 +377,9 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#createEntryPointingNode(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public Entry createEntryPointingNode(Node node) {
         FileSystemNode fn = (FileSystemNode) node;
 
@@ -383,8 +387,9 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#free(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void free(Node node) {
         try {
             FileSystemNode fn = (FileSystemNode) node;
@@ -395,8 +400,9 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#close()
+     * {@inheritDoc }
      */
+    @Override
     public void close() throws TreeException {
         try {
             this.header.position(0);
@@ -415,29 +421,33 @@ public class FileSystemPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getMaxNodeEntries()
+     * {@inheritDoc }
      */
+    @Override
     public int getMaxNodeEntries() {
         return this.params.getMaxNodeEntries();
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getMinNodeEntries()
+     * {@inheritDoc }
      */
+    @Override
     public int getMinNodeEntries() {
         return this.params.getMinNodeEntries();
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getSplitAlgorithm()
+     * {@inheritDoc }
      */
+    @Override
     public short getSplitAlgorithm() {
         return this.params.getSplitAlg();
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getKeyDefinition()
+     * {@inheritDoc }
      */
+    @Override
     public DataDefinition getDataDefinition() {
         return this.params.getDataDef();
     }

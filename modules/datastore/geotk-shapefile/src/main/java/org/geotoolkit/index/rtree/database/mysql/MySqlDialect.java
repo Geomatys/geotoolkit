@@ -25,9 +25,11 @@ import org.geotoolkit.index.rtree.database.AbstractDialect;
  * @module pending
  */
 public class MySqlDialect extends AbstractDialect {
+
     /**
-     * @see org.geotools.index.rtree.database.Dialect#getCreateTable(java.lang.String)
+     * {@inheritDoc }
      */
+    @Override
     public String getCreateTable(String tableName) {
         return "create table " + tableName + "(" + "page_id int not null,"
                 + "fl_leaf char(1) not null," + "blob_content blob";

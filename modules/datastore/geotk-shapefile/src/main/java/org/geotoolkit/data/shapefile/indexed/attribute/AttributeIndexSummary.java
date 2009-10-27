@@ -61,8 +61,7 @@ public class AttributeIndexSummary {
     /**
      * Creates an IndexSummary
      * 
-     * @param shapefileUrl
-     *                url of shapefile for wich indexes are related to
+     * @param shpURL of shapefile for wich indexes are related to
      */
     public AttributeIndexSummary(URL shpURL) throws MalformedURLException, IOException {
         this(shpURL,DEFAULT_CACHE_SIZE);
@@ -71,10 +70,8 @@ public class AttributeIndexSummary {
     /**
      * Creates an IndexSummary
      * 
-     * @param shapefileUrl
-     *                url of shapefile for wich indexes are related to
-     * @param cacheSize
-     *                maximum amount of memory to be used for index creation
+     * @param shpURL of shapefile for wich indexes are related to
+     * @param cacheSize maximum amount of memory to be used for index creation
      */
     public AttributeIndexSummary(URL shpURL, int cacheSize) throws MalformedURLException, IOException {
         try {
@@ -150,7 +147,7 @@ public class AttributeIndexSummary {
      * Tests whether an index for this attribute exists.
      * 
      * @param attribute
-     * @return
+     * @return boolean
      */
     public boolean existsIndex(String attribute) throws FileNotFoundException, IOException {
         URL url = getIndexURL(attribute);

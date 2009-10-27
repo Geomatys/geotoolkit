@@ -68,8 +68,9 @@ public class FileSystemIndexStore implements IndexStore {
     }
 
     /**
-     * @see org.geotools.index.quadtree.IndexStore#store(org.geotools.index.quadtree.QuadTree)
+     * {@inheritDoc }
      */
+    @Override
     public void store(QuadTree tree) throws StoreException {
         // For efficiency, trim the tree
         tree.trim();
@@ -194,8 +195,9 @@ public class FileSystemIndexStore implements IndexStore {
      * quadtree will be immutable; if you perform an insert, an
      * <code>UnsupportedOperationException</code> will be thrown.
      * 
-     * @see org.geotools.index.quadtree.IndexStore#load()
+     * @see IndexStore#load(org.geotoolkit.data.shapefile.shp.IndexFile)
      */
+    @Override
     public QuadTree load(IndexFile indexfile) throws StoreException {
         QuadTree tree = null;
 

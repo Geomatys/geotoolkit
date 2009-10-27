@@ -83,6 +83,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
@@ -97,6 +98,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 public class IndexedShapefileDataStore extends ShapefileDataStore implements FileWriter {
     private static final class IdentifierComparator implements Comparator<Identifier>
     {
+        @Override
         public int compare(Identifier o1, Identifier o2)
         {
             return o1.toString().compareTo(o2.toString());
@@ -229,6 +231,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         buildQuadTree(maxDepth);
     }
 
+    @Override
     protected void finalize() throws Throwable {
         if (rtree != null) {
             try {
@@ -242,6 +245,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         }
     }
 
+    @Override
     protected Filter getUnsupportedFilter(String typeName, Filter filter) {
 
         if (filter instanceof Id && isLocal() && shpFiles.exists(FIX))
@@ -250,6 +254,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         return filter;
     }
 
+    @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(String typeName,
             Transaction transaction) throws IOException {
         if (transaction == null) {
@@ -281,6 +286,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
     /**
      * This method is identical to the super class WHY?
      */
+    @Override
     protected TransactionStateDiff state(Transaction transaction) {
         synchronized (transaction) {
             TransactionStateDiff state = (TransactionStateDiff) transaction
@@ -300,9 +306,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
      * attributes are going to be read, don't uselessly open and read the dbf
      * file.
      * 
-     * @see org.geotools.data.AbstractDataStore#getFeatureReader(java.lang.String,
-     *      org.geotools.data.Query)
+     * @see AbstractDataStore#getFeatureReader(java.lang.String, org.geotoolkit.data.query.Query)
      */
+    @Override
     protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
             throws IOException {
         if (query.getFilter() == Filter.EXCLUDE)
@@ -587,33 +593,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         return !needsGeneration(FIX) && !needsGeneration(treeType.shpFileType);
     }
 
-    // /**
-    // * RTree query
-    // *
-    // * @param bbox
-    // *
-    // *
-    // * @throws DataSourceException
-    // * @throws IOException
-    // */
-    // private List queryRTree(Envelope bbox) throws DataSourceException,
-    // IOException {
-    // List goodRecs = null;
-    // RTree rtree = this.openRTree();
-    //
-    // try {
-    // if ((rtree != null) && (rtree.getBounds() != null)
-    // && !bbox.contains(rtree.getBounds())) {
-    // goodRecs = rtree.search(bbox);
-    // }
-    // } catch (LockTimeoutException le) {
-    // throw new DataSourceException("Error querying RTree", le);
-    // } catch (TreeException re) {
-    // throw new DataSourceException("Error querying RTree", re);
-    // }
-    //
-    // return goodRecs;
-    // }
 
     /**
      * QuadTree Query
@@ -657,6 +636,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
      * @throws IOException
      *                 If an error occurs during creation.
      */
+    @Override
     protected DbaseFileReader openDbfReader() throws IOException {
         if (shpFiles.get(DBF) == null) {
             return null;
@@ -668,43 +648,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
 
         return new IndexedDbaseFileReader(shpFiles, false, dbfCharset);
     }
-
-    //
-    // /**
-    // * Convenience method for opening an RTree index.
-    // *
-    // * @return A new RTree.
-    // *
-    // * @throws IOException
-    // * If an error occurs during creation.
-    // * @throws DataSourceException
-    // * DOCUMENT ME!
-    // */
-    // protected RTree openRTree() throws IOException {
-    // if (!isLocal()) {
-    // return null;
-    // }
-    // URL treeURL = shpFiles.acquireRead(GRX, this);
-    // try {
-    // File treeFile = DataUtilities.urlToFile(treeURL);
-    //
-    // if (!treeFile.exists() || (treeFile.length() == 0)) {
-    // treeType = IndexType.NONE;
-    // return null;
-    // }
-    //
-    // try {
-    // FileSystemPageStore fps = new FileSystemPageStore(treeFile);
-    // rtree = new RTree(fps);
-    // } catch (TreeException re) {
-    // throw new DataSourceException("Error opening RTree", re);
-    // }
-    //
-    // return rtree;
-    // } finally {
-    // shpFiles.unlockRead(treeURL, this);
-    // }
-    // }
 
     /**
      * Convenience method for opening a QuadTree index.
@@ -741,10 +684,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
     /**
      * Create a FeatureWriter for the given type name.
      * 
-     * @param typeName
-     *                The typeName of the FeatureType to write
-     * @param transaction
-     *                DOCUMENT ME!
+     * @param typeName The typeName of the FeatureType to write
+     * @param transaction  DOCUMENT ME!
      * 
      * @return A new FeatureWriter.
      * 
@@ -752,6 +693,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
      *                 If the typeName is not available or some other error
      *                 occurs.
      */
+    @Override
     protected FeatureWriter<SimpleFeatureType, SimpleFeature> createFeatureWriter(String typeName,
             Transaction transaction) throws IOException {
         typeCheck(typeName);
@@ -777,7 +719,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
     }
 
     /**
-     * @see org.geotools.data.AbstractDataStore#getBounds(org.geotools.data.Query)
+     * @see AbstractDataStore#getBounds(org.geotoolkit.data.query.Query)
      */
     @Override
     protected JTSEnvelope2D getBounds(Query query) throws IOException {

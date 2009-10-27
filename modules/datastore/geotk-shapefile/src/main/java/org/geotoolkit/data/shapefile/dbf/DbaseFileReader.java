@@ -120,10 +120,8 @@ public class DbaseFileReader implements FileReader {
     /**
      * Creates a new instance of DBaseFileReader
      * 
-     * @param shapefileFiles.
-     *                The readable channel to use.
-     * @throws IOException
-     *                 If an error occurs while initializing.
+     * @param shapefileFiles The readable channel to use.
+     * @throws IOException If an error occurs while initializing.
      */
     public DbaseFileReader(ShpFiles shapefileFiles,
             boolean useMemoryMappedBuffer, Charset charset) throws IOException {

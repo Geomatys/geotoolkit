@@ -219,8 +219,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#getParent()
+     * {@inheritDoc }
      */
+    @Override
     public Node getParent() throws TreeException {
         FileSystemNode node = null;
 
@@ -324,8 +325,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#save()
+     * {@inheritDoc }
      */
+    @Override
     protected void doSave() throws TreeException {
         FileChannel channel = this.params.getChannel();
 
@@ -411,11 +413,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * Force this node flush
-     * 
-     * @throws Throwable
-     *                 DOCUMENT ME!
+     * {@inheritDoc }
      */
+    @Override
     protected void finalize() throws Throwable {
         this.flush();
     }
@@ -491,7 +491,7 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#getEntry(org.geotools.rtree.Node)
+     * {@inheritDoc }
      */
     protected Entry getEntry(Node node) {
         FileSystemNode fn = (FileSystemNode) node;
@@ -513,8 +513,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#setParent(org.geotools.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void setParent(Node node) {
         if (node == null) {
             this.parentOffset = -1;
@@ -527,8 +528,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc }
      */
+    @Override
     public boolean equals(Object obj) {
         FileSystemNode comp = (FileSystemNode) obj;
 

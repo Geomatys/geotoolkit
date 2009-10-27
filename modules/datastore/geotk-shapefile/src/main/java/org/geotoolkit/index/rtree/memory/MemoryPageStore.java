@@ -49,23 +49,26 @@ public class MemoryPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getRoot()
+     * {@inheritDoc }
      */
+    @Override
     public Node getRoot() {
         return this.root;
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#setRoot(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void setRoot(Node node) throws TreeException {
         this.root = node;
         this.root.setParent(null);
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getEmptyNode(boolean)
+     * {@inheritDoc }
      */
+    @Override
     public Node getEmptyNode(boolean isLeaf) {
         MemoryNode ret = new MemoryNode(this.maxNodeEntries);
         ret.setLeaf(isLeaf);
@@ -74,9 +77,9 @@ public class MemoryPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#getNode(org.geotools.index.rtree.Entry,
-     *      org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public Node getNode(Entry parentEntry, Node parent) throws TreeException {
         Node ret = (Node) parentEntry.getData();
         ret.setParent(parent);
@@ -85,22 +88,25 @@ public class MemoryPageStore extends PageStore {
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#createEntryPointingNode(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public Entry createEntryPointingNode(Node node) {
         return new Entry(node.getBounds(), node);
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#free(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void free(Node node) {
         // Does nothing
     }
 
     /**
-     * @see org.geotools.index.rtree.PageStore#close()
+     * {@inheritDoc }
      */
+    @Override
     public void close() throws TreeException {
         this.root = null;
     }

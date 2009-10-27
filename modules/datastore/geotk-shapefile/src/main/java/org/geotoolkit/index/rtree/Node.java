@@ -159,8 +159,9 @@ public abstract class Node implements EntryBoundsChangeListener {
     }
 
     /**
-     * @see org.geotools.index.rtree.EntryBoundsChangeListener#boundsChanged(org.geotools.index.rtree.Entry)
+     * {@inheritDoc }
      */
+    @Override
     public void boundsChanged(Entry e) {
         this.bounds = new Envelope(this.entries[0].getBounds());
 

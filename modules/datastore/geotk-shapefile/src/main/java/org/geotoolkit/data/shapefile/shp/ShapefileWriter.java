@@ -28,6 +28,7 @@ import org.geotoolkit.resources.NIOUtilities;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
+import org.geotoolkit.data.shapefile.ShapefileDataStore;
 
 /**
  * ShapefileWriter allows for the storage of geometries in esris shp format.
@@ -44,7 +45,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  * </code>
  * This example assumes that each shape in the collection is a LineString.
  * 
- * @see org.geotools.data.shapefile.ShapefileDataStore
+ * @see ShapefileDataStore
  * @author jamesm
  * @author aaime
  * @author Ian Schneider

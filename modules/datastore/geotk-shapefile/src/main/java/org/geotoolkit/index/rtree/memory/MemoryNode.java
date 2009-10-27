@@ -39,22 +39,25 @@ public class MemoryNode extends Node {
     }
 
     /**
-     * @see org.geotools.index.rtree.Node#getParent()
+     * {@inheritDoc }
      */
+    @Override
     public Node getParent() throws TreeException {
         return this.parent;
     }
 
     /**
-     * @see org.geotools.index.rtree.Node#setParent(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void setParent(Node node) {
         this.parent = node;
     }
 
     /**
-     * @see org.geotools.index.rtree.Node#getEntry(org.geotools.index.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     protected Entry getEntry(Node node) {
         Entry ret = null;
         Node n = null;
@@ -73,8 +76,9 @@ public class MemoryNode extends Node {
     }
 
     /**
-     * @see org.geotools.index.rtree.Node#doSave()
+     * {@inheritDoc }
      */
+    @Override
     protected void doSave() throws TreeException {
         // does nothing....
     }

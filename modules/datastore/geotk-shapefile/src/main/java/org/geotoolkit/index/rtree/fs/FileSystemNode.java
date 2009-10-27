@@ -192,8 +192,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#getParent()
+     * {@inheritDoc }
      */
+    @Override
     public Node getParent() throws TreeException {
         FileSystemNode node = null;
         try {
@@ -205,7 +206,7 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#save()
+     * @see Node#save()
      * 
      * <pre>
      * Node page structure:
@@ -220,8 +221,8 @@ public class FileSystemNode extends Node {
      * Data pages are immediatly after leaf Node pages.
      * 
      * </pre>
-     * 
      */
+    @Override
     protected void doSave() throws TreeException {
         FileChannel channel = this.params.getChannel();
         try {
@@ -366,8 +367,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#getEntry(org.geotools.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     protected Entry getEntry(Node node) {
         FileSystemNode fn = (FileSystemNode) node;
 
@@ -385,8 +387,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see org.geotools.rtree.Node#setParent(org.geotools.rtree.Node)
+     * {@inheritDoc }
      */
+    @Override
     public void setParent(Node node) {
         if (node == null) {
             this.parentOffset = -1;
@@ -397,8 +400,9 @@ public class FileSystemNode extends Node {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc }
      */
+    @Override
     public boolean equals(Object obj) {
         FileSystemNode comp = (FileSystemNode) obj;
         return this.getOffset() == comp.getOffset();

@@ -82,7 +82,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.filter.Filter;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -235,7 +234,7 @@ public class ShapefileDataStore extends AbstractDataStore {
     /**
      * Returns the {@link Charset} used to decode strings in the DBF file
      * 
-     * @return
+     * @return Charset
      */
     public Charset getStringCharset() {
         return dbfCharset;
@@ -316,8 +315,7 @@ public class ShapefileDataStore extends AbstractDataStore {
      * attributes are going to be read, don't uselessly open and read the dbf
      * file. Makes sure to consider also attributes in the query.
      * 
-     * @see org.geotools.data.AbstractDataStore#getFeatureReader(java.lang.String,
-     *      org.geotools.data.Query)
+     * @see AbstractDataStore#getFeatureReader(java.lang.String, org.geotoolkit.data.query.Query)
      */
     @Override
     protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
@@ -854,7 +852,7 @@ public class ShapefileDataStore extends AbstractDataStore {
     }
 
     /**
-     * @see org.geotools.data.DataStore#getFeatureSource(java.lang.String)
+     * {@inheritDoc }
      */
     @Override
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
