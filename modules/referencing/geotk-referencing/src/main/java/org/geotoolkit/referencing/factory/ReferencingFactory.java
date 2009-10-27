@@ -87,15 +87,20 @@ public class ReferencingFactory extends org.geotoolkit.factory.Factory implement
     }
 
     /**
-     * Returns the vendor responsible for creating this factory implementation. Many implementations
-     * may be available for the same factory interface. The default implementation returns
+     * Returns the vendor responsible for creating this factory implementation.
+     * Many implementations from different vendors may be available for the same
+     * factory interface.
+     * <p>
+     * The default for Geotk implementations is to return
      * {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}.
      *
      * @return The vendor for this factory implementation.
+     *
+     * @see Citations#GEOTOOLKIT
      */
     @Override
     public Citation getVendor() {
-        return Citations.GEOTOOLKIT;
+        return getClass().getName().startsWith("org.geotoolkit.") ? Citations.GEOTOOLKIT : Citations.UNKNOWN;
     }
 
     /**

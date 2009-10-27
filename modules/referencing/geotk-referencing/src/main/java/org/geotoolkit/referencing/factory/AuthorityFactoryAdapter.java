@@ -186,8 +186,18 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * If we failed to instantiated the backing factories, when the last attempt occured.
      * This is used in order to wait a little while before to try a new attempt, in order
      * to avoid too many connection attempts.
+     *
+     * @see #NO_LAST_ATTEMPT
+     * @see #LAST_ATTEMPT_SUCCEED
      */
-    private long lastAttempt;
+    private long lastAttempt = Long.MIN_VALUE;
+
+    /**
+     * The value to assign to {@link #lastAttempt} after a successfull query of the backing
+     * store. Any value greater than {@code LAST_ATTEMPT_SUCCEED} means that we had a failure.
+     * The {@link Long#MIN_VALUE} is reserved for "no attempt yet".
+     */
+    private static final long LAST_ATTEMPT_SUCCEED = Long.MIN_VALUE + 1;
 
     /**
      * The hints of the factories to fetch with {@link AuthorityFactoryFinder}. This is
@@ -519,7 +529,32 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      */
     private boolean failedRecently(final long currentTime) {
         final long last = lastAttempt;
-        return last != 0 && (currentTime - last) < ATTEMPTS_DELAY;
+        return (last > LAST_ATTEMPT_SUCCEED) && (currentTime - last) < ATTEMPTS_DELAY;
+    }
+
+    /**
+     * Logs a message when an attempt to get the backing factory failed.
+     *
+     * @param method The method to declare in the logger.
+     * @param e The exception.
+     * @param currentTime The value to set into {@link #lastAttempt}.
+     */
+    private void logFailure(final String method, final Exception e, final long currentTime) {
+        if (lastAttempt == LAST_ATTEMPT_SUCCEED) {
+            /*
+             * A factory which was previously working is not working anymore.
+             * It may be a cause of serious problem in client code that didn't
+             * expected the disparition of a their factory.
+             */
+            Logging.unexpectedException(LOGGER, AuthorityFactoryAdapter.class, method, e);
+        } else {
+            /*
+             * A factory was not working before, and still not working.
+             * Log at the FINE level.
+             */
+            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, method, e);
+        }
+        lastAttempt = currentTime;
     }
 
     /**
@@ -542,8 +577,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         } catch (RuntimeException e) {
             // The two main exceptions of interest are FactoryRegistryException
             // and NullArgumentException.
-            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, "availability", e);
-            lastAttempt = currentTime;
+            logFailure("availability", e, currentTime);
             return new Availability(e);
         }
         for (int f=0; f<TYPE_COUNT; f++) {
@@ -556,7 +590,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
                 }
             }
         }
-        lastAttempt = 0;
+        lastAttempt = LAST_ATTEMPT_SUCCEED;
         return super.availability();
     }
 
@@ -699,25 +733,28 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns the vendor or the authority, or {@code null} if the information is not available.
+     * Returns the vendor or the authority, or {@code UNKNOWN} if the information is not available.
      * This methods fetches the citation only if the last attempt is older than some arbitrary
      * delay, in order to avoid too many connection attempts and flooding the logger.
      *
      * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
-     * @return The authority or the vendor, or {@code null}.
+     * @return The authority or the vendor, or {@code UNKNOWN}.
      *
      * @see #availability
+     * @see org.geotoolkit.metadata.iso.citation.Citations#UNKNOWN
      */
     @Override
     final synchronized Citation getCitation(final String method) {
         final long currentTime = System.currentTimeMillis();
         if (!failedRecently(currentTime)) try {
-            lastAttempt = 0;
-            return getCitation(getAuthorityFactory(), method);
+            final Citation citation = getCitation(getAuthorityFactory(), method);
+            lastAttempt = LAST_ATTEMPT_SUCCEED;
+            return citation;
         } catch (FactoryNotFoundException e) {
-            lastAttempt = currentTime;
-            Logging.recoverableException(LOGGER, AuthorityFactoryAdapter.class, method, e);
+            logFailure(method, e, currentTime);
         }
+        // Fallback on the default implementation,
+        // which returns UNKNOWN most of the time.
         return super.getCitation(method);
     }
 

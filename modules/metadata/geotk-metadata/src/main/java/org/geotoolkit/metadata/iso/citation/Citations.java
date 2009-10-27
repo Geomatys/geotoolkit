@@ -29,6 +29,7 @@ import org.opengis.metadata.citation.Role;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -46,9 +47,9 @@ import org.geotoolkit.util.SimpleInternationalString;
  * codes maintained by the authority. For example the identifier for the {@link #EPSG} citation
  * is {@code "EPSG"}, and EPSG codes look like {@code "EPSG:4326"}.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.04
+ * @version 3.05
  *
  * @since 2.2
  * @module
@@ -442,6 +443,18 @@ public final class Citations {
         HTTP_OGC = c;
     }
 
+    /**
+     * Unknown authority, vendor or specification.
+     *
+     * @since 3.05
+     */
+    public static final Citation UNKNOWN;
+    static {
+        final CitationConstant c = new CitationConstant(Vocabulary.formatInternational(Vocabulary.Keys.UNKNOW), "UNKNOWN");
+        c.freeze();
+        UNKNOWN = c;
+    }
+
 
 
 
@@ -455,7 +468,8 @@ public final class Citations {
      * List of citations declared in this class.
      */
     private static final Citation[] AUTHORITIES = {
-        OGC, OPEN_GIS, ESRI, ORACLE, GEOTOOLKIT, WMS, GEOTIFF, JAI, EPSG, AUTO, AUTO2, CRS
+        OGC, OPEN_GIS, ESRI, ORACLE, POSTGIS, GEOTOOLKIT, GEOTOOLS, WMS, GEOTIFF, JAI,
+        EPSG, AUTO, AUTO2, CRS, URN_OGC, HTTP_OGC, UNKNOWN
     };
 
     /**

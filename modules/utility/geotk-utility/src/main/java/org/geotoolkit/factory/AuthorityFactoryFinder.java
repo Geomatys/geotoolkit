@@ -382,15 +382,16 @@ loop:       for (int i=0; ; i++) {
         }
 
         /**
-         * Returns {@code true} if the specified provider is for the authority.
-         * The user hints are also verified.
+         * Returns {@code true} if the specified provider is for the {@link #authority}.
+         * The user provided filter (if any) is also applied.
          */
         @Override
         public boolean filter(final Object provider) {
-            if (authority != null && Citations.identifierMatches(
-                    ((AuthorityFactory) provider).getAuthority(), authority))
-            {
-                return (filter == null) || filter.filter(provider);
+            if (authority != null) {
+                final Citation declared = ((AuthorityFactory) provider).getAuthority();
+                if (declared != null && Citations.identifierMatches(declared, authority)) {
+                    return (filter == null) || filter.filter(provider);
+                }
             }
             // If the user didn't specified an authority name, then the factory to use must
             // be specified explicitly through a hint (e.g. Hints.CRS_AUTHORITY_FACTORY).

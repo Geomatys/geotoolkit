@@ -365,12 +365,13 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns the vendor or the authority, or {@code null} if the information is not available.
+     * Returns the vendor or the authority, or {@code UNKNOWN} if the information is not available.
      *
      * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
-     * @return The authority or the vendor, or {@code null}.
+     * @return The authority or the vendor, or {@code UNKNOWN}.
      *
      * @see #availability
+     * @see org.geotoolkit.metadata.iso.citation.Citations#UNKNOWN
      */
     @Override
     final Citation getCitation(final String method) {
@@ -382,13 +383,19 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 release();
             }
         } catch (FactoryException e) {
-            Logging.recoverableException(LOGGER, CachingAuthorityFactory.class, method, e);
+            /*
+             * Log the exception as an unexpected one, because the caller should have
+             * invoked this method only after having tested the factory availability.
+             */
+            Logging.unexpectedException(LOGGER, CachingAuthorityFactory.class, method, e);
         }
         return super.getCitation(method);
     }
 
     /**
      * Returns the vendor responsible for creating the underlying factory implementation.
+     * This method should be invoked only if this factory is {@linkplain #availability()
+     * available}.
      */
     @Override
     public Citation getVendor() {
@@ -397,7 +404,8 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
 
     /**
      * Returns the organization or party responsible for definition and maintenance of the
-     * underlying database.
+     * underlying database. This method should be invoked only if this factory is
+     * {@linkplain #availability() available}.
      */
     @Override
     public Citation getAuthority() {

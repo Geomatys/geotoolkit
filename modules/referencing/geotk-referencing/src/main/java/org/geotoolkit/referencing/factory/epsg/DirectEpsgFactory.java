@@ -304,7 +304,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * will contains the database version in the {@linkplain Citation#getEdition edition}
      * attribute, together with the {@linkplain Citation#getEditionDate edition date}.
      */
-    private transient volatile Citation authority;
+    private transient Citation authority;
 
     /**
      * Last object type returned by {@link #createObject}, or -1 if none.
@@ -438,25 +438,20 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * {@linkplain Citation#getEditionDate edition date}.
      */
     @Override
-    public Citation getAuthority() {
-        // Do NOT synchronize this method.
-        Citation authority = this.authority;
+    public synchronized Citation getAuthority() {
         if (authority == null) {
-            authority = createAuthority();
+            createAuthority();
         }
         return authority;
     }
 
     /**
-     * Creates the authority for this EPSG database. This method checks one last time if
-     * {@link #authority} is non-null in case it has been computed in an other thread.
-     * Together with the public methods that invoke this one, this result in double-checked
-     * locking which was a deprecated practice before Java 5 but is okay since Java 5 provided
-     * that {@link #authority} is volatile.
+     * Creates the authority for this EPSG database. The result is stored in the
+     * {@link #authority} field.
      */
-    private synchronized Citation createAuthority() {
-        Citation authority = this.authority;
-        if (authority == null) try {
+    private void createAuthority() {
+        assert Thread.holdsLock(this);
+        try {
             final String query = adaptSQL(
                     "SELECT VERSION_NUMBER, VERSION_DATE FROM [Version History]" +
                     " ORDER BY VERSION_DATE DESC");
@@ -479,12 +474,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             }
             result.close();
             statement.close();
-            this.authority = authority;
         } catch (SQLException exception) {
             Logging.unexpectedException(LOGGER, DirectEpsgFactory.class, "getAuthority", exception);
             authority = Citations.EPSG;
         }
-        return authority;
     }
 
     /**
@@ -536,8 +529,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * with the addition of {@link Hints#VERSION VERSION}.
      */
     @Override
-    public Map<RenderingHints.Key,?> getImplementationHints() {
-        // Do NOT synchronize this method.
+    public synchronized Map<RenderingHints.Key,?> getImplementationHints() {
         if (authority == null) {
             createAuthority(); // For the computation of Hints.VERSION.
         }

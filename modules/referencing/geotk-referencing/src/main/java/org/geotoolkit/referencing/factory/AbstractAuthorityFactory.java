@@ -116,9 +116,13 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
 
     /**
      * Tries to guess the authority for the given class. This is used only when we failed
-     * to get the authority from the public API and we still want something at least an
-     * approximative information. This is used only for formatting error message and should
-     * not be used for programmatic logic.
+     * to get the authority from the public API and we still want at least an approximative
+     * information. This is used:
+     * <p>
+     * <ul>
+     *   <li>For formatting an error message when no instance of the factory is available.</li>
+     *   <li>As the last ressort fallback when {@link #getAuthority()} failed.</li>
+     * </ul>
      *
      * @param  type The class of the factory.
      * @return A guess of the authority for the given class.
@@ -137,24 +141,32 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
                 return Citations.EPSG;
             }
         }
-        return null;
+        return Citations.UNKNOWN;
     }
 
     /**
-     * Returns the vendor or the authority, or {@code null} if the information is not
-     * available. The default implementation is not allowed to invoke overrideable methods,
-     * because it is used by subclasses as a fallback when their own {@code getVendor()} or
-     * {@code getAuthority()} implementations failed.
+     * Returns the authority or the vendor, or {@link Citations#UNKNOWN} if the information
+     * is not available. For the vendor case we are not allowed to use the heuristic defined
+     * in the super-class {@link ReferencingFactory#getVendor()} method, because this method
+     * is typically invoked by wrappers. We wanted the citation of the wrapped factory, not
+     * the wrapper.
+     * <p>
+     * The default implementation is not allowed to invoke overrideable methods of the same name
+     * (e.g. don't invoke {@link #getAuthority()} if {@code method} is {@code "getAuthority"}),
+     * because it is used by subclasses as a fallback when their own {@code getAuthority()} or
+     * {@code getVendor()} implementation failed.
      *
      * @param  method Either {@code "getAuthority"} or {@code "getVendor"}.
-     * @return The authority or the vendor, or {@code null}.
+     * @return The authority or the vendor.
+     * @throws IllegalArgumentException If the given method is not
+     *         {@code "getAuthority"} or {@code "getVendor"}.
      *
      * @since 3.03
      */
     Citation getCitation(final String method) {
         if (method.equals("getAuthority")) return getAuthority(getClass());
-        if (method.equals("getVendor"))    return super.getVendor();
-        return null;
+        if (method.equals("getVendor"))    return Citations.UNKNOWN; // See javadoc
+        throw new IllegalArgumentException(method);
     }
 
     /**
@@ -162,11 +174,11 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
      * method for implementations that perform the same non-trivial processing for both the
      * vendor and the authority.
      *
-     * @param  factory The factor from which to get the vendor or authority citation.
-     * @param  method  Either {@code "getVendor"} or {@code "getAuthority"}.
-     * @return The vendor or authority.
+     * @param  factory The factor from which to get the authority or the vendor citation.
+     * @param  method  Either {@code "getAuthority"} or {@code "getVendor"}.
+     * @return The authority or the vendor.
      * @throws IllegalArgumentException If the given method is not
-     *         {@code "getVendor"} or {@code "getAuthority"}.
+     *         {@code "getAuthority"} or {@code "getVendor"}.
      *
      * @since 3.03
      */
