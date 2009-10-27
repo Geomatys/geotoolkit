@@ -29,7 +29,6 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @author Ian Schneider
  * @version $Id$
  *
- * @see AttributeAcceptor
  * @module pending
  */
 public interface AttributeReader {
@@ -82,7 +81,7 @@ public interface AttributeReader {
     /**
      * Read all attributs in one call, improves performances when iterating.
      *
-     * @param buffer, be sure it is not null and has the good size
+     * @param buffer : be sure it is not null and has the good size
      * @throws IOException
      */
     void read(Object[] buffer) throws IOException;

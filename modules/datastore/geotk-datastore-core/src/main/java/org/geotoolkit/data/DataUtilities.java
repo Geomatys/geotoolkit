@@ -737,7 +737,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
     /**
      * Manually calculates the bounds of a feature collection.
      * @param collection
-     * @return
+     * @return Envelope
      */
     public static Envelope bounds(final FeatureCollection<? extends FeatureType, ? extends Feature> collection) {
         final FeatureIterator<? extends Feature> i = collection.features();

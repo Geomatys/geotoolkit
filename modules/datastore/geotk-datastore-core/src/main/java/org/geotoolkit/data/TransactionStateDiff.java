@@ -139,7 +139,7 @@ public class TransactionStateDiff implements State {
     /**
      * Will apply differences to store.
      *
-     * @see org.geotoolkit.data.Transaction.State#commit()
+     * @see State#commit()
      */
     @Override
     public synchronized void commit() throws IOException {

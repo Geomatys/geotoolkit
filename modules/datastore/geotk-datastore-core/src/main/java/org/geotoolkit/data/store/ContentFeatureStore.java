@@ -49,14 +49,14 @@ import org.opengis.filter.identity.FeatureId;
  * of operations provided by {@link FeatureCollection}.
  * </p>
  * <p>
- * The {@link #addFeatures(FeatureCollection<SimpleFeatureType, SimpleFeature>)} method is used to add features to
+ * The {@link #addFeatures(java.util.Collection)} method is used to add features to
  * the feature store. The method should return the "persistent" feature id's
  * which are generated after the feature has been added to persistent storage.
  * Often the persistent fid is different from the fid specified by the actual
  * feature being inserted. For this reason {@link SimpleFeature#getUserData()} is
  * used to report back persistent fids. It is up to the implementor of the
  * feature collection to report this value back after a feature has been inserted.
- * As an example, consider an implementation of {@link FeatureCollection#add(Object)}.
+ * As an example, consider an implementation of {@link FeatureCollection#add(org.opengis.feature.Feature)}.
  * <pre>
  *  boolean add( Object o ) {
  *    SimpleFeature feature = (SimpleFeature) o;
@@ -338,7 +338,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
     }
 
     /**
-     * Calls through to {@link #modifyFeatures(AttributeDescriptor[], Object[], Filter)}.
+     * Calls through to {@link #updateFeatures(org.opengis.feature.type.AttributeDescriptor[], java.lang.Object[], org.opengis.filter.Filter)}.
      */
     @Override
     public final void updateFeatures(final AttributeDescriptor type, final Object value,

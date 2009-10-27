@@ -241,8 +241,6 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
      * object, thus getting the true shape of the reprojected envelope, and then
      * computing the minimum and maximum coordinates of that new shape. The
      * result would not a true representation of the new bounds.
-     * 
-     * @see org.geotoolkit.data.FeatureResults#getBounds()
      */
     @Override
     public JTSEnvelope2D getBounds() {

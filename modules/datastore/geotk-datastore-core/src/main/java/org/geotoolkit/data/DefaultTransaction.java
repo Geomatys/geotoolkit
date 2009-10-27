@@ -81,8 +81,7 @@ public class DefaultTransaction implements Transaction {
      * @throws IllegalArgumentException
      *             When Transaction already using key
      *
-     * @see org.geotoolkit.data.Transaction#putState(java.lang.Object,
-     *      org.geotoolkit.data.Transaction.State)
+     * @see Transaction#putState(java.lang.Object, org.geotoolkit.data.concurrent.Transaction.State)
      */
     @Override
     public void putState(Object key, State state) {
@@ -116,7 +115,7 @@ public class DefaultTransaction implements Transaction {
      * @throws IllegalArgumentException
      *             If no State was maintained for supplied <code>key</code>
      *
-     * @see org.geotoolkit.data.Transaction#removeState(java.lang.Object)
+     * @see Transaction#removeState(java.lang.Object)
      */
     @Override
     public void removeState(Object key) {
@@ -143,7 +142,7 @@ public class DefaultTransaction implements Transaction {
      *
      * @return Previously externalized State.
      *
-     * @see org.geotoolkit.data.Transaction#getState(java.lang.Object)
+     * @see Transaction#getState(java.lang.Object)
      */
     @Override
     public State getState(Object key) {
@@ -166,7 +165,7 @@ public class DefaultTransaction implements Transaction {
      * @throws DataSourceException
      *             See IOException
      *
-     * @see org.geotoolkit.data.Transaction#commit()
+     * @see Transaction#commit()
      */
     @Override
     public void commit() throws IOException {
@@ -208,7 +207,7 @@ public class DefaultTransaction implements Transaction {
      * @throws DataSourceException
      *             IOException
      *
-     * @see org.geotoolkit.data.Transaction#rollback()
+     * @see Transaction#rollback()
      */
     @Override
     public void rollback() throws IOException {
@@ -278,15 +277,12 @@ public class DefaultTransaction implements Transaction {
      * Remember authorizations are cleared after every commit/rollback.
      * </p>
      *
-     * @param authID
-     *            Provided Authorization ID
+     * @param authID Provided Authorization ID
      *
-     * @throws IOException
-     *             Encountered problems maintaing Transaction State
-     * @throws DataSourceException
-     *             See IOException
+     * @throws IOException Encountered problems maintaing Transaction State
+     * @throws DataSourceException See IOException
      *
-     * @see org.geotoolkit.data.Transaction#setAuthorization(java.lang.String)
+     * @see Transaction#addAuthorization(java.lang.String)
      */
     @Override
     public void addAuthorization(String authID) throws IOException {

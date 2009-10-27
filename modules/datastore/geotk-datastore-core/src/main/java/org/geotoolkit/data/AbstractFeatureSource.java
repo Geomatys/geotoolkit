@@ -221,7 +221,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      *
      * @param query
      *
-     * @see org.geotoolkit.data.FeatureSource#getFeatures(org.geotoolkit.data.Query)
+     * @see FeatureSource#getFeatures(org.geotoolkit.data.query.Query)
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(Query query) throws IOException {

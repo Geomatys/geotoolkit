@@ -197,10 +197,9 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
-     * Delegates to {@link #getSchema(String)} with {@code name.getLocalPart()}
+     * Delegates to {@link #getSchema(java.lang.String)} with {@code name.getLocalPart()}
      *
      * @since 2.5
-     * @see DataAccess#getSchema(Name)
      */
     @Override
     public SimpleFeatureType getSchema(Name name) throws IOException {
@@ -226,7 +225,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * {@code name.getLocalPart()}
      *
      * @since 2.5
-     * @see DataAccess#getFeatureSource(Name)
+     * @see DataStore#getFeatureSource(Name)
      */
     @Override
     public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
@@ -255,7 +254,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * {@code name.getLocalPart()}
      *
      * @since 2.5
-     * @see DataAccess#getFeatureSource(Name)
+     * @see DataStore#getFeatureSource(Name)
      */
     @Override
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName)
@@ -615,7 +614,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     /**
      * If you are using the automated FeatureSource/Store/Locking creation, this method
      * allows for the specification of the supported hints.
-     * @return
+     * @return Set of hints
      */
     protected Set getSupportedHints() {
         return Collections.EMPTY_SET;
@@ -635,7 +634,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * returned Names have no namespace set.
      *
      * @since 2.5
-     * @see DataAccess#getNames()
      */
     @Override
     public List<Name> getNames() throws IOException {

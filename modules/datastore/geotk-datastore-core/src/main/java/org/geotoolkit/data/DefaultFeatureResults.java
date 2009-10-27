@@ -261,11 +261,6 @@ public class DefaultFeatureResults extends DataFeatureCollection {
      * FeatureSource.getBounds( Query ).
      * </p>
      * If the feature has no geometry, then an empty envelope is returned.
-     *
-     *
-     * @throws DataSourceException See IOException
-     *
-     * @see org.geotools.data.FeatureResults#getBounds()
      */
     @Override
     public JTSEnvelope2D getBounds() {
@@ -313,8 +308,6 @@ public class DefaultFeatureResults extends DataFeatureCollection {
      *
      * @throws IOException If feature could not be read
      * @throws DataSourceException See IOException
-     *
-     * @see org.geotools.data.FeatureResults#getCount()
      */
     @Override
     public int getCount() throws IOException {

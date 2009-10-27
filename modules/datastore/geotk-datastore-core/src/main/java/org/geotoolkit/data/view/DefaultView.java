@@ -151,7 +151,7 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
      * @param source
      * @param query
      *
-     * @return
+     * @return FeatureSource
      * @throws SchemaException
      */
     public static FeatureSource<SimpleFeatureType, SimpleFeature> create(

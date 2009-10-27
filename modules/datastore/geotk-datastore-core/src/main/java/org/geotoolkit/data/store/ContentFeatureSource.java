@@ -38,6 +38,7 @@ import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.PropertyNameResolvingVisitor;
@@ -55,16 +56,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Abstract implementation of FeatureSource.
  * <p>
  * This feature source works off of operations provided by {@link FeatureCollection}.
- * Individual FeatureCollection<SimpleFeatureType, SimpleFeature> implementations are provided by subclasses:
- * <ul>
- *   {@link #all(ContentState)}: Access to entire dataset
- *   {@link #filtered(ContentState, Filter)}: Access to filtered dataset
- * </ul>
  * </p>
  * <p>
  * Even though a feature source is read-only, this class is transaction aware.
- * (see {@link #setTransaction(Transaction)}. The transaction is taken into 
- * account during operations such as {@link #getCount()} and {@link #getBounds()}
+ * (see {@link #setTransaction(org.geotoolkit.data.concurrent.Transaction)}. The transaction is taken into
+ * account during operations such as {@link #getCount(org.geotoolkit.data.query.Query)} and {@link #getBounds()}
  * since these values may be affected by another operation (like writing to 
  * a FeautreStore) working against the same transaction. 
  * </p>
@@ -144,7 +140,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * <code>null</code> value for a transaction represents the auto commit
      * transaction: {@link Transaction#AUTO_COMMIT}.
      * </p>
-     * @see {@link #getState()}.
+     * @see #getState() 
      */
     public Transaction getTransaction() {
         return transaction;
@@ -168,7 +164,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * This value is derived from current transaction of the feature source.
      * </p>
      * 
-     * @see {@link #setTransaction(Transaction)}.
+     * @see #setTransaction(org.geotoolkit.data.concurrent.Transaction)
      */
     public ContentState getState() {
         return entry.getState(transaction);
@@ -556,17 +552,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * Visit the features matching the provided query.
      * <p>
      * The default information will use getReader( query ) and pass each feature to the provided visitor.
-     * Subclasses should override this method to optimise common visitors:
-     * <ul>
-     * <li> {@link Collection_AverageFunction}
-     * <li> {@link Collection_BoundsFunction}
-     * <li> (@link Collection_CountFunction}
-     * <li> {@link Collection_MaxFunction}
-     * <li> {@link Collection_MedianFunction}
-     * <li> {@link Collection_MinFunction}
-     * <li> {@link Collection_SumFunction}
-     * <li> {@link Collection_UniqueFunction}
-     * </ul>
+     * Subclasses should override this method to optimise common visitors.
      * Often in the case of Filter.INCLUDES the information can be determined from a file header or metadata table.
      * <p>
      * 
@@ -743,7 +729,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * to the specified query.
      * </p>
      * @param query
-     * @return
+     * @return ContentFeatureSource
      * @throws IOException
      */
     public final ContentFeatureSource getView(Query query) throws IOException {
@@ -835,8 +821,8 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * <p>
      * By default, the followings are already present:
      * <ul>
-     *   <li>{@link Hints#JTS_COORDINATE_SEQUENCE_FACTORY}
-     *   <li>{@link Hints#JTS_GEOMETRY_FACTORY}
+     *   <li>{@link HintsPending#JTS_COORDINATE_SEQUENCE_FACTORY}
+     *   <li>{@link HintsPending#JTS_GEOMETRY_FACTORY}
      * </ul>
      * 
      * </p>
@@ -917,82 +903,13 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * Builds the query capabilities for this feature source. The default 
      * implementation returns a newly built QueryCapabilities, subclasses
      * are advised to build their own.
-     * @return
+     * @return QueryCapabilities
      * @throws IOException
      */
     protected QueryCapabilities buildQueryCapabilities() {
         return new QueryCapabilities();
     }
 
-    /**
-     * Returns a new feature collection containing all the features of the 
-     * feature source.
-     * <p>
-     * Subclasses are encouraged to provide a feature collection implementation 
-     * which provides optimized access to the underlying data format.
-     * </p>
-     *
-     * @param state The state the feature collection must work from.
-     */
-    //protected abstract ContentFeatureCollection all(ContentState state);
-    /**
-     * Returns a new feature collection containing all the features of the 
-     * feature source which match the specified filter.
-     * <p>
-     * Subclasses are encouraged to provide a feature collection implementation 
-     * which provides optimized access to the underlying data format.
-     * </p>
-     * @param state The state the feature collection must work from.
-     * @param filter The constraint filtering the data to return.
-     * 
-     */
-    //protected abstract ContentFeatureCollection filtered(ContentState state, Filter filter);
-    /**
-     * Returns a new feautre collection containing all the features of the 
-     * feature source sorted by a particular set of attributes.
-     * <p>
-     * This method accepts a filter optionally to filter returned content. This 
-     * parameter may be <code>null</code>, which which case no filtering should
-     * occur.
-     * </p>
-     * @param state The state the feature collection must work from.
-     * @param sort The sort criteria
-     * @param filter A filter, possibly <code>null</code>
-     * @return
-     */
-    //protected abstract ContentFeatureCollection sorted(ContentState state, SortBy[] sort, Filter filter);
-    /**
-     * FeatureList representing sorted content.
-     * <p>
-     * Available via getFeatureSource():
-     * <ul>
-     * <li>getFeatures().sort( sort )
-     * <li>getFeatures( filter ).sort( sort )
-     * <li>getFeatures( filter ).sort( sort ).sort( sort1 );
-     * </ul>
-     * @param state
-     * @param filter
-     * @param order List<SortBy> used to determine sort order
-     * @return subset of content
-     */
-    //protected abstract FeatureList sorted(ContentState state, Filter filter, List order);
-    /**
-     * FeatureCollection<SimpleFeatureType, SimpleFeature> optimized for read-only access.
-     * <p>
-     * Available via getView( filter ):
-     * <ul>
-     * <li>getFeatures().sort( sort )
-     * <li>getFeatures( filter ).sort( sort )
-     * </ul>
-     * <p>
-     * In particular this method of data access is intended for rendering and other high speed
-     * operations; care should be taken to optimize the use of FeatureVisitor.
-     * <p>
-     * @param state
-     * @param filter
-     * @return readonly access
-     */
-    //protected abstract FeatureCollection<SimpleFeatureType, SimpleFeature> readonly(ContentState state, Filter filter);
     @Override
     public QueryCapabilities getQueryCapabilities() {
         // lazy initialization, so that the subclass has all its data structures ready

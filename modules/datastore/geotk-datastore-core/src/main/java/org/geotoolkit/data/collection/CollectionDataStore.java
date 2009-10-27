@@ -52,7 +52,7 @@ public class CollectionDataStore extends AbstractDataStore {
     /**
      * Builds a data store wrapper around an empty collection.
      *
-     * @param collection
+     * @param schema feature type
      */
     public CollectionDataStore(final SimpleFeatureType schema) {
         this.collection = FeatureCollectionUtilities.createCollection();

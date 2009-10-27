@@ -91,7 +91,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      *
      * @throws NullPointerException If lock was <code>null</code>
      *
-     * @see org.geotoolkit.data.FeatureLocking#setFeatureLock(org.geotoolkit.data.FeatureLock)
+     * @see FeatureLocking#setFeatureLock(org.geotoolkit.data.concurrent.FeatureLock)
      */
     @Override
     public void setFeatureLock(final FeatureLock lock) {
@@ -137,7 +137,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      *         LockingManager
      * @throws DataSourceException If feature to be locked does not exist
      *
-     * @see org.geotoolkit.data.FeatureLocking#lockFeatures(org.geotoolkit.data.Query)
+     * @see FeatureLocking#lockFeatures(org.geotoolkit.data.query.Query)
      */
     @Override
     public int lockFeatures(final Query query) throws IOException {
@@ -207,7 +207,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      * @throws DataSourceException Filter describes an unlocked Feature, or
      *         authorization not held
      *
-     * @see org.geotoolkit.data.FeatureLocking#unLockFeatures(org.geotoolkit.data.Query)
+     * @see FeatureLocking#unLockFeatures(org.geotoolkit.data.query.Query)
      */
     @Override
     public void unLockFeatures(final Query query) throws IOException {

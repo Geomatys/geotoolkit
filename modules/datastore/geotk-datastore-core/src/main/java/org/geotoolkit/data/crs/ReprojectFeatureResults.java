@@ -179,8 +179,6 @@ public class ReprojectFeatureResults extends AbstractFeatureCollection {
      * then computing the minumum and maximum coordinates of that new shape.
      * The result would not a true representation of the new bounds, but it
      * would be guaranteed to be larger that the true representation.
-     *
-     * @see org.geotoolkit.data.FeatureResults#getBounds()
      */
     @Override
     public JTSEnvelope2D getBounds() {

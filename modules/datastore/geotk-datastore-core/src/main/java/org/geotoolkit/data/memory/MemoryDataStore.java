@@ -46,6 +46,7 @@ import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.DataStore;
 
 /**
  * This is an example implementation of a DataStore used for testing.
@@ -80,7 +81,7 @@ public final class MemoryDataStore extends AbstractDataStore {
 
     /**
      * Construct an MemoryDataStore around an empty collection of the provided SimpleFeatureType
-     * @param schema An empty feature collection of this type will be made available
+     * @param featureType An empty feature collection of this type will be made available
      */
     public MemoryDataStore(SimpleFeatureType featureType) {
         final Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
@@ -354,7 +355,7 @@ public final class MemoryDataStore extends AbstractDataStore {
      *
      * @throws IOException If featureType already exists
      *
-     * @see org.geotoolkit.data.DataStore#createSchema(org.geotoolkit.feature.SimpleFeatureType)
+     * @see DataStore#createSchema(org.opengis.feature.type.FeatureType)
      */
     @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {

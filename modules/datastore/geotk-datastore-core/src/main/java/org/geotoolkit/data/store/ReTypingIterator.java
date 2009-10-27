@@ -104,7 +104,7 @@ public class ReTypingIterator implements Iterator {
      * </p>
      *
      * @param target Desired FeatureType
-     * @param origional Origional FeatureType
+     * @param original Origional FeatureType
      *
      * @return Mapping from originoal to target FeatureType
      *

@@ -59,12 +59,9 @@ public interface FileDataStoreFactory extends DataStoreFactory<SimpleFeatureType
      * <p>
      * @param url The data location for the
      *
-     * @return Returns an AbstractFileDataStore created from the data source
-     *         provided.
+     * @return Returns an FileDataStore created from the data source provided.
      *
      * @throws IOException
-     *
-     * @see AbstractFileDataStore
      */
     public DataStore<SimpleFeatureType,SimpleFeature> createDataStore(URL url) throws IOException;
 

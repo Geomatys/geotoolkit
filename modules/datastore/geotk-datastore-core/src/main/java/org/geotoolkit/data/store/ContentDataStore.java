@@ -516,10 +516,10 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * <p>
      * In the event that the name does not map to an entry
      * and one cannot be created <code>null</code> will be returned. Note that
-     * {@link #ensureEntry(TypeName)} will throw an exception in this case.
+     * {@link #ensureEntry(org.opengis.feature.type.Name)} will throw an exception in this case.
      * </p>
      *
-     * @param The name of the entry.
+     * @param name The name of the entry.
      *
      * @return The entry, or <code>null</code> if it does not exist.
      */
@@ -599,7 +599,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * {@code name.getLocalPart()}
      *
      * @since 2.5
-     * @see DataAccess#getFeatureSource(Name)
+     * @see DataStore#getFeatureSource(org.opengis.feature.type.Name)
      */
     @Override
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName)
@@ -613,7 +613,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * returned Names have no namespace set.
      *
      * @since 2.5
-     * @see DataAccess#getNames()
+     * @see DataStore#getNames()
      */
     @Override
     public List<Name> getNames() throws IOException {
@@ -629,7 +629,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * Delegates to {@link #getSchema(String)} with {@code name.getLocalPart()}
      *
      * @since 2.5
-     * @see DataAccess#getSchema(Name)
+     * @see DataStore#getSchema(org.opengis.feature.type.Name)
      */
     @Override
     public SimpleFeatureType getSchema(final Name name) throws IOException {
@@ -641,7 +641,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * {@code name.getLocalPart()}
      *
      * @since 2.5
-     * @see DataAccess#getFeatureSource(Name)
+     * @see DataStore#getFeatureSource(org.opengis.feature.type.Name)
      */
     @Override
     public void updateSchema(final Name typeName, final SimpleFeatureType featureType) throws IOException {
