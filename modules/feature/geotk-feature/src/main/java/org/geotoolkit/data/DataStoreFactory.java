@@ -131,7 +131,7 @@ public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
     String getDescription();
 
     /**
-     * MetaData about the required Parameters (for createDataStore).
+     * Metadata about the required Parameters (for createDataStore).
      *
      * @return ParameterDescriptorGroup describing the parameters for createDataStore
      */

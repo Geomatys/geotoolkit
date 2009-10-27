@@ -26,7 +26,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.Extent;
@@ -80,12 +80,12 @@ public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
     }
 
     @Override
-    public SLDLibrary createSLDLibrary(OnLineResource online) {
+    public SLDLibrary createSLDLibrary(OnlineResource online) {
         return new DefaultSLDLibrary(online);
     }
 
     @Override
-    public RemoteOWS createRemoteOWS(String service, OnLineResource online) {
+    public RemoteOWS createRemoteOWS(String service, OnlineResource online) {
         return new DefaultRemoteOWS(service, online);
     }
 

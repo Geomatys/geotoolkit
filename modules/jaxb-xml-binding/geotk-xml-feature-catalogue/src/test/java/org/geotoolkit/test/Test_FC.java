@@ -40,7 +40,7 @@ import org.geotoolkit.feature.catalog.FeatureTypeImpl;
 import org.geotoolkit.feature.catalog.InheritanceRelationImpl;
 import org.geotoolkit.feature.catalog.ListedValueImpl;
 import org.geotoolkit.feature.catalog.PropertyTypeImpl;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.citation.DefaultAddress;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -91,7 +91,7 @@ public class Test_FC {
         JAXBContext context;
         
         context = JAXBContext.newInstance(
-                         DefaultMetaData.class,
+                         DefaultMetadata.class,
                          AssociationRoleImpl.class, BindingImpl.class, BoundFeatureAttributeImpl.class,
                          ConstraintImpl.class, DefinitionReferenceImpl.class, DefinitionSourceImpl.class,
                          FeatureAssociationImpl.class, FeatureAttributeImpl.class, FeatureCatalogueImpl.class,

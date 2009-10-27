@@ -46,11 +46,11 @@ import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
 // openGis dependencies
 import org.opengis.observation.Process;
 import org.opengis.metadata.quality.Element;
-import org.opengis.metadata.MetaData;
+import org.opengis.metadata.Metadata;
 
 // geotools dependencies
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
@@ -155,7 +155,7 @@ public class ObservationEntry implements Observation {
       *
       */
      @XmlTransient
-     private DefaultMetaData observationMetadata;
+     private DefaultMetadata observationMetadata;
      
     /**
      * 
@@ -213,7 +213,7 @@ public class ObservationEntry implements Observation {
                             final ElementEntry         quality,
                             final Object               result,
                             final AbstractTimeGeometricPrimitiveType  samplingTime,
-                            final DefaultMetaData      observationMetadata,
+                            final DefaultMetadata      observationMetadata,
                             final AbstractTimeGeometricPrimitiveType  procedureTime,
                             final Object               procedureParameter) 
     {
@@ -412,7 +412,7 @@ public class ObservationEntry implements Observation {
      * {@inheritDoc}
      */
     @Override
-    public MetaData getObservationMetadata() {
+    public Metadata getObservationMetadata() {
         return observationMetadata;
     }
     

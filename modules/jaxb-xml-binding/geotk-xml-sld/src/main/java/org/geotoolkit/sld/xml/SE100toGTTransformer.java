@@ -45,7 +45,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -102,7 +102,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         this.styleFactory = styleFactory;
     }
 
-    public OnLineResource visitOnlineResource(org.geotoolkit.sld.xml.v100.OnlineResource ort) {
+    public OnlineResource visitOnlineResource(org.geotoolkit.sld.xml.v100.OnlineResource ort) {
         if(ort == null){
             return null;
         }
@@ -763,7 +763,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     private ExternalGraphic visit(org.geotoolkit.sld.xml.v100.ExternalGraphic externalGraphicType) {
         if(externalGraphicType == null) return null;
         
-        final OnLineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
+        final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
         final Icon icon = null;
         final String format = externalGraphicType.getFormat();
         final Collection<ColorReplacement> replaces = Collections.emptyList();

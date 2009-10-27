@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.text.StringAdapter;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.service.OperationMetadata;
 import org.opengis.service.Parameter;
 
@@ -58,7 +58,7 @@ public class OperationMetadataImpl implements OperationMetadata {
     private String operationDescription;
     private String invocationName;
     private Collection<Parameter> parameters;
-    private Collection<OnLineResource> connectPoint;
+    private Collection<OnlineResource> connectPoint;
     private Collection<OperationMetadata> dependsOn;
 
     /**
@@ -191,20 +191,20 @@ public class OperationMetadataImpl implements OperationMetadata {
      * 
      */
     @XmlElement(required = true)
-    public Collection<OnLineResource> getConnectPoint() {
+    public Collection<OnlineResource> getConnectPoint() {
         if (connectPoint == null) {
-            connectPoint = new ArrayList<OnLineResource>();
+            connectPoint = new ArrayList<OnlineResource>();
         }
         return this.connectPoint;
     }
     
-    public void setConnectPoint(Collection<OnLineResource> connectPoint) {
+    public void setConnectPoint(Collection<OnlineResource> connectPoint) {
          this.connectPoint = connectPoint;
     }
     
-    public void setConnectPoint(OnLineResource connectPoint) {
+    public void setConnectPoint(OnlineResource connectPoint) {
         if (this.connectPoint == null) {
-            this.connectPoint = new ArrayList<OnLineResource>();
+            this.connectPoint = new ArrayList<OnlineResource>();
         }
         this.connectPoint.add(connectPoint);
     }
@@ -253,7 +253,7 @@ public class OperationMetadataImpl implements OperationMetadata {
         }
         if (connectPoint != null) {
             s.append("connectPoint:").append('\n');
-            for (OnLineResource d:connectPoint) {
+            for (OnlineResource d:connectPoint) {
                 s.append('\t').append(d).append('\n');
             } 
         }

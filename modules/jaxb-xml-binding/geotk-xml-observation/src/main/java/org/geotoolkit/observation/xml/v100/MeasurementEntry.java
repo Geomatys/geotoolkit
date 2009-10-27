@@ -25,7 +25,7 @@ import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.sampling.xml.v100.SamplingFeatureEntry;
 import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.opengis.observation.Measurement;
 import org.opengis.observation.Measure;
 
@@ -73,7 +73,7 @@ public class MeasurementEntry extends ObservationEntry implements Measurement {
             final ElementEntry           quality,
             final MeasureEntry           result,
             final AbstractTimeGeometricPrimitiveType    samplingTime,
-            final DefaultMetaData        observationMetadata,
+            final DefaultMetadata        observationMetadata,
             final AbstractTimeGeometricPrimitiveType    procedureTime,
             final Object                 procedureParameter) {
         super(name, definition, station, observedProperty, procedure, quality, result,

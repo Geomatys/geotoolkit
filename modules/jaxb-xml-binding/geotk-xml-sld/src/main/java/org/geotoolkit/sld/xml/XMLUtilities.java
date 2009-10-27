@@ -49,7 +49,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
@@ -139,8 +139,8 @@ public final class XMLUtilities {
             return unMarshaller.unmarshal( (XMLEventReader)source );
         }else if(source instanceof XMLStreamReader){
             return unMarshaller.unmarshal( (XMLStreamReader)source );
-        }else if(source instanceof OnLineResource){
-            final OnLineResource online = (OnLineResource) source;
+        }else if(source instanceof OnlineResource){
+            final OnlineResource online = (OnlineResource) source;
             try {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
@@ -238,7 +238,7 @@ public final class XMLUtilities {
     /**
      * Read a SLD source and parse it in GT SLD object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
-     * XMLEventReader, XMLStreamReader or OnLineResource
+     * XMLEventReader, XMLStreamReader or OnlineResource
      * 
      * @throws javax.xml.bind.JAXBException
      */
@@ -335,7 +335,7 @@ public final class XMLUtilities {
     /**
      * Read a SLD UserStyle source and parse it in GT Style object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
-     * XMLEventReader, XMLStreamReader or OnLineResource
+     * XMLEventReader, XMLStreamReader or OnlineResource
      * 
      * @throws javax.xml.bind.JAXBException
      */
@@ -399,7 +399,7 @@ public final class XMLUtilities {
     /**
      * Read a SE FeatureTypeStyle source and parse it in GT FTS object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
-     * XMLEventReader, XMLStreamReader or OnLineResource
+     * XMLEventReader, XMLStreamReader or OnlineResource
      * 
      * @throws javax.xml.bind.JAXBException
      */
@@ -472,7 +472,7 @@ public final class XMLUtilities {
     /**
      * Read a SE Rule source and parse it in GT Rule object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
-     * XMLEventReader, XMLStreamReader or OnLineResource
+     * XMLEventReader, XMLStreamReader or OnlineResource
      * 
      * @throws javax.xml.bind.JAXBException
      */
@@ -546,7 +546,7 @@ public final class XMLUtilities {
     /**
      * Read a Filter source and parse it in GT Filter object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
-     * XMLEventReader, XMLStreamReader or OnLineResource
+     * XMLEventReader, XMLStreamReader or OnlineResource
      * 
      * @throws javax.xml.bind.JAXBException
      */

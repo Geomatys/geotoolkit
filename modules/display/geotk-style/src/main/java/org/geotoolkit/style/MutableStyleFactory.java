@@ -37,7 +37,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -245,7 +245,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
 
     Mark mark(Expression wellKnownName, Stroke stroke, Fill fill);
 
-    OnLineResource onlineResource(URI uri);
+    OnlineResource onlineResource(URI uri);
 
     PointPlacement pointPlacement();
 

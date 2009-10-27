@@ -16,7 +16,7 @@
  */
  package org.geotoolkit.sld;
  
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -29,11 +29,11 @@ import org.opengis.sld.StyledLayerDescriptor;
  */
 class DefaultSLDLibrary implements SLDLibrary{
 
-    private final OnLineResource online;
+    private final OnlineResource online;
     private StyledLayerDescriptor sld = null;
     
     
-    DefaultSLDLibrary(OnLineResource online){
+    DefaultSLDLibrary(OnlineResource online){
         if(online == null){
             throw new NullPointerException("Online resource can not be null");
         }
@@ -45,7 +45,7 @@ class DefaultSLDLibrary implements SLDLibrary{
      * {@inheritDoc }
      */
     @Override
-    public OnLineResource getOnlineResource() {
+    public OnlineResource getOnlineResource() {
         return online;        
     }
 

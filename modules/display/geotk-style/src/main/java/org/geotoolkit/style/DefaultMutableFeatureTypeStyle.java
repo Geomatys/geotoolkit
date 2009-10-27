@@ -30,7 +30,7 @@ import org.geotoolkit.util.collection.NotifiedCheckedSet;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
@@ -148,7 +148,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
     
     private Id ids = null;
     
-    private OnLineResource online = null;
+    private OnlineResource online = null;
     
     /**
      * Create a default mutable feature type style.
@@ -269,7 +269,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
      * This method is thread safe.
      */
     @Override
-    public OnLineResource getOnlineResource() {
+    public OnlineResource getOnlineResource() {
         return online;
     }
     
@@ -278,8 +278,8 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
      * This method is thread safe.
      */
     @Override
-    public void setOnlineResource(OnLineResource online) {
-        final OnLineResource oldOnline;
+    public void setOnlineResource(OnlineResource online) {
+        final OnlineResource oldOnline;
         synchronized (this) {
             oldOnline = this.online;
             if(Utilities.equals(oldOnline, online)){

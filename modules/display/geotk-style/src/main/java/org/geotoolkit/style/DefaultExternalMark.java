@@ -18,7 +18,7 @@ package org.geotoolkit.style;
 
 import javax.swing.Icon;
 import org.geotoolkit.util.Utilities;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalMark;
 import org.opengis.style.StyleVisitor;
 
@@ -30,7 +30,7 @@ import org.opengis.style.StyleVisitor;
  */
 public class DefaultExternalMark implements ExternalMark{
 
-    private final OnLineResource online;
+    private final OnlineResource online;
     
     private final Icon icon;
     
@@ -45,7 +45,7 @@ public class DefaultExternalMark implements ExternalMark{
      * @param format : can not be null
      * @param index : can be null
      */
-    public DefaultExternalMark(OnLineResource online, String format, int index){
+    public DefaultExternalMark(OnlineResource online, String format, int index){
         if( online == null || format == null ){
             throw new IllegalArgumentException("Online resource and format can not be null");
         }
@@ -79,7 +79,7 @@ public class DefaultExternalMark implements ExternalMark{
      * {@inheritDoc }
      */
     @Override
-    public OnLineResource getOnlineResource() {
+    public OnlineResource getOnlineResource() {
         return online;
     }
 

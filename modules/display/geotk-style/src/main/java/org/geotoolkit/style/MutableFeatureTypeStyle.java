@@ -19,7 +19,7 @@ package org.geotoolkit.style;
 import java.util.List;
 
 import org.opengis.filter.Id;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
 
@@ -64,7 +64,7 @@ public interface MutableFeatureTypeStyle extends FeatureTypeStyle{
      * Set the online resource of this fts.
      * The onlineResource must be an xml file containing this fts.
      */
-    void setOnlineResource(OnLineResource online);
+    void setOnlineResource(OnlineResource online);
     
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------

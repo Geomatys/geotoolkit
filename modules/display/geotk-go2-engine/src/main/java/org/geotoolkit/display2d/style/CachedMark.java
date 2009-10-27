@@ -29,7 +29,7 @@ import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalMark;
 import org.opengis.style.Mark;
 
@@ -208,7 +208,7 @@ public class CachedMark extends Cache<Mark>{
         final String format = external.getFormat();
         final Icon icon = external.getInlineContent();
         final int index = external.getMarkIndex();
-        final OnLineResource online = external.getOnlineResource();
+        final OnlineResource online = external.getOnlineResource();
 
         if(icon != null){
             int height = icon.getIconHeight();

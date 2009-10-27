@@ -52,7 +52,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -748,7 +748,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ExternalGraphic externalGraphic(final OnLineResource resource, final String format, final Collection<ColorReplacement> replaces){
+    public ExternalGraphic externalGraphic(final OnlineResource resource, final String format, final Collection<ColorReplacement> replaces){
         return new DefaultExternalGraphic(resource, format, replaces);
     }
 
@@ -758,7 +758,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ExternalMark externalMark(final OnLineResource online, final String format, final int index){
+    public ExternalMark externalMark(final OnlineResource online, final String format, final int index){
         return new DefaultExternalMark(online, format, index);
     }
 
@@ -831,7 +831,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public OnLineResource onlineResource(final URI uri){
+    public OnlineResource onlineResource(final URI uri){
         return new DefaultOnlineResource(uri,null,null,null,null,null);
     }
 

@@ -13,7 +13,7 @@ package org.opengis.service;
 
 import java.util.Collection;
 import org.opengis.annotation.UML;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 
@@ -63,7 +63,7 @@ public interface OperationMetadata {
      * handle for accesing the service interface.
      */
     //@UML(identifier="connectPoint", obligation=MANDATORY, specification=ISO_19119)
-    Collection<OnLineResource> getConnectPoint();
+    Collection<OnlineResource> getConnectPoint();
     
     /**
      * list of operation that must be completed immediatly before current operation is invoked,

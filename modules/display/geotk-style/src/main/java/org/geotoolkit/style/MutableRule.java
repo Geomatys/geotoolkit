@@ -20,7 +20,7 @@ package org.geotoolkit.style;
 import java.util.List;
 
 import org.opengis.filter.Filter;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.GraphicLegend;
 import org.opengis.style.Rule;
@@ -98,7 +98,7 @@ public interface MutableRule extends Rule{
      * Set the online resource of this Rule.
      * The onlineResource must be an xml file containing this rule.
      */
-    void setOnlineResource(OnLineResource online);
+    void setOnlineResource(OnlineResource online);
     
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------

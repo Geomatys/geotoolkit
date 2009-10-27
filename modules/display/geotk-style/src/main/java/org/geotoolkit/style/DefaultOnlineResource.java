@@ -21,7 +21,7 @@ import java.net.URI;
 import org.geotoolkit.util.Utilities;
 
 import org.opengis.metadata.citation.OnLineFunction;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.util.InternationalString;
 
 /**
@@ -30,7 +30,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultOnlineResource implements OnLineResource{
+public class DefaultOnlineResource implements OnlineResource{
     
     private final URI href;
     

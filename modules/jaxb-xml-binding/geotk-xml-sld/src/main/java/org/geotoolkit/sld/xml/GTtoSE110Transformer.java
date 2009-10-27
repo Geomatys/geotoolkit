@@ -139,7 +139,7 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -1104,7 +1104,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a GT onlineResource in jaxb online resource.
      */
-    public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnLineResource onlineResource, Object data) {
+    public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnlineResource onlineResource, Object data) {
         final OnlineResourceType ort = se_factory.createOnlineResourceType();
         try {
             ort.setHref(onlineResource.getLinkage().toURL().toString());

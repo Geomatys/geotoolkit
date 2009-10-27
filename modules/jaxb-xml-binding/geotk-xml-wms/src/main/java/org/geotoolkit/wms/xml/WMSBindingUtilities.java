@@ -31,7 +31,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -95,8 +95,8 @@ import org.xml.sax.InputSource;
             return unMarshaller.unmarshal( (XMLEventReader)source );
         }else if(source instanceof XMLStreamReader){
             return unMarshaller.unmarshal( (XMLStreamReader)source );
-        }else if(source instanceof OnLineResource){
-            final OnLineResource online = (OnLineResource) source;
+        }else if(source instanceof OnlineResource){
+            final OnlineResource online = (OnlineResource) source;
             try {
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);

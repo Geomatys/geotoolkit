@@ -20,7 +20,7 @@ xmlns = {
     @XmlJavaTypeAdapter(ConstraintsAdapter.class),
     @XmlJavaTypeAdapter(KeywordsAdapter.class),
     @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(OnLineResourceAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
     @XmlJavaTypeAdapter(DataIdentificationAdapter.class),
     @XmlJavaTypeAdapter(StandardOrderProcessAdapter.class),
     @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),

@@ -62,7 +62,7 @@ import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 // Geotools dependencies
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
@@ -106,7 +106,7 @@ public class CswXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool202 = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetaData.class);
+        pool202 = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class);
         recordUnmarshaller202    = pool202.acquireUnmarshaller();
         recordMarshaller202      = pool202.acquireMarshaller();
         

@@ -44,7 +44,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.Extent;
@@ -92,7 +92,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         }else{
             final Collection<SLDLibrary> sldLibs = new ArrayList<SLDLibrary>();
             for(final UseSLDLibrary use : libs){
-                final OnLineResource online = visitOnlineResource(use.getOnlineResource());
+                final OnlineResource online = visitOnlineResource(use.getOnlineResource());
                 if(online != null) sldLibs.add(sldFactory.createSLDLibrary(online));
                 
             }
@@ -253,7 +253,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
         if(ows == null){
             return null;
         }else{
-            final OnLineResource online = visitOnlineResource(ows.getOnlineResource());
+            final OnlineResource online = visitOnlineResource(ows.getOnlineResource());
             if( online != null){
                 return sldFactory.createRemoteOWS(ows.getService(), online);
             }else{

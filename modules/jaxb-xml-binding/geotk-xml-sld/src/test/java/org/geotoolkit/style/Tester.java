@@ -44,7 +44,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.Layer;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -149,7 +149,7 @@ public class Tester {
                 new SimpleInternationalString("the abstract")));
         
         //Libraries-------------------------------------------------------------
-        OnLineResource online = null;
+        OnlineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
             Logging.getLogger(Tester.class).log(Level.SEVERE, null, ex);

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sld;
 
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.SLDVisitor;
 
@@ -30,10 +30,10 @@ import org.opengis.sld.SLDVisitor;
 class DefaultRemoteOWS implements RemoteOWS{
 
     private final String service;
-    private final OnLineResource online;
+    private final OnlineResource online;
     
     
-    DefaultRemoteOWS(String service, OnLineResource online){
+    DefaultRemoteOWS(String service, OnlineResource online){
         if(service == null || online == null){
             throw new NullPointerException("Service and online resource can not be null.");
         }
@@ -53,7 +53,7 @@ class DefaultRemoteOWS implements RemoteOWS{
      * {@inheritDoc }
      */
     @Override
-    public OnLineResource getOnlineResource() {
+    public OnlineResource getOnlineResource() {
         return online;
     }
 

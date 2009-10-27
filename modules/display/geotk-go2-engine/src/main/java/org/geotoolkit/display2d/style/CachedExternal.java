@@ -28,7 +28,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 
 import org.opengis.feature.Feature;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalGraphic;
 
 /**
@@ -86,7 +86,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         
         //if no inline image then use the online image
         if(cachedImage == null){
-            OnLineResource online = styleElement.getOnlineResource();
+            OnlineResource online = styleElement.getOnlineResource();
             if(online != null && online.getLinkage() != null){
                 
                 final URI path = styleElement.getOnlineResource().getLinkage();

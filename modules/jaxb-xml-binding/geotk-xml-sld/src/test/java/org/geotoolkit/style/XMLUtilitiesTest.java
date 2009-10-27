@@ -43,7 +43,7 @@ import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.filter.expression.Expression;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -261,7 +261,7 @@ public class XMLUtilitiesTest extends TestCase{
                 new SimpleInternationalString("the abstract")));
 
         //Libraries-------------------------------------------------------------
-        OnLineResource online = null;
+        OnlineResource online = null;
         try { online = STYLE_FACTORY.onlineResource(new URI("http://geomayts.fr/anSLDFile.xml"));
         } catch (URISyntaxException ex) {
             Logging.getLogger(XMLUtilitiesTest.class).log(Level.SEVERE, null, ex);

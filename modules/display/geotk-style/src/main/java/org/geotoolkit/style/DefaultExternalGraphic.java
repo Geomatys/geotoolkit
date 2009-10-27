@@ -23,7 +23,7 @@ import javax.swing.Icon;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.StyleVisitor;
@@ -36,7 +36,7 @@ import org.opengis.style.StyleVisitor;
  */
 public class DefaultExternalGraphic implements ExternalGraphic{
 
-    private final OnLineResource resource;
+    private final OnlineResource resource;
     
     private final Icon icon;
     
@@ -51,7 +51,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      * @param format : can not be null
      * @param replaces : can be null or empty
      */
-    public DefaultExternalGraphic(OnLineResource resource, String format, Collection<ColorReplacement> replaces){
+    public DefaultExternalGraphic(OnlineResource resource, String format, Collection<ColorReplacement> replaces){
         if( resource == null || format == null ){
             throw new IllegalArgumentException("OnlineResource and format can not be null");
         }
@@ -98,7 +98,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      * {@inheritDoc }
      */
     @Override
-    public OnLineResource getOnlineResource() {
+    public OnlineResource getOnlineResource() {
         return resource;
     }
 

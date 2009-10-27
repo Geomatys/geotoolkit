@@ -26,7 +26,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
 import org.opengis.filter.Filter;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.Description;
 import org.opengis.style.GraphicLegend;
 import org.opengis.style.StyleVisitor;
@@ -78,7 +78,7 @@ public class DefaultMutableRule implements MutableRule{
     private boolean isElse = false;
     private double minscale = 0;
     private double maxScale = Double.MAX_VALUE;
-    private OnLineResource online = null;
+    private OnlineResource online = null;
     
     /**
      * Create a default mutable rule.
@@ -292,7 +292,7 @@ public class DefaultMutableRule implements MutableRule{
      * This method is thread safe.
      */
     @Override
-    public OnLineResource getOnlineResource() {
+    public OnlineResource getOnlineResource() {
         return online;
     }
     
@@ -301,8 +301,8 @@ public class DefaultMutableRule implements MutableRule{
      * This method is thread safe.
      */
     @Override
-    public void setOnlineResource(OnLineResource online) {
-        final OnLineResource oldOnline;
+    public void setOnlineResource(OnlineResource online) {
+        final OnlineResource oldOnline;
         synchronized (this) {
             oldOnline = this.online;
             if(Utilities.equals(oldOnline, online)){

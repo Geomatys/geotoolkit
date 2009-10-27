@@ -109,7 +109,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -181,7 +181,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
     }
 
-    public OnLineResource visitOnlineResource(final org.geotoolkit.se.xml.v110.OnlineResourceType ort) {
+    public OnlineResource visitOnlineResource(final org.geotoolkit.se.xml.v110.OnlineResourceType ort) {
         URI uri = null;
         try {
             uri = new URI(ort.getHref());
@@ -410,7 +410,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
         if(obj instanceof OnlineResourceType){
             final  OnlineResourceType ort = (OnlineResourceType) obj;
-            final OnLineResource or = visitOnlineResource(ort);
+            final OnlineResource or = visitOnlineResource(ort);
             if(or != null){
                 try{
                     return xmlUtilities.readFeatureTypeStyle(or, Specification.SymbologyEncoding.V_1_1_0);
@@ -513,7 +513,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      * Trasnform SLD v1.1 rule in GT Rule.
      */
     public MutableRule visitRule(OnlineResourceType ort) {
-        final OnLineResource or = visitOnlineResource(ort);
+        final OnlineResource or = visitOnlineResource(ort);
         if(or != null) {
             try{
                 return xmlUtilities.readRule(or, Specification.SymbologyEncoding.V_1_1_0);
@@ -1006,7 +1006,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     private ExternalGraphic visit(ExternalGraphicType externalGraphicType) {
         if(externalGraphicType == null) return null;
                 
-        final OnLineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
+        final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
         final Icon icon = null;
         final String format = externalGraphicType.getFormat();
         final Collection<ColorReplacement> replaces = Collections.emptyList();

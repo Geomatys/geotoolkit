@@ -43,7 +43,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.RemoteOWS;
@@ -167,7 +167,7 @@ public class SLD100toGTTransformer extends SE100toGTTransformer{
         if(ows == null){
             return null;
         }else{
-            final OnLineResource online = visitOnlineResource(ows.getOnlineResource());
+            final OnlineResource online = visitOnlineResource(ows.getOnlineResource());
             if( online != null){
                 return sldFactory.createRemoteOWS(ows.getService(), online);
             }else{
