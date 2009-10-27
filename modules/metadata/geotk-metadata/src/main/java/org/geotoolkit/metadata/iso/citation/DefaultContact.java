@@ -28,7 +28,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Address;
 import org.opengis.metadata.citation.Contact;
 import org.opengis.metadata.citation.Telephone;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
@@ -64,11 +64,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for the <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A>.
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      *
-     * @see DefaultOnLineResource#OGC
+     * @see DefaultOnlineResource#OGC
      */
     public static final Contact OGC;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.OGC);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.OGC);
         c.freeze();
         OGC = c;
     }
@@ -77,11 +77,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for the <A HREF="http://www.opengis.org">OpenGIS consortium</A>.
      * "OpenGIS consortium" is the old name for "Open Geospatial consortium".
      *
-     * @see DefaultOnLineResource#OPEN_GIS
+     * @see DefaultOnlineResource#OPEN_GIS
      */
     public static final Contact OPEN_GIS;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.OPEN_GIS);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.OPEN_GIS);
         c.freeze();
         OPEN_GIS = c;
     }
@@ -90,11 +90,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for the
      * <A HREF="http://www.epsg.org">European Petroleum Survey Group</A>.
      *
-     * @see DefaultOnLineResource#EPSG
+     * @see DefaultOnlineResource#EPSG
      */
     public static final Contact EPSG;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.EPSG);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.EPSG);
         c.freeze();
         EPSG = c;
     }
@@ -103,11 +103,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
      * Contact informations for the
      * <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> group.
      *
-     * @see DefaultOnLineResource#GEOTIFF
+     * @see DefaultOnlineResource#GEOTIFF
      */
     public static final Contact GEOTIFF;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.GEOTIFF);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.GEOTIFF);
         c.freeze();
         GEOTIFF = c;
     }
@@ -115,11 +115,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Contact informations for <A HREF="http://www.esri.com">ESRI</A>.
      *
-     * @see DefaultOnLineResource#ESRI
+     * @see DefaultOnlineResource#ESRI
      */
     public static final Contact ESRI;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.ESRI);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.ESRI);
         c.freeze();
         ESRI = c;
     }
@@ -127,11 +127,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Contact informations for <A HREF="http://www.oracle.com">Oracle</A>.
      *
-     * @see DefaultOnLineResource#ORACLE
+     * @see DefaultOnlineResource#ORACLE
      */
     public static final Contact ORACLE;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.ORACLE);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.ORACLE);
         c.freeze();
         ORACLE = c;
     }
@@ -139,13 +139,13 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Contact informations for <A HREF="http://postgis.refractions.net">PostGIS</A>.
      *
-     * @see DefaultOnLineResource#POSTGIS
+     * @see DefaultOnlineResource#POSTGIS
      *
      * @since 2.4
      */
     public static final Contact POSTGIS;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.POSTGIS);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.POSTGIS);
         c.freeze();
         POSTGIS = c;
     }
@@ -153,13 +153,13 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Contact informations for <A HREF="http://www.sun.com/">Sun Microsystems</A>.
      *
-     * @see DefaultOnLineResource#SUN_MICROSYSTEMS
+     * @see DefaultOnlineResource#SUN_MICROSYSTEMS
      *
      * @since 2.2
      */
     public static final Contact SUN_MICROSYSTEMS;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.SUN_MICROSYSTEMS);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.SUN_MICROSYSTEMS);
         c.freeze();
         SUN_MICROSYSTEMS = c;
     }
@@ -167,11 +167,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Contact informations for the <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      *
-     * @see DefaultOnLineResource#GEOTOOLKIT
+     * @see DefaultOnlineResource#GEOTOOLKIT
      */
     public static final Contact GEOTOOLKIT;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.GEOTOOLKIT);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.GEOTOOLKIT);
         c.freeze();
         GEOTOOLKIT = c;
     }
@@ -179,11 +179,11 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * Contact informations for the <A HREF="http://www.geotools.org">GeoTools</A> project.
      *
-     * @see DefaultOnLineResource#GEOTOOLS
+     * @see DefaultOnlineResource#GEOTOOLS
      */
     public static final Contact GEOTOOLS;
     static {
-        final DefaultContact c = new DefaultContact(DefaultOnLineResource.GEOTOOLS);
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.GEOTOOLS);
         c.freeze();
         GEOTOOLS = c;
     }
@@ -202,7 +202,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
     /**
      * On-line information that can be used to contact the individual or organization.
      */
-    private OnLineResource onlineResource;
+    private OnlineResource onlineResource;
 
     /**
      * Physical and email address at which the organization or individual may be contacted.
@@ -238,7 +238,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      *
      * @param resource The on-line information that can be used to contact the individual or organization.
      */
-    public DefaultContact(final OnLineResource resource) {
+    public DefaultContact(final OnlineResource resource) {
         setOnlineResource(resource);
     }
 
@@ -288,7 +288,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     @Override
     @XmlElement(name = "onlineResource")
-    public synchronized OnLineResource getOnlineResource() {
+    public synchronized OnlineResource getOnlineResource() {
         return onlineResource;
     }
 
@@ -297,7 +297,7 @@ public class DefaultContact extends MetadataEntity implements Contact {
      *
      * @param newValue The new online resource.
      */
-    public synchronized void setOnlineResource(final OnLineResource newValue) {
+    public synchronized void setOnlineResource(final OnlineResource newValue) {
         checkWritePermission();
         onlineResource = newValue;
     }

@@ -61,22 +61,22 @@
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_CollectionMetadata&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>MetaData</code> in <code>IIOMetadata</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;<code>Metadata</code> in <code>IIOMetadata</code>&nbsp;</td>
  *     <td>&nbsp;A set of collection metadata that describes the data product as represented in the collection.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_DiscoveryMetadata&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>MetaData.getIdentificationInfo()</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;<code>Metadata.getIdentificationInfo()</code>&nbsp;</td>
  *     <td>&nbsp;A set of discovery metadata that describes the data set so that it can be accessed.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_AcquisitionMetadata&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>MetaData.getAcquisitionInformation()</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;<code>Metadata.getAcquisitionInformation()</code>&nbsp;</td>
  *     <td>&nbsp;A set of acquisition metadata that describes the source of the data values.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_QualityMetadata&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>MetaData.getDataQualityInfo()</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;<code>Metadata.getDataQualityInfo()</code>&nbsp;</td>
  *     <td>&nbsp;A set of quality metadata that describes the quality of the data values.</td>
  *   </tr>
  *   <tr>

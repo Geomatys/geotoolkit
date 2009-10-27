@@ -85,7 +85,7 @@ import org.geotoolkit.resources.Errors;
  *
  * {@section Default formats}
  * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
- * {@link MetaData} and {@link ImageDescription} interfaces, respectively. Consequently those
+ * {@link Metadata} and {@link ImageDescription} interfaces, respectively. Consequently those
  * instances can be considered as profiles of ISO 19115-2. The tree structures are as below:
  *
 <blockquote><table border="1" cellpadding="12">
@@ -309,7 +309,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Adds an {@link MetaData} node at the root of the tree.
+     * Adds an {@link Metadata} node at the root of the tree.
      * This is used for <cite>stream</cite> metadata.
      *
      * @see #STREAM

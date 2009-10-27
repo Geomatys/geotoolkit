@@ -29,7 +29,7 @@ import org.geotoolkit.util.converter.Classes;
 
 /**
  * The handler for metadata proxy that implement (indirectly) metadata interfaces like
- * {@link org.opengis.metadata.MetaData}, {@link org.opengis.metadata.citation.Citation},
+ * {@link org.opengis.metadata.Metadata}, {@link org.opengis.metadata.citation.Citation},
  * <i>etc</i>.
  *
  * Any call to a method in a metadata interface is redirected toward the {@link #invoke} method.

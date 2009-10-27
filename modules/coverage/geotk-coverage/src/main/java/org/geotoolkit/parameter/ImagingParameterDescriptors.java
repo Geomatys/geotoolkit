@@ -63,7 +63,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
-import org.geotoolkit.metadata.iso.citation.DefaultOnLineResource;
+import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.util.NullArgumentException;
 
@@ -323,7 +323,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             description = new ImagingParameterDescription(op, "Description", null);
             try {
                 final URI uri = new URI(bundle.getString("DocURL"));
-                final DefaultOnLineResource resource = new DefaultOnLineResource(uri);
+                final DefaultOnlineResource resource = new DefaultOnlineResource(uri);
                 resource.setFunction(OnLineFunction.INFORMATION);
                 resource.setDescription(description);
                 final DefaultCitation citation = new DefaultCitation(authority);

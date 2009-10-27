@@ -130,7 +130,7 @@ public class MarshallerPool {
     /**
      * Creates a new factory for the given class to be bound, with a default empty namespace.
      *
-     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetaData.class}.
+     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetadata.class}.
      * @throws JAXBException    If the JAXB context can not be created.
      */
     public MarshallerPool(final Class<?>... classesToBeBound) throws JAXBException {
@@ -142,7 +142,7 @@ public class MarshallerPool {
      * shall be one or many of the constants defined in this class like {@link #ROOT_NAMESPACE_KEY}.
      *
      * @param  properties       The set of properties to be given to the pool.
-     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetaData.class}.
+     * @param  classesToBeBound The classes to be bound, for example {@code DefaultMetadata.class}.
      * @throws JAXBException    If the JAXB context can not be created.
      *
      * @since 3.04

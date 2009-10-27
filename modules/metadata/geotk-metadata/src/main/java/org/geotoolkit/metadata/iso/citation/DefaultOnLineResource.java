@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.OnLineFunction;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
@@ -56,7 +56,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "function"
 })
 @XmlRootElement(name = "CI_OnlineResource")
-public class DefaultOnLineResource extends MetadataEntity implements OnLineResource {
+public class DefaultOnlineResource extends MetadataEntity implements OnlineResource {
     /**
      * Serial number for interoperability with different versions.
      */
@@ -68,10 +68,10 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @see #OPEN_GIS
      */
-    public static final OnLineResource OGC;
+    public static final OnlineResource OGC;
     static {
-        final DefaultOnLineResource r;
-        OGC = r = new DefaultOnLineResource("http://www.opengeospatial.org/");
+        final DefaultOnlineResource r;
+        OGC = r = new DefaultOnlineResource("http://www.opengeospatial.org/");
         r.freeze();
     }
 
@@ -81,10 +81,10 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @see #OGC
      */
-    public static final OnLineResource OPEN_GIS;
+    public static final OnlineResource OPEN_GIS;
     static {
-        final DefaultOnLineResource r;
-        OPEN_GIS = r = new DefaultOnLineResource("http://www.opengis.org");
+        final DefaultOnlineResource r;
+        OPEN_GIS = r = new DefaultOnlineResource("http://www.opengis.org");
         r.freeze();
     }
 
@@ -92,10 +92,10 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      * The online resources for the
      * <A HREF="http://www.epsg.org">European Petroleum Survey Group</A>.
      */
-    public static final OnLineResource EPSG;
+    public static final OnlineResource EPSG;
     static {
-        final DefaultOnLineResource r;
-        EPSG = r = new DefaultOnLineResource("http://www.epsg.org");
+        final DefaultOnlineResource r;
+        EPSG = r = new DefaultOnlineResource("http://www.epsg.org");
         r.freeze();
     }
 
@@ -103,30 +103,30 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      * The online resources for the
      * <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> group.
      */
-    public static final OnLineResource GEOTIFF;
+    public static final OnlineResource GEOTIFF;
     static {
-        final DefaultOnLineResource r;
-        GEOTIFF = r = new DefaultOnLineResource("http://www.remotesensing.org/geotiff");
+        final DefaultOnlineResource r;
+        GEOTIFF = r = new DefaultOnlineResource("http://www.remotesensing.org/geotiff");
         r.freeze();
     }
 
     /**
      * The online resources for <A HREF="http://www.esri.com">ESRI</A>.
      */
-    public static final OnLineResource ESRI;
+    public static final OnlineResource ESRI;
     static {
-        final DefaultOnLineResource r;
-        ESRI = r = new DefaultOnLineResource("http://www.esri.com");
+        final DefaultOnlineResource r;
+        ESRI = r = new DefaultOnlineResource("http://www.esri.com");
         r.freeze();
     }
 
     /**
      * The online resources for <A HREF="http://www.oracle.com">Oracle</A>.
      */
-    public static final OnLineResource ORACLE;
+    public static final OnlineResource ORACLE;
     static {
-        final DefaultOnLineResource r;
-        ORACLE = r = new DefaultOnLineResource("http://www.oracle.com");
+        final DefaultOnlineResource r;
+        ORACLE = r = new DefaultOnlineResource("http://www.oracle.com");
         r.freeze();
     }
 
@@ -135,10 +135,10 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @since 2.4
      */
-    public static final OnLineResource POSTGIS;
+    public static final OnlineResource POSTGIS;
     static {
-        final DefaultOnLineResource r;
-        POSTGIS = r = new DefaultOnLineResource("http://postgis.refractions.net");
+        final DefaultOnlineResource r;
+        POSTGIS = r = new DefaultOnlineResource("http://postgis.refractions.net");
         r.freeze();
     }
 
@@ -148,30 +148,30 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @since 2.2
      */
-    public static final OnLineResource SUN_MICROSYSTEMS;
+    public static final OnlineResource SUN_MICROSYSTEMS;
     static {
-        final DefaultOnLineResource r;
-        SUN_MICROSYSTEMS = r = new DefaultOnLineResource("http://java.sun.com");
+        final DefaultOnlineResource r;
+        SUN_MICROSYSTEMS = r = new DefaultOnlineResource("http://java.sun.com");
         r.freeze();
     }
 
     /**
      * The online resources for the <A HREF="http://www.geotoolkit.org">Geotoolkit.org</A> project.
      */
-    public static final OnLineResource GEOTOOLKIT;
+    public static final OnlineResource GEOTOOLKIT;
     static {
-        final DefaultOnLineResource r;
-        GEOTOOLKIT = r = new DefaultOnLineResource("http://www.geotoolkit.org");
+        final DefaultOnlineResource r;
+        GEOTOOLKIT = r = new DefaultOnlineResource("http://www.geotoolkit.org");
         r.freeze();
     }
 
     /**
      * The online resources for the <A HREF="http://www.geotools.org">GeoTools</A> project.
      */
-    public static final OnLineResource GEOTOOLS;
+    public static final OnlineResource GEOTOOLS;
     static {
-        final DefaultOnLineResource r;
-        GEOTOOLS = r = new DefaultOnLineResource("http://www.geotools.org");
+        final DefaultOnlineResource r;
+        GEOTOOLS = r = new DefaultOnlineResource("http://www.geotools.org");
         r.freeze();
     }
 
@@ -182,10 +182,10 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @since 2.2
      */
-    public static final OnLineResource WMS;
+    public static final OnlineResource WMS;
     static {
-        final DefaultOnLineResource r;
-        WMS = r = new DefaultOnLineResource("http://portal.opengis.org/files/?artifact_id=5316");
+        final DefaultOnlineResource r;
+        WMS = r = new DefaultOnlineResource("http://portal.opengis.org/files/?artifact_id=5316");
         r.setFunction(OnLineFunction.DOWNLOAD);
         r.freeze();
     }
@@ -224,7 +224,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
     /**
      * Creates an initially empty on line resource.
      */
-    public DefaultOnLineResource() {
+    public DefaultOnlineResource() {
     }
 
     /**
@@ -234,7 +234,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @since 2.4
      */
-    public DefaultOnLineResource(final OnLineResource source) {
+    public DefaultOnlineResource(final OnlineResource source) {
         super(source);
     }
 
@@ -245,7 +245,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      * Furthermore, a public method should not catch the {@link URISyntaxException}
      * and should not set a function.
      */
-    private DefaultOnLineResource(final String linkage) {
+    private DefaultOnlineResource(final String linkage) {
         try {
             setLinkage(new URI(linkage));
         } catch (URISyntaxException exception) {
@@ -259,7 +259,7 @@ public class DefaultOnLineResource extends MetadataEntity implements OnLineResou
      *
      * @param linkage The location for on-line access using a Uniform Resource Locator address.
      */
-    public DefaultOnLineResource(final URI linkage) {
+    public DefaultOnlineResource(final URI linkage) {
         setLinkage(linkage);
     }
 

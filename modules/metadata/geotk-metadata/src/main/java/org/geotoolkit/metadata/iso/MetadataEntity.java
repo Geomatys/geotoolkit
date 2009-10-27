@@ -30,7 +30,7 @@ import org.geotoolkit.metadata.InvalidMetadataException;
 
 /**
  * A superclass for implementing ISO 19115 metadata interfaces. Subclasses
- * must implement at least one of the ISO MetaData interface provided by
+ * must implement at least one of the ISO Metadata interface provided by
  * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A>.
  *
  * @author Martin Desruisseaux (IRD)

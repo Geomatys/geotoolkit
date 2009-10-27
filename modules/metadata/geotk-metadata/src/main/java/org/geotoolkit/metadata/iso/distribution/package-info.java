@@ -45,7 +45,7 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(OnLineResourceAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
     @XmlJavaTypeAdapter(MediumAdapter.class),
     @XmlJavaTypeAdapter(FormatAdapter.class),
     @XmlJavaTypeAdapter(DistributorAdapter.class),

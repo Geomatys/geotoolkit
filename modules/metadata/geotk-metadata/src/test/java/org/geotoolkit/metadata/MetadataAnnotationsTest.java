@@ -64,7 +64,7 @@ public final class MetadataAnnotationsTest extends AnnotationsTest {
         org.opengis.metadata.citation.Contact.class,
         org.opengis.metadata.citation.DateType.class,
         org.opengis.metadata.citation.OnLineFunction.class,
-        org.opengis.metadata.citation.OnLineResource.class,
+        org.opengis.metadata.citation.OnlineResource.class,
         org.opengis.metadata.citation.PresentationForm.class,
         org.opengis.metadata.citation.ResponsibleParty.class,
         org.opengis.metadata.citation.Role.class,
@@ -134,7 +134,7 @@ public final class MetadataAnnotationsTest extends AnnotationsTest {
         org.opengis.metadata.maintenance.MaintenanceInformation.class,
         org.opengis.metadata.maintenance.ScopeCode.class,
         org.opengis.metadata.maintenance.ScopeDescription.class,
-        org.opengis.metadata.MetaData.class,
+        org.opengis.metadata.Metadata.class,
         org.opengis.metadata.MetadataExtensionInformation.class,
 // The following CodeList is excluded because it doesn't use the usual kind of adapter.
 //      org.opengis.metadata.Obligation.class,
@@ -208,7 +208,7 @@ public final class MetadataAnnotationsTest extends AnnotationsTest {
      */
     @Override
     protected Class<?> getWrapper(final Class<?> type) {
-        if (type.equals(org.opengis.metadata.MetaData.class)) {
+        if (type.equals(org.opengis.metadata.Metadata.class)) {
             /*
              * We don't have adapter for Metadata, since it is the root element.
              * We explicitly exclude it for avoiding confusion with MetadataAdapter,

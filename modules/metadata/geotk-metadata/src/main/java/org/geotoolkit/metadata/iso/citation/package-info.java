@@ -53,7 +53,7 @@
     @XmlJavaTypeAdapter(ContactAdapter.class),
     @XmlJavaTypeAdapter(DateTypeAdapter.class),
     @XmlJavaTypeAdapter(AddressAdapter.class),
-    @XmlJavaTypeAdapter(OnLineResourceAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
     @XmlJavaTypeAdapter(TelephoneAdapter.class),
     @XmlJavaTypeAdapter(OnLineFunctionAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),

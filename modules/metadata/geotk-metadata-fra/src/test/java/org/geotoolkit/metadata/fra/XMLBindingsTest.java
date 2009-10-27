@@ -24,7 +24,7 @@ import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 
@@ -56,7 +56,7 @@ public final class XMLBindingsTest {
     }
 
     /**
-     * Ensures that the marshalling process of a {@link DefaultMetaData} produces
+     * Ensures that the marshalling process of a {@link DefaultMetadata} produces
      * an XML document which complies with the one expected.
      *
      * @throws JAXBException if the marshalling process fails.
@@ -64,7 +64,7 @@ public final class XMLBindingsTest {
      */
     @Test
     public void marshallingTest() throws JAXBException, IOException {
-        final DefaultMetaData metadata = new DefaultMetaData();
+        final DefaultMetadata metadata = new DefaultMetadata();
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
         metadata.setReferenceSystemInfo(Arrays.asList(refSys));
@@ -78,7 +78,7 @@ public final class XMLBindingsTest {
     }
 
     /**
-     * Ensures that the unmarshalling process of a {@link DefaultMetaData} stored in an XML
+     * Ensures that the unmarshalling process of a {@link DefaultMetadata} stored in an XML
      * document produces an object containing all the information.
      *
      * @throws JAXBException if the unmarshalling process fails.
@@ -87,13 +87,13 @@ public final class XMLBindingsTest {
     @Test
     public void UnmarshallingTest() throws JAXBException, IOException {
         final InputStream in = TestData.openStream(this, RESOURCE_FILE);
-        final DefaultMetaData result = (DefaultMetaData) XML.unmarshal(in);
+        final DefaultMetadata result = (DefaultMetadata) XML.unmarshal(in);
         in.close();
 
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
 
-        final DefaultMetaData expected = new DefaultMetaData();
+        final DefaultMetadata expected = new DefaultMetadata();
         expected.setReferenceSystemInfo(Arrays.asList(refSys));
 
         if (false) { // TODO: disabled for now

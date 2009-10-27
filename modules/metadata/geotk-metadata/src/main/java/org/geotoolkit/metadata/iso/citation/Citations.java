@@ -203,7 +203,7 @@ public final class Citations {
      * @see <A HREF="http://www.opengis.org/docs/01-068r3.pdf">WMS 1.1.1 specification</A>
      * @see <A HREF="http://portal.opengis.org/files/?artifact_id=5316">WMS 1.3.0 specification</A>
      * @see DefaultResponsibleParty#OGC
-     * @see DefaultOnLineResource#WMS
+     * @see DefaultOnlineResource#WMS
      * @category Specification
      */
     public static final Citation WMS;
@@ -217,7 +217,7 @@ public final class Citations {
 
         final Collection<ResponsibleParty> parties = c.getCitedResponsibleParties();
         parties.add(DefaultResponsibleParty.OGC);
-        parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnLineResource.WMS));
+        parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnlineResource.WMS));
         /*
          * The WMS specification is a model in a programming point of view, but this is not
          * the purpose of ISO 19115 PresentationForm.MODEL_DIGITAL in my understanding. The
@@ -378,7 +378,7 @@ public final class Citations {
          */
         final Collection<ResponsibleParty> parties = c.getCitedResponsibleParties();
         parties.add(DefaultResponsibleParty.OGC);
-        parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnLineResource.WMS));
+        parties.add(DefaultResponsibleParty.OGC(Role.PUBLISHER, DefaultOnlineResource.WMS));
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL); // See comment in WMS.
         c.freeze();
         AUTO2 = c;

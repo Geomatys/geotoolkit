@@ -29,7 +29,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -57,8 +57,8 @@ import org.geotoolkit.test.Depend;
 /**
  * A test class for annotations written in the Metadata module.
  * First, it marshalls all annotations in a XML temporary file, starting with the
- * {@link DefaultMetaData} class as root element. Then, the temporary XML file is
- * unmarshalled, in order to get a {@code DefaultMetaData} object. Finally some
+ * {@link DefaultMetadata} class as root element. Then, the temporary XML file is
+ * unmarshalled, in order to get a {@code DefaultMetadata} object. Finally some
  * fields of this object are compared with the original value.
  *
  * @author Cédric Briançon (Geomatys)
@@ -69,7 +69,7 @@ import org.geotoolkit.test.Depend;
 @Depend(MetadataStandardTest.class)
 public final class MetadataMarshallingTest {
     /**
-     * Generates an XML tree from the annotations on the {@link DefaultMetaData} class,
+     * Generates an XML tree from the annotations on the {@link DefaultMetadata} class,
      * and writes it in a temporary buffer. This file is then read by the unmarshaller.
      * Some assertions about the validity of the unmarshalled data are checked.
      *
@@ -80,12 +80,12 @@ public final class MetadataMarshallingTest {
     @Test
     public void testMarshalling() throws JAXBException, IOException {
         final MarshallerPool pool = new MarshallerPool(Collections.singletonMap(
-                MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), DefaultMetaData.class);
+                MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), DefaultMetadata.class);
         final Marshaller marshaller = pool.acquireMarshaller();
         /*
          * Fill metadata values.
          */
-        final DefaultMetaData metadata = new DefaultMetaData();
+        final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setLanguage(Locale.FRENCH);
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setDateStamp(new Date());
@@ -158,10 +158,10 @@ public final class MetadataMarshallingTest {
          */
         assertNotNull(obj);
         assertTrue("The unmarshalled object gotten from the XML file marshalled is not an instance " +
-                   "of DefaultMetaData. So the unmarshalling process fails for that XML string.",
-                   obj instanceof DefaultMetaData);
+                   "of DefaultMetadata. So the unmarshalling process fails for that XML string.",
+                   obj instanceof DefaultMetadata);
 
-        final DefaultMetaData dataUnmarsh = (DefaultMetaData) obj;
+        final DefaultMetadata dataUnmarsh = (DefaultMetadata) obj;
         assertEquals(metadata.getCharacterSet(), dataUnmarsh.getCharacterSet());
         assertEquals(metadata.getLanguage(), dataUnmarsh.getLanguage());
         assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());

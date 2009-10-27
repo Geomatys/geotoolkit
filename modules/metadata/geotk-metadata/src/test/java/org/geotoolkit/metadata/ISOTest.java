@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Collection;
 
 import org.opengis.util.CodeList;
-import org.opengis.metadata.MetaData;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.citation.CitationFactory;
 import org.opengis.metadata.maintenance.ScopeDescription;
 import org.opengis.metadata.identification.AggregateInformation;
@@ -31,7 +31,7 @@ import org.opengis.metadata.identification.RepresentativeFraction;
 
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.CheckedCollection;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  *
- * @todo Current implementation relies on {@link MetaData} dependencies. This is probably
+ * @todo Current implementation relies on {@link Metadata} dependencies. This is probably
  *       not enough; we should provide an explicit list of metadata interface.
  */
 public final class ISOTest {
@@ -79,7 +79,7 @@ public final class ISOTest {
         org.opengis.metadata.ExtendedElementInformation.class,
         org.opengis.metadata.FeatureTypeList.class,
         org.opengis.metadata.Identifier.class,
-        org.opengis.metadata.MetaData.class,
+        org.opengis.metadata.Metadata.class,
         org.opengis.metadata.MetadataExtensionInformation.class,
         org.opengis.metadata.PortrayalCatalogueReference.class,
         org.opengis.metadata.citation.Address.class,
@@ -87,7 +87,7 @@ public final class ISOTest {
         org.opengis.metadata.citation.CitationDate.class,
         org.opengis.metadata.citation.CitationFactory.class,
         org.opengis.metadata.citation.Contact.class,
-        org.opengis.metadata.citation.OnLineResource.class,
+        org.opengis.metadata.citation.OnlineResource.class,
         org.opengis.metadata.citation.ResponsibleParty.class,
         org.opengis.metadata.citation.Series.class,
         org.opengis.metadata.citation.Telephone.class,
@@ -171,7 +171,7 @@ public final class ISOTest {
         CitationFactory.class,          // SHOULD THIS INTERFACE REALLY EXISTS IN GEOAPI?
         RepresentativeFraction.class,   // Implemented on top of 'Number'.
         ScopeDescription.class,         // Only partially implemented (no references to Features).
-        OnLineResource.class            // No 'setProtocol' method.
+        OnlineResource.class            // No 'setProtocol' method.
     };
 
     /**
@@ -186,12 +186,12 @@ public final class ISOTest {
     }
 
     /**
-     * Tests all dependencies starting from the {@link DefaultMetaData} class.
+     * Tests all dependencies starting from the {@link DefaultMetadata} class.
      */
     @Test
     public void testDependencies() {
         assertNull(getImplementation(Number.class));
-        assertSame(DefaultMetaData.class, getImplementation(MetaData.class));
+        assertSame(DefaultMetadata.class, getImplementation(Metadata.class));
         final Set<Class<?>> done = new HashSet<Class<?>>();
         for (int i=0; i<TEST.length; i++) {
             final Class<?> type = TEST[i];

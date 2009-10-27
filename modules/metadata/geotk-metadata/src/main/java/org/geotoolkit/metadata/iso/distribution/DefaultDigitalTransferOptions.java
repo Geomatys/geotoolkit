@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.util.InternationalString;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.distribution.DigitalTransferOptions;
 import org.opengis.metadata.distribution.Medium;
 
@@ -75,7 +75,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
     /**
      * Information about online sources from which the resource can be obtained.
      */
-    private Collection<OnLineResource> onLines;
+    private Collection<OnlineResource> onLines;
 
     /**
      * Information about offline media on which the resource can be obtained.
@@ -145,8 +145,8 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      */
     @Override
     @XmlElement(name = "onLine")
-    public synchronized Collection<OnLineResource> getOnLines() {
-        return xmlOptional(onLines = nonNullCollection(onLines, OnLineResource.class));
+    public synchronized Collection<OnlineResource> getOnLines() {
+        return xmlOptional(onLines = nonNullCollection(onLines, OnlineResource.class));
     }
 
     /**
@@ -154,8 +154,8 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
      *
      * @param newValues The new online sources.
      */
-    public synchronized void setOnLines(final Collection<? extends OnLineResource> newValues) {
-        onLines = copyCollection(newValues, onLines, OnLineResource.class);
+    public synchronized void setOnLines(final Collection<? extends OnlineResource> newValues) {
+        onLines = copyCollection(newValues, onLines, OnlineResource.class);
     }
 
     /**

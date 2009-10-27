@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Contact;
 import org.opengis.metadata.citation.OnLineFunction;
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.util.InternationalString;
 
@@ -84,7 +84,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @since 2.2
      */
-    public static ResponsibleParty OGC(final Role role, final OnLineResource resource) {
+    public static ResponsibleParty OGC(final Role role, final OnlineResource resource) {
         final DefaultContact contact = new DefaultContact(resource);
         contact.freeze();
 
@@ -109,7 +109,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
                                        final OnLineFunction function,
                                        final URI onlineResource)
     {
-        final DefaultOnLineResource resource = new DefaultOnLineResource(onlineResource);
+        final DefaultOnlineResource resource = new DefaultOnlineResource(onlineResource);
         resource.setFunction(function);
         resource.freeze();
         return OGC(role, resource);

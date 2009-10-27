@@ -17,7 +17,7 @@
  */
 
 /**
- * {@linkplain org.geotoolkit.metadata.iso.DefaultMetaData Metadata} implementation. An explanation
+ * {@linkplain org.geotoolkit.metadata.iso.DefaultMetadata Metadata} implementation. An explanation
  * for this package is provided in the {@linkplain org.opengis.metadata OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
  * <p>
@@ -60,7 +60,7 @@
     @XmlJavaTypeAdapter(ConstraintsAdapter.class),
     @XmlJavaTypeAdapter(ApplicationSchemaInformationAdapter.class),
     @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
-    @XmlJavaTypeAdapter(OnLineResourceAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
     @XmlJavaTypeAdapter(ExtendedElementInformationAdapter.class),
     @XmlJavaTypeAdapter(FeatureTypeListAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),

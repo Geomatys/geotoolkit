@@ -18,7 +18,7 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Collection;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 
 
 /**
@@ -37,6 +37,6 @@ public final class MetadataTypes implements RegisterableTypes {
      */
     @Override
     public void getTypes(final Collection<Class<?>> addTo) {
-        addTo.add(DefaultMetaData.class);
+        addTo.add(DefaultMetadata.class);
     }
 }

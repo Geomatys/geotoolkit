@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.opengis.metadata.MetaData;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.ApplicationSchemaInformation;
 import org.opengis.metadata.MetadataExtensionInformation;
 import org.opengis.metadata.PortrayalCatalogueReference;
@@ -88,7 +88,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
     "acquisitionInformation"
 })
 @XmlRootElement(name = "MD_Metadata")
-public class DefaultMetaData extends MetadataEntity implements MetaData {
+public class DefaultMetadata extends MetadataEntity implements Metadata {
     /**
      * Serial number for interoperability with different versions.
      */
@@ -220,7 +220,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
     /**
      * Creates an initially empty metadata.
      */
-    public DefaultMetaData() {
+    public DefaultMetadata() {
     }
 
     /**
@@ -230,7 +230,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      *
      * @since 2.4
      */
-    public DefaultMetaData(final MetaData source) {
+    public DefaultMetadata(final Metadata source) {
         super(source);
     }
 
@@ -242,7 +242,7 @@ public class DefaultMetaData extends MetadataEntity implements MetaData {
      * @param identificationInfo Basic information about the resource
      *        to which the metadata applies.
      */
-    public DefaultMetaData(final ResponsibleParty contact,
+    public DefaultMetadata(final ResponsibleParty contact,
                            final Date             dateStamp,
                            final Identification   identificationInfo)
     {

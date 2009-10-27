@@ -18,8 +18,8 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.opengis.metadata.citation.OnLineResource;
-import org.geotoolkit.metadata.iso.citation.DefaultOnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
+import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 
 
 /**
@@ -32,56 +32,56 @@ import org.geotoolkit.metadata.iso.citation.DefaultOnLineResource;
  * @since 2.5
  * @module
  */
-public final class OnLineResourceAdapter
-        extends MetadataAdapter<OnLineResourceAdapter,OnLineResource>
+public final class OnlineResourceAdapter
+        extends MetadataAdapter<OnlineResourceAdapter,OnlineResource>
 {
     /**
      * Empty constructor for JAXB only.
      */
-    public OnLineResourceAdapter() {
+    public OnlineResourceAdapter() {
     }
 
     /**
-     * Wraps an OnLineResource value with a {@code CI_OnLineResource} element at marshalling time.
+     * Wraps an OnlineResource value with a {@code CI_OnlineResource} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
-    private OnLineResourceAdapter(final OnLineResource metadata) {
+    private OnlineResourceAdapter(final OnlineResource metadata) {
         super(metadata);
     }
 
     /**
-     * Returns the OnLineResource value wrapped by a {@code CI_OnLineResource} element.
+     * Returns the OnlineResource value wrapped by a {@code CI_OnlineResource} element.
      *
      * @param value The value to marshall.
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected OnLineResourceAdapter wrap(final OnLineResource value) {
-        return new OnLineResourceAdapter(value);
+    protected OnlineResourceAdapter wrap(final OnlineResource value) {
+        return new OnlineResourceAdapter(value);
     }
 
     /**
-     * Returns the {@link DefaultOnLineResource} generated from the metadata value.
+     * Returns the {@link DefaultOnlineResource} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
      */
     @Override
     @XmlElement(name = "CI_OnlineResource")
-    public DefaultOnLineResource getElement() {
-        final OnLineResource metadata = this.metadata;
-        return (metadata instanceof DefaultOnLineResource) ?
-            (DefaultOnLineResource) metadata : new DefaultOnLineResource(metadata);
+    public DefaultOnlineResource getElement() {
+        final OnlineResource metadata = this.metadata;
+        return (metadata instanceof DefaultOnlineResource) ?
+            (DefaultOnlineResource) metadata : new DefaultOnlineResource(metadata);
     }
 
     /**
-     * Sets the value for the {@link DefaultOnLineResource}. This method is systematically
+     * Sets the value for the {@link DefaultOnlineResource}. This method is systematically
      * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setElement(final DefaultOnLineResource metadata) {
+    public void setElement(final DefaultOnlineResource metadata) {
         this.metadata = metadata;
     }
 }

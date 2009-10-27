@@ -17,7 +17,7 @@
  */
 
 /**
- * An implementation of {@linkplain org.opengis.metadata.MetaData Metadata} interfaces
+ * An implementation of {@linkplain org.opengis.metadata.Metadata Metadata} interfaces
  * fetching the data from an SQL database. Each metadata classes are mapped to a table,
  * and each metadata attributes are mapped to a column in the appropriate table. Tables
  * and columns are created only when first needed.

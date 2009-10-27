@@ -41,7 +41,7 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
-import org.geotoolkit.metadata.iso.DefaultMetaData;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
@@ -71,7 +71,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 
 
 /**
- * Tests the marshalling and unmarshalling of a {@linkplain DefaultMetaData metadata}
+ * Tests the marshalling and unmarshalling of a {@linkplain DefaultMetadata metadata}
  * object, containing a {@linkplain DefaultVerticalCRS vertical CRS}.
  *
  * @author Cédric Briançon (Geomatys)
@@ -84,13 +84,13 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 public class ReferencingMarsallingTest {
     /**
      * The resource file which contains an XML representation of a
-     * {@linkplain DefaultMetaData metadata} object, with a {@link VerticalCRS}.
+     * {@linkplain DefaultMetadata metadata} object, with a {@link VerticalCRS}.
      */
     private static final String VERTICAL_CRS_XML = "verticalCRS.xml";
 
     /**
      * The resource file which contains an XML representation of a
-     * {@linkplain DefaultMetaData metadata} object, with a {@link GeographicCRS}.
+     * {@linkplain DefaultMetadata metadata} object, with a {@link GeographicCRS}.
      */
     private static final String GEOGRAPHIC_CRS_XML = "geographicCRS.xml";
 
@@ -155,7 +155,7 @@ public class ReferencingMarsallingTest {
     }
 
     /**
-     * Tests the marshalling of a {@linkplain DefaultMetaData metadata} object, compared
+     * Tests the marshalling of a {@linkplain DefaultMetadata metadata} object, compared
      * to the resource XML file.
      *
      * @throws JAXBException if the marshalling process fails.
@@ -163,9 +163,9 @@ public class ReferencingMarsallingTest {
      */
     @Test
     public void testVerticalCRSMarshalling() throws JAXBException, IOException {
-        final DefaultMetaData metadata = createMetadataWithVerticalCRS();
+        final DefaultMetadata metadata = createMetadataWithVerticalCRS();
         final StringWriter          sw = new StringWriter();
-        final MarshallerPool      pool = new MarshallerPool(DefaultMetaData.class);
+        final MarshallerPool      pool = new MarshallerPool(DefaultMetadata.class);
         final Locale            locale = Locale.getDefault();
         final Marshaller    marshaller = pool.acquireMarshaller();
         try {
@@ -181,15 +181,15 @@ public class ReferencingMarsallingTest {
     }
 
     /**
-     * Tests the unmarshalling of a {@linkplain DefaultMetaData metadata} object from an XML file.
+     * Tests the unmarshalling of a {@linkplain DefaultMetadata metadata} object from an XML file.
      *
      * @throws JAXBException if the unmarshalling process fails.
      * @throws IOException if an error occurs while trying to read data from the resource file.
      */
     @Test
     public void testVerticalCRSUnmarshalling() throws JAXBException, IOException {
-        final MarshallerPool pool = new MarshallerPool(DefaultMetaData.class);
-        final DefaultMetaData expected = createMetadataWithVerticalCRS();
+        final MarshallerPool pool = new MarshallerPool(DefaultMetadata.class);
+        final DefaultMetadata expected = createMetadataWithVerticalCRS();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         final Object obj;
         try {
@@ -199,16 +199,16 @@ public class ReferencingMarsallingTest {
         } finally {
             pool.release(unmarshaller);
         }
-        assertTrue(obj instanceof DefaultMetaData);
-        final DefaultMetaData result = (DefaultMetaData) obj;
+        assertTrue(obj instanceof DefaultMetadata);
+        final DefaultMetadata result = (DefaultMetadata) obj;
         assertEquals(expected, result);
     }
 
     /**
-     * Builds and returns a {@linkplain DefaultMetaData metadata} object for the marshalling tests.
+     * Builds and returns a {@linkplain DefaultMetadata metadata} object for the marshalling tests.
      */
-    private static DefaultMetaData createMetadataWithVerticalCRS() {
-        final DefaultMetaData metadata = new DefaultMetaData();
+    private static DefaultMetadata createMetadataWithVerticalCRS() {
+        final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setFileIdentifier("20090901");
         metadata.setLanguage(Locale.ENGLISH);
         metadata.setCharacterSet(CharacterSet.UTF_8);

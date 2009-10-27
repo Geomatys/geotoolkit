@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.opengis.metadata.citation.OnLineResource;
+import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.metadata.MetadataExtensionInformation;
 
@@ -62,7 +62,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
      * Information about on-line sources containing the community profile name and
      * the extended metadata elements. Information for all new metadata elements.
      */
-    private OnLineResource extensionOnLineResource;
+    private OnlineResource extensionOnLineResource;
 
     /**
      * Provides information about a new metadata element, not found in ISO 19115, which is
@@ -93,7 +93,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
      */
     @Override
     @XmlElement(name = "extensionOnLineResource")
-    public synchronized OnLineResource getExtensionOnLineResource() {
+    public synchronized OnlineResource getExtensionOnLineResource() {
         return extensionOnLineResource;
     }
 
@@ -102,7 +102,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
      *
      * @param newValue The new extension online resource.
      */
-    public synchronized void setExtensionOnLineResource(final OnLineResource newValue) {
+    public synchronized void setExtensionOnLineResource(final OnlineResource newValue) {
         checkWritePermission();
         this.extensionOnLineResource = newValue;
     }
