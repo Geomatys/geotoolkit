@@ -161,7 +161,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
     /**
      * Returns the list of Filters built as the result of calling
-     * {@link #MultipleCompilationUnit()}
+     * {@link CQLFilterBuilder}
      *
      * @return List<Filter>
      * @throws CQLException

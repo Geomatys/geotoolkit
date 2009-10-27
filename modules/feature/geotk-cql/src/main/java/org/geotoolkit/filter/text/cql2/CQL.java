@@ -170,8 +170,8 @@ public class CQL {
     /**
      * WARNING THIS IS A WORK IN PROGRESS.
      *
-     * @param filter
-     * @return
+     * @param filter filter expression
+     * @return String representation of the cql expression
      */
     public static String toCQL(final Filter filter) {
         final StringBuffer output = (StringBuffer) filter.accept(new FilterToCQL(), new StringBuffer());
@@ -180,8 +180,8 @@ public class CQL {
     /**
      * WARNING THIS IS A WORK IN PROGRESS.
      *
-     * @param filter
-     * @return
+     * @param expression filter expression
+     * @return String representation of the cql expression
      */
     public static String toCQL(final Expression expression) {
         final StringBuffer output = (StringBuffer) expression.accept(new FilterToCQL(), new StringBuffer());

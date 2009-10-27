@@ -313,8 +313,7 @@ public abstract class AbstractFilterBuilder {
     /**
      * Creates a literal with date time
      *
-     * @param n
-     *            with date time
+     * @param token with date time
      * @return Literal
      * @throws CQLException
      */
@@ -965,9 +964,7 @@ public abstract class AbstractFilterBuilder {
 
     /**
      * Adds in the result stack the partial result associated to node.
-     * @param built partial result
-     * @param token
-     * @param type node associated to partial result
+     * @param result partial result
      */
     public void pushResult(final Result result) {
         resultStack.push(result);

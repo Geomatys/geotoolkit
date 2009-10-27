@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.filter.text.commons;
 
+import org.geotoolkit.filter.text.cql2.CQLCompiler;
+import org.geotoolkit.filter.text.ecql.ECQL;
+import org.geotoolkit.filter.text.generated.parsers.CQLParser;
 import org.geotoolkit.filter.text.generated.parsers.Token;
 
 
@@ -35,7 +38,7 @@ import org.geotoolkit.filter.text.generated.parsers.Token;
  * Client module should not use this feature.
  * </p>
  * @see IToken
- * @see CQLFilterBuilder
+ * @see AbstractFilterBuilder
  * @see CQLCompiler
  * @see CQLParser
  * 

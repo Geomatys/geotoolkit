@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.filter.text.generated.parsers;
 
+import org.geotoolkit.filter.text.cql2.CQLCompiler;
+
 /**
  * Redefines SimpleNode to allow access to additional 
  * information to the {@link CQLCompiler}
@@ -26,7 +28,6 @@ package org.geotoolkit.filter.text.generated.parsers;
  *
  * @author Mauricio Pazos (Axios Engineering)
  * @module pending
- * @since
  */
 public class SimpleNode implements  Node {
   protected Node parent;

@@ -21,7 +21,7 @@ import org.geotoolkit.filter.text.generated.parsers.Token;
 
 /**
  * Interface must be implemented by the specific compiler.
- * This will be used to send the token to the {@link CQLFilterBuilder}.
+ * This will be used to send the token to the {@link AbstractFilterBuilder}.
  *
  * <p>
  * Warning: This component is not published. It is part of module implementation.
