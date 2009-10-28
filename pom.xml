@@ -570,6 +570,7 @@
             <link>http://swinglabs.org/hudson/job/SwingX%20Continuous%20Build/javadoc</link>
             <link>http://jscience.org/api/</link>
             <link>http://www.geoapi.org/snapshot/pending</link>
+            <link>http://www.geotoolkit.org/apidocs</link>
           </links>
 
           <!-- Separates packages on the overview page into the groups specified. -->

@@ -101,7 +101,7 @@ public class NetcdfMetadata extends GeographicMetadata {
 
     /**
      * Creates metadata from the specified file. This constructor is typically invoked
-     * for creating {@linkplain NetcdfReader#getStreamMetadata stream metadata}. Note that
+     * for creating {@linkplain NetcdfImageReader#getStreamMetadata() stream metadata}. Note that
      * {@link ucar.nc2.dataset.CoordSysBuilder#addCoordinateSystems} should have been invoked
      * (if needed) before this constructor.
      *
@@ -118,7 +118,7 @@ public class NetcdfMetadata extends GeographicMetadata {
 
     /**
      * Creates metadata from the specified file. This constructor is typically invoked
-     * for creating {@linkplain NetcdfReader#getImageMetadata image metadata}. Note that
+     * for creating {@linkplain NetcdfImageReader#getImageMetadata image metadata}. Note that
      * {@link ucar.nc2.dataset.CoordSysBuilder#addCoordinateSystems} should have been invoked
      * (if needed) before this constructor.
      *
