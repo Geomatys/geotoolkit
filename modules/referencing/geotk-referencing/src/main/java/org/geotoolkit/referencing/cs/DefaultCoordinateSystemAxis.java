@@ -28,12 +28,9 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
@@ -46,7 +43,6 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -626,16 +622,6 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return axis.nameMatches(name) || axis.getOpposite().nameMatches(name);
         }
         return false;
-    }
-
-    /**
-     * The {@code gml:id}, which is mandatory.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
-    final String getID() {
-        return "coordinate-system-axis";
     }
 
     /**

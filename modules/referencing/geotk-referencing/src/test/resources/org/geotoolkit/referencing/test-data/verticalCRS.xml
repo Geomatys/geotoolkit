@@ -98,13 +98,13 @@
           <gmd:verticalElement>
             <gmd:EX_VerticalExtent>
               <gmd:verticalCRS>
-                <gml:VerticalCRS gml:id="coordinate-reference-system">
+                <gml:VerticalCRS gml:id="idvertCRS">
                 <gml:identifier codeSpace="">idvertCRS</gml:identifier>
                   <gml:verticalCS>
-                    <gml:VerticalCS gml:id="coordinate-system">
+                    <gml:VerticalCS gml:id="meters">
                     <gml:identifier codeSpace="">meters</gml:identifier>
                       <gml:axis>
-                        <gml:CoordinateSystemAxis gml:id="coordinate-system-axis" uom="m">
+                        <gml:CoordinateSystemAxis uom="m" gml:id="meters">
                           <gml:identifier codeSpace="">meters</gml:identifier>
                           <gml:axisAbbrev>meters</gml:axisAbbrev>
                           <gml:axisDirection codeSpace="EPSG">down</gml:axisDirection>
@@ -113,7 +113,7 @@
                     </gml:VerticalCS>
                   </gml:verticalCS>
                   <gml:verticalDatum>
-                    <gml:VerticalDatum gml:id="datum">
+                    <gml:VerticalDatum gml:id="D28">
                       <gml:identifier codeSpace="">D28</gml:identifier>
                       <gml:realizationEpoch/>
                     </gml:VerticalDatum>

@@ -23,9 +23,7 @@ package org.geotoolkit.referencing.datum;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.metadata.extent.Extent;
@@ -37,9 +35,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.internal.jaxb.uom.DateAsLongAdapter;
-import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.lang.Immutable;
 
 
@@ -80,16 +76,6 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * {@link AbstractIdentifiedObject} constructor.
      */
     private static final String[] LOCALIZABLES = {ANCHOR_POINT_KEY, SCOPE_KEY};
-
-    /**
-     * The {@code gml:id}, which is mandatory.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
-    final String getID() {
-        return "datum";
-    }
 
     /**
      * Description, possibly including coordinates, of the point or points used to anchor the datum

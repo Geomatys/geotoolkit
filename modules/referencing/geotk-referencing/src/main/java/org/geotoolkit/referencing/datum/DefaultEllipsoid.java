@@ -26,24 +26,21 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.XmlRootElement;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 
 import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
+import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -66,6 +63,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @Immutable
+@XmlRootElement(name = "Ellipsoid")
 public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellipsoid {
     /**
      * Serial number for interoperability with different versions.
@@ -120,16 +118,6 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             createEllipsoid("SPHERE", 6371000, 6371000, SI.METRE);
 
     /**
-     * The {@code gml:id}, which is mandatory.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
-    final String getID() {
-        return "meridian";
-    }
-
-    /**
      * The equatorial radius.
      *
      * @see #getSemiMajorAxis
@@ -150,11 +138,10 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      *
      * @see #getInverseFlattening
      */
-    @XmlElement
     private final double inverseFlattening;
 
     /**
-     * Tells if the Inverse Flattening definitive for this ellipsoid.
+     * Tells if the Inverse Flattening is definitive for this ellipsoid.
      *
      * @see #isIvfDefinitive
      */
@@ -431,6 +418,17 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     @Override
     public boolean isIvfDefinitive() {
         return ivfDefinitive;
+    }
+
+    /**
+     * Returns the object to be marshalled as the {@code SecondDefiningParameter} XML element.
+     * The returned object contains the values for {@link #semiMajorAxis} or {@link #inverseFlattening},
+     * according to the definition of the ellipsoid in presence. This is for JAXB usage only, to allow
+     * the (un)marshalling of this parameter.
+     */
+    @XmlElement(name = "secondDefiningParameter")
+    final SecondDefiningParameter getSecondDefiningParameter() {
+        return new SecondDefiningParameter(this, true);
     }
 
     /**

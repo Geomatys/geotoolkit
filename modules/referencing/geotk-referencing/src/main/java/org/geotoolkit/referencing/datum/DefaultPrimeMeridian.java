@@ -25,19 +25,14 @@ import java.util.Map;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.referencing.datum.PrimeMeridian;
 
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -65,16 +60,6 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      */
     public static final DefaultPrimeMeridian GREENWICH =
             new DefaultPrimeMeridian("Greenwich", 0, NonSI.DEGREE_ANGLE);
-
-    /**
-     * The {@code gml:id}, which is mandatory.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
-    final String getID() {
-        return "meridian";
-    }
 
     /**
      * Longitude of the prime meridian measured from the Greenwich meridian, positive eastward.

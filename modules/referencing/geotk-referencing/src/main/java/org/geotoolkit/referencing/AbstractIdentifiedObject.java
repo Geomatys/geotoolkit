@@ -34,7 +34,10 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
@@ -54,11 +57,13 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.Citations;
+import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -547,6 +552,37 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         }
         ensureNonNull(NAME_KEY, name);
         ensureNonNull(NAME_KEY, name.toString());
+    }
+
+    /**
+     * The {@code gml:id}, which is mandatory. The current implementation searchs for the first
+     * identifier, regardless its authority. If no identifier is found, then the name is used.
+     * If no name is found (which should not occur for valid objects), then this method returns
+     * {@code null}.
+     * <p>
+     * When an identifier has been found, this method returns the concatenation of its code
+     * space with its code, <em>without separator</em>. For example this method may return
+     * {@code "EPSG4326"}, not {@code "EPSG:4326"}.
+     */
+    @XmlID
+    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
+    @XmlJavaTypeAdapter(StringConverter.class)
+    final String getID() {
+        ReferenceIdentifier id = getIdentifier(null);
+        if (id == null) {
+            id = getName();
+            if (id == null) {
+                return null;
+            }
+        }
+        String code = id.getCodeSpace();
+        if (code != null) {
+            code += id.getCode();
+        } else {
+            code = id.getCode();
+        }
+        code = code.replace(":", ""); // Usually not needed, but done as a paranoiac safety.
+        return code;
     }
 
     /**

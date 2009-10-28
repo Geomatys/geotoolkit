@@ -29,10 +29,7 @@ import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -50,8 +47,6 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
 
 
 /**
@@ -97,16 +92,6 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
         DefaultCoordinateSystemAxis.SOUTHING,
         DefaultCoordinateSystemAxis.WESTING
     };
-
-    /**
-     * The {@code gml:id}, which is mandatory.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", namespace = Namespaces.GML, required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
-    final String getID() {
-        return "coordinate-system";
-    }
 
     /**
      * The axis for this coordinate system at the specified dimension.

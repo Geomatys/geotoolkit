@@ -23,9 +23,6 @@ package org.geotoolkit.referencing.crs;
 import java.util.Map;
 import java.util.HashMap;
 import javax.measure.unit.Unit;
-import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -39,10 +36,8 @@ import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.internal.referencing.NullReferencingObject;
 
 
@@ -64,16 +59,6 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * Serial number for interoperability with different versions.
      */
     private static final long serialVersionUID = -7433284548909530047L;
-
-    /**
-     * The {@code gml:id}, which is mandatory.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", namespace = Namespaces.GML ,required = true)
-    @XmlJavaTypeAdapter(StringConverter.class)
-    final String getID() {
-        return "coordinate-reference-system";
-    }
 
     /**
      * The coordinate system. This field should be considered as final.
