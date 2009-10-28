@@ -573,17 +573,17 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * Utility method to ensure that an Envelope if a ReferencedEnvelope.
+     * Utility method to ensure that an Envelope if a JTSEnvelope2D.
      * <p>
-     * This method first checks if <tt>e</tt> is an instanceof {@link ReferencedEnvelope},
-     * if it is, itself is returned. If not <code>new ReferencedEnvelpe(e,null)</code>
+     * This method first checks if <tt>e</tt> is an instanceof {@link JTSEnvelope2D},
+     * if it is, itself is returned. If not <code>new JTSEnvelope2D(e,null)</code>
      * is returned.
      * </p>
      * <p>
      * If e is null, null is returned.
      * </p>
      * @param e The envelope.  Can be null.
-     * @return A ReferencedEnvelope using the specified envelope, or null if the envelope was null.
+     * @return A JTSEnvelope2D using the specified envelope, or null if the envelope was null.
      */
     public static JTSEnvelope2D reference(Envelope e) {
         if (e == null) {
@@ -598,14 +598,14 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     }
 
     /**
-     * Utility method to ensure that an BoundingBox in a ReferencedEnvelope.
+     * Utility method to ensure that an BoundingBox in a JTSEnvelope2D.
      * <p>
-     * This method first checks if <tt>e</tt> is an instanceof {@link ReferencedEnvelope},
-     * if it is, itself is returned. If not <code>new ReferencedEnvelpe(e)</code>
+     * This method first checks if <tt>e</tt> is an instanceof {@link JTSEnvelope2D},
+     * if it is, itself is returned. If not <code>new JTSEnvelope2D(e)</code>
      * is returned.
      * </p>
      * @param e The envelope.
-     * @return
+     * @return JTSEnvelope2D
      */
     public static JTSEnvelope2D reference(BoundingBox e) {
         if (e == null) {

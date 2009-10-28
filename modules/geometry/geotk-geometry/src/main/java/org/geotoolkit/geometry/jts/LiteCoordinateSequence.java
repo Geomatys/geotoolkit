@@ -141,7 +141,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see java.lang.Object#clone()
+     * {@inheritDoc }
      */
     @Override
     public Object clone() {
@@ -162,7 +162,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see com.vividsolutions.jts.geom.CoordinateSequence#getX(int)
+     * {@inheritDoc }
      */
     @Override
     public double getX(int index) {
@@ -170,7 +170,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see com.vividsolutions.jts.geom.CoordinateSequence#getY(int)
+     * {@inheritDoc }
      */
     @Override
     public double getY(int index) {
@@ -178,8 +178,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     }
 
     /**
-     * @see com.vividsolutions.jts.geom.PackedCoordinateSequence#setOrdinate(int,
-     *      int, double)
+     * {@inheritDoc }
      */
     @Override
     public void setOrdinate(int index, int ordinate, double value) {
@@ -187,6 +186,9 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
         coords[index * dimension + ordinate] = value;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Envelope expandEnvelope(Envelope env) {
         double minx = coords[0];
@@ -212,8 +214,6 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
         return env;
     }
 
-    /**
-     */
     public double[] getArray() {
         return coords;
     }

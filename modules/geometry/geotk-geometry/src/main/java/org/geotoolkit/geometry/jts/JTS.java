@@ -53,6 +53,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.geometry.GeneralEnvelope;
 
 /**
  * JTS Geometry utility methods, bringing Geotools to JTS.
@@ -118,9 +119,7 @@ public final class JTS {
      * Transforms the envelope using the specified math transform.
      * Note that this method can not handle the case where the envelope contains the North or
      * South pole, or when it cross the &plusmn;180ï¿½ longitude, because {@linkplain MathTransform
-     * math transforms} do not carry suffisient informations. For a more robust envelope
-     * transformation, use {@link ReferencedEnvelope#transform(CoordinateReferenceSystem,
-     * boolean)} instead.
+     * math transforms} do not carry suffisient informations.
      *
      * @param  envelope  The envelope to transform.
      * @param  transform The transform to use.
@@ -143,9 +142,7 @@ public final class JTS {
      * <p>
      * Note that this method can not handle the case where the envelope contains the North or
      * South pole, or when it cross the &plusmn;180ï¿½ longitude, because {@linkplain MathTransform
-     * math transforms} do not carry suffisient informations. For a more robust envelope
-     * transformation, use {@link ReferencedEnvelope#transform(CoordinateReferenceSystem,
-     * boolean, int)} instead.
+     * math transforms} do not carry suffisient informations.
      *
      * @param  sourceEnvelope  The envelope to transform.
      * @param  targetEnvelope  An envelope to expand with the transformation result, or {@code null}
@@ -510,7 +507,7 @@ public final class JTS {
      * Converts a JTS 2D envelope in an {@link Envelope2D} for interoperability with the
      * referencing package.
      * <p>
-     * If the provided envelope is a {@link ReferencedEnvelope} we check
+     * If the provided envelope is a {@link JTSEnvelope2D} we check
      * that the provided CRS and the implicit CRS are similar.
      *
      * @param envelope The JTS envelope to convert.
@@ -552,16 +549,16 @@ public final class JTS {
      *
      * @since 2.4
      */
-    public static Polygon toGeometry(Envelope e) {
+    public static Polygon toGeometry(Envelope envelope) {
         GeometryFactory gf = new GeometryFactory();
 
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
-                    new Coordinate(e.getMinX(), e.getMinY()),
-                    new Coordinate(e.getMaxX(), e.getMinY()),
-                    new Coordinate(e.getMaxX(), e.getMaxY()),
-                    new Coordinate(e.getMinX(), e.getMaxY()),
-                    new Coordinate(e.getMinX(), e.getMinY())
+                    new Coordinate(envelope.getMinX(), envelope.getMinY()),
+                    new Coordinate(envelope.getMaxX(), envelope.getMinY()),
+                    new Coordinate(envelope.getMaxX(), envelope.getMaxY()),
+                    new Coordinate(envelope.getMinX(), envelope.getMaxY()),
+                    new Coordinate(envelope.getMinX(), envelope.getMinY())
                 }), null);
     }
 
@@ -611,16 +608,16 @@ public final class JTS {
      *
      * @since 2.4
      */
-    public static Polygon toGeometry(BoundingBox e) {
+    public static Polygon toGeometry(BoundingBox envelope) {
         GeometryFactory gf = new GeometryFactory();
 
         return gf.createPolygon(gf.createLinearRing(
                 new Coordinate[]{
-                    new Coordinate(e.getMinX(), e.getMinY()),
-                    new Coordinate(e.getMaxX(), e.getMinY()),
-                    new Coordinate(e.getMaxX(), e.getMaxY()),
-                    new Coordinate(e.getMinX(), e.getMaxY()),
-                    new Coordinate(e.getMinX(), e.getMinY())
+                    new Coordinate(envelope.getMinX(), envelope.getMinY()),
+                    new Coordinate(envelope.getMaxX(), envelope.getMinY()),
+                    new Coordinate(envelope.getMaxX(), envelope.getMaxY()),
+                    new Coordinate(envelope.getMinX(), envelope.getMaxY()),
+                    new Coordinate(envelope.getMinX(), envelope.getMinY())
                 }), null);
     }
 
@@ -629,10 +626,8 @@ public final class JTS {
      * specified reference system. If a coordinate falls outside the area of
      * validity a {@link ProjectionException} is thrown
      *
-     * @param geom
-     *            the geometry to check
-     * @param the
-     *            crs that defines the are of validity (must not be null)
+     * @param geom the geometry to check
+     * @param crs that defines the are of validity (must not be null)
      * @throws ProjectionException
      * @since 2.4
      */

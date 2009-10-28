@@ -53,7 +53,7 @@ public class GeometricUtilities {
      * 
      * @param boundingBox A bounding box
      * @param point       A point in the same CRS that the boundingBox.
-     * @param unit        The units in which the distance will be expressed.
+     * @param units       The units in which the distance will be expressed.
      * 
      * @return the shortest distance between the bounding box and the point.
      */
@@ -317,10 +317,10 @@ public class GeometricUtilities {
      *
      * if one of the parameters is null it return false.
      * 
-     * @param line1 The first line2D.
-     * @param line2 The second line2D.
+     * @param boundingBox The bounding box.
+     * @param line The line2D.
      * 
-     * @return true if one of the extremity of a line is a point of the other.
+     * @return boolean
      */
     public static boolean touches(final GeneralEnvelope boundingBox, final Line2D line) {
         if (line == null || boundingBox == null)
@@ -345,7 +345,7 @@ public class GeometricUtilities {
      * @param boundingBox1 The first envelope.
      * @param boundingBox2 The second envelope.
      * 
-     * @return 
+     * @return boolean
      */
     public static boolean touches(final GeneralEnvelope boundingBox1, final GeneralEnvelope boundingBox2) {
         if (boundingBox1 == null || boundingBox2 == null)
@@ -598,7 +598,7 @@ public class GeometricUtilities {
      * 
      * @param targetCRSName The coordinate reference system in which we have to reproject the geometry. 
      * @param sourceCRSName The current coordinate reference system of the geometry.
-     * @param geometry the geometric object to reproject.
+     * @param boundingBox the bbox object to reproject as a string.
      * 
      * @return The geometric object reprojected in the target coordinate reference system.
      * 

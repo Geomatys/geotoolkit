@@ -24,7 +24,6 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 
 /**
@@ -50,8 +49,9 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceTransformer {
 
     /**
-     * @see org.geotools.geometry.jts.CoordinateSequenceTransformer#transform(com.vividsolutions.jts.geom.CoordinateSequence, org.opengis.referencing.operation.MathTransform)
+     * {@inheritDoc }
      */
+    @Override
     public CoordinateSequence transform( CoordinateSequence cs, MathTransform transform )
             throws TransformException {
         if( cs instanceof PackedCoordinateSequence ){
@@ -104,14 +104,15 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         }
         
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#getDimension()
+         * {@inheritDoc }
          */
+        @Override
         public int getDimension() {
             return dimension;
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#getCoordinates()
+         * {@inheritDoc }
          */
         @Deprecated
         public double[] getCoordinates() {
@@ -119,51 +120,54 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#getCoordinate()
+         * {@inheritDoc }
          */
+        @Override
         public double[] getCoordinate() {
             return new double[]{ sequence.getX(offset), sequence.getY(offset), sequence.getOrdinate(offset, CoordinateSequence.Z)};
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#getOrdinate(int)
+         * {@inheritDoc }
          */
+        @Override
         public double getOrdinate( int arg0 ) throws IndexOutOfBoundsException {
             return sequence.getOrdinate(offset, arg0);
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#setOrdinate(int, double)
+         * {@inheritDoc }
          */
+        @Override
         public void setOrdinate( int arg0, double arg1 ) throws IndexOutOfBoundsException {
             sequence.setOrdinate(offset, arg0, arg1);
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#getCoordinateReferenceSystem()
+         * {@inheritDoc }
          */
+        @Override
         public CoordinateReferenceSystem getCoordinateReferenceSystem() {
             //TODO implement method body
             throw new UnsupportedOperationException();
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.DirectPosition#clone()
+         * {@inheritDoc }
          */
+        @Override
         public FlyWeightDirectPosition clone() {
             throw new UnsupportedOperationException();
         }
 
-        /**
-         * @see org.opengis.geometry.coordinate.Position#getPosition()
-         */
         public DirectPosition getPosition() {
             return this;
         }
 
         /**
-         * @see org.opengis.geometry.coordinate.Position#getDirectPosition()
+         * {@inheritDoc }
          */
+        @Override
         public DirectPosition getDirectPosition() {
             return this;
         }
