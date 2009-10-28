@@ -25,7 +25,6 @@ import org.opengis.geometry.Envelope;
  * all of the data types in this specification, their state is represented by their publicly
  * accessible attributes.
  *
- * @UML datatype GM_Envelope
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0

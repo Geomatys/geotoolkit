@@ -19,12 +19,11 @@ import org.opengis.geometry.coordinate.GenericSurface;
  * and {@code SurfacePatch} represent sections of surface geometry,
  * and therefore share a number of operation signatures.
  *
- * @UML type GM_GenericSurface
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  *
- * @revisit Why this interface is not defined in the primitive package, since the sub-interfaces
+ * @todo Why this interface is not defined in the primitive package, since the sub-interfaces
  *          ({@link org.opengis.geometry.primitive.Surface} and {@link org.opengis.geometry.primitive.SurfacePatch})
  *          belong to that package?
  * @module pending
@@ -60,7 +59,6 @@ public abstract class AbstractJTSGenericSurface implements GenericSurface {
      *
      * @param point The point on this {@code GenericSurface} where to compute the upNormal.
      * @return The upNormal unit vector.
-     * @UML operation upNormal
      */
     @Override
     public abstract double[] getUpNormal(DirectPosition point);
@@ -79,8 +77,6 @@ public abstract class AbstractJTSGenericSurface implements GenericSurface {
      * </font></blockquote>
      *
      * @return The perimeter.
-     * @unitof Length
-     * @UML operation perimeter
      */
     @Override
     public abstract double getPerimeter();
@@ -101,9 +97,8 @@ public abstract class AbstractJTSGenericSurface implements GenericSurface {
      * </font></blockquote>
      *
      * @return The area.
-     * @UML operation area
      *
-     * @revisit In UML diagram, the return type is {@code Area}.
+     * @todo In UML diagram, the return type is {@code Area}.
      */
     @Override
     public abstract double getArea();

@@ -47,12 +47,11 @@ import org.opengis.geometry.primitive.Primitive;
  * complex, primitives may be aggregated many-to-many into composites for use as attributes
  * of features.
  *
- * @UML type GM_Complex
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  *
- * @revisit Some associations are commented out for now.
+ * @todo Some associations are commented out for now.
  * @module pending
  */
 public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implements Complex {

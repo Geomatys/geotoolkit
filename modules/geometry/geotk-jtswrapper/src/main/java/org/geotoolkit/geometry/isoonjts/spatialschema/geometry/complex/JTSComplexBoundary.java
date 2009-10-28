@@ -12,6 +12,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 // OpenGIS direct dependencies
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSBoundary;
+import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.ComplexBoundary;
 
 
@@ -21,7 +22,6 @@ import org.opengis.geometry.complex.ComplexBoundary;
  * objects shall return a {@code ComplexBoundary}, which is a collection of primitives
  * and a {@linkplain Complex complex} of dimension 1 less than the original object.
  *
- * @UML type GM_ComplexBoundary
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0

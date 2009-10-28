@@ -21,7 +21,6 @@ import org.opengis.geometry.coordinate.PointGrid;
 /**
  * A grid of points. The grid may be see as a sequences of equal length sequences.
  *  
- * @UML datatype GM_PointGrid
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -50,6 +49,7 @@ public class JTSPointGrid implements PointGrid {
      * @return The grid width.
      * @see PointArray#size
      */
+    @Override
     public int width() {
         return pointGrid[0].length();
     }
@@ -60,6 +60,7 @@ public class JTSPointGrid implements PointGrid {
      *
      * @return The grid height.
      */
+    @Override
     public int height() {
         return pointGrid.length;
     }
@@ -73,6 +74,7 @@ public class JTSPointGrid implements PointGrid {
      * @return The point at the given index.
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      */
+    @Override
     public DirectPosition get(int row, int column) throws IndexOutOfBoundsException {
         return getInternal( row, column );
     }
@@ -100,6 +102,7 @@ public class JTSPointGrid implements PointGrid {
      * @return The {@code dest} argument, or a new object if {@code dest} was null.
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      */
+    @Override
     public DirectPosition get(int row, int column, DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition target = new GeneralDirectPosition(getInternal( row, column ));
         
@@ -138,6 +141,7 @@ public class JTSPointGrid implements PointGrid {
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      * @throws UnsupportedOperationException if this grid is immutable.
      */
+    @Override
     public void set(int row, int column, DirectPosition position) throws IndexOutOfBoundsException,
                                                                          UnsupportedOperationException {
         DirectPosition target = new GeneralDirectPosition(getInternal(row, column));
@@ -155,6 +159,7 @@ public class JTSPointGrid implements PointGrid {
      * @return The row at the given index.
      * @throws IndexOutOfBoundsException if the index is out of bounds.
      */
+    @Override
     public PointArray getRow(int row) throws IndexOutOfBoundsException {
         return pointGrid[row];
     }
@@ -163,11 +168,11 @@ public class JTSPointGrid implements PointGrid {
      * Returns all rows in this array.
      *
      * @return The rows in this array.
-     * @UML mandatory row
      *
-     * @revisit Should changes in this list be forwarded to the underlying {@code PointGrid}?
+     * @todo Should changes in this list be forwarded to the underlying {@code PointGrid}?
      *          In the mean time, it is probably safe for implementor to make this list immutable.
      */
+    @Override
     public List/*<PointArray>*/ rows() {
         List returnable = new ArrayList(pointGrid.length);
         for (int i = 0; i < pointGrid.length; i++) {

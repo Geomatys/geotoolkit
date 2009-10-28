@@ -14,15 +14,15 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSComplex;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Boundary;
+import org.opengis.geometry.Geometry;
 
 
 /**
  * The abstract root data type for all the data types used to represent the boundary of geometric
  * objects. Any subclass of {@link Geometry} will use a subclass of {@code Boundary} to
- * represent its boundary through the operation {@link Geometry#getBoundary}. By the nature of
+ * represent its boundary through the operation {@link Geometry#getBoundary()}. By the nature of
  * geometry, boundary objects are cycles.
  *
- * @UML type GM_Boundary
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0

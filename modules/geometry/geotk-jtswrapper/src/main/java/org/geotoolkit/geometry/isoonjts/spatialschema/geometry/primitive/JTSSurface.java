@@ -22,6 +22,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
 import org.opengis.geometry.primitive.OrientableSurface;
 import org.opengis.geometry.primitive.Primitive;
+import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Surface;
 import org.opengis.geometry.primitive.SurfacePatch;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -44,7 +45,6 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * <strong>NOTE:</strong> Other than the restriction on orientability, no other "validity" condition is required for GM_Surface.
  * </font></blockquote>
  *
- * @UML type GM_Surface
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -163,8 +163,7 @@ public class JTSSurface extends AbstractJTSGeometry implements Surface {
     }
 
     /**
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.GeometryImpl#computeJTSPeer()
+     * {@inheritDoc }
      */
     @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {

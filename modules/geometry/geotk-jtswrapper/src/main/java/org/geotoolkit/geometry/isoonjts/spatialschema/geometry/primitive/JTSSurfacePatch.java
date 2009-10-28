@@ -25,7 +25,6 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.Abstract
  * Defines a homogeneous portion of a {@linkplain Surface surface}.
  * Each {@code SurfacePatch} shall be in at most one {@linkplain Surface surface}.
  *
- * @UML type GM_SurfacePatch
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -54,10 +53,10 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      * </font></blockquote>
      *
      * @return The owner of this surface patch, or {@code null} if none.
-     * @UML association surface
      *
      * @see Surface#getPatches
      */
+    @Override
     public Surface getSurface() {
         return null;
     }
@@ -72,8 +71,8 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      * subclasses to determine the position of this {@code SurfacePatch}.
      *
      * @return The interpolation mechanism.
-     * @UML operation interpolation
      */
+    @Override
     public SurfaceInterpolation getInterpolation() {
         return interpolation;
     }
@@ -89,36 +88,39 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      * <var>n</var>-times differentiable: "C<sup>n</sup>" continuity.
      *
      * @return The type of continuity between this surface patch and its immediate neighbors.
-     * @UML operation numDerivativesOnBoundary
      */
+    @Override
     public abstract int getNumDerivativesOnBoundary();
 
     /**
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.primitive.SurfacePatchImpl#getBoundary()
+     * {@inheritDoc }
      */
+    @Override
     public SurfaceBoundary getBoundary() {
         return boundary;
     }
 
     /**
-     * @param point
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.geometry.GenericSurfaceImpl#getUpNormal(org.opengis.geometry.coordinate.DirectPosition)
+     * {@inheritDoc }
      */
+    @Override
     public final double[] getUpNormal(DirectPosition point) {
         return new double [] { 0, 0, 1 };
     }
 
     /**
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.geometry.GenericSurfaceImpl#getPerimeter()
+     * {@inheritDoc }
      */
+    @Override
     public final double getPerimeter() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         return jtsGeom.getBoundary().getLength();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final double getArea() {
         com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
         return jtsGeom.getArea();
@@ -128,6 +130,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      * Retrieves the equivalent JTS geometry for this object.  Note that this
      * operation may be expensive if the geometry must be computed.
      */
+    @Override
     public Geometry getJTSGeometry() {
         if (jtsPeer == null) {
             jtsPeer = calculateJTSPeer();
@@ -140,6 +143,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      * next time it is requested.  This method will be called by the
      * underlying guts of the code when something has changed.
      */
+    @Override
     public void invalidateCachedJTSPeer() {
         jtsPeer = null;
     }

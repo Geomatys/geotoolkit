@@ -56,14 +56,15 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
     //  implement the *** interface
     //*************************************************************************
     
+    @Override
     public int getNumDerivativesOnBoundary() {
         return 0;
     }
 
     /**
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.primitive.SurfacePatchImpl#calculateJTSPeer()
+     * {@inheritDoc }
      */
+    @Override
     public com.vividsolutions.jts.geom.Geometry calculateJTSPeer() {
         SurfaceBoundary boundary = getBoundary();
         Ring exterior = boundary.getExterior();
@@ -84,14 +85,18 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
         return result;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public PolyhedralSurface getSurface() {
         return (PolyhedralSurface) super.getSurface();
     }
 
     /**
-     * @return
-     * @see org.opengis.geometry.coordinate.Polygon#getSpanningSurface()
+     * {@inheritDoc }
      */
+    @Override
     public List getSpanningSurface() {
         // Why the hell is this a list???
         return spanningSurface;

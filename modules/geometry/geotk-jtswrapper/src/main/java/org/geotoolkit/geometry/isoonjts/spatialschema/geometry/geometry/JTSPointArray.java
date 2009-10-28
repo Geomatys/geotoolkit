@@ -38,7 +38,6 @@ import org.opengis.geometry.coordinate.Position;
  * from the <A HREF="http://java.sun.com/j2se/1.5.0/docs/guide/collections/index.html">collection
  * framework</A>. Implementations are free to implement directly the {@link List} interface.
  *  
- * @UML datatype GM_PointArray
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -131,9 +130,9 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @throws IndexOutOfBoundsException if the index is out of bounds.
      *
      * @see List#get
-     * @see #get(int, DirectPosition)
+     * @see #getDirectPosition(int, org.opengis.geometry.DirectPosition)
      *
-     * @revisit Should we specify that changes to the returned point will not be reflected
+     * @todo Should we specify that changes to the returned point will not be reflected
      *          to this array, or should we left the decision to the implementor?
      */
     @Override
@@ -197,7 +196,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *
      * @see List#toArray
      *
-     * @revisit Should we specify that changes to the returned points will not be reflected
+     * @todo Should we specify that changes to the returned points will not be reflected
      *          into this array, or should we left the decision to the implementor?
      */
     @Override
@@ -216,7 +215,6 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * in the list, and vice-versa.
      *
      * @return The points in this array.
-     * @UML mandatory column
      */
     @Override
     public List<Position> positions() {

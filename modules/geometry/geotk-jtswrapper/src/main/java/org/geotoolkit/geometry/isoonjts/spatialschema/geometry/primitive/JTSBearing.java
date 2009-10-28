@@ -23,12 +23,11 @@ import org.opengis.geometry.primitive.Bearing;
  * is possible. If both a set of angles and a vector are given, then they shall be consistent
  * with one another.
  *
- * @UML datatype Bearing
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  *
- * @revisit Should we move this interface elsewhere (e.g. in some kind of units package)?
+ * @todo Should we move this interface elsewhere (e.g. in some kind of units package)?
  * @module pending
  */
 public class JTSBearing implements Bearing {
@@ -51,9 +50,8 @@ public class JTSBearing implements Bearing {
      * angles) a local plane parallel to the tangent plane of the reference surface.
      *
      * @return An array of length 0, 1 or 2 containing the azimuth and altitude angles.
-     * @UML operation angle
      *
-     * @revisit Should we split this method in {@code getAzimuth()} and
+     * @todo Should we split this method in {@code getAzimuth()} and
      *          {@code getAltitude()} methods instead? Should we provides
      *          a {@code getDimension()} method too?
      */
@@ -68,7 +66,6 @@ public class JTSBearing implements Bearing {
      * express as an arbitrary vector, in the coordinate system.
      *
      * @return The direction.
-     * @UML operation direction
      */
     @Override
     public double[] getDirection() {

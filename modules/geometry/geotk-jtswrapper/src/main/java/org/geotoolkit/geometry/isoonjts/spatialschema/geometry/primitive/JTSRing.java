@@ -38,7 +38,6 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * This implementation does not automatically close itself.  The isValid method
  * returns false if the curve is either not closed or crosses itself.
  *
- * @UML type GM_Ring
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0

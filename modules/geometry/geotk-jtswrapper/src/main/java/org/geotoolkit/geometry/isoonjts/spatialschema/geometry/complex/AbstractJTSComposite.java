@@ -11,7 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 import java.util.Collection;
 
-import org.opengis.geometry.Geometry;
+import org.opengis.geometry.complex.Complex;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.primitive.Primitive;
@@ -23,7 +23,6 @@ import org.opengis.geometry.primitive.Primitive;
  * values in datasets in which the underlying geometry has been decomposed, usually to expose its
  * topological nature.
  *
- * @UML type GM_Composite
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
@@ -45,10 +44,9 @@ public abstract class AbstractJTSComposite extends JTSComplex implements Composi
      * and all primitives on the boundary of these primitives, and so forth until
      * {@linkplain org.opengis.geometry.primitive.Point points} are included. Thus the
      * {@code generators} on {@code Composite} is a subset of the
-     * {@linkplain Complex#getElements elements} on {@linkplain Complex complex}.
+     * {@linkplain Complex#getElements() elements} on {@linkplain Complex complex}.
      *
      * @return The list of primitives in this composite.
-     * @UML association generator
      */
     @Override
     public Collection<? extends Primitive> getGenerators() {

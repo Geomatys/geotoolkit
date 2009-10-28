@@ -9,6 +9,7 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
+import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineSegment;
 
 
@@ -35,12 +36,11 @@ import org.opengis.geometry.coordinate.LineSegment;
  * <var>c</var>(<var>t</var>) = <var>c</var>(0)(1-<var>t</var>) + <var>c</var>(1)<var>t</var>
  * </blockquote>
  *  
- * @UML datatype GM_LineSegment
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  *
- * @see GeometryFactory#createLineSegment
+ * @see GeometryFactory#createLineString(java.util.List)
  * @module pending
  */
 public class JTSLineSegment extends JTSLineString implements LineSegment {

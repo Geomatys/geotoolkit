@@ -10,6 +10,7 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSBoundary;
+import org.opengis.geometry.primitive.Primitive;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 
@@ -20,7 +21,6 @@ import org.opengis.geometry.primitive.PrimitiveBoundary;
  * subtypes of {@link Primitive}. Since points have no boundary, no special subclass is needed
  * for their boundary.
  *
- * @UML type GM_PrimitiveBoundary
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0

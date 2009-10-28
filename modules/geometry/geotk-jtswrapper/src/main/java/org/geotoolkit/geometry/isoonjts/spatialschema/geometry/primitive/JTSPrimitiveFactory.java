@@ -28,6 +28,7 @@ import org.opengis.geometry.primitive.Point;
 import org.opengis.geometry.primitive.Primitive;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
+import org.opengis.geometry.primitive.Shell;
 import org.opengis.geometry.primitive.Solid;
 import org.opengis.geometry.primitive.SolidBoundary;
 import org.opengis.geometry.primitive.Surface;
@@ -69,7 +70,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     
     /**
      * Returns the coordinate reference system in use for all
-     * {@linkPlain Primitive primitive}geometric objects to be created through
+     * {@linkplain Primitive primitive}geometric objects to be created through
      * this interface.
      */
     @Override
@@ -90,7 +91,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      * coordinates. If the parameter is null, the position is left
      * uninitialized.
      * @param coordinates
-     * @return
+     * @return DirectPosition
      */
     public DirectPosition createDirectPosition(final double[] coordinates) {
         if(coordinates == null){
@@ -120,9 +121,9 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     }
 
     /**
-     * Takes a list of {@linkPlain CurveSegment curve segments}with the
+     * Takes a list of {@linkplain CurveSegment curve segments}with the
      * appropriate end-to-start relationships and creates a
-     * {@linkPlain Curve curve}. This may throw an IllegalArgumentException if
+     * {@linkplain Curve curve}. This may throw an IllegalArgumentException if
      * the List contains objects that are not instances of the CurveSegment
      * interface.
      */
@@ -177,9 +178,9 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     }
 
     /**
-     * Constructs a {@linkPlain Solid solid}by indicating its boundary as a
-     * collection of {@linkPlain Shell shells}organized into a
-     * {@linkPlain SolidBoundary solid boundary}. Since this specification is
+     * Constructs a {@linkplain Solid solid}by indicating its boundary as a
+     * collection of {@linkplain Shell shells}organized into a
+     * {@linkplain SolidBoundary solid boundary}. Since this specification is
      * limited to 3-dimensional coordinate reference systems, any solid is
      * definable by its boundary.
      * @param boundary

@@ -11,6 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.primitive.Point;
 
 
 /**
@@ -20,7 +21,6 @@ import org.opengis.geometry.coordinate.Position;
  * position either directly as a coordinate (variant direct) or indirectly as a reference
  * to a {@linkplain Point point} (variant indirect).
  *  
- * @UML datatype GM_Position
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0

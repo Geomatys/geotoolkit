@@ -13,6 +13,8 @@ import java.util.Set;
 
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.CompositeSurface;
+import org.opengis.geometry.primitive.Curve;
+import org.opengis.geometry.primitive.OrientableCurve;
 import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.OrientableSurface;
 import org.opengis.geometry.primitive.Primitive;
@@ -26,12 +28,11 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * Essentially, a composite surface is a collection of oriented surfaces that join in pairs on
  * common boundary curves and which, when considered as a whole, form a single surface.
  *
- * @UML type GM_CompositeSurface
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  *
- * @revisit This interface extends (indirectly) both {@link org.opengis.geometry.primitive.Primitive} and
+ * @todo This interface extends (indirectly) both {@link org.opengis.geometry.primitive.Primitive} and
  *          {@link org.opengis.geometry.complex.Complex}. Concequently, there is a clash in the semantics
  *          of some set theoretic operation. Specifically, {@code Primitive.contains(...)}
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
@@ -50,7 +51,6 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * surfaces} would be added to the curves in the generator list.
      *
      * @return The list of orientable surfaces in this composite.
-     * @UML association generator
      */
     @Override
     public Set<OrientableSurface> getGenerators() {
@@ -77,7 +77,6 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * </font></blockquote>
      *
      * @return The sets of positions on the boundary.
-     * @UML operation boundary
      */
     @Override
     public SurfaceBoundary getBoundary() {
@@ -88,9 +87,8 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * Returns the owner of this orientable surface, or {@code null} if none.
      *
      * @return The owner of this orientable surface, or {@code null} if none.
-     * @UML association composite
      *
-     * @revisit I'm not sure to interpret correctly the ISO specification.
+     * @todo I'm not sure to interpret correctly the ISO specification.
      *          Sound like ISO returns an array (or a sequence) here.
      */
     @Override
@@ -106,9 +104,8 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * Determines which of the two possible orientations this object represents.
      *
      * @return +1 for a positive orientation, or -1 for a negative orientation.
-     * @UML operation orientation
      *
-     * @revisit The UML specify a {@code Sign} return type.
+     * @todo The UML specify a {@code Sign} return type.
      *          Should we create a {@code Sign} class?
      */
     @Override
@@ -124,7 +121,6 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * for each geometric object.
      *
      * @return The primitive, never {@code null}.
-     * @UML association primitive
      *
      * @see Primitive#getProxy
      */
@@ -145,7 +141,6 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * type of the primitive.
      *
      * @return The sets of positions on the boundary.
-     * @UML operation boundary
      */
 /// public PrimitiveBoundary getBoundary();
 
@@ -166,9 +161,8 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * computer calculations.
      *
      * @return The set of primitives contained into this primitive.
-     * @UML association containedPrimitive
      *
-     * @revisit Using a {@link Set} returns type allows the user to add or remove element in
+     * @todo Using a {@link Set} returns type allows the user to add or remove element in
      *          this set at his convenience. Is it the right interpretation of this specification?
      *
      * @see #getContainingPrimitives
@@ -182,9 +176,8 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * Returns the {@code Primitive}s which are by definition coincident with this one.
      *
      * @return The set of primitives which contains this primitive.
-     * @UML association containingPrimitive
      *
-     * @revisit Using a {@link Set} returns type allows the user to add or remove element in
+     * @todo Using a {@link Set} returns type allows the user to add or remove element in
      *          this set at his convenience. Is it the right interpretation of this specification?
      *
      *          Should we stretch out some relation with contained primitive? For example
@@ -205,9 +198,8 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * direction (from primitive to complex), depending on the implementation.
      *
      * @return The set of complexex which contains this primitive.
-     * @UML association complex
      *
-     * @revisit Does it means that {@code Primitive} can't be immutable, since
+     * @todo Does it means that {@code Primitive} can't be immutable, since
      *          adding this primitive to a complex will change this set?
      */
     @Override
@@ -224,11 +216,10 @@ public class JTSCompositeSurface extends AbstractJTSComposite implements Composi
      * {@linkplain Curve curve} or {@linkplain Surface surface}.
      *
      * @return The orientable primitives as an array of length 2, or {@code null} if none.
-     * @UML association proxy
      *
      * @see OrientablePrimitive#getPrimitive
      *
-     * @revisit Should we use the plural form for the method names?
+     * @todo Should we use the plural form for the method names?
      */
     @Override
     public OrientablePrimitive[] getProxy() {

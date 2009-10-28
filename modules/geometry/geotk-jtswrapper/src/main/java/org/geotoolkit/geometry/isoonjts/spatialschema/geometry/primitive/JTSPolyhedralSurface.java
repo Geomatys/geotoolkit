@@ -155,8 +155,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
     }
 
     /**
-     * @return
-     * @see com.polexis.lite.spatialschema.geometry.GeometryImpl#computeJTSPeer()
+     * {@inheritDoc }
      */
     @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {

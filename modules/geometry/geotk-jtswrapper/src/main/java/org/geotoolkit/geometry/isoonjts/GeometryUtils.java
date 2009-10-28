@@ -102,7 +102,7 @@ public final class GeometryUtils {
      * Converts an {@code Envelope} to a "minx, miny, maxx, maxy" array.
      * @param envelope
      * @param unit
-     * @return
+     * @return double[]
      */
     public static double[] getBBox(final Envelope envelope, final Unit unit) {
         final double[] returnable = new double[4];
@@ -155,7 +155,7 @@ public final class GeometryUtils {
      * @param maxx
      * @param maxy
      * @param unit
-     * @return
+     * @return Envelope
      */
     public static Envelope createEnvelope(
             final CoordinateReferenceSystem crs,
@@ -228,7 +228,7 @@ public final class GeometryUtils {
      * @param miny
      * @param maxx
      * @param maxy
-     * @return
+     * @return boolean
      */
     public static boolean within(
             final Envelope envelope, 
@@ -268,7 +268,7 @@ public final class GeometryUtils {
      * DOCUMENT ME.
      * @param envelope1
      * @param envelope2
-     * @return
+     * @return boolean
      */
     public static boolean equals(final Envelope envelope1, final Envelope envelope2) {
         //getLog().debug("PENDING(jdc): implement the method instead of returning false...");
@@ -853,7 +853,7 @@ public final class GeometryUtils {
      * Returns the {@code CoordinateSystemAxis} with the given {@code AxisDirection}.
      * @param cs the {@code CoordinateSystem} to check
      * @param direction the {@code AxisDirection} to check for
-     * @return
+     * @return CoordinateSystemAxis
      */
     public static CoordinateSystemAxis getDirectedAxis(
             final CoordinateSystem cs, 

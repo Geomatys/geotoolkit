@@ -31,12 +31,11 @@ import org.opengis.geometry.primitive.CurveBoundary;
  * point for element i+1 must be identical to the end point of element i.</strong>
  * This may change for later versions when arcs are supported.
  * 
- * @UML type GM_CompositeCurve
  * @author ISO/DIS 19107
  * @author <A HREF="http://www.opengis.org">OpenGIS&reg; consortium</A>
  * @version 2.0
  *
- * @revisit This interface extends (indirectly) both {@link org.opengis.geometry.primitive.Primitive} and
+ * @todo This interface extends (indirectly) both {@link org.opengis.geometry.primitive.Primitive} and
  *          {@link org.opengis.geometry.complex.Complex}. Concequently, there is a clash in the semantics
  *          of some set theoretic operation. Specifically, {@code Primitive.contains(...)}
  *          (returns FALSE for end points) is different from {@code Complex.contains(...)}
@@ -74,7 +73,6 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
      * added to the curves in the generator list.
      *
      * @return The list of orientable curves in this composite.
-     * @UML association generator
      */
     @Override
     public final List<OrientableCurve> getGenerators() {
@@ -89,9 +87,8 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
      * Returns the owner of this orientable curve, or {@code null} if none.
      *
      * @return The owner of this orientable curve, or {@code null} if none.
-     * @UML association composite
      *
-     * @revisit I'm not sure to interpret correctly the ISO specification.
+     * @todo I'm not sure to interpret correctly the ISO specification.
      *          Sound like ISO returns an array (or a sequence) here.
      */
     @Override
