@@ -18,6 +18,7 @@ package org.geotoolkit.filter.text.commons;
 
 import org.geotoolkit.filter.text.cql2.CQLCompiler;
 import org.geotoolkit.filter.text.ecql.ECQL;
+import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.generated.parsers.CQLParser;
 import org.geotoolkit.filter.text.generated.parsers.Token;
 
@@ -31,7 +32,7 @@ import org.geotoolkit.filter.text.generated.parsers.Token;
  * <p>
  * The token class, used by the specific parser, requires to be adapted to
  * implementing the interface {@link IToken} which is used by the
- * {@link CQLFilterBuilder} and {@link ECQL}}.
+ * {@link CQL} and {@link ECQL}}.
  * </p>
  * <p>
  * Warning: This component is not published. It is part of module implementation. 

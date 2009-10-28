@@ -116,7 +116,6 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
  *   <h3>Spatial Functions</h3>
  * The set of spatial operations or functions that are supported by the
  * specific database are reported with a {@link FilterCapabilities} instance.
- * This is specified using {@link #setFilterCapabilities(FilterCapabilities)}.
  * </p>
  *
  * @author Justin Deoliveira, The Open Planning Project
@@ -207,7 +206,7 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
      * dbms at a time. If set to a value less or equal than zero, all the records will be
      * read in one shot, severily increasing the memory requirements to read a big number
      * of features.
-     * @return
+     * @return int size
      */
     public int getFetchSize() {
         return fetchSize;
@@ -442,7 +441,7 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
      * to sql types and generate a 'CREATE TABLE' statement against the underlying
      * database.
      * </p>
-     * @see DataStore#createSchema(SimpleFeatureType)
+     * @see DataStore#createSchema(org.opengis.feature.type.FeatureType)
      *
      * @throws IllegalArgumentException If the table already exists.
      * @throws IOException If the table cannot be created due to an error.
@@ -2171,14 +2170,10 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
      * @param featureType
      *            the feature type that the query must return (may contain less
      *            attributes than the native one)
-     * @param attributes
-     *            the properties queried, or {@link Query#ALL_NAMES} to gather
-     *            all of them
      * @param query
      *            the query to be run. The type name and property will be ignored, as they are
      *            supposed to have been already embedded into the provided feature type
-     * @param sort
-     *            sort conditions
+     * @return String
      */
     protected String selectSQL(final SimpleFeatureType featureType, final Query query) throws IOException {
         final StringBuffer sql = new StringBuffer();
@@ -2288,9 +2283,6 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
      * @param featureType
      *            the feature type that the query must return (may contain less
      *            attributes than the native one)
-     * @param attributes
-     *            the properties queried, or {@link Query#ALL_NAMES} to gather
-     *            all of them
      * @param query
      *            the query to be run. The type name and property will be ignored, as they are
      *            supposed to have been already embedded into the provided feature type
@@ -3362,7 +3354,7 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
      *
      * @param hints	  hints passed in
      * @param gatt   Geometry attribute descriptor
-     * @param param  {@link Hints#GEOMETRY_GENERALIZATION} or {@link Hints#GEOMETRY_SIMPLIFICATION}
+     * @param param  {@link HintsPending#GEOMETRY_GENERALIZATION} or {@link HintsPending#GEOMETRY_SIMPLIFICATION}
      * @return true to indicate reducing the geometry, false otherwise
      */
     protected boolean isGeometryReduceRequired(final Hints hints, final GeometryDescriptor gatt,

@@ -230,7 +230,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     /**
      * Performs the encoding, sends the encoded sql to the writer passed in.
      *
-     * @param filter the Filter to be encoded.
+     * @param expression the Filter to be encoded.
      *
      * @throws OpenGISFilterToOpenGISFilterToSQLEncoderException If filter type not supported, or if there
      *         were io problems.
@@ -249,7 +249,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      *  new FilterToSQL(out).encode(filter);
      *  out.getBuffer().toString();
      *
-     * @param filter
+     * @param expression
      * @return a string representing the filter encoded to SQL.
      * @throws FilterToSQLException
      */
@@ -366,11 +366,11 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     // BEGIN IMPLEMENTING org.opengis.filter.FilterVisitor METHODS
 
     /**
-     * @see {@link FilterVisitor#visit(ExcludeFilter, Object)}
-     *
      * Writes the SQL for the IncludeFilter by writing "FALSE".
      *
-     * @param the filter to be visited
+     * @param filter the filter to be visited
+     *
+     * @see FilterVisitor#visit(org.opengis.filter.ExcludeFilter, java.lang.Object)
      */
     @Override
     public Object visit(ExcludeFilter filter, Object extraData) {
@@ -384,12 +384,9 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
 
 
     /**
-     * @see {@link FilterVisitor#visit(IncludeFilter, Object)}
-     *
      * Writes the SQL for the IncludeFilter by writing "TRUE".
      *
-     * @param the filter to be visited
-     *
+     * @see FilterVisitor#visit(org.opengis.filter.IncludeFilter, java.lang.Object)
      */
     @Override
     public Object visit(IncludeFilter filter, Object extraData) {
@@ -862,7 +859,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     }
 
     /**
-     * @see {@link FilterVisitor#visit()}
+     * @see FilterVisitor
      */
     protected Object visitBinarySpatialOperator(BinarySpatialOperator filter, Object extraData) {
         throw new RuntimeException(
@@ -1071,7 +1068,7 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
     /**
      * Writes sql for a function expression.
      *
-     * @param expression a function expression
+     * @param function a function expression
      *
      * @throws RuntimeException If an IO error occurs.
      */

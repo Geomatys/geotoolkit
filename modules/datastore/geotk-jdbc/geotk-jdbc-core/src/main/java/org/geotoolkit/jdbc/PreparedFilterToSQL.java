@@ -63,7 +63,7 @@ public class PreparedFilterToSQL extends FilterToSQL {
 
     /**
      * Default constructor
-     * @deprecated Use {@link PreparedFilterToSQL(PreparedStatementSQLDialect)} instead
+     * @deprecated Use {@link #PreparedFilterToSQL(org.geotoolkit.jdbc.PreparedStatementSQLDialect)} instead
      */
     public PreparedFilterToSQL() {
         this.dialect = null;
@@ -81,7 +81,7 @@ public class PreparedFilterToSQL extends FilterToSQL {
     /**
      * If true (default) a sql statement with literal placemarks is created, otherwise
      * a normal statement is created
-     * @return
+     * @return boolean
      */
     public boolean isPrepareEnabled() {
         return prepareEnabled;
@@ -208,7 +208,7 @@ public class PreparedFilterToSQL extends FilterToSQL {
 
     /**
      * Returns the list of native SRID for each literal that happens to be a geometry, or null otherwise
-     * @return
+     * @return List<Integer>
      */
     public List<Integer> getSRIDs() {
         return SRIDs;

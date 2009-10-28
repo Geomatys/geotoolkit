@@ -76,10 +76,6 @@ public class WKBAttributeIO {
         }
     }
 
-    /**
-     * @see org.geotools.data.jdbc.attributeio.AttributeIO#read(java.sql.ResultSet,
-     *      int)
-     */
     public Object read(final ResultSet rs, final String columnName) throws IOException {
         try {
             final byte bytes[] = rs.getBytes(columnName);
@@ -92,10 +88,6 @@ public class WKBAttributeIO {
         }
     }
 
-    /**
-     * @see org.geotools.data.jdbc.attributeio.AttributeIO#read(java.sql.ResultSet,
-     *      int)
-     */
     public Object read(final ResultSet rs, final int columnIndex) throws IOException {
         try {
             final byte bytes[] = rs.getBytes(columnIndex);
@@ -108,9 +100,6 @@ public class WKBAttributeIO {
         }
     }
 
-    /**
-     * @see org.geotools.data.jdbc.attributeio.AttributeIO#write(java.sql.PreparedStatement, int, java.lang.Object)
-     */
     public void write(final PreparedStatement ps, final int position, final Object value)
             throws IOException
     {
@@ -130,7 +119,6 @@ public class WKBAttributeIO {
      * Turns a char that encodes four bits in hexadecimal notation into a byte
      *
      * @param c
-     *
      */
     public static byte getFromChar(final char c) {
         if (c <= '9') {
@@ -158,7 +146,6 @@ public class WKBAttributeIO {
     /**
      * Accelerates data loading compared to the plain InStream shipped along with JTS
      * @author Andrea Aime - TOPP
-     *
      */
     private static class ByteArrayInStream implements InStream {
 

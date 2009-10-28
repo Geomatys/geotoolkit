@@ -45,6 +45,8 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
+import java.sql.DatabaseMetaData;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -243,16 +245,16 @@ public abstract class SQLDialect {
      * Implementing this method is optional. It is used to allow database to
      * perform custom type mappings based on various column metadata. It is called
      * before the mappings registered in {@link #registerSqlTypeToClassMappings(Map)}
-     * and {@link #registerSqlTypeNameToClassMappings(Map) are used to determine
+     * and {@link #registerSqlTypeNameToClassMappings(Map)} are used to determine
      * the mapping. Subclasses should implement as needed, this default implementation
      * returns <code>null</code>.
      * </p>
      * <p>
      * The <tt>columnMetaData</tt> argument is provided from
-     * {@link DatabaseMetaData#getColumns(String, String, String, String)}.
+     * {@link DatabaseMetaData#getColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
      * </p>
      * @param columnMetaData The column metadata
-     * @param The connection used to retrieve the metadata
+     * @param cx The connection used to retrieve the metadata
      * @return The class mapped to the to column, or <code>null</code>.
      */
     public Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException {
@@ -529,7 +531,7 @@ public abstract class SQLDialect {
      * <p>Most overrides will try out to decode the official EPSG code first, and fall back on
      * the custom database definition otherwise</p>
      * @param srid
-     * @return
+     * @return CoordinateReferenceSystem
      */
     public CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException {
         try {
@@ -565,9 +567,8 @@ public abstract class SQLDialect {
      * the one referenced by <tt>column</tt>.
      * </p>
      * @param rs A result set
-     * @param column Index into the result set which points at the spatial extent
-     * value.
-     * @param The database connection.
+     * @param column Index into the result set which points at the spatial extent value.
+     * @param cx The database connection.
      */
     public abstract Envelope decodeGeometryEnvelope(final ResultSet rs, final int column, final Connection cx)
         throws SQLException, IOException;
@@ -606,7 +607,7 @@ public abstract class SQLDialect {
     /**
      * Encodes a generalized geometry using a DB provided SQL function if available
      * If not supported, subclasses should not implement
-     * Only called if {@link Hints#GEOMETRY_GENERALIZATION is supported}
+     * Only called if {@link HintsPending#GEOMETRY_GENERALIZATION is supported}
      *
      * Example:
      * </p>
@@ -635,9 +636,8 @@ public abstract class SQLDialect {
      *
      * Encodes a simplified geometry using a DB provided SQL function if available
      * If not supported, subclasses should not implement
-     * Only called if {@link Hints#GEOMETRY_SIMPLIFICATION is supported}
-     * @see SQLDialect#encodeGeometryColumnGeneralized(GeometryDescriptor, StringBuffer, Double)
-     *
+     * Only called if {@link HintsPending#GEOMETRY_SIMPLIFICATION is supported}
+     * @see #encodeGeometryColumnGeneralized(org.opengis.feature.type.GeometryDescriptor, int, java.lang.StringBuffer, java.lang.Double)
      */
     public void encodeGeometryColumnSimplified(final GeometryDescriptor gatt, final int srid,
                                                final StringBuffer sql, final Double distance)
@@ -680,10 +680,12 @@ public abstract class SQLDialect {
      * Decodes a geometry value from the result of a query specifying the column
      * as an index.
      * <p>
-     * See {@link #decodeGeometryValue(GeometryDescriptor, ResultSet, String, GeometryFactory)}
+     * @see #decodeGeometryValue(org.opengis.feature.type.GeometryDescriptor, java.sql.ResultSet,
+     * java.lang.String, com.vividsolutions.jts.geom.GeometryFactory, java.sql.Connection).
      * for a more in depth description.
      * </p>
-     * @see {@link #decodeGeometryValue(GeometryDescriptor, ResultSet, String, GeometryFactory)}.
+     * @see #decodeGeometryValue(org.opengis.feature.type.GeometryDescriptor, java.sql.ResultSet,
+     * java.lang.String, com.vividsolutions.jts.geom.GeometryFactory, java.sql.Connection).
      */
     public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
         final int column, final GeometryFactory factory, final Connection cx ) throws IOException, SQLException {
@@ -847,7 +849,7 @@ public abstract class SQLDialect {
     /**
      * Returns true if this dialect can encode both {@linkplain Query#getStartIndex()}
      * and {@linkplain Query#getMaxFeatures()} into native SQL.
-     * @return
+     * @return boolean
      */
     public boolean isLimitOffsetSupported() {
         return false;
@@ -869,8 +871,8 @@ public abstract class SQLDialect {
      *
      * possible hints (but not limited to)
      *
-     * {@link Hints#GEOMETRY_GENERALIZATION}
-     * {@link Hints#GEOMETRY_SIMPLIFICATION}
+     * {@link HintsPending#GEOMETRY_GENERALIZATION}
+     * {@link HintsPending#GEOMETRY_SIMPLIFICATION}
      *
      * @param hints
      */

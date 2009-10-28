@@ -313,7 +313,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      * Override this to return a good validation query (a very quick one, such as one that
      * asks the database what time is it) or return null if the factory does not support
      * validation.
-     * @return
+     * @return String fast query
      */
     protected abstract String getValidationQuery();
 
@@ -321,7 +321,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      * Builds up the JDBC url in a jdbc:<database>://<host>:<port>/<dbname>
      * Override if you need a different setup
      * @param params
-     * @return
+     * @return String url
      * @throws IOException
      */
     protected String getJDBCUrl(final ParameterValueGroup params) throws IOException {
