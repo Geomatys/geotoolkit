@@ -396,7 +396,7 @@
         <configuration>
           <source>1.6</source>       <!-- The -source argument for the Java compiler.   -->
           <target>1.6</target>       <!-- The -target argument for the Java compiler.   -->
-          <debug>false</debug>       <!-- Whether to include debugging information.     -->
+          <debug>true</debug>       <!-- Whether to include debugging information.     -->
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
           <showWarnings>true</showWarnings>
@@ -732,5 +732,6 @@
     <module>modules</module>
   </modules>
 </project>
+
 
 

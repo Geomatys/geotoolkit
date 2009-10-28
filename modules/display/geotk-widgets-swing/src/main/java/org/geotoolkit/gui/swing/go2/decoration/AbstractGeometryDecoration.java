@@ -136,6 +136,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
 
         //prepare datas for geometry painting
         for(final Geometry geo : geometries){
+            if(geo == null) continue;
             final DefaultProjectedGeometry projected = new DefaultProjectedGeometry(geo);
             projected.setObjToDisplay(new AffineTransform2D(objToDisp));
             try {

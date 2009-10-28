@@ -32,55 +32,55 @@ public class MultiPolygonDelegate extends AbstractMouseDelegate {
         super(handler);
     }
 
-    @Override
-    public void fireStateChange() {
-        coords.clear();
-        geoms.clear();
-        nbRightClick = 0;
-        inCreation = false;
-        hasEditionGeometry = false;
-        hasGeometryChanged = false;
-        editedFeatureID = null;
-        editedNodes.clear();
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        final int button = e.getButton();
-
-        if (button == MouseEvent.BUTTON1) {
-            nbRightClick = 0;
-            coords.add(editionDecoration.toCoord(e.getX(), e.getY()));
-            updateCreationGeoms();
-        } else if (button == MouseEvent.BUTTON3) {
-            nbRightClick++;
-            if (nbRightClick == 1) {
-                inCreation = false;
-                if (coords.size() > 2) {
-                    if (geoms.size() > 0) {
-                        geoms.remove(geoms.size() - 1);
-                    }
-                    Geometry geo = EditionHelper.createPolygon(coords);
-                    geoms.add(geo);
-                } else if (coords.size() > 0) {
-                    if (geoms.size() > 0) {
-                        geoms.remove(geoms.size() - 1);
-                    }
-                }
-            } else {
-                if (geoms.size() > 0) {
-                    Geometry geo = EditionHelper.createMultiPolygon(geoms);
-                    editionDecoration.editAddGeometry(new Geometry[]{geo});
-                    nbRightClick = 0;
-                    geoms.clear();
-                }
-            }
-            coords.clear();
-        }
-
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
+//    @Override
+//    public void fireStateChange() {
+//        coords.clear();
+//        geoms.clear();
+//        nbRightClick = 0;
+//        inCreation = false;
+//        hasEditionGeometry = false;
+//        hasGeometryChanged = false;
+//        editedFeatureID = null;
+//        editedNodes.clear();
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
+//
+//    @Override
+//    public void mouseClicked(MouseEvent e) {
+//        final int button = e.getButton();
+//
+//        if (button == MouseEvent.BUTTON1) {
+//            nbRightClick = 0;
+//            coords.add(editionDecoration.toCoord(e.getX(), e.getY()));
+//            updateCreationGeoms();
+//        } else if (button == MouseEvent.BUTTON3) {
+//            nbRightClick++;
+//            if (nbRightClick == 1) {
+//                inCreation = false;
+//                if (coords.size() > 2) {
+//                    if (geoms.size() > 0) {
+//                        geoms.remove(geoms.size() - 1);
+//                    }
+//                    Geometry geo = EditionHelper.createPolygon(coords);
+//                    geoms.add(geo);
+//                } else if (coords.size() > 0) {
+//                    if (geoms.size() > 0) {
+//                        geoms.remove(geoms.size() - 1);
+//                    }
+//                }
+//            } else {
+//                if (geoms.size() > 0) {
+//                    Geometry geo = EditionHelper.createMultiPolygon(geoms);
+//                    editionDecoration.editAddGeometry(new Geometry[]{geo});
+//                    nbRightClick = 0;
+//                    geoms.clear();
+//                }
+//            }
+//            coords.clear();
+//        }
+//
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
 }

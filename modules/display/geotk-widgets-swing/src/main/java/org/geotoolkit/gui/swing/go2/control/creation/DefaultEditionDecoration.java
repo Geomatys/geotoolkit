@@ -107,18 +107,18 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultEditionDecoration.class);
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+//    private static final Logger LOGGER = Logging.getLogger(DefaultEditionDecoration.class);
+//    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+//    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+//                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
-    private static final Icon ICON_EDIT = IconBundle.getInstance().getIcon("16_edit_geom");
-    private static final Icon ICON_MULTI_POINT = IconBundle.getInstance().getIcon("16_multi_point");
-    private static final Icon ICON_MULTI_LINE = IconBundle.getInstance().getIcon("16_multi_line");
-    private static final Icon ICON_MULTI_POLYGON = IconBundle.getInstance().getIcon("16_multi_polygon");
-    private static final Icon ICON_SINGLE_POINT = IconBundle.getInstance().getIcon("16_single_point");
-    private static final Icon ICON_SINGLE_LINE = IconBundle.getInstance().getIcon("16_single_line");
-    private static final Icon ICON_SINGLE_POLYGON = IconBundle.getInstance().getIcon("16_single_polygon");
+//    private static final Icon ICON_EDIT = IconBundle.getInstance().getIcon("16_edit_geom");
+//    private static final Icon ICON_MULTI_POINT = IconBundle.getInstance().getIcon("16_multi_point");
+//    private static final Icon ICON_MULTI_LINE = IconBundle.getInstance().getIcon("16_multi_line");
+//    private static final Icon ICON_MULTI_POLYGON = IconBundle.getInstance().getIcon("16_multi_polygon");
+//    private static final Icon ICON_SINGLE_POINT = IconBundle.getInstance().getIcon("16_single_point");
+//    private static final Icon ICON_SINGLE_LINE = IconBundle.getInstance().getIcon("16_single_line");
+//    private static final Icon ICON_SINGLE_POLYGON = IconBundle.getInstance().getIcon("16_single_polygon");
 
     private static final Color MAIN_COLOR = Color.RED;
 
@@ -219,9 +219,9 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 //        }
 //    };
 
-    private final UIEventProxy eventProxy = new UIEventProxy();
-    private final ButtonGroup group = new ButtonGroup();
-    private final JComboBox guiLayers = new JComboBox();
+//    private final UIEventProxy eventProxy = new UIEventProxy();
+//    private final ButtonGroup group = new ButtonGroup();
+//    private final JComboBox guiLayers = new JComboBox();
     
 //    private final JButton guiStart = new JButton(startAction);
 //    private final JButton guiEnd = new JButton(endAction);
@@ -306,7 +306,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 //        multiPointAction.setEnabled(false);
 //        multiPolygonAction.setEnabled(false);
 //        guiEnd.setEnabled(false);
-        eventProxy.delegate = null;
+//        eventProxy.delegate = null;
 //        setToolsPane(null);
     }
 
@@ -333,29 +333,9 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
     @Override
     public void setMap2D(Map2D map2d){
         super.setMap2D(map2d);
-
-        guiLayers.setEnabled(false);
-
-        final List<Object> objects = new ArrayList<Object>();
-        objects.add("-");
-
-        if(map != null){
-            AbstractContainer2D container = map.getCanvas().getContainer();
-            if(container instanceof ContextContainer2D){
-                guiLayers.setEnabled(true);
-                ContextContainer2D cc = (ContextContainer2D) container;
-                objects.addAll(cc.getContext().layers());
-            }
-        }
-
-        guiLayers.setModel(new ListComboBoxModel(objects));
-        guiLayers.setSelectedIndex(0);
     }
 
-    public UIEventProxy getUIEventProxy() {
-        return eventProxy;
-    }
-    
+
     @Override
     protected void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
@@ -428,390 +408,390 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         g2.setColor(Color.BLACK);
         g2.drawRect((int)crds[0]-4, (int)crds[1]-4, 8, 8);
     }
-
-    public FeatureMapLayer getEditedLayer(){
-        MapLayer layer = (MapLayer) guiLayers.getSelectedItem();
-
-        if(layer instanceof FeatureMapLayer){
-            return (FeatureMapLayer) layer;
-        }else{
-            return null;
-        }
-    }
-
-    //--------------------Geometry Edition--------------------------------------
-
-    /**
-     * transform a mouse coordinate in JTS Geometry using the CRS of the mapcontext
-     * @param mx : x coordinate of the mouse on the map (in pixel)
-     * @param my : y coordinate of the mouse on the map (in pixel)
-     * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
-     */
-    public Polygon mousePositionToGeometry(int mx, int my) throws NoninvertibleTransformException {
-        Coordinate[] coord = new Coordinate[5];
-        int taille = 4;
-
-        coord[0] = toCoord(mx - taille, my - taille);
-        coord[1] = toCoord(mx - taille, my + taille);
-        coord[2] = toCoord(mx + taille, my + taille);
-        coord[3] = toCoord(mx + taille, my - taille);
-        coord[4] = coord[0];
-
-        LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
-        return GEOMETRY_FACTORY.createPolygon(lr1, null);
-    }
-
-    public void editAddGeometry(Geometry[] geoms) {
-
-        FeatureMapLayer editionLayer = getEditedLayer();
-
-        if (editionLayer != null) {
-
-            for (Geometry geom : geoms) {
-                SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
-                Object[] values = new Object[featureType.getAttributeCount()];
-
-                AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
-
-                final CoordinateReferenceSystem dataCrs = editionLayer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
-
-                try {
-                    geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
-                }
-
-                List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
-                for (int i = 0,  n = lst.size(); i < n; i++) {
-                    AttributeDescriptor desc = lst.get(i);
-
-                    if (desc.equals(geomAttribut)) {
-                        values[i] = geom;
-                    } else {
-                        values[i] = desc.getDefaultValue();
-                    }
-                }
-
-                SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
-                collection.add(sf);
-
-                DefaultTransaction transaction = null;
-                Transaction oldTransaction = null;
-                FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
-                try {
-//                    String featureName = data.getTypeNames()[0]; // there is only one in a shapefile
-
-                    // Create the DefaultTransaction Object
-                    transaction = new DefaultTransaction();
-
-//                    String name = editionLayer.getFeatureSource().getName().getLocalPart();
-//                    try {
-//                        //GR: question: why not just editionLayer.getFeatureSource()?
-//                        FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
-//                        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
-//                    } catch (IOException e) {
-//                        // Tell it the name of the shapefile it should look for in our DataStore
-//                        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) data.getFeatureSource(featureName);
-//                    }
-
-                    store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-
-                    // Then set the transaction for that FeatureStore
-                    oldTransaction = store.getTransaction();
-                    store.setTransaction(transaction);
-
-                    store.addFeatures(collection);
-                    transaction.commit();
-                } catch (Exception eek) {
-                    eek.printStackTrace();
-                    try {
-                        store.getTransaction().rollback();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } finally {
-                    transaction.close();
-                    store.setTransaction(oldTransaction);
-                }
-
-
-            }
-
-            map.getCanvas().getController().repaint();
-        }
-
-    }
-
-    public void validateModifiedGeometry(final Geometry geo, final String ID) {
-
-        if (geo == null || ID == null) {
-            throw new NullPointerException();
-        }
-
-
-        final FeatureMapLayer editionLayer = getEditedLayer();
-        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
-        
-        if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
-
-//            String name = editionLayer.getFeatureSource().getName().getLocalPart();
-//            try {
-//                //GR question: why not just editionLayer.getFeatureSource()?
-//                FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
-//            } catch (IOException e) {
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//            }
-
-            store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//                    store.getDataStore().dispose();
-
-            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
-            Transaction previoustransaction = store.getTransaction();
-
-            store.setTransaction(transaction);
-            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-
-            SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-            AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
-
-            final CoordinateReferenceSystem dataCrs = store.getSchema().getCoordinateReferenceSystem();
-
-            try {
-                final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
-                store.updateFeatures(geomAttribut, geom, filter);
-                transaction.commit();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                try {
-                    transaction.rollback();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } finally {
-                transaction.close();
-                store.setTransaction(Transaction.AUTO_COMMIT);
-            }
-
-            map.getCanvas().getController().repaint();
-        }
-
-    }
-
-    public void removeSelectedGeometry(final String ID) {
-
-        if (ID == null) {
-            throw new NullPointerException();
-        }
-
-        FeatureMapLayer editionLayer = getEditedLayer();
-
-        FeatureStore<SimpleFeatureType, SimpleFeature> store;
-        if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
-            store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-
-            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
-
-            store.setTransaction(transaction);
-            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-
-            try {
-                store.removeFeatures(filter);
-                transaction.commit();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                try {
-                    transaction.rollback();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } finally {
-                transaction.close();
-                store.setTransaction(Transaction.AUTO_COMMIT);
-            }
-
-            map.getCanvas().getController().repaint();
-        }
-
-    }
-
-
-    public Point toJTS(int x, int y){
-        Coordinate coord = toCoord(x, y);
-        Point geom = GEOMETRY_FACTORY.createPoint(coord);                
-        return geom;
-    }
-
-    public Coordinate toCoord(int x, int y){
-        AffineMatrix3 trs = map.getCanvas().getController().getTransform();
-        AffineTransform dispToObj;
-        try {
-            dispToObj = trs.createInverse();
-        } catch (NoninvertibleTransformException ex) {
-            dispToObj = new AffineTransform();
-            LOGGER.log(Level.SEVERE, null, ex);
-        }
-        double[] crds = new double[]{x,y};
-        dispToObj.transform(crds, 0, crds, 0, 1);
-        return new Coordinate(crds[0], crds[1]);
-    }
-
-    /**
-     * 
-     * @param geom : in canvas objective CRS
-     * @param layer : target layer filter
-     * @return geometry filter
-     */
-    public Filter toFilter(Geometry poly, FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
-
-        final String geoStr = fl.getFeatureSource().getSchema().getGeometryDescriptor().getLocalName();
-        final Expression geomField = FF.property(geoStr);
-
-        final CoordinateReferenceSystem dataCrs = fl.getFeatureSource().getSchema().getCoordinateReferenceSystem();
-
-        final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
-
-        final Expression geomData = FF.literal(dataPoly);
-        final Filter f = FF.intersects(geomField, geomData);
-
-        return f;
-    }
-
-    //---------------------Memory Layer-----------------------------------------
-
-    public void setMemoryLayerGeometry(List<Geometry> geoms) {
-        setGeometries(geoms);
-    }
-
-    public void clearMemoryLayer() {
-        setGeometries(null);
-    }
-
-    public void reprojectEditionLayer() {
-//TODO handle the case of reprojection while editing
-//        List<Geometry> geoms = getGeometries();
 //
-//        for (Geometry geo : geoms) {
-//            geomsOut.add(FACILITIES_FACTORY.projectGeometry(geo, map2D.getRenderingStrategy().getContext().getCoordinateReferenceSystem(), map2D.getRenderingStrategy().getContext().getCoordinateReferenceSystem()));
-//        //geomsOut.add(map2D.projectGeometry(geo, memoryMapContext.getCoordinateReferenceSystem(), map2D.getRenderingStrategy().getContext().getCoordinateReferenceSystem()));
+//    public FeatureMapLayer getEditedLayer(){
+//        MapLayer layer = (MapLayer) guiLayers.getSelectedItem();
+//
+//        if(layer instanceof FeatureMapLayer){
+//            return (FeatureMapLayer) layer;
+//        }else{
+//            return null;
+//        }
+//    }
+//
+//    //--------------------Geometry Edition--------------------------------------
+//
+//    /**
+//     * transform a mouse coordinate in JTS Geometry using the CRS of the mapcontext
+//     * @param mx : x coordinate of the mouse on the map (in pixel)
+//     * @param my : y coordinate of the mouse on the map (in pixel)
+//     * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
+//     */
+//    public Polygon mousePositionToGeometry(int mx, int my) throws NoninvertibleTransformException {
+//        Coordinate[] coord = new Coordinate[5];
+//        int taille = 4;
+//
+//        coord[0] = toCoord(mx - taille, my - taille);
+//        coord[1] = toCoord(mx - taille, my + taille);
+//        coord[2] = toCoord(mx + taille, my + taille);
+//        coord[3] = toCoord(mx + taille, my - taille);
+//        coord[4] = coord[0];
+//
+//        LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
+//        return GEOMETRY_FACTORY.createPolygon(lr1, null);
+//    }
+//
+//    public void editAddGeometry(Geometry[] geoms) {
+//
+//        FeatureMapLayer editionLayer = getEditedLayer();
+//
+//        if (editionLayer != null) {
+//
+//            for (Geometry geom : geoms) {
+//                SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
+//                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
+//                Object[] values = new Object[featureType.getAttributeCount()];
+//
+//                AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+//
+//                final CoordinateReferenceSystem dataCrs = editionLayer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
+//
+//                try {
+//                    geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
+//                } catch (Exception ex) {
+//                    LOGGER.log(Level.SEVERE, null, ex);
+//                }
+//
+//                List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
+//                for (int i = 0,  n = lst.size(); i < n; i++) {
+//                    AttributeDescriptor desc = lst.get(i);
+//
+//                    if (desc.equals(geomAttribut)) {
+//                        values[i] = geom;
+//                    } else {
+//                        values[i] = desc.getDefaultValue();
+//                    }
+//                }
+//
+//                SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
+//                collection.add(sf);
+//
+//                DefaultTransaction transaction = null;
+//                Transaction oldTransaction = null;
+//                FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
+//                try {
+////                    String featureName = data.getTypeNames()[0]; // there is only one in a shapefile
+//
+//                    // Create the DefaultTransaction Object
+//                    transaction = new DefaultTransaction();
+//
+////                    String name = editionLayer.getFeatureSource().getName().getLocalPart();
+////                    try {
+////                        //GR: question: why not just editionLayer.getFeatureSource()?
+////                        FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
+////                        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
+////                    } catch (IOException e) {
+////                        // Tell it the name of the shapefile it should look for in our DataStore
+////                        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) data.getFeatureSource(featureName);
+////                    }
+//
+//                    store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
+//
+//                    // Then set the transaction for that FeatureStore
+//                    oldTransaction = store.getTransaction();
+//                    store.setTransaction(transaction);
+//
+//                    store.addFeatures(collection);
+//                    transaction.commit();
+//                } catch (Exception eek) {
+//                    eek.printStackTrace();
+//                    try {
+//                        store.getTransaction().rollback();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                } finally {
+//                    transaction.close();
+//                    store.setTransaction(oldTransaction);
+//                }
+//
+//
+//            }
+//
+//            map.getCanvas().getController().repaint();
 //        }
 //
-//        clearMemoryLayer();
-//        setMemoryLayerGeometry(geomsOut);
-    }
-
-
-    //---------------------PRIVATE CLASSES--------------------------------------
-
-    public final class UIEventProxy implements MouseInputListener,KeyListener, MouseWheelListener {
-
-        private AbstractMouseDelegate delegate;
-
-        public void install(Component component){
-            component.addMouseListener(this);
-            component.addMouseMotionListener(this);
-            component.addMouseWheelListener(this);
-            component.addKeyListener(this);
-        }
-
-        public void uninstall(Component component){
-            component.removeMouseListener(this);
-            component.removeMouseMotionListener(this);
-            component.removeMouseWheelListener(this);
-            component.removeKeyListener(this);
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseClicked(arg0);
-            }
-        }
-
-        @Override
-        public void mousePressed(MouseEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mousePressed(arg0);
-            }
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseReleased(arg0);
-            }
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent arg0) {
-            map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseEntered(arg0);
-            }
-        }
-
-        @Override
-        public void mouseExited(MouseEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseExited(arg0);
-            }
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseDragged(arg0);
-            }
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseMoved(arg0);
-            }
-        }
-
-        @Override
-        public void keyTyped(KeyEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.keyTyped(arg0);
-            }
-        }
-
-        @Override
-        public void keyPressed(KeyEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.keyPressed(arg0);
-            }
-        }
-
-        @Override
-        public void keyReleased(KeyEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.keyReleased(arg0);
-            }
-        }
-
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent arg0) {
-            if(delegate != null){
-                delegate.setMap((Map2D) map);
-                delegate.mouseWheelMoved(arg0);
-            }
-        }
-
-    }
+//    }
+//
+//    public void validateModifiedGeometry(final Geometry geo, final String ID) {
+//
+//        if (geo == null || ID == null) {
+//            throw new NullPointerException();
+//        }
+//
+//
+//        final FeatureMapLayer editionLayer = getEditedLayer();
+//        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
+//
+//        if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
+//
+////            String name = editionLayer.getFeatureSource().getName().getLocalPart();
+////            try {
+////                //GR question: why not just editionLayer.getFeatureSource()?
+////                FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
+////                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
+////            } catch (IOException e) {
+////                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
+////            }
+//
+//            store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
+////                    store.getDataStore().dispose();
+//
+//            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
+//            Transaction previoustransaction = store.getTransaction();
+//
+//            store.setTransaction(transaction);
+//            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
+//
+//            SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
+//            AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+//
+//            final CoordinateReferenceSystem dataCrs = store.getSchema().getCoordinateReferenceSystem();
+//
+//            try {
+//                final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+//                store.updateFeatures(geomAttribut, geom, filter);
+//                transaction.commit();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//                try {
+//                    transaction.rollback();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            } finally {
+//                transaction.close();
+//                store.setTransaction(Transaction.AUTO_COMMIT);
+//            }
+//
+//            map.getCanvas().getController().repaint();
+//        }
+//
+//    }
+//
+//    public void removeSelectedGeometry(final String ID) {
+//
+//        if (ID == null) {
+//            throw new NullPointerException();
+//        }
+//
+//        FeatureMapLayer editionLayer = getEditedLayer();
+//
+//        FeatureStore<SimpleFeatureType, SimpleFeature> store;
+//        if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
+//            store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
+//
+//            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
+//
+//            store.setTransaction(transaction);
+//            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
+//
+//            try {
+//                store.removeFeatures(filter);
+//                transaction.commit();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//                try {
+//                    transaction.rollback();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            } finally {
+//                transaction.close();
+//                store.setTransaction(Transaction.AUTO_COMMIT);
+//            }
+//
+//            map.getCanvas().getController().repaint();
+//        }
+//
+//    }
+//
+//
+//    public Point toJTS(int x, int y){
+//        Coordinate coord = toCoord(x, y);
+//        Point geom = GEOMETRY_FACTORY.createPoint(coord);
+//        return geom;
+//    }
+//
+//    public Coordinate toCoord(int x, int y){
+//        AffineMatrix3 trs = map.getCanvas().getController().getTransform();
+//        AffineTransform dispToObj;
+//        try {
+//            dispToObj = trs.createInverse();
+//        } catch (NoninvertibleTransformException ex) {
+//            dispToObj = new AffineTransform();
+//            LOGGER.log(Level.SEVERE, null, ex);
+//        }
+//        double[] crds = new double[]{x,y};
+//        dispToObj.transform(crds, 0, crds, 0, 1);
+//        return new Coordinate(crds[0], crds[1]);
+//    }
+//
+//    /**
+//     *
+//     * @param geom : in canvas objective CRS
+//     * @param layer : target layer filter
+//     * @return geometry filter
+//     */
+//    public Filter toFilter(Geometry poly, FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
+//
+//        final String geoStr = fl.getFeatureSource().getSchema().getGeometryDescriptor().getLocalName();
+//        final Expression geomField = FF.property(geoStr);
+//
+//        final CoordinateReferenceSystem dataCrs = fl.getFeatureSource().getSchema().getCoordinateReferenceSystem();
+//
+//        final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+//
+//        final Expression geomData = FF.literal(dataPoly);
+//        final Filter f = FF.intersects(geomField, geomData);
+//
+//        return f;
+//    }
+//
+//    //---------------------Memory Layer-----------------------------------------
+//
+//    public void setMemoryLayerGeometry(List<Geometry> geoms) {
+//        setGeometries(geoms);
+//    }
+//
+//    public void clearMemoryLayer() {
+//        setGeometries(null);
+//    }
+//
+//    public void reprojectEditionLayer() {
+////TODO handle the case of reprojection while editing
+////        List<Geometry> geoms = getGeometries();
+////
+////        for (Geometry geo : geoms) {
+////            geomsOut.add(FACILITIES_FACTORY.projectGeometry(geo, map2D.getRenderingStrategy().getContext().getCoordinateReferenceSystem(), map2D.getRenderingStrategy().getContext().getCoordinateReferenceSystem()));
+////        //geomsOut.add(map2D.projectGeometry(geo, memoryMapContext.getCoordinateReferenceSystem(), map2D.getRenderingStrategy().getContext().getCoordinateReferenceSystem()));
+////        }
+////
+////        clearMemoryLayer();
+////        setMemoryLayerGeometry(geomsOut);
+//    }
+//
+//
+//    //---------------------PRIVATE CLASSES--------------------------------------
+//
+//    public final class UIEventProxy implements MouseInputListener,KeyListener, MouseWheelListener {
+//
+//        private AbstractMouseDelegate delegate;
+//
+//        public void install(Component component){
+//            component.addMouseListener(this);
+//            component.addMouseMotionListener(this);
+//            component.addMouseWheelListener(this);
+//            component.addKeyListener(this);
+//        }
+//
+//        public void uninstall(Component component){
+//            component.removeMouseListener(this);
+//            component.removeMouseMotionListener(this);
+//            component.removeMouseWheelListener(this);
+//            component.removeKeyListener(this);
+//        }
+//
+//        @Override
+//        public void mouseClicked(MouseEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseClicked(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mousePressed(MouseEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mousePressed(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mouseReleased(MouseEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseReleased(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mouseEntered(MouseEvent arg0) {
+//            map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseEntered(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mouseExited(MouseEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseExited(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mouseDragged(MouseEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseDragged(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mouseMoved(MouseEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseMoved(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void keyTyped(KeyEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.keyTyped(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void keyPressed(KeyEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.keyPressed(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void keyReleased(KeyEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.keyReleased(arg0);
+//            }
+//        }
+//
+//        @Override
+//        public void mouseWheelMoved(MouseWheelEvent arg0) {
+//            if(delegate != null){
+//                delegate.setMap((Map2D) map);
+//                delegate.mouseWheelMoved(arg0);
+//            }
+//        }
+//
+//    }
     
 
 }

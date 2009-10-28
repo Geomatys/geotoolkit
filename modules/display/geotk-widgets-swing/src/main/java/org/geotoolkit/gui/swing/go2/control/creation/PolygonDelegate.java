@@ -32,38 +32,38 @@ public class PolygonDelegate extends AbstractMouseDelegate {
         super(handler);
     }
 
-    @Override
-    public void fireStateChange() {
-        coords.clear();
-        geoms.clear();
-        nbRightClick = 0;
-        inCreation = false;
-        hasEditionGeometry = false;
-        hasGeometryChanged = false;
-        editedFeatureID = null;
-        editedNodes.clear();
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        final int button = e.getButton();
-
-        if (button == MouseEvent.BUTTON1) {
-            coords.add(editionDecoration.toCoord(e.getX(), e.getY()));
-            updateCreationGeoms();
-        } else if (button == MouseEvent.BUTTON3) {
-            inCreation = false;
-            if (coords.size() > 2) {
-                Geometry geo = EditionHelper.createPolygon(coords);
-                editionDecoration.editAddGeometry(new Geometry[]{geo});
-                geoms.clear();
-            }
-            coords.clear();
-        }
-        
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
+//    @Override
+//    public void fireStateChange() {
+//        coords.clear();
+//        geoms.clear();
+//        nbRightClick = 0;
+//        inCreation = false;
+//        hasEditionGeometry = false;
+//        hasGeometryChanged = false;
+//        editedFeatureID = null;
+//        editedNodes.clear();
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
+//
+//    @Override
+//    public void mouseClicked(MouseEvent e) {
+//        final int button = e.getButton();
+//
+//        if (button == MouseEvent.BUTTON1) {
+//            coords.add(editionDecoration.toCoord(e.getX(), e.getY()));
+//            updateCreationGeoms();
+//        } else if (button == MouseEvent.BUTTON3) {
+//            inCreation = false;
+//            if (coords.size() > 2) {
+//                Geometry geo = EditionHelper.createPolygon(coords);
+//                editionDecoration.editAddGeometry(new Geometry[]{geo});
+//                geoms.clear();
+//            }
+//            coords.clear();
+//        }
+//
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
 }

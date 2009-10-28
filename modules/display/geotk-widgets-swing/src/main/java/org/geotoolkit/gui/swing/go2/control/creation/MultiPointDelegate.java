@@ -32,38 +32,38 @@ public class MultiPointDelegate extends AbstractMouseDelegate {
         super(handler);
     }
 
-    @Override
-    public void fireStateChange() {
-        coords.clear();
-        geoms.clear();
-        nbRightClick = 0;
-        inCreation = false;
-        hasEditionGeometry = false;
-        hasGeometryChanged = false;
-        editedFeatureID = null;
-        editedNodes.clear();
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        final int button = e.getButton();
-
-        if (button == MouseEvent.BUTTON1) {
-            Geometry geo = EditionHelper.createPoint(editionDecoration.toCoord(e.getX(), e.getY()));
-            geoms.add(geo);
-            updateCreationGeoms();
-
-        } else if (button == MouseEvent.BUTTON3) {
-            if (geoms.size() > 0) {
-                Geometry geo = EditionHelper.createMultiPoint(geoms);
-                editionDecoration.editAddGeometry(new Geometry[]{geo});
-                geoms.clear();
-            }
-            coords.clear();
-        }
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
+//    @Override
+//    public void fireStateChange() {
+//        coords.clear();
+//        geoms.clear();
+//        nbRightClick = 0;
+//        inCreation = false;
+//        hasEditionGeometry = false;
+//        hasGeometryChanged = false;
+//        editedFeatureID = null;
+//        editedNodes.clear();
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
+//
+//    @Override
+//    public void mouseClicked(MouseEvent e) {
+//        final int button = e.getButton();
+//
+//        if (button == MouseEvent.BUTTON1) {
+//            Geometry geo = EditionHelper.createPoint(editionDecoration.toCoord(e.getX(), e.getY()));
+//            geoms.add(geo);
+//            updateCreationGeoms();
+//
+//        } else if (button == MouseEvent.BUTTON3) {
+//            if (geoms.size() > 0) {
+//                Geometry geo = EditionHelper.createMultiPoint(geoms);
+//                editionDecoration.editAddGeometry(new Geometry[]{geo});
+//                geoms.clear();
+//            }
+//            coords.clear();
+//        }
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
 }

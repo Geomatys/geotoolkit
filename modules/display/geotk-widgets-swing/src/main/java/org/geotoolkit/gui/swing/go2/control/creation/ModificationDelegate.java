@@ -81,10 +81,10 @@ public class ModificationDelegate extends AbstractMouseDelegate {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             if(hasEditionGeometry){
-                removeGeometryEdit();
-                geoms.clear();
-                editionDecoration.clearMemoryLayer();
-                editionDecoration.setMemoryLayerGeometry(geoms);
+//                removeGeometryEdit();
+//                geoms.clear();
+//                editionDecoration.clearMemoryLayer();
+//                editionDecoration.setMemoryLayerGeometry(geoms);
             }
         }
     };
@@ -202,64 +202,64 @@ public class ModificationDelegate extends AbstractMouseDelegate {
         panDetail.setVisible(true);
     }
 
-    @Override
-    public void fireStateChange() {
-        coords.clear();
-        geoms.clear();
-        nbRightClick = 0;
-        inCreation = false;
-        hasEditionGeometry = false;
-        hasGeometryChanged = false;
-        editedFeatureID = null;
-        editedNodes.clear();
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        final int button = e.getButton();
-
-        if (button == MouseEvent.BUTTON1) {
-            if (!hasEditionGeometry) {
-                grabGeometry(e.getX(), e.getY());
-            }
-        } else if (button == MouseEvent.BUTTON3) {
-            validateGeometryEdit();
-            geoms.clear();
-            coords.clear();
-        }
-        editionDecoration.clearMemoryLayer();
-        editionDecoration.setMemoryLayerGeometry(geoms);
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        final int button = e.getButton();
-
-        if (button == MouseEvent.BUTTON1) {
-            if (hasEditionGeometry) {
-                grabGeometryNode(e.getX(), e.getY());
-            }
-        }
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-        if (hasEditionGeometry && !editedNodes.isEmpty()) {
-            hasGeometryChanged = true;
-            dragGeometryNode(e.getX(), e.getY());
-        }
-        editedNodes.clear();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-        if (hasEditionGeometry && !editedNodes.isEmpty()) {
-            hasGeometryChanged = true;
-            dragGeometryNode(e.getX(), e.getY());
-        }
-    }
+//    @Override
+//    public void fireStateChange() {
+//        coords.clear();
+//        geoms.clear();
+//        nbRightClick = 0;
+//        inCreation = false;
+//        hasEditionGeometry = false;
+//        hasGeometryChanged = false;
+//        editedFeatureID = null;
+//        editedNodes.clear();
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
+//
+//    @Override
+//    public void mouseClicked(MouseEvent e) {
+//        final int button = e.getButton();
+//
+//        if (button == MouseEvent.BUTTON1) {
+//            if (!hasEditionGeometry) {
+//                grabGeometry(e.getX(), e.getY());
+//            }
+//        } else if (button == MouseEvent.BUTTON3) {
+//            validateGeometryEdit();
+//            geoms.clear();
+//            coords.clear();
+//        }
+//        editionDecoration.clearMemoryLayer();
+//        editionDecoration.setMemoryLayerGeometry(geoms);
+//    }
+//
+//    @Override
+//    public void mousePressed(MouseEvent e) {
+//        final int button = e.getButton();
+//
+//        if (button == MouseEvent.BUTTON1) {
+//            if (hasEditionGeometry) {
+//                grabGeometryNode(e.getX(), e.getY());
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void mouseReleased(MouseEvent e) {
+//
+//        if (hasEditionGeometry && !editedNodes.isEmpty()) {
+//            hasGeometryChanged = true;
+//            dragGeometryNode(e.getX(), e.getY());
+//        }
+//        editedNodes.clear();
+//    }
+//
+//    @Override
+//    public void mouseDragged(MouseEvent e) {
+//
+//        if (hasEditionGeometry && !editedNodes.isEmpty()) {
+//            hasGeometryChanged = true;
+//            dragGeometryNode(e.getX(), e.getY());
+//        }
+//    }
 }

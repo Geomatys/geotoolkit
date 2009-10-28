@@ -33,10 +33,12 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 public abstract class AbstractEditionDelegate implements MouseInputListener,KeyListener,MouseWheelListener{
 
+    public static final Icon ICON_ADD = IconBundle.getInstance().getIcon("16_add");
+    public static final Icon ICON_MOVE = IconBundle.getInstance().getIcon("16_move");
     public static final Icon ICON_DELETE = IconBundle.getInstance().getIcon("16_delete");
-    public static final Icon ICON_MOVE = IconBundle.getInstance().getIcon("16_move_node");
-    public static final Icon ICON_ADD = IconBundle.getInstance().getIcon("16_add_node");
-    public static final Icon ICON_REMOVE = IconBundle.getInstance().getIcon("16_remove_node");
+    public static final Icon ICON_NODE_MOVE = IconBundle.getInstance().getIcon("16_move_node");
+    public static final Icon ICON_NODE_ADD = IconBundle.getInstance().getIcon("16_add_node");
+    public static final Icon ICON_NODE_DELETE = IconBundle.getInstance().getIcon("16_remove_node");
 
     protected final DefaultEditionHandler handler;
     private Map2D map;

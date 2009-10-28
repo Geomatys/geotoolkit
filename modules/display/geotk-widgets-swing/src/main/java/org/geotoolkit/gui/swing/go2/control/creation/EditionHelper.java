@@ -34,7 +34,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DefaultTransaction;
+import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.factory.FactoryFinder;
@@ -67,6 +69,28 @@ import org.opengis.referencing.operation.TransformException;
  * @module pending
  */
 public class EditionHelper {
+
+    public static class EditionContext{
+        public SimpleFeature feature = null;
+        public Geometry geometry = null;
+        public final List<Geometry> subGeometries =  new ArrayList<Geometry>();
+        public int subGeometryIndex = -1;
+        public int[] nodes = null;
+        public final List<Coordinate> coords = new ArrayList<Coordinate>();
+        public boolean modified = false;
+        public boolean added = false;
+
+        public void reset(){
+            feature = null;
+            geometry = null;
+            subGeometries.clear();
+            subGeometryIndex = -1;
+            nodes = null;
+            modified = false;
+            added = false;
+            coords.clear();
+        }
+    }
 
     private static final Logger LOGGER = Logging.getLogger(DefaultEditionDecoration.class);
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
@@ -120,32 +144,106 @@ public class EditionHelper {
         return new Coordinate(crds[0], crds[1]);
     }
 
-    public SimpleFeature grabFeature(int mx, int my) {
+    public SimpleFeature grabFeature(int mx, int my, boolean style) {
 
         final FeatureMapLayer layer = handler.getEditedLayer();
 
         if(layer == null) return null;
 
-        try {
-            final Polygon geo = mousePositionToGeometry(mx, my);
-            final Filter flt = toFilter(geo, layer);
-            final FeatureCollection<SimpleFeatureType, SimpleFeature> editgeoms = layer.getFeatureSource().getFeatures(flt);
+        //todo handle style
+//        if(style){
+//            //we take the style in account for selection
+//            layer.setSelectable(true);
+//
+//        }else{
+            try {
+                final Polygon geo = mousePositionToGeometry(mx, my);
+                final Filter flt = toFilter(geo, layer);
+                final FeatureCollection<SimpleFeatureType, SimpleFeature> editgeoms = layer.getFeatureSource().getFeatures(flt);
 
-            if (editgeoms != null) {
-                FeatureIterator<SimpleFeature> fi = editgeoms.features();
-                if (fi.hasNext()) {
-                    SimpleFeature sf = fi.next();
-                    return sf;
+                if (editgeoms != null) {
+                    FeatureIterator<SimpleFeature> fi = editgeoms.features();
+                    if (fi.hasNext()) {
+                        SimpleFeature sf = fi.next();
+                        return sf;
+                    }
+                    fi.close();
                 }
-                fi.close();
+            }catch(Exception ex){
+                ex.printStackTrace();
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
-        }
+//        }
         
         return null;
     }
 
+    public void grabGeometryNode(EditionContext context, int mx, int my) {
+
+        final Geometry geo = context.geometry;
+
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                final Geometry subgeo = geo.getGeometryN(i);
+
+                if (subgeo.intersects(mouseGeo)) {
+                    //this geometry intersect the mouse
+                    context.subGeometries.add(subgeo);
+                    context.subGeometryIndex = i;
+
+                    final Coordinate[] coos = subgeo.getCoordinates();
+                    for (int j=0,m=coos.length; j<m; j++) {
+                        final Coordinate coo = coos[j];
+                        final Point p = createPoint(coo);
+                        if (p.intersects(mouseGeo)) {
+
+                            if ((j==0 || j==m-1) && (geo instanceof Polygon || geo instanceof MultiPolygon)) {
+                                //first and last coordinate index are the same point
+                                context.nodes = new int[]{0, m - 1};
+                            } else {
+                                //coordinate is in the middle of the geometry
+                                context.nodes = new int[]{j};
+                            }
+                        }
+                    }
+                    break;
+                }
+
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void dragGeometryNode(EditionContext context, int mx, int my) {
+        final Coordinate mouseCoord = toCoord(mx, my);
+
+        final Geometry subgeo = context.subGeometries.get(0);
+        if(subgeo == null) return;
+
+        final int[] nodeIndexes = context.nodes;
+        if(nodeIndexes == null) return;
+
+        context.modified = true;
+
+        if(context.geometry instanceof Point){
+            Point pt = (Point) context.geometry;
+            pt.getCoordinate().x = mouseCoord.x;
+            pt.getCoordinate().y = mouseCoord.y;
+        }else{
+            for (int index : nodeIndexes) {
+                subgeo.getCoordinates()[index].x = mouseCoord.x;
+                subgeo.getCoordinates()[index].y = mouseCoord.y;
+            }
+        }
+
+
+        subgeo.geometryChanged();
+        context.geometry.geometryChanged();
+    }
 
     public Geometry toObjectiveCRS(SimpleFeature sf){
         final FeatureMapLayer layer = handler.getEditedLayer();
@@ -289,47 +387,36 @@ public class EditionHelper {
 
         if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
 
-//            String name = editionLayer.getFeatureSource().getName().getLocalPart();
-//            try {
-//                //GR question: why not just editionLayer.getFeatureSource()?
-//                FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
-//            } catch (IOException e) {
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//            }
+            FeatureStore<SimpleFeatureType, SimpleFeature> store;
 
-            final FeatureStore<SimpleFeatureType, SimpleFeature> store =
-                    (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//                    store.getDataStore().dispose();
+            String name = editionLayer.getFeatureSource().getName().getLocalPart();
+            try {
+                //GR question: why not just editionLayer.getFeatureSource()?
+                FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
+                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
+            } catch (IOException e) {
+                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
+            }
 
-            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
-            Transaction previoustransaction = store.getTransaction();
+//            final FeatureStore<SimpleFeatureType, SimpleFeature> store =
+//                    (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
 
-            store.setTransaction(transaction);
-            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
+            final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
 
-            SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-            AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
-
+            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
+            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
             final CoordinateReferenceSystem dataCrs = store.getSchema().getCoordinateReferenceSystem();
 
             try {
                 final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
                 store.updateFeatures(geomAttribut, geom, filter);
-                transaction.commit();
+                store.getTransaction().commit();
             } catch (Exception ex) {
                 ex.printStackTrace();
-                try {
-                    transaction.rollback();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             } finally {
-                transaction.close();
-                store.setTransaction(Transaction.AUTO_COMMIT);
+                map.getCanvas().getController().repaint();
             }
-
-            map.getCanvas().getController().repaint();
+            
         }
 
     }
@@ -378,6 +465,21 @@ public class EditionHelper {
 
 
     //staic helper methods -----------------------------------------------------
+
+    public static Geometry createGeometry(List<Coordinate> coords) {
+        int size = coords.size();
+
+        switch (size) {
+            case 0:
+                return null;
+            case 1:
+                return createPoint(coords.get(0));
+            case 2:
+                return createLine(coords);
+            default:
+                return createLine(coords);
+        }
+    }
 
     public static Point createPoint(Coordinate coord) {
         return GEOMETRY_FACTORY.createPoint(coord);
