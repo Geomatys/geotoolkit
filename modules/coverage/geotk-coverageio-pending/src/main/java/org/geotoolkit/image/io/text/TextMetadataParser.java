@@ -46,6 +46,7 @@ import org.geotoolkit.image.io.metadata.GeographicMetadataFormat;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -812,7 +813,6 @@ public abstract class TextMetadataParser {
      * @param  image The image with metadata to add to this {@code MetadataReader}.
      * @throws AmbiguousMetadataException if a metadata is defined twice.
      *
-     * @see #add(GridCoverage)
      * @see #add(PropertySource,String)
      * @see #add(String,Object)
      */
@@ -842,7 +842,6 @@ public abstract class TextMetadataParser {
      *         will be added.
      * @throws AmbiguousMetadataException if a metadata is defined twice.
      *
-     * @see #add(GridCoverage)
      * @see #add(RenderedImage)
      * @see #add(String,Object)
      */
@@ -874,7 +873,6 @@ public abstract class TextMetadataParser {
      * @throws AmbiguousMetadataException if a different value already exists for the
      *         specified alias, or for an other alias bound to the same {@link Key}.
      *
-     * @see #add(GridCoverage)
      * @see #add(RenderedImage)
      * @see #add(PropertySource,String)
      * @see #parseLine

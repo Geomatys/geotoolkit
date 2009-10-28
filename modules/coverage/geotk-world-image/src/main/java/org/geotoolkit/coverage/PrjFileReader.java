@@ -40,7 +40,7 @@ public class PrjFileReader {
     /**
      * Parse an input stream and return the contained Coordinate Reference System
      * @param stream : prj file input stream
-     * @returnCoordinateReferenceSystem stored in the stream
+     * @return CoordinateReferenceSystem stored in the stream
      * @throws java.io.IOException : if stream is not a valid projection or reading error
      */
     public static CoordinateReferenceSystem parse(InputStream stream)throws IOException, FactoryException{
