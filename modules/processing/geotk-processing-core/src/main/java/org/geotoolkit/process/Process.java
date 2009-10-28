@@ -40,7 +40,7 @@ public interface Process extends Runnable {
      * Input values of the process. Thoses are described in the
      * process descriptor.
      * Those must be set before calling the run method.
-     * @param parameter, must not be null.
+     * @param parameter must not be null.
      */
     void setInput(ParameterValueGroup parameter);
 
@@ -49,7 +49,7 @@ public interface Process extends Runnable {
      * process descriptor.
      * Those can be aquiered after the monitor has been informed of the end
      * of the process.
-     * @param parameter, must not be null.
+     * @param parameter must not be null.
      */
     ParameterValueGroup getOutput();
 

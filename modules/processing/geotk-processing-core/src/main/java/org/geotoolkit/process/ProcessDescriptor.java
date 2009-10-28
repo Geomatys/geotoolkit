@@ -46,8 +46,6 @@ public interface ProcessDescriptor {
 
     /**
      * Create a process.
-     *
-     * @param name : process name
      * @return Process
      * @throws IllegalArgumentException if name is not part of this factory
      */
