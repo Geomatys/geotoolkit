@@ -117,6 +117,7 @@ public final class SwingUtilities {
     public static Component toFrame(Component owner, final JComponent panel,
             final String title, final WindowListener listener)
     {
+        Window window = null;
         while (owner != null) {
             if (owner == panel) {
                 throw new IllegalArgumentException();
@@ -127,38 +128,34 @@ public final class SwingUtilities {
                 frame.setDefaultCloseOperation(JInternalFrame.DISPOSE_ON_CLOSE);
                 frame.addInternalFrameListener(InternalWindowListener.wrap(listener));
                 ((JDesktopPane) owner).add(frame);
-                frame.getContentPane().add(panel);
+                frame.add(panel);
                 frame.pack();
                 return frame;
             }
             if (owner instanceof Frame) {
                 final JDialog dialog = new JDialog((Frame) owner, title);
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.addWindowListener(listener);
-                dialog.getContentPane().add(panel);
-                dialog.pack();
-                return dialog;
+                window = dialog;
+                break;
             }
             if (owner instanceof Dialog) {
                 final JDialog dialog = new JDialog((Dialog) owner, title);
                 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.addWindowListener(listener);
-                dialog.getContentPane().add(panel);
-                dialog.pack();
-                return dialog;
+                window = dialog;
+                break;
             }
             owner = owner.getParent();
         }
-        /*
-         * Adds the panel as a standalone window.
-         * This window has its own button on the task bar.
-         */
-        final JFrame frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.addWindowListener(listener);
-        frame.getContentPane().add(panel);
-        frame.pack();
-        return frame;
+        if (window == null) {
+            final JFrame frame = new JFrame(title);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            window = frame;
+        }
+        window.addWindowListener(listener);
+        window.add(panel);
+        window.pack();
+        window.setLocationRelativeTo(owner);
+        return window;
     }
 
     /**
@@ -183,6 +180,24 @@ public final class SwingUtilities {
             }
             component = component.getParent();
         }
+    }
+
+    /**
+     * Shows the given component in a {@link JFrame}.
+     * This is used (indirectly) mostly for debugging purpose.
+     *
+     * @param  panel The panel to show.
+     * @param  title The frame title.
+     *
+     * @since 3.05
+     */
+    public static void show(final JComponent panel, final String title) {
+        final JFrame frame = new JFrame(title);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.add(panel);
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 
     /**
@@ -258,7 +273,7 @@ public final class SwingUtilities {
          */
         final int choice;
         if (JOptionPane.getDesktopPaneForComponent(owner)!=null) {
-            choice=JOptionPane.showInternalOptionDialog(
+            choice = JOptionPane.showInternalOptionDialog(
                     owner,                         // Composante parente
                     dialog,                        // Message
                     title,                         // Titre de la boîte de dialogue
@@ -268,7 +283,7 @@ public final class SwingUtilities {
                     options,                       // Liste des boutons
                     initialValue);                 // Bouton par défaut
         } else {
-            choice=JOptionPane.showOptionDialog(
+            choice = JOptionPane.showOptionDialog(
                     owner,                         // Composante parente
                     dialog,                        // Message
                     title,                         // Titre de la boîte de dialogue

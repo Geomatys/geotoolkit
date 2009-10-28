@@ -123,7 +123,8 @@ public class ImagePane extends ZoomPane implements Runnable {
                                          ((float)renderedSize) / image.getHeight());
             if (scale < 1) {
                 final Float sc = Float.valueOf(scale);
-                image = ScaleDescriptor.create(image, sc, sc, null, null, null, null);
+                final Float tr = 0f; // Seems mandatory, despite what JAI javadoc said.
+                image = ScaleDescriptor.create(image, sc, sc, tr, tr, null, null);
             }
         }
         renderable = null;

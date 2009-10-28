@@ -30,6 +30,7 @@ import java.beans.PropertyChangeEvent;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Dimension;
 import java.lang.reflect.Array;
@@ -50,7 +51,9 @@ import javax.media.jai.PropertyChangeEmitter;
 import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.OperationDescriptor;
 
+import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -90,7 +93,7 @@ import static java.awt.GridBagConstraints.*;
  * @module
  */
 @SuppressWarnings("serial")
-public class ImageProperties extends JPanel {
+public class ImageProperties extends JPanel implements Dialog {
     /**
      * The operation name, version and description. If the image is not an instance of
      * {@link OperationNode}, then the class name is used. If this panel is an instance
@@ -806,5 +809,32 @@ public class ImageProperties extends JPanel {
                 fireTableRowsUpdated(first, last);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param  title The dialog box title, or {@code null} for a default title.
+     *
+     * @since 3.05
+     */
+    @Override
+    public boolean showDialog(final Component owner, String title) {
+        if (title == null) {
+            title = Vocabulary.getResources(getLocale()).getString(Vocabulary.Keys.PROPERTIES);
+        }
+        return SwingUtilities.showOptionDialog(owner, this, title);
+    }
+
+    /**
+     * Shows the properties for the specified rendered image in a frame.
+     * This convenience method is mostly a helper for debugging purpose.
+     *
+     * @param image The image to display in a frame.
+     *
+     * @since 3.05
+     */
+    public static void show(final RenderedImage image) {
+        SwingUtilities.show(new ImageProperties(image), Vocabulary.format(Vocabulary.Keys.PROPERTIES));
     }
 }

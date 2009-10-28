@@ -22,7 +22,6 @@ import java.util.Locale;
 import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.JPanel;
-import javax.swing.JFrame;
 import javax.swing.JSplitPane;
 import javax.swing.JScrollPane;
 import javax.swing.BorderFactory;
@@ -172,7 +171,7 @@ public class OperationTreeBrowser extends JPanel implements Dialog {
         split.setDividerLocation(220);
         add(split, BorderLayout.CENTER);
 
-        setPreferredSize(new Dimension(600,250));
+        setPreferredSize(new Dimension(700, 400));
     }
 
     /**
@@ -480,12 +479,7 @@ public class OperationTreeBrowser extends JPanel implements Dialog {
      * Implementation of public {@link #show} methods.
      */
     private void showFrame(final Object image) {
-        final JFrame frame = new JFrame(Classes.getShortClassName(this) + " - " + getName(image));
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.getContentPane().add(this);
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        SwingUtilities.show(this, Classes.getShortClassName(this) + " - " + getName(image));
     }
 
 

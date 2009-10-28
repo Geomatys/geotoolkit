@@ -28,9 +28,12 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
 import java.awt.Dimension;
+import javax.swing.JComponent;
 
+import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.util.XArrays;
 
 
@@ -76,6 +79,18 @@ public class ImageFileProperties extends ImageProperties {
      */
     public ImageFileProperties() {
         this(new IIOMetadataPanel());
+    }
+
+    /**
+     * Creates a new instance of {@code ImageFileProperties} initialized to the given file.
+     *
+     * @param  file The image file.
+     * @throws IOException If the file is not found, or no suitable image reader is found for the
+     *         given file, or if an error occured while reading the metadata or the thumbnails.
+     */
+    public ImageFileProperties(final File file) throws IOException {
+        this();
+        setImage(file);
     }
 
     /**
@@ -188,7 +203,7 @@ public class ImageFileProperties extends ImageProperties {
      * <p>
      * This method can be invoked from any thread. Actually it is recommanded to invoke
      * it from an other thread than the Swing one.
-     * 
+     *
      * @param  file The image file.
      * @throws IOException If the file is not found, or no suitable image reader is found for the
      *         given file, or if an error occured while reading the metadata or the thumbnails.
@@ -357,5 +372,22 @@ public class ImageFileProperties extends ImageProperties {
                     (height + tileHeight-1) / tileHeight);
             properties.setDescription(provider);
         }
+    }
+
+    /**
+     * Shows the properties for the specified image file in a frame.
+     * This convenience method is mostly a helper for debugging purpose.
+     *
+     * @param image The image to display in a frame.
+     */
+    public static void show(final File image) {
+        JComponent c;
+        try {
+            c = new ImageFileProperties(image);
+        } catch (IOException e) {
+            ExceptionMonitor.show(null, e);
+            return;
+        }
+        SwingUtilities.show(c, image.getName());
     }
 }
