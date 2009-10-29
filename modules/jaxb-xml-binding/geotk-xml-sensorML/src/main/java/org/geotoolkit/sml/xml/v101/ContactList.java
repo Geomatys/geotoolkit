@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -107,25 +108,7 @@ public class ContactList {
     /**
      * Gets the value of the member property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the member property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ContactList.Member }
-     * 
-     * 
-     */
+    */
     public List<ContactList.Member> getMember() {
         if (member == null) {
             member = new ArrayList<ContactList.Member>();
@@ -155,6 +138,30 @@ public class ContactList {
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof ContactList) {
+            final ContactList that = (ContactList) object;
+            return Utilities.equals(this.description, that.description)    &&
+                   Utilities.equals(this.id,          that.id)             &&
+                   Utilities.equals(this.member,      that.member);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 13 * hash + (this.member != null ? this.member.hashCode() : 0);
+        hash = 13 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
     }
 
 
@@ -452,6 +459,46 @@ public class ContactList {
             this.actuate = value;
         }
 
+        /**
+         * Verify if this entry is identical to specified object.
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+
+            if (object instanceof Member) {
+                final Member that = (Member) object;
+                return Utilities.equals(this.actuate,      that.actuate)       &&
+                       Utilities.equals(this.arcrole,      that.arcrole)       &&
+                       Utilities.equals(this.href,         that.href)          &&
+                       Utilities.equals(this.remoteSchema, that.remoteSchema)  &&
+                       Utilities.equals(this.role,         that.role)          &&
+                       Utilities.equals(this.show,         that.show)          &&
+                       Utilities.equals(this.title,        that.title)         &&
+                       Utilities.equals(this.responsibleParty, that.responsibleParty) &&
+                       Utilities.equals(this.person,       that.person)        &&
+                       Utilities.equals(this.type,         that.type);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 17 * hash + (this.person != null ? this.person.hashCode() : 0);
+            hash = 17 * hash + (this.responsibleParty != null ? this.responsibleParty.hashCode() : 0);
+            hash = 17 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+            hash = 17 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+            hash = 17 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+            hash = 17 * hash + (this.href != null ? this.href.hashCode() : 0);
+            hash = 17 * hash + (this.role != null ? this.role.hashCode() : 0);
+            hash = 17 * hash + (this.show != null ? this.show.hashCode() : 0);
+            hash = 17 * hash + (this.title != null ? this.title.hashCode() : 0);
+            hash = 17 * hash + (this.type != null ? this.type.hashCode() : 0);
+            return hash;
+        }
     }
 
 }

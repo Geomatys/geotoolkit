@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -34,7 +35,7 @@ import org.geotoolkit.util.Utilities;
 public class QuantityType extends AbstractDataComponentEntry implements Quantity {
 
     protected UomPropertyType uom;
-   // protected AllowedValuesPropertyType constraint;
+    //protected AllowedValuesPropertyType constraint;
     //protected List<QualityPropertyType> quality;
     protected Double value;
     @XmlAttribute

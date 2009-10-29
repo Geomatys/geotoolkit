@@ -83,6 +83,14 @@ public class LayerPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public LayerPropertyType() {
+
+    }
+
+    public LayerPropertyType(Category category) {
+        this.category = category;
+    }
+    
     /**
      * Gets the value of the abstractDataRecord property.
      * 

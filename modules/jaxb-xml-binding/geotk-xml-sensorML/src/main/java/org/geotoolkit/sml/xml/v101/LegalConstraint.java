@@ -76,6 +76,14 @@ public class LegalConstraint {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public LegalConstraint() {
+
+    }
+
+    public LegalConstraint(Rights rights) {
+        this.rights = rights;
+    }
+    
     /**
      * Gets the value of the rights property.
      * 

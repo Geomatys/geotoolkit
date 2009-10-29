@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractComponentList;
 import org.geotoolkit.sml.xml.AbstractComponents;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -183,11 +184,7 @@ public class Components implements AbstractComponents {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**
@@ -346,6 +343,77 @@ public class Components implements AbstractComponents {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[Components]").append("\n");
+        if (componentList != null) {
+            sb.append("componentList: ").append(componentList).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Components) {
+            final Components that = (Components) object;
+
+            return Utilities.equals(this.actuate, that.actuate)             &&
+                   Utilities.equals(this.href, that.href)                   &&
+                   Utilities.equals(this.componentList, that.componentList) &&
+                   Utilities.equals(this.remoteSchema, that.remoteSchema)   &&
+                   Utilities.equals(this.role, that.role)                   &&
+                   Utilities.equals(this.show, that.show)                   &&
+                   Utilities.equals(this.title, that.title)                 &&
+                   Utilities.equals(this.getType(), that.getType())         &&
+                   Utilities.equals(this.arcrole, that.arcrole);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + (this.componentList != null ? this.componentList.hashCode() : 0);
+        hash = 29 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 29 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 29 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 29 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 29 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 29 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 29 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 29 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -408,6 +476,39 @@ public class Components implements AbstractComponents {
             }
             return this.component;
         }
+
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof ComponentList) {
+                final ComponentList that = (ComponentList) object;
+                return Utilities.equals(this.component, that.component);
+
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            hash = 43 * hash + (this.component != null ? this.component.hashCode() : 0);
+            return hash;
+        }
+
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ComponentList]").append("\n");
+            if (component != null) {
+                sb.append("component:").append('\n');
+                for (ComponentPropertyType k : component) {
+                    sb.append("component: ").append(k).append('\n');
+                }
+            }
+            return sb.toString();
+         }
 
     }
 }

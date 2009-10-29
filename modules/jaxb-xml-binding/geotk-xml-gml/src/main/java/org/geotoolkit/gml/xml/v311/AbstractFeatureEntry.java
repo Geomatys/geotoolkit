@@ -48,7 +48,7 @@ import org.geotoolkit.util.Utilities;
 public abstract class AbstractFeatureEntry extends AbstractGMLEntry {
 
     private List<String> srsName;
-    @XmlElement(nillable = true)
+    @XmlElement
     private BoundingShapeEntry boundedBy;
     @XmlElement
     private LocationPropertyType location;

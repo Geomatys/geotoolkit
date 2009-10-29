@@ -362,6 +362,39 @@ public class Parameters {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[Parameters]").append("\n");
+        if (parameterList != null) {
+            sb.append("parameterList: ").append(parameterList).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -462,6 +495,21 @@ public class Parameters {
             hash = 29 * hash + (this.parameter != null ? this.parameter.hashCode() : 0);
             hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
             return hash;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[ParameterList]").append("\n");
+            if (id != null) {
+                sb.append("id:").append(id).append('\n');
+            }
+            if (parameter != null) {
+                sb.append("parameters:").append('\n');
+                for (DataComponentPropertyType k :parameter) {
+                    sb.append("parameter: ").append(k).append('\n');
+                }
+            }
+            return sb.toString();
         }
     }
 }

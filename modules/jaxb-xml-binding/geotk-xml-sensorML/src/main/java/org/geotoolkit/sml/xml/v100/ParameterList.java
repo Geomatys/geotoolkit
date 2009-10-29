@@ -119,4 +119,19 @@ public class ParameterList {
         hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[ParameterList]").append("\n");
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (parameter != null) {
+            sb.append("parameters:").append('\n');
+            for (DataComponentPropertyType k :parameter) {
+                sb.append("parameter: ").append(k).append('\n');
+            }
+        }
+        return sb.toString();
+     }
 }

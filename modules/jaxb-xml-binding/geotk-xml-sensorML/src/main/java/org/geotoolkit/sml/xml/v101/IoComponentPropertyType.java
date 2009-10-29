@@ -34,6 +34,7 @@ import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.Count;
 import org.geotoolkit.swe.xml.v101.CountRange;
+import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.ObservableProperty;
 import org.geotoolkit.swe.xml.v101.QuantityType;
 import org.geotoolkit.swe.xml.v101.QuantityRange;
@@ -154,6 +155,11 @@ public class IoComponentPropertyType implements IoComponent {
     public IoComponentPropertyType(String name, SimpleDataRecordEntry abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
+    }
+
+    public IoComponentPropertyType(String name, DataRecordType abstractDataRecord) {
+        this.name = name;
+        this.abstractDataRecord = factory.createDataRecord(abstractDataRecord);
     }
     
     /**
@@ -761,6 +767,75 @@ public class IoComponentPropertyType implements IoComponent {
         hash = 31 * hash + (this.title != null ? this.title.hashCode() : 0);
         hash = 31 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[IoComponentPropertyType]").append("\n");
+        if (_boolean != null) {
+            sb.append("boolean: ").append(_boolean).append('\n');
+        }
+        if (abstractDataArray != null) {
+            sb.append("data array: ").append(abstractDataArray.getValue()).append('\n');
+        }
+        if (abstractDataRecord != null) {
+            sb.append("data record: ").append(abstractDataRecord.getValue()).append('\n');
+        }
+        if (category != null) {
+            sb.append("category: ").append(category).append('\n');
+        }
+        if (count != null) {
+            sb.append("count: ").append(count).append('\n');
+        }
+        if (countRange != null) {
+            sb.append("count range: ").append(countRange).append('\n');
+        }
+        if (name != null) {
+            sb.append("name: ").append(name).append('\n');
+        }
+        if (observableProperty != null) {
+            sb.append("observable property: ").append(observableProperty).append('\n');
+        }
+        if (quantity != null) {
+            sb.append("quantity: ").append(quantity).append('\n');
+        }
+        if (quantityRange != null) {
+            sb.append("quantityRange: ").append(quantityRange).append('\n');
+        }
+        if (text != null) {
+            sb.append("text: ").append(text).append('\n');
+        }
+        if (time != null) {
+            sb.append("time: ").append(time).append('\n');
+        }
+        if (timeRange != null) {
+            sb.append("timeRange: ").append(timeRange).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
     }
 
 }

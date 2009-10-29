@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -83,6 +84,15 @@ public class Interface {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public Interface() {
+
+    }
+
+    public Interface(String name, InterfaceDefinition definition) {
+        this.name = name;
+        this.interfaceDefinition = definition;
+    }
+    
     /**
      * Gets the value of the interfaceDefinition property.
      * 
@@ -327,4 +337,80 @@ public class Interface {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[interface]").append("\n");
+        if (interfaceDefinition != null) {
+            sb.append("interfaceDefinition: ").append(interfaceDefinition).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (name != null) {
+            sb.append("name: ").append(name).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Interface) {
+            final Interface that = (Interface) object;
+
+            return Utilities.equals(this.actuate, that.actuate)           &&
+                   Utilities.equals(this.href, that.href)                 &&
+                   Utilities.equals(this.interfaceDefinition, that.interfaceDefinition) &&
+                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
+                   Utilities.equals(this.role, that.role)                 &&
+                   Utilities.equals(this.show, that.show)                 &&
+                   Utilities.equals(this.title, that.title)               &&
+                   Utilities.equals(this.type, that.type)                 &&
+                   Utilities.equals(this.name, that.name)                 &&
+                   Utilities.equals(this.arcrole, that.arcrole);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 19 * hash + (this.interfaceDefinition != null ? this.interfaceDefinition.hashCode() : 0);
+        hash = 19 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 19 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 19 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 19 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 19 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 19 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 19 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 19 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 19 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

@@ -51,6 +51,15 @@ public class DataRecordType extends AbstractDataRecordEntry {
 
     private List<DataComponentPropertyType> field;
 
+    public DataRecordType() {
+
+    }
+
+    public DataRecordType(String definition, List<DataComponentPropertyType> field) {
+        super(definition);
+        this.field = field;
+    }
+    
     /**
      * Gets the value of the field property.
      */

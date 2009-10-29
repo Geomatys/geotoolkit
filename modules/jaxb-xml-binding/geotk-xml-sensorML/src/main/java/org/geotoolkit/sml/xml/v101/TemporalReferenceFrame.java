@@ -54,6 +54,14 @@ public class TemporalReferenceFrame {
     @XmlElement(name = "TemporalCRS", namespace = "http://www.opengis.net/gml", required = true)
     private TemporalCRSType temporalCRS;
 
+    public TemporalReferenceFrame() {
+
+    }
+
+    public TemporalReferenceFrame(TemporalCRSType temporalCRS) {
+        this.temporalCRS = temporalCRS;
+    }
+    
     /**
      * Gets the value of the temporalCRS property.
      */

@@ -19,9 +19,11 @@ package org.geotoolkit.swe.xml.v101;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.CodeType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 /**
@@ -40,6 +42,18 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      */
     @XmlAttribute(namespace="http://www.opengis.net/gml")
     private String id;
+
+    /**
+     * (override from abstractGML Type).
+     */
+    @XmlElement(namespace="http://www.opengis.net/gml")
+    private String description;
+
+    /**
+     * (override from abstractGML Type).
+     */
+    @XmlElement(namespace="http://www.opengis.net/gml")
+    private CodeType parameterName;
     
     @XmlTransient //@XmlAttribute
     private boolean fixed;
@@ -109,13 +123,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
         return fixed;
     }
 
-    /**
-     * Return the numeric code identifiyng this entry.
-     */
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
+    
     
     /**
      * Verify that this entry is identical to the specified object.
@@ -133,6 +141,19 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        if (id !=  null) {
+            return id.hashCode();
+        }
+
+        int hash = 7;
+        hash = 97 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 97 * hash + (this.fixed ? 1 : 0);
+        hash = 97 * hash + (this.definition != null ? this.definition.hashCode() : 0);
+        return hash;
+    }
     
     @Override
     public String toString() {
@@ -145,6 +166,41 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
         
         s.append(" fixed = ").append(fixed).append('\n');
         return s.toString();
+    }
+
+    /**
+     * @return the parameterName
+     */
+    public CodeType getParameterName() {
+        return parameterName;
+    }
+
+    /**
+     * @param parameterName the parameterName to set
+     */
+    public void setParameterName(CodeType parameterName) {
+        this.parameterName = parameterName;
+    }
+
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
+     * @param definition the definition to set
+     */
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
     
 }

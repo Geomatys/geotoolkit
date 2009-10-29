@@ -20,7 +20,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-xml-feature-catalogue</artifactId>
   <packaging>jar</packaging>
-  <name>Binding for ISO 19110</name>
+  <name>Bindings for ISO 19110</name>
   <description>An implementation of ISO 19110.</description>
 
 

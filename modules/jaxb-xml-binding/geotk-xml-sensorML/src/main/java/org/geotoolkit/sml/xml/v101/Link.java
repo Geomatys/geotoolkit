@@ -81,6 +81,16 @@ public class Link {
     @XmlSchemaType(name = "anyURI")
     private String type;
 
+    public Link() {
+
+    }
+
+    public Link(String type, Source source, Destination destination) {
+        this.destination = destination;
+        this.source      = source;
+        this.type        = type;
+    }
+    
     /**
      * Gets the value of the source property.
      * 
@@ -179,6 +189,14 @@ public class Link {
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         private String ref;
 
+        public Destination() {
+
+        }
+
+        public Destination(String ref) {
+            this.ref = ref;
+        }
+        
         /**
          * Gets the value of the ref property.
          * 
@@ -230,6 +248,14 @@ public class Link {
         @XmlAttribute(required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         private String ref;
+
+        public Source() {
+
+        }
+
+        public Source(String ref) {
+            this.ref = ref;
+        }
 
         /**
          * Gets the value of the ref property.
