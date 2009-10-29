@@ -156,17 +156,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ServiceInfo getInfo() {
-        final DefaultServiceInfo info = new DefaultServiceInfo();
-        info.setDescription("Features from " + getClass().getSimpleName());
-        info.setSchema(FeatureTypeUtilities.DEFAULT_NAMESPACE);
-        return info;
-    }
-
-    /**
      * Subclass must implement.
      *
      * @param typeName

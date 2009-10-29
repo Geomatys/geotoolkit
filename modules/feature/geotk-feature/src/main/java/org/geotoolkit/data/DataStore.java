@@ -122,18 +122,6 @@ import org.geotoolkit.feature.collection.FeatureCollection;
 public interface DataStore<T extends FeatureType, F extends Feature> {
 
     /**
-     * Information about this service.
-     * <p>
-     * This method offers access to a summary of header or metadata
-     * information describing the service.
-     * </p>
-     * Subclasses may return a specific ServiceInfo instance that has
-     * additional information (such as FilterCapabilities).
-     * @return SeviceInfo
-     */
-    ServiceInfo getInfo();
-
-    /**
      * Retrieve a per featureID based locking service from this DataStore.
      *
      * <p>

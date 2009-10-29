@@ -30,12 +30,12 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FilteringFeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureStore;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -90,11 +90,6 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
     @Override
     public ContentEntry getEntry() {
         return delegate.getEntry();
-    }
-
-    @Override
-    public ResourceInfo getInfo() {
-        return delegate.getInfo();
     }
 
     @Override

@@ -35,7 +35,6 @@ import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.data.crs.ForceCoordinateSystemFeatureResults;
 import org.geotoolkit.data.crs.ReprojectFeatureResults;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -422,70 +421,6 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
     @Override
     public SimpleFeatureType getSchema() {
         return schema;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ResourceInfo getInfo() {
-        return new ResourceInfo() {
-
-            final Set<String> words = new HashSet<String>();
-
-            {
-                words.add("features");
-                words.add("view");
-                words.add(DefaultView.this.getSchema().getTypeName());
-            }
-
-            @Override
-            public JTSEnvelope2D getBounds() {
-                try {
-                    return DefaultView.this.getBounds();
-                } catch (IOException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public CoordinateReferenceSystem getCRS() {
-                return DefaultView.this.getSchema().getCoordinateReferenceSystem();
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public Set<String> getKeywords() {
-                return words;
-            }
-
-            @Override
-            public String getName() {
-                return DefaultView.this.getSchema().getTypeName();
-            }
-
-            @Override
-            public URI getSchema() {
-                Name name = DefaultView.this.getSchema().getName();
-                URI namespace;
-                try {
-                    namespace = new URI(name.getNamespaceURI());
-                    return namespace;
-                } catch (URISyntaxException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public String getTitle() {
-                Name name = DefaultView.this.getSchema().getName();
-                return name.getLocalPart();
-            }
-        };
     }
 
     /**

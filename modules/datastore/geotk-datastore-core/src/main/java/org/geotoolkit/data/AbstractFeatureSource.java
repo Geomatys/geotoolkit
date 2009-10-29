@@ -119,68 +119,6 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      * {@inheritDoc }
      */
     @Override
-    public ResourceInfo getInfo() {
-        return new ResourceInfo() {
-
-            final Set<String> words = new HashSet<String>();
-
-            {
-                words.add("features");
-                words.add(AbstractFeatureSource.this.getSchema().getTypeName());
-            }
-
-            @Override
-            public JTSEnvelope2D getBounds() {
-                try {
-                    return AbstractFeatureSource.this.getBounds();
-                } catch (IOException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public CoordinateReferenceSystem getCRS() {
-                return AbstractFeatureSource.this.getSchema().getCoordinateReferenceSystem();
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public Set<String> getKeywords() {
-                return words;
-            }
-
-            @Override
-            public String getName() {
-                return AbstractFeatureSource.this.getSchema().getTypeName();
-            }
-
-            @Override
-            public URI getSchema() {
-                final Name name = AbstractFeatureSource.this.getSchema().getName();
-                try {
-                    final URI namespace = new URI(name.getNamespaceURI());
-                    return namespace;
-                } catch (URISyntaxException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public String getTitle() {
-                final Name name = AbstractFeatureSource.this.getSchema().getName();
-                return name.getLocalPart();
-            }
-        };
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public QueryCapabilities getQueryCapabilities() {
         return queryCapabilities;
     }

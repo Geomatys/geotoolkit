@@ -110,17 +110,6 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
     Name getName();
 
     /**
-     * Information describing the contents of this resoruce.
-     * <p>
-     * Please note that for FeatureContent:
-     * <ul>
-     * <li>name - unqiue with in the context of a Service
-     * <li>schema - used to identify the type of resource; usually gml schema; although it may be more specific
-     * <ul>
-     */
-    ResourceInfo getInfo();
-
-    /**
      * Retrieves the featureType that features extracted from this datasource
      * will be created with.
      *

@@ -34,7 +34,6 @@ import org.geotoolkit.data.MaxFeatureReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.ReTypeFeatureReader;
-import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.factory.Hints;
@@ -187,71 +186,6 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     public final boolean isView() {
         return query != null && query != Query.ALL;
-    }
-
-    /**
-     * A default ResourceInfo with a generic description.
-     * <p>
-     * Subclasses should override to provide an explicit ResourceInfo
-     * object for their content.
-     * @return description of features contents
-     */
-    @Override
-    public ResourceInfo getInfo() {
-        return new ResourceInfo() {
-
-            final Set<String> words = new HashSet<String>();
-
-            {
-                words.add("features");
-                words.add(ContentFeatureSource.this.getSchema().getTypeName());
-            }
-
-            @Override
-            public JTSEnvelope2D getBounds() {
-                try {
-                    return ContentFeatureSource.this.getBounds();
-                } catch (IOException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public CoordinateReferenceSystem getCRS() {
-                return ContentFeatureSource.this.getSchema().getCoordinateReferenceSystem();
-            }
-
-            @Override
-            public String getDescription() {
-                return null;
-            }
-
-            @Override
-            public Set<String> getKeywords() {
-                return words;
-            }
-
-            @Override
-            public String getName() {
-                return ContentFeatureSource.this.getSchema().getTypeName();
-            }
-
-            @Override
-            public URI getSchema() {
-                final Name name = ContentFeatureSource.this.getSchema().getName();
-                try {
-                    return new URI(name.getNamespaceURI());
-                } catch (URISyntaxException e) {
-                    return null;
-                }
-            }
-
-            @Override
-            public String getTitle() {
-                final Name name = ContentFeatureSource.this.getSchema().getName();
-                return name.getLocalPart();
-            }
-        };
     }
 
     /**

@@ -52,8 +52,6 @@ import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FIDFeatureReader;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.ResourceInfo;
-import org.geotoolkit.data.ServiceInfo;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
@@ -72,6 +70,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -93,7 +92,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.io.InputStream;
-import org.geotoolkit.io.wkt.PrjFiles;
 
 
 /**
@@ -120,9 +118,6 @@ public class ShapefileDataStore extends AbstractDataStore {
     protected SimpleFeatureType schema; // read only
     protected boolean useMemoryMappedBuffer = true;
     protected Charset dbfCharset;
-    
-    private final ServiceInfo serviceInfo = new ShapefileServiceInfo(this);
-    private final ResourceInfo resourceInfo = new ShapefileResourceInfo(this);
 
     /**
      * Creates a new instance of ShapefileDataStore.
@@ -197,27 +192,6 @@ public class ShapefileDataStore extends AbstractDataStore {
         }
         this.useMemoryMappedBuffer = useMemoryMapped;
         this.dbfCharset = dbfCharset;
-    }
-
-    /**
-     * Access a ServiceInfo object for this shapefile.
-     * 
-     * @return ShapefileServiceInfo describing service.
-     */
-    @Override
-    public ServiceInfo getInfo(){
-        return serviceInfo;
-    }
-    
-    /**
-     * Used by FeatureSource<SimpleFeatureType, SimpleFeature> / FeatureStore / FeatureLocking to 
-     * access a single ResourceInfo.
-     * 
-     * @param typeName
-     * @return ResourceInfo
-     */
-    ResourceInfo getInfo( String typeName ) {
-        return resourceInfo;
     }
     
     /**

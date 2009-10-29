@@ -24,14 +24,12 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DefaultServiceInfo;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.ServiceInfo;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -236,17 +234,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     //
     // DataStore API
     //
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ServiceInfo getInfo() {
-        final DefaultServiceInfo info = new DefaultServiceInfo();
-        info.setDescription("Features from "+getClass().getSimpleName() );
-        info.setSchema( FeatureTypeUtilities.DEFAULT_NAMESPACE );
-        return info;
-    }
 
     /**
      * Returns the names of all entries or types provided by the datastore.

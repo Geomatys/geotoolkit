@@ -23,7 +23,6 @@ import org.geotoolkit.data.AbstractFeatureSource;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.ResourceInfo;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -84,12 +83,5 @@ class ShapefileFeatureSource extends AbstractFeatureSource {
     public JTSEnvelope2D getBounds(Query query) throws IOException {
         return shapefile.getBounds(query);
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public ResourceInfo getInfo(){
-        return shapefile.getInfo( featureType.getTypeName() );
-    }
+    
 }
