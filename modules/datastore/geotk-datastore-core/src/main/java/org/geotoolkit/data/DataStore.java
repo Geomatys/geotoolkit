@@ -30,7 +30,6 @@ import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.collection.FeatureCollection;
 
 /**
  * Access to Feature content from a service or file.

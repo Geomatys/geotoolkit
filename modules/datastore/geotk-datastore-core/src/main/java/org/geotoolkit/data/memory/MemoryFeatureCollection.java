@@ -20,9 +20,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
-import org.geotoolkit.feature.collection.AbstractFeatureCollection;
-import org.geotoolkit.feature.collection.RandomAccessFeatureCollection;
-
+import org.geotoolkit.data.collection.AbstractFeatureCollection;
+import org.geotoolkit.data.collection.RandomAccessFeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

@@ -24,11 +24,11 @@ import java.util.List;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.collection.DecoratingFeatureCollection;
+import org.geotoolkit.data.collection.DelegateFeatureIterator;
 import org.geotoolkit.data.collection.DelegateFeatureReader;
-import org.geotoolkit.feature.collection.DecoratingFeatureCollection;
-import org.geotoolkit.feature.collection.DelegateFeatureIterator;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;

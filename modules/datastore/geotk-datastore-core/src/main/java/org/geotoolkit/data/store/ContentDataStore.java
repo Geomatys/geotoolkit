@@ -31,8 +31,6 @@ import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.logging.Logging;

@@ -24,7 +24,6 @@ import junit.framework.TestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.data.memory.MemoryDataStore;
 
@@ -38,6 +37,7 @@ import org.opengis.filter.identity.FeatureId;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 /**
  *

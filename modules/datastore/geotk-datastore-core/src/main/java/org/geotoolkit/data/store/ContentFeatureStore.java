@@ -32,9 +32,9 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.InProcessLockingManager;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.collection.FeatureCollection;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

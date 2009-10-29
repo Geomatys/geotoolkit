@@ -17,7 +17,7 @@
  *    Created on July 21, 2003, 5:58 PM
  */
 
-package org.geotoolkit.feature;
+package org.geotoolkit.data.collection;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -39,10 +39,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
-import org.geotoolkit.feature.collection.CollectionEvent;
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.feature.FeatureUtilities;
 
 /**
  *
@@ -143,7 +141,7 @@ public class FeatureCollectionTest extends TestCase {
   
   public void testAddRemoveAllAbilities() throws Exception {
     Collection half = randomPiece(features);
-    Collection otherHalf = FeatureUtilities.list(features);
+    Collection otherHalf = FeatureCollectionUtilities.list(features);
     otherHalf.removeAll(half);
     features.removeAll(half);
     assertTrue(features.containsAll(otherHalf));
@@ -180,7 +178,7 @@ public class FeatureCollectionTest extends TestCase {
     copy.addAll(features);
     assertTrue(!copy.isEmpty());
     
-    List<SimpleFeature> list = FeatureUtilities.list(features);
+    List<SimpleFeature> list = FeatureCollectionUtilities.list(features);
     SimpleFeature[] f1 = (SimpleFeature[]) list.toArray(new SimpleFeature[list.size()]);
     SimpleFeature[] f2 = (SimpleFeature[]) features.toArray(new SimpleFeature[list.size()]);
     assertEquals(f1.length,f2.length);
@@ -199,7 +197,7 @@ public class FeatureCollectionTest extends TestCase {
     listen.addAll(features);
     assertEquals(1,counter.changeEvents);
     listen.removeListener(counter);
-    listen.removeAll(FeatureUtilities.list(features));
+    listen.removeAll(FeatureCollectionUtilities.list(features));
     assertEquals(1,counter.changeEvents);
   }
   

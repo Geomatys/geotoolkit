@@ -19,8 +19,6 @@ package org.geotoolkit.data.crs;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.memory.MemoryDataStore;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -34,6 +32,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 public class ForceCoordinateSystemFeatureIteratorTest extends TestCase {
 

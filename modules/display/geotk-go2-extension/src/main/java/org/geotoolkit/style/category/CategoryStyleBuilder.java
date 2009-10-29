@@ -34,7 +34,7 @@ import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;

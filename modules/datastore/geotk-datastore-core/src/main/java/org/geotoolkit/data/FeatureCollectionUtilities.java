@@ -14,18 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature;
+package org.geotoolkit.data;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.collection.FeatureCollection;
 
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.IllegalAttributeException;
@@ -42,6 +43,28 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class FeatureCollectionUtilities {
 
     protected FeatureCollectionUtilities(){}
+
+
+    /**
+     * Copies the provided fetaures into a List.
+     *
+     * @param featureCollection
+     * @return List of features copied into memory
+     */
+    public static List<SimpleFeature> list(final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection) {
+        final List<SimpleFeature> list = new ArrayList<SimpleFeature>();
+        try {
+            featureCollection.accepts(new FeatureVisitor() {
+
+                @Override
+                public void visit(Feature feature) {
+                    list.add((SimpleFeature) feature);
+                }
+            }, null);
+        } catch (IOException ignore) {
+        }
+        return list;
+    }
 
     public static FeatureCollection<SimpleFeatureType, SimpleFeature> createCollection() {
         return new DefaultFeatureCollection(null, null);

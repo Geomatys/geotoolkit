@@ -31,22 +31,18 @@ import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.collection.CollectionEvent;
+import org.geotoolkit.data.collection.CollectionListener;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.collection.CollectionEvent;
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.util.ProgressListener;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 

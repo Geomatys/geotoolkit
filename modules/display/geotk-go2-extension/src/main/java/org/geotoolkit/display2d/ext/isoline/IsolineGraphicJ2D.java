@@ -62,8 +62,8 @@ import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.logging.Logging;
 
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

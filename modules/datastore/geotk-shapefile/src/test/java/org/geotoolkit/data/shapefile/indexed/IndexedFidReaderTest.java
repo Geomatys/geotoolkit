@@ -18,8 +18,6 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -27,9 +25,7 @@ import java.util.TreeSet;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.util.Comparators;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

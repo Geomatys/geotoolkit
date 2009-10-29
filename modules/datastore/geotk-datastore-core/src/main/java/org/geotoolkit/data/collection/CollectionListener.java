@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.collection;
+package org.geotoolkit.data.collection;
 
 /**
  * Interface to be implemented by all listeners of CollectionEvents.

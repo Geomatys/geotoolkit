@@ -25,11 +25,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.SchemaNotFoundException;
 import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.feature.FeatureCollectionUtilities;
-import org.geotoolkit.feature.collection.CollectionEvent;
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 

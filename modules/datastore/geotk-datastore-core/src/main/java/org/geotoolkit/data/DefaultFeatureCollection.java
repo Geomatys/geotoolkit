@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature;
+package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,16 +28,14 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.collection.DefaultFeatureIterator;
-import org.geotoolkit.feature.collection.SubFeatureCollection;
+import org.geotoolkit.data.collection.CollectionEvent;
+import org.geotoolkit.data.collection.CollectionListener;
+import org.geotoolkit.data.collection.DefaultFeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.collection.SubFeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.feature.collection.CollectionEvent;
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.util.logging.Logging;
 

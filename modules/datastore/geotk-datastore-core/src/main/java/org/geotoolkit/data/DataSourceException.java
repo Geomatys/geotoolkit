@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data;
 
+import java.io.IOException;
+
 /**
  * Thrown when there is an error in a datasource.
  * <p>
@@ -26,9 +28,7 @@ package org.geotoolkit.data;
  * </p>
  * @module pending
  */
-public class DataSourceException extends java.io.IOException {
-
-    private static final long serialVersionUID = -602847953059978370L;
+public class DataSourceException extends IOException {
 
     /**
      * Constructs a new instance of DataSourceException

@@ -21,9 +21,9 @@ import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.util.Set;
 
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;

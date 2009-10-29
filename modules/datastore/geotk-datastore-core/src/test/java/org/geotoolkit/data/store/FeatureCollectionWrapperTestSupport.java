@@ -18,8 +18,7 @@ package org.geotoolkit.data.store;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.feature.DefaultFeatureCollection;
-import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
@@ -32,6 +31,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.collection.FeatureCollection;
 
 public class FeatureCollectionWrapperTestSupport extends TestCase {
 

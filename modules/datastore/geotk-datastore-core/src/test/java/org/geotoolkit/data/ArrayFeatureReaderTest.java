@@ -22,9 +22,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.feature.FeatureCollectionUtilities;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.IllegalAttributeException;

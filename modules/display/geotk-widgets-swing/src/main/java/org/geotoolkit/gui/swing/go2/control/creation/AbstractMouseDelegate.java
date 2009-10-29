@@ -19,10 +19,6 @@ package org.geotoolkit.gui.swing.go2.control.creation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -33,18 +29,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.event.MouseInputListener;
 
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
-import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.referencing.CRS;
-
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
-
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.referencing.operation.MathTransform;
 
 /**
  * special mouse listener

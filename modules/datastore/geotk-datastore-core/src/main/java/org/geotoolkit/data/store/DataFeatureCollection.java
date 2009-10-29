@@ -29,13 +29,13 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.collection.CollectionEvent;
+import org.geotoolkit.data.collection.CollectionListener;
+import org.geotoolkit.data.collection.DelegateFeatureIterator;
 import org.geotoolkit.data.collection.DelegateFeatureReader;
-import org.geotoolkit.feature.collection.CollectionEvent;
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
-import org.geotoolkit.feature.collection.DelegateFeatureIterator;
-import org.geotoolkit.feature.collection.SubFeatureCollection;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.collection.SubFeatureCollection;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.util.logging.Logging;
 

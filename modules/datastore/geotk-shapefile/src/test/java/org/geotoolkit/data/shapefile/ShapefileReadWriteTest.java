@@ -27,8 +27,8 @@ import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.ShapeTestData;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

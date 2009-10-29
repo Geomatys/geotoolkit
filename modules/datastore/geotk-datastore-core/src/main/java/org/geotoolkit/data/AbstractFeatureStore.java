@@ -22,10 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.feature.collection.FeatureCollection;
 
-import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;

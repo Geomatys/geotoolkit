@@ -32,10 +32,11 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.SchemaNotFoundException;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureVisitor;
@@ -46,7 +47,6 @@ import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.DataStore;
 
 /**
  * This is an example implementation of a DataStore used for testing.

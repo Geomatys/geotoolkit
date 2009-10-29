@@ -16,7 +16,7 @@
  *
  *    Created on August 12, 2003, 7:29 PM
  */
-package org.geotoolkit.feature;
+package org.geotoolkit.data.collection;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -27,9 +27,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 
-import org.geotoolkit.feature.collection.CollectionListener;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.FeatureVisitor;
 import org.opengis.util.ProgressListener;

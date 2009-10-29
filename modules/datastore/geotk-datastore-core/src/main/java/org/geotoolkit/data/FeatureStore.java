@@ -21,13 +21,13 @@ import org.geotoolkit.data.concurrent.Transaction;
 import java.io.IOException;
 import java.util.List;
 
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 
-import org.geotoolkit.feature.collection.FeatureCollection;
 
 /**
  * Provides storage of data for Features.

@@ -19,10 +19,10 @@ package org.geotoolkit.data.crs;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.data.collection.AbstractFeatureCollection;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.collection.AbstractFeatureCollection;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.simple.SimpleFeature;

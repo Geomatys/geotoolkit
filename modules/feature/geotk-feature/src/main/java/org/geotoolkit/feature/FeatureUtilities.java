@@ -42,7 +42,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -151,27 +150,6 @@ public class FeatureUtilities {
         }
 
         throw new IllegalArgumentException(type + " is not supported by this method");
-    }
-
-    /**
-     * Copies the provided fetaures into a List.
-     *
-     * @param featureCollection
-     * @return List of features copied into memory
-     */
-    public static List<SimpleFeature> list(final FeatureCollection<SimpleFeatureType, SimpleFeature> featureCollection) {
-        final List<SimpleFeature> list = new ArrayList<SimpleFeature>();
-        try {
-            featureCollection.accepts(new FeatureVisitor() {
-
-                @Override
-                public void visit(Feature feature) {
-                    list.add((SimpleFeature) feature);
-                }
-            }, null);
-        } catch (IOException ignore) {
-        }
-        return list;
     }
 
     public static Object duplicate(Object src) {

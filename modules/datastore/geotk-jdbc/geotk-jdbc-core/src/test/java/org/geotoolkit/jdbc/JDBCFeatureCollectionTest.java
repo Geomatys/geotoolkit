@@ -19,7 +19,7 @@ package org.geotoolkit.jdbc;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;

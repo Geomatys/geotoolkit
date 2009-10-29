@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.feature.collection.FeatureIterator;
 
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;

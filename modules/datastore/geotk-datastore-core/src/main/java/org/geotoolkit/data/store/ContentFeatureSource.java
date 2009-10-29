@@ -18,8 +18,6 @@ package org.geotoolkit.data.store;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,7 +36,6 @@ import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.PropertyNameResolvingVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -49,7 +46,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Abstract implementation of FeatureSource.

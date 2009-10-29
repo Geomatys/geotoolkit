@@ -29,14 +29,14 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
-import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collections;
-import org.geotoolkit.feature.FeatureCollectionUtilities;
+import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**

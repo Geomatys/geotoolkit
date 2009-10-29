@@ -22,19 +22,18 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
 import org.geotoolkit.data.store.DataFeatureCollection;
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.feature.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

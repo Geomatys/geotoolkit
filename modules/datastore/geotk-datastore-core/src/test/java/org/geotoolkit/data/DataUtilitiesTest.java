@@ -27,7 +27,6 @@ import java.util.List;
 
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.referencing.CRS;
@@ -53,6 +52,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.collection.FeatureCollection;
 
 /**
  * Tests cases for DataUtilities.

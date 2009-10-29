@@ -32,8 +32,6 @@ import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.TransactionStateDiff;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

@@ -19,9 +19,9 @@ package org.geotoolkit.data.memory;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.data.DataTestCase;
 
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 

@@ -14,16 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.feature.collection;
+package org.geotoolkit.data.collection;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
+import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.FeatureCollectionUtilities;
 
-import org.geotoolkit.feature.FeatureUtilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -221,7 +220,7 @@ public class SubFeatureCollection extends AbstractFeatureCollection {
      */
     @Override
     public void clear() {
-        final List toDelete = FeatureUtilities.list(this);
+        final List toDelete = FeatureCollectionUtilities.list(this);
         removeAll(toDelete);
     }
 

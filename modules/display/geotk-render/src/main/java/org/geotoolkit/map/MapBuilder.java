@@ -23,7 +23,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.feature.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.MutableStyle;
 

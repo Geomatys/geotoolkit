@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.data.crs;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 
@@ -31,6 +29,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 /**
  * ReprojectFeatureReader provides a reprojection for FeatureTypes.

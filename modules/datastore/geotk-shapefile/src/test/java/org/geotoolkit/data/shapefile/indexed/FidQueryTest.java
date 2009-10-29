@@ -29,8 +29,8 @@ import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.collection.FeatureCollection;
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -43,7 +43,7 @@ import org.opengis.filter.spatial.BBOX;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.feature.FeatureCollectionUtilities;
+import org.geotoolkit.data.FeatureCollectionUtilities;
 
 public class FidQueryTest extends FIDTestCase {
     public  FidQueryTest(  ) throws IOException {

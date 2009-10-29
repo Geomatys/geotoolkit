@@ -19,7 +19,7 @@ package org.geotoolkit.data.crs;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.feature.collection.FeatureIterator;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
