@@ -32,6 +32,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class DefaultFIDReader implements FIDReader {
 
     protected static final String CLOSE_MESG = "Close has already been called on this FIDReader";
+    
     private int len;
     protected int index = 0;
     protected final StringBuilder buffer;

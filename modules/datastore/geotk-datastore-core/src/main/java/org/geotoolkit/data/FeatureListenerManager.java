@@ -455,4 +455,5 @@ public class FeatureListenerManager {
             fireEvent(typeName, transaction, FeatureEvent.Type.REMOVED, bounds);
         }
     }
+
 }

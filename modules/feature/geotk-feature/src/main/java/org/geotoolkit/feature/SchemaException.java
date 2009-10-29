@@ -16,14 +16,17 @@
  */
 package org.geotoolkit.feature;
 
+import java.io.IOException;
+
 
 /**
  * Indicates client class has attempted to create an invalid schema.
+ * 
  * @module pending
  */
-public class SchemaException extends Exception {
-    
-    private static final long serialVersionUID = 5453903672192802976L;
+public class SchemaException extends IOException {
+
+    private static final String NOT_FOUND = "Feature type could not be found for ";
 
     public SchemaException(Throwable cause) {
         super(cause);
@@ -47,4 +50,17 @@ public class SchemaException extends Exception {
     public SchemaException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public static SchemaException notFound(String typeName){
+        return notFound(typeName,null);
+    }
+
+    public static SchemaException notFound(String typeName, Throwable th){
+        final SchemaException ex = new SchemaException(NOT_FOUND+typeName);
+        if(th != null){
+            ex.initCause(th);
+        }
+        return ex;
+    }
+
 }

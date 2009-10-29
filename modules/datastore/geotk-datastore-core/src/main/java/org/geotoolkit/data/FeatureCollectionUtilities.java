@@ -46,7 +46,7 @@ public class FeatureCollectionUtilities {
 
 
     /**
-     * Copies the provided fetaures into a List.
+     * Copies the provided features into a List.
      *
      * @param featureCollection
      * @return List of features copied into memory

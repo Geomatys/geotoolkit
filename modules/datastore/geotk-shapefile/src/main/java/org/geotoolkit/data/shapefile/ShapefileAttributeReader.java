@@ -19,8 +19,7 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.util.List;
 
-import org.geotoolkit.data.AbstractAttributeIO;
-import org.geotoolkit.data.AttributeReader;
+import org.geotoolkit.data.AbstractAttributeReader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -32,7 +31,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  * DbaseFileReader
  * @module pending
  */
-public class ShapefileAttributeReader extends AbstractAttributeIO implements AttributeReader {
+public class ShapefileAttributeReader extends AbstractAttributeReader {
 
     protected ShapefileReader shp;
     protected DbaseFileReader dbf;

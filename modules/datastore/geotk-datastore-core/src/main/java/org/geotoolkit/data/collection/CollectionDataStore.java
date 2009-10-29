@@ -23,7 +23,6 @@ import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.SchemaNotFoundException;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -34,6 +33,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.feature.SchemaException;
 
 /**
  * Simple data store wrapper for feature collections. Allows to use feature collections in the user
@@ -133,10 +133,10 @@ public class CollectionDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    protected JTSEnvelope2D getBounds(final Query query) throws SchemaNotFoundException {
+    protected JTSEnvelope2D getBounds(final Query query) throws SchemaException {
         final String featureTypeName = query.getTypeName();
         if (!featureType.getTypeName().equals(featureTypeName)) {
-            throw new SchemaNotFoundException(featureTypeName);
+            throw SchemaException.notFound(featureTypeName);
         }
 
         return getBoundsInternal(query);
@@ -175,7 +175,7 @@ public class CollectionDataStore extends AbstractDataStore {
     protected int getCount(final Query query) throws IOException {
         final String featureTypeName = query.getTypeName();
         if (!featureType.getTypeName().equals(featureTypeName)) {
-            throw new SchemaNotFoundException(featureTypeName);
+            throw SchemaException.notFound(featureTypeName);
         }
 
         final FeatureIterator<SimpleFeature> iterator = collection.features();

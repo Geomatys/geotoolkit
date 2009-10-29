@@ -44,8 +44,6 @@ import org.opengis.filter.identity.Identifier;
  */
 public class BatchFeatureEvent extends FeatureEvent {
 
-    private static final long serialVersionUID = 3154238322369916486L;
-
     public BatchFeatureEvent(final FeatureSource<? extends FeatureType, ? extends Feature> featureSource) {
         this(featureSource, new JTSEnvelope2D(), Filter.EXCLUDE);
     }

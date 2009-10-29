@@ -27,7 +27,6 @@ import java.io.IOException;
  */
 public class FeatureLockException extends IOException {
 
-    private static final long serialVersionUID = 6257796552547874140L;
     String featureID;
 
     public FeatureLockException() {

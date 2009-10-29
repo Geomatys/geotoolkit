@@ -30,7 +30,6 @@ import org.opengis.feature.type.FeatureType;
  * @module pending
  */
 public class CollectionEvent extends EventObject {
-    private static final long serialVersionUID = -1864190177730929948L;
 
     /*
      * Design Notes:

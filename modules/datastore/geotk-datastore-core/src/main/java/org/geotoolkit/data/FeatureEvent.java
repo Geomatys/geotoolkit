@@ -51,8 +51,6 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since GeoTools 2.0
  */
 public class FeatureEvent extends EventObject {
-
-    private static final long serialVersionUID = 3154238322369916485L;
     
     public enum Type {
 

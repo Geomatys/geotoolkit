@@ -25,29 +25,34 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @version $Id$
  * @author  Ian Schneider
  */
-public abstract class AbstractAttributeIO {
+public abstract class AbstractAttributeReader implements AttributeReader {
 
     protected final AttributeDescriptor[] metaData;
 
-    /**
-     * Copy the meta-data from this reader, but doesn't use the reader.
-     */
-    protected AbstractAttributeIO(AttributeReader defs) {
-        this(defs.getAttributeDescriptors());
-    }
-
-    protected AbstractAttributeIO(AttributeDescriptor[] metaData) {
+    protected AbstractAttributeReader(AttributeDescriptor[] metaData) {
         this.metaData = metaData;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final int getAttributeCount() {
         return metaData.length;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final AttributeDescriptor getAttributeDescriptor(int position) {
         return metaData[position];
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public final AttributeDescriptor[] getAttributeDescriptors(){
         return metaData;
     }

@@ -29,9 +29,9 @@ import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.SchemaNotFoundException;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.data.DataStore;
@@ -339,7 +339,7 @@ public final class MemoryDataStore extends AbstractDataStore {
             if (schema.containsKey(typeName)) {
                 return (SimpleFeatureType) schema.get(typeName);
             }
-            throw new SchemaNotFoundException(typeName);
+            throw SchemaException.notFound(typeName);
         }
     }
 
