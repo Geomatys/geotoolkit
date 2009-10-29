@@ -17,11 +17,14 @@
  */
 package org.geotoolkit.gui.swing.go2.control.creation;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -41,44 +44,66 @@ import org.opengis.feature.simple.SimpleFeature;
 public class MultiLineDelegate extends AbstractEditionDelegate {
 
      private enum ACTION{
-        ADD,
-        MOVE
+        GEOM_ADD,
+        GEOM_MOVE,
+        NODE_MOVE,
+        NODE_ADD,
+        NODE_DELETE
     }
 
     private final Action deleteAction = new AbstractAction("", ICON_DELETE) {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(context.feature != null){
-                handler.getHelper().sourceRemoveFeature(context.feature);
-                handler.getDecoration().setGeometries(null);
+            if(feature != null){
+                handler.getHelper().sourceRemoveFeature(feature);
+                reset();
             }
         }
     };
 
-
-    private final EditionHelper.EditionContext context = new EditionHelper.EditionContext();
-    private ACTION currentAction = ACTION.MOVE;
+    private ACTION currentAction = ACTION.GEOM_MOVE;
     private int nbRighClick = 0;
+    private SimpleFeature feature = null;
+    private Geometry geometry = null;
+    private final List<Geometry> subGeometries =  new ArrayList<Geometry>();
+    private int subGeometryIndex = -1;
+    private int[] nodes = null;
+    private final List<Coordinate> coords = new ArrayList<Coordinate>();
+    private boolean modified = false;
+    private boolean added = false;
+
 
     public MultiLineDelegate(DefaultEditionHandler handler) {
         super(handler);
     }
 
+    private void reset(){
+        feature = null;
+        geometry = null;
+        subGeometries.clear();
+        subGeometryIndex = -1;
+        nodes = null;
+        modified = false;
+        added = false;
+        coords.clear();
+        nbRighClick = 0;
+        handler.getDecoration().setGeometries(null);
+    }
+
     @Override
     public void initialize() {
         //configure tool panel
-        final JPanel pan = new JPanel(new GridLayout(3,2));
+        final JPanel pan = new JPanel(new GridLayout(4,3));
         pan.setOpaque(false);
 
         final ButtonGroup group = new ButtonGroup();
         AbstractButton button;
 
         button = new JToggleButton(new AbstractAction("",ICON_MOVE) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentAction = ACTION.MOVE;
+                currentAction = ACTION.GEOM_MOVE;
             }
         });
         button.setSelected(true);
@@ -86,36 +111,68 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
         pan.add(button);
 
         button = new JToggleButton(new AbstractAction("",ICON_ADD) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentAction = ACTION.ADD;
+                currentAction = ACTION.GEOM_ADD;
             }
         });
         group.add(button);
         pan.add(button);
 
         pan.add(new JLabel(" "));
+
+        button = new JToggleButton(new AbstractAction("",ICON_NODE_MOVE) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentAction = ACTION.NODE_MOVE;
+            }
+        });
+        group.add(button);
+        pan.add(button);
+
+        button = new JToggleButton(new AbstractAction("",ICON_NODE_ADD) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentAction = ACTION.NODE_ADD;
+            }
+        });
+        group.add(button);
+        pan.add(button);
+
+
+        button = new JToggleButton(new AbstractAction("",ICON_NODE_DELETE) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentAction = ACTION.NODE_DELETE;
+            }
+        });
+        group.add(button);
+        pan.add(button);
+
+
+        pan.add(new JLabel(" "));
+        pan.add(new JLabel(" "));
+        pan.add(new JLabel(" "));        
+
         pan.add(new JLabel(" "));
         pan.add(new JLabel(" "));
 
         button = new JButton(deleteAction);
-        group.add(button);
         pan.add(button);
 
-        deleteAction.setEnabled(context.feature != null);
+        deleteAction.setEnabled(this.feature != null);
         handler.getDecoration().setToolsPane(pan);
     }
 
     private void setCurrentFeature(SimpleFeature feature){
-        context.feature = feature;
+        this.feature = feature;
         if(feature != null){
-            context.geometry = handler.getHelper().toObjectiveCRS(feature);
+            this.geometry = handler.getHelper().toObjectiveCRS(feature);
         }else{
-            context.geometry = null;
+            this.geometry = null;
         }
-        deleteAction.setEnabled(context.feature != null);
-        handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+        deleteAction.setEnabled(this.feature != null);
+        handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
     }
 
     @Override
@@ -125,71 +182,70 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
 
         if(button == MouseEvent.BUTTON1){
             switch(currentAction){
-                case ADD:
+                case GEOM_ADD:
                     nbRighClick = 0;
-                    context.coords.add(handler.getHelper().toCoord(e.getX(), e.getY()));
-                    Geometry candidate = EditionHelper.createGeometry(context.coords);
-                    if (context.subGeometries.size() > 0) {
-                        context.subGeometries.remove(context.subGeometries.size() - 1);
+                    coords.add(handler.getHelper().toCoord(e.getX(), e.getY()));
+                    Geometry candidate = EditionHelper.createGeometry(coords);
+                    if (subGeometries.size() > 0) {
+                        subGeometries.remove(subGeometries.size() - 1);
                     }
-                    context.subGeometries.add(candidate);
-                    context.geometry = EditionHelper.createMultiLine(context.subGeometries);
-                    handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
-                    context.added = true;
-                    handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+                    subGeometries.add(candidate);
+                    geometry = EditionHelper.createMultiLine(subGeometries);
+                    added = true;
+                    handler.getDecoration().setGeometries(Collections.singleton(geometry));
                     break;
-                default:
-                    setCurrentFeature(handler.getHelper().grabFeature(e.getX(), e.getY(), false));
+//                default:
+//                    setCurrentFeature(handler.getHelper().grabFeature(e.getX(), e.getY(), false));
             }
         }else if(button == MouseEvent.BUTTON3){
             switch(currentAction){
-                case ADD:
+                case GEOM_ADD:
                     nbRighClick++;
                     if (nbRighClick == 1) {
-                        if (context.coords.size() > 1) {
-                            if (context.subGeometries.size() > 0) {
-                                context.subGeometries.remove(context.subGeometries.size() - 1);
+                        if (coords.size() > 1) {
+                            if (subGeometries.size() > 0) {
+                                subGeometries.remove(subGeometries.size() - 1);
                             }
-                            Geometry geo = EditionHelper.createLine(context.coords);
-                            context.subGeometries.add(geo);
-                        } else if (context.coords.size() > 0) {
-                            if (context.subGeometries.size() > 0) {
-                                context.subGeometries.remove(context.subGeometries.size() - 1);
+                            Geometry geo = EditionHelper.createLine(coords);
+                            subGeometries.add(geo);
+                        } else if (coords.size() > 0) {
+                            if (subGeometries.size() > 0) {
+                                subGeometries.remove(subGeometries.size() - 1);
                             }
                         }
                     } else {
-                        if (context.subGeometries.size() > 0) {
-                            Geometry geo = EditionHelper.createMultiLine(context.subGeometries);
+                        if (subGeometries.size() > 0) {
+                            Geometry geo = EditionHelper.createMultiLine(subGeometries);
                             handler.getHelper().sourceAddGeometry(new Geometry[]{geo});
                             nbRighClick = 0;
-                            context.reset();
+                            reset();
                         }
                         handler.getDecoration().setGeometries(null);
                     }
-                    context.coords.clear();
+                    coords.clear();
                     break;
-                case MOVE :
-                    if(context.modified){
-                        handler.getHelper().sourceModifyFeature(context.feature, context.geometry);
-                        handler.getDecoration().setGeometries(null);
-                    }
-                    break;
+//                case GEOM_MOVE :
+//                    if(context.modified){
+//                        handler.getHelper().sourceModifyFeature(context.feature, context.geometry);
+//                        handler.getDecoration().setGeometries(null);
+//                    }
+//                    break;
 
             }
 
-            deleteAction.setEnabled(context.feature != null);
+            deleteAction.setEnabled(feature != null);
         }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         switch(currentAction){
-            case MOVE:
-                if(context.geometry != null){
-                    //start dragging mode
-                    handler.getHelper().grabGeometryNode(context, e.getX(), e.getY());
-                }
-                break;
+//            case GEOM_MOVE:
+//                if(this.geometry != null){
+//                    //start dragging mode
+//                    handler.getHelper().grabGeometryNode(context, e.getX(), e.getY());
+//                }
+//                break;
         }
 
     }
@@ -197,20 +253,20 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
     @Override
     public void mouseReleased(MouseEvent e) {
 
-        if(currentAction == ACTION.MOVE && context.nodes != null){
-            //we were dragging a node
-            handler.getHelper().dragGeometryNode(context, e.getX(), e.getY());
-            handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
-        }
+//        if(currentAction == ACTION.GEOM_MOVE && context.nodes != null){
+//            //we were dragging a node
+//            handler.getHelper().dragGeometryNode(context, e.getX(), e.getY());
+//            handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+//        }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
 
-        if(currentAction == ACTION.MOVE && context.nodes != null){
-            handler.getHelper().dragGeometryNode(context, e.getX(), e.getY());
-            handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
-        }
+//        if(currentAction == ACTION.GEOM_MOVE && context.nodes != null){
+//            handler.getHelper().dragGeometryNode(context, e.getX(), e.getY());
+//            handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+//        }
 
     }
 

@@ -78,7 +78,7 @@ public class PointDelegate extends AbstractEditionDelegate{
     @Override
     public void initialize() {
         //configure tool panel
-        final JPanel pan = new JPanel(new GridLayout(3,2));
+        final JPanel pan = new JPanel(new GridLayout(5,1));
         pan.setOpaque(false);
 
         final ButtonGroup group = new ButtonGroup();
@@ -95,6 +95,8 @@ public class PointDelegate extends AbstractEditionDelegate{
         group.add(button);
         pan.add(button);
 
+        pan.add(new JLabel(" "));
+
         button = new JToggleButton(new AbstractAction("",ICON_ADD) {
 
             @Override
@@ -106,11 +108,8 @@ public class PointDelegate extends AbstractEditionDelegate{
         pan.add(button);
 
         pan.add(new JLabel(" "));
-        pan.add(new JLabel(" "));
-        pan.add(new JLabel(" "));
 
         button = new JButton(deleteAction);
-        group.add(button);
         pan.add(button);
 
         deleteAction.setEnabled(feature != null);
