@@ -221,6 +221,25 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     }
 
     /**
+     * Gets the value of the legalConstraint property.
+     *
+     */
+    public void setLegalConstraint(LegalConstraint legalConstraint) {
+        if (this.legalConstraint == null) {
+            this.legalConstraint = new ArrayList<LegalConstraint>();
+        }
+        this.legalConstraint.add(legalConstraint);
+    }
+
+    /**
+     * Gets the value of the legalConstraint property.
+     *
+     */
+    public void setLegalConstraint(List<LegalConstraint> legalConstraint) {
+        this.legalConstraint = legalConstraint;
+    }
+    
+    /**
      * Gets the value of the characteristics property.
      * 
      * 
@@ -232,6 +251,24 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         return this.characteristics;
     }
 
+    /**
+     * Sets the value of the characteristics property.
+     *
+     */
+    public void setCharacteristics(List<Characteristics> characteristics) {
+        this.characteristics = characteristics;
+    }
+
+    /**
+     * Sets the value of the characteristics property.
+     *
+     */
+    public void setCharacteristics(Characteristics characteristics) {
+        if (this.characteristics == null)
+            this.characteristics = new ArrayList<Characteristics>();
+        this.characteristics.add(characteristics);
+    }
+    
     /**
      * Gets the value of the capabilities property.
      * 
@@ -284,6 +321,25 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
         return this.documentation;
     }
 
+    /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setDocumention(Documentation documentation) {
+        if (this.documentation == null) {
+            this.documentation = new ArrayList<Documentation>();
+        }
+        this.documentation.add(documentation);
+    }
+
+    /**
+     * sets the value of the contact property.
+     *
+     */
+    public void setDocumentation(List<Documentation> documentation) {
+        this.documentation = documentation;
+    }
+    
     /**
      * Gets the value of the history property.
      * 

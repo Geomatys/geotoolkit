@@ -54,6 +54,14 @@ public class SpatialReferenceFrame {
     @XmlElement(name = "EngineeringCRS", namespace = "http://www.opengis.net/gml", required = true)
     protected EngineeringCRSType engineeringCRS;
 
+    public SpatialReferenceFrame() {
+
+    }
+
+    public SpatialReferenceFrame(EngineeringCRSType engineeringCRS) {
+        this.engineeringCRS = engineeringCRS;
+    }
+    
     /**
      * Gets the value of the engineeringCRS property.
      * 

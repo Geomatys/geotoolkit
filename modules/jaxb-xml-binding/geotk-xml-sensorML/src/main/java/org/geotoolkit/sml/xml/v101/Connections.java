@@ -65,6 +65,14 @@ public class Connections {
     @XmlElement(name = "ConnectionList")
     private Connections.ConnectionList connectionList;
 
+    public Connections() {
+
+    }
+
+    public Connections(ConnectionList connectionList) {
+        this.connectionList = connectionList;
+    }
+    
     /**
      * Gets the value of the connectionList property.
      * 
@@ -118,6 +126,13 @@ public class Connections {
         @XmlElement(required = true)
         private List<Connection> connection;
 
+        public ConnectionList() {
+
+        }
+
+        public ConnectionList(List<Connection> connection) {
+            this.connection = connection;
+        }
         /**
          * Gets the value of the connection property.
          * 

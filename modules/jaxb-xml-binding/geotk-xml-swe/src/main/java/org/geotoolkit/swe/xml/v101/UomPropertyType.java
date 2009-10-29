@@ -271,4 +271,67 @@ public class UomPropertyType implements UomProperty {
         return s.toString();
     }
 
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    /**
+     * @param remoteSchema the remoteSchema to set
+     */
+    public void setRemoteSchema(String remoteSchema) {
+        this.remoteSchema = remoteSchema;
+    }
+
+    /**
+     * @param actuate the actuate to set
+     */
+    public void setActuate(String actuate) {
+        this.actuate = actuate;
+    }
+
+    /**
+     * @param arcrole the arcrole to set
+     */
+    public void setArcrole(String arcrole) {
+        this.arcrole = arcrole;
+    }
+
+    /**
+     * @param href the href to set
+     */
+    public void setHref(String href) {
+        this.href = href;
+    }
+
+    /**
+     * @param role the role to set
+     */
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    /**
+     * @param show the show to set
+     */
+    public void setShow(String show) {
+        this.show = show;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(String type) {
+        this.type = type;
+    }
+
 }

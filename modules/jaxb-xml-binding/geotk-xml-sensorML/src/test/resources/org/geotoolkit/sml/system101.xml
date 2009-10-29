@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sml:SensorML xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/sensorML/1.0.1 http://schemas.opengis.net/sensorML/1.0.1/sensorML.xsd" version="1.0.1">
+    <sml:member>
+        <sml:System gml:id="urn-ogc-object-feature-Sensor-IFREMER-13471-09-CTD-1">
+            <gml:description>The SBE 37-SMP MicroCAT is a high-accuracy conductivity and temperature (pressure optional) recorder with internal battery and memory, serial communication or Inductive Modem and pump (optional). Designed for moorings or other long duration, fixed-site deployments, the MicroCAT includes a standard serial interface and nonvolatile FLASH memory. Construction is of titanium and other non-corroding materials to ensure long life with minimum maintenance, and depth capability is 7000 meters (23,000 feet).</gml:description>
+            <sml:keywords>
+                <sml:KeywordList codeSpace="urn:x-nasa:def:gcmd:keywords">
+                    <sml:keyword>OCEANS</sml:keyword>
+                    <sml:keyword>OCEANS:OCEAN TEMPERATURE</sml:keyword>
+                    <sml:keyword>OCEANS:OCEAN PRESSURE</sml:keyword>
+                    <sml:keyword>OCEANS:SALINITY/DENSITY</sml:keyword>
+                    <sml:keyword>Instruments/Sensors:In Situ/Laboratory Instruments:Conductivity Sensors</sml:keyword>
+                </sml:KeywordList>
+            </sml:keywords>
+            <sml:identification>
+                <sml:IdentifierList>
+                    <sml:identifier name="uniqueID">
+                        <sml:Term definition="urn:ogc:def:identifierType:OGC:uniqueID">
+                            <sml:value>urn:ogc:object:feature:Sensor:IFREMER:13471-09-CTD-1</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="shortName">
+                        <sml:Term definition="urn:x-ogc:def:identifier:OGC:shortName">
+                            <sml:value>Microcat_CT_SBE37</sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="modelNumber">
+                        <sml:Term definition="urn:x-ogc:def:identifier:OGC:modelNumber">
+                            <sml:codeSpace xlink:href="urn:x-ogc:def:identifier:SBE:modelNumber"/>
+                            <sml:value></sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                    <sml:identifier name="serialNumber">
+                        <sml:Term definition="urn:x-ogc:def:identifier:OGC:serialNumber">
+                            <sml:codeSpace xlink:href="urn:x-ogc:def:identifier:SBE:serialNumber"/>
+                            <sml:value></sml:value>
+                        </sml:Term>
+                    </sml:identifier>
+                </sml:IdentifierList>
+            </sml:identification>
+            <sml:classification>
+                <sml:ClassifierList>
+                    <sml:classifier name="sensorType">
+                        <sml:Term definition="urn:x-ogc:def:classifier:OGC:sensorType">
+                            <sml:codeSpace xlink:href="urn:x-ogc:dictionary::sensorTypes"/>
+                            <sml:value>CTD</sml:value>
+                        </sml:Term>
+                    </sml:classifier>
+                </sml:ClassifierList>
+            </sml:classification>
+            <sml:contact xlink:arcrole="urn:x-ogc:def:classifiers:OGC:contactType:manufacturer">
+                <sml:ResponsibleParty>
+                    <sml:organizationName>Sea-Bird Electronics, Inc.</sml:organizationName>
+                    <sml:contactInfo>
+                        <sml:phone>
+                            <sml:voice>+1 (425) 643-9866</sml:voice>
+                            <sml:facsimile>+1 (425) 643-9954</sml:facsimile>
+                        </sml:phone>
+                        <sml:address>
+                            <sml:deliveryPoint>1808 136th Place NE</sml:deliveryPoint>
+                            <sml:city>Bellevue</sml:city>
+                            <sml:administrativeArea>Washington</sml:administrativeArea>
+                            <sml:postalCode>98005</sml:postalCode>
+                            <sml:country>USA</sml:country>
+                        </sml:address>
+                        <sml:onlineResource xlink:href="http://www.seabird.com"/>
+                    </sml:contactInfo>
+                </sml:ResponsibleParty>
+            </sml:contact>
+            <sml:interfaces>
+                <sml:InterfaceList>
+                    <sml:interface name="RS232"/>
+                </sml:InterfaceList>
+            </sml:interfaces>
+            <sml:components>
+                <sml:ComponentList>
+                    <sml:component name="IFREMER-13471-1017-PSAL-2.0">
+                        <sml:Component gml:id="urn-ogc-object-feature-Sensor-IFREMER-13471-1017-PSAL-2.0">
+                            <sml:inputs>
+                                <sml:InputList>
+                                    <sml:input name="CNDC">
+                                        <swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:CNDC"/>
+                                    </sml:input>
+                                    <sml:input name="TEMP">
+                                        <swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:TEMP"/>
+                                    </sml:input>
+                                    <sml:input name="PRES">
+                                        <swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:PRES"/>
+                                    </sml:input>
+                                </sml:InputList>
+                            </sml:inputs>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="computedPSAL">
+                                        <swe:Quantity definition="urn:x-ogc:def:phenomenon:OGC:PSAL">
+                                            <gml:parameterName codeSpace="http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/11/standard-name-table">#sea_water_electrical_conductivity</gml:parameterName>
+                                            <swe:uom code="P.S.U"/>
+                                        </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
+                        </sml:Component>
+                    </sml:component>
+                    <sml:component name="IFREMER-13471-1017-CNDC-2.0">
+                        <sml:Component gml:id="urn-ogc-object-feature-Sensor-IFREMER-13471-1017-CNDC-2.0">
+                            <sml:inputs>
+                                <sml:InputList>
+                                    <sml:input name="CNDC">
+                                        <swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:CNDC"/>
+                                    </sml:input>
+                                </sml:InputList>
+                            </sml:inputs>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="measuredCNDC">
+                                        <swe:Quantity definition="urn:x-ogc:def:phenomenon:OGC:CNDC">
+                                            <gml:parameterName codeSpace="http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/11/standard-name-table">#sea_water_electrical_conductivity</gml:parameterName>
+                                            <swe:uom code="mhos/m"/>
+                                        </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
+                        </sml:Component>
+                    </sml:component>
+                    <sml:component name="IFREMER-13471-1017-PRES-2.0">
+                        <sml:Component gml:id="urn-ogc-object-feature-Sensor-IFREMER-13471-1017-PRES-2.0">
+                            <gml:description>Conductivity detector connected to the SBE37SMP Recorder</gml:description>
+                            <sml:inputs>
+                                <sml:InputList>
+                                    <sml:input name="PRES">
+                                        <swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:PRES"/>
+                                    </sml:input>
+                                </sml:InputList>
+                            </sml:inputs>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="measuredPRES">
+                                        <swe:Quantity definition="urn:x-ogc:def:phenomenon:OGC:PRES">
+                                            <gml:parameterName codeSpace="http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/11/standard-name-table">#sea_water_pressure</gml:parameterName>
+                                            <swe:uom xlink:title="decibar=10000 pascals" code="dBar"/>
+                                        </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
+                        </sml:Component>
+                    </sml:component>
+                    <sml:component name="IFREMER-13471-1017-TEMP-2.0">
+                        <sml:Component gml:id="urn-ogc-object-feature-Sensor-IFREMER-13471-1017-TEMP-2.0">
+                            <gml:description> Temperature detector connected to the SBE37SMP Recorder</gml:description>
+                            <sml:inputs>
+                                <sml:InputList>
+                                    <sml:input name="TEMP">
+                                        <swe:ObservableProperty definition="urn:x-ogc:def:phenomenon:OGC:TEMP"/>
+                                    </sml:input>
+                                </sml:InputList>
+                            </sml:inputs>
+                            <sml:outputs>
+                                <sml:OutputList>
+                                    <sml:output name="measuredTEMP">
+                                        <swe:Quantity definition="urn:x-ogc:def:phenomenon:OGC:TEMP">
+                                            <gml:parameterName codeSpace="http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/11/standard-name-table">#sea_water_temperature</gml:parameterName>
+                                            <swe:uom xlink:title="Celsius degree" code="Cel"/>
+                                        </swe:Quantity>
+                                    </sml:output>
+                                </sml:OutputList>
+                            </sml:outputs>
+                            <sml:parameters>
+                                <sml:ParameterList>
+                                    <sml:parameter name="calibration" xlink:role="urn:x-ogc:def:sensor:steadyState">
+                                        <swe:DataRecord definition="urn:x-ogc:def:sensor:linearCalibration">
+                                            <swe:field name="dynamicRange">
+                                                <swe:QuantityRange definition="urn:x-ogc:def:sensor:dynamicRange">
+                                                    <swe:uom code="Cel"/>
+                                                    <swe:value>-5.0 35.0</swe:value>
+                                                </swe:QuantityRange>
+                                            </swe:field>
+                                            <swe:field name="gain">
+                                                <swe:Quantity definition="urn:x-ogc:def:sensor:gain">
+                                                    <swe:value>1.0</swe:value>
+                                                </swe:Quantity>
+                                            </swe:field>
+                                            <swe:field name="offset">
+                                                <swe:Quantity definition="urn:x-ogc:def:sensor:offset">
+                                                    <swe:value>0.0</swe:value>
+                                                </swe:Quantity>
+                                            </swe:field>
+                                        </swe:DataRecord>
+                                    </sml:parameter>
+                                    <sml:parameter name="accuracy" xlink:role="urn:x-ogc:def:sensor:OGC:accuracy">
+                                        <swe:Quantity definition="urn:x-ogc:def:sensor:OGC:absoluteAccuracy">
+                                            <swe:uom code="Cel"/>
+                                            <swe:value>0.0020</swe:value>
+                                        </swe:Quantity>
+                                    </sml:parameter>
+                                </sml:ParameterList>
+                            </sml:parameters>
+                            <sml:method xlink:href="urn:x-ogc:def:process:1.0:detector"/>
+                        </sml:Component>
+                    </sml:component>
+                </sml:ComponentList>
+            </sml:components>
+        </sml:System>
+    </sml:member>
+</sml:SensorML>

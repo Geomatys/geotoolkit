@@ -85,6 +85,14 @@ public class Location implements AbstractLocation {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public Location() {
+
+    }
+
+    public Location(PointType point) {
+        this.point = point;
+    }
+    
     /**
      * Gets the value of the point property.
      * 

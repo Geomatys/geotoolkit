@@ -73,6 +73,16 @@ public class Rights {
     @XmlAttribute
     private Boolean copyRights;
 
+    public Rights() {
+
+    }
+
+    public Rights(Boolean copyRights, Boolean privacyAct, Documentation docu) {
+        this.copyRights = copyRights;
+        this.privacyAct = privacyAct;
+        this.documentation = docu;
+    }
+    
     /**
      * Gets the value of the documentation property.
      * 

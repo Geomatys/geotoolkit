@@ -277,4 +277,42 @@ public class Parameters {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[Parameters]").append("\n");
+        if (parameterList != null) {
+            sb.append("parameterList: ").append(parameterList).append('\n');
+        }
+        if (nilReason != null) {
+            sb.append("nilReason:").append('\n');
+            for (String k : nilReason) {
+                sb.append("nilReason: ").append(k).append('\n');
+            }
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
 }

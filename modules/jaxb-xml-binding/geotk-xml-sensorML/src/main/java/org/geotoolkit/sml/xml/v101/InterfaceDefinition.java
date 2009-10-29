@@ -86,6 +86,15 @@ public class InterfaceDefinition {
     @XmlSchemaType(name = "ID")
     private String id;
 
+    public InterfaceDefinition() {
+
+    }
+
+    public InterfaceDefinition(String id, LayerPropertyType applicationLayer, LayerPropertyType dataLinkLayer) {
+        this.applicationLayer = applicationLayer;
+        this.dataLinkLayer    = dataLinkLayer;
+    }
+    
     /**
      * Gets the value of the serviceLayer property.
      * 

@@ -76,6 +76,14 @@ public class Category extends AbstractDataComponentEntry {
     @XmlSchemaType(name = "token")
     private String axisID;
 
+    public Category() {
+
+    }
+
+    public Category(String definition, String value) {
+        super(definition);
+        this.value = value;
+    }
     
     /**
      * Gets the value of the value property.

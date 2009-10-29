@@ -16,12 +16,9 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDerivableComponent;
@@ -60,9 +57,12 @@ import org.geotoolkit.sml.xml.AbstractPosition;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractDerivableComponentType", propOrder = {
-    "rest",
     "location",
-    "position"
+    "spatialReferenceFrame",
+    "position",
+    "timePosition",
+    "temporalReferenceFrame",
+    "interfaces"
 })
 @XmlSeeAlso({
     ComponentArrayType.class,
@@ -70,39 +70,23 @@ import org.geotoolkit.sml.xml.AbstractPosition;
 })
 public abstract class AbstractDerivableComponentType extends AbstractProcessType implements AbstractDerivableComponent {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "temporalReferenceFrame", namespace = "http://www.opengis.net/sensorML/1.0.1", type = TemporalReferenceFrame.class),
-        @XmlElementRef(name = "spatialReferenceFrame", namespace = "http://www.opengis.net/sensorML/1.0.1", type = SpatialReferenceFrame.class),
-        @XmlElementRef(name = "timePosition", namespace = "http://www.opengis.net/sensorML/1.0.1", type = TimePosition.class),
-        @XmlElementRef(name = "interfaces", namespace = "http://www.opengis.net/sensorML/1.0.1", type = Interfaces.class)
-    })
-    private List<Object> rest;
+    @XmlElementRef(name = "spatialReferenceFrame",  namespace = "http://www.opengis.net/sensorML/1.0", type = SpatialReferenceFrame.class)
+    private SpatialReferenceFrame spatialReferenceFrame;
 
-    @XmlElementRef(name = "location", namespace = "http://www.opengis.net/sensorML/1.0.1", type = Location.class)
+    @XmlElementRef(name = "location", namespace = "http://www.opengis.net/sensorML/1.0", type = Location.class)
     private Location location;
 
-    @XmlElementRef(name = "position", namespace = "http://www.opengis.net/sensorML/1.0.1", type = Position.class)
+    @XmlElementRef(name = "position", namespace = "http://www.opengis.net/sensorML/1.0", type = Position.class)
     private Position position;
-    
-    /**
-     * Gets the rest of the content model. 
-     * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link SpatialReferenceFrame }
-     * {@link TemporalReferenceFrame }
-     * {@link Location }
-     * {@link Interfaces }
-     * {@link TimePosition }
-     * {@link Position }
-     * 
-     * 
-     */
-    public List<Object> getRest() {
-        if (rest == null) {
-            rest = new ArrayList<Object>();
-        }
-        return this.rest;
-    }
+
+    @XmlElementRef(name = "timePosition", namespace = "http://www.opengis.net/sensorML/1.0", type = TimePosition.class)
+    private TimePosition timePosition;
+
+    @XmlElementRef(name = "temporalReferenceFrame", namespace = "http://www.opengis.net/sensorML/1.0", type = TemporalReferenceFrame.class)
+    private TemporalReferenceFrame temporalReferenceFrame;
+
+    @XmlElementRef(name = "interfaces", namespace = "http://www.opengis.net/sensorML/1.0", type = Interfaces.class)
+    private Interfaces interfaces;
     
     public Location getSMLLocation() {
         return location;
@@ -125,5 +109,61 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         if (position instanceof Position)
             this.position = (Position) position;
         else throw new IllegalArgumentException("Bad version of the position object");
+    }
+
+    /**
+     * @return the spatialReferenceFrame
+     */
+    public SpatialReferenceFrame getSpatialReferenceFrame() {
+        return spatialReferenceFrame;
+    }
+
+    /**
+     * @param spatialReferenceFrame the spatialReferenceFrame to set
+     */
+    public void setSpatialReferenceFrame(SpatialReferenceFrame spatialReferenceFrame) {
+        this.spatialReferenceFrame = spatialReferenceFrame;
+    }
+    
+    /**
+     * @return the timePosition
+     */
+    public TimePosition getTimePosition() {
+        return timePosition;
+    }
+
+    /**
+     * @param timePosition the timePosition to set
+     */
+    public void setTimePosition(TimePosition timePosition) {
+        this.timePosition = timePosition;
+    }
+
+    /**
+     * @return the temporalReferenceFrame
+     */
+    public TemporalReferenceFrame getTemporalReferenceFrame() {
+        return temporalReferenceFrame;
+    }
+
+    /**
+     * @param temporalReferenceFrame the temporalReferenceFrame to set
+     */
+    public void setTemporalReferenceFrame(TemporalReferenceFrame temporalReferenceFrame) {
+        this.temporalReferenceFrame = temporalReferenceFrame;
+    }
+
+    /**
+     * @return the interfaces
+     */
+    public Interfaces getInterfaces() {
+        return interfaces;
+    }
+
+    /**
+     * @param interfaces the interfaces to set
+     */
+    public void setInterfaces(Interfaces interfaces) {
+        this.interfaces = interfaces;
     }
 }

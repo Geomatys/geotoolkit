@@ -58,7 +58,8 @@ import org.geotoolkit.gml.xml.AbstractGML;
     //"metaDataProperty",
     "description",
     "descriptionReference",
-    "name"
+    "name",
+    "parameterName"
 })
 @XmlSeeAlso({
     ArrayType.class,
@@ -78,6 +79,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
+    private CodeType parameterName;
 
     /**
      *  Empty constructor used by JAXB.
@@ -209,6 +211,20 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
         if (descriptionReference != null)
             sb.append("description reference:").append(descriptionReference).append('\n');
         return sb.toString();
+    }
+
+    /**
+     * @return the parameterName
+     */
+    public CodeType getParameterName() {
+        return parameterName;
+    }
+
+    /**
+     * @param parameterName the parameterName to set
+     */
+    public void setParameterName(CodeType parameterName) {
+        this.parameterName = parameterName;
     }
 
 }

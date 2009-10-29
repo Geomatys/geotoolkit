@@ -86,6 +86,20 @@ public class Document {
     @XmlSchemaType(name = "token")
     private String version;
 
+    public Document() {
+
+    }
+
+    public Document(String description) {
+        this.description = new StringOrRefType(description);
+    }
+
+    public Document(String description, String format, List<OnlineResource> onlineResource) {
+        this.description = new StringOrRefType(description);
+        this.format      = format;
+        this.onlineResource = onlineResource;
+    }
+    
     /**
      * Gets the value of the description property.
      * 

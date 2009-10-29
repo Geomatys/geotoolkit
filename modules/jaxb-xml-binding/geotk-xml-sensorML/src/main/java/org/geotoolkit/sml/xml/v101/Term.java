@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractTerm;
 import org.geotoolkit.swe.xml.v101.CodeSpacePropertyType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -169,6 +170,34 @@ public class Term implements AbstractTerm {
             sb.append("definition: ").append(definition).append('\n');
         }
         return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof Term) {
+            final Term that = (Term) object;
+
+            return Utilities.equals(this.codeSpace,  that.codeSpace) &&
+                   Utilities.equals(this.value,      that.value)     &&
+                   Utilities.equals(this.definition, that.definition);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.codeSpace != null ? this.codeSpace.hashCode() : 0);
+        hash = 97 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 97 * hash + (this.definition != null ? this.definition.hashCode() : 0);
+        return hash;
     }
 
 }

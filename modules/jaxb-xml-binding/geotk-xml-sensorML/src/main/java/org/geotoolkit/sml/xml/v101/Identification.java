@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractIdentification;
 import org.geotoolkit.sml.xml.AbstractIdentifier;
 import org.geotoolkit.sml.xml.AbstractIdentifierList;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -368,6 +369,45 @@ public class Identification implements AbstractIdentification {
         return sb.toString();
     }
 
+     /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof Identification) {
+            final Identification that = (Identification) object;
+
+            return Utilities.equals(this.actuate, that.actuate)           &&
+                   Utilities.equals(this.href, that.href)                 &&
+                   Utilities.equals(this.identifierList, that.identifierList) &&
+                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
+                   Utilities.equals(this.role, that.role)                 &&
+                   Utilities.equals(this.show, that.show)                 &&
+                   Utilities.equals(this.title, that.title)               &&
+                   Utilities.equals(this.type, that.type)                 &&
+                   Utilities.equals(this.arcrole, that.arcrole);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.identifierList != null ? this.identifierList.hashCode() : 0);
+        hash = 67 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 67 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 67 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 67 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 67 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 67 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 67 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 67 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 
     /**
      * <p>Java class for anonymous complex type.
@@ -472,6 +512,32 @@ public class Identification implements AbstractIdentification {
         }
 
         /**
+         * Verify if this entry is identical to specified object.
+         */
+        @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+
+            if (object instanceof IdentifierList) {
+                final IdentifierList that = (IdentifierList) object;
+
+                return Utilities.equals(this.identifier, that.identifier) &&
+                        Utilities.equals(this.id, that.id);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 53 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
+            hash = 53 * hash + (this.id != null ? this.id.hashCode() : 0);
+            return hash;
+
+        }
+        /**
          * <p>Java class for anonymous complex type.
          * 
          * <p>The following schema fragment specifies the expected content contained within this class.
@@ -571,6 +637,32 @@ public class Identification implements AbstractIdentification {
                     sb.append("name: ").append(name).append('\n');
                 }
                 return sb.toString();
+            }
+
+            /**
+             * Verify if this entry is identical to specified object.
+             */
+            @Override
+            public boolean equals(final Object object) {
+                if (object == this) {
+                    return true;
+                }
+
+                if (object instanceof Identifier) {
+                    final Identifier that = (Identifier) object;
+
+                    return Utilities.equals(this.name, that.name) &&
+                            Utilities.equals(this.term, that.term);
+                }
+                return false;
+            }
+
+            @Override
+            public int hashCode() {
+                int hash = 5;
+                hash = 13 * hash + (this.term != null ? this.term.hashCode() : 0);
+                hash = 13 * hash + (this.name != null ? this.name.hashCode() : 0);
+                return hash;
             }
 
         }

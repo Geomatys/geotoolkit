@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -92,6 +93,14 @@ public class Interfaces {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public Interfaces() {
+
+    }
+
+    public Interfaces(InterfaceList interfaceList) {
+        this.interfaceList = interfaceList;
+    }
+    
     /**
      * Gets the value of the interfaceList property.
      * 
@@ -313,6 +322,78 @@ public class Interfaces {
     }
 
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[interfaces]").append("\n");
+        if (interfaceList != null) {
+            sb.append("interfaceList: ").append(interfaceList).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Interfaces) {
+            final Interfaces that = (Interfaces) object;
+
+            return Utilities.equals(this.actuate, that.actuate)           &&
+                   Utilities.equals(this.href, that.href)                 &&
+                   Utilities.equals(this.interfaceList, that.interfaceList) &&
+                   Utilities.equals(this.remoteSchema, that.remoteSchema) &&
+                   Utilities.equals(this.role, that.role)                 &&
+                   Utilities.equals(this.show, that.show)                 &&
+                   Utilities.equals(this.title, that.title)               &&
+                   Utilities.equals(this.type, that.type)                 &&
+                   Utilities.equals(this.arcrole, that.arcrole);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 43 * hash + (this.interfaceList != null ? this.interfaceList.hashCode() : 0);
+        hash = 43 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 43 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 43 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 43 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 43 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 43 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 43 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 43 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+    
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -346,6 +427,15 @@ public class Interfaces {
         @XmlID
         @XmlSchemaType(name = "ID")
         private String id;
+
+        public InterfaceList() {
+
+        }
+
+        public InterfaceList(String id, List<Interface> _interface) {
+            this._interface = _interface;
+            this.id = id;
+        }
 
         /**
          * Gets the value of the interface property.
@@ -400,6 +490,41 @@ public class Interfaces {
             this.id = value;
         }
 
+         @Override
+        public boolean equals(final Object object) {
+            if (object == this) {
+                return true;
+            }
+            if (object instanceof InterfaceList) {
+                final InterfaceList that = (InterfaceList) object;
+                return Utilities.equals(this._interface, that._interface) &&
+                       Utilities.equals(this.id, that.id);
+
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 89 * hash + (this._interface != null ? this._interface.hashCode() : 0);
+            hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
+            return hash;
+        }
+
+
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder("[InterfaceList]").append("\n");
+            if (_interface != null) {
+                sb.append("interfaces:").append('\n');
+                for (Interface k : _interface) {
+                    sb.append("interface: ").append(k).append('\n');
+                }
+            }
+            return sb.toString();
+        }
     }
 
 }
