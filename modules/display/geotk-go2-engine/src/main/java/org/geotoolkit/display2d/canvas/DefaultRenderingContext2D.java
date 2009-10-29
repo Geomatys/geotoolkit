@@ -35,6 +35,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
@@ -57,8 +58,8 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Informations relative to a rendering in progress. A {@code RenderingContext} instance is
- * created by {@link AWTDirectRenderer2D#paint} at rendering time, which iterates over all graphic
- * objects and invokes {@link GraphicPrimitive2D#paint} for each of them. The rendering context
+ * created by {@link J2DCanvas} at rendering time, which iterates over all graphic
+ * objects and invokes the rendering process for each of them. The rendering context
  * is disposed once the rendering is completed. {@code RenderingContext} instances contain the
  * following informations:
  * <p>
@@ -66,7 +67,7 @@ import org.opengis.referencing.operation.TransformException;
  *   <li>The {@link Graphics2D} handler to use for rendering.</li>
  *   <li>The coordinate reference systems in use and the transformations between them.</li>
  *   <li>The area rendered up to date. This information shall be updated by each
- *       {@link GraphicPrimitive2D} while they are painting.</li>
+ *       {@link GraphicJ2D} while they are painting.</li>
  *   <li>The map scale.</li>
  * </ul>
  * <p>
@@ -189,8 +190,6 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * Constructs a new {@code RenderingContext} for the specified canvas.
      *
      * @param canvas        The canvas which creates this rendering context.
-     * @param displayBounds The drawing area in display coordinates.
-     * @param isPrinting    {@code true} if this context is used for printing.
      */
     public DefaultRenderingContext2D(final ReferencedCanvas2D canvas) {
         this.canvas = canvas;

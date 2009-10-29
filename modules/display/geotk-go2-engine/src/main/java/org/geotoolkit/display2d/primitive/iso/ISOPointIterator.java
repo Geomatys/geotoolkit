@@ -34,7 +34,7 @@ public final class ISOPointIterator extends ISOGeometryIterator<Point> {
      * Creates a new PointIterator object.
      *
      * @param point The point
-     * @param at The affine transform applied to coordinates during iteration
+     * @param trs The affine transform applied to coordinates during iteration
      */
     public ISOPointIterator(Point point,AffineTransform trs) {
         super(point,trs);

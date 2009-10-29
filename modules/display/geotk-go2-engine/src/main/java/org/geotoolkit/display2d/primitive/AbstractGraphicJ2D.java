@@ -21,11 +21,12 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
+import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * Base class for Geotoolkit implementations of {@link org.opengis.go.display.primitive.Graphic}
+ * Base class for Geotoolkit implementations of {@link Graphic}
  * primitives in java2d. This implementation is designed for use with
  * {@link org.geotoolkit.display2d.canvas.J2DCanvas}.
  *

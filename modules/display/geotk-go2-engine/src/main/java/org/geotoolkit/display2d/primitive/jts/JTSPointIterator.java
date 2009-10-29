@@ -35,7 +35,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      * Creates a new PointIterator object.
      *
      * @param point The point
-     * @param at The affine transform applied to coordinates during iteration
+     * @param trs The affine transform applied to coordinates during iteration
      */
     public JTSPointIterator(Point point,AffineTransform trs) {
         super(point,trs);

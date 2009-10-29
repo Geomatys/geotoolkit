@@ -23,6 +23,7 @@ import java.awt.Shape;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
+import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
@@ -66,9 +67,10 @@ public interface RenderingContext2D extends RenderingContext{
 
     /**
      * Returns the graphics where painting occurs. The initial coordinate reference system is
-     * {@link #displayCRS}, which maps the <cite>Java2D</cite> {@linkplain Graphics2D user space}.
+     * {@link #getDisplayCRS()}, which maps the <cite>Java2D</cite> {@linkplain Graphics2D user space}.
      * For drawing shapes directly in terms of "real world" coordinates, users should invoke
-     * <code>{@linkplain #setGraphicsCRS setGraphicsCRS}({@linkplain #objectiveCRS})</code>.
+     * <code>{@linkplain #setGraphicsCRS setGraphicsCRS}({@linkplain #getObjectiveCRS()})</code> or
+     * {@linkplain #switchToDisplayCRS() } and {@linkplain #switchToObjectiveCRS() }.
      */
     Graphics2D getGraphics();
     
@@ -118,7 +120,7 @@ public interface RenderingContext2D extends RenderingContext{
      * supplied by the underlying system}.
      *
      * @return The rendering scale factor as a number between 0 and 1, or {@link Double#NaN}.
-     * @see BufferedCanvas2D#getScale
+     * @see CanvasController2D#getScale()
      */
     double getScale();
 

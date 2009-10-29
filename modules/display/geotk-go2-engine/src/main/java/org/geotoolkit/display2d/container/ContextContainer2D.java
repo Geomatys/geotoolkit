@@ -26,12 +26,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -39,6 +41,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.display.canvas.CanvasState;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -154,22 +157,19 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     }
 
     /**
-     * Returns an envelope that completly encloses all {@linkplain ReferencedGraphic#getEnvelope
+     * Returns an envelope that completly encloses all {@linkplain ReferencedGraphic#getEnvelope()
      * graphic envelopes} managed by this canvas. Note that there is no guarantee that the returned
      * envelope is the smallest bounding box that encloses the canvas, only that the canvas lies
      * entirely within the indicated envelope.
      * <p>
      * This envelope is different from
-     * {@link org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope}, since the later returns
+     * {@link CanvasState#getCenter() }, since the later returns
      * an envelope that encloses only the <em>visible</em> canvas area and is scale-dependent. This
      * {@code ReferencedCanvas.getEnvelope()} method is scale-independent. Both envelopes are equal
      * if the scale is choosen in such a way that all graphics fit exactly in the canvas visible
      * area.
      *
-     * @return The envelope for this canvas in terms of {@linkplain #getObjectiveCRS objective CRS}.
-     *
-     * @see org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope
-     * @see ReferencedCanvas2D#getEnvelope2D
+     * @return The envelope for this canvas in terms of {@linkplain AbstractCanvas#getObjectiveCRS() objective CRS}.
      */
     @Override
     public GeneralEnvelope getGraphicsEnvelope(){

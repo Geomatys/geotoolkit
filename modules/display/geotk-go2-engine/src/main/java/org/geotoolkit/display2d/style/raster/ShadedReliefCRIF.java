@@ -21,6 +21,7 @@ import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import javax.media.jai.CRIFImpl;
+import org.opengis.style.ShadedRelief;
 
 /**
  * The image factory for the {@link ShadedRelief} operation.

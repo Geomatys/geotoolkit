@@ -111,7 +111,7 @@ public interface SymbolizerRenderer<S extends Symbolizer, C extends CachedSymbol
      *
      * @param graphic : cached graphic representation of a coverage
      * @param symbol : cached symbolizer to use
-     * @param context : rendering context contains the java2d rendering parameters
+     * @param renderingContext : rendering context contains the java2d rendering parameters
      * @param mask : search area, it can represent a mouse position or a particular shape
      * @param filter : the type of searching, intersect or within
      * @return true if the searcharea hit this graphic object, false otherwise.
