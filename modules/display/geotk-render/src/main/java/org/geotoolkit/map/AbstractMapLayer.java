@@ -254,7 +254,7 @@ public abstract class AbstractMapLayer implements MapLayer {
     /**
      * Setter for property selectable.
      *
-     * @param visible : New value of property selectable.
+     * @param selectable : New value of property selectable.
      */
     @Override
     public void setSelectable(boolean selectable) {

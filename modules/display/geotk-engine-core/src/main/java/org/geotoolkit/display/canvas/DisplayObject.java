@@ -25,6 +25,7 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 import java.beans.VetoableChangeListener;
 import java.beans.VetoableChangeSupport;
+import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
 
@@ -33,7 +34,7 @@ import org.opengis.display.canvas.Canvas;       //for javadoc
 
 /**
  * The base class for {@linkplain AbstractCanvas canvas} and
- * {@linkplain org.geotools.display.primitive.AbstractGraphic graphic primitives}. This base class
+ * {@linkplain AbstractGraphic graphic primitives}. This base class
  * provides support for {@linkplain PropertyChangeListener property change listeners}, and some
  * basic services particular to the Geotools implementation like {@linkplain #getLogger logging},
  * <cite>etc.</cite>
@@ -112,7 +113,7 @@ public class DisplayObject {
      * @param  key The hint key.
      * @return The hint value for the specified key, or {@code null} if none.
      *
-     * @see #getHint
+     * @see #getRenderingHint(java.awt.RenderingHints.Key)
      */
     public Object getRenderingHint(final RenderingHints.Key key) {
         return hints.get(key);
@@ -126,7 +127,7 @@ public class DisplayObject {
      * @param key   The hint key.
      * @param value The hint value. A {@code null} value remove the hint.
      *
-     * @see #setHint
+     * @see #setRenderingHint(java.awt.RenderingHints.Key, java.lang.Object)
      */
     public void setRenderingHint(RenderingHints.Key key, Object value) {
         hints.put(key, value);
@@ -134,10 +135,7 @@ public class DisplayObject {
 
     /**
      * Adds a property change listener to the listener list. The listener is registered
-     * for all properties. For example, {@linkplain AbstractCanvas#add adding} or
-     * {@linkplain AbstractCanvas#remove removing} graphics in a canvas may fire
-     * {@value #GRAPHICS_PROPERTY} change events and, indirectly, some other side-effect
-     * events like {@value #ENVELOPE_PROPERTY}.
+     * for all properties. For example, {@value AbstractCanvas#DISPLAY_CRS_PROPERTY}.
      *
      * @param listener The property change listener to be added
      */
@@ -280,7 +278,7 @@ public class DisplayObject {
      * Method that can be called when an object is no longer needed. Implementations may use
      * this method to release resources, if needed. Implementations may also implement this
      * method to return an object to an object pool. It is an error to reference a
-     * {@link Graphic}, {@link Canvas} or {@link Renderer} in any way after its
+     * {@link Graphic}, {@link Canvas} in any way after its
      * dispose method has been called.
      */
     public void dispose() {

@@ -36,7 +36,7 @@ public final class HintKey extends RenderingHints.Key {
     /**
      * Constructs a new key.
      *
-     * @param id An ID. Must be unique for all instances of {@link Key}.
+     * @param id An ID. Must be unique for all instances of {@link RenderingHints.Key}.
      * @param valueClass Base class of all valid values.
      */
     public HintKey(final int id, final Class valueClass) {

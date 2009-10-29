@@ -42,14 +42,12 @@ import org.opengis.geometry.Envelope;
 public interface CanvasController2D extends CanvasController{
     
     /**
-     * Reinitializes the affine transform {@link #zoom} in order to cancel any zoom, rotation or
-     * translation.  The default implementation initializes the affine transform {@link #zoom} in
+     * Reinitializes the affine transform {@link #transform(java.awt.geom.AffineTransform)}
+     * in order to cancel any zoom, rotation or translation.
+     * The default implementation initializes the affine transform in
      * order to make the <var>y</var> axis point upwards and make the whole of the region covered
-     * by the {@link #getPreferredArea} logical coordinates appear in the panel.
+     * by the {@link #setVisibleArea(org.opengis.geometry.Envelope) } logical coordinates appear in the panel.
      * <p>
-     * Note: for the derived classes: {@code reset()} is <u>the only</u> method of {@code ZoomPane}
-     * which doesn't have to pass through {@link #transform(AffineTransform)} to modify the zoom.
-     * This exception is necessary to avoid falling into an infinite loop.
      */
     void reset() throws NoninvertibleTransformException;
     
@@ -114,32 +112,19 @@ public interface CanvasController2D extends CanvasController{
     void translateObjective(double x, double y) throws NoninvertibleTransformException;
     
     /**
-     * Changes the {@linkplain #zoom} by applying an affine transform. The {@code change} transform
-     * must express a change in logical units, for example, a translation in metres. This method is
-     * conceptually similar to the following code:
+     * Changes the {@linkplain AffineTransform} by applying a concatenate affine transform.
+     * The {@code change} transform
+     * must express a change in logical units, for example, a translation in metres. 
      *
-     * <pre>
-     * {@link #zoom}.{@link AffineTransform#concatenate(AffineTransform) concatenate}(change);
-     * {@link #fireZoomChanged(AffineTransform) fireZoomChanged}(change);
-     * {@link #repaint() repaint}({@link #getDisplayBounds getZoomableBounds}(null));
-     * </pre>
-     *
-     * @param  change The zoom change, as an affine transform in logical coordinates. If
+     * @param  change The affine transform change, as an affine transform in logical coordinates. If
      *         {@code change} is the identity transform, then this method does nothing and
      *         listeners are not notified.
      */
     void transform(AffineTransform change);
 
     /**
-     * Changes the {@linkplain #zoom} by applying an affine transform. The {@code change} transform
-     * must express a change in pixel units, for example, a scrolling of 6 pixels toward right. This
-     * method is conceptually similar to the following code:
-     *
-     * <pre>
-     * {@link #zoom}.{@link AffineTransform#preConcatenate(AffineTransform) preConcatenate}(change);
-     * {@link #fireZoomChanged(AffineTransform) fireZoomChanged}(<cite>change translated in logical units</cite>);
-     * {@link #repaint() repaint}({@link #getDisplayBounds getZoomableBounds}(null));
-     * </pre>
+     * Changes the {@linkplain #AffineTransform} by applying an affine transform. The {@code change} transform
+     * must express a change in pixel units, for example, a scrolling of 6 pixels toward right.
      *
      * @param  change The zoom change, as an affine transform in pixel coordinates. If
      *         {@code change} is the identity transform, then this method does nothing
@@ -158,8 +143,8 @@ public interface CanvasController2D extends CanvasController{
     void setScale(double newScale) throws NoninvertibleTransformException;
 
     /**
-     * Returns the current {@linkplain #zoom} scale factor. A value of 1/100 means that 100 metres
-     * are displayed as 1 pixel (provided that the logical coordinates of {@link #getArea} are
+     * Returns the current scale factor. A value of 1/100 means that 100 metres
+     * are displayed as 1 pixel (provided that the logical coordinates of {@code #getArea} are
      * expressed in metres). Scale factors for X and Y axes can be computed separately using the
      * following equations:
      *
@@ -168,8 +153,6 @@ public interface CanvasController2D extends CanvasController{
      * <td width=50%><IMG src="doc-files/scaleY.png"></td>
      * </tr></table>
      *
-     * This method combines scale along both axes, which is correct if this {@code ZoomPane} has
-     * been constructed with the {@link #UNIFORM_SCALE} type.
      */
     double getScale();
     

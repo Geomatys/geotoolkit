@@ -101,7 +101,6 @@ public final class MapBuilder {
      * Create a default elevation model based on a grid coverage reader.
      *
      * @param grid : Coverage reader holding elevation values
-     * @param correction : expression used to modified on the fly the elevation value
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final CoverageReader grid){
@@ -113,7 +112,8 @@ public final class MapBuilder {
      * Create a default elevation model based on a grid coverage reader.
      *
      * @param grid : Coverage reader holding elevation values
-     * @param correction : expression used to modified on the fly the elevation value
+     * @param offset : expression used to modified on the fly the elevation value
+     * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
     public static ElevationModel createElevationModel(final CoverageReader grid, Expression offset, Expression scale){

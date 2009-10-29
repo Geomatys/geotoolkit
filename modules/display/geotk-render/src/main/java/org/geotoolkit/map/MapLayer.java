@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.map;
 
+import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.primitive.Graphic;
@@ -96,7 +98,7 @@ public interface MapLayer {
 
     /**
      * Specify whether this layer is visible on a map pane or whether the layer
-     * is hidden. A {@link LayerEvent} is fired if the visibility changed.
+     * is hidden. A {@link PropertyChangeEvent} is fired if the visibility changed.
      *
      * @param visible Show the layer if <code>true</code>, or hide the layer if
      *        <code>false</code>
@@ -113,7 +115,7 @@ public interface MapLayer {
 
     /**
      * Specify whether this layer is selectable on a map pane.
-     * A {@link LayerEvent} is fired if the selectable changed.
+     * A {@link PropertyChangeEvent} is fired if the selectable changed.
      *
      * @param selectable Show the layer if <code>true</code>.
      */

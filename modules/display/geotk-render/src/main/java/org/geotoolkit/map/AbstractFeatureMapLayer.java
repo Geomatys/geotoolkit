@@ -62,13 +62,7 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
 
 
     /**
-     * Returns the definition query established for this layer.
-     *
-     * @return the definition query established for this layer. If not set, just
-     *         returns {@link Query.ALL}, if set, returns a copy of the actual
-     *         query object to avoid external modification
-     *
-     * @see org.geotools.map.MapLayer#getQuery()
+     * {@inheritDoc }
      */
     @Override
     public Query getQuery() {

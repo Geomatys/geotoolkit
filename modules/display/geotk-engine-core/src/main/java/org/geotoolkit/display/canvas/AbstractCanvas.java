@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display.canvas;
 
+import java.awt.geom.AffineTransform;
 import java.beans.PropertyChangeEvent;
 import javax.swing.event.EventListenerList;
 
@@ -40,11 +41,14 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
+import org.opengis.referencing.cs.CartesianCS;
+import org.opengis.referencing.cs.SphericalCS;
 
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
  * {@code Canvas} is initially empty. To make something appears, {@link Graphic}s must be added
- * using the {@link #add add} method. The visual content depends of the {@code Graphic}
+ * using the {@link AbstractContainer#add(org.opengis.display.primitive.Graphic) } method.
+ * The visual content depends of the {@code Graphic}
  * subclass. The contents are usually symbols, features or images, but some implementations
  * can also manage non-geographic elements like a map scale.
  * <p>
@@ -90,13 +94,13 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
 
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas#getScale canvas scale} changed.
+     * canvas {@linkplain CanvasController2D#getScale() canvas scale} changed.
      */
     public static final String SCALE_PROPERTY = "scale";
     
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas#getScale canvas scale} changed.
+     * canvas {@linkplain CanvasController2D#getScale() canvas scale} changed.
      */
     public static final String OBJECTIVE_TO_DISPLAY_PROPERTY = "objectiveToDisplay";
 
@@ -163,7 +167,6 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
     /**
      * Creates an initially empty canvas.
      *
-     * @param renderer the renderer for this canvas
      * @param hints   The initial set of hints, or {@code null} if none.
      */
     protected AbstractCanvas(final Hints hints) {
@@ -186,7 +189,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * Sets the title of this {@code Canvas}. The title of a {@code Canvas}
      * may or may not be displayed on the titlebar of an application's window.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#TITLE_PROPERTY}
+     * This method fires a {@value #TITLE_PROPERTY}
      * property change event.
      *
      * @param title The International String title.
@@ -237,7 +240,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
     /**
      * Sets the monitor of this {@code Canvas}. The monitor can not be null.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#TITLE_PROPERTY}
+     * This method fires a {@value #TITLE_PROPERTY}
      * property change event.
      *
      * @param monitor The canvas monitor.
@@ -288,8 +291,8 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
 
     /**
      * Returns a string representation of this canvas and all its {@link Graphic}s.
-     * The {@linkplain BufferedCanvas2D#getOffscreenBuffered offscreen buffer type},
-     * if any, appears in the right column. This method is for debugging purpose
+     * The offscreen buffer type, if any, appears in the right column.
+     * This method is for debugging purpose
      * only and may change in any future version.
      *
      * @return String representation of the canvas
@@ -372,7 +375,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * {@linkplain #getObjectiveCRS objective CRS}. The
      * {@linkplain DerivedCRS#getConversionFromBase conversion from base} is usually an
      * {@linkplain AffineTransform affine transform} with the scale terms proportional to the map
-     * {@linkplain ReferencedCanvas#getScale scale factor}. The
+     * {@linkplain CanvasController2D#getScale scale factor}. The
      * {@linkplain AffineTransform#getScaleY y scale value} is often negative because of the
      * <var>y</var> axis oriented toward down.
      *
@@ -406,7 +409,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * Most users will deal with the {@linkplain #getDisplayCRS display CRS} rather than this
      * device CRS.
      *
-     * @return
+     * @return DerivedCRS
      * @see ReferencedCanvas#setDeviceCRS
      */
     public DerivedCRS getDeviceCRS() {

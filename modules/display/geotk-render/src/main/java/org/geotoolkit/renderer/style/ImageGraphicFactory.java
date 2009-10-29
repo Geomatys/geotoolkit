@@ -90,7 +90,7 @@ public class ImageGraphicFactory implements ExternalGraphicFactory {
     
     /**
      * Returs the set of mime types supported by this factory
-     * @return
+     * @return Set<String>
      */
     public Set<String> getSupportedMimeTypes() {
         return Collections.unmodifiableSet(supportedGraphicFormats);

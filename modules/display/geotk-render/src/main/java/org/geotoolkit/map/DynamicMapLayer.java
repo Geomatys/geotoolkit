@@ -32,7 +32,7 @@ public interface DynamicMapLayer extends MapLayer{
      * Query the distant layer and retour the result Image.
      * This method may take time since the server may be long to answer.
      * 
-     * @Return should be one of those : File(to image file), URL(to image file), 
+     * @return should be one of those : File(to image file), URL(to image file),
      * BufferedImage, RenderedImage.
      * The result Image will be painted at coordinate 0,0 in display CRS
      */

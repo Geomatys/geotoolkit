@@ -25,6 +25,7 @@ import java.io.Serializable;
 import java.util.RandomAccess;
 import java.util.List;
 
+import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
@@ -337,7 +338,7 @@ public abstract class PointArray2D implements PointArray, Serializable {
      * Many implementations will compute distances using Pythagoras formulas, which is okay for
      * {@linkplain org.opengis.referencing.crs.ProjectedCRS projected CRS} but not strictly right
      * for {@linkplain org.opengis.referencing.crs.GeographicCRS geographic CRS}. This is not a real
-     * problem when the {@linkplain org.geotools.display.canvas.ReferencedCanvas#getObjectiveCRS
+     * problem when the {@linkplain ReferencedCanvas#getObjectiveCRS()
      * objective CRS} is the same one than the {@linkplain #getCoordinateReferenceSystem data CRS},
      * since the decimation performed by this {@code toFloatArray} method target specifically the
      * rendering device. However, it may be a problem when the objective CRS is different, since

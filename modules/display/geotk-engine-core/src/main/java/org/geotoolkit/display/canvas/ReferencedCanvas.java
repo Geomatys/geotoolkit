@@ -63,7 +63,11 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
+import org.geotoolkit.display.primitive.ReferencedGraphic;
+import org.geotoolkit.display.primitive.ReferencedGraphic2D;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
+import org.opengis.display.canvas.CanvasController;
+import org.opengis.display.container.GraphicsContainer;
 
 
 /**
@@ -74,7 +78,7 @@ import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
  * <p>
  * Note that because this class is not tied to any widget toolkit, it has
  * no idea about what are the widget visible area bounds. For this class, the
- * {@linkplain org.geotools.display.canvas.map.DefaultMapState#getEnvelope canvas envelope}
+ * {@linkplain GraphicsContainer#getGraphicsEnvelope() canvas envelope}
  * is an envelope that completly encloses all graphic primitives, regardless of any map scale
  * or zoom factor. Subclasses like {@link ReferencedCanvas2D} will restrict that to an envelope
  * that encloses only the visible part of this canvas.
@@ -224,7 +228,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
 
     /**
      * Returns a copy of the current state of this {@code Canvas}. The default implementation
-     * returns a {@link DefaultCanvasState} with a center position inferred from the canvas
+     * returns a {@link CanvasState} with a center position inferred from the canvas
      * envelope.
      */
     @Override
@@ -324,17 +328,6 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
 
     /**
      * Sets the objective Coordinate Reference System for this {@code Canvas}.
-     * All graphic primitives are notified of the CRS change by a call to
-     * <code>{@linkplain ReferencedGraphic#setObjectiveCRS setObjectiveCRS}(crs)</code>.
-     * <p>
-     * After the objective CRS change, this method invokes {@link #setDisplayCRS setDisplayCRS}
-     * with a new, automatically computed, display CRS. The new display CRS try to preserve the
-     * same {@linkplain #getScale scale factor} than the previous one.
-     * <p>
-     * This method fires the following property change events in no particular order:
-     * {@value org.geotools.display.canvas.DisplayObject#OBJECTIVE_CRS_PROPERTY},
-     * {@value org.geotools.display.canvas.DisplayObject#DISPLAY_CRS_PROPERTY},
-     * {@value org.geotools.display.canvas.DisplayObject#ENVELOPE_PROPERTY}.
      */
     @Override
     public synchronized void setObjectiveCRS(final CoordinateReferenceSystem crs)
@@ -511,7 +504,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      *   <li>{@link ReferencedCanvas#setObjectiveToDisplayTransform(Matrix)}</li>
      * </ul>
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#DISPLAY_CRS_PROPERTY}
+     * This method fires a {@value AbstractCanvas#DISPLAY_CRS_PROPERTY}
      * property change event.
      *
      * @param  crs The display coordinate reference system.
@@ -812,8 +805,8 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @return A transform from {@code sourceCRS} to {@code targetCRS}.
      * @throws FactoryException if the transform can't be created.
      *
-     * @see #getImplHint
-     * @see #setImplHint
+     * @see DisplayObject#getRenderingHint(java.awt.RenderingHints.Key)
+     * @see DisplayObject#setRenderingHint(java.awt.RenderingHints.Key, java.lang.Object)
      * @see Hints#COORDINATE_OPERATION_FACTORY
      */
     public final synchronized MathTransform getMathTransform(final CoordinateReferenceSystem sourceCRS,
