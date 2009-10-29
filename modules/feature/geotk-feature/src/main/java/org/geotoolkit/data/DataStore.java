@@ -20,12 +20,12 @@ package org.geotoolkit.data;
 import java.io.IOException;
 import java.util.List;
 
-import org.geotoolkit.data.concurrent.FeatureLocking;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
+import org.geotoolkit.data.concurrent.FeatureLocking;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.query.Query;

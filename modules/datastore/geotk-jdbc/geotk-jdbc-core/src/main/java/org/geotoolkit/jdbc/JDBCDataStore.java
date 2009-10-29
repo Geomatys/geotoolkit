@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.data.jdbc.FilterToSQLException;
-import org.geotoolkit.data.jdbc.FilterToSQL;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -44,7 +42,6 @@ import javax.sql.DataSource;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DefaultQuery;
-import org.geotoolkit.data.GmlObjectStore;
 import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
@@ -58,6 +55,7 @@ import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotoolkit.data.store.ContentState;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.feature.collection.FeatureCollection;
 import org.geotoolkit.feature.collection.FeatureIterator;
 import org.geotoolkit.feature.DefaultName;
@@ -85,7 +83,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 
 
 /**
@@ -122,7 +119,7 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
  *
  * @module pending
  */
-public final class JDBCDataStore extends ContentDataStore implements GmlObjectStore {
+public final class JDBCDataStore extends ContentDataStore {
 
     /**
      * The native SRID associated to a certain descriptor
@@ -478,92 +475,6 @@ public final class JDBCDataStore extends ContentDataStore implements GmlObjectSt
 
         // reset the type name cache, there's a new type name in town
         typeNameCache = null;
-    }
-
-    /**
-     *
-     */
-    @Override
-    public Object getGmlObject(final GmlObjectId id, final Hints hints) throws IOException {
-        //geometry?
-        if (isAssociations()) {
-
-            Connection cx = null;
-            try {
-                cx = createConnection();
-                final Statement st;
-                final ResultSet rs;
-
-                if (getSQLDialect() instanceof PreparedStatementSQLDialect) {
-                    st = selectGeometrySQLPS(id.getID(), cx);
-                    rs = ((PreparedStatement) st).executeQuery();
-                } else {
-                    final String sql = selectGeometrySQL(id.getID());
-                    Logger.log(Level.FINE, "Get GML object: {0}", sql);
-
-                    st = cx.createStatement();
-                    rs = st.executeQuery(sql);
-                }
-
-                try {
-                    if (rs.next()) {
-                        //read the geometry
-                        final Geometry g = getSQLDialect().decodeGeometryValue(
-                                null, rs, "geometry", getGeometryFactory(), cx);
-
-                        //read the metadata
-                        final String name = rs.getString("name");
-                        final String desc = rs.getString("description");
-                        setGmlProperties(g, id.getID(), name, desc);
-
-                        return g;
-                    }
-                } finally {
-                    closeSafe(rs);
-                    closeSafe(st);
-                }
-
-            } catch (SQLException e) {
-                throw (IOException) new IOException().initCause(e);
-            } finally {
-                closeSafe(cx);
-            }
-        }
-
-        //regular feature, first feature out the feature type
-        int i = id.getID().indexOf('.');
-        if (i == -1) {
-            Logger.info("Unable to determine feature type for GmlObjectId:" + id);
-            return null;
-        }
-
-        //figure out the type name from the id
-        final String featureTypeName = id.getID().substring(0, i);
-        final SimpleFeatureType featureType = getSchema(featureTypeName);
-        if (featureType == null) {
-            throw new IllegalArgumentException("No such feature type: " + featureTypeName);
-        }
-
-        //load the feature
-        final Id filter = getFilterFactory().id(Collections.singleton(id));
-        final DefaultQuery query = new DefaultQuery(featureTypeName);
-        query.setFilter(filter);
-        query.setHints(hints);
-
-        final FeatureCollection<SimpleFeatureType, SimpleFeature> features =
-                getFeatureSource(featureTypeName).getFeatures(query);
-        if (!features.isEmpty()) {
-            final FeatureIterator<SimpleFeature> fi = features.features();
-            try {
-                if (fi.hasNext()) {
-                    return fi.next();
-                }
-            } finally {
-                features.close(fi);
-            }
-        }
-
-        return null;
     }
 
     /**

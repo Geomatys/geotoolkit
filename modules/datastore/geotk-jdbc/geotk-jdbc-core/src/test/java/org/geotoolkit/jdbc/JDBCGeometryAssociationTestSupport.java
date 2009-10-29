@@ -152,17 +152,4 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
         reader.close();
     }
     
-    public void testGetGmlObjectGeometry() throws Exception {
-        GmlObjectId id = dataStore.getFilterFactory().gmlObjectId("0");
-        Object o = dataStore.getGmlObject( id, null);
-        
-        assertNotNull( o );
-        assertTrue( o instanceof Point );
-        assertEquals( new Coordinate( 0 , 0 ), ((Point)o).getCoordinate() );
-        
-        id = dataStore.getFilterFactory().gmlObjectId( "ft1.0" );
-        o = dataStore.getGmlObject( id, null);
-        assertNotNull( o );
-        assertTrue( o instanceof SimpleFeature );
-    }
 }

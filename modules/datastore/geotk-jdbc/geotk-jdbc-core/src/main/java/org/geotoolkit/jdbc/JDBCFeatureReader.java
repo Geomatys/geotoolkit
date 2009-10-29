@@ -445,10 +445,8 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                                                                     try {
                                                                         mgg.next();
 
-                                                                        final String mname = mgg.getString(
-                                                                                "name");
-                                                                        final String mdesc = mgg.getString(
-                                                                                "description");
+                                                                        final String mname = mgg.getString("name");
+                                                                        final String mdesc = mgg.getString("description");
 
                                                                         member = dataStore.getSQLDialect()
                                                                                                    .decodeGeometryValue(gatt,
