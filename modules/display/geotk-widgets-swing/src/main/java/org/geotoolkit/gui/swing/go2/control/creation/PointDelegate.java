@@ -49,19 +49,30 @@ public class PointDelegate extends AbstractEditionDelegate{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(context.feature != null){
-                handler.getHelper().sourceRemoveFeature(context.feature);
-                handler.getDecoration().setGeometries(null);
+            if(feature != null){
+                handler.getHelper().sourceRemoveFeature(feature);
+                reset();
             }
         }
     };
 
 
     private ACTION currentAction = ACTION.MOVE;
-    private final EditionHelper.EditionContext context = new EditionHelper.EditionContext();
+    private SimpleFeature feature = null;
+    private Point geometry = null;
+    private boolean modified = false;
+    private boolean coordSelected = false;
 
     public PointDelegate(DefaultEditionHandler handler) {
         super(handler);
+    }
+
+    private void reset(){
+        feature = null;
+        geometry = null;
+        modified = false;
+        coordSelected = false;
+        handler.getDecoration().setGeometries(null);
     }
 
     @Override
@@ -102,19 +113,19 @@ public class PointDelegate extends AbstractEditionDelegate{
         group.add(button);
         pan.add(button);
 
-        deleteAction.setEnabled(context.feature != null);
+        deleteAction.setEnabled(feature != null);
         handler.getDecoration().setToolsPane(pan);
     }
 
     private void setCurrentFeature(SimpleFeature feature){
-        context.feature = feature;
+        this.feature = feature;
         if(feature != null){
-            context.geometry = (Point)handler.getHelper().toObjectiveCRS(feature);
+            this.geometry = (Point)handler.getHelper().toObjectiveCRS(feature);
         }else{
-            context.geometry = null;
+            this.geometry = null;
         }
-        deleteAction.setEnabled(context.feature != null);
-        handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+        deleteAction.setEnabled(this.feature != null);
+        handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
     }
 
     @Override
@@ -125,7 +136,7 @@ public class PointDelegate extends AbstractEditionDelegate{
         if(button == MouseEvent.BUTTON1){
             switch(currentAction){
                 case ADD:
-                    if(context.geometry == null){
+                    if(this.geometry == null){
                         final Point geo = handler.getHelper().toJTS(e.getX(), e.getY());
                         handler.getHelper().sourceAddGeometry(geo);
                     }
@@ -135,12 +146,12 @@ public class PointDelegate extends AbstractEditionDelegate{
             }
         }else if(button == MouseEvent.BUTTON3){
             //save changes if we had some
-            if(context.modified){
-                handler.getHelper().sourceModifyFeature(context.feature, context.geometry);
+            if(this.modified){
+                handler.getHelper().sourceModifyFeature(this.feature, this.geometry);
                 handler.getDecoration().setGeometries(null);
             }
-            context.reset();
-            deleteAction.setEnabled(context.feature != null);
+            reset();
+            deleteAction.setEnabled(this.feature != null);
         }
     }
 
@@ -148,33 +159,31 @@ public class PointDelegate extends AbstractEditionDelegate{
     public void mousePressed(MouseEvent e) {
         switch(currentAction){
             case MOVE:
-                if(context.geometry != null){
+                if(this.geometry != null){
                     //start dragging mode
-                    handler.getHelper().grabGeometryNode(context, e.getX(), e.getY());
+                    coordSelected = handler.getHelper().grabGeometrynode(geometry, e.getX(), e.getY());
                 }
                 break;
         }
-
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
-        if(currentAction == ACTION.MOVE && context.nodes != null){
+        if(currentAction == ACTION.MOVE && coordSelected){
             //we were dragging a node
-            handler.getHelper().dragGeometryNode(context, e.getX(), e.getY());
-            handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+            this.modified = true;
+            this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
+            handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
-        if(currentAction == ACTION.MOVE && context.nodes != null){
-            handler.getHelper().dragGeometryNode(context, e.getX(), e.getY());
-            handler.getDecoration().setGeometries(Collections.singleton(context.geometry));
+        if(currentAction == ACTION.MOVE && coordSelected){
+            this.modified = true;
+            this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
+            handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
         }
-
     }
 
 }

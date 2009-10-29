@@ -150,31 +150,40 @@ public class EditionHelper {
 
         if(layer == null) return null;
 
-        //todo handle style
-//        if(style){
-//            //we take the style in account for selection
-//            layer.setSelectable(true);
-//
-//        }else{
-            try {
-                final Polygon geo = mousePositionToGeometry(mx, my);
-                final Filter flt = toFilter(geo, layer);
-                final FeatureCollection<SimpleFeatureType, SimpleFeature> editgeoms = layer.getFeatureSource().getFeatures(flt);
+        SimpleFeature candidate = null;
 
-                if (editgeoms != null) {
-                    FeatureIterator<SimpleFeature> fi = editgeoms.features();
-                    if (fi.hasNext()) {
-                        SimpleFeature sf = fi.next();
-                        return sf;
-                    }
-                    fi.close();
-                }
-            }catch(Exception ex){
-                ex.printStackTrace();
+        FeatureCollection<SimpleFeatureType, SimpleFeature> editgeoms = null;
+        FeatureIterator<SimpleFeature> fi = null;
+        try {
+            final Polygon geo = mousePositionToGeometry(mx, my);
+            final Filter flt = toFilter(geo, layer);
+            editgeoms = layer.getFeatureSource().getFeatures(flt);
+
+            fi = editgeoms.features();
+            if (fi.hasNext()) {
+                SimpleFeature sf = fi.next();
+                return sf;
             }
-//        }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }finally{
+            if(fi != null){
+                fi.close();
+            }
+        }
         
-        return null;
+        return candidate;
+    }
+
+    public boolean grabGeometrynode(Point pt, int mx, int my){
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+            return pt.intersects(mouseGeo);
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
     }
 
     public void grabGeometryNode(EditionContext context, int mx, int my) {
