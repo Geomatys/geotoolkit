@@ -5,15 +5,24 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
+    <h1>ZoomPane</h1>
     <p>Display a <code><a href="../../apidocs/org/geotoolkit/gui/swing/ZoomPane.html">ZoomPane</a></code>
-    in an applet. This demo drawn simple geometric shapes. The purpose is only to illustrate the
-    zoom capabilities.</p>
+    in an applet. This demo drawn simple geometric shapes for demonstrating the zooms and rotations
+    capabilities. In order to provide useful contains, developers need to create a derived class of
+    <code>ZoomPane</code> and define the <code>paintComponent(Graphics2D)</code> method.</p>
 
+    <h2>Prerequites</h2>
+    <ul>
+      <li>Java 6</li>
+    </ul>
+    <p>Note that the applet is known to not work as expected on Macintosh platforms.</p>
+    <table align="center" border="1"><tr><td>
     <script src="http://www.java.com/js/deployJava.js"></script>
     <script>
       var attributes = {width:600, height:400};
       var parameters = {jnlp_href: 'ZoomPane.jnlp'};
       deployJava.runApplet(attributes, parameters, '1.6');
     </script>
+    </td></tr></table>
   </body>
 </html>

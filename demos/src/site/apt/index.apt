@@ -3,4 +3,6 @@ Demonstrations of the Geotoolkit.org library
   This is the root directory of a collection of demos. All demo are hereby placed into
   the Public Domain. This means anyone is free to do whatever they wish with those files.
 
-  * {{{geotk-simples/index.html}Simple demos}} (standalone classes that can be run from the command line)
+  * {{{geotk-simples/index.html}Simple code demos}} (standalone classes that can be run from the command line)
+
+  * {{{geotk-simples/applet/index.html}Simple applets}} (applets showing small parts of functionality)
