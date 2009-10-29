@@ -184,7 +184,7 @@ final class DesktopPane extends JDesktopPane {
         frame.setJMenuBar(menuBar);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setContentPane(this);
-        frame.setSize(800, 600);
+        frame.setSize(1000, 600);
         frame.setLocationRelativeTo(null); // Put at screen center.
         return frame;
     }

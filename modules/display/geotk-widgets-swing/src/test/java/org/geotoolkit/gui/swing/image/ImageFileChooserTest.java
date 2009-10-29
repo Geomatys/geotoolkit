@@ -19,12 +19,15 @@ package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.test.SwingBase;
 
+import org.junit.*;
+import static org.junit.Assume.*;
+
 
 /**
  * Tests the {@link ImageFileChooser}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @since 3.00
  */
@@ -43,6 +46,17 @@ public final class ImageFileChooserTest extends SwingBase<ImageFileChooser> {
     protected ImageFileChooser create() {
         final ImageFileChooser test = new ImageFileChooser("png");
         test.setDialogType(ImageFileChooser.OPEN_DIALOG);
+        test.setApproveButtonText("Noop");
         return test;
+    }
+
+    /**
+     * Tests the usage of the {@link ImageFileChooser#showOpenDialog} method.
+     */
+    @Test
+    public void testOpenDialog() {
+        assumeTrue(isDisplayEnabled());
+        final ImageFileChooser test = new ImageFileChooser("png", true);
+        test.showOpenDialog(null);
     }
 }

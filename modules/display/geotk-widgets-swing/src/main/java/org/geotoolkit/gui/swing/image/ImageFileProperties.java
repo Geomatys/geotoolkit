@@ -29,7 +29,11 @@ import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
 import java.awt.Dimension;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.SwingWorker;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
@@ -52,16 +56,38 @@ import org.geotoolkit.util.XArrays;
  * All {@code setImage} methods defined in this class may be slow because they involve I/O
  * operations. It is recommanded to invoke them from an other thread than the Swing thread.
  *
+ * {@section Using this component together with a File Chooser}
+ * This component can be registered to a {@link JFileChooser} for listening to change events.
+ * When the file selection change, the {@link #propertyChange(PropertyChangeEvent)} method is
+ * automatically invoked. The default implementation invokes in turn {@code setImage(File)} in
+ * a background thread. This allows this {@code ImageFileProperties} to be updated automatically
+ * when the user selection changed. Example:
+ *
+ * {@preformat java
+ *     ImageFileChooser chooser = new ImageFileChooser("png");
+ *     ImageFileProperties properties = new ImageFileProperties();
+ *     chooser.addPropertyChangeListener(JFileChooser.SELECTED_FILE_CHANGED_PROPERTY, properties);
+ *     //
+ *     // Add the FileChooser and ImageFileProperties to some panel with the layout constraints
+ *     // of your choice. The example below uses BorderLayout in such a way that, when resizing
+ *     // the panel, only the properties pane is resized.
+ *     //
+ *     JPanel panel = new JPanel(new BorderLayout());
+ *     panel.add(this, BorderLayout.WEST);
+ *     panel.add(properties, BorderLayout.CENTER);
+ * }
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
  *
  * @see ImageProperties
+ * @see ImageFileChooser
  *
  * @since 3.05
  * @module
  */
 @SuppressWarnings("serial")
-public class ImageFileProperties extends ImageProperties {
+public class ImageFileProperties extends ImageProperties implements PropertyChangeListener {
     /**
      * The preferred size of thumbnail.
      */
@@ -71,6 +97,12 @@ public class ImageFileProperties extends ImageProperties {
      * The panel for image I/O metadata.
      */
     private final IIOMetadataPanel metadata;
+
+    /**
+     * If a worker is currently running, that worker. This is used for
+     * cancelling a running action before to start a new one.
+     */
+    private transient SwingWorker<Object,Object> worker;
 
     /**
      * Creates a new instance of {@code ImageFileProperties} with no image.
@@ -259,6 +291,78 @@ public class ImageFileProperties extends ImageProperties {
         if (!size.equals(old)) {
             preferredThumbnailSize = new Dimension(size);
             firePropertyChange("preferredThumbnailSize", old, size);
+        }
+    }
+
+    /**
+     * Invoked when the state of a {@link JFileChooser} (or any other component at caller choice)
+     * changed. If the event {@linkplain PropertyChangeEvent#getPropertyName() property name} is
+     * {@value javax.swing.JFileChooser#SELECTED_FILE_CHANGED_PROPERTY}, then this method invokes
+     * {@link #setImage(File)} in a background thread.
+     * <p>
+     * This method is invoked automatically when this {@code ImageFileProperties} is registered
+     * to a {@code JFileChooser} as an {@link PropertyChangeListener). It shall be invoked from
+     * the <cite>Swing</cite> thread only.
+     *
+     * @param event The property change event.
+     */
+    @Override
+    public void propertyChange(final PropertyChangeEvent event) {
+        if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(event.getPropertyName())) {
+            if (worker != null) {
+                worker.cancel(false);
+                worker = null;
+            }
+            final Object input = event.getNewValue();
+            if (input instanceof File) {
+                worker = new Worker((File) input);
+                worker.execute();
+            }
+        }
+    }
+
+    /**
+     * The worker thread which will fetch image properties in background.
+     * In case of failure, the {@link IOException} is ignored.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.05
+     *
+     * @since 3.05
+     * @module
+     */
+    private final class Worker extends SwingWorker<Object,Object> {
+        /**
+         * The file to read.
+         */
+        private final File input;
+
+        /**
+         * Creates a new worker thread for reading the given image.
+         */
+        Worker(final File input) {
+            this.input = input;
+        }
+
+        /**
+         * Loads the image in a background thread, then refreshes
+         * the {@link ImageFileProperties} in the Swing thread.
+         */
+        @Override
+        protected Object doInBackground() throws IOException {
+            setImage(input);
+            return null;
+        }
+
+        /**
+         * Invoked in the Swing thread when the task is completed for
+         * cleaning the {@link ImageFileProperties#worker} reference.
+         */
+        @Override
+        protected void done() {
+            if (worker == this) {
+                worker = null;
+            }
         }
     }
 

@@ -38,6 +38,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -106,7 +107,7 @@ public abstract class IndexColorOperation extends Operation2D {
             if (!(candidate instanceof IndexColorModel)) {
                 // Current implementation supports only sources that use an index color model.
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                        candidate, IndexColorModel.class));
+                        Classes.getClass(candidate), IndexColorModel.class));
             }
             final IndexColorModel colors = (IndexColorModel) candidate;
             final int mapSize = colors.getMapSize();
