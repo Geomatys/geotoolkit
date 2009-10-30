@@ -32,6 +32,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
+import java.util.Arrays;
+import java.util.Iterator;
+import org.opengis.feature.IllegalAttributeException;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -219,6 +222,20 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         return new WrappedIterator<T, F>(type, ite);
     }
 
+    public static FeatureReader<SimpleFeatureType,SimpleFeature> wrapToReader(final Collection featuresArg,
+            final SimpleFeatureType typeArg){
+        return new WrappedCollection(featuresArg, typeArg);
+    }
+
+    public static FeatureReader<SimpleFeatureType,SimpleFeature> wrapToReader(FeatureCollection<SimpleFeatureType,
+            SimpleFeature> featuresArg, SimpleFeatureType typeArg){
+        return new WrappedCollection(featuresArg,typeArg);
+    }
+
+    public static FeatureReader<SimpleFeatureType,SimpleFeature> wrapToReader(SimpleFeature[] featuresArg){
+        return new WrappedCollection(featuresArg);
+    }
+
     private static class WrappedIterator<T extends FeatureType, F extends Feature> implements FeatureReader<T,F>{
 
         private final FeatureIterator<F> delegate;
@@ -267,6 +284,92 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             delegate.close();
         }
 
+    }
+
+    /**
+     * FeatureReader<SimpleFeatureType, SimpleFeature> that reads features from a java.util.collection of features,
+     * an array of features or a FeatureCollection.
+     *
+     * @author jones
+     * @module pending
+     */
+    public static class WrappedCollection implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+
+        private FeatureCollection<SimpleFeatureType, SimpleFeature> collection;
+        private final Iterator features;
+        private final SimpleFeatureType type;
+        private boolean closed = false;
+
+        /**
+         * Create a new instance.
+         *
+         * @param featuresArg a colleciton of features.  <b>All features must be of the same FeatureType</b>
+         * @param typeArg the Feature type of of the features.
+         */
+        public WrappedCollection(final Collection featuresArg, final SimpleFeatureType typeArg) {
+            assert !featuresArg.isEmpty();
+
+            if (featuresArg instanceof FeatureCollection) {
+                collection = (FeatureCollection<SimpleFeatureType, SimpleFeature>) featuresArg;
+            }
+
+            this.features = featuresArg.iterator();
+            this.type = typeArg;
+        }
+
+        /**
+         * Create a new instance.
+         *
+         * @param featuresArg a FeatureCollection.  <b>All features must be of the same FeatureType</b>
+         * @param typeArg the Feature type of of the features.
+         */
+        public WrappedCollection(FeatureCollection<SimpleFeatureType, SimpleFeature> featuresArg,
+                SimpleFeatureType typeArg) {
+            assert !featuresArg.isEmpty();
+            collection = featuresArg;
+            this.features = featuresArg.iterator();
+            this.type = typeArg;
+        }
+
+        /**
+         * Create a new instance.
+         *
+         * @param featuresArg an of features.  <b>All features must be of the same FeatureType</b>
+         */
+        public WrappedCollection(SimpleFeature[] featuresArg) {
+            assert featuresArg.length > 0;
+            this.features = Arrays.asList(featuresArg).iterator();
+            type = featuresArg[0].getFeatureType();
+        }
+
+        @Override
+        public SimpleFeatureType getFeatureType() {
+            return type;
+        }
+
+        @Override
+        public SimpleFeature next()
+                throws IOException, IllegalAttributeException, NoSuchElementException {
+            if (closed) {
+                throw new NoSuchElementException("Reader has been closed");
+            }
+
+            return (SimpleFeature) features.next();
+        }
+
+        @Override
+        public boolean hasNext() throws IOException {
+            return features.hasNext() && !closed;
+        }
+
+        @Override
+        public void close() throws IOException {
+            closed = true;
+
+            if (collection != null) {
+                collection.close(features);
+            }
+        }
     }
 
 }

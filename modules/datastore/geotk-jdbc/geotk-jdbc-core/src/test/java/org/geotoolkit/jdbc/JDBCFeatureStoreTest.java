@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import org.geotoolkit.data.CollectionFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -43,6 +42,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.DataUtilities;
 
 
 public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
@@ -114,7 +114,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
             collection.add(b.buildFeature(null));
         }
 
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader = new CollectionFeatureReader(collection, collection.getSchema());
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.wrapToReader(collection, collection.getSchema());
         featureStore.removeFeatures(Filter.INCLUDE);
         featureStore.addFeatures(reader);
 

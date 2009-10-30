@@ -18,7 +18,7 @@
 package org.geotoolkit.map;
 
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.style.MutableStyle;

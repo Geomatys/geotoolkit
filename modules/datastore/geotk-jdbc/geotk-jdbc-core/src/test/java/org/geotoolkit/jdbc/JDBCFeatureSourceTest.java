@@ -18,7 +18,7 @@ package org.geotoolkit.jdbc;
 
 import java.util.Iterator;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.store.ContentFeatureSource;

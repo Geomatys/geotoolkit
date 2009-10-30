@@ -34,12 +34,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.transaction.TransactionRequiredException;
-
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;

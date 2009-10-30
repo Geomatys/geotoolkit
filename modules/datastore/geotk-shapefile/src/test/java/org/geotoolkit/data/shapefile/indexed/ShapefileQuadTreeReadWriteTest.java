@@ -28,7 +28,7 @@ import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;

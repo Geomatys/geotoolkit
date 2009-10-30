@@ -38,9 +38,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class ArrayFeatureReaderTest extends TestCase {
 
-    private CollectionFeatureReader arrayReader;
-    private CollectionFeatureReader collectionReader;
-    private CollectionFeatureReader featureCollectionReader;
+    private FeatureReader arrayReader;
+    private FeatureReader collectionReader;
+    private FeatureReader featureCollectionReader;
     private SimpleFeatureType type;
     private SimpleFeature[] features;
 
@@ -58,9 +58,9 @@ public class ArrayFeatureReaderTest extends TestCase {
         FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
         List list = Arrays.asList(features);
         collection.addAll(list);
-        arrayReader = new CollectionFeatureReader(features);
-        collectionReader = new CollectionFeatureReader(list, type);
-        featureCollectionReader = new CollectionFeatureReader(collection, type);
+        arrayReader = DataUtilities.wrapToReader(features);
+        collectionReader = DataUtilities.wrapToReader(list, type);
+        featureCollectionReader = DataUtilities.wrapToReader(collection, type);
     }
 
     /**

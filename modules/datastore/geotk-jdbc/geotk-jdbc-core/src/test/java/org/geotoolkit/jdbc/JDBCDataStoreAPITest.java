@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureLockException;
 import org.geotoolkit.data.FeatureReader;

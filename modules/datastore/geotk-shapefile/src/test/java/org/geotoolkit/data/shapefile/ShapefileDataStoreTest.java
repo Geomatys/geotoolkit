@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;

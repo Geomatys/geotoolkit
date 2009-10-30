@@ -25,7 +25,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;

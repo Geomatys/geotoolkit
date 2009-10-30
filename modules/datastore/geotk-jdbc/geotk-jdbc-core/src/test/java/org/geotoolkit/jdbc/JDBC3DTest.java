@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
