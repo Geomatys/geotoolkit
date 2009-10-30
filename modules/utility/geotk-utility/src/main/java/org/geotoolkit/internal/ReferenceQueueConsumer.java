@@ -36,11 +36,6 @@ import org.geotoolkit.util.converter.Classes;
  */
 public abstract class ReferenceQueueConsumer<T> extends Thread {
     /**
-     * The group of {@code ReferenceQueueConsumer} threads running.
-     */
-    private static final ThreadGroup GROUP = new ThreadGroup(Threads.PARENT, "ReferenceQueueConsumers");
-
-    /**
      * List of references collected by the garbage collector.
      */
     public final ReferenceQueue<T> queue = new ReferenceQueue<T>();
@@ -52,7 +47,7 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
      * @param name The thread name.
      */
     protected ReferenceQueueConsumer(final String name) {
-        super(GROUP, name);
+        super(Threads.REFERENCE_CLEANERS, name);
         setPriority(MAX_PRIORITY - 2);
         setDaemon(true);
     }

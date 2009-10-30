@@ -132,7 +132,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
         if (c == null) {
             assert isEmpty();
             connection = c = dataSource.getConnection();
-            Threads.EXECUTOR.execute(this);
+            Threads.executor().execute(this);
         }
         return c;
     }

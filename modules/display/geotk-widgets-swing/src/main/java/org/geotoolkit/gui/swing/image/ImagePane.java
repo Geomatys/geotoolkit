@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import java.awt.EventQueue;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
@@ -25,22 +24,24 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderableImage;
 import javax.media.jai.operator.ScaleDescriptor;
+import javax.swing.SwingWorker;
+import java.util.concurrent.Future;
+import java.util.concurrent.ExecutionException;
 
 import org.geotoolkit.gui.swing.ZoomPane;
-import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.internal.GraphicsUtilities;
 
 
 /**
  * A simple image viewer. This widget accepts either {@linkplain RenderedImage rendered} or
- * {@linkplain RenderableImage renderable} image. Rendered image are display immediately,
+ * {@linkplain RenderableImage renderable} image. Rendered image are displayed immediately,
  * while renderable image will be rendered in a background thread when first requested.
  * <p>
  * This widget may scale down images for faster rendering. This is convenient for image
  * previews, but should not be used as a "real" (i.e. robust and accurate) renderer.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
  * @see ImageProperties
  *
@@ -48,33 +49,39 @@ import org.geotoolkit.internal.GraphicsUtilities;
  * @module
  */
 @SuppressWarnings("serial")
-public class ImagePane extends ZoomPane implements Runnable {
+public class ImagePane extends ZoomPane {
     /**
      * The default size for rendered image produced by a {@link RenderableImage}.
      * This is also the maximum size for a {@link RenderedImage}; bigger image
-     * will be scaled down using JAI's "Scale" operation for faster rendering.
+     * will be scaled down for faster rendering.
      */
     private final int renderedSize;
 
     /**
-     * The renderable image, or {@code null} if none. If non-null, then the {@link #run}
-     * method will transform this renderable image into a rendered one when first requested.
+     * The renderable image, or {@code null} if none. If non-null, then the {@link Render}
+     * will transform this renderable image into a rendered one when first requested.
      * Once the image is rendered, this field is set to {@code null}.
      */
     private RenderableImage renderable;
 
     /**
      * The rendered image, or {@code null} if none. This image may be explicitly set
-     * by {@link #setImage(RenderedImage)}, or computed by {@link #run}.
+     * by {@link #setImage(RenderedImage)}, or computed by {@link Render}.
      */
     private RenderedImage rendered;
 
     /**
-     * {@code true} if the {@link #run} method has been invoked for the current image.
-     * This field is used in order to avoid to start more than one thread for the same
-     * {@linkplain #renderable} image.
+     * If the rendering failed, the exception to paint in place of the image.
+     *
+     * @since 3.05
      */
-    private volatile boolean running;
+    private Throwable error;
+
+    /**
+     * The task which is rendering a {@link RenderableImage} in a background thread.
+     * This field shall be read and write from the <cite>Swing</cite> thread only.
+     */
+    private transient Future<RenderedImage> render;
 
     /**
      * Constructs an initially empty image pane with a default rendered image size.
@@ -98,39 +105,93 @@ public class ImagePane extends ZoomPane implements Runnable {
     }
 
     /**
-     * Sets the source renderable image.
-     * A {@code null} value remove the current image.
+     * Cancel computation tasks and reset all fields to {@code null}.
+     * This is invoked when the user specify a different image.
+     *
+     * @return The old renderable or rendered image.
+     */
+    private Object clear() {
+        Object old = renderable;
+        if (old == null) {
+            old = rendered;
+        }
+        if (render != null) {
+            render.cancel(true);
+            render = null;
+        }
+        renderable = null;
+        rendered   = null;
+        error      = null;
+        return old;
+    }
+
+    /**
+     * Sets the source renderable image. The given image will be
+     * {@linkplain RenderableImage#createDefaultRendering() rendered}
+     * in a background thread when first needed.
      *
      * @param image The image to display, or {@code null} if none.
      */
     public void setImage(final RenderableImage image) {
+        final Throwable error = this.error;
+        final Object old = clear();
         renderable = image;
-        rendered   = null;
-        running    = false;
         reset();
+        if (error != null) {
+            firePropertyChange("error", error, null);
+        }
+        firePropertyChange("image", old, image);
         repaint();
     }
 
     /**
-     * Sets the source rendered image.
+     * Sets the source rendered image. If the given image is larger than the size
+     * given at construction time, then it will be scaled down when first needed.
      * A {@code null} value remove the current image.
      *
      * @param image The image to display, or {@code null} if none.
      */
     public void setImage(RenderedImage image) {
         if (image != null) {
-            final float scale = Math.min(((float)renderedSize) / image.getWidth(),
-                                         ((float)renderedSize) / image.getHeight());
+            final float size = (float) renderedSize;
+            final float scale = Math.min((size) / image.getWidth(), (size) / image.getHeight());
             if (scale < 1) {
                 final Float sc = Float.valueOf(scale);
                 final Float tr = 0f; // Seems mandatory, despite what JAI javadoc said.
                 image = ScaleDescriptor.create(image, sc, sc, tr, tr, null, null);
             }
         }
-        renderable = null;
-        rendered   = image;
-        running    = false;
+        final Throwable error = this.error;
+        final Object old = clear();
+        rendered = image;
         reset();
+        if (error != null) {
+            firePropertyChange("error", error, null);
+        }
+        firePropertyChange("image", old, image);
+        repaint();
+    }
+
+    /**
+     * Removes the current image (if any) and paints the stack trace of the given exception
+     * instead. This method is invoked when the client code failed to create the image to
+     * display, typically because of an {@link java.io.IOException}.
+     * <p>
+     * The error is cleaned when a {@code setImage(...)} method is invoked.
+     *
+     * @param error The error to paint, or {@code null} if none.
+     *
+     * @since 3.05
+     */
+    public void setError(final Throwable error) {
+        final Object old = this.error;
+        final Object image = clear();
+        this.error = error;
+        reset();
+        if (image != null) {
+            firePropertyChange("image", image, null);
+        }
+        firePropertyChange("error", old, error);
         repaint();
     }
 
@@ -177,45 +238,81 @@ public class ImagePane extends ZoomPane implements Runnable {
 
     /**
      * Paints the image. If the image was a {@link RenderableImage}, then a {@link RenderedImage}
-     * will be computed in a background thread when this method is first invoked.
+     * will be computed in a background thread when this method is first invoked. If the rendering
+     * fails, then the exception stack trace will be painted.
      */
     @Override
     protected void paintComponent(final Graphics2D graphics) {
-        final RenderedImage rendered = this.rendered; // Protect from change in an other thread
-        if (rendered == null) {
-            if (renderable!=null && !running) {
-                running = true;
-                final Thread runner = new Thread(SwingUtilities.WORKER_THREADS, this, "Renderer");
-                runner.setPriority(Thread.NORM_PRIORITY - 2);
-                runner.start();
+        if (error == null) {
+            if (rendered == null) {
+                if (renderable != null && render == null) {
+                    final Render r = new Render();
+                    render = r;
+                    r.execute();
+                }
+                // Leave the canvas empty. A repaint event will be posted
+                // later when the rendered image will be ready.
+                return;
             }
-        } else try {
-            graphics.drawRenderedImage(rendered, zoom);
-        } catch (RuntimeException e) {
-            graphics.setColor(getForeground());
-            GraphicsUtilities.paintStackTrace(graphics, getZoomableBounds(null), e);
+            try {
+                graphics.drawRenderedImage(rendered, zoom);
+                return;
+            } catch (RuntimeException e) {
+                error = e;
+                // Fallthrough the code below.
+            }
         }
+        graphics.setColor(getForeground());
+        GraphicsUtilities.paintStackTrace(graphics, getZoomableBounds(null), error);
     }
 
     /**
-     * Creates a {@linkplain RenderedImage rendered} view of the {@linkplain RenderableImage
-     * renderable} image and notifies {@link ZoomPane} when the result is ready. This method
-     * is run in a background thread and should not be invoked directly, unless the user wants
-     * to trig the {@link RenderedImage} creation immediately.
+     * The worker which will create a {@link RenderedImage} from a {@link RenderableImage}.
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.05
+     *
+     * @since 3.05
+     * @module
      */
-    @Override
-    public void run() {
-        running = true;
-        final RenderableImage producer = renderable; // Protect from change.
-        if (producer != null) {
-            final RenderedImage image = producer.createScaledRendering(renderedSize, 0, null);
-            EventQueue.invokeLater(new Runnable() {
-                @Override public void run() {
-                    if (producer == renderable) {
-                        setImage(image);
-                    }
+    private final class Render extends SwingWorker<RenderedImage,Object> {
+        /**
+         * The renderable image, assigned from the Swing thread and used from the background
+         * thread. We must do this assignment for protecting the value from concurrent change.
+         */
+        private final RenderableImage producer = renderable;
+
+        /**
+         * Creates the rendered image.
+         */
+        @Override
+        protected RenderedImage doInBackground() {
+            return producer.createScaledRendering(renderedSize, 0, null);
+        }
+
+        /**
+         * Invoked from the Swing thread when the image creation has been completed,
+         * has been interrupted or failed. This method set the image of error field
+         * accordingly.
+         */
+        @Override
+        protected void done() {
+            if (render == this) {
+                render = null; // Declare the task as completed.
+                try {
+                    rendered = get();
+                } catch (InterruptedException e) {
+                    /*
+                     * The task has been canceled, normally from the ImagePane.clear() method.
+                     * Do not change the state and do not repaint, because the caller of clear()
+                     * is going to set a new image anyway.
+                     */
+                    return;
+                } catch (ExecutionException e) {
+                    error = e.getCause();
                 }
-            });
+                repaint();
+            }
         }
     }
 }

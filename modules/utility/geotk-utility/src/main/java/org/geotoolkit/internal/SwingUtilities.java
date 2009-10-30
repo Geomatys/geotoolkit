@@ -57,16 +57,6 @@ import org.geotoolkit.util.logging.Logging;
 @Static
 public final class SwingUtilities {
     /**
-     * The thread group for jobs to be run in background from a Swing widgets.
-     * The main purpose of this group is to keep trace of swing workers that we
-     * create in various location in Geotoolkit.org code.
-     */
-    public static final ThreadGroup WORKER_THREADS = new ThreadGroup(Threads.PARENT, "SwingWorkers");
-    static {
-        WORKER_THREADS.setMaxPriority(Thread.NORM_PRIORITY - 2);
-    }
-
-    /**
      * Do not allow any instance of this class to be created.
      */
     private SwingUtilities() {

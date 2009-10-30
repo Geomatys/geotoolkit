@@ -19,12 +19,12 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 import java.util.prefs.Preferences;
 
 import javax.swing.*;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.CardLayout;
 import java.awt.GridLayout;
 import java.awt.BorderLayout;
@@ -317,14 +317,11 @@ public class MosaicChooser extends JPanel implements Dialog {
      *        the creation of the tile manager instead.
      */
     private void runLoader(final ImageFileChooser fileChooser) {
-        Loader loader = this.loader;
         if (loader != null) {
-            loader.cancel = true;
+            loader.cancel(false);
         }
-        this.loader = loader = new Loader(fileChooser);
-        final Thread thread = new Thread(SwingUtilities.WORKER_THREADS, loader);
-        thread.setDaemon(true); // Do not prevent the application to finish.
-        thread.start();
+        loader = new Loader(fileChooser);
+        loader.execute();
     }
 
     /**
@@ -332,17 +329,17 @@ public class MosaicChooser extends JPanel implements Dialog {
      * performed by a single {@link #run} method, but is sliced in many sections to be executed
      * in Swing thread or in the background thread. We put everything in the same {@code run()}
      * method because the next step uses the results from the previous steps.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.05
+     *
+     * @since 3.00
+     * @module
      */
-    private final class Loader implements Runnable {
+    private final class Loader extends SwingWorker<Object,Object> {
         private final File[]         files;
         private final ImageReaderSpi provider;
         private final ProgressWindow progress;
-
-        private volatile TileManager[] managers;
-        private volatile TableModel    failures;
-        private volatile IOException   error;
-        private volatile int           stage;
-        volatile boolean cancel;
 
         /**
          * Creates a new tile loader.
@@ -365,7 +362,8 @@ public class MosaicChooser extends JPanel implements Dialog {
 
         /**
          * Returns the format name of the reader used for reading tile headers,
-         * or {@code null} if it can not be determined.
+         * or {@code null} if it can not be determined. This method is safe for
+         * invocation from any thread, since it acceed only immutable fields.
          */
         public String getFormat() {
             final String[] names = provider.getFormatNames();
@@ -373,90 +371,114 @@ public class MosaicChooser extends JPanel implements Dialog {
         }
 
         /**
-         * Runs a portion of the task in a background thread. The {@link #stage} variable
-         * said where we are in the code flow. Even numbers must be run in the background
-         * thread while odd numbers must be run in the Swing thread.
+         * Invoked in a background thread for loading the tiles. This method sends
+         * intermediate results through the {@code publish(...)} method, to be
+         * processed in the <cite>Swing</cite> thread by {@link #process(List)}.
+         *
+         * @return Always {@code null}.
          */
         @Override
-        public void run() {
-            while (!cancel) {
-                final int s = stage;
-                final boolean isDispatchThread = ((s & 1) != 0);
-                assert EventQueue.isDispatchThread() == isDispatchThread : s;
-                switch (s) {
-                    /*
-                     * Background thread: creates the Tile objects from the list of files selected
-                     * by the user. Needs to be run in background because this method will open
-                     * every files for fetching the image size and will read every TFW files.
-                     */
-                    case 0: {
-                        if (files != null) {
-                            failures = tiles.add(provider, files, progress);
-                        }
-                        break;
-                    }
-                    /*
-                     * Swing thread: if the previous step reported some failures, creates a new
-                     * JTable for displaying the list of failures. Next, set the right pane as
-                     * busy before we compute the mosaic.
-                     */
-                    case 1: {
-                        final TableModel failures = this.failures;
-                        if (failures != null) {
-                            reportFailures(files, failures);
-                        }
-                        setBusy(true);
-                        break;
-                    }
-                    /*
-                     * Background thread: computes the mosaic from the list of tiles.
-                     * If we fail, remember the exception but do not process it yet.
-                     */
-                    case 2: {
-                        try {
-                            managers = tiles.getTileManager();
-                        } catch (IOException e) {
-                            error = e;
-                        }
-                        break;
-                    }
-                    /*
-                     * Swing thread: remove duplicated tiles. Needs to be done after the mosaic
-                     * has been built, because tile location has been determined only after the
-                     * mosaic creation and may affect the result of Tile.equals(Object).
-                     */
-                    case 3: {
-                        if (tiles.removeDuplicates() != 0 && error == null) {
-                            stage = 2; // Creates TileManager again.
-                            return;
-                        }
-                        setBusy(false);
-                        if (error != null) {
-                            ExceptionMonitor.show(MosaicChooser.this, error);
-                        }
-                        if (managers != null) {
-                            mosaic.setTileManagers(managers);
-                        }
-                        loader = null; // Said to MosaicChooser that we are done.
-                        fireStateChanged();
-                        break;
-                    }
-                    /*
-                     * Background thread: we are done.
-                     */
-                    default: {
-                        return;
+        protected Object doInBackground() {
+            /*
+             * Creates the Tile objects from the list of files selected by the user. Needs to be
+             * run in background because this method will open every files for fetching the image
+             * size and will read every TFW files.
+             */
+            if (files != null) {
+                final TableModel failures = tiles.add(provider, files, progress);
+                if (failures != null) {
+                    publish(failures);
+                }
+            }
+            /*
+             * Set the busy state only when the reading is completed (during the reading,
+             * the progress was reported in an other window), to show that the process
+             * which is now under way is the mosaic computation, not tiles reading.
+             */
+            publish(Boolean.TRUE);
+            /*
+             * A task to be run in the Swing thread: removes duplicated tiles.  This needs to be
+             * done after the mosaic has been built, because tile locations have been determined
+             * only after the mosaic creation and may affect the result of Tile.equals(Object).
+             */
+            final class RD implements Runnable {
+                volatile boolean again = true;
+                @Override public void run() {
+                    if (tiles.removeDuplicates() == 0) {
+                        again = false;
                     }
                 }
-                /*
-                 * Runs the next step in the Swing thread. If we were already in the Swing thread,
-                 * we need to finish this method now in order to return to the background thread.
-                 */
-                stage = s+1;
-                if (isDispatchThread) {
+            }
+            final RD removeDuplicates = new RD(); // Will be run later.
+            /*
+             * Computes the mosaic from the list of tiles. We may need to perform this step
+             * more than once if we had to remove duplicated tiles,  except if an exception
+             * has been thrown.
+             */
+            Object result;
+            do {
+                if (isCancelled()) {
+                    return null;
+                }
+                try {
+                    result = tiles.getTileManager();
+                } catch (IOException e) {
+                    result = e;
+                    removeDuplicates.again = false;
+                }
+                SwingUtilities.invokeAndWait(removeDuplicates);
+            } while (removeDuplicates.again);
+            publish(Boolean.FALSE, result);
+            return null;
+        }
+
+        /**
+         * Processes in the <cite>Swing</cite> thread the intermediate results sent
+         * by {@link #doInBackground()}. The task depends on the result type:
+         * <p>
+         * <ul>
+         *   <li>{@link Boolean}:     Set the busy state in the right pane (the mosaic silhouete).</li>
+         *   <li>{@link TileManager}: Display the mosaic silhouete.</li>
+         *   <li>{@link TableModel}:  Create a new JTable for displaying the list of failures.</li>
+         *   <li>{@link Throwable}:   Display a dialog box reporting the exception.</li>
+         * </ul>
+         *
+         * @param results The intermediate results sent by {@link #doInBackground()}.
+         */
+        @Override
+        protected void process(final List<Object> results) {
+            for (final Object result : results) {
+                if (isCancelled()) {
                     return;
                 }
-                SwingUtilities.invokeAndWait(this);
+                if (result instanceof Boolean) {
+                    setBusy((Boolean) result);
+                    continue;
+                }
+                if (result instanceof TileManager[]) {
+                    mosaic.setTileManagers((TileManager[]) result);
+                    continue;
+                }
+                if (result instanceof TableModel) {
+                    reportFailures(files, (TableModel) result);
+                    continue;
+                }
+                if (result instanceof Throwable) {
+                    ExceptionMonitor.show(MosaicChooser.this, (Throwable) result);
+                    continue;
+                }
+            }
+        }
+
+        /**
+         * Invoked from the Swing thread after we finished to load and compute the mosaic,
+         * or after a failure.
+         */
+        @Override
+        protected void done() {
+            if (!isCancelled()) {
+                loader = null; // Said to MosaicChooser that we are done.
+                fireStateChanged();
             }
         }
     }

@@ -25,48 +25,58 @@ import org.geotoolkit.lang.Static;
 
 
 /**
- * Utilities methods for threads.
+ * Utilities methods for threads. This class declares in a single place every {@link ThreadGroup}
+ * used in Geotk. Their purpose is only to put a little bit of order in debugger informations, by
+ * grouping the threads created by Geotk together under the same parent tree node.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.05
  *
  * @since 3.03
  * @module
  */
 @Static
-public final class Threads implements ThreadFactory {
+public final class Threads extends ThreadGroup implements ThreadFactory {
     /**
-     * Do not allow instantiation of this class.
+     * The group of shutdown hooks. This group has the default priority.
      */
-    private Threads() {
+    public static final ThreadGroup SHUTDOWN_HOOKS;
+
+    /**
+     * The group of {@code ReferenceQueueConsumer} threads running.
+     * Threads in this group have a high priority and should be completed quickly.
+     */
+    static final ThreadGroup REFERENCE_CLEANERS;
+
+    /**
+     * The group of low-priority dameons. Tasks in this thread are executed only
+     * when the CPU have plenty of time available.
+     *
+     * @since 3.05
+     */
+    public static final ThreadGroup DAEMONS;
+
+    static {
+        final ThreadGroup parent = new ThreadGroup("Geotoolkit.org");
+        SHUTDOWN_HOOKS     = new ThreadGroup(parent, "ShutdownHooks");
+        REFERENCE_CLEANERS = new ThreadGroup(parent, "ReferenceQueueConsumers");
+        DAEMONS            = new ThreadGroup(parent, "Daemons");
+        REFERENCE_CLEANERS.setMaxPriority(Thread.MAX_PRIORITY - 2);
+        DAEMONS           .setMaxPriority(Thread.MIN_PRIORITY);
     }
 
     /**
-     * The parent of all thread groups defined in this class.
-     * This is the root of our tree of thread groups.
+     * The executor to be returned by {@link #executor()}.
+     * Will be created only when first needed.
      */
-    static final ThreadGroup PARENT = new ThreadGroup("Geotoolkit.org");
+    private static volatile Executor executor;
 
     /**
-     * The group of shutdown hooks.
+     * For internal usage only.
      */
-    public static final ThreadGroup SHUTDOWN_HOOKS = new ThreadGroup(PARENT, "ShutdownHooks");
-
-    /*
-     * Other ThreadGroups are defined in:
-     *
-     *   - SwingUtilities
-     *   - FactoryUtilities
-     *   - ReferenceQueueConsumer
-     *
-     * They are left in their respective class in order to instantiate the group only on
-     * class initialization. The shutdown group is defined here because needed soon anyway.
-     */
-
-    /**
-     * The group of threads pooled by {@link #EXECUTOR}.
-     */
-    private static final ThreadGroup POOL = new ThreadGroup(PARENT, "ThreadPool");
+    private Threads(final String name) {
+        super(DAEMONS.getParent(), name);
+    }
 
     /**
      * A pool of threads to be shared by different Geotk utility classes. This pool is useful
@@ -80,18 +90,36 @@ public final class Threads implements ThreadFactory {
      * The threads in this executor have a priority slightly higher than the normal priority.
      * This is on the assumption that the tasks will spend most of their time waiting for some
      * condition, and complete quickly when the condition become true.
+     *
+     * @return The executor.
+     *
+     * @todo We need to shutdown the executor and reset the field to null. When?
+     *       After a timeout?
      */
-    public static final Executor EXECUTOR = Executors.newCachedThreadPool(new Threads());
+    public static Executor executor() {
+        Executor exec = executor;
+        if (exec == null) {
+            // Double-check: was a deprecated practice before Java 5, is okay
+            // since Java 5 provided that the field is declared volatile.
+            synchronized (Threads.class) {
+                exec = executor;
+                if (exec == null) {
+                    executor = exec = Executors.newCachedThreadPool(new Threads("ThreadPool"));
+                }
+            }
+        }
+        return exec;
+    }
 
     /**
-     * For internal usage by {@link #EXECUTOR} only.
+     * For internal usage by {@link #executor} only.
      *
      * @param  task The task to execute.
      * @return A new thread running the given task.
      */
     @Override
     public Thread newThread(final Runnable task) {
-        final Thread thread = new Thread(POOL, task);
+        final Thread thread = new Thread(this, task);
         thread.setPriority(Thread.NORM_PRIORITY + 1);
         thread.setDaemon(true);
         return thread;

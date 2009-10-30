@@ -62,7 +62,7 @@ import org.geotoolkit.resources.Errors;
  *       the image formats known to {@link IIORegistry}.</li>
  *   <li>An optional pseudo-format called "<cite>List of files</cite>"
  *       {@linkplain #isListFileFilterUsed() can be added}. This pseudo-format allows the
- *       user to specify a text file listing the paths to the image files to select.</li>
+ *       user to specify a text file listing the paths to many image files.</li>
  *   <li>The {@code showDialog(...)} methods display an {@link ImageFileProperties} pane
  *       at the right of the {@code ImageFileChooser}.</li>
  * </ul>
@@ -71,7 +71,7 @@ import org.geotoolkit.resources.Errors;
  * "{@code showSaveDialog"} for saving an image instead than loading it):
  *
  * {@preformat java
- *     ImageFileChooser chooser = new ImageFileChooser("png");
+ *     ImageFileChooser chooser = new ImageFileChooser("png", true);
  *     if (chooser.showOpenDialog(parent) == ImageFileChooser.APPROVE_OPTION) {
  *         File selected = chooser.getSelectedFile();
  *     }
@@ -194,7 +194,9 @@ public class ImageFileChooser extends JFileChooser {
      * @see #setAcceptAllFileFilterUsed
      */
     public void setListFileFilterUsed(final boolean enabled) {
+        final boolean old = listFileFilterUsed;
         listFileFilterUsed = enabled;
+        firePropertyChange("listFileFilterUsed", old, enabled);
     }
 
     /**
@@ -240,13 +242,15 @@ public class ImageFileChooser extends JFileChooser {
      * @since 3.05
      */
     public void setPropertiesPane(final ImageFileProperties properties) {
-        if (propertiesPane != null) {
-            removePropertyChangeListener(SELECTED_FILE_CHANGED_PROPERTY, propertiesPane);
+        final ImageFileProperties old = propertiesPane;
+        if (old != null) {
+            removePropertyChangeListener(SELECTED_FILE_CHANGED_PROPERTY, old);
         }
         if (properties != null) {
             addPropertyChangeListener(SELECTED_FILE_CHANGED_PROPERTY, properties);
         }
         propertiesPane = properties;
+        firePropertyChange("propertiesPane", old, properties);
     }
 
     /**
@@ -260,6 +264,7 @@ public class ImageFileChooser extends JFileChooser {
      */
     @Override
     public void setDialogType(final int mode) {
+        super.setDialogType(mode);
         final Locale locale = getLocale();
         final Class<? extends ImageReaderWriterSpi> category;
         switch (mode) {

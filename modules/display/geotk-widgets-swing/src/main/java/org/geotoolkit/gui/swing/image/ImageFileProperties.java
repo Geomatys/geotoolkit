@@ -59,7 +59,7 @@ import org.geotoolkit.util.XArrays;
  * {@section Using this component together with a File Chooser}
  * This component can be registered to a {@link JFileChooser} for listening to change events.
  * When the file selection change, the {@link #propertyChange(PropertyChangeEvent)} method is
- * automatically invoked. The default implementation invokes in turn {@code setImage(File)} in
+ * automatically invoked. The default implementation invokes in turn {@link #setImage(File)} in
  * a background thread. This allows this {@code ImageFileProperties} to be updated automatically
  * when the user selection changed. Example:
  *
@@ -301,7 +301,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * {@link #setImage(File)} in a background thread.
      * <p>
      * This method is invoked automatically when this {@code ImageFileProperties} is registered
-     * to a {@code JFileChooser} as an {@link PropertyChangeListener). It shall be invoked from
+     * to a {@code JFileChooser} as an {@link PropertyChangeListener}. It can be invoked from
      * the <cite>Swing</cite> thread only.
      *
      * @param event The property change event.

@@ -55,6 +55,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
 
@@ -485,8 +486,7 @@ public class About extends JPanel implements Dialog {
          */
         public synchronized void start() {
             if (worker == null) {
-                worker = new Thread(SwingUtilities.WORKER_THREADS, this, resources.getString(Vocabulary.Keys.ABOUT));
-                worker.setPriority(Thread.MIN_PRIORITY);
+                worker = new Thread(Threads.DAEMONS, this, resources.getString(Vocabulary.Keys.ABOUT));
                 worker.setDaemon(true);
                 worker.start();
             }
