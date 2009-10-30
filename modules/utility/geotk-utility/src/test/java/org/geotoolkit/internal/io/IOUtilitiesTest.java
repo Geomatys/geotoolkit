@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.internal.io;
 
+import java.net.URL;
 import java.io.File;
+import java.io.IOException;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -26,7 +29,7 @@ import static org.junit.Assert.*;
  * Tests the {@link IOUtilities} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  */
@@ -39,5 +42,20 @@ public class IOUtilitiesTest {
         final File root  = new File("home/root/subdirectory");
         final File other = new File("home/root/data/other");
         assertEquals(new File("home/root"), IOUtilities.commonParent(root, other));
+    }
+
+    /**
+     * Tests the {@link IOUtilities#toFile} method.
+     *
+     * @throws IOException Should not happen.
+     */
+    @Test
+    public void testToFile() throws IOException {
+        assertEquals("Unix absolute path.", new File("/Users/name/Picture.png"),
+                IOUtilities.toFile(new URL("file:/Users/name/Picture.png"), null));
+        /*
+         * Do not test a Windows-specific path (e.g. "file:///C:/some/path/Picture.png").
+         * The result is different on Windows or Unix platforms.
+         */
     }
 }

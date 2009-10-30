@@ -20,6 +20,8 @@ package org.geotoolkit.internal.io;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URISyntaxException;
 import java.net.MalformedURLException;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
@@ -69,29 +71,74 @@ public final class IOUtilities {
     }
 
     /**
-     * Transforms an {@link URL} into a {@link File}. If the URL can't be
-     * interpreted as a file, then this method returns {@code null}.
+     * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
+     * to {@link URL#toURI()} followed by a call to the {@link File(URI)} constructor. However
+     * this method adds the following functionalities:
+     * <p>
+     * <ul>
+     *   <li>Optionnaly decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
+     *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
+     * </ul>
      *
      * @param  url The URL (may be {@code null}).
-     * @return The file for the given URL, or {@code null}.
+     * @param  encoding If the URL is encoded in a {@code application/x-www-form-urlencoded}
+     *         MIME format, the character encoding (normally {@code "UTF-8"}. If the URL is
+     *         not encoded, then {@code null}.
+     * @return The file for the given URL, or {@code null} if the given URL was null.
+     * @throws IOException if the URL can not be converted to a file.
      *
      * @since 3.05
      */
-    public static File toFile(final URL url) {
-        if (url != null && url.getProtocol().equalsIgnoreCase("file")) {
-            return new File(url.getPath());
+    public static File toFile(final URL url, final String encoding) throws IOException {
+        if (url == null) {
+            return null;
         }
-        return null;
+        /*
+         * Convert the URL to an URI, taking in account the encoding if any.
+         *
+         * Note: URL.toURI() is implemented as new URI(URL.toString()) where toString()
+         * delegates to toExternalForm(), and all those methods are final. So we really
+         * don't lost anything by doing those steps ourself.
+         */
+        String path = url.toExternalForm();
+        if (encoding != null) {
+            path = URLDecoder.decode(path, encoding);
+        }
+        URI uri;
+        try {
+            uri = new URI(path);
+        } catch (URISyntaxException cause) {
+            /*
+             * Occurs only if the URL is not compliant with RFC 2396. Otherwise every URL
+             * should succeed, to a failure can actually be considered as a malformed URL.
+             */
+            MalformedURLException e = new MalformedURLException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path));
+            e.initCause(cause);
+            throw e;
+        }
+        /*
+         * We really want to call the File constructor expecting an URI argument, not the
+         * constructor expecting a String argument, because the one for URI performs
+         * additional platform-specific parsing.
+         */
+        try {
+            return new File(uri);
+        } catch (IllegalArgumentException cause) {
+            IOException e = new FileNotFoundException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path));
+            e.initCause(cause);
+            throw e;
+        }
     }
 
     /**
      * Parses the following path as a {@link File} if possible, or a {@link URL} otherwise.
      *
-     * @param path The path to parse.
+     * @param  path The path to parse.
      * @return The path as a {@link File} if possible, or a {@link URL} otherwise.
-     * @throws MalformedURLException If the given path is not a file and can't be parsed as a URL.
+     * @throws IOException If the given path is not a file and can't be parsed as a URL.
      */
-    public static Object toFileOrURL(final String path) throws MalformedURLException {
+    public static Object toFileOrURL(final String path) throws IOException {
         if (path.indexOf('?') < 0 && path.indexOf('#') < 0) {
             final int split = path.indexOf(':');
             /*
@@ -105,7 +152,7 @@ public final class IOUtilities {
         }
         final URL url = new URL(path);
         if (url.getProtocol().equalsIgnoreCase("file")) {
-            return new File(url.getFile());
+            return toFile(url, null);
         }
         return url;
     }

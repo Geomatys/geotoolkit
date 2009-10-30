@@ -21,7 +21,6 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +34,6 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -128,14 +126,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
                                 final OnLineFunction function,
                                 final String onlineResource)
     {
-        try {
-            return OGC(role, function, new URI(onlineResource));
-        }
-        catch (URISyntaxException badContact) {
-            Logging.unexpectedException(LOGGER, ResponsibleParty.class, "OGC",
-                                        badContact);
-            return OGC;
-        }
+        return OGC(role, function, URI.create(onlineResource));
     }
 
     /**

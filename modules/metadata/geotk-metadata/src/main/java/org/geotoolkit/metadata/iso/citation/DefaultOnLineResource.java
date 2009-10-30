@@ -21,7 +21,6 @@
 package org.geotoolkit.metadata.iso.citation;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -242,15 +241,11 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
      * Creates an on line resource initialized to the given URI.
      * This method is private for now since, if this constructor was public, some
      * users may expect a string argument to be for the description text instead.
-     * Furthermore, a public method should not catch the {@link URISyntaxException}
+     * Furthermore, a public method should not hide the {@code URISyntaxException}
      * and should not set a function.
      */
     private DefaultOnlineResource(final String linkage) {
-        try {
-            setLinkage(new URI(linkage));
-        } catch (URISyntaxException exception) {
-            throw new IllegalArgumentException(exception);
-        }
+        setLinkage(URI.create(linkage));
         setFunction(OnLineFunction.INFORMATION);
     }
 

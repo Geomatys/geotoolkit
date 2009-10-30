@@ -558,18 +558,19 @@ public class PaletteFactory {
          * than a JAR file.
          */
         File dir = (directory != null) ? directory : new File(".");
-        if (classloader != null) {
-            dir = IOUtilities.toFile(classloader.getResource(dir.getPath()));
-            if (dir == null) {
-                // Directory not found.
-                return found;
+        try {
+            if (classloader != null) {
+                dir = IOUtilities.toFile(classloader.getResource(dir.getPath()), null);
+            } else if (loader != null) {
+                dir = IOUtilities.toFile(loader.getResource(dir.getPath()), null);
             }
-        } else if (loader != null) {
-            dir = IOUtilities.toFile(loader.getResource(dir.getPath()));
-            if (dir == null) {
-                // Directory not found.
-                return found;
-            }
+        } catch (IOException e) {
+            /*
+             * The URL to the palette files can not be converted to a File object.
+             * Consequently we can not scan the list of files in the directory.
+             * Returns only the palettes which were explicitly declared.
+             */
+            return found;
         }
         final String[] list = dir.list(new DefaultFileFilter('*' + extension));
         if (list == null) {
