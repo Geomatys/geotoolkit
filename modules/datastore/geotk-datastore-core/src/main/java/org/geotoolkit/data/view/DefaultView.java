@@ -25,7 +25,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.concurrent.FeatureLocking;

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.feature.SchemaException;

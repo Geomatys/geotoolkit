@@ -18,6 +18,7 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.query.DefaultQuery;
 import java.util.Arrays;
 import java.util.List;
 import junit.framework.Test;

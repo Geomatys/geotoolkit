@@ -27,7 +27,7 @@ import org.geotoolkit.data.DataTestCase;
 import org.geotoolkit.data.FeatureLockFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.EmptyFeatureReader;

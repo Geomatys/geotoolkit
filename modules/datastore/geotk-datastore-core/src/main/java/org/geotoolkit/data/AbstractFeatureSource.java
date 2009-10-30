@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.diff.Diff;
 import java.io.IOException;
 import java.util.Collections;

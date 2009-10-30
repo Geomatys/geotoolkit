@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.concurrent.FeatureLock;
 import org.geotoolkit.data.FeatureLockException;
 import org.geotoolkit.data.concurrent.FeatureLocking;

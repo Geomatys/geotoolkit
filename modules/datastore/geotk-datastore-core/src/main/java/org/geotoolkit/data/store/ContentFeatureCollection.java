@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;

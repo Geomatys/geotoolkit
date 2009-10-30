@@ -41,7 +41,7 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;

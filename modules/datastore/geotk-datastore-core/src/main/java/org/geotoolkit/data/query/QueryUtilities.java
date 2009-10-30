@@ -8,7 +8,6 @@ package org.geotoolkit.data.query;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;

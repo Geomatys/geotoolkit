@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.query.DefaultQuery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

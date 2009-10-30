@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;

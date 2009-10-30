@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DefaultQuery;
+import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.query.Query;
