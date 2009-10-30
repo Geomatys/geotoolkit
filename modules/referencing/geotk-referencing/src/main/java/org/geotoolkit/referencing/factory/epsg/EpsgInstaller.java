@@ -21,8 +21,12 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLTransientException;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.concurrent.Callable;
@@ -57,7 +61,7 @@ import org.geotoolkit.resources.Descriptions;
  * {@linkplain java.util.concurrent.ExecutorService executor service}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -191,6 +195,103 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     }
 
     /**
+     * Returns the schema where are expected to be the EPSG tables. This is the value defined
+     * by the last call to {@link #setSchema(String)}, converted to lower or upper cases
+     * depending how the underlying database stores unquoted identifier.
+     * <p>
+     * The EPSG schema is unquoted on purpose, because the "EPSG" characters are not in mixed
+     * cases ("epsg" is good as well) and we want to keep some identifiers in their "natural"
+     * form for the underlying database (so the user see the case he is used to, and there is
+     * less quotes to type). This is different from the table names where there is mixed case,
+     * and the table names are more difficult to read if we don't preserve that case.
+     *
+     * @param  md The database metadata, used for determining the identifier case.
+     * @return The schema name, or {@code ""} if there is none.
+     * @throws SQLException If an error occured while querying metadata.
+     *
+     * @since 3.05
+     */
+    private String getSchema(final DatabaseMetaData md) throws SQLException {
+        String sc = schema;
+        if (sc == null) {
+            sc = "";
+        } else if (md.storesUpperCaseIdentifiers()) {
+            sc = sc.toUpperCase(Locale.CANADA);
+        } else if (md.storesLowerCaseIdentifiers()) {
+            sc = sc.toLowerCase(Locale.CANADA);
+        }
+        return sc;
+    }
+
+    /**
+     * Returns the connection to the database. It is caller's responsability to close
+     * this connection.
+     *
+     * @param  create {@code true} if this method should create the database directory (JavaDB only).
+     * @return The connection to the database.
+     * @throws IOException If the default URL is used but we failed to create the destination directory.
+     * @throws SQLException If the connection can not be obtained because of a JDBC error.
+     *
+     * @since 3.05
+     */
+    private Connection getConnection(final boolean create) throws IOException, SQLException {
+        if (databaseUrl == null) {
+            databaseUrl = ThreadedEpsgFactory.getDefaultURL(create);
+        }
+        final Connection connection;
+        if (user == null) {
+            connection = DriverManager.getConnection(databaseUrl);
+        } else {
+            connection = DriverManager.getConnection(databaseUrl, user, password);
+        }
+        return connection;
+    }
+
+    /**
+     * Verifies if the database exists. This method does not verify if the database content
+     * is consistent. It merely tests if the database contains at least one table in the
+     * EPSG schema.
+     *
+     * @return {@code true} if the database exists, or {@code false} otherwise.
+     * @throws FactoryException If an error occured while querying the database.
+     *
+     * @since 3.05
+     */
+    public synchronized boolean exists() throws FactoryException {
+        Exception failure;
+        Connection connection = null;
+        try {
+            connection = getConnection(false);
+            try {
+                final DatabaseMetaData md = connection.getMetaData();
+                final ResultSet r = md.getTables(null, getSchema(md), null, new String[] {"TABLE"});
+                final boolean exists = r.next(); // 'true' if at least one table exists in the schema.
+                r.close();
+                return exists;
+            } finally {
+                connection.close();
+                ThreadedEpsgFactory.shutdown(databaseUrl);
+            }
+        } catch (IOException e) {
+            failure = e;
+        } catch (SQLTransientException e) {
+            failure = e;
+        } catch (SQLException e) {
+            /*
+             * The JavaDB SQL state for a database not found in XJ004, but this is specific
+             * to JavaDB (the standard SQL states are in the 0-4 and A-H ranges), so we can
+             * not rely on that. For now we assume that any non-transient failure to get the
+             * connection means that the database does not exit.
+             */
+            if (connection == null) {
+                return false;
+            }
+            failure = e;
+        }
+        throw new FactoryException(failure.getLocalizedMessage(), failure);
+    }
+
+    /**
      * Processes to the creation of the EPSG database.
      *
      * @return The result of the EPSG database creation.
@@ -201,15 +302,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
         Exception failure;
         EpsgScriptRunner runner = null;
         try {
-            if (databaseUrl == null) {
-                databaseUrl = ThreadedEpsgFactory.getDefaultURL(true);
-            }
-            final Connection connection;
-            if (user == null) {
-                connection = DriverManager.getConnection(databaseUrl);
-            } else {
-                connection = DriverManager.getConnection(databaseUrl, user, password);
-            }
+            final Connection connection = getConnection(true);
             /*
              * Now execute the script using the given connection, either looking for scripts
              * in the given directory or looking for scripts embedded in the JAR file.

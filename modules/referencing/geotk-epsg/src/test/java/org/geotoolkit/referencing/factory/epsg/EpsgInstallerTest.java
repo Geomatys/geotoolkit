@@ -49,8 +49,10 @@ public final class EpsgInstallerTest {
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase("jdbc:derby:memory:EPSG;create=true");
         try {
+            assertFalse("Database exists?", installer.exists());
             final EpsgInstaller.Result result = installer.call();
             assertTrue(result.numRows > 0);
+            assertTrue("Database exists?", installer.exists());
             /*
              * At this point the EPSG database has been fully created.
              * Now test the creation of a few CRS objects from it.

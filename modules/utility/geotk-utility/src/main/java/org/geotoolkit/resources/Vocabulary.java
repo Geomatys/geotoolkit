@@ -770,6 +770,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int INSIDE = 141;
 
         /**
+         * Install
+         */
+        public static final int INSTALL = 307;
+
+        /**
          * {0} installation
          */
         public static final int INSTALLATION_$1 = 142;
@@ -1523,6 +1528,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Vendor
          */
         public static final int VENDOR = 287;
+
+        /**
+         * Verifying
+         */
+        public static final int VERIFYING = 308;
 
         /**
          * Version {0}

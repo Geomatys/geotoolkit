@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,6 +43,8 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.opengis.referencing.FactoryException;
+
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
@@ -59,7 +62,7 @@ import static java.awt.GridBagConstraints.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.05
  *
  * @since 3.00
  * @module
@@ -124,7 +127,7 @@ final class EPSGPanel extends JPanel implements ActionListener {
     /**
      * Creates the panel.
      */
-    EPSGPanel(final Vocabulary resources) {
+    EPSGPanel(final Vocabulary resources, final DataPanel dataPanel) {
         super(new GridBagLayout());
         setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
         /*
@@ -188,22 +191,25 @@ final class EPSGPanel extends JPanel implements ActionListener {
         apply.addActionListener(new ActionListener() {
             @Override public void actionPerformed(final ActionEvent event) {
                 save();
+                dataPanel.refresh(DataPanel.EPSG);
             }
         });
         isAutomatic.addActionListener(this);
         isManual   .addActionListener(this);
-        /*
-         * Loads the data only when first needed, which may never happen. We will load those
-         * data only once. One advantage of this deferred loading mechanism is to popup the
-         * error dialog box (if they was an I/O error) only if the user actually wanted to
-         * see this widget.
-         */
-        addComponentListener(new ComponentAdapter() {
-            @Override public void componentShown(final ComponentEvent e) {
-                removeComponentListener(this);
-                load();
-            }
-        });
+        addComponentListener(new LoadWhenShown());
+    }
+
+    /**
+     * Loads the data only when first needed, which may never happen. We will load those
+     * data only once. One advantage of this deferred loading mechanism is to popup the
+     * error dialog box (if they was an I/O error) only if the user actually wanted to
+     * see this widget.
+     */
+    private final class LoadWhenShown extends ComponentAdapter {
+        @Override public void componentShown(final ComponentEvent e) {
+            removeComponentListener(this);
+            load();
+        }
     }
 
     /**
@@ -289,6 +295,34 @@ final class EPSGPanel extends JPanel implements ActionListener {
             final File file = new File(Installation.EPSG.directory(true), CONFIGURATION_FILE);
             file.delete();
         }
+    }
+
+    /**
+     * Returns an installer for the EPSG database. This method must be invoked from the
+     * Swing thread. However the installer can (and should) be used from a background thread.
+     *
+     * @since 3.05
+     */
+    final EpsgInstaller installer() throws FactoryException {
+        /*
+         * If the properies file has not yet been read, read it now.
+         */
+        for (final ComponentListener listener : getComponentListeners()) {
+            if (listener instanceof LoadWhenShown) {
+                removeComponentListener(listener);
+                load();
+                break;
+            }
+        }
+        final Properties settings = this.settings;
+        final EpsgInstaller install = new EpsgInstaller();
+        if (settings != null) {
+            install.setDatabase(settings.getProperty("URL"),
+                                settings.getProperty("user"),
+                                settings.getProperty("password"));
+            install.setSchema(  settings.getProperty("schema"));
+        }
+        return install;
     }
 
     /**
