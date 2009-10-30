@@ -192,7 +192,8 @@ public class SimpleFeatureBuilder {
         // optimize the case in which we just build
         if (feature instanceof DefaultSimpleFeature) {
             final DefaultSimpleFeature impl = (DefaultSimpleFeature) feature;
-            System.arraycopy(impl.values, 0, values, 0, impl.values.length);
+            final Object[] impValue = impl.getValues();
+            System.arraycopy(impValue, 0, values, 0, impValue.length);
         } else {
             for (Object value : feature.getAttributes()) {
                 add(value);

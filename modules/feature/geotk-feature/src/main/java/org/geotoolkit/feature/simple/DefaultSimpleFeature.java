@@ -51,31 +51,31 @@ import org.opengis.geometry.BoundingBox;
  * @author Andrea Aime
  * @module pending
  */
-public class DefaultSimpleFeature implements SimpleFeature {
+public final class DefaultSimpleFeature implements SimpleFeature {
 
-    protected final FeatureId id;
+    private final FeatureId id;
 
-    protected final SimpleFeatureType featureType;
+    private final SimpleFeatureType featureType;
     /**
      * The actual values held by this feature
      */
-    protected final Object[] values;
+    private final Object[] values;
     /**
      * The attribute name -> position index
      */
-    protected final Map<String, Integer> index;
+    private final Map<String, Integer> index;
     /**
      * Wheter this feature is self validating or not
      */
-    protected final boolean validating;
+    private final boolean validating;
     /**
      * The set of user data attached to the feature (lazily created)
      */
-    protected Map<Object, Object> userData;
+    private Map<Object, Object> userData;
     /**
      * The set of user data attached to each attribute (lazily created)
      */
-    protected Map<Object, Object>[] attributeUserData;
+    private Map<Object, Object>[] attributeUserData;
 
     /**
      * Builds a new feature based on the provided values and feature type
@@ -115,6 +115,14 @@ public class DefaultSimpleFeature implements SimpleFeature {
         if (validating) {
             validate();
         }
+    }
+
+    /**
+     * Used by builder to copy more efficiently all values
+     * @return Object[] of all values
+     */
+    Object[] getValues() {
+        return values;
     }
 
     /**

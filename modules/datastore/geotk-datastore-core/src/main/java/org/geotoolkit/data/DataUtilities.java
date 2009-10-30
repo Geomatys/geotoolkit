@@ -16,42 +16,42 @@
  */
 package org.geotoolkit.data;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.collection.CollectionDataStore;
-import org.geotoolkit.data.query.Query;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.util.Converters;
+import org.geotoolkit.data.collection.CollectionDataStore;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -116,7 +116,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
                 path3 = "//" + auth + path2;
             } else {
                 path3 = path2;
-            }
+    }
         }
 
         return new File(path3);
@@ -535,44 +535,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
     public static FeatureReader<SimpleFeatureType, SimpleFeature> reader(
             final FeatureCollection<SimpleFeatureType, SimpleFeature> collection) throws IOException {
         return reader((SimpleFeature[]) collection.toArray(new SimpleFeature[collection.size()]));
-    }
-
-    public static boolean attributesEqual(final Object att, final Object otherAtt) {
-        if (att == null) {
-            if (otherAtt != null) {
-                return false;
-            }
-        } else {
-            if (!att.equals(otherAtt)) {
-                if (att instanceof Geometry && otherAtt instanceof Geometry) {
-                    // we need to special case Geometry
-                    // as JTS is broken
-                    // Geometry.equals( Object ) and Geometry.equals( Geometry )
-                    // are different
-                    // (We should fold this knowledge into AttributeType...)
-                    //
-                    if (!((Geometry) att).equals((Geometry) otherAtt)) {
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public static SimpleFeature parse(final SimpleFeatureType type, final String fid,
-            final String[] text) throws IllegalAttributeException {
-        final Object[] attributes = new Object[text.length];
-
-        for (int i = 0; i < text.length; i++) {
-            final AttributeType attType = type.getDescriptor(i).getType();
-            attributes[i] = Converters.convert(text[i], attType.getBinding());
-        }
-
-        return SimpleFeatureBuilder.build(type, attributes, fid);
     }
 
     /**
