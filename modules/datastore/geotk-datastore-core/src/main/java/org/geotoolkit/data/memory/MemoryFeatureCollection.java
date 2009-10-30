@@ -40,9 +40,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Jody Garnett, Refractions Research
  * @module pending
  */
-public class MemoryFeatureCollection extends AbstractFeatureCollection implements RandomAccessFeatureCollection {
+public final class MemoryFeatureCollection extends AbstractFeatureCollection implements RandomAccessFeatureCollection {
 
-    TreeMap contents = new TreeMap();
+    private final TreeMap contents = new TreeMap();
 
     public MemoryFeatureCollection(SimpleFeatureType schema) {
         super(schema, null);

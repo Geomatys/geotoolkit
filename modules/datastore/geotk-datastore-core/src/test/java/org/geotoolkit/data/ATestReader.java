@@ -27,7 +27,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * 
  * @module pending
  */
-class ATestReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+public class ATestReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
     private SimpleFeatureType type;
     private SimpleFeature feature;

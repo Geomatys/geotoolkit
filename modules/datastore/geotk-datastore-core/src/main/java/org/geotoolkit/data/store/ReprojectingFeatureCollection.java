@@ -22,7 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.collection.DelegateFeatureReader;
+import org.geotoolkit.data.DelegateFeatureReader;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;

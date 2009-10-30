@@ -71,9 +71,9 @@ import com.vividsolutions.jts.geom.Geometry;
 public final class MemoryDataStore extends AbstractDataStore {
 
     /** Memory holds Map of Feature by fid by typeName. */
-    protected final Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
+    private final Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
     /** Schema holds FeatureType by typeName */
-    protected final Map<String, SimpleFeatureType> schema = new HashMap<String, SimpleFeatureType>();
+    private final Map<String, SimpleFeatureType> schema = new HashMap<String, SimpleFeatureType>();
 
     public MemoryDataStore() {
         super(true);
@@ -83,27 +83,37 @@ public final class MemoryDataStore extends AbstractDataStore {
      * Construct an MemoryDataStore around an empty collection of the provided SimpleFeatureType
      * @param featureType An empty feature collection of this type will be made available
      */
-    public MemoryDataStore(SimpleFeatureType featureType) {
+    public static DataStore create(SimpleFeatureType featureType) {
+        final MemoryDataStore store = new MemoryDataStore();
         final Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
         final String typeName = featureType.getTypeName();
-        schema.put(typeName, featureType);
-        memory.put(typeName, featureMap);
+        store.schema.put(typeName, featureType);
+        store.memory.put(typeName, featureMap);
+        return store;
     }
 
-    public MemoryDataStore(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
-        addFeatures(collection);
+    public static DataStore create(FeatureCollection<SimpleFeatureType, SimpleFeature> collection) {
+        final MemoryDataStore store = new MemoryDataStore();
+        store.addFeatures(collection);
+        return store;
     }
 
-    public MemoryDataStore(SimpleFeature[] array) {
-        addFeatures(array);
+    public static DataStore create(SimpleFeature[] array) {
+        final MemoryDataStore store = new MemoryDataStore();
+        store.addFeatures(array);
+        return store;
     }
 
-    public MemoryDataStore(FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
-        addFeatures(reader);
+    public static DataStore create(FeatureReader<SimpleFeatureType, SimpleFeature> reader) throws IOException {
+        final MemoryDataStore store = new MemoryDataStore();
+        store.addFeatures(reader);
+        return store;
     }
 
-    public MemoryDataStore(FeatureIterator<SimpleFeature> reader) throws IOException {
-        addFeatures(reader);
+    public static DataStore create(FeatureIterator<SimpleFeature> reader) throws IOException {
+        final MemoryDataStore store = new MemoryDataStore();
+        store.addFeatures(reader);
+        return store;
     }
 
     /**

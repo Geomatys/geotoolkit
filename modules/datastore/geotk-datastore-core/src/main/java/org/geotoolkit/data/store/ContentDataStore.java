@@ -336,6 +336,17 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException{
+        if (typeName == null) {
+            throw new IllegalArgumentException("Query does not specify type.");
+        }
+        return getFeatureSource(typeName).getReader(Query.ALL);
+    }
+
+    /**
      * Returns a feature reader for the specified query and transaction.
      * <p>
      * This method is not intended to be overridden and is marked final. This

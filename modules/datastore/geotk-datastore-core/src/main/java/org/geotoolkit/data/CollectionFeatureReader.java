@@ -28,7 +28,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
- *  FeatureReader<SimpleFeatureType, SimpleFeature> that reads features from a java.util.collection of features,
+ * FeatureReader<SimpleFeatureType, SimpleFeature> that reads features from a java.util.collection of features,
  * an array of features or a FeatureCollection.
  *
  * @author jones

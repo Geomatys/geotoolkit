@@ -32,7 +32,6 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.data.collection.CollectionDataStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
@@ -52,6 +51,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import org.geotoolkit.data.memory.MemoryDataStore;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -461,7 +461,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             }
 
             @Override
-            protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
+            public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
                     throws IOException {
                 return reader(featureArray);
             }
@@ -480,7 +480,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             throw new NullPointerException();
         }
 
-        final DataStore store = new CollectionDataStore(collection);
+        final DataStore store = MemoryDataStore.create(collection);
 
         try {
             return store.getFeatureSource(store.getTypeNames()[0]);

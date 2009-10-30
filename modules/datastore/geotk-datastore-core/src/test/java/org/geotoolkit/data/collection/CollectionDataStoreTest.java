@@ -23,7 +23,6 @@ import org.geotoolkit.data.DataTestCase;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
-import org.geotoolkit.data.DiffFeatureReader;
 import org.geotoolkit.data.EmptyFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
@@ -32,6 +31,7 @@ import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.TransactionStateDiff;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.diff.DiffFeatureReader;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;

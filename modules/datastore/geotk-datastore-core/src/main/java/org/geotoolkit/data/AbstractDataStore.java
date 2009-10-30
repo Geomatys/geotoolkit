@@ -16,11 +16,12 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.diff.DiffFeatureReader;
+import org.geotoolkit.data.diff.Diff;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -143,28 +144,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     protected InProcessLockingManager createLockingManager() {
         return new InProcessLockingManager();
     }
-
-    /**
-     * Subclass override to provide access to metadata.
-     * <p>
-     * CreateTypeEntry uses this method to aquire metadata information,
-     * if available.
-     * </p>
-     */
-    protected Map createMetadata(String typeName) {
-        return Collections.EMPTY_MAP;
-    }
-
-    /**
-     * Subclass must implement.
-     *
-     * @param typeName
-     *
-     * @return  FeatureReader<SimpleFeatureType, SimpleFeature> over contents of typeName
-     *
-     */
-    protected abstract FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
-            throws IOException;
 
     /**
      * Subclass should implement this to provide writing support.
@@ -398,7 +377,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         // This calls our subclass "simple" implementation
         // All other functionality will be built as a reader around
         // this class
-        //
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = getFeatureReader(typeName, query);
 
         if (diff != null) {

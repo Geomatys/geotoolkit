@@ -228,7 +228,6 @@ public class ShapefileDataStore extends AbstractDataStore {
      * 
      * @return Map with xmlURL parsed, or an EMPTY_MAP.
      */
-    @Override
     protected Map createMetadata(String typeName) {
         String urlString = shpFiles.get(SHP_XML);
         if (urlString == null) {
@@ -274,7 +273,7 @@ public class ShapefileDataStore extends AbstractDataStore {
      *                 If an error occurs during creation
      */
     @Override
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
         typeCheck(typeName);
 
         try {

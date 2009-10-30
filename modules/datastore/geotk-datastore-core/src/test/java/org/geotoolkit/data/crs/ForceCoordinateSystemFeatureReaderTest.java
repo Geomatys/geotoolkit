@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.DataStore;
 
 public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
 
@@ -49,7 +50,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
      * @return
      * @throws Exception
      */
-    private MemoryDataStore createDatastore(CoordinateReferenceSystem crs, Point p) throws Exception {
+    private DataStore<SimpleFeatureType,SimpleFeature> createDatastore(CoordinateReferenceSystem crs, Point p) throws Exception {
 
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(FEATURE_TYPE_NAME);
@@ -65,7 +66,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
             b.buildFeature(null)
         };
 
-        return new MemoryDataStore(features);
+        return MemoryDataStore.create(features);
     }
 
     public void testSameCRS() throws Exception {
@@ -73,7 +74,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
         GeometryFactory fac = new GeometryFactory();
         Point p = fac.createPoint(new Coordinate(10, 10));
 
-        MemoryDataStore ds = createDatastore(crs, p);
+        DataStore<SimpleFeatureType,SimpleFeature> ds = createDatastore(crs, p);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> original = ds.getFeatureReader(FEATURE_TYPE_NAME);
 
@@ -95,7 +96,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
         GeometryFactory fac = new GeometryFactory();
         Point p = fac.createPoint(new Coordinate(10, 10));
 
-        MemoryDataStore ds = createDatastore(srcCRS, p);
+        DataStore<SimpleFeatureType,SimpleFeature> ds = createDatastore(srcCRS, p);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> original = ds.getFeatureReader(FEATURE_TYPE_NAME);
 
@@ -126,7 +127,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
         GeometryFactory fac = new GeometryFactory();
         Point p = fac.createPoint(new Coordinate(10, 10));
 
-        MemoryDataStore ds = createDatastore(crs, p);
+        DataStore<SimpleFeatureType,SimpleFeature> ds = createDatastore(crs, p);
 
         try {
             new ForceCoordinateSystemFeatureReader(
@@ -143,7 +144,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
         GeometryFactory fac = new GeometryFactory();
         Point p = fac.createPoint(new Coordinate(10, 10));
 
-        MemoryDataStore ds = createDatastore(srcCRS, p);
+        DataStore<SimpleFeatureType,SimpleFeature> ds = createDatastore(srcCRS, p);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> original = ds.getFeatureReader(FEATURE_TYPE_NAME);
 

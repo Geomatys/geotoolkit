@@ -32,7 +32,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.collection.CollectionEvent;
 import org.geotoolkit.data.collection.CollectionListener;
 import org.geotoolkit.data.collection.DelegateFeatureIterator;
-import org.geotoolkit.data.collection.DelegateFeatureReader;
+import org.geotoolkit.data.DelegateFeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.collection.SubFeatureCollection;

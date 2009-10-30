@@ -22,7 +22,7 @@ import java.util.Iterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.DecoratingFeatureCollection;
 import org.geotoolkit.data.collection.DelegateFeatureIterator;
-import org.geotoolkit.data.collection.DelegateFeatureReader;
+import org.geotoolkit.data.DelegateFeatureReader;
 
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;

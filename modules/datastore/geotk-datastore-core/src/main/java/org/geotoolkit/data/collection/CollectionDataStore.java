@@ -33,6 +33,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.DelegateFeatureReader;
 import org.geotoolkit.feature.SchemaException;
 
 /**

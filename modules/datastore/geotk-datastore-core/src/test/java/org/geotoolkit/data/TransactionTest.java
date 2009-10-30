@@ -45,7 +45,7 @@ import org.geotoolkit.data.collection.FeatureIterator;
  */
 public class TransactionTest extends TestCase {
 
-    MemoryDataStore ds;
+    DataStore<SimpleFeatureType,SimpleFeature> ds;
     SimpleFeatureType type;
     Geometry geom;
 
@@ -55,7 +55,7 @@ public class TransactionTest extends TestCase {
         GeometryFactory fac = new GeometryFactory();
         geom = fac.createPoint(new Coordinate(10, 10));
         SimpleFeature f1 = SimpleFeatureBuilder.build(type, new Object[]{"original", geom}, null);
-        ds = new MemoryDataStore(new SimpleFeature[]{f1});
+        ds = MemoryDataStore.create(new SimpleFeature[]{f1});
     }
 
     protected void tearDown() throws Exception {

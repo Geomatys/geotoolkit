@@ -33,9 +33,9 @@ import org.opengis.feature.type.FeatureType;
  */
 public class MaxFeatureReader<T extends FeatureType, F extends Feature> implements DelegatingFeatureReader<T, F> {
 
-    protected final FeatureReader<T, F> featureReader;
-    protected final int maxFeatures;
-    protected int counter = 0;
+    private final FeatureReader<T, F> featureReader;
+    private final int maxFeatures;
+    private int counter = 0;
 
     /**
      * Creates a new instance of MaxFeatureReader

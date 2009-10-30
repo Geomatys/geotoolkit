@@ -199,52 +199,6 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
     void removeListener(CollectionListener listener);
 
     /**
-     * Gets a reference to the type of this feature collection.
-     * <p>
-     * There are several limitations on the use of FeatureType with respect to a FeatureCollection.
-     * </p>
-     * <p>
-     * GML 3.x: all FeatureCollections decend from gml:AbstractFeatureCollectionType:
-     * <ul>
-     * <li>featureMember 0..* allows _Feature or xlink:ref
-     * <li>featureMembers 0..1 contents treated as _Feature
-     * </ul>
-     * The contents defined in this manner is returned the collection
-     * iterator() method.
-     * </p>
-     * <p>
-     * GML 3.x: gml:AbstractFeatureCollectionType decends from gml:BoundedFeatureType:
-     * <ul>
-     * <li>metaDataProperty 0..*
-     * <li>description 0..1
-     * <li>name 0..*
-     * <li>boundedBy 1..1 (required)
-     * <li>location 0..1
-     * </ul>
-     * The value of the boundedBy attribute should be derived from the contents
-     * of the collection.
-     * </p>
-     * <h3>Implementation Notes</h3>
-     * <p>
-     * There is a difference between getFeatureType() and getSchema(), getSchema is named
-     * for historical reasons and reprensets the LCD FeatureType that best represents the
-     * contents of this collection.
-     * <ul>
-     * <li>The degenerate case returns the "_Feature" FeatureType, where the
-     * onlything known is that the contents are Features.
-     * <li>For a collection backed by a shapefiles (or database tables) the
-     *     FeatureType returned by getSchema() will complete describe each and every child in the collection.
-     * <li>For mixed content FeatureCollections you will need to check the FeatureType
-     *     of each Feature as it is retrived from the collection
-     * </ul>
-     * </p>
-     *
-     * @return A reference to this collections type
-     */
-
-    //FeatureType getFeatureType();
-
-    /**
      * The schema for the child features of this collection.
      * <p>
      * There is a difference between getFeatureType() and getSchema()represents the LCD
@@ -267,7 +221,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      */
     T getSchema();
 
-    /** ID used when serializing to GML */
+    /** ID */
     String getID();
     
     /**

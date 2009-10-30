@@ -31,12 +31,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.collection.FeatureCollection;
 
 public class ForceCoordinateFeatureResultsTest extends TestCase {
 
     private static final String FEATURE_TYPE_NAME = "testType";
-    private MemoryDataStore store;
+    private DataStore<SimpleFeatureType,SimpleFeature> store;
     private CoordinateReferenceSystem wgs84;
     private CoordinateReferenceSystem utm32n;
 
@@ -61,7 +62,7 @@ public class ForceCoordinateFeatureResultsTest extends TestCase {
             b.buildFeature(null)
         };
 
-        store = new MemoryDataStore(features);
+        store = MemoryDataStore.create(features);
     }
 
     public void testSchema() throws Exception {

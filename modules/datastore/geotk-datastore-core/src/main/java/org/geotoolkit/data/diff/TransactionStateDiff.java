@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.data;
 
+import org.geotoolkit.data.diff.DiffFeatureReader;
+import org.geotoolkit.data.diff.Diff;
+import org.geotoolkit.data.diff.DiffFeatureWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;

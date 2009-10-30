@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.diff;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +31,7 @@ import org.opengis.geometry.BoundingBox;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.SpatialIndex;
 import com.vividsolutions.jts.index.quadtree.Quadtree;
+import org.geotoolkit.data.TransactionStateDiff;
 
 public class Diff {
 

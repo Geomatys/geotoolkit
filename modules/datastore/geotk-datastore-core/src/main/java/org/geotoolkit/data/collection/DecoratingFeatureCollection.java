@@ -45,9 +45,12 @@ public class DecoratingFeatureCollection<T extends FeatureType, F extends Featur
     /**
      * the delegate
      */
-    protected FeatureCollection<T, F> delegate;
+    protected final FeatureCollection<T, F> delegate;
 
     protected DecoratingFeatureCollection(FeatureCollection<T, F> delegate) {
+        if(delegate == null){
+            throw new NullPointerException("Delegate collection can not be null");
+        }
         this.delegate = delegate;
     }
 

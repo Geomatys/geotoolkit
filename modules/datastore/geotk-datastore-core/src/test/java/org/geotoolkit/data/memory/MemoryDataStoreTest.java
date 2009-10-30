@@ -29,7 +29,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
-import org.geotoolkit.data.DiffFeatureReader;
+import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.EmptyFeatureReader;
 import org.geotoolkit.data.EmptyFeatureWriter;
 import org.geotoolkit.data.FeatureEvent;
@@ -107,7 +107,7 @@ public class MemoryDataStoreTest extends DataTestCase {
     public void testEmpty() throws Exception {
         SimpleFeatureType type = FeatureTypeUtilities.createType("namespace.typename",
                 "name:String,id:0,geom:MultiLineString");
-        MemoryDataStore memory = new MemoryDataStore(type);
+        DataStore<SimpleFeatureType,SimpleFeature> memory = MemoryDataStore.create(type);
 
         FeatureSource source = memory.getFeatureSource("typename");
         assertEquals(0, source.getCount(Query.ALL));
@@ -139,14 +139,14 @@ public class MemoryDataStoreTest extends DataTestCase {
      * Test for void MemoryDataStore(FeatureCollection<SimpleFeatureType, SimpleFeature>)
      */
     public void testMemoryDataStoreFeatureCollection() {
-        DataStore store = new MemoryDataStore(DataUtilities.collection(roadFeatures));
+        DataStore store = MemoryDataStore.create(DataUtilities.collection(roadFeatures));
     }
 
     /*
      * Test for void MemoryDataStore(FeatureReader)
      */
     public void testMemoryDataStoreFeatureArray() throws IOException {
-        DataStore store = new MemoryDataStore(roadFeatures);
+        DataStore store = MemoryDataStore.create(roadFeatures);
     }
 
     /*
@@ -154,7 +154,7 @@ public class MemoryDataStoreTest extends DataTestCase {
      */
     public void testMemoryDataStoreFeatureReader() throws IOException {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader(roadFeatures);
-        DataStore store = new MemoryDataStore(reader);
+        DataStore store = MemoryDataStore.create(reader);
     }
 
     public void testGetFeatureTypes() {
@@ -442,11 +442,11 @@ public class MemoryDataStoreTest extends DataTestCase {
     void assertOrderSame(SimpleFeature[] features) throws Exception {
         // init using readers
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = DataUtilities.reader(features);
-        DataStore store1 = new MemoryDataStore(reader);
+        DataStore store1 = MemoryDataStore.create(reader);
         assertReaderOrderSame(features, store1);
 
         // init using array directly
-        DataStore store2 = new MemoryDataStore(features);
+        DataStore store2 = MemoryDataStore.create(features);
         assertReaderOrderSame(features, store2);
     }
 

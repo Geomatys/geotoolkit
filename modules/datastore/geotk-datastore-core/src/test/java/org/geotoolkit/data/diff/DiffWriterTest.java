@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.diff;
 
 import java.io.IOException;
 
@@ -31,6 +31,8 @@ import junit.framework.TestCase;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.ATestReader;
+import org.geotoolkit.data.FeatureReader;
 
 
 public class DiffWriterTest extends TestCase {

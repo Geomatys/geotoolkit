@@ -334,6 +334,11 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
     FeatureSource<T, F> getFeatureSource(Name typeName) throws IOException;
 
     /**
+     * Obtain a simple reader.
+     */
+    FeatureReader<T,F> getFeatureReader(String typeName) throws IOException;
+
+    /**
      * Access a FeatureReader providing access to Feature information.
      *
      * <p>

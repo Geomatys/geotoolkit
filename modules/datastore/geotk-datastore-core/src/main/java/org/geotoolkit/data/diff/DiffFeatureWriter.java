@@ -14,11 +14,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.diff;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureEvent;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data;
+package org.geotoolkit.data.diff;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -42,6 +42,9 @@ import org.opengis.filter.spatial.Within;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.TransactionStateDiff;
 
 /**
  * A  FeatureReader that considers differences.
