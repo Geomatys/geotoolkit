@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * Encapsulates the idea of a file for writing data to and then later updating the original.
@@ -100,7 +101,7 @@ public final class StorageFile implements Comparable<StorageFile>, FileWriter {
 
             URL url = storageFile.getSrcURLForWrite();
             try {
-                File dest = DataUtilities.urlToFile(url);
+                File dest = NIOUtilities.urlToFile(url);
 
                 if (storage.equals(dest))
                     return;

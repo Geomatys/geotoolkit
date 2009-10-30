@@ -21,13 +21,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.DelegateFeatureReader;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.data.collection.DelegateFeatureCollection;
+import org.geotoolkit.data.collection.DelegateFeatureIterator;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -39,10 +43,6 @@ import org.opengis.referencing.operation.MathTransform;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.collection.DecoratingFeatureCollection;
-import org.geotoolkit.data.collection.DelegateFeatureIterator;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
 
 /**
  * FeatureCollection<SimpleFeatureType, SimpleFeature> decorator that reprojects the default geometry.
@@ -50,7 +50,7 @@ import org.geotoolkit.data.collection.FeatureIterator;
  * @author Justin
  * @module pending
  */
-public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
+public class ReprojectingFeatureCollection extends DelegateFeatureCollection<SimpleFeatureType, SimpleFeature> {
 
     /**
      * The transform to the target coordinate reference system
@@ -115,7 +115,7 @@ public class ReprojectingFeatureCollection extends DecoratingFeatureCollection<S
     }
 
     public FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
-        return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
+        return DataUtilities.wrapToReader(getSchema(), features());
     }
 
     /**

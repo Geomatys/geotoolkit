@@ -45,6 +45,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -316,7 +317,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // so return an empty feature
         try {
             final String featureID = getFeatureType().getTypeName()+"."+(records+1);
-            return currentFeature = DataUtilities.template(getFeatureType(),featureID,emptyAtts);
+            return currentFeature = FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
         } catch (IllegalAttributeException iae) {
             throw new DataSourceException("Error creating empty Feature", iae);
         }

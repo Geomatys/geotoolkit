@@ -33,7 +33,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.DelegateFeatureReader;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.feature.SchemaException;
 
 /**
@@ -120,7 +120,7 @@ public class CollectionDataStore extends AbstractDataStore {
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
             throws IOException {
-        return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(typeName), collection.features());
+        return DataUtilities.wrapToReader(getSchema(typeName), collection.features());
     }
 
     /**

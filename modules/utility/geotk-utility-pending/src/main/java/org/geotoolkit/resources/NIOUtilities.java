@@ -18,7 +18,10 @@ package org.geotoolkit.resources;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -44,6 +47,53 @@ public final class NIOUtilities {
      * Do not allows instantiation of this class.
      */
     private NIOUtilities() {
+    }
+
+    /**
+     * Takes a URL and converts it to a File. The attempts to deal with
+     * Windows UNC format specific problems, specifically files located
+     * on network shares and different drives.
+     *
+     * If the URL.getAuthority() returns null or is empty, then only the
+     * url's path property is used to construct the file. Otherwise, the
+     * authority is prefixed before the path.
+     *
+     * It is assumed that url.getProtocol returns "file".
+     *
+     * Authority is the drive or network share the file is located on.
+     * Such as "C:", "E:", "\\fooServer"
+     *
+     * @param url a URL object that uses protocol "file"
+     * @return a File that corresponds to the URL's location
+     */
+    public static File urlToFile(final URL url) {
+        String string = url.toExternalForm();
+
+        try {
+            string = URLDecoder.decode(string, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Shouldn't happen
+        }
+
+        final String path3;
+        final String simplePrefix = "file:/";
+        final String standardPrefix = simplePrefix + "/";
+
+        if (string.startsWith(standardPrefix)) {
+            path3 = string.substring(standardPrefix.length());
+        } else if (string.startsWith(simplePrefix)) {
+            path3 = string.substring(simplePrefix.length() - 1);
+        } else {
+            final String auth = url.getAuthority();
+            final String path2 = url.getPath().replace("%20", " ");
+            if (auth != null && !auth.equals("")) {
+                path3 = "//" + auth + path2;
+            } else {
+                path3 = path2;
+    }
+        }
+
+        return new File(path3);
     }
 
     /**

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DelegatingFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -73,7 +72,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @version $Id$
  * @module pending
  */
-public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {
+public class ReprojectFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
     private final FeatureReader<SimpleFeatureType, SimpleFeature> reader;
     private final SimpleFeatureType schema;
@@ -110,14 +109,6 @@ public class ReprojectFeatureReader implements DelegatingFeatureReader<SimpleFea
         this.schema = FeatureTypeUtilities.transform(type, cs);
         this.reader = reader;
         transformer.setMathTransform(CRS.findMathTransform(original, cs, true));
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getDelegate() {
-        return reader;
     }
 
     /**

@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;
@@ -32,8 +31,10 @@ import org.geotoolkit.data.MaxFeatureReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.ReTypeFeatureReader;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
@@ -777,7 +778,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
         }
 
         // join the queries
-        return DataUtilities.mixQueries(this.query, query, null);
+        return QueryUtilities.mixQueries(this.query, query, null);
     }
 
     /**

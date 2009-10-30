@@ -77,6 +77,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
  * 
@@ -541,13 +542,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeature[] newFeatures1 = new SimpleFeature[1];
         SimpleFeature[] newFeatures2 = new SimpleFeature[2];
         GeometryFactory fac = new GeometryFactory();
-        newFeatures1[0] = DataUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
+        newFeatures1[0] = FeatureTypeUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
         newFeatures1[0].setDefaultGeometry(fac
                 .createPoint(new Coordinate(0, 0)));
-        newFeatures2[0] = DataUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
+        newFeatures2[0] = FeatureTypeUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
         newFeatures2[0].setDefaultGeometry(fac
                 .createPoint(new Coordinate(0, 0)));
-        newFeatures2[1] = DataUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
+        newFeatures2[1] = FeatureTypeUtilities.template(sds.getSchema(sds.getTypeNames()[0]));
         newFeatures2[1].setDefaultGeometry(fac
                 .createPoint(new Coordinate(0, 0)));
 

@@ -39,7 +39,7 @@ import org.opengis.util.ProgressListener;
  * @since 2.5
  *
  */
-public class DecoratingFeatureCollection<T extends FeatureType, F extends Feature> implements
+public class DelegateFeatureCollection<T extends FeatureType, F extends Feature> implements
         FeatureCollection<T, F> {
 
     /**
@@ -47,7 +47,7 @@ public class DecoratingFeatureCollection<T extends FeatureType, F extends Featur
      */
     protected final FeatureCollection<T, F> delegate;
 
-    protected DecoratingFeatureCollection(FeatureCollection<T, F> delegate) {
+    protected DelegateFeatureCollection(FeatureCollection<T, F> delegate) {
         if(delegate == null){
             throw new NullPointerException("Delegate collection can not be null");
         }

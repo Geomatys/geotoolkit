@@ -85,6 +85,7 @@ import org.opengis.filter.identity.Identifier;
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -563,8 +564,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
                 return false;
             }
 
-            File indexFile = DataUtilities.urlToFile(indexURL);
-            File shpFile = DataUtilities.urlToFile(shpURL);
+            File indexFile = NIOUtilities.urlToFile(indexURL);
+            File shpFile = NIOUtilities.urlToFile(shpURL);
             long indexLastModified = indexFile.lastModified();
             long shpLastModified = shpFile.lastModified();
             boolean shpChangedMoreRecently = indexLastModified < shpLastModified;
@@ -662,7 +663,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         }
         URL treeURL = shpFiles.acquireRead(QIX, this);
         try {
-            File treeFile = DataUtilities.urlToFile(treeURL);
+            File treeFile = NIOUtilities.urlToFile(treeURL);
 
             if (!treeFile.exists() || (treeFile.length() == 0)) {
                 treeType = IndexType.NONE;

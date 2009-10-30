@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.collection.DecoratingFeatureCollection;
+import org.geotoolkit.data.collection.DelegateFeatureCollection;
 import org.geotoolkit.data.collection.DelegateFeatureIterator;
-import org.geotoolkit.data.DelegateFeatureReader;
-
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -36,7 +36,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class ReTypingFeatureCollection extends DecoratingFeatureCollection<SimpleFeatureType, SimpleFeature> {
+public class ReTypingFeatureCollection extends DelegateFeatureCollection<SimpleFeatureType, SimpleFeature> {
 
     private final SimpleFeatureType featureType;
 
@@ -54,7 +54,7 @@ public class ReTypingFeatureCollection extends DecoratingFeatureCollection<Simpl
     }
 
     public FeatureReader<SimpleFeatureType, SimpleFeature> reader() throws IOException {
-        return new DelegateFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(), features());
+        return DataUtilities.wrapToReader(getSchema(), features());
     }
 
     /**

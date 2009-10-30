@@ -46,6 +46,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * The collection of all the files that are the shapefile and its metadata and
@@ -181,7 +182,7 @@ public class ShpFiles {
     }
 
     private URL findExistingFile(ShpFileType shpFileType, URL value) {
-        final File file = DataUtilities.urlToFile(value);
+        final File file = NIOUtilities.urlToFile(value);
         File directory = file.getParentFile();
         if( directory==null || !directory.exists() ) {
             // doesn't exist
@@ -331,7 +332,7 @@ public class ShpFiles {
             throw new IllegalStateException("This method only applies if the files are local");
         }
         URL url = acquireRead(type, requestor);
-        return DataUtilities.urlToFile(url);
+        return NIOUtilities.urlToFile(url);
     }
     
     /**
@@ -410,7 +411,7 @@ public class ShpFiles {
     public void unlockRead(File file, FileReader requestor) {
         Collection<URL> allURLS = urls.values();
         for (URL url : allURLS) {
-            if (DataUtilities.urlToFile(url).equals(file)) {
+            if (NIOUtilities.urlToFile(url).equals(file)) {
                 unlockRead(url, requestor);
             }
         }
@@ -471,7 +472,7 @@ public class ShpFiles {
             throw new IllegalStateException("This method only applies if the files are local");
         }
         URL url = acquireWrite(type, requestor);
-        return DataUtilities.urlToFile(url);
+        return NIOUtilities.urlToFile(url);
     }
     /**
      * Acquire a URL for read and write purposes. 
@@ -561,7 +562,7 @@ public class ShpFiles {
     public void unlockWrite(File file, FileWriter requestor) {
         Collection<URL> allURLS = urls.values();
         for (URL url : allURLS) {
-            if (DataUtilities.urlToFile(url).equals(file)) {
+            if (NIOUtilities.urlToFile(url).equals(file)) {
                 unlockWrite(url, requestor);
             }
         }
@@ -663,7 +664,7 @@ public class ShpFiles {
         if (isLocal()) {
             Collection<URL> values = urls.values();
             for (URL url : values) {
-                File f = DataUtilities.urlToFile(url);
+                File f = NIOUtilities.urlToFile(url);
                 if (!f.delete()) {
                     retVal = false;
                 }
@@ -747,7 +748,7 @@ public class ShpFiles {
             
             OutputStream out;
             if( isLocal() ){
-                File file = DataUtilities.urlToFile(url);
+                File file = NIOUtilities.urlToFile(url);
                 out = new FileOutputStream(file);
             }else{
                 URLConnection connection = url.openConnection();
@@ -810,7 +811,7 @@ public class ShpFiles {
         try {
             if (isLocal()) {
 
-                File file = DataUtilities.urlToFile(url);
+                File file = NIOUtilities.urlToFile(url);
 
                 if (!file.exists()) {
                     throw new FileNotFoundException(file.toString());
@@ -875,7 +876,7 @@ public class ShpFiles {
             WritableByteChannel channel;
             if (isLocal()) {
 
-                File file = DataUtilities.urlToFile(url);
+                File file = NIOUtilities.urlToFile(url);
 
                 RandomAccessFile raf = new RandomAccessFile(file, "rw");
                 channel = new FileChannelDecorator(raf.getChannel(), this, url,
@@ -973,7 +974,7 @@ public class ShpFiles {
             return false;
         }
 
-        File file = DataUtilities.urlToFile(url);
+        File file = NIOUtilities.urlToFile(url);
         return file.exists();
     }
 

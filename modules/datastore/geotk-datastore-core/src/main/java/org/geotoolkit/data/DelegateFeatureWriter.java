@@ -26,7 +26,7 @@ import org.opengis.feature.type.FeatureType;
  * @module pending
  * @since 2.5
  */
-public interface DelegatingFeatureWriter<T extends FeatureType, F extends Feature> extends FeatureWriter<T, F> {
+public interface DelegateFeatureWriter<T extends FeatureType, F extends Feature> extends FeatureWriter<T, F> {
 
     /**
      * @return The delegate writer.

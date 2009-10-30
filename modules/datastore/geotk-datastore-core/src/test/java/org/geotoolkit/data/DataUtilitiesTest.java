@@ -54,6 +54,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * Tests cases for DataUtilities.
@@ -121,7 +123,7 @@ public class DataUtilitiesTest extends DataTestCase {
     private void assertURL(String expectedFilePath, String urlString) throws MalformedURLException {
         URL url = new URL(urlString);
 
-        File file = DataUtilities.urlToFile(url);
+        File file = NIOUtilities.urlToFile(url);
 
         String os = System.getProperty("os.name");
         if (os.toUpperCase().contains("WINDOWS")) {
@@ -143,10 +145,10 @@ public class DataUtilitiesTest extends DataTestCase {
 
         assertEquals("jdk contract", file.getAbsoluteFile(), new File(uri));
 
-        File toFile = DataUtilities.urlToFile(url);
+        File toFile = NIOUtilities.urlToFile(url);
         assertEquals(path + ":url", file.getAbsoluteFile(), toFile);
 
-        File toFile2 = DataUtilities.urlToFile(url2);
+        File toFile2 = NIOUtilities.urlToFile(url2);
         assertEquals(path + ":url2", file.getAbsoluteFile(), toFile2);
     }
 
@@ -156,13 +158,13 @@ public class DataUtilitiesTest extends DataTestCase {
     public void testAttributeNamesFeatureType() {
         String[] names;
 
-        names = DataUtilities.attributeNames(roadType);
+        names = FeatureTypeUtilities.attributeNames(roadType);
         assertEquals(3, names.length);
         assertEquals("id", names[0]);
         assertEquals("geom", names[1]);
         assertEquals("name", names[2]);
 
-        names = DataUtilities.attributeNames(subRoadType);
+        names = FeatureTypeUtilities.attributeNames(subRoadType);
         assertEquals(2, names.length);
         assertEquals("id", names[0]);
         assertEquals("geom", names[1]);
@@ -178,13 +180,13 @@ public class DataUtilitiesTest extends DataTestCase {
         Filter filter = null;
 
         // check null
-        names = DataUtilities.attributeNames(filter, null);
+        names = FeatureTypeUtilities.attributeNames(filter, null);
         assertEquals(names.length, 0);
 
         Id fidFilter = factory.id(Collections.singleton(factory.featureId("fid")));
 
         // check fidFilter         
-        names = DataUtilities.attributeNames(fidFilter, null);
+        names = FeatureTypeUtilities.attributeNames(fidFilter, null);
         assertEquals(0, names.length);
 
         PropertyName id = factory.property("id");
@@ -193,12 +195,12 @@ public class DataUtilitiesTest extends DataTestCase {
 
         // check nullFilter
         PropertyIsNull nullFilter = factory.isNull(id);
-        names = DataUtilities.attributeNames(nullFilter, null);
+        names = FeatureTypeUtilities.attributeNames(nullFilter, null);
         assertEquals(1, names.length);
         assertEquals("id", names[0]);
 
         PropertyIsEqualTo equal = factory.equals(name, id);
-        names = DataUtilities.attributeNames(equal, null);
+        names = FeatureTypeUtilities.attributeNames(equal, null);
         assertEquals(2, names.length);
         List list = Arrays.asList(names);
         assertTrue(list.contains("name"));
@@ -208,13 +210,13 @@ public class DataUtilitiesTest extends DataTestCase {
         System.out.println(fnCall);
 
         PropertyIsLike fn = factory.like(fnCall, "does-not-matter");
-        names = DataUtilities.attributeNames(fn, null);
+        names = FeatureTypeUtilities.attributeNames(fn, null);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
         assertTrue(list.contains("id"));
 
         PropertyIsBetween between = factory.between(name, id, geom);
-        names = DataUtilities.attributeNames(between, null);
+        names = FeatureTypeUtilities.attributeNames(between, null);
         assertEquals(3, names.length);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
@@ -223,7 +225,7 @@ public class DataUtilitiesTest extends DataTestCase {
 
         // check logic filter
         PropertyIsNull geomNull = factory.isNull(geom);
-        names = DataUtilities.attributeNames(factory.and(geomNull, equal), null);
+        names = FeatureTypeUtilities.attributeNames(factory.and(geomNull, equal), null);
         assertEquals(3, names.length);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
@@ -231,13 +233,13 @@ public class DataUtilitiesTest extends DataTestCase {
         assertTrue(list.contains("geom"));
 
         // check not filter
-        names = DataUtilities.attributeNames(factory.not(geomNull), null);
+        names = FeatureTypeUtilities.attributeNames(factory.not(geomNull), null);
         assertEquals(1, names.length);
         assertEquals("geom", names[0]);
 
         //check with namespace qualified name
         PropertyIsEqualTo equalToWithPrefix = factory.equals(factory.property("gml:name"), id);
-        names = DataUtilities.attributeNames(equalToWithPrefix, roadType);
+        names = FeatureTypeUtilities.attributeNames(equalToWithPrefix, roadType);
         assertEquals(2, names.length);
         list = Arrays.asList(names);
         assertTrue(list.contains("name"));
@@ -254,7 +256,7 @@ public class DataUtilitiesTest extends DataTestCase {
 
         String[] names;
 
-        names = DataUtilities.attributeNames(filter, roadType);
+        names = FeatureTypeUtilities.attributeNames(filter, roadType);
         assertEquals(3, names.length);
         List namesList = Arrays.asList(names);
         assertTrue(namesList.contains("id"));
@@ -272,7 +274,7 @@ public class DataUtilitiesTest extends DataTestCase {
 
         String[] names;
 
-        names = DataUtilities.attributeNames(expression, roadType);
+        names = FeatureTypeUtilities.attributeNames(expression, roadType);
         assertEquals(2, names.length);
         List namesList = Arrays.asList(names);
         assertTrue(namesList.contains("geom"));
@@ -280,23 +282,23 @@ public class DataUtilitiesTest extends DataTestCase {
     }
 
     public void testCompare() throws SchemaException {
-        assertEquals(0, DataUtilities.compare(null, null));
-        assertEquals(-1, DataUtilities.compare(roadType, null));
-        assertEquals(-1, DataUtilities.compare(null, roadType));
-        assertEquals(-1, DataUtilities.compare(riverType, roadType));
-        assertEquals(-1, DataUtilities.compare(roadType, riverType));
-        assertEquals(0, DataUtilities.compare(roadType, roadType));
-        assertEquals(1, DataUtilities.compare(subRoadType, roadType));
+        assertEquals(0, FeatureTypeUtilities.compare(null, null));
+        assertEquals(-1, FeatureTypeUtilities.compare(roadType, null));
+        assertEquals(-1, FeatureTypeUtilities.compare(null, roadType));
+        assertEquals(-1, FeatureTypeUtilities.compare(riverType, roadType));
+        assertEquals(-1, FeatureTypeUtilities.compare(roadType, riverType));
+        assertEquals(0, FeatureTypeUtilities.compare(roadType, roadType));
+        assertEquals(1, FeatureTypeUtilities.compare(subRoadType, roadType));
 
         // different order
         SimpleFeatureType road2 = FeatureTypeUtilities.createType("namespace.road",
                 "geom:LineString,name:String,id:0");
-        assertEquals(1, DataUtilities.compare(road2, roadType));
+        assertEquals(1, FeatureTypeUtilities.compare(road2, roadType));
 
         // different namespace        
         SimpleFeatureType road3 = FeatureTypeUtilities.createType("test.road",
                 "id:0,geom:LineString,name:String");
-        assertEquals(0, DataUtilities.compare(road3, roadType));
+        assertEquals(0, FeatureTypeUtilities.compare(road3, roadType));
     }
 
     public void testIsMatch() {
@@ -311,12 +313,12 @@ public class DataUtilitiesTest extends DataTestCase {
         assertEquals(rd1, rdDuplicate);
         assertNotSame(rd1, rdDuplicate);
 
-        SimpleFeature rd2 = DataUtilities.reType(roadType, rd1);
+        SimpleFeature rd2 = FeatureTypeUtilities.reType(roadType, rd1);
 
         assertEquals(rd1, rd2);
         assertNotSame(rd1, rd2);
 
-        SimpleFeature rd3 = DataUtilities.reType(subRoadType, rd1);
+        SimpleFeature rd3 = FeatureTypeUtilities.reType(subRoadType, rd1);
 
         assertFalse(rd1.equals(rd3));
         assertEquals(2, rd3.getAttributeCount());
@@ -334,12 +336,12 @@ public class DataUtilitiesTest extends DataTestCase {
         assertEquals(rv1, rvDuplicate);
         assertNotSame(rv1, rvDuplicate);
 
-        SimpleFeature rv2 = DataUtilities.reType(riverType, rv1);
+        SimpleFeature rv2 = FeatureTypeUtilities.reType(riverType, rv1);
 
         assertEquals(rv1, rv2);
         assertNotSame(rv1, rv2);
 
-        SimpleFeature rv3 = DataUtilities.reType(subRiverType, rv1);
+        SimpleFeature rv3 = FeatureTypeUtilities.reType(subRiverType, rv1);
 
         assertFalse(rv1.equals(rv3));
         assertEquals(2, rv3.getAttributeCount());
@@ -353,7 +355,7 @@ public class DataUtilitiesTest extends DataTestCase {
      * Test for Feature template(FeatureType)
      */
     public void testTemplateFeatureType() throws IllegalAttributeException {
-        SimpleFeature feature = DataUtilities.template(roadType);
+        SimpleFeature feature = FeatureTypeUtilities.template(roadType);
         assertNotNull(feature);
         assertEquals(roadType.getAttributeCount(), feature.getAttributeCount());
     }
@@ -363,7 +365,7 @@ public class DataUtilitiesTest extends DataTestCase {
      */
     public void testTemplateFeatureTypeString()
             throws IllegalAttributeException {
-        SimpleFeature feature = DataUtilities.template(roadType, "Foo");
+        SimpleFeature feature = FeatureTypeUtilities.template(roadType, "Foo");
         assertNotNull(feature);
         assertEquals(roadType.getAttributeCount(), feature.getAttributeCount());
         assertEquals("Foo", feature.getID());
@@ -373,15 +375,15 @@ public class DataUtilitiesTest extends DataTestCase {
     }
 
     public void testDefaultValues() throws IllegalAttributeException {
-        Object[] values = DataUtilities.defaultValues(roadType);
+        Object[] values = FeatureTypeUtilities.defaultValues(roadType);
         assertNotNull(values);
         assertEquals(values.length, roadType.getAttributeCount());
     }
 
     public void testDefaultValue() throws IllegalAttributeException {
-        assertNull(DataUtilities.defaultValue(roadType.getDescriptor("name")));
-        assertNull(DataUtilities.defaultValue(roadType.getDescriptor("id")));
-        assertNull(DataUtilities.defaultValue(roadType.getDescriptor("geom")));
+        assertNull(FeatureTypeUtilities.defaultValue(roadType.getDescriptor("name")));
+        assertNull(FeatureTypeUtilities.defaultValue(roadType.getDescriptor("id")));
+        assertNull(FeatureTypeUtilities.defaultValue(roadType.getDescriptor("geom")));
     }
 
     public void testCollection() {
@@ -442,7 +444,7 @@ public class DataUtilitiesTest extends DataTestCase {
         secondQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 20, new String[]{"att1", "att2", "att4"}, "handle2");
         secondQuery.setStartIndex(4);
 
-        Query mixed = DataUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
+        Query mixed = QueryUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 
         //the passed handle
         assertEquals("newhandle", mixed.getHandle());
@@ -467,7 +469,7 @@ public class DataUtilitiesTest extends DataTestCase {
         firstQuery = new DefaultQuery("typeName", filter1, 100, null, "handle");
         secondQuery = new DefaultQuery("typeName", filter2, 20, new String[]{"att1", "att2", "att4"}, "handle2");
 
-        mixed = DataUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
+        mixed = QueryUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 
         //the passed handle
         assertEquals("newhandle", mixed.getHandle());

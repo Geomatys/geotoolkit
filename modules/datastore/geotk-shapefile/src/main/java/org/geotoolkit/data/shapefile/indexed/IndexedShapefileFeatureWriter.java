@@ -32,6 +32,7 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
+import org.geotoolkit.resources.NIOUtilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -144,7 +145,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter implements
     private void deleteFile(ShpFileType shpFileType) {
         URL url = shpFiles.acquireWrite(shpFileType, this);
         try {
-            File toDelete = DataUtilities.urlToFile(url);
+            File toDelete = NIOUtilities.urlToFile(url);
 
             if (toDelete.exists()) {
                 toDelete.delete();

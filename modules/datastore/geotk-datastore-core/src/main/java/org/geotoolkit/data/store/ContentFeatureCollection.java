@@ -23,10 +23,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultQuery;
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
@@ -36,6 +34,7 @@ import org.geotoolkit.data.collection.CollectionListener;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
@@ -376,7 +375,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         Query query = new DefaultQuery();
         ((DefaultQuery) query).setSortBy(new org.opengis.filter.sort.SortBy[]{sort});
 
-        query = DataUtilities.mixQueries(this.query, query, null);
+        query = QueryUtilities.mixQueries(this.query, query, null);
         return new ContentFeatureCollection(featureSource, query);
     }
 
@@ -388,7 +387,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         Query query = new DefaultQuery();
         ((DefaultQuery) query).setFilter(filter);
 
-        query = DataUtilities.mixQueries(this.query, query, null);
+        query = QueryUtilities.mixQueries(this.query, query, null);
         return new ContentFeatureCollection(featureSource, query);
     }
 

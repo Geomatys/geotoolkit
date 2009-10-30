@@ -23,6 +23,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -31,7 +36,17 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
+import org.geotoolkit.feature.type.DefaultAttributeType;
+import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
+import org.geotoolkit.feature.type.DefaultGeometryType;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.CRS;
 
+import org.opengis.feature.type.GeometryType;
+import org.opengis.filter.expression.Expression;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -57,19 +72,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
-import org.geotoolkit.feature.type.DefaultAttributeType;
-import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.feature.type.DefaultGeometryType;
-import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.referencing.ReferenceIdentifier;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -1013,4 +1015,284 @@ public class FeatureTypeUtilities {
 
         return true;
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // about attribut types ////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+
+    public static String[] attributeNames(final SimpleFeatureType featureType) {
+        final String[] names = new String[featureType.getAttributeCount()];
+        final int count = featureType.getAttributeCount();
+        for (int i = 0; i < count; i++) {
+            names[i] = featureType.getDescriptor(i).getLocalName();
+        }
+
+        return names;
+    }
+
+    /**
+     * Traverses the filter and returns any encoutered property names.
+     * <p>
+     * The feautre type is supplied as contexts used to lookup expressions in cases where the
+     * attributeName does not match the actual name of the type.
+     * </p>
+     */
+    public static String[] attributeNames(final Filter filter, final SimpleFeatureType featureType) {
+        if (filter == null) {
+            return new String[0];
+        }
+        final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
+        filter.accept(attExtractor, null);
+        final String[] attributeNames = attExtractor.getAttributeNames();
+        return attributeNames;
+    }
+
+    /**
+     * Traverses the expression and returns any encoutered property names.
+     * <p>
+     * The feautre type is supplied as contexts used to lookup expressions in cases where the
+     * attributeName does not match the actual name of the type.
+     * </p>
+     */
+    public static String[] attributeNames(final Expression expression, final SimpleFeatureType featureType) {
+        if (expression == null) {
+            return new String[0];
+        }
+        final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
+        expression.accept(attExtractor, null);
+        final String[] attributeNames = attExtractor.getAttributeNames();
+        return attributeNames;
+    }
+
+    public static Object[] defaultValues(final SimpleFeatureType featureType)
+            throws IllegalAttributeException {
+        return defaultValues(featureType, null);
+    }
+
+    public static Object[] defaultValues(final SimpleFeatureType featureType,
+            Object[] values) throws IllegalAttributeException {
+        if (values == null) {
+            values = new Object[featureType.getAttributeCount()];
+        } else if (values.length != featureType.getAttributeCount()) {
+            throw new ArrayIndexOutOfBoundsException("values");
+        }
+
+        for (int i = 0; i < featureType.getAttributeCount(); i++) {
+            values[i] = defaultValue(featureType.getDescriptor(i));
+        }
+
+        return values;
+    }
+
+    /**
+     * Provides a defautlValue for attributeType.
+     *
+     * <p>
+     * Will return null if attributeType isNillable(), or attempt to use
+     * Reflection, or attributeType.parse( null )
+     * </p>
+     *
+     * @param attributeType
+     *
+     * @return null for nillable attributeType, attempt at reflection
+     *
+     * @throws IllegalAttributeException If value cannot be constructed for
+     *         attribtueType
+     */
+    public static Object defaultValue(final AttributeDescriptor attributeType)
+            throws IllegalAttributeException {
+        final Object value = attributeType.getDefaultValue();
+
+        if (value == null && !attributeType.isNillable()) {
+            return null; // sometimes there is no valid default value :-(
+            // throw new IllegalAttributeException("Got null default value for non-null type.");
+        }
+        return value;
+    }
+    
+    /**
+     * Constructs an empty feature to use as a Template for new content.
+     *
+     * <p>
+     * We may move this functionality to FeatureType.create( null )?
+     * </p>
+     *
+     * @param featureType Type of feature we wish to create
+     *
+     * @return A new Feature of type featureType
+     *
+     * @throws IllegalAttributeException if we could not create featureType
+     *         instance with acceptable default values
+     */
+    public static SimpleFeature template(final SimpleFeatureType featureType)
+            throws IllegalAttributeException {
+        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), null);
+    }
+
+    public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID)
+            throws IllegalAttributeException {
+        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType), featureID);
+    }
+
+    public static SimpleFeature template(final SimpleFeatureType featureType, final Object[] atts)
+            throws IllegalAttributeException {
+        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), null);
+    }
+
+    public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID,
+            Object[] atts) throws IllegalAttributeException {
+        return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
+    }
+
+    /**
+     * Compare operation for FeatureType.
+     *
+     * <p>
+     * Results in:
+     * </p>
+     *
+     * <ul>
+     * <li>
+     * 1: if typeA is a sub type/reorder/renamespace of typeB
+     * </li>
+     * <li>
+     * 0: if typeA and typeB are the same type
+     * </li>
+     * <li>
+     * -1: if typeA is not subtype of typeB
+     * </li>
+     * </ul>
+     *
+     * <p>
+     * Comparison is based on AttributeTypes, an IOException is thrown if the
+     * AttributeTypes are not compatiable.
+     * </p>
+     *
+     * <p>
+     * Namespace is not considered in this opperations. You may still need to
+     * reType to get the correct namesapce, or reorder.
+     * </p>
+     *
+     * @param typeA FeatureType beind compared
+     * @param typeB FeatureType being compared against
+     *
+     */
+    public static int compare(final SimpleFeatureType typeA, final SimpleFeatureType typeB) {
+        if (typeA == typeB) {
+            return 0;
+        }
+
+        if (typeA == null) {
+            return -1;
+        }
+
+        if (typeB == null) {
+            return -1;
+        }
+
+        final int countA = typeA.getAttributeCount();
+        final int countB = typeB.getAttributeCount();
+
+        if (countA > countB) {
+            return -1;
+        }
+
+        // may still be the same featureType
+        // (Perhaps they differ on namespace?)
+        AttributeDescriptor a;
+
+        // may still be the same featureType
+        // (Perhaps they differ on namespace?)
+        int match = 0;
+
+        for (int i = 0; i < countA; i++) {
+            a = typeA.getDescriptor(i);
+
+            if (isMatch(a, typeB.getDescriptor(i))) {
+                match++;
+            } else if (isMatch(a, typeB.getDescriptor(a.getLocalName()))) {
+                // match was found in a different position
+            } else {
+                // cannot find any match for Attribute in typeA
+                return -1;
+            }
+        }
+
+        if ((countA == countB) && (match == countA)) {
+            // all attributes in typeA agreed with typeB
+            // (same order and type)
+            //            if (typeA.getNamespace() == null) {
+            //            	if(typeB.getNamespace() == null) {
+            //            		return 0;
+            //            	} else {
+            //            		return 1;
+            //            	}
+            //            } else if(typeA.getNamespace().equals(typeB.getNamespace())) {
+            //                return 0;
+            //            } else {
+            //                return 1;
+            //            }
+            return 0;
+        }
+
+        return 1;
+    }
+
+    public static boolean isMatch(final AttributeDescriptor a, final AttributeDescriptor b) {
+        if (a == b) {
+            return true;
+        }
+
+        if (b == null) {
+            return false;
+        }
+
+        if (a == null) {
+            return false;
+        }
+
+        if (a.equals(b)) {
+            return true;
+        }
+
+        if (a.getLocalName().equals(b.getLocalName()) && a.getClass().equals(b.getClass())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Creates duplicate of feature adjusted to the provided featureType.
+     *
+     * @param featureType FeatureType requested
+     * @param feature Origional Feature from DataStore
+     *
+     * @return An instance of featureType based on feature
+     *
+     * @throws IllegalAttributeException If opperation could not be performed
+     */
+    public static SimpleFeature reType(final SimpleFeatureType featureType, final SimpleFeature feature)
+            throws IllegalAttributeException {
+        final SimpleFeatureType origional = feature.getFeatureType();
+
+        if (featureType.equals(origional)) {
+            return SimpleFeatureBuilder.copy(feature);
+        }
+
+        final String id = feature.getID();
+        final int numAtts = featureType.getAttributeCount();
+        final Object[] attributes = new Object[numAtts];
+        String xpath;
+
+        for (int i = 0; i < numAtts; i++) {
+            final AttributeDescriptor curAttType = featureType.getDescriptor(i);
+            xpath = curAttType.getLocalName();
+            attributes[i] = FeatureUtilities.duplicate(feature.getAttribute(xpath));
+        }
+
+        return SimpleFeatureBuilder.build(featureType, attributes, id);
+    }
+
 }

@@ -41,7 +41,7 @@ import org.opengis.filter.Filter;
  * @version $Id$
  * @module pending
  */
-public class FilteringFeatureReader<T extends FeatureType, F extends Feature> implements DelegatingFeatureReader<T, F> {
+public class FilteringFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 
     protected final FeatureReader<T, F> featureReader;
     protected final Filter filter;
@@ -62,14 +62,6 @@ public class FilteringFeatureReader<T extends FeatureType, F extends Feature> im
         this.featureReader = featureReader;
         this.filter = filter;
         next = null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader<T, F> getDelegate() {
-        return featureReader;
     }
 
     /**

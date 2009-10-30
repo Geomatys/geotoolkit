@@ -24,9 +24,8 @@ import java.util.List;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.collection.DecoratingFeatureCollection;
+import org.geotoolkit.data.collection.DelegateFeatureCollection;
 import org.geotoolkit.data.collection.DelegateFeatureIterator;
-import org.geotoolkit.data.DelegateFeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -42,7 +41,7 @@ import org.opengis.filter.sort.SortBy;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class MaxFeaturesFeatureCollection<T extends FeatureType, F extends Feature> extends DecoratingFeatureCollection<T, F> {
+public class MaxFeaturesFeatureCollection<T extends FeatureType, F extends Feature> extends DelegateFeatureCollection<T, F> {
 
     private final FeatureCollection<T, F> delegate;
     private final long max;
@@ -54,7 +53,7 @@ public class MaxFeaturesFeatureCollection<T extends FeatureType, F extends Featu
     }
 
     public FeatureReader<T, F> reader() throws IOException {
-        return new DelegateFeatureReader<T, F>(getSchema(), features());
+        return DataUtilities.wrapToReader(getSchema(), features());
     }
 
     /**

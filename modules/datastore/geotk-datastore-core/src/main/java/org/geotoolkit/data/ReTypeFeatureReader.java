@@ -57,7 +57,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  * @author Jody Garnett (Refractions Research)
  * @module pending
  */
-public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {
+public class ReTypeFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
     /**
      * The original reader we are grabbing content from
@@ -103,14 +103,6 @@ public class ReTypeFeatureReader implements DelegatingFeatureReader<SimpleFeatur
         this.clone = clone;
         types = typeAttributes(featureType, reader.getFeatureType());
         builder = new SimpleFeatureBuilder(featureType);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader getDelegate() {
-        return reader;
     }
 
     /**

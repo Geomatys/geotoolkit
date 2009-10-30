@@ -31,7 +31,7 @@ import org.opengis.feature.type.FeatureType;
  * @version $Id$
  * @module pending
  */
-public class MaxFeatureReader<T extends FeatureType, F extends Feature> implements DelegatingFeatureReader<T, F> {
+public class MaxFeatureReader<T extends FeatureType, F extends Feature> implements FeatureReader<T, F> {
 
     private final FeatureReader<T, F> featureReader;
     private final int maxFeatures;
@@ -46,14 +46,6 @@ public class MaxFeatureReader<T extends FeatureType, F extends Feature> implemen
     public MaxFeatureReader(final FeatureReader<T, F> featureReader, final int maxFeatures) {
         this.featureReader = featureReader;
         this.maxFeatures = maxFeatures;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader<T, F> getDelegate() {
-        return featureReader;
     }
 
     /**

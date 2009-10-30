@@ -112,7 +112,7 @@ public class IndexedFidReader implements FIDReader, FileReader {
         if (removes > getCount() / 2) {
             URL url = shpFiles.acquireRead(FIX, this);
             try {
-                DataUtilities.urlToFile(url).deleteOnExit();
+                NIOUtilities.urlToFile(url).deleteOnExit();
             } finally {
                 shpFiles.unlockRead(url, this);
             }

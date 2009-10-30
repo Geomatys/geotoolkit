@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.NoSuchElementException;
 
-import org.geotoolkit.data.DelegatingFeatureReader;
+import org.geotoolkit.data.DelegateFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 
-public class JDBCClosingFeatureReader implements DelegatingFeatureReader<SimpleFeatureType, SimpleFeature> {
+public class JDBCClosingFeatureReader implements DelegateFeatureReader<SimpleFeatureType, SimpleFeature> {
 
     FeatureReader reader;
 
@@ -59,12 +59,12 @@ public class JDBCClosingFeatureReader implements DelegatingFeatureReader<SimpleF
     public void close() throws IOException {
 
         FeatureReader r = reader;
-        while(r instanceof DelegatingFeatureReader) {
+        while(r instanceof DelegateFeatureReader) {
             if (r instanceof JDBCFeatureReader) {
                 break;
             }
 
-            r = ((DelegatingFeatureReader)r).getDelegate();
+            r = ((DelegateFeatureReader)r).getDelegate();
         }
 
         if (r instanceof JDBCFeatureReader) {

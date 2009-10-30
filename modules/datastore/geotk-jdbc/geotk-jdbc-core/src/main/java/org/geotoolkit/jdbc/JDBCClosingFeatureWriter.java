@@ -19,7 +19,7 @@ package org.geotoolkit.jdbc;
 import java.io.IOException;
 import java.sql.Connection;
 
-import org.geotoolkit.data.DelegatingFeatureWriter;
+import org.geotoolkit.data.DelegateFeatureWriter;
 import org.geotoolkit.data.FeatureWriter;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -63,12 +63,12 @@ public class JDBCClosingFeatureWriter implements FeatureWriter<SimpleFeatureType
     @Override
     public void close() throws IOException {
         FeatureWriter w = writer;
-        while (w instanceof DelegatingFeatureWriter) {
+        while (w instanceof DelegateFeatureWriter) {
             if (w instanceof JDBCFeatureReader) {
                 break;
             }
 
-            w = ((DelegatingFeatureWriter) w).getDelegate();
+            w = ((DelegateFeatureWriter) w).getDelegate();
         }
 
         if (w instanceof JDBCFeatureReader) {

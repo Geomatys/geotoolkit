@@ -44,7 +44,6 @@ public class FeatureCollectionUtilities {
 
     protected FeatureCollectionUtilities(){}
 
-
     /**
      * Copies the provided features into a List.
      *
