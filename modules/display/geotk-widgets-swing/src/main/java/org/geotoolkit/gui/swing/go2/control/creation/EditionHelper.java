@@ -300,82 +300,65 @@ public class EditionHelper {
     
     //manipulating the feature source, transaction -----------------------------
 
-    public void sourceAddGeometry(Geometry ... geoms) {
+    public void sourceAddGeometry(Geometry geom) {
 
         final FeatureMapLayer editionLayer = handler.getEditedLayer();
         final Map2D map = handler.getMap();
 
         if (editionLayer != null) {
 
-            for (Geometry geom : geoms) {
-                SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-                FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
-                Object[] values = new Object[featureType.getAttributeCount()];
+            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
+            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
+            final Object[] values = new Object[featureType.getAttributeCount()];
+            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+            final CoordinateReferenceSystem dataCrs = editionLayer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
 
-                AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+            try {
+                geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
 
-                final CoordinateReferenceSystem dataCrs = editionLayer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
+            final List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
+            for (int i = 0,  n = lst.size(); i < n; i++) {
+                final AttributeDescriptor desc = lst.get(i);
 
+                if (desc.equals(geomAttribut)) {
+                    values[i] = geom;
+                } else {
+                    values[i] = desc.getDefaultValue();
+                }
+            }
+
+            SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
+            sf = JFeatureAttributPane.configure(sf);
+            collection.add(sf);
+
+//            DefaultTransaction transaction = null;
+//            Transaction oldTransaction = null;
+            FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
+            try {
+                // Create the DefaultTransaction Object
+//                transaction = new DefaultTransaction();
+
+                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
+
+                // Then set the transaction for that FeatureStore
+//                oldTransaction = store.getTransaction();
+//                store.setTransaction(transaction);
+
+                store.addFeatures(collection);
+//                transaction.commit();
+            } catch (Exception eek) {
+                eek.printStackTrace();
                 try {
-                    geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
-                } catch (Exception ex) {
-                    LOGGER.log(Level.SEVERE, null, ex);
+                    store.getTransaction().rollback();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-
-                List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
-                for (int i = 0,  n = lst.size(); i < n; i++) {
-                    AttributeDescriptor desc = lst.get(i);
-
-                    if (desc.equals(geomAttribut)) {
-                        values[i] = geom;
-                    } else {
-                        values[i] = desc.getDefaultValue();
-                    }
-                }
-
-                SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
-                collection.add(sf);
-
-                DefaultTransaction transaction = null;
-                Transaction oldTransaction = null;
-                FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
-                try {
-//                    String featureName = data.getTypeNames()[0]; // there is only one in a shapefile
-
-                    // Create the DefaultTransaction Object
-                    transaction = new DefaultTransaction();
-
-//                    String name = editionLayer.getFeatureSource().getName().getLocalPart();
-//                    try {
-//                        //GR: question: why not just editionLayer.getFeatureSource()?
-//                        FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
-//                        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
-//                    } catch (IOException e) {
-//                        // Tell it the name of the shapefile it should look for in our DataStore
-//                        store = (FeatureStore<SimpleFeatureType, SimpleFeature>) data.getFeatureSource(featureName);
-//                    }
-
-                    store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-
-                    // Then set the transaction for that FeatureStore
-                    oldTransaction = store.getTransaction();
-                    store.setTransaction(transaction);
-
-                    store.addFeatures(collection);
-                    transaction.commit();
-                } catch (Exception eek) {
-                    eek.printStackTrace();
-                    try {
-                        store.getTransaction().rollback();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } finally {
-                    transaction.close();
-                    store.setTransaction(oldTransaction);
-                }
-
-
+            } finally {
+//                transaction.close();
+//                store.setTransaction(oldTransaction);
             }
 
             map.getCanvas().getController().repaint();

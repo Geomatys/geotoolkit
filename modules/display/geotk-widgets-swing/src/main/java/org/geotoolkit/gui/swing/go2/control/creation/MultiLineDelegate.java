@@ -216,7 +216,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                     } else {
                         if (subGeometries.size() > 0) {
                             Geometry geo = EditionHelper.createMultiLine(subGeometries);
-                            handler.getHelper().sourceAddGeometry(new Geometry[]{geo});
+                            handler.getHelper().sourceAddGeometry(geo);
                             nbRighClick = 0;
                             reset();
                         }
