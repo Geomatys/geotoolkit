@@ -73,7 +73,7 @@ import org.geotoolkit.resources.Errors;
  * @param <V> The class of value elements.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.05
  *
  * @see java.util.WeakHashMap
  * @see WeakHashSet
@@ -186,9 +186,10 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
          */
         @Override
         public int hashCode() {
-            final Object val = get();
-            return (key==null ? 0 : key.hashCode()) ^
-                   (val==null ? 0 : val.hashCode());
+            final V val = get();
+            final K key = this.key;
+            return (key == null ? 0 : key.hashCode()) ^
+                   (val == null ? 0 : val.hashCode());
         }
     }
 
@@ -236,20 +237,22 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * @param initialSize The initial size.
      */
     public WeakValueHashMap(final int initialSize) {
-        newEntryTable(initialSize);
+        final Entry[] table = newEntryTable(initialSize);
         threshold = Math.round(table.length * LOAD_FACTOR);
         lastRehashTime = System.currentTimeMillis();
     }
 
     /**
      * Sets the {@link #table} array to the specified size. The content of the old array is lost.
+     * The value is returned for convenience (this is actually a paranoic safety for making sure
+     * that the caller will really use the new array, in case of synchronization bug).
      *
      * @todo Use the commented line instead if a future Java version supports generic arrays.
      */
     @SuppressWarnings("unchecked")
-    private void newEntryTable(final int size) {
+    private Entry[] newEntryTable(final int size) {
 //      table = new Entry[size];
-        table = (Entry[]) Array.newInstance(Entry.class, size);
+        return table = (Entry[]) Array.newInstance(Entry.class, size);
     }
 
     /**
@@ -272,6 +275,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         final int i = toRemove.index;
         // Index 'i' may not be valid if the reference 'toRemove'
         // has been already removed in a previous rehash.
+        Entry[] table = this.table;
         if (i < table.length) {
             Entry prev = null;
             Entry e = table[i];
@@ -288,7 +292,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                     // If the number of elements has dimunished
                     // significatively, rehash the table.
                     if (count <= threshold/4) {
-                        rehash(false);
+                        table = rehash(false);
                     }
                     // We must not continue the loop, since
                     // variable 'e' is no longer valid.
@@ -309,23 +313,25 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     /**
      * Rehashs {@link #table}.
      *
-     * @param augmentation {@code true} if this method is invoked
-     *        for augmenting {@link #table}, or {@code false} if
-     *        it is invoked for making the table smaller.
+     * @param  augmentation {@code true} if this method is invoked for augmenting {@link #table},
+     *         or {@code false} if it is invoked for making the table smaller.
+     * @return The new table array. This is actually the value of the {@link #table} field, but is
+     *         returned as a paranoic safety for making sure that the caller use the table we just
+     *         created (in case of synchronization bug).
      */
-    private void rehash(final boolean augmentation) {
+    private Entry[] rehash(final boolean augmentation) {
         assert Thread.holdsLock(this);
         assert valid();
+        final Entry[] oldTable = this.table;
         final long currentTime = System.currentTimeMillis();
         final int capacity = Math.max(Math.round(count/(LOAD_FACTOR/2)), count+MIN_CAPACITY);
-        if (augmentation ? (capacity<=table.length) :
-                           (capacity>=table.length || currentTime-lastRehashTime<HOLD_TIME))
+        if (augmentation ? (capacity <= oldTable.length) :
+                           (capacity >= oldTable.length || currentTime - lastRehashTime < HOLD_TIME))
         {
-            return;
+            return oldTable;
         }
         lastRehashTime = currentTime;
-        final Entry[] oldTable = table;
-        newEntryTable(capacity);
+        final Entry[] table = newEntryTable(capacity);
         threshold = Math.round(capacity*LOAD_FACTOR);
         for (int i=0; i<oldTable.length; i++) {
             for (Entry old=oldTable[i]; old!=null;) {
@@ -353,6 +359,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
             logger.log(record);
         }
         assert valid();
+        return table;
     }
 
     /**
@@ -365,12 +372,13 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     private boolean valid() {
         int n=0;
+        final Entry[] table = this.table;
         for (int i=0; i<table.length; i++) {
             for (Entry e=table[i]; e!=null; e=e.next) {
                 n++;
             }
         }
-        if (n!=count) {
+        if (n != count) {
             count = n;
             return false;
         } else {
@@ -422,6 +430,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     public synchronized V get(final Object key) {
         assert WeakCollectionCleaner.DEFAULT.isAlive();
         assert valid() : count;
+        final Entry[] table = this.table;
         final int index = (key.hashCode() & 0x7FFFFFFF) % table.length;
         for (Entry e=table[index]; e!=null; e=e.next) {
             if (key.equals(e.key)) {
@@ -443,6 +452,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
          */
         V oldValue = null;
         final int hash = key.hashCode() & 0x7FFFFFFF;
+        Entry[] table = this.table;
         int index = hash % table.length;
         for (Entry e=table[index]; e!=null; e=e.next) {
             if (key.equals(e.key)) {
@@ -452,7 +462,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         }
         if (value != null) {
             if (count >= threshold) {
-                rehash(true);
+                table = rehash(true);
                 index = hash % table.length;
             }
             table[index] = new Entry(key, value, table[index], index);

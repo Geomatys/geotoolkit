@@ -67,7 +67,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @param <E> The type of elements in the set.
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @version 3.05
  *
  * @see java.util.WeakHashMap
  *
@@ -170,19 +170,21 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     protected WeakHashSet(final Class<E> type) {
         this.type = type;
         isArray = type.isArray() || type.equals(Object.class);
-        newEntryTable(MIN_CAPACITY);
-        threshold = Math.round(table.length*LOAD_FACTOR);
+        final Entry[] table = newEntryTable(MIN_CAPACITY);
+        threshold = Math.round(table.length * LOAD_FACTOR);
     }
 
     /**
      * Sets the {@link #table} array to the specified size. The content of the old array is lost.
+     * The value is returned for convenience (this is actually a paranoic safety for making sure
+     * that the caller will really use the new array, in case of synchronization bug).
      *
      * @todo Use the commented line instead if a future Java version supports generic arrays.
      */
     @SuppressWarnings("unchecked")
-    private void newEntryTable(final int size) {
+    private Entry[] newEntryTable(final int size) {
 //      table = new Entry[size];
-        table = (Entry[]) Array.newInstance(Entry.class, size);
+        return table = (Entry[]) Array.newInstance(Entry.class, size);
     }
 
     /**
@@ -201,6 +203,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      */
     private synchronized void removeEntry(final Entry toRemove) {
         assert valid() : count;
+        Entry[] table = this.table;
         final int i = toRemove.hash % table.length;
         /*
          * Index 'i' may not be valid if the reference 'toRemove'
@@ -223,7 +226,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                      * We can't continue the loop pass that point, since 'e' is no longer valid.
                      */
                     if (count <= threshold/4) {
-                        rehash("remove");
+                        table = rehash("remove");
                     }
                     return;
                 }
@@ -242,17 +245,20 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
     /**
      * Rehash {@link #table}.
      *
-     * @param caller The method invoking this one. User for logging purpose only.
+     * @param  caller The method invoking this one. User for logging purpose only.
+     * @return The new table array. This is actually the value of the {@link #table} field, but is
+     *         returned as a paranoic safety for making sure that the caller use the table we just
+     *         created (in case of synchronization bug).
      */
-    private void rehash(final String caller) {
+    private Entry[] rehash(final String caller) {
         assert Thread.holdsLock(this);
         assert valid();
-        final int capacity = Math.max(Math.round(count / (LOAD_FACTOR/2)), count + MIN_CAPACITY);
-        if (capacity == table.length) {
-            return;
-        }
         final Entry[] oldTable = table;
-        newEntryTable(capacity);
+        final int capacity = Math.max(Math.round(count / (LOAD_FACTOR/2)), count + MIN_CAPACITY);
+        if (capacity == oldTable.length) {
+            return oldTable;
+        }
+        final Entry[] table = newEntryTable(capacity);
         threshold = Math.round(capacity * LOAD_FACTOR);
         for (int i=0; i<oldTable.length; i++) {
             for (Entry old=oldTable[i]; old!=null;) {
@@ -274,6 +280,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
             logger.log(record);
         }
         assert valid();
+        return table;
     }
 
     /**
@@ -285,12 +292,13 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      */
     private boolean valid() {
         int n = 0;
+        final Entry[] table = this.table;
         for (int i=0; i<table.length; i++) {
             for (Entry e=table[i]; e!=null; e=e.next) {
                 n++;
             }
         }
-        if (n!=count) {
+        if (n != count) {
             count = n;
             return false;
         } else {
@@ -438,6 +446,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
              * Check if {@code obj} is already contained in this
              * {@code WeakHashSet}. If yes, returns the element.
              */
+            Entry[] table = this.table;
             final int hash = (isArray ? Utilities.deepHashCode(obj) : obj.hashCode()) & 0x7FFFFFFF;
             int index = hash % table.length;
             for (Entry e=table[index]; e!=null; e=e.next) {
@@ -459,7 +468,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                  * Check if the table needs to be rehashed, and add {@code obj} to the table.
                  */
                 if (count >= threshold) {
-                    rehash("add");
+                    table = rehash("add");
                     index = hash % table.length;
                 }
                 table[index] = new Entry(obj, table[index], hash);
@@ -490,6 +499,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
         @SuppressWarnings("unchecked")
         final E[] elements = (E[]) Array.newInstance(type, count);
         int index = 0;
+        final Entry[] table = this.table;
         for (int i=0; i<table.length; i++) {
             for (Entry el=table[i]; el!=null; el=el.next) {
                 if ((elements[index]=el.get()) != null) {
