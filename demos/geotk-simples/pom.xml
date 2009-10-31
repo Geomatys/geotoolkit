@@ -27,7 +27,8 @@
   <name>Simple demos</name>
 
   <description>
-    Simple demos, as small standalone classes executable from the command line.
+    Standalone classes that can be run from the command line, and simple
+    applets that shown components from the geotk-widgets-swing module.
   </description>
 
 

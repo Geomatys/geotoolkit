@@ -128,18 +128,23 @@ import static java.awt.GridBagConstraints.*;
  * which manage the zooms. For example, to zoom in, we must write
  * <code>{@linkplain #getActionMap() getActionMap()}.get("ZoomIn")</code>.
  *
- * <table><tr valign="top"><td>
  * {@section Scroll pane}
  * <strong>{@link JScrollPane} objects are not suitable for adding scrollbars to a
  * {@code ZoomPane} object.</strong> Instead, use {@link #createScrollPane}. Once again, all
  * movements performed by the user through the scrollbars will be translated by calls to
  * {@link #transform(AffineTransform)}.
- * <p>
- * The image on the right side gives an example with a simple implementation drawing a
+ *
+ * <table><tr valign="top"><td>
+ * <img src="doc-files/ZoomPane.png">
+ * </td><td>
+ * {@section Demo}
+ * The image on the left side gives an example with a simple implementation drawing a
  * few geometric shapes. The menu and the optional magnifier glass are produced by this
  * {@code ZoomPane} class.
- * </td><td>
- * <img src="doc-files/ZoomPane.png">
+ * <p>
+ * To try this component in your browser, see the
+ * <a href="../../../../../demos/geotk-simples/applet/ZoomPane.html">demonstration applet</a>
+ * for this component.
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (MPO, IRD)

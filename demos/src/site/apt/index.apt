@@ -1,8 +1,33 @@
-Demonstrations of the Geotoolkit.org library
+Geotoolkit.org demos
 
-  This is the root directory of a collection of demos. All demo are hereby placed into
-  the Public Domain. This means anyone is free to do whatever they wish with those files.
+  These applications and applets demonstrate the functionalities available in the Geotoolkit.org
+  library.
 
-  * {{{geotk-simples/index.html}Simple code demos}} (standalone classes that can be run from the command line)
+  All demo are hereby placed into the Public Domain. This means anyone is free to do whatever
+  they wish with those files.
 
-  * {{{geotk-simples/applet/index.html}Simple applets}} (applets showing small parts of functionality)
+
+* Simple applets
+
+  They are small applets showing small parts of functionality. Each applet typically demonstrate single
+  classes from the <<<{{{../../modules/display/geotk-widgets-swing/index.html}geotk-widgets-swing}}>>>
+  module.
+
+    * {{{geotk-simples/applet/index.html}Applets index}}
+
+
+* Simple code demos
+
+  They are small (a few tens of lines) standalone classes that can be run from the command line.
+  Click on the links below for viewing the Java code. For downloading the file, click on the
+  "<raw>" link on the left side.
+
+  * Referencing
+
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
+      converts a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
+
+  * Coverage
+
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
+      displays an image created from a matrix of floating point values.
