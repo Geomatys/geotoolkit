@@ -215,10 +215,11 @@ public class DefaultEditionHandler implements CanvasHandler {
         panNorth.setOpaque(false);
         final JPanel panTools = new JPanel(new FlowLayout());
         panTools.setOpaque(false);
+        panTools.setBackground(Color.WHITE);
         panTools.setBorder(new RoundedBorder());
         panTools.add(guiLayers);
         panTools.add(guiStart);
-        panTools.add(new JLabel("      "));
+        panTools.add(new JLabel("  "));
         panTools.add(guiEnd);
         panNorth.add(panTools);
 

@@ -157,7 +157,7 @@ public class LineDelegate extends AbstractEditionDelegate {
             case MOVE:
                 if(context.geometry != null){
                     //start dragging mode
-                    handler.getHelper().grabGeometryNode(context, e.getX(), e.getY());
+//                    handler.getHelper().grabGeometryNode(context, e.getX(), e.getY());
                 }
                 break;
         }

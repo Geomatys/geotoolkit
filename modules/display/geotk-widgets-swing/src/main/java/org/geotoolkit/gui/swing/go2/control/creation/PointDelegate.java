@@ -33,6 +33,7 @@ import javax.swing.JToggleButton;
 import org.opengis.feature.simple.SimpleFeature;
 
 import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
+import static java.awt.event.MouseEvent.*;
 
 /**
  * point creation handler
@@ -91,7 +92,7 @@ public class PointDelegate extends AbstractEditionDelegate{
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentAction = ACTION.MOVE;
-                handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, null, null);
+                handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
             }
         });
         button.setSelected(true);
@@ -105,7 +106,7 @@ public class PointDelegate extends AbstractEditionDelegate{
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentAction = ACTION.ADD;
-                handler.getDecoration().setGestureMessages(MSG_GEOM_ADD, null, null, null);
+                handler.getDecoration().setGestureMessages(MSG_GEOM_ADD, null, MSG_DRAG, MSG_ZOOM);
             }
         });
         group.add(button);
@@ -119,14 +120,14 @@ public class PointDelegate extends AbstractEditionDelegate{
         deleteAction.setEnabled(feature != null);
         handler.getDecoration().setToolsPane(pan);
 
-        handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, null, null);
+        handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
     }
 
     private void setCurrentFeature(SimpleFeature feature){
         this.feature = feature;
         if(feature != null){
             this.geometry = (Point)handler.getHelper().toObjectiveCRS(feature);
-            handler.getDecoration().setGestureMessages(MSG_GEOM_MOVE, null, null, null);
+            handler.getDecoration().setGestureMessages(MSG_GEOM_MOVE, null, MSG_DRAG, MSG_ZOOM);
         }else{
             this.geometry = null;
         }
@@ -156,42 +157,59 @@ public class PointDelegate extends AbstractEditionDelegate{
                 handler.getHelper().sourceModifyFeature(this.feature, this.geometry);
                 handler.getDecoration().setGeometries(null);
             }
-            handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, null, null);
+            handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
             reset();
             deleteAction.setEnabled(this.feature != null);
         }
     }
 
+    int pressed = -1;
+
     @Override
     public void mousePressed(MouseEvent e) {
+        pressed = e.getButton();
         switch(currentAction){
             case MOVE:
-                if(this.geometry != null){
+                if(this.geometry != null && e.getButton() == BUTTON1){
                     //start dragging mode
                     coordSelected = handler.getHelper().grabGeometrynode(geometry, e.getX(), e.getY());
+                    return;
                 }
                 break;
         }
+        super.mousePressed(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(currentAction == ACTION.MOVE && coordSelected){
-            //we were dragging a node
-            this.modified = true;
-            this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
-            handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
+        switch(currentAction){
+            case MOVE:
+                if(coordSelected && e.getButton() == BUTTON1){
+                    //we were dragging a node
+                    this.modified = true;
+                    this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
+                    handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
+                    return;
+                }
+                break;
         }
+        super.mouseReleased(e);
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if(currentAction == ACTION.MOVE && coordSelected){
-            this.modified = true;
-            this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
-            handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
-            handler.getDecoration().setGestureMessages(MSG_GEOM_MOVE, MSG_VALIDATE, null, null);
+        switch(currentAction){
+            case MOVE:
+                if(coordSelected && pressed == BUTTON1){
+                    this.modified = true;
+                    this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
+                    handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
+                    handler.getDecoration().setGestureMessages(MSG_GEOM_MOVE, MSG_VALIDATE, MSG_DRAG, MSG_ZOOM);
+                    return;
+                }
+
         }
+        super.mouseDragged(e);
     }
 
 }

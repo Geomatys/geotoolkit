@@ -18,6 +18,7 @@ package org.geotoolkit.gui.swing.go2.control.creation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -28,6 +29,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,6 +71,8 @@ import org.opengis.referencing.operation.TransformException;
  * @module pending
  */
 public class EditionHelper {
+
+    
 
     public static class EditionContext{
         public SimpleFeature feature = null;
@@ -186,9 +190,15 @@ public class EditionHelper {
         }
     }
 
-    public void grabGeometryNode(EditionContext context, int mx, int my) {
-
-        final Geometry geo = context.geometry;
+    /**
+     * grab a node in the given geometry.
+     * int[0] == subgeometry index
+     * int[1] == grabbed coordinate index
+     * int[2] == grabbed coordinate index
+     * there might be two coordinate grab in the case of polygon last point
+     */
+    public int[] grabGeometryNode(Geometry geo, int mx, int my) {
+        final int[] indexes = new int[]{-1,-1,-1};
 
         try{
             //transform our mouse in a geometry
@@ -199,8 +209,7 @@ public class EditionHelper {
 
                 if (subgeo.intersects(mouseGeo)) {
                     //this geometry intersect the mouse
-                    context.subGeometries.add(subgeo);
-                    context.subGeometryIndex = i;
+                    indexes[0] = i;
 
                     final Coordinate[] coos = subgeo.getCoordinates();
                     for (int j=0,m=coos.length; j<m; j++) {
@@ -210,10 +219,12 @@ public class EditionHelper {
 
                             if ((j==0 || j==m-1) && (geo instanceof Polygon || geo instanceof MultiPolygon)) {
                                 //first and last coordinate index are the same point
-                                context.nodes = new int[]{0, m - 1};
+                                indexes[1] = 0;
+                                indexes[2] = m-1;
                             } else {
                                 //coordinate is in the middle of the geometry
-                                context.nodes = new int[]{j};
+                                indexes[1] = j;
+                                indexes[2] = j;
                             }
                         }
                     }
@@ -225,6 +236,7 @@ public class EditionHelper {
             ex.printStackTrace();
         }
 
+        return indexes;
     }
 
     public void dragGeometryNode(EditionContext context, int mx, int my) {
@@ -253,6 +265,158 @@ public class EditionHelper {
         subgeo.geometryChanged();
         context.geometry.geometryChanged();
     }
+
+    public void moveGeometry(Geometry geo, int dx, int dy) {
+
+        try{
+            final Point2D pt0 = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
+            final Point2D pt = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
+            pt.setLocation(pt.getX()-pt0.getX(), pt.getY()-pt0.getY());
+
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                final Geometry subgeo = geo.getGeometryN(i);
+                final Coordinate[] coos = subgeo.getCoordinates();
+
+                for (int j=0,m=coos.length; j<m; j++) {
+                    final Coordinate coo = coos[j];
+                    coo.x += pt.getX();
+                    coo.y += pt.getY();
+                }
+                subgeo.geometryChanged();
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        geo.geometryChanged();
+
+    }
+
+    public Geometry insertNode(GeometryCollection geo, int mx, int my) {
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+            final Geometry mousePoint = toJTS(mx, my);
+
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                final Geometry subgeo = geo.getGeometryN(i);
+
+                if (subgeo.intersects(mouseGeo)) {
+                    //this geometry intersect the mouse
+
+                    final Coordinate[] coos = subgeo.getCoordinates();
+                    for (int j=0,m=coos.length-1; j<m; j++) {
+                        //find the segment that intersect
+                        final Coordinate coo1 = coos[j];
+                        final Coordinate coo2 = coos[j+1];
+                        final Geometry segment = createLine(coo1,coo2);
+
+                        if(mouseGeo.intersects(segment) && segment.getEnvelope().intersects(mousePoint)){
+                            //we must add the new node on this segment
+
+                            final List<Geometry> subs = new ArrayList<Geometry>();
+                            for (int k=0,l=geo.getNumGeometries(); k<l; k++) {
+                                if(k==i){
+                                    //this subgeo must be changed
+                                    final List<Coordinate> ncs = new ArrayList<Coordinate>();
+                                    for (int d=0,p=coos.length; d<p; d++) {
+                                        ncs.add(coos[d]);
+                                        if(d==j){
+                                            //we must add the new node here
+                                            ncs.add(mousePoint.getCoordinate());
+                                        }
+                                    }
+
+                                    if(geo instanceof MultiLineString && ncs.size() >1){
+                                         subs.add(createLine(ncs));
+                                    }else if(geo instanceof MultiPolygon && ncs.size() >2){
+                                         subs.add(createPolygon(ncs));
+                                    }
+                                }else{
+                                    subs.add(geo.getGeometryN(k));
+                                }
+                            }
+
+                            if(geo instanceof MultiLineString && !subs.isEmpty()){
+                                 return createMultiLine(subs);
+                            }else if(geo instanceof MultiPolygon && !subs.isEmpty()){
+                                 return createMultiPolygon(subs);
+                            }else{
+                                return null;
+                            }
+                        }
+
+                    }
+                    break;
+                }
+
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return geo;
+    }
+
+    public Geometry deleteNode(GeometryCollection geo, int mx, int my) {
+
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                final Geometry subgeo = geo.getGeometryN(i);
+
+                if (subgeo.intersects(mouseGeo)) {
+                    //this geometry intersect the mouse
+
+                    final Coordinate[] coos = subgeo.getCoordinates();
+                    for (int j=0,m=coos.length; j<m; j++) {
+                        final Coordinate coo = coos[j];
+                        final Point p = createPoint(coo);
+                        if (p.intersects(mouseGeo)) {
+                            //delete this node
+
+                            final List<Geometry> subs = new ArrayList<Geometry>();
+                            for (int k=0,l=geo.getNumGeometries(); k<l; k++) {
+                                if(k==i){
+                                    //this subgeo must be changed
+                                    final List<Coordinate> ncs = new ArrayList<Coordinate>();
+                                    for (int d=0,z=coos.length; d<z; d++) {
+                                        if(d!=j){
+                                            ncs.add(coos[d]);
+                                        }
+                                    }
+                                    if(geo instanceof MultiLineString && ncs.size() >1){
+                                         subs.add(createLine(ncs));
+                                    }else if(geo instanceof MultiPolygon && ncs.size() >2){
+                                         subs.add(createPolygon(ncs));
+                                    }
+                                }else{
+                                    subs.add(geo.getGeometryN(k));
+                                }
+                            }
+
+                            if(geo instanceof MultiLineString && !subs.isEmpty()){
+                                 return createMultiLine(subs);
+                            }else if(geo instanceof MultiPolygon && !subs.isEmpty()){
+                                 return createMultiPolygon(subs);
+                            }else{
+                                return null;
+                            }
+
+                        }
+                    }
+                    break;
+                }
+
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return geo;
+    }
+
 
     public Geometry toObjectiveCRS(SimpleFeature sf){
         final FeatureMapLayer layer = handler.getEditedLayer();
@@ -487,6 +651,9 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createMultiPoint(lst.toArray(new Point[lst.size()]));
     }
 
+    public static LineString createLine(Coordinate ... coords) {
+        return GEOMETRY_FACTORY.createLineString(coords);
+    }
     public static LineString createLine(List<Coordinate> coords) {
         return GEOMETRY_FACTORY.createLineString(coords.toArray(EMPTY_COORDINATE_ARRAY));
     }

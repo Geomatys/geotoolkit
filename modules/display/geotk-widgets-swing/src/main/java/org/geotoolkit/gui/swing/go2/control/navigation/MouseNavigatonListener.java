@@ -47,6 +47,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     private int lastX;
     private int lastY;
     private int mousebutton = 0;
+    private int panButton = MouseEvent.BUTTON3;
 
     public MouseNavigatonListener(Map2D map) {
         this.map = map;
@@ -58,6 +59,14 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
     public Map2D getMap() {
         return map;
+    }
+
+    public void setPanButton(int panButton) {
+        this.panButton = panButton;
+    }
+
+    public int getPanButton() {
+        return panButton;
     }
 
     public void install(Component component){
@@ -154,8 +163,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         lastY = 0;
 
         mousebutton = e.getButton();
-        if (mousebutton == MouseEvent.BUTTON1) {
-        } else if (mousebutton == MouseEvent.BUTTON3) {
+        if (mousebutton == panButton) {
             //pan action on right mouse button
             decorationPane.setBuffer(map.getCanvas().getSnapShot());
             decorationPane.setCoord(0, 0, map.getComponent().getWidth(), map.getComponent().getHeight(), true);
@@ -170,8 +178,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
         decorationPane.setBuffer(null);
 
-        if (mousebutton == MouseEvent.BUTTON1) {
-        } else if (mousebutton == MouseEvent.BUTTON3) {
+        if (mousebutton == panButton) {
             //right mouse button : pan action
             decorationPane.setFill(false);
             decorationPane.setCoord(-5, -5, -4, -4, false);
@@ -197,15 +204,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         int x = e.getX();
         int y = e.getY();
 
-
-        // left mouse button
-        if (mousebutton == MouseEvent.BUTTON1) {
-
-            lastX = x;
-            lastY = y;
-
-        } //right mouse button : pan action
-        else if (mousebutton == MouseEvent.BUTTON3) {
+        if (mousebutton == panButton) {
             if ((lastX > 0) && (lastY > 0)) {
                 int dx = lastX - startX;
                 int dy = lastY - startY;
@@ -215,6 +214,9 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
             lastX = x;
             lastY = y;
 
+        }else{
+            lastX = x;
+            lastY = y;
         }
     }
 

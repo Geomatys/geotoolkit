@@ -71,6 +71,10 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
     public static final String MSG_NODE_MOVE = MessageBundle.getString("gesture_node_move");
     public static final String MSG_NODE_ADD = MessageBundle.getString("gesture_node_add");
     public static final String MSG_NODE_DELETE = MessageBundle.getString("gesture_node_delete");
+    public static final String MSG_SUBGEOM_MOVE = MessageBundle.getString("gesture_subgeom_move");
+    public static final String MSG_SUBGEOM_ADD = MessageBundle.getString("gesture_subgeom_add");
+    public static final String MSG_SUBGEOM_DELETE = MessageBundle.getString("gesture_subgeom_delete");
+    public static final String MSG_SUBGEOM_VALIDATE = MessageBundle.getString("gesture_subgeom_validate");
     public static final String MSG_ZOOM = MessageBundle.getString("gesture_zoom");
     public static final String MSG_DRAG = MessageBundle.getString("gesture_drag");
     public static final String MSG_VALIDATE = MessageBundle.getString("gesture_validate");
@@ -96,6 +100,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
     }
 
     public void setToNorth(JComponent comp){
+        comp.getInsets().set(5, 5, 5, 5);
         panNorth.add(BorderLayout.WEST,comp);
     }
 
@@ -121,6 +126,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         this.panGesture.removeAll();
 
         if(left != null || right != null || center != null || wheel != null){
+            panLabels.setBackground(Color.WHITE);
             panLabels.setBorder(new RoundedBorder());
             this.panGesture.add(panLabels);
         }
@@ -132,6 +138,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         panEast.removeAll();
         final JPanel panDetail = new JPanel();
         panDetail.setOpaque(false);
+        panDetail.setBackground(Color.WHITE);
         panDetail.setBorder(new RoundedBorder());
 
         if(comp != null){
