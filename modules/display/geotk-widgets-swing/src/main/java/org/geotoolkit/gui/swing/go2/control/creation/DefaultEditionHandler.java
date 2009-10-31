@@ -133,6 +133,7 @@ public class DefaultEditionHandler implements CanvasHandler {
             }
         });
 
+        installChooser();
     }
 
     public void setMap(Map2D map){
@@ -180,7 +181,6 @@ public class DefaultEditionHandler implements CanvasHandler {
      */
     @Override
     public void install(Component component) {
-        installChooser();
         //install decoration and listener
         gestureProxy.install(component);
         map.addDecoration(0,deco);
@@ -202,11 +202,12 @@ public class DefaultEditionHandler implements CanvasHandler {
 
 
     public void reset(){
-        guiStart.setEnabled(false);
+        guiStart.setEnabled(true);
+        guiLayers.setEnabled(true);
         guiEnd.setEnabled(false);
         deco.setToolsPane(null);
+        deco.setGestureMessages(null, null, null, null);
         setDelegate(null);
-        installChooser();
     }
 
     private void installChooser(){
@@ -221,8 +222,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         panTools.add(guiEnd);
         panNorth.add(panTools);
 
-        deco.removeAll();
-        deco.add(BorderLayout.NORTH, panNorth);
+        deco.setToNorth(panNorth);
         deco.revalidate();
     }
 

@@ -32,6 +32,8 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import org.opengis.feature.simple.SimpleFeature;
 
+import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
+
 /**
  * point creation handler
  * 
@@ -89,6 +91,7 @@ public class PointDelegate extends AbstractEditionDelegate{
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentAction = ACTION.MOVE;
+                handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, null, null);
             }
         });
         button.setSelected(true);
@@ -102,6 +105,7 @@ public class PointDelegate extends AbstractEditionDelegate{
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentAction = ACTION.ADD;
+                handler.getDecoration().setGestureMessages(MSG_GEOM_ADD, null, null, null);
             }
         });
         group.add(button);
@@ -114,12 +118,15 @@ public class PointDelegate extends AbstractEditionDelegate{
 
         deleteAction.setEnabled(feature != null);
         handler.getDecoration().setToolsPane(pan);
+
+        handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, null, null);
     }
 
     private void setCurrentFeature(SimpleFeature feature){
         this.feature = feature;
         if(feature != null){
             this.geometry = (Point)handler.getHelper().toObjectiveCRS(feature);
+            handler.getDecoration().setGestureMessages(MSG_GEOM_MOVE, null, null, null);
         }else{
             this.geometry = null;
         }
@@ -140,7 +147,7 @@ public class PointDelegate extends AbstractEditionDelegate{
                         handler.getHelper().sourceAddGeometry(geo);
                     }
                     break;
-                default:
+                case MOVE:
                     setCurrentFeature(handler.getHelper().grabFeature(e.getX(), e.getY(), false));
             }
         }else if(button == MouseEvent.BUTTON3){
@@ -149,6 +156,7 @@ public class PointDelegate extends AbstractEditionDelegate{
                 handler.getHelper().sourceModifyFeature(this.feature, this.geometry);
                 handler.getDecoration().setGeometries(null);
             }
+            handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, null, null);
             reset();
             deleteAction.setEnabled(this.feature != null);
         }
@@ -182,6 +190,7 @@ public class PointDelegate extends AbstractEditionDelegate{
             this.modified = true;
             this.geometry = handler.getHelper().toJTS(e.getX(), e.getY());
             handler.getDecoration().setGeometries(Collections.singleton(this.geometry));
+            handler.getDecoration().setGestureMessages(MSG_GEOM_MOVE, MSG_VALIDATE, null, null);
         }
     }
 

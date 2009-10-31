@@ -32,19 +32,23 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Shape;
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import javax.swing.SwingConstants;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 
-
-
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -54,21 +58,77 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
+    private static final Icon ICON_MOUSE_LEFT = IconBundle.getInstance().getIcon("22_mouse_left");
+    private static final Icon ICON_MOUSE_RIGHT = IconBundle.getInstance().getIcon("22_mouse_right");
+    private static final Icon ICON_MOUSE_CENTER = IconBundle.getInstance().getIcon("22_mouse_center");
+    private static final Icon ICON_MOUSE_WHEEL = IconBundle.getInstance().getIcon("22_mouse_wheel");
+
+    public static final String MSG_GEOM_SELECT = MessageBundle.getString("gesture_geom_select");
+    public static final String MSG_GEOM_MOVE = MessageBundle.getString("gesture_geom_move");
+    public static final String MSG_GEOM_ADD = MessageBundle.getString("gesture_geom_add");
+    public static final String MSG_GEOM_DELETE = MessageBundle.getString("gesture_geom_delete");
+    public static final String MSG_NODE_SELECT = MessageBundle.getString("gesture_node_select");
+    public static final String MSG_NODE_MOVE = MessageBundle.getString("gesture_node_move");
+    public static final String MSG_NODE_ADD = MessageBundle.getString("gesture_node_add");
+    public static final String MSG_NODE_DELETE = MessageBundle.getString("gesture_node_delete");
+    public static final String MSG_ZOOM = MessageBundle.getString("gesture_zoom");
+    public static final String MSG_DRAG = MessageBundle.getString("gesture_drag");
+    public static final String MSG_VALIDATE = MessageBundle.getString("gesture_validate");
+
     private static final Color MAIN_COLOR = Color.RED;
     private final JPanel panEast = new JPanel(new FlowLayout(FlowLayout.LEADING));
+    private final JPanel panNorth = new JPanel(new BorderLayout(2,2));
+    private final JPanel panGesture = new JPanel();
 
 
     DefaultEditionDecoration() {
         setLayout(new BorderLayout());
         panEast.setOpaque(false);
+        panNorth.setOpaque(false);
+        panGesture.setOpaque(false);
+        panNorth.add(BorderLayout.EAST,panGesture);
+        add(BorderLayout.EAST,panEast);
+        add(BorderLayout.NORTH,panNorth);
     }
 
     public void reset(){
         setMap2D(map);
     }
 
+    public void setToNorth(JComponent comp){
+        panNorth.add(BorderLayout.WEST,comp);
+    }
+
+    public void setGestureMessages(String left, String right, String center, String wheel){
+
+        final JPanel panLabels = new JPanel(new GridLayout(4, 1,4,4));
+        panLabels.setOpaque(false);
+        panLabels.getInsets().set(5, 5, 5, 5);
+
+        if(left != null){
+            panLabels.add(new JLabel(left, ICON_MOUSE_LEFT, SwingConstants.LEFT));
+        }
+        if(right != null){
+            panLabels.add(new JLabel(right, ICON_MOUSE_RIGHT, SwingConstants.LEFT));
+        }
+        if(center != null){
+            panLabels.add(new JLabel(center, ICON_MOUSE_CENTER, SwingConstants.LEFT));
+        }
+        if(wheel != null){
+            panLabels.add(new JLabel(wheel, ICON_MOUSE_WHEEL, SwingConstants.LEFT));
+        }
+
+        this.panGesture.removeAll();
+
+        if(left != null || right != null || center != null || wheel != null){
+            panLabels.setBorder(new RoundedBorder());
+            this.panGesture.add(panLabels);
+        }
+        repaint();
+        revalidate();
+    }
+
     public void setToolsPane(JComponent comp){
-        remove(panEast);
         panEast.removeAll();
         final JPanel panDetail = new JPanel();
         panDetail.setOpaque(false);
@@ -79,7 +139,6 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
             panDetail.add(comp);
         }
         panEast.add(panDetail);
-        add(BorderLayout.EAST,panEast);
         repaint();
         revalidate();
     }
