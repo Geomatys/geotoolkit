@@ -37,7 +37,7 @@ import org.apache.maven.project.MavenProject;
  * many time.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
  * @since 3.00
  *
@@ -49,6 +49,11 @@ public class PackerSpecificMojo extends AbstractMojo {
      * The Geotoolkit version.
      */
     private static final String VERSION = "SNAPSHOT";
+
+    /**
+     * The JavaDB version.
+     */
+    private static final String DERBY_VERSION = "10.5.3.0_1";
 
     /**
      * The Maven project running this plugin.
@@ -80,27 +85,48 @@ public class PackerSpecificMojo extends AbstractMojo {
         try {
             final String referencing = "geotk-bundle-referencing-" + VERSION + ".jar";
             final String coverage    = "geotk-bundle-coverage-"    + VERSION + ".jar";
+            final String catalog     = "geotk-bundle-catalog-"     + VERSION + ".jar";
             final String all         = "geotk-bundle-"             + VERSION + ".jar";
             final Packer packer = new Packer(targetDirectory, VERSION);
             packer.addPack(null, referencing, new String[] {
                     "vecmath-1.5.2.jar",
                     "jsr-275-1.0-beta-2.jar",
                     "geoapi-pending-2.3-SNAPSHOT.jar",
-                    "geotk-epsg-" + VERSION + ".jar",
-                    "geotk-utility-" + VERSION + ".jar",
-                    "geotk-metadata-" + VERSION + ".jar",
+                    "geotk-epsg-"        + VERSION + ".jar",
+                    "geotk-utility-"     + VERSION + ".jar",
+                    "geotk-metadata-"    + VERSION + ".jar",
                     "geotk-referencing-" + VERSION + ".jar" // Last in order to pickup its main class.
             });
             packer.addPack(referencing, coverage, new String[] {
-                    "geotk-coverage-" + VERSION + ".jar",
+                    "geotk-coverage-"   + VERSION + ".jar",
                     "geotk-coverageio-" + VERSION + ".jar"
             });
-            packer.addPack(coverage, all, new String[] {
+            packer.addPack(coverage, catalog, new String[] {
+                    "geotk-metadata-sql-" + VERSION + ".jar",
+                    "geotk-epsg-javadb-"  + VERSION + ".jar",
+                    "derby-"             + DERBY_VERSION + ".jar",
+                    "derbyLocale_cs-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_de_DE-" + DERBY_VERSION + ".jar",
+                    "derbyLocale_es-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_fr-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_hu-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_it-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_ja_JP-" + DERBY_VERSION + ".jar",
+                    "derbyLocale_ko_KR-" + DERBY_VERSION + ".jar",
+                    "derbyLocale_pl-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_pt_BR-" + DERBY_VERSION + ".jar",
+                    "derbyLocale_ru-"    + DERBY_VERSION + ".jar",
+                    "derbyLocale_zh_CN-" + DERBY_VERSION + ".jar",
+                    "derbyLocale_zh_TW-" + DERBY_VERSION + ".jar"
+            });
+            packer.addPack(catalog, all, new String[] {
                     "jlfgr-1.0.jar",
                     "swingx-1.0.jar",
                     "wizard-0.998.1.jar",
-                    "geotk-setup-" + VERSION + ".jar",
-                    "geotk-display-" + VERSION + ".jar",
+                    "swing-worker-1.1.jar",
+                    "filters-2.0.235.jar",
+                    "geotk-setup-"         + VERSION + ".jar",
+                    "geotk-display-"       + VERSION + ".jar",
                     "geotk-widgets-swing-" + VERSION + ".jar",
                     "geotk-wizards-swing-" + VERSION + ".jar"
             });

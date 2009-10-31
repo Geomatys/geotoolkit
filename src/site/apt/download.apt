@@ -101,20 +101,25 @@ Downloading Geotoolkit.org Binaries
 *----------------------------------------+----------------------------------+-------------------------------+
 | <<<geotk-bundle-referencing.pack.gz>>> | \u2022 vecmath.jar               | \u2022 Java 6                 |
 |                                        | \u2022 jsr-275.jar               | \u2022 JavaDB (<optional>)    |
-|                                        | \u2022 geoapi.jar                |                               |
-|                                        | \u2022 geotk-epsg.jar            |                               |
+|                                        | \u2022 geoapi-pending.jar        |                               |
 |                                        | \u2022 geotk-utility.jar         |                               |
 |                                        | \u2022 geotk-metadata.jar        |                               |
 |                                        | \u2022 geotk-referencing.jar     |                               |
+|                                        | \u2022 geotk-epsg.jar            |                               |
 *----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus>  | \u2022 Java 6                 |
+| <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:> | \u2022 Java 6                 |
 |                                        | \u2022 geotk-coverage.jar        | \u2022 Java Advanced Imaging  |
 |                                        | \u2022 geotk-coverageio.jar      | \u2022 Image I/O extensions   |
 *----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle.pack.gz>>>             | <All the coverage pack plus>     | \u2022 Java 6                 |
+| <<<geotk-bundle-catalog.pack.gz>>>     | <All the coverage pack plus:>    | \u2022 Java 6                 |
+|                                        | \u2022 geotk-metadata-sql.jar    | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-epsg-javadb.jar     | \u2022 Image I/O extensions   |
+|                                        | \u2022 derby.jar                 |                               |
+*----------------------------------------+----------------------------------+-------------------------------+
+| <<<geotk-bundle.pack.gz>>>             | <All the catalog pack plus:>     | \u2022 Java 6                 |
 |                                        | \u2022 jlfgr.jar                 | \u2022 Java Advanced Imaging  |
 |                                        | \u2022 swingx.jar                | \u2022 Image I/O extensions   |
-|                                        | \u2022 wizard.jar                | \u2022 JavaDB (<optional>)    |
+|                                        | \u2022 wizard.jar                |                               |
 |                                        | \u2022 geotk-setup.jar           |                               |
 |                                        | \u2022 geotk-display.jar         |                               |
 |                                        | \u2022 geotk-widgets-swing.jar   |                               |
@@ -142,5 +147,3 @@ java -jar geotk-bundle-referencing.jar help
 -----------------------------------------------------------------------------------
 
   which will run the command line tool for working with the referencing and metadata modules.
-
-
