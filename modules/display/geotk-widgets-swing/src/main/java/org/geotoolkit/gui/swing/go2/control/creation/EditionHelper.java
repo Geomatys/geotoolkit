@@ -291,6 +291,31 @@ public class EditionHelper {
 
     }
 
+    public void moveSubGeometry(Geometry geo, int indice, int dx, int dy) {
+
+        try{
+            final Point2D pt0 = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
+            final Point2D pt = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
+            pt.setLocation(pt.getX()-pt0.getX(), pt.getY()-pt0.getY());
+
+            final Geometry subgeo = geo.getGeometryN(indice);
+            final Coordinate[] coos = subgeo.getCoordinates();
+
+            for (int j=0,m=coos.length; j<m; j++) {
+                final Coordinate coo = coos[j];
+                coo.x += pt.getX();
+                coo.y += pt.getY();
+            }
+            subgeo.geometryChanged();
+
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+        geo.geometryChanged();
+
+    }
+
+
     public Geometry insertNode(GeometryCollection geo, int mx, int my) {
         try{
             //transform our mouse in a geometry
@@ -407,6 +432,42 @@ public class EditionHelper {
                         }
                     }
                     break;
+                }
+
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return geo;
+    }
+
+    public Geometry deleteSubGeometry(GeometryCollection geo, int mx, int my) {
+
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                final Geometry subgeo = geo.getGeometryN(i);
+
+                if (subgeo.intersects(mouseGeo)) {
+                    //this geometry intersect the mouse
+
+                    final List<Geometry> subs = new ArrayList<Geometry>();
+                    for (int k=0,l=geo.getNumGeometries(); k<l; k++) {
+                        if(k!=i){
+                            subs.add(geo.getGeometryN(k));
+                        }
+                    }
+
+                    if(geo instanceof MultiLineString && !subs.isEmpty()){
+                         return createMultiLine(subs);
+                    }else if(geo instanceof MultiPolygon && !subs.isEmpty()){
+                         return createMultiPolygon(subs);
+                    }else{
+                        return null;
+                    }
                 }
 
             }

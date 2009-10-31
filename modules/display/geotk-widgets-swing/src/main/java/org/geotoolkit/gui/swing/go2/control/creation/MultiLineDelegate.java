@@ -56,7 +56,10 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
         GEOM_MOVE,
         NODE_MOVE,
         NODE_ADD,
-        NODE_DELETE
+        NODE_DELETE,
+        SUB_MOVE,
+        SUB_ADD,
+        SUB_DELETE
     }
 
     private final Action deleteAction = new AbstractAction("", ICON_DELETE) {
@@ -114,6 +117,15 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
             case NODE_MOVE:
                 handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
                 break;
+            case SUB_ADD:
+                handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
+                break;
+            case SUB_DELETE:
+                handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
+                break;
+            case SUB_MOVE:
+                handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
+                break;
         }
 
     }
@@ -121,7 +133,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
     @Override
     public void initialize() {
         //configure tool panel
-        final JPanel pan = new JPanel(new GridLayout(4,3));
+        final JPanel pan = new JPanel(new GridLayout(5,3));
         pan.setOpaque(false);
 
         final ButtonGroup group = new ButtonGroup();
@@ -150,6 +162,35 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
 
         pan.add(new JLabel(" "));
 
+        button = new JToggleButton(new AbstractAction("",ICON_SUBLINE_MOVE) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentAction = ACTION.SUB_MOVE;
+                reset();
+            }
+        });
+        group.add(button);
+        pan.add(button);
+
+        button = new JToggleButton(new AbstractAction("",ICON_SUBLINE_ADD) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentAction = ACTION.SUB_ADD;
+                reset();
+            }
+        });
+        group.add(button);
+        pan.add(button);
+
+        button = new JToggleButton(new AbstractAction("",ICON_SUBLINE_DELETE) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                currentAction = ACTION.SUB_DELETE;
+                reset();
+            }
+        });
+        group.add(button);
+        pan.add(button);
         button = new JToggleButton(new AbstractAction("",ICON_NODE_MOVE) {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -279,6 +320,58 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                         }
                     }
                     break;
+                case SUB_MOVE :
+                    if(geometry == null){
+                        setCurrentFeature(handler.getHelper().grabFeature(e.getX(), e.getY(), false));
+                        if(geometry != null){
+                            handler.getDecoration().setGestureMessages(MSG_SUBGEOM_MOVE, MSG_VALIDATE, MSG_DRAG, MSG_ZOOM);
+                        }
+                    }
+                    break;
+                case SUB_ADD :
+                    if(geometry == null){
+                        setCurrentFeature(handler.getHelper().grabFeature(e.getX(), e.getY(), false));
+                        if(geometry != null){
+                            for(int i=0,n=geometry.getNumGeometries(); i<n; i++){
+                                subGeometries.add(geometry.getGeometryN(i));
+                            }
+                            handler.getDecoration().setGestureMessages(MSG_SUBGEOM_ADD, MSG_VALIDATE, MSG_DRAG, MSG_ZOOM);
+                        }
+                    }else{
+                        coords.add(handler.getHelper().toCoord(e.getX(), e.getY()));
+                        if(coords.size() == 1){
+                            //this is the first point of the geometry we create
+                            //add another point that will be used when moving the mouse around
+                            coords.add(handler.getHelper().toCoord(e.getX(), e.getY()));
+                            Geometry cdt = EditionHelper.createGeometry(coords);
+                            subGeometries.add(cdt);
+                        }
+                        Geometry cdt = EditionHelper.createGeometry(coords);
+                        if (subGeometries.size() > 0) {
+                            subGeometries.remove(subGeometries.size() - 1);
+                        }
+                        subGeometries.add(cdt);
+                        geometry = EditionHelper.createMultiLine(subGeometries);
+                        added = true;
+                        handler.getDecoration().setGeometries(Collections.singleton(geometry));
+                        handler.getDecoration().setGestureMessages(MSG_NODE_ADD, MSG_SUBGEOM_VALIDATE, MSG_DRAG, MSG_ZOOM);
+                    }
+                    break;
+                case SUB_DELETE :
+                    if(geometry == null){
+                        setCurrentFeature(handler.getHelper().grabFeature(e.getX(), e.getY(), false));
+                        if(geometry != null){
+                            handler.getDecoration().setGestureMessages(MSG_SUBGEOM_DELETE, MSG_VALIDATE, MSG_DRAG, MSG_ZOOM);
+                        }
+                    }else{
+                        MultiLineString result = (MultiLineString) handler.getHelper().deleteSubGeometry(geometry, e.getX(), e.getY());
+                        if(result != null){
+                            modified = modified || result != geometry;
+                            geometry = result;
+                            handler.getDecoration().setGeometries(Collections.singleton(geometry));
+                        }
+                    }
+                    break;
             }
         }else if(button == MouseEvent.BUTTON3){
             switch(currentAction){
@@ -332,6 +425,27 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                     }
                     reset();
                     break;
+                case SUB_MOVE :
+                    if(modified){
+                        handler.getHelper().sourceModifyFeature(feature, geometry);
+                    }
+                    reset();
+                    break;
+                case SUB_ADD :
+                    if (subGeometries.size() > 0) {
+                        Geometry geo = EditionHelper.createMultiLine(subGeometries);
+                        handler.getHelper().sourceModifyFeature(feature, geo);
+                    }
+                    handler.getDecoration().setGeometries(null);
+                    coords.clear();
+                    reset();
+                    break;
+                case SUB_DELETE :
+                    if(modified){
+                        handler.getHelper().sourceModifyFeature(feature, geometry);
+                    }
+                    reset();
+                    break;
 
             }
 
@@ -366,6 +480,13 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 }
                 break;
             case NODE_MOVE:
+                if(this.geometry != null && e.getButton()==BUTTON1){
+                    //start dragging mode
+                    selection = handler.getHelper().grabGeometryNode(geometry, e.getX(), e.getY());
+                    return;
+                }
+                break;
+            case SUB_MOVE:
                 if(this.geometry != null && e.getButton()==BUTTON1){
                     //start dragging mode
                     selection = handler.getHelper().grabGeometryNode(geometry, e.getX(), e.getY());
@@ -408,6 +529,20 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                     return;
                 }
                 break;
+            case SUB_MOVE:
+                if(selection[0] >= 0 && pressed==BUTTON1){
+                    modified = true;
+                    int currentX = e.getX();
+                    int currentY = e.getY();
+
+                    handler.getHelper().moveSubGeometry(geometry,selection[0], currentX-lastX, currentY-lastY);
+                    handler.getDecoration().setGeometries(Collections.singleton(geometry));
+
+                    lastX = currentX;
+                    lastY = currentY;
+                    return;
+                }
+                break;
         }
         super.mouseReleased(e);
     }
@@ -443,6 +578,20 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                     return;
                 }
                 break;
+            case SUB_MOVE:
+                if(selection[0] >= 0 && pressed==BUTTON1){
+                    modified = true;
+                    int currentX = e.getX();
+                    int currentY = e.getY();
+
+                    handler.getHelper().moveSubGeometry(geometry,selection[0], currentX-lastX, currentY-lastY);
+                    handler.getDecoration().setGeometries(Collections.singleton(geometry));
+
+                    lastX = currentX;
+                    lastY = currentY;
+                    return;
+                }
+                break;
         }
         super.mouseDragged(e);
     }
@@ -450,6 +599,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
     @Override
     public void mouseMoved(MouseEvent e) {
         switch(currentAction){
+            case SUB_ADD :
             case GEOM_ADD :
                 if(coords.size() > 1){
                     coords.remove(coords.size()-1);
