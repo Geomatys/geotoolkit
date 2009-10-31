@@ -41,7 +41,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
-public abstract class StreamImageWriter extends GeographicImageWriter {
+public abstract class StreamImageWriter extends SpatialImageWriter {
     /**
      * The stream to {@linkplain #close close} on {@link #setOutput}, {@link #reset} or
      * {@link #dispose} method invocation. This stream is typically an
@@ -258,7 +258,7 @@ public abstract class StreamImageWriter extends GeographicImageWriter {
          * Returns {@code true} if the image writer implementation associated with this service
          * provider is able to encode an image with the given layout. The default implementation
          * returns always {@code true}, which is accurate if the writer will fetch pixel values
-         * with the help of an {@linkplain GeographicImageWriter#createRectIter iterator}.
+         * with the help of an {@linkplain SpatialImageWriter#createRectIter iterator}.
          */
         @Override
         public boolean canEncodeImage(final ImageTypeSpecifier type) {

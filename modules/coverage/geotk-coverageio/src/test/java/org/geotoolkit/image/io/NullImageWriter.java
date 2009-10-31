@@ -39,7 +39,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @since 2.5
  */
-public class NullImageWriter extends GeographicImageWriter {
+public class NullImageWriter extends SpatialImageWriter {
     /**
      * Constructs a {@code NullImageWriter}.
      *

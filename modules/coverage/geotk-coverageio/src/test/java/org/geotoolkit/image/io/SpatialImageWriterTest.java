@@ -31,14 +31,14 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link GeographicImageWriter}, especially the {@link RectIter} creation.
+ * Tests {@link SpatialImageWriter}, especially the {@link RectIter} creation.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
  *
  * @since 2.5
  */
-public final class GeographicImageWriterTest {
+public final class SpatialImageWriterTest {
     /**
      * Tests the {@link RectIter}.
      *
@@ -67,11 +67,11 @@ public final class GeographicImageWriterTest {
         }
         final int count = value;
         final IIOImage iiom = new IIOImage(image, null, null);
-        assertEquals(count, GeographicImageWriter.computeSize(iiom, null).getNumSampleValues());
+        assertEquals(count, SpatialImageWriter.computeSize(iiom, null).getNumSampleValues());
         /*
          * Using JAI iterator on the whole image.
          */
-        RectIter iterator = GeographicImageWriter.createRectIter(iiom, null);
+        RectIter iterator = SpatialImageWriter.createRectIter(iiom, null);
         assertFalse(iterator instanceof SubsampledRectIter);
         checkSampleSuite(iterator, --value, -1, 0);
         /*
@@ -84,7 +84,7 @@ public final class GeographicImageWriterTest {
         for (int sourceYSubsampling=1; sourceYSubsampling<=6; sourceYSubsampling++) {
             for (int sourceXSubsampling=1; sourceXSubsampling<=6; sourceXSubsampling++) {
                 param.setSourceSubsampling(sourceXSubsampling, sourceYSubsampling, 0, 0);
-                iterator = GeographicImageWriter.createRectIter(iiom, param);
+                iterator = SpatialImageWriter.createRectIter(iiom, param);
 
                 // Number of points on which to iterate in a row.
                 int n = (bounds.width - 1) / sourceXSubsampling + 1;

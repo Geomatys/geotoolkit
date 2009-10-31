@@ -27,18 +27,15 @@ import org.geotoolkit.util.converter.Classes;
 
 
 /**
- * Default parameters for {@link GeographicImageReader}.
+ * Default parameters for {@link SpatialImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.05
  *
- * @since 2.4
+ * @since 3.05 (derived from 2.4)
  * @module
- *
- * @deprecated Renamed {@link SpatialImageReadParam}.
  */
-@Deprecated
-public class GeographicImageReadParam extends ImageReadParam {
+public class SpatialImageReadParam extends ImageReadParam {
     /**
      * The name of the default color palette to apply when none was explicitly specified.
      *
@@ -68,7 +65,7 @@ public class GeographicImageReadParam extends ImageReadParam {
      *
      * @param reader The reader for which this parameter block is created
      */
-    public GeographicImageReadParam(final ImageReader reader) {
+    public SpatialImageReadParam(final ImageReader reader) {
         locale = (reader != null) ? reader.getLocale() : null;
     }
 
@@ -126,7 +123,7 @@ public class GeographicImageReadParam extends ImageReadParam {
     /**
      * Returns the name of the color palette to apply when creating an
      * {@linkplain java.awt.image.IndexColorModel index color model}.
-     * This is the name specified by the last call to {@link #setPaletteName}.
+     * This is the name specified by the last call to {@link #setPaletteName(String)}.
      *
      * @return The name of the color palette to apply.
      */
@@ -137,7 +134,7 @@ public class GeographicImageReadParam extends ImageReadParam {
     /**
      * Sets the color palette as one of the {@linkplain PaletteFactory#getAvailableNames available
      * names} provided by the {@linkplain PaletteFactory#getDefault default palette factory}. This
-     * name will be given by the {@link GeographicImageReader} default implementation to the
+     * name will be given by the {@link SpatialImageReader} default implementation to the
      * {@linkplain PaletteFactory#getDefault default palette factory} for creating a
      * {@linkplain javax.imageio.ImageTypeSpecifier image type specifier}.
      *

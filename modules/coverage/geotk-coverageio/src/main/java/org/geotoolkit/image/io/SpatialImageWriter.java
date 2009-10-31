@@ -44,22 +44,19 @@ import org.geotoolkit.resources.IndexedResourceBundle;
 
 
 /**
- * Base class for writers of geographic images.
+ * Base class for writers of spatial (usually geographic) data.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.05
  *
- * @since 2.4
+ * @since 3.05 (derived from 2.4)
  * @module
- *
- * @deprecated Renamed {@link SpatialImageWriter}.
  */
-@Deprecated
-public abstract class GeographicImageWriter extends ImageWriter {
+public abstract class SpatialImageWriter extends ImageWriter {
     /**
      * The logger to use for events related to this image writer.
      */
-    static final Logger LOGGER = Logging.getLogger(GeographicImageWriter.class);
+    static final Logger LOGGER = Logging.getLogger(SpatialImageWriter.class);
 
     /**
      * Index of the image in process of being written. This convenience index is reset to 0
@@ -74,11 +71,11 @@ public abstract class GeographicImageWriter extends ImageWriter {
     private int thumbnailIndex = 0;
 
     /**
-     * Constructs a {@code GeographicImageWriter}.
+     * Constructs a {@code SpatialImageWriter}.
      *
      * @param provider The {@code ImageWriterSpi} that is constructing this object, or {@code null}.
      */
-    protected GeographicImageWriter(final ImageWriterSpi provider) {
+    protected SpatialImageWriter(final ImageWriterSpi provider) {
         super(provider);
         availableLocales = Locales.getAvailableLocales();
     }
@@ -479,7 +476,7 @@ public abstract class GeographicImageWriter extends ImageWriter {
      */
     private void warningOccurred(final String method, final Exception ex) {
         final LogRecord record = new LogRecord(Level.WARNING, ex.toString());
-        record.setSourceClassName(GeographicImageWriter.class.getName());
+        record.setSourceClassName(SpatialImageWriter.class.getName());
         record.setSourceMethodName(method);
         record.setThrown(ex);
         warningOccurred(record);

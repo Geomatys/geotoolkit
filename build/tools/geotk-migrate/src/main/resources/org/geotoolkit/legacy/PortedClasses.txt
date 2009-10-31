@@ -134,9 +134,6 @@ image.ImageWorker
 image.TransfertRectIter
 image.io.ContinuousPalette
 image.io.FileImageReader
-image.io.GeographicImageReadParam
-image.io.GeographicImageReader
-image.io.GeographicImageWriter
 image.io.IIOListeners
 image.io.IIOReadProgressAdapter
 image.io.IndexedPalette
@@ -154,8 +151,6 @@ image.io.SubsampledRectIter
 image.io.metadata.Axis
 image.io.metadata.Band
 image.io.metadata.ChildList
-image.io.metadata.GeographicMetadata
-image.io.metadata.GeographicMetadataFormat
 image.io.metadata.Identification
 image.io.metadata.ImageGeometry
 image.io.metadata.ImageReferencing

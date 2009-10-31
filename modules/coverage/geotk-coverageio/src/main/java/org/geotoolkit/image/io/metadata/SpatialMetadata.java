@@ -40,11 +40,11 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.GeographicImageReader;
-import org.geotoolkit.image.io.GeographicImageWriter;
+import org.geotoolkit.image.io.SpatialImageWriter;
 
 
 /**
- * Geographic informations encoded in an image. This class converts the
+ * Spatial (usually geographic) informations encoded in an image. This class converts the
  * {@link IIOMetadataNode} elements and attribute values to metadata objects conform
  * to some {@linkplain org.geotoolkit.metadata.MetadataStandard metadata standard}
  * (typically ISO 19115-2) and conversely.
@@ -355,8 +355,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     protected void warningOccurred(final LogRecord record) {
         if (owner instanceof GeographicImageReader) {
             ((GeographicImageReader) owner).warningOccurred(record);
-        } else if (owner instanceof GeographicImageWriter) {
-            ((GeographicImageWriter) owner).warningOccurred(record);
+        } else if (owner instanceof SpatialImageWriter) {
+            ((SpatialImageWriter) owner).warningOccurred(record);
         } else {
             final Logger logger = Logging.getLogger(SpatialMetadata.class);
             record.setLoggerName(logger.getName());
@@ -365,7 +365,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * A {@link LoggedFormat} which use the {@link GeographicMetadata#getLocale reader locale}
+     * A {@link LoggedFormat} which use the {@link SpatialMetadata#getLocale reader locale}
      * for warnings.
      */
     private final class FormatAdapter<T> extends LoggedFormat<T> {

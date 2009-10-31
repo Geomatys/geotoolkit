@@ -91,7 +91,12 @@ import org.geotoolkit.image.io.metadata.Band;
  *
  * @since 1.2
  * @module
+ *
+ * @deprecated This class will be renamed {@code SpatialImageReader} in the next Geotk release.
+ *    That {@code SpatialImageReader} class is not presents in the Geotk 3.05 release because
+ *    not ready (the way to handle metadata is different).
  */
+@Deprecated
 public abstract class GeographicImageReader extends ImageReader {
     /**
      * The logger to use for events related to this image reader.
