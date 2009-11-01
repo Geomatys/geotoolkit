@@ -55,6 +55,7 @@ import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.misc.LayerListRenderer;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
@@ -72,7 +73,7 @@ public class DefaultEditionHandler implements CanvasHandler {
     private final GestureProxy gestureProxy = new GestureProxy();
     private final EditionHelper helper = new EditionHelper(this);
 
-    private final Action startAction = new AbstractAction("Start") {
+    private final Action startAction = new AbstractAction(MessageBundle.getString("start")) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             final Object candidate = guiLayers.getSelectedItem();
@@ -103,7 +104,7 @@ public class DefaultEditionHandler implements CanvasHandler {
 
         }
     };
-    private final Action endAction = new AbstractAction("End") {
+    private final Action endAction = new AbstractAction(MessageBundle.getString("end")) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             reset();
