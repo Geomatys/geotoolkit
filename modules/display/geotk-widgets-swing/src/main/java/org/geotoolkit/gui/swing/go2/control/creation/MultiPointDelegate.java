@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.go2.control.creation;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
@@ -131,6 +130,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_GEOM_MOVE);
         button.setSelected(true);
         group.add(button);
         pan.add(button);
@@ -142,6 +142,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_GEOM_ADD);
         group.add(button);
         pan.add(button);
 
@@ -154,6 +155,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_SUBGEOM_MOVE);
         group.add(button);
         pan.add(button);
 
@@ -164,6 +166,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_SUBGEOM_DELETE);
         group.add(button);
         pan.add(button);
 
@@ -174,6 +177,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_SUBGEOM_DELETE);
         group.add(button);
         pan.add(button);
 
@@ -185,6 +189,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
         pan.add(new JLabel(" "));
 
         button = new JButton(deleteAction);
+        button.setToolTipText(MSG_GEOM_DELETE);
         pan.add(button);
 
         deleteAction.setEnabled(this.feature != null);

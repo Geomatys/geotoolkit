@@ -88,13 +88,13 @@ public class PointDelegate extends AbstractEditionDelegate{
         AbstractButton button;
 
         button = new JToggleButton(new AbstractAction("",ICON_MOVE) {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 currentAction = ACTION.MOVE;
                 handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
             }
         });
+        button.setToolTipText(MSG_GEOM_MOVE);
         button.setSelected(true);
         group.add(button);
         pan.add(button);
@@ -109,12 +109,14 @@ public class PointDelegate extends AbstractEditionDelegate{
                 handler.getDecoration().setGestureMessages(MSG_GEOM_ADD, null, MSG_DRAG, MSG_ZOOM);
             }
         });
+        button.setToolTipText(MSG_GEOM_ADD);
         group.add(button);
         pan.add(button);
 
         pan.add(new JLabel(" "));
 
         button = new JButton(deleteAction);
+        button.setToolTipText(MSG_GEOM_DELETE);
         pan.add(button);
 
         deleteAction.setEnabled(feature != null);

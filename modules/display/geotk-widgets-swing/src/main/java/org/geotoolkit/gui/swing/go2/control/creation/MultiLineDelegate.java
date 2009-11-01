@@ -146,6 +146,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_GEOM_MOVE);
         button.setSelected(true);
         group.add(button);
         pan.add(button);
@@ -157,6 +158,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_GEOM_ADD);
         group.add(button);
         pan.add(button);
 
@@ -169,6 +171,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_SUBGEOM_MOVE);
         group.add(button);
         pan.add(button);
 
@@ -179,6 +182,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_SUBGEOM_ADD);
         group.add(button);
         pan.add(button);
 
@@ -189,6 +193,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_SUBGEOM_DELETE);
         group.add(button);
         pan.add(button);
         button = new JToggleButton(new AbstractAction("",ICON_NODE_MOVE) {
@@ -198,6 +203,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_NODE_MOVE);
         group.add(button);
         pan.add(button);
 
@@ -208,6 +214,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_NODE_ADD);
         group.add(button);
         pan.add(button);
 
@@ -219,6 +226,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
                 reset();
             }
         });
+        button.setToolTipText(MSG_NODE_DELETE);
         group.add(button);
         pan.add(button);
 
@@ -231,6 +239,7 @@ public class MultiLineDelegate extends AbstractEditionDelegate {
         pan.add(new JLabel(" "));
 
         button = new JButton(deleteAction);
+        button.setToolTipText(MSG_GEOM_DELETE);
         pan.add(button);
 
         deleteAction.setEnabled(this.feature != null);
