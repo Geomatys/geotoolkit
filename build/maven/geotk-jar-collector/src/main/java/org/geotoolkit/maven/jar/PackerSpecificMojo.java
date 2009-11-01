@@ -85,7 +85,7 @@ public class PackerSpecificMojo extends AbstractMojo {
         try {
             final String referencing = "geotk-bundle-referencing-" + VERSION + ".jar";
             final String coverage    = "geotk-bundle-coverage-"    + VERSION + ".jar";
-            final String catalog     = "geotk-bundle-catalog-"     + VERSION + ".jar";
+            final String storage     = "geotk-bundle-storage-"     + VERSION + ".jar";
             final String all         = "geotk-bundle-"             + VERSION + ".jar";
             final Packer packer = new Packer(targetDirectory, VERSION);
             packer.addPack(null, referencing, new String[] {
@@ -101,7 +101,7 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "geotk-coverage-"   + VERSION + ".jar",
                     "geotk-coverageio-" + VERSION + ".jar"
             });
-            packer.addPack(coverage, catalog, new String[] {
+            packer.addPack(coverage, storage, new String[] {
                     "geotk-metadata-sql-" + VERSION + ".jar",
                     "geotk-epsg-javadb-"  + VERSION + ".jar",
                     "derby-"             + DERBY_VERSION + ".jar",
@@ -119,7 +119,7 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "derbyLocale_zh_CN-" + DERBY_VERSION + ".jar",
                     "derbyLocale_zh_TW-" + DERBY_VERSION + ".jar"
             });
-            packer.addPack(catalog, all, new String[] {
+            packer.addPack(storage, all, new String[] {
                     "jlfgr-1.0.jar",
                     "swingx-1.0.jar",
                     "wizard-0.998.1.jar",

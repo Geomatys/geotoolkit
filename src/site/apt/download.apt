@@ -111,12 +111,12 @@ Downloading Geotoolkit.org Binaries
 |                                        | \u2022 geotk-coverage.jar        | \u2022 Java Advanced Imaging  |
 |                                        | \u2022 geotk-coverageio.jar      | \u2022 Image I/O extensions   |
 *----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle-catalog.pack.gz>>>     | <All the coverage pack plus:>    | \u2022 Java 6                 |
+| <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>    | \u2022 Java 6                 |
 |                                        | \u2022 geotk-metadata-sql.jar    | \u2022 Java Advanced Imaging  |
 |                                        | \u2022 geotk-epsg-javadb.jar     | \u2022 Image I/O extensions   |
 |                                        | \u2022 derby.jar                 |                               |
 *----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle.pack.gz>>>             | <All the catalog pack plus:>     | \u2022 Java 6                 |
+| <<<geotk-bundle.pack.gz>>>             | <All the storage pack plus:>     | \u2022 Java 6                 |
 |                                        | \u2022 jlfgr.jar                 | \u2022 Java Advanced Imaging  |
 |                                        | \u2022 swingx.jar                | \u2022 Image I/O extensions   |
 |                                        | \u2022 wizard.jar                |                               |
