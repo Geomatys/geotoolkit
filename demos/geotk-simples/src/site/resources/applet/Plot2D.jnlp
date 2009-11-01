@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="6.0+" codebase="http://download.geotoolkit.org/packs/"
+      href="http://www.geotoolkit.org/demos/geotk-simples/applet/Plot2D.jnlp">
+
+  <information>
+    <title>Plot2D</title>
+    <vendor>Geotoolkit.org</vendor>
+    <homepage href="http://www.geotoolkit.org/demos"/>
+    <description kind="one-line">Illustrates the use of the Geotk Plot2D widget by drawing random data.</description>
+    <offline-allowed/>
+  </information>
+
+  <resources>
+    <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="geotk-simples-3.05.jar" main="true"/>
+    <property name="jnlp.packEnabled" value="true"/>
+  </resources>
+
+  <applet-desc name="Plot2D" main-class="org.geotoolkit.demo.swing.Plot2DApplet" width="800" height="400"/>
+  <update check="background"/>
+
+</jnlp>

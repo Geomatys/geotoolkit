@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="6.0+" codebase="http://download.geotoolkit.org/packs/"
+      href="http://www.geotoolkit.org/demos/geotk-simples/applet/CoordinateChooser.jnlp">
+
+  <information>
+    <title>CoordinateChooser</title>
+    <vendor>Geotoolkit.org</vendor>
+    <homepage href="http://www.geotoolkit.org/demos"/>
+    <description kind="one-line">Illustrates the use of the Geotk CoordinateChooser widget.</description>
+    <offline-allowed/>
+  </information>
+
+  <resources>
+    <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="geotk-simples-3.05.jar" main="true"/>
+    <property name="jnlp.packEnabled" value="true"/>
+  </resources>
+
+  <applet-desc name="CoordinateChooser" main-class="org.geotoolkit.demo.swing.CoordinateChooserApplet" width="350" height="400"/>
+  <update check="background"/>
+
+</jnlp>
