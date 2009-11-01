@@ -317,6 +317,46 @@ public class EditionHelper {
     }
 
 
+    public Geometry insertNode(Polygon geo, int mx, int my) {
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+            final Geometry mousePoint = toJTS(mx, my);
+
+            if (geo.intersects(mouseGeo)) {
+                //this geometry intersect the mouse
+
+                final Coordinate[] coos = geo.getCoordinates();
+                for (int j=0,m=coos.length-1; j<m; j++) {
+                    //find the segment that intersect
+                    final Coordinate coo1 = coos[j];
+                    final Coordinate coo2 = coos[j+1];
+                    final Geometry segment = createLine(coo1,coo2);
+
+                    if(mouseGeo.intersects(segment) && segment.getEnvelope().intersects(mousePoint)){
+                        //we must add the new node on this segment
+
+                        final List<Coordinate> ncs = new ArrayList<Coordinate>();
+                        for (int d=0,p=coos.length; d<p; d++) {
+                            ncs.add(coos[d]);
+                            if(d==j){
+                                //we must add the new node here
+                                ncs.add(mousePoint.getCoordinate());
+                            }
+                         }
+
+                        return createPolygon(ncs);
+                    }
+                }
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return geo;
+    }
+
+
     public Geometry insertNode(GeometryCollection geo, int mx, int my) {
         try{
             //transform our mouse in a geometry
@@ -375,6 +415,43 @@ public class EditionHelper {
                     break;
                 }
 
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return geo;
+    }
+
+    public Geometry deleteNode(Polygon geo, int mx, int my) {
+
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+
+            if (geo.intersects(mouseGeo)) {
+                //this geometry intersect the mouse
+
+                final Coordinate[] coos = geo.getCoordinates();
+                for (int j=0,m=coos.length; j<m; j++) {
+                    final Coordinate coo = coos[j];
+                    final Point p = createPoint(coo);
+                    if (p.intersects(mouseGeo)) {
+                        //delete this node
+
+                        final List<Coordinate> ncs = new ArrayList<Coordinate>();
+                        for (int d=0,z=coos.length; d<z; d++) {
+                            if(d!=j){
+                                ncs.add(coos[d]);
+                            }
+                        }
+
+                        if(ncs.size() > 2){
+                            return createPolygon(ncs);
+                        }
+                        break;
+                    }
+                }
             }
         }catch(Exception ex){
             ex.printStackTrace();
