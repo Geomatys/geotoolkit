@@ -46,6 +46,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.gui.swing.go2.Map2D;
@@ -553,6 +554,9 @@ public class EditionHelper {
                 } else {
                     values[i] = desc.getDefaultValue();
                 }
+                if(values[i] == null){
+                    values[i] = FeatureUtilities.defaultValue(desc.getType().getBinding());
+                }
             }
 
             SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
@@ -720,7 +724,12 @@ public class EditionHelper {
     }
 
     public static LinearRing createLinearRing(List<Coordinate> coords) {
+        coords = new ArrayList<Coordinate>(coords);
         if (!(coords.get(0).equals2D(coords.get(coords.size() - 1)))) {
+            Coordinate coo = new Coordinate(coords.get(0));
+            coords.add(coo);
+        }
+        if(coords.size() == 3){
             Coordinate coo = new Coordinate(coords.get(0));
             coords.add(coo);
         }
@@ -738,6 +747,8 @@ public class EditionHelper {
         for (Geometry go : geoms) {
             if (go instanceof Polygon) {
                 lst.add((Polygon) go);
+            }else{
+                throw new IllegalArgumentException("Found an unexpected geometry type while building multipolygon : " + go.getClass());
             }
         }
         return GEOMETRY_FACTORY.createMultiPolygon(lst.toArray(new Polygon[lst.size()]));

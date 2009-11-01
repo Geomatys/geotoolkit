@@ -103,10 +103,10 @@ public final class JTSUtilities {
      * @return A new ring with the reversed Coordinates.
      */
     public static final LinearRing reverseRing(LinearRing lr) {
-        final int numPoints = lr.getNumPoints();
-        final Coordinate[] newCoords = new Coordinate[numPoints];
+        final int numPoints = lr.getNumPoints()-1;
+        final Coordinate[] newCoords = new Coordinate[numPoints+1];
 
-        for (int t = numPoints-1; t >= 0; t--) {
+        for (int t = numPoints; t >= 0; t--) {
             newCoords[t] = lr.getCoordinateN(numPoints - t);
         }
 

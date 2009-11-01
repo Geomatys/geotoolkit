@@ -36,6 +36,9 @@ import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
@@ -44,7 +47,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @author Johann Sorel
  * @module pending
  */
-public class JFeatureAttributPane<T extends Feature> extends javax.swing.JPanel {
+public class JFeatureAttributPane<T extends SimpleFeature> extends javax.swing.JPanel {
 
     private final T feature;
 
@@ -53,7 +56,7 @@ public class JFeatureAttributPane<T extends Feature> extends javax.swing.JPanel 
         this.feature = feature;
         initComponents();
 
-        tab_data.setModel(new FeatureSourceModel(tab_data,(List<Feature>)Collections.singletonList(feature)));
+        tab_data.setModel(new FeatureSourceModel((List<SimpleFeature>)Collections.singletonList(feature)));
         tab_data.setEditable(true);
         tab_data.setColumnControlVisible(false);
         tab_data.setHorizontalScrollEnabled(true);
@@ -117,7 +120,7 @@ public class JFeatureAttributPane<T extends Feature> extends javax.swing.JPanel 
         return feature;
     }
 
-    public static <S extends Feature> S configure(S feature){
+    public static <S extends SimpleFeature> S configure(S feature){
 
         final JDialog dialog = new JDialog();
         dialog.setModal(true);
@@ -146,17 +149,15 @@ public class JFeatureAttributPane<T extends Feature> extends javax.swing.JPanel 
 
     public class FeatureSourceModel extends DefaultTableModel {
 
-        private final ArrayList<PropertyDescriptor> columns = new ArrayList<PropertyDescriptor>();
-        private final List<Feature> features;
-        private JXTable tab;
+        private final ArrayList<AttributeDescriptor> columns = new ArrayList<AttributeDescriptor>();
+        private final List<SimpleFeature> features;
 
         /** Creates a new instance of BasicTableModel
          * @param tab
          * @param layer
          */
-        public FeatureSourceModel(JXTable tab, List<Feature> layers) {
+        public FeatureSourceModel(List<SimpleFeature> layers) {
             super();
-            this.tab = tab;
             this.features = layers;
             init();
         }
@@ -164,9 +165,9 @@ public class JFeatureAttributPane<T extends Feature> extends javax.swing.JPanel 
         public void init() {
             columns.clear();
 
-            FeatureType ft = features.get(0).getType();
+            SimpleFeatureType ft = features.get(0).getType();
 
-            for(PropertyDescriptor desc : ft.getDescriptors()){
+            for(AttributeDescriptor desc : ft.getAttributeDescriptors()){
                 if(!Geometry.class.isAssignableFrom(desc.getType().getBinding())){
                     columns.add(desc);
                 }
@@ -213,14 +214,13 @@ public class JFeatureAttributPane<T extends Feature> extends javax.swing.JPanel 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if(columnIndex == 0) return "-";
-            return features.get(rowIndex).getProperty(columns.get(columnIndex-1).getName()).getValue();
+            return features.get(rowIndex).getAttribute(columns.get(columnIndex-1).getLocalName());
         }
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             if(columnIndex == 0) return;
-            Property prop = features.get(rowIndex).getProperty(columns.get(columnIndex-1).getName());
-            prop.setValue(aValue);
+            features.get(rowIndex).setAttribute(columns.get(columnIndex-1).getLocalName(), aValue);
         }
 
     }
