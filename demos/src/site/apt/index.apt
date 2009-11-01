@@ -3,31 +3,39 @@ Geotoolkit.org demos
   These applications and applets demonstrate the functionalities available in the Geotoolkit.org
   library.
 
-  All demo are hereby placed into the Public Domain. This means anyone is free to do whatever
-  they wish with those files.
+  All this code is hereby placed into the Public Domain. This means anyone is free to do whatever
+  they wish with these files.
 
 
-* Simple applets
+* Demonstration applets
 
-  They are small applets showing small parts of functionality. Each applet typically demonstrate single
-  classes from the <<<{{{../../modules/display/geotk-widgets-swing/index.html}geotk-widgets-swing}}>>>
+  These applets demonstrate specific functionality in the Geotoolkit.org library.
+  Each applet typically demonstrates a single class from the
+  <<<{{{../../modules/display/geotk-widgets-swing/index.html}geotk-widgets-swing}}>>>
   module.
 
-    * {{{geotk-simples/applet/index.html}Applets index}}
+*--------------------------------------------------+----------------------------------------------------------------------+
+| {{{geotk-simples/applet/ZoomPane.html}ZoomPane}} | Display a component providing zoom and rotation capabilities.        |
+|                                                  | The content (map, chart, <etc.>) shall be provided by the developer. |
+|                                                  | In this demo, we display only a triangle and a square.               |
+*--------------------------------------------------+----------------------------------------------------------------------+
 
 
-* Simple code demos
+* Demonstration code
 
-  They are small (a few tens of lines) standalone classes that can be run from the command line.
-  Click on the links below for viewing the Java code. For downloading the file, click on the
-  "<raw>" link on the left side.
+  These are small standalone classes that could be compiled and run from the command line.
 
-  * Referencing
+  To view the java code, click on one of the links below. This will open a Mercurial on-line
+  code browser. To download the file, click on the "<raw>" link on the left side of the code
+  browser. The file can be compiled with the <<<javac>>> compiler assuming that the Geotk
+  library is on the classpath.
+
+  * Referencing demonstration
 
     * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
-      converts a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
+      shows how to convert a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
-  * Coverage
+  * Coverage demonstration
 
     * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
-      displays an image created from a matrix of floating point values.
+      shows how to create an image from a matrix of floating point values.

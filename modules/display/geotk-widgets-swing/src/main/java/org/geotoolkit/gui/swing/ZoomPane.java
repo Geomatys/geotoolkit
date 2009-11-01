@@ -134,9 +134,9 @@ import static java.awt.GridBagConstraints.*;
  * movements performed by the user through the scrollbars will be translated by calls to
  * {@link #transform(AffineTransform)}.
  *
- * <table><tr valign="top"><td>
+ * <table cellspacing="24" cellpadding="12" align="center"><tr valign="top"><td>
  * <img src="doc-files/ZoomPane.png">
- * </td><td>
+ * </td><td width="500" bgcolor="lightblue">
  * {@section Demo}
  * The image on the left side gives an example with a simple implementation drawing a
  * few geometric shapes. The menu and the optional magnifier glass are produced by this

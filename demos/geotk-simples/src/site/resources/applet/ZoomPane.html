@@ -1,26 +1,27 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title>ZoomPane</title>
+    <title>ZoomPane demo</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
-    <h1>ZoomPane</h1>
+    <h1>ZoomPane demo</h1>
+    <p>This demo illustrates the use of the Geotoolkit.org <code>ZoomPane</code> widget by
+       drawing a triangle and a box and placing the widget in an applet. The <code>ZoomPane</code>
+       widget manages an <cite>Affine Transform</cite> common to all <code>java.awt.Shape</code>
+       objects in the scene, thereby enabling the joint scaling, translation and rotation of all
+       painted objects.</p>
+
     <table cellpadding="6">
       <tr>
         <th nowrap align="left" valign="top">Widget javadoc:</th>
         <td><code><a href="../../../apidocs/org/geotoolkit/gui/swing/ZoomPane.html">ZoomPane</a></code></td>
       </tr>
       <tr>
-        <th nowrap align="left" valign="top">Purpose of this applet:</th>
-        <td>Draw simple geometric shapes for demonstrating the zooms and rotations capabilities
-            of the <code>ZoomPane</code> widget.</td>
-      </tr>
-      <tr>
         <th nowrap align="left" valign="top">How to make your own:</th>
         <td>In order to provide useful content, developers need to create a derived class of
         <code>ZoomPane</code> and define the <code>paintComponent(Graphics2D)</code> method.
-        This demo applet defines the above method for painting a triangle and a square only.</td>
+        This demo applet defines the above method to paint a triangle and a box.</td>
       </tr>
       <tr>
         <th nowrap align="left" valign="top">Prerequites:</th>
@@ -30,10 +31,10 @@
       </tr>
     </table>
     <p>&nbsp;</p>
-    <table align="center" border="1"><tr><td>
+    <table align="center" border="1"><tr><td width="400" height="400">
     <script src="http://www.java.com/js/deployJava.js"></script>
     <script>
-      var attributes = {width:600, height:400};
+      var attributes = {width:400, height:400};
       var parameters = {jnlp_href: 'ZoomPane.jnlp'};
       deployJava.runApplet(attributes, parameters, '1.6');
     </script>
