@@ -91,6 +91,7 @@ public class DefaultEditionHandler implements CanvasHandler {
                         setDelegate(new LineDelegate(DefaultEditionHandler.this));
                     }else if(c == Polygon.class){
                     }else if(c == MultiPoint.class){
+                        setDelegate(new MultiPointDelegate(DefaultEditionHandler.this));
                     }else if(c == MultiLineString.class){
                         setDelegate(new MultiLineDelegate(DefaultEditionHandler.this));
                     }else if(c == MultiPolygon.class){

@@ -466,6 +466,8 @@ public class EditionHelper {
                          return createMultiLine(subs);
                     }else if(geo instanceof MultiPolygon && !subs.isEmpty()){
                          return createMultiPolygon(subs);
+                    }else if(geo instanceof MultiPoint && !subs.isEmpty()){
+                         return createMultiPoint(subs);
                     }else{
                         return null;
                     }
@@ -706,7 +708,7 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createPoint(coord);
     }
 
-    public static MultiPoint createMultiPoint(List<Geometry> geoms) {
+    public static MultiPoint createMultiPoint(List<? extends Geometry> geoms) {
         List<Point> lst = new ArrayList<Point>();
         for (Geometry go : geoms) {
             if (go instanceof Point) {
