@@ -51,10 +51,17 @@ import org.geotoolkit.util.NullArgumentException;
  *       method with arbitrary return type, or {@code is*()} method with boolean return type,
  *       found in the <strong>interface</strong>. Getters declared only in the implementation
  *       are ignored.</p></li>
+ *   <li><p>Every properties are <cite>readable</cite>.</p></li>
  *   <li><p>A property is <cite>writable</cite> if a {@code set*(...)} method is defined
  *       in the implementation class for the corresponding {@code get*()} method. The
  *       setter doesn't need to be defined in the interface.</p></li>
  * </ul>
+ *
+ * An instance of {@code MetadataStandard} is associated to every {@link AbstractMetadata} objects.
+ * The {@code AbstractMetadata} base class usually form the basis of ISO 19115 implementations but
+ * can also be used for other standards. An instance of {@code MetadataStandard} is also associated
+ * with Image I/O {@link org.geotoolkit.image.io.metadata.SpatialMetadataFormat} in order to define
+ * the tree of XML nodes to be associated with raster data.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
@@ -509,7 +516,7 @@ public final class MetadataStandard {
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      *
-     * @see AbstractMetadata#asMap
+     * @see AbstractMetadata#asMap()
      */
     public Map<String,Object> asMap(final Object metadata) throws ClassCastException {
         return asMap(metadata, NullValuePolicy.NON_EMPTY, KeyNamePolicy.JAVABEANS_PROPERTY);
@@ -528,7 +535,7 @@ public final class MetadataStandard {
      * @throws ClassCastException if the metadata object doesn't implement a metadata
      *         interface of the expected package.
      *
-     * @see AbstractMetadata#asTree
+     * @see AbstractMetadata#asTree()
      */
     public TreeModel asTree(final Object metadata) throws ClassCastException {
         final PropertyTree builder = treeBuilders.get();

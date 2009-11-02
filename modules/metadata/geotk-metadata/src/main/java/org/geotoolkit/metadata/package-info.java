@@ -17,24 +17,33 @@
  */
 
 /**
- * Root package for various metadata implementations. This root package is not
- * linked to any particular metadata standard. It assumes that a standard is
- * defined through a set of Java interfaces (for example {@link org.opengis.metadata})
- * and uses reflection for performing basic operations like comparisons and copies.
+ * Root package for various metadata implementations. For a global overview of metadata in Geotk,
+ * see the <a href="{@docRoot}../modules/metadata/index.html">Metadata</a> page on the project web
+ * site.
  * <p>
- * Possible metadata implementations (already available or planed in a future Geotk version) are:
- * <UL>
- *   <LI>{@link org.geotoolkit.metadata.iso}: concrete implementation of ISO
- *       interfaces, including ISO&nbsp;19115 and ISO&nbsp;19115-2.</LI>
- *   <LI>{@code org.geotoolkit.metadata.dublin}: concrete implementation of
- *       Dublin core interfaces. <EM>Not yet implemented.</EM></LI>
- *   <LI>{@link org.geotoolkit.metadata.sql}: implementation of metadata interfaces
- *       backed by a SQL database. The metadata interfaces doesn't need to be ISO ones,
- *       which is why this package is not a sub-package of the ISO's one.</LI>
- * </UL>
+ * This root package is not linked to any particular metadata standard. It assumes that a standard
+ * is defined through a set of Java interfaces (for example {@link org.opengis.metadata}) and uses
+ * reflection for performing basic operations like comparisons and copies.
+ * <p>
+ * The available metadata implementations are:
+ * <p>
+ * <ul>
+ *   <li>{@link org.geotoolkit.metadata.iso}:&nbsp;
+ *       concrete implementation of ISO interfaces, including ISO&nbsp;19115 and ISO&nbsp;19115-2.</li>
+ *
+ *   <li>{@link org.geotoolkit.metadata.sql}:&nbsp;
+ *       implementation of metadata interfaces backed by a SQL database. The metadata interfaces
+ *       doesn't need to be ISO ones, which is why this package is not a sub-package of the ISO's
+ *       one.</li>
+ *
+ *   <li>{@link org.geotoolkit.image.io.metadata}:&nbsp;
+ *       Metadata managed by this package (it doesn't need to be a Geotk implementation) viewed
+ *       as a XML tree of {@link javax.image.io.metadata.IIOMetadataNode}s. This is used for
+ *       Image I/O operations.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.05
  *
  * @since 2.0
  * @module

@@ -25,7 +25,7 @@ if (uml != null) {
     // Fetch the metadata here.
 }</pre></blockquote>
 
-        <p>This is exactly the approach taken by the <a href="geotk-metadata-sql">geotk-metadata-sql/index.html</a>
+        <p>This is exactly the approach taken by the <a href="geotk-metadata-sql/index.html">geotk-metadata-sql</a>
         module for providing an implementation of all GeoAPI metadata interfaces reading their values
         directly from a SQL database.</p>
       </answer>
