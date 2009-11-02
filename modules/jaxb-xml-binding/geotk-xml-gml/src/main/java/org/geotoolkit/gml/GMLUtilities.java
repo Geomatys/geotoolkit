@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.StringTokenizer;
+import javax.xml.bind.JAXBException;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
@@ -73,7 +75,15 @@ public class GMLUtilities {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    private GMLUtilities(){}
+    public GMLUtilities(){}
+
+    public FeatureCollection read(final Object source) throws JAXBException{
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    public void write(FeatureCollection collection, Object stream) throws JAXBException{
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 
     public static AbstractGMLEntry getGMLFromISO(org.opengis.geometry.Geometry geometry) {
        if (geometry instanceof Point) {
