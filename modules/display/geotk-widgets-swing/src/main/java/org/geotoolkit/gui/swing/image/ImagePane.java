@@ -58,7 +58,7 @@ public class ImagePane extends ZoomPane {
     private final int renderedSize;
 
     /**
-     * The renderable image, or {@code null} if none. If non-null, then the {@link Render}
+     * The renderable image, or {@code null} if none. If non-null, then the {@code Render}
      * will transform this renderable image into a rendered one when first requested.
      * Once the image is rendered, this field is set to {@code null}.
      */
@@ -66,7 +66,7 @@ public class ImagePane extends ZoomPane {
 
     /**
      * The rendered image, or {@code null} if none. This image may be explicitly set
-     * by {@link #setImage(RenderedImage)}, or computed by {@link Render}.
+     * by {@link #setImage(RenderedImage)}, or computed by {@code Render}.
      */
     private RenderedImage rendered;
 
