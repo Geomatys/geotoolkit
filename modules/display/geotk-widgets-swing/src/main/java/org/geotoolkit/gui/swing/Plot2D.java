@@ -84,9 +84,14 @@ import static java.lang.Math.hypot;
  *     plot.addSeries("Random values", Color.BLUE, x, y);
  * }
  *
- * <p>&nbsp;</p>
- * <p align="center"><img src="doc-files/Plot2D.png"></p>
- * <p>&nbsp;</p>
+ * <table cellspacing="24" cellpadding="12" align="center"><tr valign="top"><td>
+ * <img src="doc-files/Plot2D.png">
+ * </td><td width="500" bgcolor="lightblue">
+ * {@section Demo}
+ * The image on the left side gives an example of this widget appearance.
+ * To try this component in your browser, see the
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/Plot2D.html">demonstration applet</a>.
+ * </td></tr></table>
  *
  * @author Martin Desruisseaux (MPO, Geomatys)
  * @version 3.00

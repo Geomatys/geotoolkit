@@ -78,9 +78,14 @@ import org.geotoolkit.gui.swing.Dialog;
  * are constrained in the range January 1st, 1970 up to the date at the time the widget
  * was created.
  *
- * <p>&nbsp;</p>
- * <p align="center"><img src="doc-files/CoordinateChooser.png"></p>
- * <p>&nbsp;</p>
+ * <table cellspacing="24" cellpadding="12" align="center"><tr valign="top"><td>
+ * <img src="doc-files/CoordinateChooser.png">
+ * </td><td width="500" bgcolor="lightblue">
+ * {@section Demo}
+ * The image on the left side gives an example of this widget appearance.
+ * To try this component in your browser, see the
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/CoordinateChooser.html">demonstration applet</a>.
+ * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

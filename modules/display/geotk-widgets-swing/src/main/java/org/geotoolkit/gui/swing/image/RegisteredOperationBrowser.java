@@ -80,6 +80,13 @@ import org.geotoolkit.util.logging.Logging;
  *       is relevant.</li>
  * </ul>
  *
+ * <table cellspacing="24" cellpadding="12" align="center"><tr valign="top">
+ * <td width="500" bgcolor="lightblue">
+ * {@section Demo}
+ * To try this component in your browser, see the
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/RegisteredOperationBrowser.html">demonstration applet</a>.
+ * </td></tr></table>
+ *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *

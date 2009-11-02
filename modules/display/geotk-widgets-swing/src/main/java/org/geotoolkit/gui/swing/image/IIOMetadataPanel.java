@@ -83,6 +83,13 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
  *     {@link #addMetadata addMetadata(...)}.</li>
  * </ul>
  *
+ * <table cellspacing="24" cellpadding="12" align="center"><tr valign="top">
+ * <td width="500" bgcolor="lightblue">
+ * {@section Demo}
+ * To try this component in your browser, see the
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/IIOMetadataPanel.html">demonstration applet</a>.
+ * </td></tr></table>
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
  *

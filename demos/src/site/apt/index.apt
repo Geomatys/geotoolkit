@@ -7,6 +7,15 @@ Geotoolkit.org demos
   they wish with these files.
 
 
+* Real applications
+
+  Geotk is a library and does not provide application on its own. One way to get some feeling of
+  what Geotk can do is to look at some applications that use it.
+
+  * {{{http://puzzle-gis.codehaus.org/}Puzzle GIS}}
+  * {{{http://constellation.codehaus.org/}Constellation SDI}}
+
+
 * Demonstration applets
 
   These applets demonstrate specific functionality in the Geotoolkit.org library.
@@ -14,28 +23,31 @@ Geotoolkit.org demos
   <<<{{{../../modules/display/geotk-widgets-swing/index.html}geotk-widgets-swing}}>>>
   module.
 
-*--------------------------------------------------+----------------------------------------------------------------------+
-| {{{geotk-simples/applet/ZoomPane.html}ZoomPane}} | Display a component providing zoom and rotation capabilities.        |
-|                                                  | The content (map, chart, <etc.>) shall be provided by the developer. |
-|                                                  | In this demo, we display only a triangle and a square.               |
-*--------------------------------------------------+----------------------------------------------------------------------+
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{geotk-simples/applet/CoordinateChooser.html}CoordinateChooser}}                   | Specify a spatial bounding box, a temporal extent and optionnaly a spatial resolution. |
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{geotk-simples/applet/GradientKernelEditor.html}GradientKernelEditor}}             | Select the kernels to use for computing gradient magnitudes in a raster.               |
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{geotk-simples/applet/IIOMetadataPanel.html}IIOMetadataPanel}}                     | Display the structure of Geotk Image I/O metadata (subsets of ISO 19115-2).            |
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{geotk-simples/applet/Plot2D.html}Plot2D}}                                         | Display a graph.                                                                       |
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{geotk-simples/applet/RegisteredOperationBrowser.html}RegisteredOperationBrowser}} | Display the JAI operations registered on the host machine.                             |
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{geotk-simples/applet/ZoomPane.html}ZoomPane}}                                     | Display a component providing zoom and rotation capabilities.                          |
+*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
 
 
 * Demonstration code
 
   These are small standalone classes that could be compiled and run from the command line.
 
-  To view the java code, click on one of the links below. This will open a Mercurial on-line
-  code browser. To download the file, click on the "<raw>" link on the left side of the code
-  browser. The file can be compiled with the <<<javac>>> compiler assuming that the Geotk
-  library is on the classpath.
-
   * Referencing demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
       shows how to convert a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
   * Coverage demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
       shows how to create an image from a matrix of floating point values.

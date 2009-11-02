@@ -143,8 +143,7 @@ import static java.awt.GridBagConstraints.*;
  * {@code ZoomPane} class.
  * <p>
  * To try this component in your browser, see the
- * <a href="../../../../../demos/geotk-simples/applet/ZoomPane.html">demonstration applet</a>
- * for this component.
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/ZoomPane.html">demonstration applet</a>.
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (MPO, IRD)

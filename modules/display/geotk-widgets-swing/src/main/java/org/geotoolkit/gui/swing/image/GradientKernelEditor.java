@@ -41,9 +41,14 @@ import static java.awt.GridBagConstraints.*;
  * This widget combine two {@link KernelEditor} side-by-side: one for the
  * horizontal component and one for the vertical component.
  *
- * <p>&nbsp;</p>
- * <p align="center"><img src="doc-files/GradientKernelEditor.png"></p>
- * <p>&nbsp;</p>
+ * <table cellspacing="24" cellpadding="12" align="center"><tr valign="top"><td>
+ * <img src="doc-files/GradientKernelEditor.png">
+ * </td><td width="500" bgcolor="lightblue">
+ * {@section Demo}
+ * The image on the left side gives an example of this widget appearance.
+ * To try this component in your browser, see the
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/GradientKernelEditor.html">demonstration applet</a>.
+ * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
