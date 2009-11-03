@@ -105,7 +105,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         /**
          * The key.
          */
-        K key;
+        final K key;
 
         /**
          * The next entry, or {@code null} if there is none.
@@ -146,13 +146,14 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
 
         /**
          * Replaces the value corresponding to this entry with the specified value.
+         * This method can be used only for setting the value to {@code null}.
          */
         @Override
         public V setValue(final V value) {
             if (value != null) {
                 throw new UnsupportedOperationException();
             }
-            V old = get();
+            final V old = get();
             dispose();
             return old;
         }
@@ -163,9 +164,8 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
          */
         @Override
         public void dispose() {
-            clear();
             removeEntry(this);
-            key = null;
+            clear(); // Clears only after removal.
         }
 
         /**
@@ -175,8 +175,8 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         public boolean equals(final Object other) {
             if (other instanceof Map.Entry<?,?>) {
                 final Map.Entry<?,?> that = (Map.Entry<?,?>) other;
-                return Utilities.equals(this.getKey(),   that.getKey()) &&
-                       Utilities.equals(this.getValue(), that.getValue());
+                return Utilities.equals(key,   that.getKey()) &&
+                       Utilities.equals(get(), that.getValue());
             }
             return false;
         }
@@ -287,7 +287,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                         table[i] = e.next;
                     }
                     count--;
-                    assert valid();
+                    assert valid() : toRemove.key;
 
                     // If the number of elements has dimunished
                     // significatively, rehash the table.
@@ -302,7 +302,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                 e = e.next;
             }
         }
-        assert valid();
+        assert valid() : toRemove.key;
         /*
          * If we reach this point, its mean that reference 'toRemove' has not
          * been found. This situation may occurs if 'toRemove' has already been
@@ -321,7 +321,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     private Entry[] rehash(final boolean augmentation) {
         assert Thread.holdsLock(this);
-        assert valid();
+        assert valid() : count;
         final Entry[] oldTable = this.table;
         final long currentTime = System.currentTimeMillis();
         final int capacity = Math.max(Math.round(count/(LOAD_FACTOR/2)), count+MIN_CAPACITY);
@@ -336,7 +336,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         for (int i=0; i<oldTable.length; i++) {
             for (Entry old=oldTable[i]; old!=null;) {
                 final Entry e=old;
-                old = old.next; // On retient 'next' tout de suite car sa valeur va changer...
+                old = old.next; // Retains 'next' now because its value will change.
                 final Object key = e.key;
                 if (key != null) {
                     final int index=(key.hashCode() & 0x7FFFFFFF) % table.length;
@@ -358,7 +358,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
             record.setLoggerName(logger.getName());
             logger.log(record);
         }
-        assert valid();
+        assert valid() : augmentation;
         return table;
     }
 
@@ -371,6 +371,9 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * help to get similar behaviour as if assertions hasn't been turned on.
      */
     private boolean valid() {
+        if (!Thread.holdsLock(this)) {
+            throw new AssertionError();
+        }
         int n=0;
         final Entry[] table = this.table;
         for (int i=0; i<table.length; i++) {
@@ -391,7 +394,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     @Override
     public synchronized int size() {
-        assert valid();
+        assert valid() : count;
         return count;
     }
 
@@ -468,7 +471,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
             table[index] = new Entry(key, value, table[index], index);
             count++;
         }
-        assert valid();
+        assert valid() : key;
         return oldValue;
     }
 
