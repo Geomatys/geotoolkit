@@ -305,8 +305,11 @@
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
           <archive>
+            <forced>false</forced>   <!-- Recreate the archive only if needed.     -->
+            <index>true</index>      <!-- Archive will contain an INDEX.LIST file. -->
             <manifest>
               <addClasspath>true</addClasspath>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
         </configuration>
