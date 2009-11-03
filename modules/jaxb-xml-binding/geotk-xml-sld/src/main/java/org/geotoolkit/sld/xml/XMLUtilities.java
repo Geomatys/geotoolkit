@@ -549,6 +549,7 @@ public final class XMLUtilities {
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
      * XMLEventReader, XMLStreamReader or OnlineResource
      *
+     * @todo implement it correctly for wfs
      * @throws javax.xml.bind.JAXBException
      */
     public SortBy readSortBy(final Object source,
@@ -563,7 +564,7 @@ public final class XMLUtilities {
             case V_1_1_0 :
                 obj = unmarshallV110(source);
                 if(obj instanceof org.geotoolkit.ogc.xml.v110.SortByType){
-                    return transformerGTv110.visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
+//                    return transformerGTv110.visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
                 }else{
                     throw new JAXBException("Source is not a valid OGC SortBy v1.1.0");
                 }
