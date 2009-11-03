@@ -49,6 +49,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.sort.SortBy;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
@@ -542,7 +543,36 @@ public final class XMLUtilities {
     
     
     // Filter ------------------------------------------------------------------
-    
+
+    /**
+     * Read a Filter source and parse it in GT Filter object.
+     * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL,
+     * XMLEventReader, XMLStreamReader or OnlineResource
+     *
+     * @throws javax.xml.bind.JAXBException
+     */
+    public SortBy readSortBy(final Object source,
+            final Specification.Filter version) throws JAXBException{
+        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+
+        final Object obj;
+
+        switch(version){
+            case V_1_0_0 :
+                throw new JAXBException("SortBy doesnt exist in OGC Filter v1.0.0");
+            case V_1_1_0 :
+                obj = unmarshallV110(source);
+                if(obj instanceof org.geotoolkit.ogc.xml.v110.SortByType){
+                    return transformerGTv110.visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
+                }else{
+                    throw new JAXBException("Source is not a valid OGC SortBy v1.1.0");
+                }
+            default :
+                throw new IllegalArgumentException("Unable to read source, specified version is not supported");
+        }
+
+    }
+
     /**
      * Read a Filter source and parse it in GT Filter object.
      * Source can be : File, InputSource, InputStream, Node, Reader, Source, URL, 
