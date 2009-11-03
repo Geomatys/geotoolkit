@@ -37,16 +37,15 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.BorderLayout;
 import java.awt.HeadlessException;
-import javax.swing.JPanel;
+import javax.swing.JDialog;
+import javax.swing.JSplitPane;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.JDialog;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
@@ -475,37 +474,21 @@ verify:     for (final File file : getSelectedFiles()) {
     protected JDialog createDialog(final Component parent) throws HeadlessException {
         final JDialog dialog = super.createDialog(parent);
         if (propertiesPane != null) {
-            Container contentPane = dialog.getContentPane();
-            Component chooser;
             synchronized (dialog.getTreeLock()) {
-                if (contentPane.getLayout() instanceof BorderLayout &&
-                    contentPane.getComponentCount() == 1 &&
-                    contentPane.getComponent(0) == this)
-                {
-                    /*
-                     * This is the usual case. Remove the file chooser component because
-                     * it was put with the Border.CENTER constraint, while we want the
-                     * Border.WEST constraint. It will be added back after this block.
-                     */
-                    chooser = this;
+                final Container contentPane = dialog.getContentPane();
+                Component chooser = contentPane;
+                if (contentPane.getComponentCount() == 1) {
+                    chooser = contentPane.getComponent(0);
                     contentPane.remove(0);
-                } else {
-                    /*
-                     * Fallback - should not be necessary with Sun implementation,
-                     * at least as of Java 6 update 15.
-                     */
-                    chooser = contentPane;
-                    contentPane = new JPanel(new BorderLayout());
-                    dialog.setContentPane(contentPane);
                 }
+                dialog.setContentPane(new JSplitPane(
+                        JSplitPane.HORIZONTAL_SPLIT, true, chooser, propertiesPane));
             }
             /*
              * Add the file chooser and the properties panel with constraints choosed in
              * such a way that if the dialog box is resized, only the properties panel
              * will be resized accordingly.
              */
-            contentPane.add(chooser, BorderLayout.WEST);
-            contentPane.add(propertiesPane, BorderLayout.CENTER);
             dialog.pack();
             dialog.setLocationRelativeTo(parent);
         }

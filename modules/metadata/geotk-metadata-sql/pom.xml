@@ -27,8 +27,8 @@
   <name>Metadata on SQL</name>
 
   <description>
-    Stores metadata in a SQL database. Each metadata classes are mapped to a table,
-    and each metadata attributes are mapped to a column in the appropriate table.
+    Stores metadata in a SQL database. Each metadata class is mapped to a table,
+    and each metadata attribute is mapped to a column in the appropriate table.
     Tables and columns are created only when first needed.
   </description>
 

@@ -21,6 +21,7 @@ import java.text.Format;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Logger;
@@ -32,6 +33,8 @@ import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.Node;
+
+import org.opengis.metadata.content.Band;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -59,7 +62,7 @@ import org.geotoolkit.image.io.SpatialImageWriter;
  * to treat some warnings as fatal errors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.06
  *
  * @since 3.04 (derived from 2.4)
  * @module
@@ -87,17 +90,16 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     private transient LoggedFormat<Date> dateFormat;
 
     /**
-     * Creates a default metadata instance. This constructor defines no standard or native format.
-     * The only format defined is the {@link SpatialMetadataFormat} default instance
+     * Creates a default metadata instance. The only format declared by this
+     * constructor is the {@link SpatialMetadataFormat#IMAGE} instance.
      */
     public SpatialMetadata() {
         this(SpatialMetadataFormat.IMAGE, (Object) null);
     }
 
     /**
-     * Creates a default metadata instance for the given reader. This constructor defines no
-     * standard or native format. The only format defined is the {@link SpatialMetadataFormat}
-     * default instance.
+     * Creates a default metadata instance for the given reader. The only format declared
+     * by this constructor is the {@link SpatialMetadataFormat#IMAGE} instance.
      *
      * @param reader The source image reader, or {@code null} if none.
      */
@@ -106,9 +108,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Creates a default metadata instance for the given writer. This constructor defines no
-     * standard or native format. The only format defined is the {@link SpatialMetadataFormat}
-     * default instance.
+     * Creates a default metadata instance for the given writer. The only format declared
+     * by this constructor is the {@link SpatialMetadataFormat#IMAGE} instance.
      *
      * @param writer The target image writer, or {@code null} if none.
      */
@@ -137,7 +138,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Creates a default metadata instance.
+     * Creates a default metadata instance for the given format and reader/writer.
      */
     private SpatialMetadata(final SpatialMetadataFormat format, final Object owner) {
         super(false, // Can not return or accept a DOM tree using the standard metadata format.
@@ -154,7 +155,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns the language to use when for formatting messages, or {@code null} for the
+     * Returns the language to use when formatting messages, or {@code null} for the
      * default. The default implementation delegates to {@link ImageReader#getLocale} or
      * {@link ImageWriter#getLocale} if possible, or returns {@code null} otherwise.
      *
@@ -187,6 +188,21 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
             throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
         }
+    }
+
+    /**
+     * Returns the list of all {@code dimension} elements under the {@code ImageDescription/dimensions}
+     * node. If this node does not exist, then this method returns {@code null}.
+     *
+     * @return The list of every {@code dimension} elements, or {@code null} if the
+     *         {@code ImageDescription/dimensions} node does not exist.
+     *
+     * @since 3.06
+     *
+     * @todo Current implementation returns {@code null} if all cases.
+     */
+    public List<Band> getBands() {
+        return null;
     }
 
     /**
@@ -226,8 +242,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
 
     /**
      * Alters the internal state of this metadata from a tree defined by the specified metadata.
-     * The default implementation expects the format described by the {@link SpatialMetadataFormat}
-     * argument.
+     * The default implementation asks the format described by the {@link SpatialMetadataFormat}
+     * argument, then delegates to {@link #mergeTree(String, Node)}.
      *
      * @param  metadata The metadata to merge to this object.
      * @throws IIOInvalidTreeException If the metadata can not be merged.
@@ -250,8 +266,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * <p>
      * <ul>
      *   <li>Searches for a format name which is common to both metadata;</li>
-     *   <li>invokes {@link IIOMetadata#getAsTree} on the source metadata;</li>
-     *   <li>invokes {@link IIOMetadata#mergeTree} on the target metadata.</li>
+     *   <li>invokes {@link IIOMetadata#getAsTree(String)} on the source metadata;</li>
+     *   <li>invokes {@link IIOMetadata#mergeTree(String, Node)} on the target metadata.</li>
      * </ul>
      *
      * @param  source The source metadata, or {@code null}.
@@ -335,6 +351,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
 
     /**
      * Resets all the data stored in this object to default values.
+     * All nodes below the root node are discarted.
      */
     @Override
     public void reset() {
@@ -344,7 +361,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
      * Invoked when a warning occured. This method is invoked when some inconsistency has
      * been detected in the geographic metadata. The default implementation delegates to
-     * {@link GeographicImageReader#warningOccurred} if possible, or send the record to
+     * {@link SpatialImageReader#warningOccurred(LogRecord)} if possible, or send the record to
      * the {@code "org.geotoolkit.image.io.metadata"} logger otherwise.
      * <p>
      * Subclasses may override this method if more processing is wanted, or for

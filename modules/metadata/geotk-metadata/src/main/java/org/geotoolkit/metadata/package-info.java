@@ -18,7 +18,7 @@
 
 /**
  * Root package for various metadata implementations. For a global overview of metadata in Geotk,
- * see the <a href="{@docRoot}../modules/metadata/index.html">Metadata</a> page on the project web
+ * see the <a href="{@docRoot}/../modules/metadata/index.html">Metadata</a> page on the project web
  * site.
  * <p>
  * This root package is not linked to any particular metadata standard. It assumes that a standard

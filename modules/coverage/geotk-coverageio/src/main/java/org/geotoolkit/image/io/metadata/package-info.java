@@ -28,8 +28,7 @@
  * The {@link org.geotoolkit.image.io.metadata.SpatialMetadata} class contains convenience methods
  * for encoding metatadata. Metadata are usually given as {@link java.lang.String} or {@code double}
  * attributes only, but image readers can optionaly attach fully constructed GeoAPI objects if they
- * wish. If only {@link java.lang.String} and {@code double} are used, then the duty to create GeoAPI
- * objects from them incomb to the {@link org.geotoolkit.coverage.io} package.
+ * wish.
  *
  * {@section Relationship with the ISO-19129 standard}
  * The ISO 19129 standard (<cite>Geographic information — Imagery, gridded and coverage data
@@ -46,17 +45,17 @@
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_Transmittal&nbsp;</code></td>
- *     <td nowrap>&nbsp;Input/output of <code>javax.imageio</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;Input/output of {@link javax.imageio}&nbsp;</td>
  *     <td>&nbsp;The entity used in the encoded exchange format to carry all, part of, or several data sets.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_DataSet&nbsp;</code></td>
- *     <td nowrap>&nbsp;Collection of <code>RenderedImage</code>s&nbsp;</td>
+ *     <td nowrap>&nbsp;Collection of {@link java.awt.image.RenderedImage}s&nbsp;</td>
  *     <td>&nbsp;An identifiable collection of data that can be represented in an exchange format or stored on a storage media.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_Collection&nbsp;</code></td>
- *     <td nowrap>&nbsp;Collection of <code>Coverage</code>s&nbsp;</td>
+ *     <td nowrap>&nbsp;Collection of {@link org.opengis.grid.GridCoverage}s&nbsp;</td>
  *     <td>&nbsp;A collection of <code>IF_CoverageData</code> and associated metadata.</td>
  *   </tr>
  *   <tr>
@@ -81,32 +80,32 @@
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_StructuralMetadata&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>RenderedImage</code> width, height and models&nbsp;</td>
+ *     <td nowrap>&nbsp;{@link java.awt.image.RenderedImage} width, height and models&nbsp;</td>
  *     <td>&nbsp;A set of structural metadata that describes the structure of the coverage.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_Tiling&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>RenderedImage</code> tile width & height&nbsp;</td>
+ *     <td nowrap>&nbsp;{@link java.awt.image.RenderedImage} tile width & height&nbsp;</td>
  *     <td>&nbsp;Describes the tiling scheme used within the collection.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_GridCoverage&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>ContinuousQuadrilateralGridCoverage</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;{@link org.opengis.coverage.grid.ContinuousQuadrilateralGridCoverage}&nbsp;</td>
  *     <td>&nbsp;Implements Continuous Quadrilateral Grid Coverage from ISO 19123.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_TINCoverage&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>TINCoverage</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;{@link org.opengis.coverage.TinCoverage}&nbsp;</td>
  *     <td>&nbsp;Implements TIN Coverage from ISO 19123.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_PointSetCoverage&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>PointSetCoverage</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;{@code PointSetCoverage}&nbsp;</td>
  *     <td>&nbsp;Implements Point Set Coverage from ISO 19123.</td>
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_DiscreteSurfaceCoverage&nbsp;</code></td>
- *     <td nowrap>&nbsp;<code>DiscreteSurfaceCoverage</code>&nbsp;</td>
+ *     <td nowrap>&nbsp;{@link org.opengis.coverage.DiscreteSurfaceCoverage}&nbsp;</td>
  *     <td>&nbsp;Implements Discrete Surface Coverage from ISO 19123.</td>
  *   </tr>
  *  </table>

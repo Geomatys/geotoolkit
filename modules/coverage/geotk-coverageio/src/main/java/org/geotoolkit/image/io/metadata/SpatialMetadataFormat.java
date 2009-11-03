@@ -243,14 +243,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * The default spatial metadata format instance.
-     *
-     * @deprecated Renamed as {@link #IMAGE}.
-     */
-    @Deprecated
-    public static final SpatialMetadataFormat INSTANCE = IMAGE;
-
-    /**
      * The metadata standard represented by this format.
      * This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
      */

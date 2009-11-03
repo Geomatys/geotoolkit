@@ -1,15 +1,15 @@
 Metadata
 
-  Projects group for metadata services. This group contains the core of metadata services
-  (<<<geotk-metadata>>>) and various plugins. See the "Modules" links on the left side for
-  information about individual components.
+  Group of modules related to handling metadata. This group contains the core of metadata classes
+  (in <<<geotk-metadata>>>) and various extensions. See the "Modules" links on the left side for
+  information about each individual component.
 
   * Getting started
 
   * {{{faq.html}Frequently Asked Questions}}
 
 
-* Overview of the Metadata support in Geotoolkit.org
+* Overview of Metadata handling in Geotoolkit.org
 
 ** Foreword
 
@@ -74,7 +74,8 @@ Metadata
 
   Using Java reflection, a metadata can be viewed in many different ways:
 
-*** As a <<<java.util.Map>>>
+
+*** As a <<<Map>>> (from <<<java.util>>>)
 
   The <<<MetadataStandard>>> class provides various methods returning a view of an arbitrary
   metadata implementation as a <<<java.util.Map>>>, where the key are the property names and
@@ -82,13 +83,62 @@ Metadata
   metadata implementation has setter methods, otherwise attempts to set a value throw an
   <<<UnsupportedOperationException>>>.
 
-*** As a <<<javax.imageio.metadata.IIOMetadata>>>
+
+*** As a <<<IIOMetadata>>> (from <<<javax.imageio.metadata>>>)
 
   The ISO 19115-2 standard defines metadata for gridded data, which are good candidates for
   Image I/O metadata with spatial data. The <<<org.geotoolkit.image.io.metadata>>> package
   provides a framework for converting an ISO metadata like <<<ImageDescription>>> into an
   <<<IIOMetadata>>> object, and conversely.
 
-*** As a <<<org.jdesktop.swingx.treetable.TreeTableModel>>>
 
-*** As a table record in a database
+*** As a <<<TreeTableModel>>> (from <<<org.jdesktop.swingx.treetable>>>)
+
+  The metadata are organized as a tree. For example the <<<Citation>>> metadata contains one
+  or many <<<ResponsibleParty>>> elements, each of them containing a <<<Contact>>> element,
+  which contains a <<<Telephone>>> element, <etc>. For each node, there is many information
+  that can be displayed in columns:
+
+   * A description of the element.
+
+   * The type of values (<<<String>>>, <<<double>>>, <etc>).
+
+   * The range of valid values (if the type is numeric),
+     or an enumeration of valid values (if the type is a code list).
+
+   * The value stored in the element, or the default value.
+
+  The current Geotk library provides an indirect way to view metadata in such tree table:
+  create an <<<IIOMetadata>>> view from the metadata, then create a <<<TreeTableModel>>>
+  view from the <<<IIOMetadata>>>. A more direct way may be provided in a future version.
+
+
+*** As a table record in a database (using <<<<org.geotoolkit.metadata.sql>>>)
+
+  It is possible to etablish the following mapping between metadata and a SQL database:
+
+   * Each metadata interface maps to a table of the same name in the database.
+
+   * Each property in the above interface maps to a column of the same name in the above table.
+
+   * Each instance of the above interface is a record in the above table.
+
+  Using Java reflection, it is possible to generate implementations of the metadata interfaces
+  where each call to a getter method is translated into a SQL query for the above database.
+
+
+** How Metadata are marshalled
+
+  The ISO 19139 standard defines how ISO 19115 metadata shall be represented in XML.
+  The Geotk library supports XML marshalling and unmarshalling with JAXB annotations.
+
+  Only the implementation classes defined in the <<<org.geotoolkit.metadata.iso>>> packages
+  are annotated for JAXB marshalling. If a metadata is implemented by an other package (for
+  example <<<org.geotoolkit.metadata.sql>>>), then it shall be converted to an annotated class
+  before to be marshalled. All Geotk annotated classes provide a copy constructor for this
+  purpose. A shallow copy is suffisient; JAXB adapters will convert the elements on-the-fly
+  when needed.
+
+  The annotated classes can be given to a JAXB <<<Marshaller>>>. For best results, it shall
+  be a marshaller obtained from the <<<org.geotoolkit.xml.MarshallerPool>>>, otherwise some
+  XML outputs may be incomplete (missing namespaces for instance).

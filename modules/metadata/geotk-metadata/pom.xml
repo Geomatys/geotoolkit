@@ -27,7 +27,9 @@
   <name>Metadata core</name>
 
   <description>
-    Implementations of metadata derived from ISO 19115.
+    Implementations of metadata derived from ISO 19115. This module provides both an implementation
+    of the metadata interfaces defined in GeoAPI, and a framework for handling those metadata through
+    Java reflection.
   </description>
 
 
