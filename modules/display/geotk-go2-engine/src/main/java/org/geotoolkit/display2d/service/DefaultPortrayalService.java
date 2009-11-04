@@ -489,8 +489,29 @@ public class DefaultPortrayalService implements PortrayalService{
     ////////////////////////////////////////////////////////////////////////////
     // OTHER USEFULL ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * Write exception in a transparent image.
+     *
+     * @param e   The exception to write.
+     * @param dim The dimension of the image.
+     * @return The transparent image with the exception in it.
+     */
     public static BufferedImage writeException(Exception e, Dimension dim){
+        return writeException(e, dim, false);
+    }
+
+    /**
+     * Write an exception in an image. It is possible to set the image as transparent or
+     * opaque.
+     *
+     * @param e The exception to write.
+     * @param dim The dimension of the image.
+     * @param opaque If true, the exception will be written on an opaque white background.
+     *               Otherwise the image will be transparent, only the exception trace will
+     *               be displayed.
+     * @return The image with the exception in it.
+     */
+    public static BufferedImage writeException(Exception e, Dimension dim, boolean opaque){
 
         final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D g = img.createGraphics();
@@ -500,8 +521,10 @@ public class DefaultPortrayalService implements PortrayalService{
         final int maxCharPerLine = dim.width / metrics.charWidth('A');
         final String message = e.getMessage();
 
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, dim.width, dim.height);
+        if (opaque) {
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, dim.width, dim.height);
+        }
 
         g.setColor(Color.RED);
         if(maxCharPerLine < 1){
