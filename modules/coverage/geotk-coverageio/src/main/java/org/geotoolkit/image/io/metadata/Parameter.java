@@ -97,4 +97,21 @@ public class Parameter extends MetadataAccessor {
     public void setValue(final double value) {
         setAttributeAsDouble("value", value);
     }
+
+    /**
+     * A list of {@linkplain Parameter parameters}.
+     */
+    @Deprecated
+    static final class List extends ChildList<Parameter> {
+        /** Creates a parser for parameters. */
+        public List(final SpatialMetadata metadata) {
+            super(metadata, "rectifiedGridDomain/crs/projection", "parameter");
+        }
+
+        /** Creates a new parameter. */
+        @Override
+        protected Parameter newChild(final int index) {
+            return new Parameter(this, index);
+        }
+    }
 }

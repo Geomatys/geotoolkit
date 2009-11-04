@@ -45,7 +45,7 @@ public final class SpatialMetadataFormatTest {
     @Test
     public void testImageElements() {
         final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
-        assertEquals(Identifier.class, format.getObjectClass("processingLevelCode"));
+        assertEquals(Identifier.class, format.getObjectClass("ProcessingLevelCode"));
     }
 
     /**
@@ -56,7 +56,7 @@ public final class SpatialMetadataFormatTest {
         final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
         assertEquals(DATATYPE_BOOLEAN,    format.getAttributeDataType("ImageDescription", "cameraCalibrationInformationAvailable"));
         assertEquals(DATATYPE_DOUBLE,     format.getAttributeDataType("ImageDescription", "cloudCoverPercentage"));
-        assertEquals(CHILD_POLICY_REPEAT, format.getChildPolicy("dimensions"));
+        assertEquals(CHILD_POLICY_REPEAT, format.getChildPolicy("Dimensions"));
     }
 
     /**
@@ -66,7 +66,7 @@ public final class SpatialMetadataFormatTest {
     public void testImageDescriptions() {
         final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
         assertEquals("Image distributor's code that identifies the level of radiometric and geometric processing that has been applied.",
-                format.getElementDescription("processingLevelCode", Locale.ENGLISH));
+                format.getElementDescription("ProcessingLevelCode", Locale.ENGLISH));
         assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
                 format.getAttributeDescription("ImageDescription", "cloudCoverPercentage", Locale.ENGLISH));
     }

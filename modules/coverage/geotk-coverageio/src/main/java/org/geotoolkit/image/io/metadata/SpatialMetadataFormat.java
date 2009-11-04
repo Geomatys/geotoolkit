@@ -95,64 +95,65 @@ import org.geotoolkit.resources.Errors;
  *       is used.</li>
  * </ul>
  * <p>
- * The tree structures are show below.
+ * The tree structures are show below. As a general rule, the name of <em>elements</em> start with
+ * a upper case letter while the name of <em>attributes</em> start with a lower case letter.
  * For browsing these trees in an applet together with additional information, see the
  * <a href="{@docRoot}/../demos/geotk-simples/applet/IIOMetadataPanel.html">IIOMetadataPanel applet</a>.
  *
 <blockquote><table border="1" cellpadding="12">
 <tr bgcolor="lightblue"><th>Stream metadata</th><th>Image metadata</th></tr>
 <tr><td nowrap valign="top" width="50%">
-<pre>geotk-coverageio_3.05
-├───DiscoveryMetadata
+<pre>geotk-coverageio_3.06
+├───<b>DiscoveryMetadata</b> : {@linkplain DataIdentification}
 │   ├───citation
 │   ├───abstract
 │   ├───purpose
 │   ├───credits
 │   ├───status
-│   ├───descriptiveKeywords
-│   │   └───descriptiveKeywords entry
+│   ├───DescriptiveKeywords
+│   │   └───DescriptiveKeywords entry
 │   │       ├───keywords
 │   │       ├───thesaurusName
 │   │       └───type
-│   ├───spatialResolution
+│   ├───SpatialResolution
 │   │   ├───distance
-│   │   └───equivalentScale
+│   │   └───EquivalentScale
 │   │       └───denominator
 │   ├───topicCategories
 │   ├───environmentDescription
-│   ├───extent
+│   ├───Extent
 │   │   ├───description
-│   │   ├───geographicElement
+│   │   ├───GeographicElement
 │   │   │   ├───inclusion
 │   │   │   ├───westBoundLongitude
 │   │   │   ├───eastBoundLongitude
 │   │   │   ├───southBoundLatitude
 │   │   │   └───northBoundLatitude
-│   │   └───verticalElement
+│   │   └───VerticalElement
 │   │       ├───minimumValue
 │   │       ├───maximumValue
 │   │       └───verticalCRS
 │   └───supplementalInformation
-├───AcquisitionMetadata
-│   ├───environmentalConditions
+├───<b>AcquisitionMetadata</b> : {@linkplain AcquisitionInformation}
+│   ├───EnvironmentalConditions
 │   │   ├───averageAirTemperature
 │   │   ├───maxRelativeHumidity
 │   │   ├───maxAltitude
 │   │   └───meteorologicalConditions
-│   └───platform
+│   └───Platform
 │       ├───citation
 │       ├───identifier
 │       ├───description
 │       └───Instruments
 │           └───Instrument
 │               ├───citation
-│               ├───identifier
+│               ├───Identifier
 │               │   ├───code
 │               │   └───authority
 │               ├───type
 │               └───description
-└───QualityMetadata
-    └───report
+└───<b>QualityMetadata</b> : {@linkplain DataQuality}
+    └───Report
         ├───namesOfMeasure
         ├───measureIdentification
         ├───measureDescription
@@ -161,17 +162,17 @@ import org.geotoolkit.resources.Errors;
         ├───evaluationProcedure
         └───date</pre>
 </td><td nowrap valign="top" width="50%">
-<pre>geotk-coverageio_3.05
-└───ImageDescription
+<pre>geotk-coverageio_3.06
+└───<b>ImageDescription</b> : {@linkplain ImageDescription}
     ├───contentType
     ├───illuminationElevationAngle
     ├───illuminationAzimuthAngle
     ├───imagingCondition
-    ├───imageQualityCode
+    ├───ImageQualityCode
     │   ├───code
     │   └───authority
     ├───cloudCoverPercentage
-    ├───processingLevelCode
+    ├───ProcessingLevelCode
     │   ├───code
     │   └───authority
     ├───compressionGenerationQuantity
@@ -180,8 +181,8 @@ import org.geotoolkit.resources.Errors;
     ├───cameraCalibrationInformationAvailable
     ├───filmDistortionInformationAvailable
     ├───lensDistortionInformationAvailable
-    ├───dimensions
-    │   └───dimension
+    ├───Dimensions
+    │   └───Dimension
     │       ├───descriptor
     │       ├───sequenceIdentifier
     │       ├───maxValue
@@ -197,15 +198,15 @@ import org.geotoolkit.resources.Errors;
     │       ├───transferFunctionType
     │       ├───transmittedPolarization
     │       └───detectedPolarization
-    └───rangeElementDescriptions
-        └───rangeElementDescription
+    └───RangeElementDescriptions
+        └───RangeElementDescription
             ├───name
             ├───definition
             └───rangeElements</pre>
 </tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 3.04
  * @module
@@ -217,7 +218,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * version number provided in this constant is set to the last Geotk version when this
      * format has been modified, and may change in any future version.
      */
-    public static final String FORMAT_NAME = "geotk-coverageio_3.05";
+    public static final String FORMAT_NAME = "geotk-coverageio_3.06";
 
     /**
      * The policy for the names of the nodes to be inferred from the ISO objects.
@@ -394,7 +395,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         addTree(DataIdentification.class,     "DiscoveryMetadata",   root, substitution);
         addTree(AcquisitionInformation.class, "AcquisitionMetadata", root, substitution);
         addTree(DataQuality.class,            "QualityMetadata",     root, substitution);
-        removeAttribute("equivalentScale", "doubleValue");
+        removeAttribute("EquivalentScale", "doubleValue");
         /*
          * Add by hand a node in the place where it would have been added if we didn't
          * excluded it. We do this addition because Instruments appear in two places,
@@ -402,7 +403,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          */
         substitution.put(Platform.class, null);
         substitution.remove(Identifier.class); // Allow full expansion.
-        addTree(Instrument[].class, "Instruments", "platform", substitution);
+        addTree(Instrument[].class, "Instruments", "Platform", substitution);
     }
 
     /**
@@ -536,7 +537,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param substitution The classes to substitute by other classes.
      *        This user-supplied map applies only on childs and is not modified.
      */
-    private void addTree(final Class<?> type, final String identifier, String elementName,
+    private void addTree(final Class<?> type, String identifier, String elementName,
             String parentName, final int minOccurence, final int maxOccurence,
             final ValueRestriction restriction, final Set<Class<?>> exclude,
             final Map<Class<?>,Class<?>> substitution)
@@ -604,14 +605,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * structure is set to the UML identifier, which is typically the same name than
          * 'elementName' except that it is in singular form.
          */
+        elementName = toElementName(elementName);
         if (maxOccurence != 1) {
             addElement(elementName, parentName, minOccurence, maxOccurence);
             parentName = elementName;
+            identifier = toElementName(identifier);
             if (identifier != null && !identifier.equals(elementName)) {
                 elementName = identifier;
             } else {
                 // This is used only as a fallback.
-                elementName = identifier + " entry";
+                elementName = (identifier != null ? identifier : elementName) + " entry";
             }
         }
         /*
@@ -753,6 +756,28 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             return IIOMetadataFormat.DATATYPE_BOOLEAN;
         }
         return IIOMetadataFormat.DATATYPE_STRING;
+    }
+
+    /**
+     * Makes the first character an upper-case letter. This is used for element names,
+     * which typically starts with an upper-case letter in Image I/O metadata.
+     *
+     * @param  elementName The element name.
+     * @return The given name with the first character converted to an upper-case letter.
+     *
+     * @since 3.06
+     */
+    private static String toElementName(String elementName) {
+        if (elementName != null && (elementName = elementName.trim()).length() != 0) {
+            final char c = elementName.charAt(0);
+            final char u = Character.toUpperCase(c);
+            if (c != u) {
+                final StringBuilder buffer = new StringBuilder(elementName);
+                buffer.setCharAt(0, u);
+                elementName = buffer.toString();
+            }
+        }
+        return elementName;
     }
 
     /**

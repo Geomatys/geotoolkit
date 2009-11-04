@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.metadata;
 
 import java.awt.image.DataBuffer;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.resources.Errors;
 import org.opengis.coverage.SampleDimension;
 
 
@@ -312,5 +313,28 @@ public class Band extends MetadataAccessor {
      */
     public void setOffset(final double offset) {
         setAttributeAsDouble("offset", offset);
+    }
+
+    /**
+     * A list of {@linkplain Band bands}.
+     */
+    @Deprecated
+    static final class List extends ChildList<Band> {
+        /** Creates a parser for bands. */
+        public List(final SpatialMetadata metadata) {
+            super(metadata, "rectifiedGridDomain/rangeSet/bands", "band");
+        }
+
+        /** Creates a new band. */
+        @Override
+        protected Band newChild(final int index) {
+            return new Band(this, index);
+        }
+
+        /** Returns the key for "out of range" error localization. */
+        @Override
+        int outOfBounds() {
+            return Errors.Keys.BAD_BAND_NUMBER_$1;
+        }
     }
 }

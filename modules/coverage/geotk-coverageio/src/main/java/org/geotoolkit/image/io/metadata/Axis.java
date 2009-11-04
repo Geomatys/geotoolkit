@@ -134,4 +134,21 @@ public class Axis extends MetadataAccessor {
     public void setTimeOrigin(final Date origin) {
         setAttributeAsDate("origin", origin);
     }
+
+    /**
+     * A list of {@linkplain Axis axis}.
+     */
+    @Deprecated
+    static final class List extends ChildList<Axis> {
+        /** Creates a parser for axis. */
+        public List(final SpatialMetadata metadata) {
+            super(metadata, "rectifiedGridDomain/crs/cs", "axis");
+        }
+
+        /** Creates a new axis. */
+        @Override
+        protected Axis newChild(final int index) {
+            return new Axis(this, index);
+        }
+    }
 }

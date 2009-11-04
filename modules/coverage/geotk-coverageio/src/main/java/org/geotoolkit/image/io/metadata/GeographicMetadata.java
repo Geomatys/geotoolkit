@@ -145,7 +145,7 @@ public class GeographicMetadata extends SpatialMetadata {
      */
     final ChildList<Band> getBands() {
         if (bands == null) {
-            bands = new ChildList.Bands(this);
+            bands = new Band.List(this);
         }
         return bands;
     }
