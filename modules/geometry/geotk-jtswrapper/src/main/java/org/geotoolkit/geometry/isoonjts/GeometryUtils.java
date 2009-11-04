@@ -30,6 +30,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.referencing.FactoryException;
@@ -104,7 +105,15 @@ public final class GeometryUtils {
      * @param unit
      * @return double[]
      */
-    public static double[] getBBox(final Envelope envelope, final Unit unit) {
+    public static double[] getBBox(Envelope envelope, final Unit unit) {
+
+        if (unit.equals(NonSI.DEGREE_ANGLE)) {
+            try {
+                envelope = CRS.transform(envelope, DefaultGeographicCRS.WGS84);
+            } catch (TransformException ex) {
+                LOGGER.severe("unable to reproject the envelope:" + ex.getMessage());
+            }
+        }
         final double[] returnable = new double[4];
         
         final DirectPosition lowerCorner = envelope.getLowerCorner();
@@ -115,7 +124,7 @@ public final class GeometryUtils {
         final Unit xUnit = getDirectedAxisUnit(cs, AxisDirection.EAST);
         final int yIndex = getDirectedAxisIndex(cs, AxisDirection.NORTH);
         final Unit yUnit = getDirectedAxisUnit(cs, AxisDirection.NORTH);
-        
+
         //edited to use javax.measure.unit.Convertor
         UnitConverter xConverter = xUnit.getConverterTo(unit);
         UnitConverter yConverter = yUnit.getConverterTo(unit);

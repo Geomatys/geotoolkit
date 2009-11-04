@@ -14,12 +14,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.NotifyingArrayList;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 
+import org.geotoolkit.internal.jaxb.CurveArrayType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeCurve;
@@ -292,6 +295,18 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         return null;
     }
 
+    @XmlElement(name="segments", namespace="http://www.opengis.net/gml")
+    public CurveArrayType getCurveArray() {
+        return new CurveArrayType(curveSegments);
+    }
+
+    public void setCurveArray(CurveArrayType array) {
+        curveSegments = new NotifyingArrayList<CurveSegment>(this);
+        for (CurveSegment c : array.getCurveSegments())  {
+            curveSegments.add(c);
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -319,18 +334,28 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("JTSCurve{");
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("segments:");
         if(!curveSegments.isEmpty()){
             sb.append("\n");
             for(CurveSegment seg : curveSegments){
                 sb.append(seg.toString()).append("\n");
             }
         }
-        sb.append("}");
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (object instanceof JTSCurve && super.equals(object)) {
+            JTSCurve that = (JTSCurve) object;
+            return Utilities.equals(this.curveSegments, that.curveSegments);
+        }
+        return false;
+    }
 
 
 }

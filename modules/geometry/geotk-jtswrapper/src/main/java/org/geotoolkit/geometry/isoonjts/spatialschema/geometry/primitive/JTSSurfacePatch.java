@@ -18,8 +18,14 @@ import org.opengis.geometry.primitive.SurfaceInterpolation;
 import org.opengis.geometry.primitive.SurfacePatch;
 
 import com.vividsolutions.jts.geom.Geometry;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.AbstractJTSGenericSurface;
+import org.geotoolkit.internal.jaxb.SurfaceBoundaryAdapter;
+import org.geotoolkit.util.Utilities;
 
 /**
  * Defines a homogeneous portion of a {@linkplain Surface surface}.
@@ -30,12 +36,20 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.Abstract
  * @version 2.0
  * @module pending
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implements SurfacePatch, JTSGeometry {
     private Surface surface;
     private SurfaceInterpolation interpolation;
+
+    @XmlElement(name = "PolygonPatch", namespace = "http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(SurfaceBoundaryAdapter.class)
     private SurfaceBoundary boundary;
     private com.vividsolutions.jts.geom.Geometry jtsPeer;
 
+    public JTSSurfacePatch() {
+        this(null, null);
+    }
+    
     public JTSSurfacePatch(SurfaceInterpolation interpolation, SurfaceBoundary boundary) {
         this.interpolation = interpolation;
         this.boundary = boundary;
@@ -149,4 +163,37 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
     }
 
     public abstract com.vividsolutions.jts.geom.Geometry calculateJTSPeer();
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this)
+            return true;
+
+        if (object instanceof JTSSurfacePatch) {
+            JTSSurfacePatch that = (JTSSurfacePatch) object;
+            return Utilities.equals(this.boundary,      that.boundary)      &&
+                   Utilities.equals(this.interpolation, that.interpolation) &&
+                   Utilities.equals(this.jtsPeer,       that.jtsPeer)       &&
+                   Utilities.equals(this.surface,       that.surface);
+        }
+        return false;
+     }
+
+     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (boundary != null) {
+            sb.append("boundary:").append(boundary).append('\n');
+        }
+        if (interpolation != null) {
+            sb.append("interpolation:").append(interpolation).append('\n');
+        }
+        if (jtsPeer != null) {
+            sb.append("jtsPeer:").append(jtsPeer).append('\n');
+        }
+        if (surface != null) {
+            sb.append("surface:").append(surface).append('\n');
+        }
+        return sb.toString();
+    }
 }
