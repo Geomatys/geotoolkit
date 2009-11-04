@@ -22,6 +22,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +66,28 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
         final Map<NumberRange,List<CachedSymbolizer>> styles = new HashMap<NumberRange, List<CachedSymbolizer>>();
         final Map<Expression, List<Symbolizer>> categorizes = styleElement.getThredholds();
         final Expression[] steps = categorizes.keySet().toArray(new Expression[categorizes.size()]);
+        Arrays.sort(steps, new Comparator<Expression>() {
+
+            @Override
+            public int compare(Expression t1, Expression t2) {
+                if(t1 == null){
+                    return -1;
+                }else if(t2 == null){
+                    return +1;
+                }
+                
+                double d1 = t1.evaluate(null, Double.class);
+                double d2 = t2.evaluate(null, Double.class);
+                double res = d1-d2;
+                if(res < 0){
+                    return -1;
+                }else if(res > 0){
+                    return +1;
+                }else{
+                    return 0;
+                }
+            }
+        });
 
         //fill the numberranges ------------------------------------------------
         double last = Double.NEGATIVE_INFINITY;
@@ -81,6 +105,12 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
         end = Double.POSITIVE_INFINITY;
         styles.put(NumberRange.create(last,end),
                 getCached(categorizes.get(steps[i])) );
+
+        Object[] rs = styles.keySet().toArray();
+        for(Object r : rs){
+            System.out.println("Range : "+ r);
+        }
+
 
         //calculate the polygons -----------------------------------------------
         final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor(
