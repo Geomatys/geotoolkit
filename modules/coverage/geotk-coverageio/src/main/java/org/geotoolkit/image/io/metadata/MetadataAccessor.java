@@ -40,7 +40,7 @@ import org.geotoolkit.util.UnsupportedImplementationException;
 
 
 /**
- * Base class for {@linkplain GeographicMetadata geographic metadata} parsers. This class
+ * Base class for {@linkplain SpatialMetadata spatial metadata} parsers. This class
  * provides convenience methods for encoding and decoding metadata information. A metadata
  * root {@linkplain Node node} is specified at construction time, together with a path to
  * the {@linkplain Element element} of interest. Example of valid paths:
@@ -48,17 +48,17 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  * <ul>
  *   <li>{@code "CoordinateReferenceSystem/Datum"}</li>
  *   <li>{@code "CoordinateReferenceSystem/CoordinateSystem"}</li>
- *   <li>{@code "GridGeometry/Envelope"}</li>
+ *   <li>{@code "DiscoveryMetadata/Extent/GeographicElement"}</li>
  * </ul>
  * <p>
  * In addition, some elements contains an arbitrary amount of childs. The path to child
- * elements can also be specified to the constructor. Examples (note that the constructor
- * expects paths relative to the parent; we show absolute paths below for completness):
+ * elements can also be specified to the constructor. Examples (note that child paths
+ * are relative to the parent):
  * <p>
  * <ul>
- *   <li>{@code "CoordinateReferenceSystem/CoordinateSystem/Axis"}</li>
- *   <li>{@code "GridGeometry/Envelope/CoordinateValues"}</li>
- *   <li>{@code "SampleDimensions/SampleDimension"}</li>
+ *   <li>({@code "CoordinateReferenceSystem/CoordinateSystem"}, {@code "Axis"})</li>
+ *   <li>({@code "GridGeometry/Envelope"}, {@code "CoordinateValues"})</li>
+ *   <li>({@code "ImageDescription/Dimensions"}, {@code "Dimension"})</li>
  * </ul>
  * <p>
  * The {@code get} and {@code set} methods defined in this class will operate on the
@@ -66,8 +66,8 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  * specified at construction time, or one of its childs. The element can be selected
  * by {@link #selectParent} (the default) or {@link #selectChild}.
  * <p>
- * The example below creates an accessor for a node called {@code "CoordinateSystem"}
- * which is expected to have childs called {@code "Axis"}:
+ * The example below creates an accessor for a node called {@code "coordinateSystem"}
+ * which is expected to have childs called {@code "axis"}:
  *
  * {@preformat java
  *     MetadataAccessor accessor = new MetadataAccessor(metadata,
@@ -82,16 +82,11 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.06
  *
  * @since 2.5
  * @module
- *
- * @deprecated Replaced by the standard metadata objects defined by ISO 19115-2. The
- *   {@link SpatialMetadata} class can convert automatically those metadata objects
- *   to {@code IIOMetadata}.
  */
-@Deprecated
 public class MetadataAccessor {
     /**
      * The separator between names in a node path.
@@ -101,7 +96,7 @@ public class MetadataAccessor {
     /**
      * The owner of this accessor.
      */
-    final GeographicMetadata metadata;
+    final SpatialMetadata metadata;
 
     /**
      * The parent of child {@linkplain Element elements}.
@@ -163,9 +158,9 @@ public class MetadataAccessor {
      *                    {@linkplain Element elements}, or {@code null} if none.
      */
     @SuppressWarnings("fallthrough")
-    protected MetadataAccessor(final GeographicMetadata metadata, final String parentPath, final String childPath) {
+    protected MetadataAccessor(final SpatialMetadata metadata, final String parentPath, final String childPath) {
         this.metadata = metadata;
-        final Node root = metadata.getRootNode();
+        final Node root = metadata.getAsTree();
         /*
          * Fetches the parent node and ensure that we got a singleton. If there is more nodes than
          * expected, log a warning and pickup the first one. If there is no node, create a new one.

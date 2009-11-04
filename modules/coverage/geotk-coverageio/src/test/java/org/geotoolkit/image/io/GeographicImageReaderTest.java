@@ -83,7 +83,7 @@ public final class GeographicImageReaderTest {
         final int padValue = -9999;
         final SampleConverter[] converters = new SampleConverter[1];
         final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_SHORT, minimum, maximum, padValue);
-        final GeographicImageReadParam param = (GeographicImageReadParam) reader.getDefaultReadParam();
+        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
         param.setPaletteName("grayscale"); // Easier to test than "rainbow".
         final ImageTypeSpecifier specifier = reader.getRawImageType(0, param, converters);
         final SampleConverter    converter = converters[0];
@@ -128,7 +128,7 @@ public final class GeographicImageReaderTest {
         final int padValue = -9999;
         final SampleConverter[] converters = new SampleConverter[1];
         final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_USHORT, minimum, maximum, padValue);
-        final GeographicImageReadParam param = (GeographicImageReadParam) reader.getDefaultReadParam();
+        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
         param.setPaletteName("grayscale"); // Easier to test than "rainbow".
         final ImageTypeSpecifier specifier = reader.getRawImageType(0, param, converters);
         final SampleConverter    converter = converters[0];
@@ -168,7 +168,7 @@ public final class GeographicImageReaderTest {
         final int padValue = 255;
         final SampleConverter[] converters = new SampleConverter[1];
         final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_BYTE, minimum, maximum, padValue);
-        final GeographicImageReadParam param = (GeographicImageReadParam) reader.getDefaultReadParam();
+        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
         param.setPaletteName("grayscale"); // Easier to test than "rainbow".
         final ImageTypeSpecifier specifier = reader.getRawImageType(0, param, converters);
         final SampleConverter    converter = converters[0];

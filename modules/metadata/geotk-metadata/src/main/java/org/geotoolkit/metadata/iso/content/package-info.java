@@ -21,7 +21,22 @@
  * implementation. An explanation for this package is provided in the
  * {@linkplain org.opengis.metadata.content OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
- * <p>
+ *
+ * {@section Overview}
+ * For a global overview of metadata in Geotk, see the
+ * <a href="{@docRoot}/../modules/metadata/index.html">Metadata page on the project web site</a>.
+ *
+ * {@section Bands in gridded data}
+ * ISO 19115 defines a {@link org.geotoolkit.metadata.iso.content.Band} interface which
+ * expresses the range of wavelengths in the electromagnetic spectrum. For the needs of
+ * Image I/O, an additional interface has been defined with a subset of the {@code Band}
+ * API and the restriction to electromagnetic spectrum removed. This interface is defined
+ * in the {@code geotk-coverageio} module and is named
+ * {@link org.geotoolkit.image.io.metadata.SampleDimension}.
+ * Both {@code Band} and {@code SampleDimension} interfaces extend the same parent,
+ * {@link org.opengis.metadata.content.RangeDimension}.
+ *
+ * {@section Parameterized types}
  * In GeoAPI interfaces, most collections are typed with wildcards, for example
  * {@code Collection<? extends Citation>}. The Geotk implementation removes the
  * wildcards and declares {@code Collection<Citation>} instead. This allows collections

@@ -18,8 +18,7 @@
 
 /**
  * Root package for various metadata implementations. For a global overview of metadata in Geotk,
- * see the <a href="{@docRoot}/../modules/metadata/index.html">Metadata</a> page on the project web
- * site.
+ * see the <a href="{@docRoot}/../modules/metadata/index.html">Metadata page on the project web site</a>.
  * <p>
  * This root package is not linked to any particular metadata standard. It assumes that a standard
  * is defined through a set of Java interfaces (for example {@link org.opengis.metadata}) and uses

@@ -17,14 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
-import java.text.Format;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
-import java.util.logging.Logger;
-import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
@@ -34,10 +27,7 @@ import org.w3c.dom.Node;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
-import org.geotoolkit.image.io.GeographicImageReader;
-import org.geotoolkit.image.io.GeographicImageWriter;
 
 
 /**
@@ -52,7 +42,7 @@ import org.geotoolkit.image.io.GeographicImageWriter;
  * treat some warnings as fatal errors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.06
  *
  * @since 2.4
  * @module
@@ -61,18 +51,7 @@ import org.geotoolkit.image.io.GeographicImageWriter;
  *   metadata objects defined in ISO 19115-2.
  */
 @Deprecated
-public class GeographicMetadata extends IIOMetadata {
-    /**
-     * The {@link ImageReader} or {@link ImageWriter} that holds the metadata,
-     * or {@code null} if none.
-     */
-    private final Object owner;
-
-    /**
-     * The root node to be returned by {@link #getAsTree}.
-     */
-    private Node root;
-
+public class GeographicMetadata extends SpatialMetadata {
     /**
      * The coordinate reference system node.
      * Will be created only when first needed.
@@ -101,7 +80,7 @@ public class GeographicMetadata extends IIOMetadata {
      * The only format defined is the {@linkplain GeographicMetadataFormat geographic} one.
      */
     public GeographicMetadata() {
-        this((Object) null);
+        this((ImageReader) null);
     }
 
     /**
@@ -110,7 +89,8 @@ public class GeographicMetadata extends IIOMetadata {
      * @param reader The source image reader, or {@code null} if none.
      */
     public GeographicMetadata(final ImageReader reader) {
-        this((Object) reader);
+        super(GeographicMetadataFormat.getInstance(), reader);
+        init();
     }
 
     /**
@@ -119,72 +99,21 @@ public class GeographicMetadata extends IIOMetadata {
      * @param writer The target image writer, or {@code null} if none.
      */
     public GeographicMetadata(final ImageWriter writer) {
-        this((Object) writer);
+        super(GeographicMetadataFormat.getInstance(), writer);
+        init();
     }
 
     /**
      * Creates a default metadata instance. This constructor defines no standard or native format.
      * The only format defined is the {@linkplain GeographicMetadataFormat geographic} one.
      */
-    private GeographicMetadata(final Object owner) {
-        super(false, // Can not return or accept a DOM tree using the standard metadata format.
-              null,  // There is no native metadata format.
-              null,  // There is no native metadata format.
-              new String[] {
+    private void init() {
+        extraMetadataFormatNames = new String[] {
                   GeographicMetadataFormat.FORMAT_NAME
-              },
-              new String[] {
+              };
+        extraMetadataFormatClassNames = new String[] {
                   "org.geotoolkit.image.io.metadata.GeographicMetadataFormat"
-              });
-        this.owner = owner;
-    }
-
-    /**
-     * Constructs a geographic metadata instance with the given format names and format class names.
-     * This constructor passes the arguments to the {@linkplain IIOMetadata#IIOMetadata(boolean,
-     * String, String, String[], String[]) super-class constructor} unchanged.
-     *
-     * @param standardMetadataFormatSupported {@code true} if this object can return or accept
-     *        a DOM tree using the standard metadata format.
-     * @param nativeMetadataFormatName The name of the native metadata, or {@code null} if none.
-     * @param nativeMetadataFormatClassName The name of the class of the native metadata format,
-     *        or {@code null} if none.
-     * @param extraMetadataFormatNames Additional formats supported by this object,
-     *        or {@code null} if none.
-     * @param extraMetadataFormatClassNames The class names of any additional formats
-     *        supported by this object, or {@code null} if none.
-     */
-    public GeographicMetadata(final boolean  standardMetadataFormatSupported,
-                              final String   nativeMetadataFormatName,
-                              final String   nativeMetadataFormatClassName,
-                              final String[] extraMetadataFormatNames,
-                              final String[] extraMetadataFormatClassNames)
-    {
-        super(standardMetadataFormatSupported,
-              nativeMetadataFormatName,
-              nativeMetadataFormatClassName,
-              extraMetadataFormatNames,
-              extraMetadataFormatClassNames);
-        owner = null;
-    }
-
-    /**
-     * Returns {@code false} since this node support some write operations.
-     */
-    @Override
-    public boolean isReadOnly() {
-        return false;
-    }
-
-    /**
-     * Returns the root of a tree of metadata contained within this object
-     * according to the conventions defined by a given metadata format.
-     */
-    final Node getRootNode() {
-        if (root == null) {
-            root = new IIOMetadataNode(GeographicMetadataFormat.FORMAT_NAME);
-        }
-        return root;
+              };
     }
 
     /**
@@ -287,39 +216,6 @@ public class GeographicMetadata extends IIOMetadata {
     }
 
     /**
-     * Returns the root of a tree of metadata contained within this object
-     * according to the conventions defined by a given metadata format.
-     *
-     * @param formatName the desired metadata format.
-     * @return The node forming the root of metadata tree.
-     * @throws IllegalArgumentException if the format name is {@code null} or is not
-     *         one of the names returned by {@link #getMetadataFormatNames}.
-     */
-    @Override
-    public Node getAsTree(final String formatName) throws IllegalArgumentException {
-        checkFormatName(formatName);
-        return getRootNode();
-    }
-
-    /**
-     * Alters the internal state of this metadata from a tree whose syntax is defined by
-     * the given metadata format. The default implementation simply replaces all existing
-     * state with the contents of the given tree.
-     *
-     * @param formatName The desired metadata format.
-     * @param root An XML DOM Node object forming the root of a tree.
-     *
-     * @todo We need to performs a real merge; this is required by mosaic image readers.
-     *       See {@link MetadataMerge}.
-     */
-    @Override
-    public void mergeTree(final String formatName, final Node root) throws IIOInvalidTreeException {
-        checkFormatName(formatName);
-        reset();
-        this.root = root;
-    }
-
-    /**
      * Alters the internal state of this metadata from a tree defined by the specified metadata.
      * The default implementation expects the
      * {@value org.geotoolkit.image.io.metadata.GeographicMetadataFormat#FORMAT_NAME} format.
@@ -327,6 +223,7 @@ public class GeographicMetadata extends IIOMetadata {
      * @param  metadata The metadata to merge to this object.
      * @throws IIOInvalidTreeException If the metadata can not be merged.
      */
+    @Override
     public void mergeTree(final IIOMetadata metadata) throws IIOInvalidTreeException {
         final Node tree;
         try {
@@ -343,99 +240,10 @@ public class GeographicMetadata extends IIOMetadata {
      */
     @Override
     public void reset() {
-        root        = null;
         referencing = null;
         geometry    = null;
         bands       = null;
-    }
-
-    /**
-     * Returns the language to use when {@linkplain #warningOccurred logging a warning},
-     * or {@code null} if none has been set. The default implementation delegates to
-     * {@link ImageReader#getLocale} or {@link ImageWriter#getLocale} if possible, or
-     * returns {@code null} otherwise.
-     *
-     * @return The locale for formatting warnings.
-     */
-    public Locale getLocale() {
-        if (owner instanceof ImageReader) {
-            return ((ImageReader) owner).getLocale();
-        }
-        if (owner instanceof ImageWriter) {
-            return ((ImageWriter) owner).getLocale();
-        }
-        return null;
-    }
-
-    /**
-     * Invoked when a warning occured. This method is invoked when some inconsistency has
-     * been detected in the geographic metadata. The default implementation delegates to
-     * {@link GeographicImageReader#warningOccurred} if possible, or send the record to
-     * the {@code "org.geotoolkit.image.io.metadata"} logger otherwise.
-     * <p>
-     * Subclasses may override this method if more processing is wanted, or for
-     * throwing exception if some warnings should be considered as fatal errors.
-     *
-     * @param record The warning record to log.
-     */
-    protected void warningOccurred(final LogRecord record) {
-        if (owner instanceof GeographicImageReader) {
-            ((GeographicImageReader) owner).warningOccurred(record);
-        } else if (owner instanceof GeographicImageWriter) {
-            ((GeographicImageWriter) owner).warningOccurred(record);
-        } else {
-            final Logger logger = Logging.getLogger(GeographicMetadata.class);
-            record.setLoggerName(logger.getName());
-            logger.log(record);
-        }
-    }
-
-    /**
-     * A {@link LoggedFormat} which use the {@link GeographicMetadata#getLocale reader locale}
-     * for warnings.
-     */
-    private final class FormatAdapter<T> extends LoggedFormat<T> {
-        private static final long serialVersionUID = -1108933164506428318L;
-
-        FormatAdapter(final Format format, final Class<T> type) {
-            super(format, type);
-        }
-
-        @Override
-        protected Locale getWarningLocale() {
-            return getLocale();
-        }
-
-        @Override
-        protected void logWarning(final LogRecord warning) {
-            warningOccurred(warning);
-        }
-    }
-
-    /**
-     * Wraps the specified format in order to either parse fully a string, or log a warning.
-     *
-     * @param  <T>    The expected type of parsed values.
-     * @param  format The format to use for parsing and formatting.
-     * @param  type   The expected type of parsed values.
-     * @return A format that log warnings when it can't parse fully a string.
-     */
-    protected <T> LoggedFormat<T> createLoggedFormat(final Format format, final Class<T> type) {
-        return new FormatAdapter<T>(format, type);
-    }
-
-    /**
-     * Returns a standard date format to be shared by {@link MetadataAccessor}.
-     */
-    final LoggedFormat<Date> dateFormat() {
-        if (dateFormat == null) {
-            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            dateFormat = createLoggedFormat(format, Date.class);
-            dateFormat.setLogger("org.geotoolkit.image.io.metadata");
-            dateFormat.setCaller(MetadataAccessor.class, "getDate");
-        }
-        return dateFormat;
+        super.reset();
     }
 
     /**

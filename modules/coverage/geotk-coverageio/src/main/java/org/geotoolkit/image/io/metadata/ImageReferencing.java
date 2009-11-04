@@ -511,7 +511,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private ChildList<Axis> getCoordinateSystemAccessor() {
         if (cs == null) {
-            cs = new ChildList.Axes(metadata);
+            cs = new ChildList.Axes((GeographicMetadata) metadata);
         }
         return cs;
     }
@@ -569,7 +569,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private ChildList<Parameter> getProjectionAccessor() {
         if (projection == null) {
-            projection = new ChildList.Parameters(metadata);
+            projection = new ChildList.Parameters((GeographicMetadata) metadata);
         }
         return projection;
     }

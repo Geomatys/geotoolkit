@@ -20,7 +20,12 @@
  * {@linkplain org.geotoolkit.metadata.iso.extent.DefaultExtent Extent} implementation. An explanation
  * for this package is provided in the {@linkplain org.opengis.metadata.extent OpenGIS&reg; javadoc}.
  * The remaining discussion on this page is specific to the Geotk implementation.
- * <p>
+ *
+ * {@section Overview}
+ * For a global overview of metadata in Geotk, see the
+ * <a href="{@docRoot}/../modules/metadata/index.html">Metadata page on the project web site</a>.
+ *
+ * {@section Parameterized types}
  * In GeoAPI interfaces, most collections are typed with wildcards, for example
  * {@code Collection<? extends Citation>}. The Geotk implementation removes the
  * wildcards and declares {@code Collection<Citation>} instead. This allows collections

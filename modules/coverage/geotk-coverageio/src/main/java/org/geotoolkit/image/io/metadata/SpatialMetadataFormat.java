@@ -86,7 +86,18 @@ import org.geotoolkit.resources.Errors;
  * {@section Default formats}
  * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
  * {@link Metadata} and {@link ImageDescription} interfaces, respectively. Consequently those
- * instances can be considered as profiles of ISO 19115-2. The tree structures are as below:
+ * instances can be considered as profiles of ISO 19115-2, with a few minor departures
+ * <p>
+ * <ul>
+ *   <li>The {@link Band} interface defined by ISO 19115-2 is used only when the values are
+ *       measurements of wavelengths in the electromagnetic spectrum, as specified in the ISO
+ *       specification. Otherwise the {@link SampleDimension} interface (which is very similar)
+ *       is used.</li>
+ * </ul>
+ * <p>
+ * The tree structures are show below.
+ * For browsing these trees in an applet together with additional information, see the
+ * <a href="{@docRoot}/../demos/geotk-simples/applet/IIOMetadataPanel.html">IIOMetadataPanel applet</a>.
  *
 <blockquote><table border="1" cellpadding="12">
 <tr bgcolor="lightblue"><th>Stream metadata</th><th>Image metadata</th></tr>

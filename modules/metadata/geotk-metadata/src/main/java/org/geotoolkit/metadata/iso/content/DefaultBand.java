@@ -38,6 +38,12 @@ import org.geotoolkit.lang.ValueRange;
 /**
  * Range of wavelengths in the electromagnetic spectrum.
  *
+ * {@section Geotk extension}
+ * The {@link Band} interface defined by ISO 19115-2 is specific to measurements in
+ * electromagnetic spectrum. For the needs of Image I/O, an additional interface -
+ * {@link org.geotoolkit.image.io.metadata.SampleDimension} - has been defined with
+ * a subset of the {@code Band} API but without the restriction to wavelengths.
+ *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)

@@ -30,11 +30,10 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.Node;
-
-import org.opengis.metadata.content.Band;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -50,7 +49,12 @@ import org.geotoolkit.image.io.SpatialImageWriter;
  * Spatial (usually geographic) informations encoded in an image. This class converts the
  * {@link IIOMetadataNode} elements and attribute values to metadata objects conform
  * to some {@linkplain org.geotoolkit.metadata.MetadataStandard metadata standard}
- * (typically ISO 19115-2) and conversely.
+ * (typically ISO 19115-2) and conversely. The conversions are performed by the following
+ * methods:
+ * <p>
+ * <ul>
+ *   <li>{@link #getSampleDimensions()}</li>
+ * </ul>
  *
  * {@section Errors handling}
  * If some inconsistency are found while reading (for example if the coordinate system
@@ -71,7 +75,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
      * The metadata format.
      */
-    private final SpatialMetadataFormat format;
+    private final IIOMetadataFormat format;
 
     /**
      * The {@link ImageReader} or {@link ImageWriter} that holds the metadata,
@@ -123,7 +127,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @param format The metadata format.
      * @param reader The source image reader, or {@code null} if none.
      */
-    public SpatialMetadata(final SpatialMetadataFormat format, final ImageReader reader) {
+    public SpatialMetadata(final IIOMetadataFormat format, final ImageReader reader) {
         this(format, (Object) reader);
     }
 
@@ -133,14 +137,14 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @param format The metadata format.
      * @param writer The target image writer, or {@code null} if none.
      */
-    public SpatialMetadata(final SpatialMetadataFormat format, final ImageWriter writer) {
+    public SpatialMetadata(final IIOMetadataFormat format, final ImageWriter writer) {
         this(format, (Object) writer);
     }
 
     /**
      * Creates a default metadata instance for the given format and reader/writer.
      */
-    private SpatialMetadata(final SpatialMetadataFormat format, final Object owner) {
+    private SpatialMetadata(final IIOMetadataFormat format, final Object owner) {
         super(false, // Can not return or accept a DOM tree using the standard metadata format.
               null,  // There is no native metadata format.
               null,  // There is no native metadata format.
@@ -152,6 +156,25 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
               });
         this.format = format;
         this.owner  = owner;
+    }
+
+    /**
+     * Returns the list of all {@code dimension} elements under the {@code "ImageDescription/Dimensions"}
+     * node. If this node does not exist or has no element, then this method returns an empty list
+     * (never {@code null}).
+     * <p>
+     * The returned list is writable: if an element of that list is modified or if a new element
+     * is added, the change will be reflected in the underlying {@link IIOMetadata}.
+     *
+     * @return The list of every {@code "Dimension"} elements.
+     *
+     * @since 3.06
+     *
+     * @todo Current implementation returns an unmodifiable empty list if all cases.
+     *       Real implementation will be provided soon.
+     */
+    public List<SampleDimension> getSampleDimensions() {
+        return java.util.Collections.emptyList();
     }
 
     /**
@@ -173,14 +196,6 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns {@code false} since this metadata supports some write operations.
-     */
-    @Override
-    public boolean isReadOnly() {
-        return false;
-    }
-
-    /**
      * Checks the format name.
      */
     private void checkFormatName(final String formatName) throws IllegalArgumentException {
@@ -191,18 +206,14 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns the list of all {@code dimension} elements under the {@code ImageDescription/dimensions}
-     * node. If this node does not exist, then this method returns {@code null}.
-     *
-     * @return The list of every {@code dimension} elements, or {@code null} if the
-     *         {@code ImageDescription/dimensions} node does not exist.
-     *
-     * @since 3.06
-     *
-     * @todo Current implementation returns {@code null} if all cases.
+     * Returns the root of a tree of metadata contained within this object according
+     * to the conventions defined by the metadata format associated to this instance.
      */
-    public List<Band> getBands() {
-        return null;
+    final Node getAsTree() {
+        if (root == null) {
+            root = new IIOMetadataNode(format.getRootName());
+        }
+        return root;
     }
 
     /**
@@ -217,10 +228,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     @Override
     public Node getAsTree(final String formatName) throws IllegalArgumentException {
         checkFormatName(formatName);
-        if (root == null) {
-            root = new IIOMetadataNode(format.getRootName());
-        }
-        return root;
+        return getAsTree();
     }
 
     /**
@@ -347,6 +355,14 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
             return IIOMetadataFormatImpl.standardMetadataFormatName;
         }
         return null;
+    }
+
+    /**
+     * Returns {@code false} since this metadata supports some write operations.
+     */
+    @Override
+    public boolean isReadOnly() {
+        return false;
     }
 
     /**

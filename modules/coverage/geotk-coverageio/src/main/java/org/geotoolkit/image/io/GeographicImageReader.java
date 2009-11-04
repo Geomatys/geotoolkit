@@ -507,12 +507,12 @@ public abstract class GeographicImageReader extends ImageReader {
             sourceBands = null;
             targetBands = null;
         }
-        if (parameters instanceof GeographicImageReadParam) {
-            final GeographicImageReadParam geoparam = (GeographicImageReadParam) parameters;
+        if (parameters instanceof SpatialImageReadParam) {
+            final SpatialImageReadParam geoparam = (SpatialImageReadParam) parameters;
             paletteName = geoparam.getNonNullPaletteName();
             visibleBand = geoparam.getVisibleBand();
         } else {
-            paletteName = GeographicImageReadParam.DEFAULT_PALETTE_NAME;
+            paletteName = SpatialImageReadParam.DEFAULT_PALETTE_NAME;
             visibleBand = 0;
         }
         final int numBands;
@@ -842,7 +842,7 @@ public abstract class GeographicImageReader extends ImageReader {
 
     /**
      * Returns a default parameter object appropriate for this format. The default
-     * implementation constructs and returns a new {@link GeographicImageReadParam}.
+     * implementation constructs and returns a new {@link SpatialImageReadParam}.
      *
      * @return An {@code ImageReadParam} object which may be used.
      *
@@ -851,7 +851,7 @@ public abstract class GeographicImageReader extends ImageReader {
      */
     @Override
     public ImageReadParam getDefaultReadParam() {
-        return new GeographicImageReadParam(this);
+        return new SpatialImageReadParam(this);
     }
 
     /**
