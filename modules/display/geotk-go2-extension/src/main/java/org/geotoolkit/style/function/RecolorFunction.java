@@ -16,16 +16,20 @@
  */
 package org.geotoolkit.style.function;
 
+import java.awt.Color;
 import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.geotoolkit.filter.AbstractExpression;
-
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
+import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 
 /**
@@ -49,17 +53,10 @@ import org.opengis.filter.expression.Literal;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class RecodeFunction extends AbstractExpression implements Recode {
-    
-    /**
-     * Use as a PropertyName when defining a color map.
-     * The "Raterdata" is expected to apply to only a single band;
-     */
-    public static final String RASTER_DATA = "Rasterdata";
-    
-    private final List<MapItem> items;
+public class RecolorFunction extends AbstractExpression implements Function {
+        
+    private final List<ColorItem> items;
     private final Literal fallback;
-    private final Expression lookup;
     
     /**
      * Make the instance of FunctionName available in
@@ -74,10 +71,12 @@ public class RecodeFunction extends AbstractExpression implements Recode {
      */
     public static class Name implements FunctionName {
 
+        @Override
         public int getArgumentCount() {
             return -2; // indicating unbounded, 2 minimum
         }
 
+        @Override
         public List<String> getArgumentNames() {
             return Arrays.asList(new String[]{
                         "LookupValue",
@@ -86,30 +85,24 @@ public class RecodeFunction extends AbstractExpression implements Recode {
                     });
         }
 
+        @Override
         public String getName() {
             return "Recode";
         }
     };
 
-    public RecodeFunction(List<MapItem> items, Expression lookup, Literal fallback){
+    public RecolorFunction(List<ColorItem> items, Literal fallback){
         this.items = items;
-        this.lookup = lookup;
         this.fallback = fallback;
     }
 
-    @Override
-    public Expression getLookupValue() {
-        return lookup;
-    }
-
-    @Override
-    public List<MapItem> getMapItems() {
+    public List<ColorItem> getColorItems() {
         return items;
     }
 
     @Override
     public String getName() {
-        return "Recode";
+        return "Recolor";
     }
 
     @Override
@@ -124,15 +117,46 @@ public class RecodeFunction extends AbstractExpression implements Recode {
 
     @Override
     public Object evaluate(Object object) {
-        final Expression lookupExp = lookup;
 
-        if(object instanceof Image){
-            //todo handle recode with lookup
-            return object;
-        }else{
-            throw new IllegalArgumentException("unexpected type : " + object + ", need Image.");
+        if(!(object instanceof Image)){
+            throw new IllegalArgumentException("Unexpected type : " + object + ", need Image.");
         }
 
+        final Image img = (Image) object;
+
+        final BufferedImage buffer;
+        if(img instanceof BufferedImage ){
+            BufferedImage candidate = (BufferedImage) img;
+            if(candidate.getColorModel() instanceof ComponentColorModel &&
+                    candidate.getColorModel().getTransparency() == ColorModel.TRANSLUCENT){
+                //valid buffered image
+                buffer = (BufferedImage) img;
+            }else{
+                buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                buffer.getGraphics().drawImage(img, 0, 0, null);
+            }
+            
+        }else{
+            buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            buffer.getGraphics().drawImage(img, 0, 0, null);
+        }
+
+        for(ColorItem item : items){
+            final Color dataExp = item.getSourceColor().evaluate(null, Color.class);
+            final Color resultExp = item.getTargetColor().evaluate(null, Color.class);
+
+            for (int y = 0; y < buffer.getHeight(); y++) {
+                for (int x = 0; x < buffer.getWidth(); x++) {
+                    Color c = new Color(buffer.getRGB(x, y));
+                    if(c.equals(dataExp)){
+                        buffer.setRGB(x, y, resultExp.getRGB());
+                    }
+                }
+            }
+
+        }
+
+        return buffer;
     }
 
     @Override

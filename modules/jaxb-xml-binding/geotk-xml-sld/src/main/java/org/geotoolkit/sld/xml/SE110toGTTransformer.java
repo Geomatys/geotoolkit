@@ -80,6 +80,7 @@ import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChangeCaseType;
+import org.geotoolkit.se.xml.v110.ColorReplacementType;
 import org.geotoolkit.se.xml.v110.ConcatenateType;
 import org.geotoolkit.se.xml.v110.FormatDateType;
 import org.geotoolkit.se.xml.v110.FormatNumberType;
@@ -1009,7 +1010,16 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
         final Icon icon = null;
         final String format = externalGraphicType.getFormat();
-        final Collection<ColorReplacement> replaces = Collections.emptyList();
+        final Collection<ColorReplacement> replaces = new ArrayList<ColorReplacement>();
+
+        for(final ColorReplacementType crt : externalGraphicType.getColorReplacement()){
+            final RecodeType rt = crt.getRecode();
+            for(final MapItemType mit : rt.getMapItem()){
+                final double d = mit.getData();
+                final Expression val = visitExpression(mit.getValue());
+            }
+        }
+
         
         if (resource != null){
             return styleFactory.externalGraphic(resource, format, replaces);

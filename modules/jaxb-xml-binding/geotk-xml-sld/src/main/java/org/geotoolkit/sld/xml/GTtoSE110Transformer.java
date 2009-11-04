@@ -29,6 +29,7 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
@@ -79,6 +80,7 @@ import org.geotoolkit.se.xml.v110.LabelPlacementType;
 import org.geotoolkit.se.xml.v110.LegendGraphicType;
 import org.geotoolkit.se.xml.v110.LinePlacementType;
 import org.geotoolkit.se.xml.v110.LineSymbolizerType;
+import org.geotoolkit.se.xml.v110.MapItemType;
 import org.geotoolkit.se.xml.v110.MarkType;
 import org.geotoolkit.se.xml.v110.MethodType;
 import org.geotoolkit.se.xml.v110.ModeType;
@@ -88,6 +90,7 @@ import org.geotoolkit.se.xml.v110.PointPlacementType;
 import org.geotoolkit.se.xml.v110.PointSymbolizerType;
 import org.geotoolkit.se.xml.v110.PolygonSymbolizerType;
 import org.geotoolkit.se.xml.v110.RasterSymbolizerType;
+import org.geotoolkit.se.xml.v110.RecodeType;
 import org.geotoolkit.se.xml.v110.RuleType;
 import org.geotoolkit.se.xml.v110.ShadedReliefType;
 import org.geotoolkit.se.xml.v110.StrokeType;
@@ -100,6 +103,8 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.style.function.Recode;
+import org.geotoolkit.style.function.RecodeFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 import org.geotoolkit.util.logging.Logging;
@@ -1034,6 +1039,10 @@ public class GTtoSE110Transformer implements StyleVisitor{
             egt.setOnlineResource(  visit(externalGraphic.getOnlineResource(), null) );
         }
         
+        for(final ColorReplacement cr : externalGraphic.getColorReplacements()){
+            egt.getColorReplacement().add(visit(cr, data));
+        }
+        
         return egt;
     }
 
@@ -1202,9 +1211,21 @@ public class GTtoSE110Transformer implements StyleVisitor{
     @Override
     public ColorReplacementType visit(ColorReplacement colorReplacement, Object data) {
         final ColorReplacementType crt = se_factory.createColorReplacementType();
-        colorReplacement.getRecoding();
-//        crt.setRecode(value);
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Function fct = colorReplacement.getRecoding();
+//        if(fct instanceof RecodeFunction){
+//            final RecodeFunction recode = (RecodeFunction) fct;
+//            final RecodeType rt = se_factory.createRecodeType();
+//
+//            for(final Expression exp : recode.getParameters()){
+//                final MapItemType mit = se_factory.createMapItemType();
+//                mit.setValue(visitExpression(exp));
+//                rt.getMapItem().add(mit);
+//            }
+//
+//            rt.setLookupValue(visitExpression(FactoryFinder.getFilterFactory(null).literal(RecodeFunction.RASTER_DATA)));
+//            crt.setRecode(rt);
+//        }
+        return crt;
     }
 
     /**
