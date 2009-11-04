@@ -16,10 +16,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 
+import org.geotoolkit.internal.jaxb.GeometryAdapter;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
@@ -56,11 +61,17 @@ import org.opengis.geometry.primitive.Primitive;
  */
 public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implements Complex {
 
+    @XmlElement(name="curveMember", namespace = "http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(GeometryAdapter.class)
     private List<T> elements;
 
     protected Set setViewOfElements;
 
     private Set subComplexes;
+
+    public JTSComplex() {
+        this(null);
+    }
 
     public JTSComplex(CoordinateReferenceSystem crs) {
         super(crs);
@@ -154,5 +165,26 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
         // class it can.
         return JTSUtils.GEOMETRY_FACTORY.buildGeometry(subParts);
     }
-    
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("elements:").append('\n');
+        for (Geometry g : elements) {
+            sb.append(g).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (object instanceof JTSComplex && super.equals(object)) {
+            JTSComplex that = (JTSComplex) object;
+            return Utilities.equals(this.elements, that.elements);
+        }
+        return false;
+    }
 }

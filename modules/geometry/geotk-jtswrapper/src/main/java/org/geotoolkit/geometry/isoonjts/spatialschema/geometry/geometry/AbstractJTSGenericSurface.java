@@ -102,4 +102,9 @@ public abstract class AbstractJTSGenericSurface implements GenericSurface {
      */
     @Override
     public abstract double getArea();
+
+    @Override
+    public String toString() {
+        return '[' + this.getClass().getName() + ']';
+    }
 }
