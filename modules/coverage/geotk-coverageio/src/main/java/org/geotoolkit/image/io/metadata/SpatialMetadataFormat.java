@@ -268,23 +268,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     private volatile transient MetadataDescriptions descriptions;
 
     /**
-     * Creates a new format for the {@linkplain MetadataStandard#ISO_19115 ISO 19115}
-     * metadata standard, and declare the default structure. If the default structure
-     * (illustrated in the class javadoc) is not wanted, then callers should use the
-     * {@link #SpatialMetadataFormat(MetadataStandard, String)} constructor instead.
-     *
-     * @param rootName the name of the root element.
-     *
-     * @deprecated Invoke {@link #addTreeForStream} or {@link #addTreeForImage}
-     *             after construction instead.
-     */
-    @Deprecated
-    protected SpatialMetadataFormat(final String rootName) {
-        this(MetadataStandard.ISO_19115, rootName);
-        addTreeForImage();
-    }
-
-    /**
      * Creates an initially empty format for the given standard. Subclasses shall invoke the
      * various {@code addFoo(...)} methods defined in this class or parent class for adding
      * new elements and attributes.
