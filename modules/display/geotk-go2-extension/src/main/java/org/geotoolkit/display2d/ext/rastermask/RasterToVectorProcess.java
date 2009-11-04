@@ -22,14 +22,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
@@ -46,26 +46,28 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class RasterMaskUtilies {
+public class RasterToVectorProcess {
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final LinearRing[] EMPTY_RING_ARRAY = new LinearRing[0];
 
-    private RasterMaskUtilies(){
+    public RasterToVectorProcess(){
     }
 
-    public static Map<NumberRange,Geometry> toPolygon(GridCoverage2D coverage, final Collection<NumberRange> ranges, int band)
+
+    private NumberRange lastNumberRange = null;
+    private int y = -1;
+    private int startX = -1;
+    private int endX = -1;
+
+    public Map<NumberRange,Geometry> toPolygon(GridCoverage2D coverage, final Collection<NumberRange> ranges, int band)
             throws IOException, TransformException{
         coverage = coverage.view(ViewType.GEOPHYSICS);
 
-        final Map<NumberRange,Geometry> polygons = new HashMap<NumberRange, Geometry>();
+        final Map<NumberRange,List<Geometry>> polygons = new HashMap<NumberRange, List<Geometry>>();
         for(final NumberRange range : ranges){
-            polygons.put(range, GF.createMultiPolygon(new Polygon[0]));
+            polygons.put(range, new ArrayList<Geometry>());
         }
-
-//        if(coverage.getNumSampleDimensions() > 1){
-//            throw new IOException("Coverage has more than one band.");
-//        }
 
         final RectIter iter = RectIterFactory.create(coverage.getRenderedImage(), null);
         final MathTransform2D gridToCRS = coverage.getGridGeometry().getGridToCRS2D();
@@ -101,9 +103,8 @@ public class RasterMaskUtilies {
                             }
 
                             //insert last geometry
-                            final Polygon pixel = toPolygon(startX, endX);
-                            final Geometry poly = polygons.get(lastNumberRange);
-                            polygons.put(lastNumberRange, poly.union(pixel));
+                            final Polygon pixel = toPolygon(startX, endX, y);
+                            polygons.get(lastNumberRange).add(pixel);
 
                             lastNumberRange = null;
                             startX = -1;
@@ -121,39 +122,35 @@ public class RasterMaskUtilies {
             }while(!iter.nextBandDone());
         }
 
+        System.out.println("packing");
+        final Map<NumberRange,Geometry> polygones = new HashMap<NumberRange, Geometry>();
         for(final NumberRange range : polygons.keySet()){
-            polygons.put(range, (MultiPolygon)JTS.transform(polygons.get(range), gridToCRS));
+            GeometryCollection gc = GF.createGeometryCollection(polygons.get(range).toArray(new Geometry[0]));
+            Geometry union = gc.buffer(0); //union();
+            polygones.put(range, JTS.transform(union, gridToCRS));
         }
 
-        return polygons;
+        return polygones;
     }
 
-    private static NumberRange lastNumberRange = null;
-    private static int y = -1;
-    private static int startX = -1;
-    private static int endX = -1;
-
-    private static void append(Map<NumberRange,Geometry> polygons, Point point, Number value){
+    private void append(Map<NumberRange,List<Geometry>> polygons, Point point, Number value){
         for(final NumberRange range : polygons.keySet()){
             
             if(range.contains(value)){
                 if(lastNumberRange == range){
                     //last pixel was in the same range
-                    endX = point.x;
+                    endX = point.x+1;
                     return;
                 }else if(lastNumberRange != null){
                     //last pixel was in a different range, save it's geometry
                     final Polygon pixel = toPolygon(startX, endX, y);
-                    final Geometry poly = polygons.get(range);
-                    
-
-                    polygons.put(range, poly.union(pixel));
+                    polygons.get(lastNumberRange).add(pixel);
                 }
 
                 //start a pixel serie
                 lastNumberRange = range;
                 startX = point.x;
-                endX = point.y;
+                endX = point.x+1;
                 y = point.y;
                 
                 return;
@@ -161,19 +158,19 @@ public class RasterMaskUtilies {
         }
     }
 
-    private static Polygon toPolygon(int x, int y){
-        final Coordinate coord = new Coordinate(x, y);
-        final LinearRing ring = GF.createLinearRing(
-            new Coordinate[]{
-                coord,
-                new Coordinate(x+1,y),
-                new Coordinate(x+1,y+1),
-                new Coordinate(x,  y+1),
-                coord
-            }
-        );
-        return GF.createPolygon(ring, EMPTY_RING_ARRAY);
-    }
+//    private static Polygon toPolygon(int x, int y){
+//        final Coordinate coord = new Coordinate(x, y);
+//        final LinearRing ring = GF.createLinearRing(
+//            new Coordinate[]{
+//                coord,
+//                new Coordinate(x+1,y),
+//                new Coordinate(x+1,y+1),
+//                new Coordinate(x,  y+1),
+//                coord
+//            }
+//        );
+//        return GF.createPolygon(ring, EMPTY_RING_ARRAY);
+//    }
 
     private static Polygon toPolygon(int startx, int endx, int y){
         final Coordinate coord = new Coordinate(startx, y);

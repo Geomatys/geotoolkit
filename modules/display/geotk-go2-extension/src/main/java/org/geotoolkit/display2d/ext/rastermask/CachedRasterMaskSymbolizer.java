@@ -78,7 +78,8 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
                 getCached(categorizes.get(steps[i])) );
 
         //calculate the polygons -----------------------------------------------
-        final Map<NumberRange,Geometry> polygons = RasterMaskUtilies.toPolygon(coverage, styles.keySet(),0);
+        final RasterToVectorProcess process = new RasterToVectorProcess();
+        final Map<NumberRange,Geometry> polygons = process.toPolygon(coverage, styles.keySet(),0);
 
 
         //build the features ---------------------------------------------------

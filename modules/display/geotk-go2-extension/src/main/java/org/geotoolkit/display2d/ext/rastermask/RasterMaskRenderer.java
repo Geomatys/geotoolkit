@@ -88,6 +88,8 @@ public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymboliz
             RenderingContext2D context) throws PortrayalException {
 
         double[] resolution = context.getResolution();
+        resolution[0] *= 3;
+        resolution[1] *= 3;
 
         final CoordinateReferenceSystem gridCRS = projectedCoverage.getCoverageLayer().getBounds().getCoordinateReferenceSystem();
 

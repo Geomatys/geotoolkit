@@ -135,7 +135,7 @@ public class CachedGraphic extends Cache<Graphic>{
         
         // Size ----------------------------------------
         if(GO2Utilities.isStatic(expSize)){
-            cachedSize = GO2Utilities.evaluate(expSize, null, Float.class, 0f);
+            cachedSize = GO2Utilities.evaluate(expSize, null, Float.class, Float.NaN);
             //we return false, size is 0 no need to cache or draw anything
             if(cachedSize == 0){
                 isStaticVisible = VisibilityState.UNVISIBLE;
@@ -346,7 +346,7 @@ public class CachedGraphic extends Cache<Graphic>{
         //-------- grab the cached parameters ----------------------------------------------------
         float candidateOpacity = cachedOpacity;
         float candidateRotation = cachedRotation;
-        float candidateSize = cachedSize;
+        Float candidateSize = cachedSize;
 
         if(candidateOpacity == Float.NaN){
             final Expression expOpacity = styleElement.getOpacity();
@@ -361,9 +361,8 @@ public class CachedGraphic extends Cache<Graphic>{
 
         if(candidateSize == Float.NaN){
             final Expression expSize = styleElement.getSize();
-            candidateSize = GO2Utilities.evaluate(expSize, feature, Float.class, 16f);
+            candidateSize = GO2Utilities.evaluate(expSize, feature, Float.class, Float.NaN);
         }
-        
         
         //the subbuffer image
         BufferedImage subBuffer = null;
@@ -374,13 +373,19 @@ public class CachedGraphic extends Cache<Graphic>{
 //        }
         
         //we have a cached mark ------------------------------------------------------------------
-        if(cachedMark != null)
-            subBuffer = cachedMark.getImage(feature, candidateSize*coeff,hints);
+        if(cachedMark != null){
+            if(candidateSize.isNaN()){
+                subBuffer = cachedMark.getImage(feature, 16*coeff,hints);
+            }else{
+                subBuffer = cachedMark.getImage(feature, candidateSize*coeff,hints);
+            }
+        }
         
                 
         //we have a cached external --------------------------------------------------------------
-        if(cachedExternal != null)
-            subBuffer = cachedExternal.getImage(candidateSize*coeff,hints);
+        if(cachedExternal != null){
+            subBuffer = cachedExternal.getImage(candidateSize,coeff,hints);
+        }
         
         
         //no operation to append to image, return the buffer directly ----------------------------
@@ -524,7 +529,7 @@ public class CachedGraphic extends Cache<Graphic>{
         
         //we have a cached external --------------------------------------------------------------
         if(cachedExternal != null){
-            subBuffer = cachedExternal.getImage(candidateSize*coeff,null);
+            subBuffer = cachedExternal.getImage(candidateSize,coeff,null);
         }
 
         if(subBuffer == null) return 0;

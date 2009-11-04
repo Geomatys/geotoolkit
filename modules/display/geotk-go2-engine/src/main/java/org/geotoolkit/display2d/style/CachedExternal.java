@@ -23,12 +23,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
+import java.util.Collection;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 
 import org.opengis.feature.Feature;
+import org.opengis.filter.expression.Function;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.style.ColorReplacement;
 import org.opengis.style.ExternalGraphic;
 
 /**
@@ -103,6 +105,15 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                 }
             }
         }
+
+        if(cachedImage != null){
+            final Collection<ColorReplacement> replaces = styleElement.getColorReplacements();
+            for(final ColorReplacement replace : replaces){
+                final Function fct = replace.getRecoding();
+                cachedImage = fct.evaluate(cachedImage, BufferedImage.class);
+            }
+        }
+
         
         return ! (cachedImage == null);        
     }
@@ -130,11 +141,13 @@ public class CachedExternal extends Cache<ExternalGraphic>{
      * @param size : image size
      * @return BufferedImage
      */
-    public BufferedImage getImage(final Float size, RenderingHints hints){
+    public BufferedImage getImage(final Float size, float coeff, RenderingHints hints){
         evaluate();
 
+        BufferedImage img = cachedImage;
+
         //resize image if necessary
-        if(cachedImage != null && size != null){
+        if(cachedImage != null && size != null && !size.isNaN()){
             final float aspect = (float)(cachedImage.getHeight()) / size.floatValue() ;
             final float maxwidth = cachedImage.getWidth() / aspect;
 
@@ -143,11 +156,22 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             if(hints != null) g2.setRenderingHints(hints);
             g2.drawImage(cachedImage, 0, 0,buffer.getWidth(), buffer.getHeight(), 0, 0, cachedImage.getWidth(), cachedImage.getHeight(),null);
             g2.dispose();
-            return buffer;
-        }else{
-            return cachedImage;
+            img = buffer;
         }
 
+        if(coeff != 1){
+            final float aspect = (float)(cachedImage.getHeight()) / coeff ;
+            final float maxwidth = cachedImage.getWidth() / aspect;
+
+            BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(coeff), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+            if(hints != null) g2.setRenderingHints(hints);
+            g2.drawImage(cachedImage, 0, 0,buffer.getWidth(), buffer.getHeight(), 0, 0, cachedImage.getWidth(), cachedImage.getHeight(),null);
+            g2.dispose();
+            img = buffer;
+        }
+
+        return img;
     }
 
 }

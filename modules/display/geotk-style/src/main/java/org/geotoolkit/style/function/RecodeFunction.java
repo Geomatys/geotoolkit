@@ -16,6 +16,11 @@
  */
 package org.geotoolkit.style.function;
 
+import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -127,7 +132,11 @@ public class RecodeFunction implements Function {
             //this should not happen
             splits = parameters.subList(1, parameters.size() - 1);
         }
-        
+
+        if(object instanceof Image && context.equals(BufferedImage.class)){
+            return (T) recolor((Image) object,splits);
+        }
+
         for (int i = 0; i < splits.size(); i += 2) {
             Expression dataExp = splits.get(i);
             Expression resultExp = splits.get(i + 1);
@@ -153,6 +162,41 @@ public class RecodeFunction implements Function {
         return currentExp.evaluate(object, context);
     }
 
+    private Image recolor(Image img, List<Expression> splits){
+        final BufferedImage buffer;
+        if(img instanceof BufferedImage ){
+            BufferedImage candidate = (BufferedImage) img;
+            if(candidate.getColorModel() instanceof ComponentColorModel &&
+                    candidate.getColorModel().getTransparency() == ColorModel.TRANSLUCENT){
+                //valid buffered image
+                buffer = (BufferedImage) img;
+            }else{
+                buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                buffer.getGraphics().drawImage(img, 0, 0, null);
+            }
+            
+        }else{
+            buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+            buffer.getGraphics().drawImage(img, 0, 0, null);
+        }
+
+        for (int i = 0; i < splits.size(); i += 2) {
+            final Color dataExp = splits.get(i).evaluate(null, Color.class);
+            final Color resultExp = splits.get(i + 1).evaluate(null, Color.class);
+
+            for (int y = 0; y < buffer.getHeight(); y++) {
+                for (int x = 0; x < buffer.getWidth(); x++) {
+                    Color c = new Color(buffer.getRGB(x, y));
+                    if(c.equals(dataExp)){
+                        buffer.setRGB(x, y, resultExp.getRGB());
+                    }
+                }
+            }
+
+        }
+
+        return buffer;
+    }
 
     public Literal getFallbackValue() {
         return fallback;
