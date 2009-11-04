@@ -18,7 +18,6 @@
 package org.geotoolkit.process;
 
 import org.opengis.metadata.identification.Identification;
-import org.opengis.referencing.Factory;
 
 /**
  * A process factory may provide several different process type.
@@ -27,7 +26,7 @@ import org.opengis.referencing.Factory;
  * @author johann Sorel (Geomatys)
  * @module pending
  */
-public interface ProcessFactory extends Factory{
+public interface ProcessFactory {
 
     /**
      * Hold the general information about this factory.
@@ -37,16 +36,23 @@ public interface ProcessFactory extends Factory{
     Identification getIdentification();
 
     /**
+     * Return the process descriptor of this given name.
+     * @return ProcessDescriptor can not null
+     * @throws IllegalArgumentException if no descriptor exist for the given name
+     */
+    ProcessDescriptor getDescriptor(String name) throws IllegalArgumentException;
+
+    /**
      * Return an array of all process descriptors available in this factory.
      * @return ProcessDescriptor[] never null but can be empty
      */
-    ProcessDescriptor[] getProcessDescriptors();
+    ProcessDescriptor[] getDescriptors();
 
     /**
      * Return the name of all available processes. This name is only available
      * within this factory.
      */
-    String[] getProcessNames();
+    String[] getNames();
 
     /**
      * Create a process.
@@ -55,6 +61,6 @@ public interface ProcessFactory extends Factory{
      * @return Process
      * @throws IllegalArgumentException if name is not part of this factory
      */
-    Process createProcess(String name) throws IllegalArgumentException;
+    Process create(String name) throws IllegalArgumentException;
 
 }

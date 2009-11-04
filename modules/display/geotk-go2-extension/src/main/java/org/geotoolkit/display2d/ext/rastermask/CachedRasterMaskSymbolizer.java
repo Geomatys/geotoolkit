@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.ext.rastermask;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -33,12 +32,18 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.process.Process;
+import org.geotoolkit.process.ProcessDescriptor;
+import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.coverage.CoverageProcessFactory;
+import org.geotoolkit.process.coverage.CoverageToVectorDescriptor;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.expression.Expression;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Symbolizer;
 
@@ -78,8 +83,18 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
                 getCached(categorizes.get(steps[i])) );
 
         //calculate the polygons -----------------------------------------------
-        final RasterToVectorProcess process = new RasterToVectorProcess();
-        final Map<NumberRange,Geometry> polygons = process.toPolygon(coverage, styles.keySet(),0);
+        final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor(
+                CoverageProcessFactory.NAME, CoverageToVectorDescriptor.NAME);
+
+        final Process process = descriptor.createProcess();
+        final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
+        input.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
+        input.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(styles.keySet().toArray(new NumberRange[0]));
+        process.setInput(input);
+        process.run();
+
+        final Geometry[] polygons = (Geometry[]) process.getOutput().parameter(
+                CoverageToVectorDescriptor.GEOMETRIES.getName().getCode()).getValue();
 
 
         //build the features ---------------------------------------------------
@@ -93,12 +108,12 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
 
         final SimpleFeatureBuilder sfBuilder = new SimpleFeatureBuilder(sft);
         int id = 0;
-        for(final Entry<NumberRange,Geometry> entry : polygons.entrySet()){
+        for(Geometry entry : polygons){
             sfBuilder.reset();
-            sfBuilder.set(geometryField, entry.getValue());
+            sfBuilder.set(geometryField, entry);
             final SimpleFeature sf = sfBuilder.buildFeature(String.valueOf(id++));
 
-            features.put(sf, styles.get(entry.getKey()));
+            features.put(sf, styles.get(entry.getUserData()));
         }
 
         return features;

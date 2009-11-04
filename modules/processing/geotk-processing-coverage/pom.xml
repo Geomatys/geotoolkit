@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>processing</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>processing</artifactId>
-  <packaging>pom</packaging>
-  <name>Processing</name>
+  <artifactId>geotk-processing-coverage</artifactId>
+  <packaging>jar</packaging>
+  <name>Processing coverage</name>
 
   <description>
-    Projects group for processing operation.
+    Processes for coverages.
   </description>
 
 
@@ -50,11 +50,31 @@
 
 
   <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
+  <!--     Dependency Management                                   -->
   <!-- =========================================================== -->
-  <modules>
-    <module>geotk-processing-core</module>
-    <module>geotk-processing-coverage</module>
-  </modules>
+  <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-processing-core</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-geometry</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverage</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-coverageio</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>com.vividsolutions</groupId>
+          <artifactId>jts</artifactId>
+      </dependency>
+  </dependencies>
 
 </project>

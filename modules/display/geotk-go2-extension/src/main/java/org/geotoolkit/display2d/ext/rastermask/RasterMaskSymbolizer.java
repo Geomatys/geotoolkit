@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.ext.rastermask;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import javax.measure.unit.NonSI;
 
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
