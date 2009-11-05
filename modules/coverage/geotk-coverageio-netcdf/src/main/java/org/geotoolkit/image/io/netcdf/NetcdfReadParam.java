@@ -28,7 +28,7 @@ import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.VariableEnhanced;
 
-import org.geotoolkit.image.io.GeographicImageReadParam;
+import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.resources.Errors;
 
 
@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
  *             a {@code FileImageReaderND} superclass (common to NetCDF and HDF readers). The
  *             {@link AxisType} enumeration needs to be replaced by something neutral from GeoAPI.
  */
-public class NetcdfReadParam extends GeographicImageReadParam {
+public class NetcdfReadParam extends SpatialImageReadParam {
     /**
      * The default source band to read from the NetCDF file. Also the default indice for
      * any additional dimension after the one assigned to bands. We use the same default
