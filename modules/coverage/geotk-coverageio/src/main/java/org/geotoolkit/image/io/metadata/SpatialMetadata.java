@@ -47,10 +47,9 @@ import org.geotoolkit.image.io.SpatialImageWriter;
 
 /**
  * Spatial (usually geographic) informations encoded in an image. This class converts the
- * {@link IIOMetadataNode} elements and attribute values to metadata objects conform
- * to some {@linkplain org.geotoolkit.metadata.MetadataStandard metadata standard}
- * (typically ISO 19115-2) and conversely. The conversions are performed by the following
- * methods:
+ * {@link IIOMetadataNode} elements and attribute values to ISO 19115-2 metadata objects.
+ * The tree is expected conform to the {@linkplain SpatialMetadataFormat spatial metadata
+ * format} defined in this package. The conversions are performed by the following methods:
  * <p>
  * <ul>
  *   <li>{@link #getSampleDimensions()}</li>

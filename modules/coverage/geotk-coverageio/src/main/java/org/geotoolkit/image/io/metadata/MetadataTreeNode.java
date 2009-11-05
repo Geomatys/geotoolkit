@@ -40,10 +40,10 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
 
 /**
  * A node in the tree produced by {@link MetadataTreeTable}. The value returned by the
- * {@link #toString()} methods is the programmatic name of the element or attribute represented
- * by this node. The values returned by the {@link #getValueAt(int)} method are the values for
- * the columns documented in the {@link MetadataTreeTable} javadoc. Those values are also
- * accessible by specific getter methods:
+ * {@link #toString() toString()} method is the programmatic name of the element or attribute
+ * represented by this node. The values returned by the {@link #getValueAt(int)} method are
+ * the values for the columns documented in the {@link MetadataTreeTable} javadoc. Those
+ * values are also accessible by specific getter methods:
  * <p>
  * <ol>
  *   <li>{@link #getLabel()}</li>
@@ -54,6 +54,13 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  *   <li>{@link #getDefaultValue()}</li>
  *   <li>{@link #getValueRestriction()}</li>
  * </ol>
+ * <p>
+ * By default the value returned by {@link #getAllowsChildren() getAllowsChildren()} is:
+ * <p>
+ * <ul>
+ *   <li>{@code true) if the node is an element.</li>
+ *   <li>{@code false} if the node is an attribute.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
@@ -329,7 +336,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                 }
             }
             if (isArray) {
-                type = Classes.changeArrayDimension(type, 1);
+                type = Classes.changeArrayDimension(Classes.wrapperToPrimitive(type), 1);
             }
             valueType = type;
         }

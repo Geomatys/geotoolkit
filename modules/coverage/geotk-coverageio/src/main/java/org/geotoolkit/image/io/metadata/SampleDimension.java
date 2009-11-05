@@ -26,7 +26,7 @@ import org.geotoolkit.util.MeasurementRange;
 
 
 /**
- * The range of values in an image band. This interface is a generalization of the
+ * The range of physical values in an image band. This interface is a generalization of the
  * {@link org.opengis.metadata.content.Band} interface defined by ISO 19115-2: {@code Band}
  * describes specifically the range of wavelengths in the electromagnetic spectrum, while
  * {@code SampleDimension} allows any kind of physical measurements.
@@ -39,9 +39,9 @@ import org.geotoolkit.util.MeasurementRange;
  *   <li>{@link #getValueRange()}</li>
  * </ul>
  * <p>
- * If an image band is known to be a measurement of wavelengths in the electromagnetic spectrum,
- * then the instance returned by {@link SpatialMetadata#getBands()} shall implement both the
- * {@code SampleDimension} and the {@code Band} interfaces.
+ * If image bands are known to be a measurement of wavelengths in the electromagnetic spectrum,
+ * then the instances returned by {@link SpatialMetadata#getSampleDimensions()} shall implement
+ * both the {@code SampleDimension} and the {@code Band} interfaces.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06

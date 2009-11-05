@@ -21,18 +21,25 @@
  * <p>
  * This package defines a {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadataFormat spatial
  * metadata format} which is aimed image format neutral. The metadata format defines a structure for
- * a tree of nodes in a way similar to the way methods are defined in GeoAPI interfaces. For example
- * it defines a {@code "CoordinateReferenceSystem"} node with {@code "CoordinateSystem"} and
- * {@code "Datum"} child nodes.
+ * a tree of nodes with elements and attributes similar to GeoAPI interfaces and methods.
  * <p>
  * The {@link org.geotoolkit.image.io.metadata.SpatialMetadata} class contains convenience methods
  * for encoding metatadata. Metadata are usually given as {@link java.lang.String} or {@code double}
  * attributes only, but image readers can optionaly attach fully constructed GeoAPI objects if they
  * wish.
  *
- * {@section Relationship with the ISO-19129 standard}
- * The ISO 19129 standard (<cite>Geographic information — Imagery, gridded and coverage data
- * framework</cite>) defines the metadata that are expected to exist in every coverage format.
+ * {@section Relationship with ISO/OGC standards}
+ * The {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadataFormat spatial metadata format}
+ * defined in this package is inspired by the following material:
+ * <p>
+ * <ul>
+ *   <li><a href="http://www.opengeospatial.org/standards/gmljp2">GML in JPEG 2000 for Geographic Imagery Encoding</a></li>
+ *   <li>ISO 19115:   <cite>Geographic information — Metadata</cite></li>
+ *   <li>ISO 19115-2: <cite>Geographic information — Metadata — Part 2: Extensions for imagery and gridded data</cite></li>
+ *   <li>ISO 19129:   <cite>Geographic information — Imagery, gridded and coverage data framework</cite></li>
+ * </ul>
+ * <p>
+ * The ISO 19129 standard defines the metadata that are expected to exist in every coverage format.
  * The table below gives the relationship between ISO 19129 constructs and Java or GeoAPI. Not
  * all ISO constructs are implemented; see {@link org.geotoolkit.image.io.metadata.SpatialMetadataFormat}
  * for the list of constructs available in Geotk.
@@ -55,7 +62,7 @@
  *   </tr>
  *   <tr>
  *     <td nowrap><code>&nbsp;IF_Collection&nbsp;</code></td>
- *     <td nowrap>&nbsp;Collection of {@link org.opengis.grid.GridCoverage}s&nbsp;</td>
+ *     <td nowrap>&nbsp;Collection of {@link org.opengis.coverage.grid.GridCoverage}s&nbsp;</td>
  *     <td>&nbsp;A collection of <code>IF_CoverageData</code> and associated metadata.</td>
  *   </tr>
  *   <tr>

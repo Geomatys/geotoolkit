@@ -46,8 +46,8 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  * the {@linkplain Element element} of interest. Example of valid paths:
  * <p>
  * <ul>
- *   <li>{@code "CoordinateReferenceSystem/Datum"}</li>
- *   <li>{@code "CoordinateReferenceSystem/CoordinateSystem"}</li>
+ *   <li>{@code "RectifiedGridDomain/CRS/Datum"}</li>
+ *   <li>{@code "RectifiedGridDomain/CRS/CoordinateSystem"}</li>
  *   <li>{@code "DiscoveryMetadata/Extent/GeographicElement"}</li>
  * </ul>
  * <p>

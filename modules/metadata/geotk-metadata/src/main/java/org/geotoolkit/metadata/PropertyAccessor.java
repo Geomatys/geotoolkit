@@ -52,7 +52,7 @@ import org.geotoolkit.internal.StringUtilities;
  * purpose, a little bit like the <cite>Java Beans</cite> framework.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 2.4
  * @module
@@ -173,7 +173,7 @@ final class PropertyAccessor {
      *
      * @param  metadata The metadata implementation to wrap.
      * @param  type The interface implemented by the metadata.
-     *         Should be the value returned by {@link #getType}.
+     *         Shall be the value returned by {@link #getStandardType}.
      */
     PropertyAccessor(final Class<?> implementation, final Class<?> type) {
         this.implementation = implementation;
@@ -215,6 +215,11 @@ final class PropertyAccessor {
                     name = SET + name.substring(base);
                 }
             }
+            /*
+             * Note: we want PUBLIC methods only.  For example the referencing module defines
+             * setters as private methods for use by JAXB only. We don't want to allow access
+             * to those setters.
+             */
             Method setter = null;
             try {
                 setter = implementation.getMethod(name, arguments);
@@ -287,45 +292,52 @@ final class PropertyAccessor {
     }
 
     /**
-     * Returns the metadata interface implemented by the specified implementation.
-     * Only one metadata interface can be implemented.
+     * Returns the metadata interface implemented by the specified implementation type.
+     * Only one metadata interface can be implemented. If the given type is already an
+     * interface from the standard, it is returned directly.
      *
-     * @param  metadata The metadata implementation to wraps.
+     * @param  type The type of the implementation (could also be the interface type).
      * @param  interfacePackage The root package for metadata interfaces.
      * @return The single interface, or {@code null} if none where found.
      */
-    static Class<?> getType(Class<?> implementation, final String interfacePackage) {
-        if (implementation != null && !implementation.isInterface()) {
-            /*
-             * Gets every interfaces from the supplied package in declaration order,
-             * including the ones declared in the super-class.
-             */
-            final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
-            do {
-                getInterfaces(implementation, interfacePackage, interfaces);
-                implementation = implementation.getSuperclass();
-            } while (implementation != null);
-            /*
-             * If we found more than one interface, removes the
-             * ones that are sub-interfaces of the other.
-             */
-            for (final Iterator<Class<?>> it=interfaces.iterator(); it.hasNext();) {
-                final Class<?> candidate = it.next();
-                for (final Class<?> child : interfaces) {
-                    if (candidate != child && candidate.isAssignableFrom(child)) {
-                        it.remove();
-                        break;
+    static Class<?> getStandardType(Class<?> type, final String interfacePackage) {
+        if (type != null) {
+            if (type.isInterface()) {
+                if (type.getName().startsWith(interfacePackage)) {
+                    return type;
+                }
+            } else {
+                /*
+                 * Gets every interfaces from the supplied package in declaration order,
+                 * including the ones declared in the super-class.
+                 */
+                final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
+                do {
+                    getInterfaces(type, interfacePackage, interfaces);
+                    type = type.getSuperclass();
+                } while (type != null);
+                /*
+                 * If we found more than one interface, removes the
+                 * ones that are sub-interfaces of the other.
+                 */
+                for (final Iterator<Class<?>> it=interfaces.iterator(); it.hasNext();) {
+                    final Class<?> candidate = it.next();
+                    for (final Class<?> child : interfaces) {
+                        if (candidate != child && candidate.isAssignableFrom(child)) {
+                            it.remove();
+                            break;
+                        }
                     }
                 }
-            }
-            final Iterator<Class<?>> it=interfaces.iterator();
-            if (it.hasNext()) {
-                final Class<?> candidate = it.next();
-                if (!it.hasNext()) {
-                    return candidate;
+                final Iterator<Class<?>> it=interfaces.iterator();
+                if (it.hasNext()) {
+                    final Class<?> candidate = it.next();
+                    if (!it.hasNext()) {
+                        return candidate;
+                    }
+                    // Found more than one interface; we don't know which one to pick.
+                    // Returns 'null' for now; the caller will thrown an exception.
                 }
-                // Found more than one interface; we don't know which one to pick.
-                // Returns 'null' for now; the caller will thrown an exception.
             }
         }
         return null;
@@ -586,11 +598,11 @@ final class PropertyAccessor {
                 }
                 case DECLARING_CLASS: {
                     Method getter = getters[index];
-                    try {
+                    if (implementation != type) try {
                         getter = implementation.getMethod(getter.getName(), (Class<?>[]) null);
                     } catch (NoSuchMethodException error) {
                         // Should never happen, since the implementation class
-                        // implements the the interface where the getter come from.
+                        // implements the interface where the getter come from.
                         throw new AssertionError(error);
                     }
                     return getter.getDeclaringClass();
@@ -617,7 +629,9 @@ final class PropertyAccessor {
         ValueRestriction restriction = restrictions[index];
         if (restriction == ValueRestriction.PENDING) {
             final Method impl, getter=getters[index];
-            try {
+            if (implementation == type) {
+                impl = getter;
+            } else try {
                 impl = implementation.getMethod(getter.getName(), (Class<?>[]) null);
             } catch (NoSuchMethodException error) {
                 // Should never happen, since the implementation class

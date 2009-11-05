@@ -70,7 +70,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      *
      * @param array The array to wrap.
      */
-    protected UnmodifiableArrayList(final E[] array) {
+    protected UnmodifiableArrayList(final E... array) {
         if (array == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "array"));
         }

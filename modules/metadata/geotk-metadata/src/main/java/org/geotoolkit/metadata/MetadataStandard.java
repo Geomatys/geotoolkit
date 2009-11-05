@@ -64,7 +64,7 @@ import org.geotoolkit.util.NullArgumentException;
  * the tree of XML nodes to be associated with raster data.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 2.4
  * @module
@@ -78,15 +78,14 @@ public final class MetadataStandard {
      *
      * @since 2.5
      */
-    public static final MetadataStandard ISO_19111 = new MetadataStandard("org.opengis.referencing.");
+    public static final MetadataStandard ISO_19111;
 
     /**
      * An instance working on ISO 19115 standard as defined by
      * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
      * in the {@link org.opengis.metadata} package and subpackages.
      */
-    public static final MetadataStandard ISO_19115 = new MetadataStandard("org.opengis.metadata.",
-            "org.geotoolkit.metadata.iso.", new String[] {"Default", "Abstract"});
+    public static final MetadataStandard ISO_19115;
 
     /**
      * An instance working on ISO 19119 standard as defined by
@@ -95,7 +94,23 @@ public final class MetadataStandard {
      *
      * @since 2.5
      */
-    public static final MetadataStandard ISO_19119 = new MetadataStandard("org.opengis.service.");
+    public static final MetadataStandard ISO_19119;
+
+    /**
+     * An instance working on ISO 19123 standard as defined by
+     * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
+     * in the {@link org.opengis.coverage} package and subpackages.
+     *
+     * @since 3.06
+     */
+    public static final MetadataStandard ISO_19123;
+    static {
+        final String[] prefix = {"Default", "Abstract"};
+        ISO_19111 = new MetadataStandard("org.opengis.referencing.", "org.geotoolkit.referencing.",  prefix);
+        ISO_19115 = new MetadataStandard("org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix);
+        ISO_19119 = new MetadataStandard("org.opengis.service.");
+        ISO_19123 = new MetadataStandard("org.opengis.coverage.");
+    }
 
     /**
      * The root packages for metadata interfaces. Must ends with {@code "."}.
@@ -152,8 +167,9 @@ public final class MetadataStandard {
      *
      * @param interfacePackage The root package for metadata interfaces.
      * @param implementationPackage The root package for metadata implementations.
+     * @param prefix The prefix of implementation class. This array is not cloned.
      */
-    private MetadataStandard(String interfacePackage, String implementationPackage, String[] prefix) {
+    private MetadataStandard(String interfacePackage, String implementationPackage, final String[] prefix) {
         if (!interfacePackage.endsWith(".")) {
             interfacePackage += '.';
         }
@@ -171,31 +187,34 @@ public final class MetadataStandard {
     }
 
     /**
-     * Returns the accessor for the specified implementation.
+     * Returns the accessor for the specified implementation type.
      *
+     * @param  type The implementation type.
      * @throws ClassCastException if the specified implementation class do
      *         not implements a metadata interface of the expected package.
      */
-    private PropertyAccessor getAccessor(final Class<?> implementation) throws ClassCastException {
-        final PropertyAccessor accessor = getAccessorOptional(implementation);
+    private PropertyAccessor getAccessor(final Class<?> type) throws ClassCastException {
+        final PropertyAccessor accessor = getAccessorOptional(type);
         if (accessor == null) {
             throw new ClassCastException(Errors.format(
-                    Errors.Keys.UNKNOW_TYPE_$1, implementation.getCanonicalName()));
+                    Errors.Keys.UNKNOW_TYPE_$1, type.getCanonicalName()));
         }
         return accessor;
     }
 
     /**
-     * Returns the accessor for the specified implementation, or {@code null} if none.
+     * Returns the accessor for the specified implementation type, or {@code null} if none.
+     *
+     * @param  type The implementation type.
      */
-    final PropertyAccessor getAccessorOptional(final Class<?> implementation) {
+    final PropertyAccessor getAccessorOptional(final Class<?> type) {
         synchronized (accessors) {
-            PropertyAccessor accessor = accessors.get(implementation);
+            PropertyAccessor accessor = accessors.get(type);
             if (accessor == null) {
-                Class<?> type = getType(implementation);
-                if (type != null) {
-                    accessor = new PropertyAccessor(implementation, type);
-                    accessors.put(implementation, accessor);
+                final Class<?> standard = getStandardType(type);
+                if (standard != null) {
+                    accessor = new PropertyAccessor(type, standard);
+                    accessors.put(type, accessor);
                 }
             }
             return accessor;
@@ -204,58 +223,62 @@ public final class MetadataStandard {
 
     /**
      * Returns the metadata interface implemented by the specified implementation.
-     * Only one metadata interface can be implemented.
+     * Only one metadata interface can be implemented. If the given type is already
+     * an interface from the standard, it is returned directly.
      *
-     * @param  metadata The metadata implementation to wraps.
+     * @param  type The type of the implementation (could also be the interface type).
      * @return The single interface, or {@code null} if none where found.
      */
-    private Class<?> getType(final Class<?> implementation) {
-        return PropertyAccessor.getType(implementation, interfacePackage);
+    private Class<?> getStandardType(final Class<?> type) {
+        return PropertyAccessor.getStandardType(type, interfacePackage);
     }
 
     /**
-     * Returns {@code true} if the given class implements an interface from this standard.
+     * Returns {@code true} if the given type is assignable to a type from this standard.
      * If this method returns {@code true}, then invoking {@link #getInterface(Class)} is
      * garanteed to succeed without throwing an exception.
      *
-     * @param  implementation The implementation class (can be {@code null}).
-     * @return {@code true} if the given class implements an interface of this standard.
+     * @param  type The implementation class (can be {@code null}).
+     * @return {@code true} if the given class is an interface of this standard,
+     *         or implements an interface of this standard.
      *
      * @since 3.03
      */
-    public boolean isMetadata(final Class<?> implementation) {
-        if (implementation == null) {
+    public boolean isMetadata(final Class<?> type) {
+        if (type == null) {
             return false;
         }
-        // Checks if the class is an interface from the metadata package.
-        if (implementation.getName().startsWith(interfacePackage)) {
+        // Checks if the class is an interface from the standard.
+        if (type.getName().startsWith(interfacePackage)) {
             return true;
         }
-        // Checks if the class is an implementation of the metadata package.
-        return getAccessorOptional(implementation) != null;
+        // Checks if the class is an implementation of the standard.
+        return getAccessorOptional(type) != null;
     }
 
     /**
      * Returns the metadata interface implemented by the specified implementation class.
+     * If the given type is already an interface from this standard, then it is returned
+     * unchanged.
      *
      * {@note The word "interface" may be taken in a looser sense than the usual Java sense
      *        because if the given type is defined in this standard package, then it is returned
      *        unchanged. The standard package is usually made of interfaces and code lists only,
      *        but this is not verified by this method.}
      *
-     * @param  implementation The implementation class.
+     * @param  type The implementation class.
      * @return The interface implemented by the given implementation class.
-     * @throws ClassCastException if the specified implementation class do
-     *         not implements a metadata interface of the expected package.
+     * @throws ClassCastException if the specified implementation class does
+     *         not implement an interface of this standard.
      *
      * @see AbstractMetadata#getInterface
      */
-    public Class<?> getInterface(final Class<?> implementation) throws ClassCastException {
-        ensureNonNull("implementation", implementation);
-        if (implementation.getName().startsWith(interfacePackage)) {
-            return implementation;
+    public Class<?> getInterface(final Class<?> type) throws ClassCastException {
+        ensureNonNull("type", type);
+        if (type.getName().startsWith(interfacePackage)) {
+            return type;
         }
-        return getAccessor(implementation).type;
+        return getAccessor(type).type;
     }
 
     /**
@@ -650,7 +673,7 @@ public final class MetadataStandard {
             return false;
         }
         final PropertyAccessor accessor = getAccessor(metadata1.getClass());
-        if (!accessor.type.equals(getType(metadata2.getClass()))) {
+        if (!accessor.type.equals(getStandardType(metadata2.getClass()))) {
             return false;
         }
         return accessor.shallowEquals(metadata1, metadata2, skipNulls);

@@ -24,7 +24,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A list of child elements, for example {@code <SampleDimensions>} or {@code <Axis>}.
+ * A list of child elements, for example {@code <Dimensions>} or {@code <Axis>}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)

@@ -29,6 +29,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.WildcardType;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 
 import org.geotoolkit.lang.Static;
@@ -41,7 +42,7 @@ import org.geotoolkit.resources.Errors;
  * wrappers.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.06
  *
  * @since 2.5
  * @module
@@ -242,13 +243,23 @@ public final class Classes {
             Type[] p = ((ParameterizedType) type).getActualTypeArguments();
             while (p != null && p.length == 1) {
                 type = p[0];
-                if (type instanceof Class<?>) {
-                    return (Class<?>) type;
-                } else if (type instanceof WildcardType) {
+                if (type instanceof WildcardType) {
                     p = ((WildcardType) type).getUpperBounds();
-                } else {
-                    break; // Unknown type.
+                    continue;
                 }
+                /*
+                 * At this point we are not going to continue the loop anymore.
+                 * Check if we have an array, then check the (component) class.
+                 */
+                int dimension = 0;
+                while (type instanceof GenericArrayType) {
+                    type = ((GenericArrayType) type).getGenericComponentType();
+                    dimension++;
+                }
+                if (type instanceof Class<?>) {
+                    return changeArrayDimension((Class<?>) type, dimension);
+                }
+                break; // Unknown type.
             }
         }
         return null;

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests the {@link Classes} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.06
  *
  * @since 2.5
  */
@@ -149,6 +149,7 @@ public final class ClassesTest {
         assertEquals(Integer.class, Classes.boundOfParameterizedAttribute(c.getMethod("getter1", g)));
         assertEquals(Byte   .class, Classes.boundOfParameterizedAttribute(c.getMethod("getter2", g)));
         assertEquals(Object .class, Classes.boundOfParameterizedAttribute(c.getMethod("getter3", g)));
+        assertEquals(short[].class, Classes.boundOfParameterizedAttribute(c.getMethod("getter4", g)));
         assertEquals(String .class, Classes.boundOfParameterizedAttribute(c.getMethod("setter1", s)));
         assertEquals(Short  .class, Classes.boundOfParameterizedAttribute(c.getMethod("setter2", s)));
         assertEquals(Object .class, Classes.boundOfParameterizedAttribute(c.getMethod("setter3", s)));
@@ -160,6 +161,7 @@ public final class ClassesTest {
     public Set<       Integer> getter1() {return null;}
     public Set<? extends Byte> getter2() {return null;}
     public Set<? super  Float> getter3() {return null;}
+    public Set<       short[]> getter4() {return null;}
     @SuppressWarnings("rawtypes")
     public void setter0(Set                  dummy) {}  // Intentionnaly unparameterized.
     public void setter1(Set<         String> dummy) {}

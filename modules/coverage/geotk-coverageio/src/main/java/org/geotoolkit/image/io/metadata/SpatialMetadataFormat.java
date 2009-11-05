@@ -52,6 +52,13 @@ import org.opengis.metadata.identification.*;
 import org.opengis.metadata.identification.Identification; // Override the package class.
 import org.opengis.metadata.content.Band; // Override the package class.
 
+import org.opengis.coverage.grid.GridCell;
+import org.opengis.coverage.grid.GridPoint;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.coverage.grid.GridCoordinates;
+import org.opengis.geometry.DirectPosition;
+
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
@@ -110,42 +117,42 @@ import org.geotoolkit.resources.Errors;
 │   ├───purpose
 │   ├───credits
 │   ├───status
-│   ├───DescriptiveKeywords
+│   ├───<b>DescriptiveKeywords</b> : {@linkplain Keywords}[]
 │   │   └───DescriptiveKeywords entry
 │   │       ├───keywords
 │   │       ├───thesaurusName
 │   │       └───type
-│   ├───SpatialResolution
+│   ├───<b>SpatialResolution</b> : {@linkplain Resolution}
 │   │   ├───distance
 │   │   └───EquivalentScale
 │   │       └───denominator
 │   ├───topicCategories
 │   ├───environmentDescription
-│   ├───Extent
+│   ├───<b>Extent</b> : {@linkplain Extent}
 │   │   ├───description
-│   │   ├───GeographicElement
+│   │   ├───<b>GeographicElement</b> : {@linkplain GeographicExtent}
 │   │   │   ├───inclusion
 │   │   │   ├───westBoundLongitude
 │   │   │   ├───eastBoundLongitude
 │   │   │   ├───southBoundLatitude
 │   │   │   └───northBoundLatitude
-│   │   └───VerticalElement
+│   │   └───<b>VerticalElement</b> : {@linkplain VerticalExtent}
 │   │       ├───minimumValue
 │   │       ├───maximumValue
 │   │       └───verticalCRS
 │   └───supplementalInformation
 ├───<b>AcquisitionMetadata</b> : {@linkplain AcquisitionInformation}
-│   ├───EnvironmentalConditions
+│   ├───<b>EnvironmentalConditions</b> : {@linkplain EnvironmentalRecord}
 │   │   ├───averageAirTemperature
 │   │   ├───maxRelativeHumidity
 │   │   ├───maxAltitude
 │   │   └───meteorologicalConditions
-│   └───Platform
+│   └───<b>Platform</b> : {@linkplain Platform}
 │       ├───citation
 │       ├───identifier
 │       ├───description
 │       └───Instruments
-│           └───Instrument
+│           └───<b>Instrument</b> : {@linkplain Instrument}
 │               ├───citation
 │               ├───Identifier
 │               │   ├───code
@@ -163,46 +170,54 @@ import org.geotoolkit.resources.Errors;
         └───date</pre>
 </td><td nowrap valign="top" width="50%">
 <pre>geotk-coverageio_3.06
-└───<b>ImageDescription</b> : {@linkplain ImageDescription}
-    ├───contentType
-    ├───illuminationElevationAngle
-    ├───illuminationAzimuthAngle
-    ├───imagingCondition
-    ├───ImageQualityCode
-    │   ├───code
-    │   └───authority
-    ├───cloudCoverPercentage
-    ├───ProcessingLevelCode
-    │   ├───code
-    │   └───authority
-    ├───compressionGenerationQuantity
-    ├───triangulationIndicator
-    ├───radiometricCalibrationDataAvailable
-    ├───cameraCalibrationInformationAvailable
-    ├───filmDistortionInformationAvailable
-    ├───lensDistortionInformationAvailable
-    ├───Dimensions
-    │   └───Dimension
-    │       ├───descriptor
-    │       ├───sequenceIdentifier
-    │       ├───maxValue
-    │       ├───minValue
-    │       ├───units
-    │       ├───peakResponse
-    │       ├───bitsPerValue
-    │       ├───toneGradation
-    │       ├───scaleFactor
-    │       ├───offset
-    │       ├───bandBoundaryDefinition
-    │       ├───nominalSpatialResolution
-    │       ├───transferFunctionType
-    │       ├───transmittedPolarization
-    │       └───detectedPolarization
-    └───RangeElementDescriptions
-        └───RangeElementDescription
-            ├───name
-            ├───definition
-            └───rangeElements</pre>
+├───<b>ImageDescription</b> : {@linkplain ImageDescription}
+│   ├───contentType
+│   ├───illuminationElevationAngle
+│   ├───illuminationAzimuthAngle
+│   ├───imagingCondition
+│   ├───ImageQualityCode
+│   │   ├───code
+│   │   └───authority
+│   ├───cloudCoverPercentage
+│   ├───ProcessingLevelCode
+│   │   ├───code
+│   │   └───authority
+│   ├───compressionGenerationQuantity
+│   ├───triangulationIndicator
+│   ├───radiometricCalibrationDataAvailable
+│   ├───cameraCalibrationInformationAvailable
+│   ├───filmDistortionInformationAvailable
+│   ├───lensDistortionInformationAvailable
+│   ├───<b>Dimensions</b> : {@linkplain SampleDimension}[]
+│   │   └───Dimension
+│   │       ├───descriptor
+│   │       ├───sequenceIdentifier
+│   │       ├───minValue
+│   │       ├───maxValue
+│   │       ├───units
+│   │       ├───peakResponse
+│   │       ├───bitsPerValue
+│   │       ├───toneGradation
+│   │       ├───scaleFactor
+│   │       ├───offset
+│   │       ├───bandBoundaryDefinition
+│   │       ├───nominalSpatialResolution
+│   │       ├───transferFunctionType
+│   │       ├───transmittedPolarization
+│   │       └───detectedPolarization
+│   └───RangeElementDescriptions
+│       └───RangeElementDescription
+│           ├───name
+│           ├───definition
+│           └───rangeElements
+└───<b>RectifiedGridDomain</b> : {@linkplain RectifiedGrid}
+    ├───dimension
+    ├───<b>Limits</b> : {@linkplain GridEnvelope}
+    │   ├───low
+    │   └───high
+    ├───origin
+    └───offsetVectors
+        └───offsetVector</pre>
 </tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -236,8 +251,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * @since 3.05
      */
-    public static final SpatialMetadataFormat STREAM = new SpatialMetadataFormat(MetadataStandard.ISO_19115, FORMAT_NAME);
+    public static final SpatialMetadataFormat STREAM;
     static {
+        STREAM = new SpatialMetadataFormat(FORMAT_NAME, MetadataStandard.ISO_19115);
         STREAM.addTreeForStream();
     }
 
@@ -249,16 +265,17 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * @since 3.05
      */
-    public static final SpatialMetadataFormat IMAGE = new SpatialMetadataFormat(MetadataStandard.ISO_19115, FORMAT_NAME);
+    public static final SpatialMetadataFormat IMAGE;
     static {
+        IMAGE = new SpatialMetadataFormat(FORMAT_NAME, MetadataStandard.ISO_19115, MetadataStandard.ISO_19123);
         IMAGE.addTreeForImage();
     }
 
     /**
-     * The metadata standard represented by this format.
-     * This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
+     * The metadata standards represented by this format. At least one standard must
+     * be specified. This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
      */
-    protected final MetadataStandard standard;
+    private final MetadataStandard[] standards;
 
     /**
      * The last value returned by {@link #getDescriptions}, cached on the assumption
@@ -268,18 +285,28 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     private volatile transient MetadataDescriptions descriptions;
 
     /**
-     * Creates an initially empty format for the given standard. Subclasses shall invoke the
-     * various {@code addFoo(...)} methods defined in this class or parent class for adding
-     * new elements and attributes.
+     * Creates an initially empty format for the given standards. At least one standard
+     * must be specified. This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
+     * <p>
+     * Subclasses shall invoke the various {@code addFoo(...)} methods defined in this
+     * class or parent class for adding new elements and attributes.
      *
-     * @param standard The metadata standard represented by this format.
-     *        This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
      * @param rootName the name of the root element.
+     * @param standards The metadata standards represented by this format.
      */
-    protected SpatialMetadataFormat(final MetadataStandard standard, final String rootName) {
+    protected SpatialMetadataFormat(final String rootName, MetadataStandard... standards) {
         super(rootName, CHILD_POLICY_SOME);
-        this.standard = standard;
-        ensureNonNull("standard", standard);
+        ensureNonNull("standards", standards);
+        if (standards.length == 0) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
+        }
+        this.standards = standards = standards.clone();
+        for (int i=0; i<standards.length; i++) {
+            if (standards[i] == null) {
+                throw new NullArgumentException(Errors.format(
+                        Errors.Keys.NULL_ARGUMENT_$1, "standards[" + i + ']'));
+            }
+        }
     }
 
     /**
@@ -375,9 +402,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * Build the tree.
          */
         final String root = getRootName();
-        addTree(DataIdentification.class,     "DiscoveryMetadata",   root, substitution);
-        addTree(AcquisitionInformation.class, "AcquisitionMetadata", root, substitution);
-        addTree(DataQuality.class,            "QualityMetadata",     root, substitution);
+        final MetadataStandard standard = MetadataStandard.ISO_19115;
+        addTree(standard, DataIdentification.class,     "DiscoveryMetadata",   root, substitution);
+        addTree(standard, AcquisitionInformation.class, "AcquisitionMetadata", root, substitution);
+        addTree(standard, DataQuality.class,            "QualityMetadata",     root, substitution);
         removeAttribute("EquivalentScale", "doubleValue");
         /*
          * Add by hand a node in the place where it would have been added if we didn't
@@ -386,7 +414,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          */
         substitution.put(Platform.class, null);
         substitution.remove(Identifier.class); // Allow full expansion.
-        addTree(Instrument[].class, "Instruments", "Platform", substitution);
+        addTree(standard, Instrument[].class, "Instruments", "Platform", substitution);
     }
 
     /**
@@ -402,21 +430,43 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         substitution.put(Citation.class,       String.class);
         substitution.put(RecordType.class,     null);
         substitution.put(RangeDimension.class, Band.class);
-        addTree(ImageDescription.class, substitution);
+        /*
+         * Adds the "ImageDescription" node derived from ISO 19115.
+         */
+        final String root = getRootName();
+        MetadataStandard standard = MetadataStandard.ISO_19115;
+        addTree(standard, ImageDescription.class, "ImageDescription", root, substitution);
+        /*
+         * Adds the "RectifiedGridDomain" node derived from ISO 19123.
+         */
+        substitution.put(String.class,          null); // CV_Grid.axisNames
+        substitution.put(GridCell.class,        null); // CV_Grid.cell
+        substitution.put(GridPoint.class,       null); // CV_Grid.intersection
+        substitution.put(GridEnvelope.class,    null); // CV_Grid.extent (will be added later)
+        substitution.put(GridCoordinates.class, int[].class);    // CV_GridEnvelope.low/high
+        substitution.put(DirectPosition.class,  double[].class); // CV_RectifiedGrid.origin
+        standard = MetadataStandard.ISO_19123;
+        addTree(standard, RectifiedGrid.class, "RectifiedGridDomain", root, substitution);
+        /*
+         * Following is part of ISO 19123 and "GML in JPEG 2000" specifications,
+         * but under different names. We use the "GML in JPEG 2000" names.
+         */
+        addTree(standard, GridEnvelope.class, "Limits", "RectifiedGridDomain", substitution);
+        removeAttribute("Limits", "dimension"); // Redundant with the one in RectifiedGridDomain.
     }
 
     /**
      * Adds a new element or attribute of the given type as a child of the root. This method
-     * performs the same work than {@link #addTree(Class, String, String, Map)}, except that
-     * the element is added at the root and the name is inferred from the given type for
-     * convenience.
+     * performs the same work than {@link #addTree(MetadataStandard, Class, String, String, Map)},
+     * except that the element is added at the root and the name is inferred from the given type
+     * for convenience.
      *
      * @param type The type of the element or attribute to be added.
      * @param substitution The map of children types to substitute by other types, or {@code null}.
      */
     protected void addTree(final Class<?> type, final Map<Class<?>,Class<?>> substitution) {
         ensureNonNull("type", type);
-        addTree(type, type.getSimpleName(), getRootName(), substitution);
+        addTree(standards[0], type, type.getSimpleName(), getRootName(), substitution);
     }
 
     /**
@@ -464,14 +514,17 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * The substitution map applies only to childs (if any), not to the type given directly to this
      * method.
      *
+     * @param standard      The metadata standard of the element or attribute to be added.
      * @param type          The type of the element or attribute to be added.
      * @param elementName   The name of the element or attribute node to be added.
      * @param parentName    The name of the parent node to where to add the child.
      * @param substitution  The map of children types to substitute by other types, or {@code null}.
      */
-    protected void addTree(Class<?> type, final String elementName, final String parentName,
+    protected void addTree(final MetadataStandard standard, Class<?> type,
+            final String elementName, final String parentName,
             final Map<Class<?>,Class<?>> substitution)
     {
+        ensureNonNull("standard",    standard);
         ensureNonNull("type",        type);
         ensureNonNull("elementName", elementName);
         ensureNonNull("parentName",  parentName);
@@ -501,7 +554,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 identifier = elementName;
             }
         }
-        addTree(type, identifier, elementName, parentName, 0, max, null, exclude, substitution);
+        addTree(standard, type, identifier, elementName, parentName, 0, max, null, exclude, substitution);
     }
 
     /**
@@ -509,6 +562,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * to exclude. This method invokes itself recursively. The given set will be modified in order
      * to avoid infinite recursivity (e.g. {@code Identifier.getAuthority().getIdentifiers()}).
      *
+     * @param standard     The metadata standard of the element or attribute to be added.
      * @param type         The type of the element or attribute to be added.
      * @param identifier   The UML identifier, or {@code null} if unknown.
      * @param elementName  The name of the element or attribute node to be added.
@@ -520,10 +574,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param substitution The classes to substitute by other classes.
      *        This user-supplied map applies only on childs and is not modified.
      */
-    private void addTree(final Class<?> type, String identifier, String elementName,
-            String parentName, final int minOccurence, final int maxOccurence,
-            final ValueRestriction restriction, final Set<Class<?>> exclude,
-            final Map<Class<?>,Class<?>> substitution)
+    private void addTree(final MetadataStandard standard, final Class<?> type,
+            String identifier, String elementName, String parentName,
+            final int minOccurence, final int maxOccurence, final ValueRestriction restriction,
+            final Set<Class<?>> exclude, final Map<Class<?>,Class<?>> substitution)
     {
         if (maxOccurence == 0) return;
         final boolean mandatory = (minOccurence != 0);
@@ -547,11 +601,18 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * is handled as a String.
          */
         if (!standard.isMetadata(type)) {
-            final int dataType = typeOf(type);
+            int dataType = typeOf(type);
             if (maxOccurence != 1) {
                 /*
                  * Collection  ⇒  Attribute VALUE_LIST
                  */
+                final Class<?> component = type.getComponentType();
+                if (component != null) {
+                    addElement(elementName, parentName, minOccurence, maxOccurence);
+                    parentName  = elementName;
+                    elementName = toComponentName(elementName, identifier);
+                    dataType    = typeOf(component);
+                }
                 addAttribute(parentName, elementName, dataType, mandatory, minOccurence, maxOccurence);
             } else if (dataType == IIOMetadataFormat.DATATYPE_BOOLEAN) {
                 /*
@@ -591,14 +652,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         elementName = toElementName(elementName);
         if (maxOccurence != 1) {
             addElement(elementName, parentName, minOccurence, maxOccurence);
-            parentName = elementName;
-            identifier = toElementName(identifier);
-            if (identifier != null && !identifier.equals(elementName)) {
-                elementName = identifier;
-            } else {
-                // This is used only as a fallback.
-                elementName = (identifier != null ? identifier : elementName) + " entry";
-            }
+            parentName  = elementName;
+            identifier  = toElementName(identifier);
+            elementName = toComponentName(elementName, identifier);
         }
         /*
          * Metadata singleton    ⇒    Element CHILD_POLICY_SOME|ALL|CHOICE|EMPTY
@@ -676,6 +732,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             if (Collection.class.isAssignableFrom(childType)) {
                 // Replace the collection type by the type of elements in that collection.
                 childType = elementTypes.get(childName);
+                if (childType == null) {
+                    /*
+                     * We have been unable to find the element type.
+                     * Silently ignore.
+                     */
+                    continue;
+                }
                 max = Integer.MAX_VALUE;
             }
             /*
@@ -685,7 +748,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
              *    replace the collection (identified by an array type) by a singleton.
              *
              * 2) Then check if we want to replace the element type by an other element
-             *    type. No array type is allowed at this stage.
+             *    type. It could be a new array type.
              */
             if (substitution != null) {
                 Class<?> replacement = null;
@@ -700,6 +763,11 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 replacement = substitution.get(childType);
                 if (replacement != null) {
                     childType = replacement;
+                    replacement = childType.getComponentType();
+                    if (childType.isArray()) {
+                        max = Integer.MAX_VALUE;
+                        childType = replacement;
+                    }
                 }
             }
             /*
@@ -707,7 +775,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
              * recursively for proceding to the addition, with guard against infinite recursivity.
              */
             if (exclude.add(childType)) {
-                addTree(childType, identifiers.get(childName), childName, elementName,
+                addTree(standard, childType, identifiers.get(childName), childName, elementName,
                         min, max, vr, exclude, substitution);
                 if (!exclude.remove(childType)) {
                     throw new AssertionError(childType);
@@ -761,6 +829,23 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             }
         }
         return elementName;
+    }
+
+    /**
+     * Returns the name of an entry in a collection.
+     *
+     * @param  elementName The Java-Beans name of the collection. This is usually plural.
+     * @param  identifier  The UML identifier of the same element than above.
+     *                     This is usually singular. It may be {@code null}
+     * @return The name of an entry in the collection.
+     */
+    private static String toComponentName(final String elementName, final String identifier) {
+        if (identifier != null && !identifier.equals(elementName)) {
+            return identifier;
+        } else {
+            // This is used only as a fallback.
+            return (identifier != null ? identifier : elementName) + " entry";
+        }
     }
 
     /**
@@ -910,7 +995,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             }
             Map<String,String> desc = Collections.emptyMap();
             if (type != null) try {
-                desc = standard.asDescriptionMap(type, locale, NAME_POLICY);
+                desc = standards[0].asDescriptionMap(type, locale, NAME_POLICY);
             } catch (ClassCastException e) {
                 // The element type is not an instance of the expected standard.
                 // We will set the description map to an empty map.

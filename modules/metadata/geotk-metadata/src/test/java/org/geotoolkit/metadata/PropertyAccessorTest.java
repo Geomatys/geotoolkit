@@ -37,7 +37,10 @@ import static org.geotoolkit.metadata.KeyNamePolicy.*;
 
 
 /**
- * Tests the {@link PropertyAccessor} class.
+ * Tests the {@link PropertyAccessor} class. Every tests in this class instantiates directly a
+ * {@link PropertyAccessor} object by invoking the {@link #createPropertyAccessor(Citation)}
+ * method. This class shall not test accessors created indirectly (e.g. the accessors created
+ * by {@link MetadataStandard}).
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -50,8 +53,9 @@ public final class PropertyAccessorTest {
      */
     private static PropertyAccessor createPropertyAccessor(final Citation citation) {
         final Class<?> implementation = citation.getClass();
-        final Class<?> type = PropertyAccessor.getType(implementation, "org.opengis.metadata");
-        assertNotNull(type);
+        final Class<?> type = PropertyAccessor.getStandardType(implementation, "org.opengis.metadata.");
+        assertNotNull("The given citation shall be recognized as a metadata implementation.", type);
+        assertTrue("The metadata type shall be assignable from the given citation.", type.isInstance(citation));
         return new PropertyAccessor(implementation, type);
     }
 
@@ -63,7 +67,7 @@ public final class PropertyAccessorTest {
         final Citation citation = Citations.EPSG;
         PropertyAccessor accessor;
         assertNull("No dummy interface expected.",
-                PropertyAccessor.getType(citation.getClass(), "org.opengis.dummy"));
+                PropertyAccessor.getStandardType(citation.getClass(), "org.opengis.dummy."));
         accessor = createPropertyAccessor(citation);
         assertTrue("Count of 'get' methods.", accessor.count() >= 13);
     }
@@ -103,7 +107,7 @@ public final class PropertyAccessorTest {
     }
 
     /**
-     * Tests the get method.
+     * Tests the {@link PropertyAccessor#get} method.
      */
     @Test
     public void testGet() {
@@ -132,7 +136,7 @@ public final class PropertyAccessorTest {
     }
 
     /**
-     * Tests the set method.
+     * Tests the {@link PropertyAccessor#set} method.
      */
     @Test
     public void testSet() {
