@@ -18,7 +18,6 @@ package org.geotoolkit.process.coverage;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -28,7 +27,6 @@ import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +37,6 @@ import javax.media.jai.iterator.RectIterFactory;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -71,10 +68,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     private Geometry[] result = null;
 
     //current pixel block
-    private NumberRange lastNumberRange = null;
-    private int y = -1;
-    private int startX = -1;
-    private int endX = -1;
+    private final Block block = new Block();
 
     CoverageToVectorProcess(ProcessDescriptor descriptor) {
         super(descriptor);
@@ -133,17 +127,14 @@ public class CoverageToVectorProcess extends AbstractProcess {
                             buffers[CURRENT_LINE] = oldLine;
                             final Set<Boundary> boundaries = new HashSet<Boundary>();
                             for(int i=0; i< buffers[LAST_LINE].length; i++){
-                                System.err.println("> " + i + " " + y +" " + buffers[LAST_LINE][i].toStringFull());
+                                System.err.println("> " + i + " " + block.y +" " + buffers[LAST_LINE][i].toStringFull());
                                 boundaries.add(buffers[LAST_LINE][i]);
                             }
-                            for(final Boundary b : boundaries){
-                                b.nextLine();
-                            }
+//                            for(final Boundary b : boundaries){
+//                                b.nextLine();
+//                            }
 
-                            lastNumberRange = null;
-                            startX = -1;
-                            endX = -1;
-                            y = -1;
+                            block.reset();
 
                             gridPosition.x = 0;
                             gridPosition.y += 1;
@@ -174,20 +165,20 @@ public class CoverageToVectorProcess extends AbstractProcess {
         for (final NumberRange range : polygons.keySet()) {
 
             if (range.contains(value)) {
-                if (lastNumberRange == range) {
+                if (block.range == range) {
                     //last pixel was in the same range
-                    endX = point.x;
+                    block.endX = point.x;
                     return;
-                } else if (lastNumberRange != null) {
+                } else if (block.range != null) {
                     //last pixel was in a different range, save it's geometry
                     constructBlock();
                 }
 
                 //start a pixel serie
-                lastNumberRange = range;
-                startX = point.x;
-                endX = point.x;
-                y = point.y;
+                block.range = range;
+                block.startX = point.x;
+                block.endX = point.x;
+                block.y = point.y;
 
                 return;
             }
@@ -198,36 +189,45 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
     private void constructBlock(){
 
-        System.err.println("BLOCK ["+startX+","+endX+"]");
+        System.err.println("BLOCK ["+block.startX+","+block.endX+"]");
 
-        if(y == 0){
+        if(block.y == 0){
             //first line, the buffer is empty, must fill it
-            final Boundary boundary = new Boundary(lastNumberRange);
-            boundary.start(startX, endX+1);
+            final Boundary boundary = new Boundary(block.range);
+            boundary.start(block.startX, block.endX+1, block.y);
 
-            System.err.println("fill from " + startX +" to " + endX);
-            for(int i=startX; i<=endX; i++){
+            for(int i=block.startX; i<=block.endX; i++){
                 buffers[CURRENT_LINE][i] = boundary;
             }
         }else{
             Boundary currentBoundary = null;
 
             //first pass to close unfriendly blocks ----------------------------
-            for(int i=startX; i<=endX;){
+            for(int i=block.startX; i<=block.endX;){
                 final Boundary candidate = buffers[LAST_LINE][i];
                 final int[] candidateExtent = findExtent(i);
                 
                 //do not treat same blockes here
-                if(candidate.range != lastNumberRange){
+                if(candidate.range != block.range){
                     System.err.println("A different block extent : "+ candidateExtent[0] + " " + candidateExtent[1]);
-                    if(endX < candidateExtent[1]){
-                        //the next block will take care of it
+                    System.err.println("before :" + candidate.toStringFull());
+
+                    if(candidateExtent[0] >= block.startX && candidateExtent[1] <= block.endX){
+                        //block overlaps completly candidate
+                        final Polygon poly = candidate.link(
+                                new Coordinate(candidateExtent[0], block.y),
+                                new Coordinate(candidateExtent[1]+1, block.y)
+                                );
+                        if(poly != null) polygons.get(candidate.range).add(poly);
                     }else{
-                        expendBlock(candidate, i, candidateExtent[1]+1);
+                        final Polygon poly = candidate.link(
+                                new Coordinate( (block.startX<candidateExtent[0]) ? candidateExtent[0]: block.startX, block.y),
+                                new Coordinate( (block.endX>candidateExtent[1]) ? candidateExtent[1]+1: block.endX+1, block.y)
+                                );
+                        if(poly != null) polygons.get(candidate.range).add(poly);
                     }
 
-                    System.err.println(candidate);
-                    
+                    System.err.println("after :" + candidate.toStringFull());
                 }
                 
                 i = candidateExtent[1]+1;
@@ -238,29 +238,39 @@ public class CoverageToVectorProcess extends AbstractProcess {
             //we first merge the last line boundary if needed
             int firstAnchor = Integer.MAX_VALUE;
             int lastAnchor = Integer.MIN_VALUE;
-            for(int i=startX; i<=endX; ){
-                final Boundary bnd = buffers[LAST_LINE][i];
+
+            for(int i=block.startX; i<=block.endX; ){
+                final Boundary candidate = buffers[LAST_LINE][i];
                 final int[] candidateExtent = findExtent(i);
 
                 //do not treat different blocks here
-                if(bnd.range == lastNumberRange){
+                if(candidate.range == block.range){
+                    System.err.println("A firnet block extent : "+ candidateExtent[0] + " " + candidateExtent[1]);
+//                    System.err.println("before :" + candidate.toStringFull());
                 
                     if(currentBoundary == null){
                         //set the current boundary, will expend this one
-                        currentBoundary = bnd;
-                    }else if(currentBoundary != null && currentBoundary != bnd){
+                        currentBoundary = candidate;
+                    }else if(currentBoundary != null && currentBoundary != candidate){
                         //those two blocks doesnt belong to the same boundaries, we must merge them
-                        currentBoundary.merge(bnd, lastAnchor, i);
-
-
-                        System.out.println("Merging : " + currentBoundary.toString());
+                        currentBoundary.merge(candidate);
+                        replaceInLastLigne(candidate, currentBoundary);
+                        System.out.println("Merging : " + currentBoundary.toStringFull());
                     }
 
+//                    if(candidateExtent[0] <= block.startX && candidateExtent[1] >= block.startX){
+//                        candidate.add(
+//                                new Coordinate(block.startX, block.y),
+//                                new Coordinate(block.startX, block.y+1)
+//                                );
+//                    }
 
-                    System.err.println(currentBoundary);
-
-                    //same range
-                    System.err.println("A friendly block  : " + candidateExtent[0] + " " + candidateExtent[1]);
+//                    if(candidateExtent[0] <= block.endX && candidateExtent[1] >= block.endX){
+//                        candidate.add(
+//                                new Coordinate(candidateExtent[1]+1, block.y),
+//                                new Coordinate(block.endX+1, block.y+1)
+//                                );
+//                    }
 
                     if(candidateExtent[0] < firstAnchor){
                         firstAnchor = candidateExtent[0];
@@ -274,40 +284,79 @@ public class CoverageToVectorProcess extends AbstractProcess {
             if(currentBoundary == null){
                 //no previous friendly boundary to link with
                 //make a new one
-                currentBoundary = new Boundary(lastNumberRange,y);
-                currentBoundary.start(startX, endX+1);
+                currentBoundary = new Boundary(block.range);
+                currentBoundary.start(block.startX, block.endX+1, block.y);
             }else{
+                if(firstAnchor < block.startX){
+                    //the previous block has created a floating sequence to this end
+                    firstAnchor = block.startX;
+                }
+
                 //add the coordinates
-                System.err.println("first anchor : " +firstAnchor + " lastAnchor : " +lastAnchor);
-                currentBoundary.add(firstAnchor, startX);
-                currentBoundary.add(lastAnchor, endX+1);
+                System.err.println("> first anchor : " +firstAnchor + " lastAnchor : " +lastAnchor);
+                if(firstAnchor == block.startX){
+                    currentBoundary.add(
+                        new Coordinate(firstAnchor, block.y),
+                        new Coordinate(block.startX, block.y+1)
+                        );
+                }else{
+                    currentBoundary.add(
+                        new Coordinate(firstAnchor, block.y),
+                        new Coordinate(block.startX, block.y)
+                        );
+                    currentBoundary.add(
+                        new Coordinate(block.startX, block.y),
+                        new Coordinate(block.startX, block.y+1)
+                        );
+                }
+
+                if(block.endX+1 >= lastAnchor){
+                    if(lastAnchor == block.endX+1){
+                        currentBoundary.add(
+                            new Coordinate(lastAnchor, block.y),
+                            new Coordinate(block.endX+1, block.y+1)
+                            );
+                    }else{
+                        currentBoundary.add(
+                            new Coordinate(lastAnchor, block.y),
+                            new Coordinate(block.endX+1, block.y)
+                            );
+                        currentBoundary.add(
+                            new Coordinate(block.endX+1, block.y),
+                            new Coordinate(block.endX+1, block.y+1)
+                            );
+                    }
+                }else{
+                    currentBoundary.addFloating(
+                            new Coordinate(block.endX+1, block.y),
+                            new Coordinate(block.endX+1, block.y+1)
+                            );
+                }
+
+                
+                
             }
 
-
+            System.err.println("after :" + currentBoundary.toStringFull());
+            
             //fill in the current line -----------------------------------------
             
-
-            for(int i=startX; i<=endX; i++){
+            for(int i=block.startX; i<=block.endX; i++){
                 buffers[CURRENT_LINE][i] = currentBoundary;
             }
 
-
-
         }
 
-        final Polygon pixel = toPolygon(startX, endX, y);
-        polygons.get(lastNumberRange).add(pixel);
     }
 
-    //unfriendly block
-    private void expendBlock(Boundary candidate, int start, int end){
-        final Polygon poly = candidate.expend(start, end);
-
-        if(poly != null){
-            System.err.println("FINISHED BLOCK  range : "+ candidate.range +" " + poly);
-            polygons.get(candidate.range).add(poly);
+    private void replaceInLastLigne(Boundary old, Boundary newone){
+        for(int i=0; i<buffers[LAST_LINE].length; i++){
+            if(buffers[LAST_LINE][i] == old){
+                buffers[LAST_LINE][i] = newone;
+            }
         }
     }
+
 
     private int[] findExtent(int index){
         final int[] extent = new int[]{index,index};
@@ -352,19 +401,6 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
         getMonitor().ended(new ProcessEvent(this));
 
-    }
-
-    private static Polygon toPolygon(int startx, int endx, int y) {
-        final Coordinate coord = new Coordinate(startx, y);
-        final LinearRing ring = GF.createLinearRing(
-                new Coordinate[]{
-                    coord,
-                    new Coordinate(endx, y),
-                    new Coordinate(endx, y + 1),
-                    new Coordinate(startx, y + 1),
-                    coord
-                });
-        return GF.createPolygon(ring, EMPTY_RING_ARRAY);
     }
 
 }
