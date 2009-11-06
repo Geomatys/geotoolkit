@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 
+import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.complex.CompositeSurface;
@@ -43,7 +45,8 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  */
 public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {
     private static final long serialVersionUID = 4153619785904408034L;
-    
+
+    @XmlElement(name = "polygonPatches", namespace = "http://www.opengis.net/gml")
     protected final List<JTSPolygon> patches = new ArrayList();
 
     public JTSPolyhedralSurface() {
@@ -178,5 +181,24 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
     @Override
     public JTSPolyhedralSurface clone() {
         return (JTSPolyhedralSurface) super.clone();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this)
+            return true;
+
+        if (object instanceof JTSPolyhedralSurface && super.equals(object)) {
+            JTSPolyhedralSurface that = (JTSPolyhedralSurface) object;
+            return Utilities.equals(this.patches, that.patches);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 67 * hash + (this.patches != null ? this.patches.hashCode() : 0);
+        return hash;
     }
 }

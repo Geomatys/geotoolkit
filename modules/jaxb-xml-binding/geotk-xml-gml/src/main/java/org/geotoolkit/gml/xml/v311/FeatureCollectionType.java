@@ -46,9 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     DynamicFeatureCollectionType.class
 })
-public class FeatureCollectionType
-    extends AbstractFeatureCollectionType
-{
+public class FeatureCollectionType extends AbstractFeatureCollectionType {
 
 
 }

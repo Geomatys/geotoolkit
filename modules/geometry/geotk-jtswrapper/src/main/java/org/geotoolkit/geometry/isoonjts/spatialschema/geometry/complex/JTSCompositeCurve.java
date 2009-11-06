@@ -12,6 +12,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 import java.util.List;
 import java.util.Set;
 
+import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.CompositeCurve;
@@ -46,6 +47,10 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
     
     // A parent curve, if any.
     private CompositeCurve parent;
+
+    public JTSCompositeCurve() {
+        this(null, null);
+    }
 
     public JTSCompositeCurve(CompositeCurve parent) {
         this(parent, parent.getCoordinateReferenceSystem());
@@ -149,5 +154,31 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
     @Override
     public OrientablePrimitive[] getProxy() {
         return null;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (parent != null)
+            sb.append("parent:").append(parent).append('\n');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this)
+            return true;
+        if (object instanceof JTSCompositeCurve && super.equals(object)) {
+            JTSCompositeCurve that = (JTSCompositeCurve) object;
+            return Utilities.equals(this.parent, that.parent);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 59 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        return hash;
     }
 }

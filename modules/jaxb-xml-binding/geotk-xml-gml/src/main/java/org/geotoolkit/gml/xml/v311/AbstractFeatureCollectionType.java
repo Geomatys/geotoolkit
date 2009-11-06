@@ -55,34 +55,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     FeatureCollectionType.class
 })
-public abstract class AbstractFeatureCollectionType
-    extends AbstractFeatureEntry
-{
+public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry {
 
-    protected List<FeaturePropertyType> featureMember;
-    protected FeatureArrayPropertyType featureMembers;
+    private List<FeaturePropertyType> featureMember;
+    private FeatureArrayPropertyType featureMembers;
 
     /**
      * Gets the value of the featureMember property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the featureMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFeatureMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link FeaturePropertyType }
-     * 
-     * 
      */
     public List<FeaturePropertyType> getFeatureMember() {
         if (featureMember == null) {

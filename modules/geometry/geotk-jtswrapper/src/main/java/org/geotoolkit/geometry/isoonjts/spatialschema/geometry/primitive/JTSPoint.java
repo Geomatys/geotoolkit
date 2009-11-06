@@ -12,12 +12,18 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -47,8 +53,11 @@ import org.opengis.geometry.complex.Composite;
  * @version $Revision $
  * @module pending
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class JTSPoint extends AbstractJTSGeometry implements Point {
 
+    @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(DirectPositionAdapter.class)
     private DirectPosition position;
 
     /**
@@ -206,32 +215,33 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * {@inheritDoc }
      */
     @Override
-	public int hashCode() {
-		final int PRIME = 31;
-		int result = 1;
-		result = PRIME * result + ((position == null) ? 0 : position.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int PRIME = 31;
+        int result      = 1;
+        result          = PRIME * result + ((position == null) ? 0 : position.hashCode());
+        return result;
+    }
 
     /**
      * {@inheritDoc }
      */
     @Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final JTSPoint other = (JTSPoint) obj;
-		if (position == null) {
-			if (other.position != null)
-				return false;
-		} else if (!position.equals(other.position))
-			return false;
-		return true;
-	}
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof JTSPoint && super.equals(obj)) {
+            final JTSPoint that = (JTSPoint) obj;
+            return Utilities.equals(this.position, that.position);
+        }
+        return false;
+    }
 
+    @Override
+    public String toString() {
+        String s = super.toString();
+        s = s + "position:" + position + '\n';
+        return s;
+    }
 }
 

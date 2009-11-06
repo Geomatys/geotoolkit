@@ -57,6 +57,11 @@
           <groupId>org.geotoolkit</groupId>
           <artifactId>geotk-utility</artifactId>
       </dependency>
+      <dependency>
+         <groupId>postgresql</groupId>
+         <artifactId>postgresql</artifactId>
+         <scope>test</scope>
+    </dependency>
   </dependencies>
             
   </project>

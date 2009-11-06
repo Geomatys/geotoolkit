@@ -13,12 +13,16 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 
+import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
@@ -102,7 +106,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
      */
     @Override
     public CurveInterpolation getInterpolation() {
-        return CurveInterpolation.LINEAR;
+            return CurveInterpolation.LINEAR;
     }
 
     /**
@@ -294,6 +298,15 @@ public class JTSLineString extends AbstractJTSGenericCurve
         return null;
     }
 
+    @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(DirectPositionAdapter.class)
+    public List<Position> getPositions() {
+        if (controlPoints != null) {
+            return controlPoints.positions();
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -308,4 +321,23 @@ public class JTSLineString extends AbstractJTSGenericCurve
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object object) {
+        if (this == object)
+            return true;
+
+        if (object instanceof JTSLineString) {
+            JTSLineString that = (JTSLineString) object;
+            return Utilities.equals(this.controlPoints, that.controlPoints) &&
+                   Utilities.equals(this.parent, that.parent);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.controlPoints != null ? this.controlPoints.hashCode() : 0);
+        return hash;
+    }
 }

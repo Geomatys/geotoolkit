@@ -22,6 +22,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
 
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
@@ -41,6 +42,10 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
     //*************************************************************************
     //  Constructors
     //*************************************************************************
+
+    public JTSPolygon() {
+        this(null, null);
+    }
     
     public JTSPolygon(SurfaceBoundary boundary) {
         // We only support planar polygons
@@ -106,5 +111,36 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
     	com.vividsolutions.jts.geom.Polygon poly = (com.vividsolutions.jts.geom.Polygon)
 			this.getJTSGeometry();
     	return poly.isValid();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this)
+            return true;
+
+        if (object instanceof JTSPolygon && super.equals(object)) {
+            JTSPolygon that = (JTSPolygon) object;
+            return Utilities.equals(this.spanningSurface, that.spanningSurface);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 59 * hash + (this.spanningSurface != null ? this.spanningSurface.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (spanningSurface != null) {
+            sb.append("spanningSurface:").append('\n');
+            for (Object o : spanningSurface) {
+                sb.append(o).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }

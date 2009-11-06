@@ -129,9 +129,9 @@ public class GMLUtilities {
            for (Polygon polygon : patches) {
 
                SurfaceInterpolationType interpolation = SurfaceInterpolationType.fromValue(polygon.getInterpolation().identifier());
-               SurfaceBoundary boundary = polygon.getBoundary();
-
-               Ring exterior            = boundary.getExterior();
+               SurfaceBoundary boundary               = polygon.getBoundary();
+               Ring exterior                          = boundary.getExterior();
+               
                List<CurvePropertyType> curves   = new ArrayList<CurvePropertyType>();
                for (Primitive p : exterior.getElements()) {
                    curves.add(new CurvePropertyType((CurveType) getGMLFromISO(p)));

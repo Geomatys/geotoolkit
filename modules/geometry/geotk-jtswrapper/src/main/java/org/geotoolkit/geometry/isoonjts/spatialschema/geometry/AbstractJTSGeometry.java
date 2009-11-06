@@ -12,14 +12,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
+import org.geotoolkit.internal.jaxb.CoordinateReferenceSystemAdapter;
 import org.geotoolkit.referencing.CRS;
 
+import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -42,6 +48,7 @@ import org.opengis.util.Cloneable;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
+@XmlAccessorType(XmlAccessType.NONE)
 public abstract class AbstractJTSGeometry implements Geometry, Serializable, Cloneable, JTSGeometry {
 
     /**
@@ -51,6 +58,8 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     /**
      * CRS for this geometry.
      */
+    @XmlAttribute(name="srsName")
+    @XmlJavaTypeAdapter(CoordinateReferenceSystemAdapter.class)
     private CoordinateReferenceSystem coordinateReferenceSystem;
     /**
      * The JTS equivalent of this geometry.  This gets set to null whenever we
@@ -149,6 +158,10 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     @Override
     public final CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return coordinateReferenceSystem;
+    }
+
+    public final void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+        this.coordinateReferenceSystem = crs;
     }
 
     /**
@@ -671,5 +684,44 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
             // Load the result back into the Coordinate.
             JTSUtils.directPositionToCoordinate(dst, coord);
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this)
+            return true;
+
+        if (object instanceof AbstractJTSGeometry) {
+            AbstractJTSGeometry that = (AbstractJTSGeometry) object;
+            return Utilities.equals(this.coordinateReferenceSystem, that.coordinateReferenceSystem) &&
+                   Utilities.equals(this.parent,                    that.parent)                    &&
+                   Utilities.equals(this.precision,                 that.precision);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.coordinateReferenceSystem != null ? this.coordinateReferenceSystem.hashCode() : 0);
+        hash = 41 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        hash = 41 * hash + (this.precision != null ? this.precision.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']');
+        sb.append('\n');
+        if (coordinateReferenceSystem != null)
+            sb.append("crs: ").append(coordinateReferenceSystem).append('\n');
+        if (jtsPeer != null)
+            sb.append("jtspeer: ").append(jtsPeer).append('\n');
+        sb.append("mutable: ").append(mutable).append('\n');
+        if (parent != null)
+            sb.append("parent:").append(parent).append('\n');
+        if (precision != null)
+            sb.append("precision:").append(precision).append('\n');
+        return sb.toString();
     }
 }
