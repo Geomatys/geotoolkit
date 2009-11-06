@@ -96,7 +96,7 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
         int i=0;
         for(;i<steps.length-1;i++){
             end = steps[i+1].evaluate(null,Double.class);
-            interval = NumberRange.create(last,end);
+            interval = NumberRange.create(last,true,end,false);
             styles.put(interval, getCached(categorizes.get(steps[i])));
             last = end;
         }
