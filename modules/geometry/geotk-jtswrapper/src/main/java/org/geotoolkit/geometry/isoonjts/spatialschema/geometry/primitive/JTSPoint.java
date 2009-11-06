@@ -215,12 +215,12 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      * {@inheritDoc }
      */
     @Override
-	public int hashCode() {
-		final int PRIME = 31;
-		int result = 1;
-		result = PRIME * result + ((position == null) ? 0 : position.hashCode());
-		return result;
-	}
+    public int hashCode() {
+        final int PRIME = 31;
+        int result      = 1;
+        result          = PRIME * result + ((position == null) ? 0 : position.hashCode());
+        return result;
+    }
 
     /**
      * {@inheritDoc }

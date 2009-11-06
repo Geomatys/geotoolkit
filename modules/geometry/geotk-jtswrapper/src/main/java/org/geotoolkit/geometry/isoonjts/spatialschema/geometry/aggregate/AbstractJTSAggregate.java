@@ -14,13 +14,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 
-import org.geotoolkit.internal.jaxb.GeometryAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -33,8 +30,6 @@ import org.opengis.geometry.aggregate.Aggregate;
  */
 public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJTSGeometry implements Aggregate {
 
-    @XmlElement(name="pointMember", namespace = "http://www.opengis.net/gml")
-    @XmlJavaTypeAdapter(GeometryAdapter.class)
     private final Set<T> elements = new LinkedHashSet();
 
     public AbstractJTSAggregate() {
@@ -89,5 +84,12 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
             return Utilities.equals(this.elements, that.elements);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 41 * hash + (this.elements != null ? this.elements.hashCode() : 0);
+        return hash;
     }
 }

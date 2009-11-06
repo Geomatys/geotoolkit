@@ -187,4 +187,11 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 59 * hash + (this.elements != null ? this.elements.hashCode() : 0);
+        return hash;
+    }
 }

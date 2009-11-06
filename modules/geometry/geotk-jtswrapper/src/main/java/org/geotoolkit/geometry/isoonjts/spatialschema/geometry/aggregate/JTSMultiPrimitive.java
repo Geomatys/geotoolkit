@@ -1,6 +1,10 @@
 
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
+import java.util.Set;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.GeometryAdapter;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.primitive.Primitive;
 
@@ -11,4 +15,10 @@ import org.opengis.geometry.primitive.Primitive;
  */
 public class JTSMultiPrimitive extends AbstractJTSAggregate<Primitive> implements MultiPrimitive {
 
+    @XmlElement(name="geometryMember", namespace = "http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(GeometryAdapter.class)
+    @Override
+    public Set<Primitive> getElements() {
+        return super.getElements();
+    }
 }

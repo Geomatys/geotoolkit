@@ -701,6 +701,15 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.coordinateReferenceSystem != null ? this.coordinateReferenceSystem.hashCode() : 0);
+        hash = 41 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        hash = 41 * hash + (this.precision != null ? this.precision.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']');
         sb.append('\n');

@@ -194,4 +194,11 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 67 * hash + (this.patches != null ? this.patches.hashCode() : 0);
+        return hash;
+    }
 }

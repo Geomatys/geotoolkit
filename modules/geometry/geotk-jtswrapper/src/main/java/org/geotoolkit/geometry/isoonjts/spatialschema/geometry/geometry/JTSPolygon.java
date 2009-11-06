@@ -126,6 +126,13 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
     }
 
     @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 59 * hash + (this.spanningSurface != null ? this.spanningSurface.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString());
         if (spanningSurface != null) {

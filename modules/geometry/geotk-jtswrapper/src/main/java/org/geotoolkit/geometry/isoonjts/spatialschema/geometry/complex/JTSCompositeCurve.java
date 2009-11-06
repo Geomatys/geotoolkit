@@ -174,4 +174,11 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 59 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        return hash;
+    }
 }

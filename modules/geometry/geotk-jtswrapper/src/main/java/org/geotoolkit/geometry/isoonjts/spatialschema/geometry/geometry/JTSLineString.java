@@ -333,4 +333,11 @@ public class JTSLineString extends AbstractJTSGenericCurve
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.controlPoints != null ? this.controlPoints.hashCode() : 0);
+        return hash;
+    }
 }

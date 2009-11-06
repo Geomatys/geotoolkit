@@ -357,5 +357,12 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 89 * hash + (this.curveSegments != null ? this.curveSegments.hashCode() : 0);
+        return hash;
+    }
+
 
 }

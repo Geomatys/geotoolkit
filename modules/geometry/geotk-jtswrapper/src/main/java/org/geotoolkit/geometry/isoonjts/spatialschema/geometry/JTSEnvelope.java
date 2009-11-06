@@ -151,6 +151,14 @@ public class JTSEnvelope implements Envelope {
         return GeometryUtils.equals(this, that);
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.lowerCorner != null ? this.lowerCorner.hashCode() : 0);
+        hash = 17 * hash + (this.upperCorner != null ? this.upperCorner.hashCode() : 0);
+        return hash;
+    }
+
     /**
      * {@inheritDoc }
      */

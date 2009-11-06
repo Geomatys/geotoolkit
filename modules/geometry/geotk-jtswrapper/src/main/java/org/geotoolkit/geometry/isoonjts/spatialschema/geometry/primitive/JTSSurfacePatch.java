@@ -179,6 +179,15 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
         return false;
      }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (this.surface != null ? this.surface.hashCode() : 0);
+        hash = 31 * hash + (this.interpolation != null ? this.interpolation.hashCode() : 0);
+        hash = 31 * hash + (this.boundary != null ? this.boundary.hashCode() : 0);
+        return hash;
+    }
+
      @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append('\n');

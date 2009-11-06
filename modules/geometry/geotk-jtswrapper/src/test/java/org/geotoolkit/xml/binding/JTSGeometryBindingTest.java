@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Marshaller;
@@ -35,6 +36,7 @@ import javax.xml.validation.SchemaFactory;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
@@ -67,6 +69,8 @@ public class JTSGeometryBindingTest {
 
     private Unmarshaller un;
 
+    private Marshaller m;
+
     private ObjectFactory factory;
 
     @BeforeClass
@@ -84,12 +88,14 @@ public class JTSGeometryBindingTest {
         pool    = new MarshallerPool(ObjectFactory.class);
         factory = new ObjectFactory();
         un      = pool.acquireUnmarshaller();
+        m       = pool.acquireMarshaller();
 
         File xsdDirectory = getDirectoryFromResource("org.geotoolkit.gml.311.base");
         SchemaFactory sf = SchemaFactory.newInstance(
         javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = sf.newSchema(new File(xsdDirectory, "gml.xsd"));
         un.setSchema(schema);
+        //m.setSchema(schema);
 
     }
 
@@ -97,6 +103,10 @@ public class JTSGeometryBindingTest {
     public void tearDown() throws Exception {
         if (un != null) {
             pool.release(un);
+        }
+
+        if (m != null) {
+            pool.release(m);
         }
     }
 
@@ -178,7 +188,7 @@ public class JTSGeometryBindingTest {
         dp.setOrdinate(0, 2.1);
         dp.setOrdinate(1, 12.6);
         JTSPoint point = new JTSPoint(dp, crs);
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPoint(point), sw);
 
@@ -265,7 +275,7 @@ public class JTSGeometryBindingTest {
         line2.getControlPoints().add(p22);
         curve.getSegments().add(line2);
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCurve(curve), sw);
 
@@ -380,7 +390,7 @@ public class JTSGeometryBindingTest {
         JTSEnvelope envelope = new JTSEnvelope(p1, p2);
 
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSEnvelope(envelope), sw);
         String result = sw.toString();
@@ -458,7 +468,7 @@ public class JTSGeometryBindingTest {
         multiPoint.getElements().add(pt1);
         multiPoint.getElements().add(pt2);
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPoint(multiPoint), sw);
         String result = sw.toString();
@@ -593,7 +603,7 @@ public class JTSGeometryBindingTest {
         compositeCurve.getElements().add(c1);
         compositeCurve.getElements().add(c2);
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCompositeCurve(compositeCurve), sw);
         String result = sw.toString();
@@ -870,7 +880,7 @@ public class JTSGeometryBindingTest {
         polyHedralSurface.getPatches().add(p1);
         polyHedralSurface.getPatches().add(p2);
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolyhedralSurface(polyHedralSurface), sw);
         String result = sw.toString();
@@ -1224,7 +1234,7 @@ public class JTSGeometryBindingTest {
         c1.getSegments().add(c1l2);
         ring.getElements().add(c1);
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSRing(ring), sw);
         String result = sw.toString();
@@ -1397,7 +1407,7 @@ public class JTSGeometryBindingTest {
         JTSSurfaceBoundary bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
         JTSPolygon polygon = new JTSPolygon(bound1);
 
-        Marshaller m = pool.acquireMarshaller();
+        
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolygon(polygon), sw);
         String result = sw.toString();
@@ -1562,6 +1572,214 @@ public class JTSGeometryBindingTest {
         PolygonType temp = (PolygonType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
         JTSPolygon result  = temp.getJTSPolygon();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test Composite curve Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void MultiPrimitiveMarshalingTest() throws Exception {
+
+        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        assertTrue(crs != null);
+
+        DirectPosition p1 = new GeneralDirectPosition(crs);
+        p1.setOrdinate(0, 402000);
+        p1.setOrdinate(1, 3334850);
+
+
+        DirectPosition p2 = new GeneralDirectPosition(crs);
+        p2.setOrdinate(0, 402200);
+        p2.setOrdinate(1, 3335200);
+
+
+        JTSLineString l1 = new JTSLineString();
+        l1.getControlPoints().add(p1);
+        l1.getControlPoints().add(p2);
+
+        JTSCurve c2 = new JTSCurve(crs);
+        c2.getSegments().add(l1);
+
+        JTSCurve c1 = new JTSCurve(crs);
+        JTSLineString l2 = new JTSLineString();
+        DirectPosition p21 = new GeneralDirectPosition(crs);
+        p21.setOrdinate(0, 401500);
+        p21.setOrdinate(1, 3334500);
+        DirectPosition p22 = new GeneralDirectPosition(crs);
+        p22.setOrdinate(0, 401700);
+        p22.setOrdinate(1, 3334850);
+        DirectPosition p23 = new GeneralDirectPosition(crs);
+        p23.setOrdinate(0, 402200);
+        p23.setOrdinate(1, 3335200);
+
+        l2.getControlPoints().add(p21);
+        l2.getControlPoints().add(p22);
+        l2.getControlPoints().add(p23);
+
+        c1.getSegments().add(l2);
+
+        JTSLineString l3 = new JTSLineString();
+        DirectPosition p31 = new GeneralDirectPosition(crs);
+        p31.setOrdinate(0, 402320);
+        p31.setOrdinate(1, 3334850);
+        DirectPosition p32 = new GeneralDirectPosition(crs);
+        p32.setOrdinate(0, 402200);
+        p32.setOrdinate(1, 3335200);
+
+        l3.getControlPoints().add(p31);
+        l3.getControlPoints().add(p32);
+        c1.getSegments().add(l3);
+
+        JTSMultiPrimitive multip = new JTSMultiPrimitive();
+        multip.getElements().add(c1);
+        multip.getElements().add(c2);
+
+        
+        StringWriter sw = new StringWriter();
+        m.marshal(factory.createJTSMultiGeometry(multip), sw);
+        String result = sw.toString();
+
+        String expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
+        "    <gml:geometryMember>"                                                                               + '\n' +
+        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "            <gml:segments>"                                                                          + '\n' +
+        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">401500.0 3334500.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">401700.0 3334850.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402200.0 3335200.0</gml:pos>" + '\n' +
+        "                </gml:LineStringSegment>"                                                            + '\n' +
+        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402320.0 3334850.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402200.0 3335200.0</gml:pos>" + '\n' +
+        "                </gml:LineStringSegment>"                                                            + '\n' +
+        "            </gml:segments>"                                                                         + '\n' +
+        "        </gml:Curve>"                                                                                + '\n' +
+        "    </gml:geometryMember>"                                                                              + '\n' +
+        "    <gml:geometryMember>"                                                                               + '\n' +
+        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "            <gml:segments>"                                                                          + '\n' +
+        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402000.0 3334850.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402200.0 3335200.0</gml:pos>" + '\n' +
+        "                </gml:LineStringSegment>"                                                            + '\n' +
+        "            </gml:segments>"                                                                         + '\n' +
+        "        </gml:Curve>"                                                                                + '\n' +
+        "    </gml:geometryMember>"                                                                              + '\n' +
+        "</gml:MultiGeometry>"                                                                               + '\n';
+
+        assertEquals(expResult, result);
+    }
+
+     /**
+     * Test Composite curve Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void MultiPrimitiveUnmarshalingTest() throws Exception {
+
+        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        assertTrue(crs != null);
+
+        DirectPosition p1 = new GeneralDirectPosition(crs);
+        p1.setOrdinate(0, 402000);
+        p1.setOrdinate(1, 3334850);
+
+
+        DirectPosition p2 = new GeneralDirectPosition(crs);
+        p2.setOrdinate(0, 402200);
+        p2.setOrdinate(1, 3335200);
+
+
+        JTSLineString l1 = new JTSLineString();
+        l1.getControlPoints().add(p1);
+        l1.getControlPoints().add(p2);
+
+        JTSCurve c2 = new JTSCurve(crs);
+        c2.getSegments().add(l1);
+
+        JTSCurve c1 = new JTSCurve(crs);
+        JTSLineString l2 = new JTSLineString();
+        DirectPosition p21 = new GeneralDirectPosition(crs);
+        p21.setOrdinate(0, 401500);
+        p21.setOrdinate(1, 3334500);
+        DirectPosition p22 = new GeneralDirectPosition(crs);
+        p22.setOrdinate(0, 401700);
+        p22.setOrdinate(1, 3334850);
+        DirectPosition p23 = new GeneralDirectPosition(crs);
+        p23.setOrdinate(0, 402200);
+        p23.setOrdinate(1, 3335200);
+
+        l2.getControlPoints().add(p21);
+        l2.getControlPoints().add(p22);
+        l2.getControlPoints().add(p23);
+
+        c1.getSegments().add(l2);
+
+        JTSLineString l3 = new JTSLineString();
+        DirectPosition p31 = new GeneralDirectPosition(crs);
+        p31.setOrdinate(0, 402320);
+        p31.setOrdinate(1, 3334850);
+        DirectPosition p32 = new GeneralDirectPosition(crs);
+        p32.setOrdinate(0, 402200);
+        p32.setOrdinate(1, 3335200);
+
+        l3.getControlPoints().add(p31);
+        l3.getControlPoints().add(p32);
+        c1.getSegments().add(l3);
+
+        JTSMultiPrimitive expResult = new JTSMultiPrimitive();
+        expResult.getElements().add(c1);
+        expResult.getElements().add(c2);
+
+        String xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
+        "    <gml:geometryMember>"                                                                               + '\n' +
+        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "            <gml:segments>"                                                                          + '\n' +
+        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">401500.0 3334500.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">401700.0 3334850.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402200.0 3335200.0</gml:pos>" + '\n' +
+        "                </gml:LineStringSegment>"                                                            + '\n' +
+        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402320.0 3334850.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402200.0 3335200.0</gml:pos>" + '\n' +
+        "                </gml:LineStringSegment>"                                                            + '\n' +
+        "            </gml:segments>"                                                                         + '\n' +
+        "        </gml:Curve>"                                                                                + '\n' +
+        "    </gml:geometryMember>"                                                                              + '\n' +
+        "    <gml:geometryMember>"                                                                               + '\n' +
+        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "            <gml:segments>"                                                                          + '\n' +
+        "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402000.0 3334850.0</gml:pos>" + '\n' +
+        "                    <gml:pos srsName=\"EPSG:27572\" srsDimension=\"2\">402200.0 3335200.0</gml:pos>" + '\n' +
+        "                </gml:LineStringSegment>"                                                            + '\n' +
+        "            </gml:segments>"                                                                         + '\n' +
+        "        </gml:Curve>"                                                                                + '\n' +
+        "    </gml:geometryMember>"                                                                              + '\n' +
+        "</gml:MultiGeometry>"                                                                               + '\n';
+
+        JTSMultiPrimitive result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
+
+        assertEquals(expResult.getElements().size(), result.getElements().size());
+        assertEquals(2, result.getElements().size());
+        Iterator expIt = expResult.getElements().iterator();
+        Iterator resIt = result.getElements().iterator();
+        assertEquals(expIt.next(), resIt.next());
+        assertEquals(expIt.next(), resIt.next());
+        expIt = expResult.getElements().iterator();
+        resIt = result.getElements().iterator();
+        assertEquals(expIt.next().hashCode(), resIt.next().hashCode());
+        assertEquals(expIt.next().hashCode(), resIt.next().hashCode());
+        assertEquals(expResult.getElements(), result.getElements());
         assertEquals(expResult, result);
     }
 }

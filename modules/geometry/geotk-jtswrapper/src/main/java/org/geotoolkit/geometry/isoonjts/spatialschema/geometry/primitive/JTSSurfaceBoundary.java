@@ -79,4 +79,12 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
         }
         return false;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 17 * hash + (this.exterior != null ? this.exterior.hashCode() : 0);
+        hash = 17 * hash + (this.interior != null ? this.interior.hashCode() : 0);
+        return hash;
+    }
 }
