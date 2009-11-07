@@ -281,6 +281,10 @@ public class CoverageToVectorProcess extends AbstractProcess {
                 i = candidateExtent[1]+1;
             }
 
+            if(currentBoundary != null){
+                System.err.println("before :" + currentBoundary.toStringFull());
+            }
+
             if(currentBoundary == null){
                 //no previous friendly boundary to link with
                 //make a new one
@@ -317,14 +321,17 @@ public class CoverageToVectorProcess extends AbstractProcess {
                             new Coordinate(block.endX+1, block.y+1)
                             );
                     }else{
+                        System.err.println("0 add :" + currentBoundary.toStringFull());
                         currentBoundary.add(
                             new Coordinate(lastAnchor, block.y),
                             new Coordinate(block.endX+1, block.y)
                             );
+                        System.err.println("1 add:" + currentBoundary.toStringFull());
                         currentBoundary.add(
                             new Coordinate(block.endX+1, block.y),
                             new Coordinate(block.endX+1, block.y+1)
                             );
+                        System.err.println("after add:" + currentBoundary.toStringFull());
                     }
                 }else{
                     currentBoundary.addFloating(

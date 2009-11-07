@@ -46,11 +46,17 @@ public class Boundary {
     }
 
     public void addFloating(final Coordinate from, final Coordinate to){
+        if(from.equals2D(to)){
+            throw new IllegalArgumentException("bugging algorithm");
+        }
+        System.err.println("Add Floating From: " + from + " New : " + to );
 
         final LinkedList<Coordinate> ll = new LinkedList<Coordinate>();
         ll.addFirst(to);
         ll.addLast(from);
         floatings.add(ll);
+
+        checkNoDiagonal();
     }
 
     public void add(final Coordinate from, final Coordinate to){
@@ -64,6 +70,29 @@ public class Boundary {
         for(final LinkedList<Coordinate> ll : floatings){
             final Coordinate first = ll.getFirst();
             if(first.equals2D(from)){
+
+                if(from.x == to.x && ll.size() > 1){
+                    final Coordinate second = ll.get(1);
+                    if(second.x == from.x){
+                        //points are aligned, just move the first point
+                        first.y = to.y;
+                    }else{
+                        //points are not aligned, must create a new point
+                        ll.addFirst(to);
+                    }
+                }else if(from.y == to.y && ll.size() > 1){
+                    final Coordinate second = ll.get(1);
+                    if(second.y == from.y){
+                        //points are aligned, just move the first point
+                        first.x = to.x;
+                    }else{
+                        //points are not aligned, must create a new point
+                        ll.addFirst(to);
+                    }
+                }else{
+                    ll.addFirst(to);
+                }
+
                 //todo must check two points to verify this
 //                if(from.x == to.x){
 //                    //just move the point, avoid creating new points
@@ -76,12 +105,36 @@ public class Boundary {
 //                    ll.addFirst(new Coordinate(to.x,first.y));
 //                    ll.addFirst(new Coordinate(to.x,to.y));
 //                }
-                ll.addFirst(to);
+                checkNoDiagonal();
                 return;
             }
 
             final Coordinate last = ll.getLast();
             if(last.equals2D(from)){
+                if(from.x == to.x && ll.size() > 1){
+                    final Coordinate second = ll.get(ll.size()-2);
+                    if(second.x == from.x){
+                        //points are aligned, just move the first point
+                        last.y = to.y;
+                    }else{
+                        //points are not aligned, must create a new point
+                        ll.addLast(to);
+                    }
+                }else if(from.y == to.y && ll.size() > 1){
+                    final Coordinate second = ll.get(ll.size()-2);
+                    if(second.y == from.y){
+                        //points are aligned, just move the first point
+                        last.x = to.x;
+                    }else{
+                        //points are not aligned, must create a new point
+                        ll.addLast(to);
+                    }
+                }else{
+                    ll.addLast(to);
+                }
+
+
+
                 //todo must check two points to verify this
 //                if(from.x == to.x){
 //                    //just move the point, avoid creating new points
@@ -94,11 +147,12 @@ public class Boundary {
 //                    ll.addLast(new Coordinate(to.x,last.y));
 //                    ll.addLast(new Coordinate(to.x,to.y));
 //                }
-                ll.addLast(to);
+                checkNoDiagonal();
                 return;
             }
         }
 
+        checkNoDiagonal();
         throw new IllegalArgumentException("bugging algorithm");
     }
 
@@ -148,20 +202,25 @@ public class Boundary {
         if(fromList != null && toList != null){
             if(fromList == toList){
                 //same list finish it
+                checkNoDiagonal();
                 return finish(fromList);
             }else{
                 combine(fromList, fromStart, toList, toStart);
+                checkNoDiagonal();
                 return null;
             }
 
         }else if(fromList != null ){
             add(from, to);
+            checkNoDiagonal();
             return null;
         }else if(toList != null){
             add(to, from);
+            checkNoDiagonal();
             return null;
         }
 
+        checkNoDiagonal();
         throw new IllegalArgumentException("bugging algorithm");
 
 
@@ -259,8 +318,24 @@ public class Boundary {
         }
 
         floatings.remove(toList);
+        checkNoDiagonal();
     }
-    
+
+
+    private void checkNoDiagonal(){
+        for(LinkedList<Coordinate> ll : floatings){
+            Coordinate last = ll.get(0);
+            for(int i=1;i<ll.size();i++){
+                Coordinate current = ll.get(i);
+                if(last.x != current.x && last.y != current.y){
+                    System.err.println(">>>> ERROR : " + this.toStringFull());
+                    throw new IllegalArgumentException("What ? a diagonal, not valid !");
+                }
+                last = current;
+            }
+        }
+    }
+
 
 //    //add a vertical bar
 //    public void appendExit(int x){
