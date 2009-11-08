@@ -37,6 +37,7 @@ import org.geotoolkit.util.MeasurementRange;
  * <p>
  * <ul>
  *   <li>{@link #getValueRange()}</li>
+ *   <li>{@link #getFillValues()}</li>
  * </ul>
  * <p>
  * If image bands are known to be a measurement of wavelengths in the electromagnetic spectrum,
@@ -45,6 +46,8 @@ import org.geotoolkit.util.MeasurementRange;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
+ *
+ * @see org.opengis.metadata.content.Band
  *
  * @since 3.06
  * @module
@@ -159,4 +162,11 @@ public interface SampleDimension extends RangeDimension {
      * @see org.opengis.metadata.content.Band#getTransferFunctionType()
      */
     TransferFunctionType getTransferFunctionType();
+
+    /**
+     * Returns the values used for filling the cells that do not have any physical value.
+     *
+     * @return The values used for filling the cells that do not have any physical value.
+     */
+    double[] getFillValues();
 }

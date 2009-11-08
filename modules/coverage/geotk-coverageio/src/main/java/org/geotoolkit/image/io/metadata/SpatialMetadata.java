@@ -41,7 +41,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
-import org.geotoolkit.image.io.GeographicImageReader;
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
 
 
@@ -385,8 +385,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @param record The warning record to log.
      */
     protected void warningOccurred(final LogRecord record) {
-        if (owner instanceof GeographicImageReader) {
-            ((GeographicImageReader) owner).warningOccurred(record);
+        if (owner instanceof SpatialImageReader) {
+            ((SpatialImageReader) owner).warningOccurred(record);
         } else if (owner instanceof SpatialImageWriter) {
             ((SpatialImageWriter) owner).warningOccurred(record);
         } else {
