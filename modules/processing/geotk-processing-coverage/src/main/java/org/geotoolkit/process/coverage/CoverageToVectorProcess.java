@@ -167,21 +167,16 @@ public class CoverageToVectorProcess extends AbstractProcess {
             } while (!iter.nextBandDone());
         }
 
-        //System.err.println("packing");
-        final Geometry[] polygones = new Geometry[ranges.length];
+        final List<Geometry> polygones = new ArrayList<Geometry>();
         for (int i=0; i<ranges.length; i++) {
             final NumberRange range = ranges[i];
-            final List<Polygon> boundaries = polygons.get(range);
-            //System.err.println("Range "+ range +"  "+ boundaries.size());
-            Geometry union = GF.createMultiPolygon(boundaries.toArray(new Polygon[0]));
-            union = JTS.transform(union, gridToCRS);
-            System.err.println("Range "+ range +"  "+ union);
-
-            union.setUserData(range);
-            polygones[i] = union;
+            for(Polygon poly : polygons.get(range)){
+                polygones.add(JTS.transform(poly, gridToCRS));
+            }
+            //we dont merge them in a single polygon to avoid to complexe geometries
         }
 
-        return polygones;
+        return polygones.toArray(new Polygon[polygones.size()]);
     }
 
     private void append(Point point, Number value) {

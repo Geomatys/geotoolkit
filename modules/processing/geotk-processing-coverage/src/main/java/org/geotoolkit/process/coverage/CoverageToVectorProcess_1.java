@@ -84,7 +84,7 @@ public class CoverageToVectorProcess_1 extends AbstractProcess {
             //iteration over bands
             do {
                 bandNum++;
-                System.out.println("bande " + bandNum);
+                //System.out.println("bande " + bandNum);
 
                 if (bandNum == band) {
                     //iteration over lines
@@ -92,7 +92,7 @@ public class CoverageToVectorProcess_1 extends AbstractProcess {
                     if (!iter.finishedLines()) {
                         do {
 
-                            System.out.println("ligne " + gridPosition.y);
+                            //System.out.println("ligne " + gridPosition.y);
                             //iteration over pixels
                             iter.startPixels();
                             if (!iter.finishedPixels()) {
@@ -126,7 +126,7 @@ public class CoverageToVectorProcess_1 extends AbstractProcess {
             } while (!iter.nextBandDone());
         }
 
-        System.out.println("packing");
+        //System.out.println("packing");
         final Geometry[] polygones = new Geometry[ranges.length];
         for (int i=0; i<ranges.length; i++) {
             final NumberRange range = ranges[i];

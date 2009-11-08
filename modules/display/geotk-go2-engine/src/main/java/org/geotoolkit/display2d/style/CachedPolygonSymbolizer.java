@@ -107,7 +107,11 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         }
         
     }
-    
+
+    public boolean isStrokeVisible(Feature feature){
+        return cacheStroke.isVisible(feature);
+    }
+
     public java.awt.Stroke getJ2DStroke(Feature feature,float coeff){
         return cacheStroke.getJ2DStroke(feature,coeff);
     }

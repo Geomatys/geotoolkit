@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import java.util.TreeMap;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -62,8 +64,8 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
     }
 
     public Map<SimpleFeature,List<CachedSymbolizer>> getMasks(GridCoverage2D coverage) throws IOException, TransformException{
-        final Map<SimpleFeature,List<CachedSymbolizer>> features = new HashMap<SimpleFeature, List<CachedSymbolizer>>();
-        final Map<NumberRange,List<CachedSymbolizer>> styles = new HashMap<NumberRange, List<CachedSymbolizer>>();
+        final Map<SimpleFeature,List<CachedSymbolizer>> features = new LinkedHashMap<SimpleFeature, List<CachedSymbolizer>>();
+        final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<NumberRange, List<CachedSymbolizer>>();
         final Map<Expression, List<Symbolizer>> categorizes = styleElement.getThredholds();
         final Expression[] steps = categorizes.keySet().toArray(new Expression[categorizes.size()]);
         Arrays.sort(steps, new Comparator<Expression>() {
@@ -105,12 +107,6 @@ public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbo
         end = Double.POSITIVE_INFINITY;
         styles.put(NumberRange.create(last,end),
                 getCached(categorizes.get(steps[i])) );
-
-        Object[] rs = styles.keySet().toArray();
-        for(Object r : rs){
-            System.out.println("Range : "+ r);
-        }
-
 
         //calculate the polygons -----------------------------------------------
         final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor(

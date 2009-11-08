@@ -153,10 +153,12 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         g2.setComposite( symbol.getJ2DFillComposite(feature) );
         g2.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
         g2.fill(shape);
-        g2.setComposite( symbol.getJ2DStrokeComposite(feature) );
-        g2.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
-        g2.setStroke( symbol.getJ2DStroke(feature,coeff) );
-        g2.draw(shape);
+        if(symbol.isStrokeVisible(feature)){
+            g2.setComposite( symbol.getJ2DStrokeComposite(feature) );
+            g2.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
+            g2.setStroke( symbol.getJ2DStroke(feature,coeff) );
+            g2.draw(shape);
+        }
 
         //restore the displacement
         if(dispStep != null){
