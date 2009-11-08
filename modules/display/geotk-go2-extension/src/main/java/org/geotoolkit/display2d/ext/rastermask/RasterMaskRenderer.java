@@ -140,6 +140,7 @@ public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymboliz
                         context.getObjectiveCRS());
             }catch(Exception ex){
                 System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
+                ex.printStackTrace();
             }
         }
 

@@ -27,7 +27,6 @@ public class Boundary {
     private final List<LinearRing> holes = new ArrayList<LinearRing>();
 
     //in construction geometries
-    private final LinkedList<Coordinate> exterior = new LinkedList<Coordinate>();
     private final LinkedList<LinkedList<Coordinate>> floatings = new LinkedList<LinkedList<Coordinate>>();
     public final NumberRange range;
 
@@ -36,13 +35,15 @@ public class Boundary {
     }
     
     public void start(int firstX, int secondX, int y){
-        if(firstX == secondX) throw new IllegalArgumentException("bugging algorithm");        
+        if(firstX == secondX) throw new IllegalArgumentException("bugging algorithm");
+        final LinkedList<Coordinate> exterior = new LinkedList<Coordinate>();
         exterior.addFirst(new Coordinate(firstX, y));
         exterior.addFirst(new Coordinate(firstX, y+1));
         exterior.addLast(new Coordinate(secondX, y));
         exterior.addLast(new Coordinate(secondX, y+1));
-
         floatings.add(exterior);
+
+        checkValidity();
     }
 
     public void addFloating(final Coordinate from, final Coordinate to){
@@ -56,7 +57,7 @@ public class Boundary {
         ll.addLast(from);
         floatings.add(ll);
 
-        checkNoDiagonal();
+        checkValidity();
     }
 
     public void add(final Coordinate from, final Coordinate to){
@@ -93,19 +94,7 @@ public class Boundary {
                     ll.addFirst(to);
                 }
 
-                //todo must check two points to verify this
-//                if(from.x == to.x){
-//                    //just move the point, avoid creating new points
-//                    first.y = to.y;
-//                }else if(from.y == to.y){
-//                    //just move the point, avoid creating new points
-//                    first.x = to.x;
-//                }else{
-//                    //make an angle
-//                    ll.addFirst(new Coordinate(to.x,first.y));
-//                    ll.addFirst(new Coordinate(to.x,to.y));
-//                }
-                checkNoDiagonal();
+                checkValidity();
                 return;
             }
 
@@ -133,26 +122,12 @@ public class Boundary {
                     ll.addLast(to);
                 }
 
-
-
-                //todo must check two points to verify this
-//                if(from.x == to.x){
-//                    //just move the point, avoid creating new points
-//                    last.y = to.y;
-//                }else if(from.y == to.y){
-//                    //just move the point, avoid creating new points
-//                    last.x = to.x;
-//                }else{
-//                    //make an angle
-//                    ll.addLast(new Coordinate(to.x,last.y));
-//                    ll.addLast(new Coordinate(to.x,to.y));
-//                }
-                checkNoDiagonal();
+                checkValidity();
                 return;
             }
         }
 
-        checkNoDiagonal();
+        checkValidity();
         throw new IllegalArgumentException("bugging algorithm");
     }
 
@@ -202,97 +177,30 @@ public class Boundary {
         if(fromList != null && toList != null){
             if(fromList == toList){
                 //same list finish it
-                checkNoDiagonal();
+                checkValidity();
                 return finish(fromList);
             }else{
                 combine(fromList, fromStart, toList, toStart);
-                checkNoDiagonal();
+                checkValidity();
                 return null;
             }
 
         }else if(fromList != null ){
             add(from, to);
-            checkNoDiagonal();
+            checkValidity();
             return null;
         }else if(toList != null){
             add(to, from);
-            checkNoDiagonal();
+            checkValidity();
             return null;
         }
 
-        checkNoDiagonal();
+        checkValidity();
         throw new IllegalArgumentException("bugging algorithm");
-
-
-
-
-
-//        if(floatings.size() == 1){
-//            //first and last can only match first and last coord of the line
-//            final LinkedList<Coordinate> coords = floatings.get(0);
-//            final Coordinate first = coords.getFirst();
-//            final Coordinate last = coords.getLast();
-//
-//            if(first.equals2D(from) && last.equals2D(to)){
-//                return finish(coords);
-//            }
-//
-//            throw new IllegalArgumentException("bugging algorithm");
-//        }else{
-//            //first must be the last coord of a line
-//            //and last must be a start coord of another line
-//
-//            LinkedList<Coordinate> leftMost = null;
-//            LinkedList<Coordinate> rightMost = null;
-//
-//            for(final LinkedList<Coordinate> ll : floatings){
-//                final Coordinate first = ll.getFirst();
-//                final Coordinate last = ll.getLast();
-//
-//                if(first.equals2D(to)){
-//                    rightMost = ll;
-//                }
-//
-//                if(last.equals2D(from)){
-//                    leftMost = ll;
-//                }
-//
-//                if(leftMost != null && rightMost != null) break;
-//            }
-//
-//            if(leftMost != null && rightMost != null){
-//                if(leftMost == rightMost){
-//                    //same coordinate list, close this polygon
-//                    return finish(leftMost);
-//                }else{
-//                    //merge both list
-//                    for(final Coordinate c : rightMost){
-//                        leftMost.addLast(c);
-//                    }
-//                    floatings.remove(rightMost);
-//                    return null;
-//                }
-//            }
-//
-//        }
-//
-//        throw new IllegalArgumentException("bugging algorithm");
     }
 
     private void combine(LinkedList<Coordinate> fromList, boolean fromStart,
                          LinkedList<Coordinate> toList, boolean toStart){
-        //
-
-        if(toList == exterior){
-            //flip names
-            final LinkedList<Coordinate> ll = fromList;
-            final boolean b = fromStart;
-
-            fromList = toList;
-            fromStart = toStart;
-            toList = ll;
-            toStart = b;
-        }
 
         if(fromStart){
             if(toStart){
@@ -318,11 +226,21 @@ public class Boundary {
         }
 
         floatings.remove(toList);
-        checkNoDiagonal();
+        checkValidity();
     }
 
 
-    private void checkNoDiagonal(){
+    public void checkValidity(){
+
+        //check for list with less than 2 elements
+        for(LinkedList<Coordinate> ll : floatings){
+            if(ll.size() < 2){
+                System.err.println(">>>> ERROR : " + this.toStringFull());
+                throw new IllegalArgumentException("What ? a list with less than 2 elements, not valid !");
+            }
+        }
+
+        //check for diagonal cases
         for(LinkedList<Coordinate> ll : floatings){
             Coordinate last = ll.get(0);
             for(int i=1;i<ll.size();i++){
@@ -334,237 +252,10 @@ public class Boundary {
                 last = current;
             }
         }
+
     }
 
 
-//    //add a vertical bar
-//    public void appendExit(int x){
-//
-//        for(final LinkedList<Coordinate> ll : floatings){
-//            final Coordinate first = ll.getFirst();
-//            if(first.x == x){
-//                //move the first point one unit down, avoid creating a new point at each line
-//                first.y = y+1;
-//                return;
-//            }
-//
-//            final Coordinate last = ll.getLast();
-//            if(last.x == x){
-//                //move the last point one unit down, avoid creating a new point at each line
-//                last.y = y+1;
-//                return;
-//            }
-//        }
-//
-//
-//        final LinkedList<Coordinate> ll = new LinkedList<Coordinate>();
-//        ll.addFirst(new Coordinate(x, y));
-//        ll.addFirst(new Coordinate(x, y+1));
-//        currentLinefloatings.add(ll);
-//    }
-//
-//    //add a flat bar
-//    public void appendFlat(int startX, int endX){
-//
-//        //expend an existing one
-//        for(final LinkedList<Coordinate> ll : currentLinefloatings){
-//            final Coordinate last = ll.getLast();
-//
-//            if(last.x == startX){
-//                ll.add(new Coordinate(endX, y));
-//                return;
-//            }
-//        }
-//
-//        throw new IllegalArgumentException("bugging algorithm");
-//    }
-//
-//
-//    //expend boundary
-//    public Polygon expend(int from, int to){
-//
-//        LinkedList<Coordinate> fromList = null;
-//        boolean fromStart = false;
-//
-//        LinkedList<Coordinate> toList = null;
-//        boolean toStart = false;
-//
-//        for(final LinkedList<Coordinate> ll : floatings){
-//
-//            if(fromList == null){
-//                final Coordinate first = ll.getFirst();
-//                final Coordinate last = ll.getLast();
-//                if(first.x == from){
-//                    fromStart = true;
-//                    fromList = ll;
-//                }else if(last.x == from){
-//                    fromStart = false;
-//                    fromList = ll;
-//                }
-//            }
-//
-//            if(toList == null){
-//                final Coordinate first = ll.getFirst();
-//                final Coordinate last = ll.getLast();
-//                if(first.x == to){
-//                    toStart = true;
-//                    toList = ll;
-//                }else if(last.x == to){
-//                    toStart = false;
-//                    toList = ll;
-//                }
-//            }
-//
-//            if(fromList != null && toList != null) break;
-//        }
-//
-//
-//        if(fromList != null && toList != null){
-//            if(fromList == toList){
-//                //same list finish it
-//                return finish(fromList);
-//            }else{
-//                return link(from, to);
-//            }
-//
-//        }else if(fromList != null){
-//            if(fromStart) fromList.addFirst(new Coordinate(to, y));
-//            else          fromList.addLast(new Coordinate(to, y));
-//            return null;
-//        }else if(toList != null){
-//            if(toStart) toList.addFirst(new Coordinate(from, y));
-//            else        toList.addLast(new Coordinate(from, y));
-//            return null;
-//        }
-//
-//        throw new IllegalArgumentException("bugging algorithm");
-//    }
-//
-//    //expand a coordinate list with a new point
-//    public void add(int lastX, int newX){
-//
-//        System.err.println("Add : " + lastX + " New : " + newX );
-//        System.err.println("-> " + toString());
-//
-//
-//        for(final LinkedList<Coordinate> ll : floatings){
-//            final Coordinate first = ll.getFirst();
-//            if(first.x == lastX){
-//                if(newX == lastX){
-//                    //move the first point one unit down, avoid creating a new point at each line
-//                    first.y = y+1;
-//                }else{
-//                    ll.addFirst(new Coordinate(newX, y));
-//                    ll.addFirst(new Coordinate(newX, y+1));
-//                }
-//                return;
-//            }
-//
-//            final Coordinate last = ll.getLast();
-//            if(last.x == lastX){
-//                if(newX == lastX){
-//                    //move the last point one unit down, avoid creating a new point at each line
-//                    last.y = y+1;
-//                }else{
-//                    ll.addLast(new Coordinate(newX, y));
-//                    ll.addLast(new Coordinate(newX, y+1));
-//                }
-//                return;
-//            }
-//        }
-//
-//        throw new IllegalArgumentException("bugging algorithm");
-//    }
-//
-//    //regroup two coordinate list
-//    public void gap(int firstX, int secondX){
-//
-//        LinkedList<Coordinate> leftMost = null;
-//        LinkedList<Coordinate> rightMost = null;
-//
-//        for(final LinkedList<Coordinate> ll : floatings){
-//
-//            if(leftMost == null){
-//                final Coordinate last = ll.getLast();
-//                if(last.x == firstX){
-//                    leftMost = ll;
-//                    continue;
-//                }
-//            }
-//
-//            if(rightMost == null){
-//                final Coordinate first = ll.getFirst();
-//                if(first.x == secondX){
-//                    rightMost = ll;
-//                    continue;
-//                }
-//            }
-//
-//            if(leftMost != null && rightMost != null) break;
-//        }
-//
-//        if(leftMost != null && rightMost != null){
-//            leftMost.addAll(rightMost);
-//            return;
-//        }
-//
-//        throw new IllegalArgumentException("bugging algorithm");
-//    }
-//
-//    public Polygon link(int firstX, int secondX){
-//
-//        if(floatings.size() == 1){
-//            //first and last can only match first and last coord of the line
-//            final LinkedList<Coordinate> coords = floatings.get(0);
-//            final Coordinate first = coords.getFirst();
-//            final Coordinate last = coords.getLast();
-//
-//            if(first.x == firstX && last.x == secondX){
-//                return finish(coords);
-//            }
-//
-//            throw new IllegalArgumentException("bugging algorithm");
-//        }else{
-//            //first must be the last coord of a line
-//            //and last must be a start coord of another line
-//
-//            LinkedList<Coordinate> leftMost = null;
-//            LinkedList<Coordinate> rightMost = null;
-//
-//            for(final LinkedList<Coordinate> ll : floatings){
-//                final Coordinate first = ll.getFirst();
-//                final Coordinate last = ll.getLast();
-//
-//                if(first.x == secondX){
-//                    rightMost = ll;
-//                }
-//
-//                if(last.x == firstX){
-//                    leftMost = ll;
-//                }
-//
-//                if(leftMost != null && rightMost != null) break;
-//            }
-//
-//            if(leftMost != null && rightMost != null){
-//                if(leftMost == rightMost){
-//                    //same coordinate list, close this polygon
-//                    return finish(leftMost);
-//                }else{
-//                    //merge both list
-//                    for(final Coordinate c : rightMost){
-//                        leftMost.addLast(c);
-//                    }
-//                    floatings.remove(rightMost);
-//                    return null;
-//                }
-//            }
-//
-//        }
-//
-//
-//        throw new IllegalArgumentException("bugging algorithm");
-//    }
 
     private Polygon finish(LinkedList<Coordinate> coords){
 
@@ -575,6 +266,8 @@ public class Boundary {
             final LinearRing exterior = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
             final Polygon polygon = GF.createPolygon(exterior, holes.toArray(EMPTY_RING_ARRAY));
             polygon.setUserData(range);
+            floatings.remove(coords);
+            checkValidity();
             return polygon;
         }else{
             //closing a hole in the geometry
@@ -582,6 +275,7 @@ public class Boundary {
             coords.add(new Coordinate(coords.get(0)));
             holes.add(GF.createLinearRing(coords.toArray(new Coordinate[coords.size()])));
             floatings.remove(coords);
+            checkValidity();
             return null;
         }
 
@@ -589,16 +283,24 @@ public class Boundary {
 
     public Polygon merge(Boundary candidate){
 
-        this.exterior.addAll(candidate.exterior);
+        System.err.println("M > before : " + toStringFull());
+        System.err.println("M > with : " + candidate.toStringFull());
+
+//        this.exterior.addAll(candidate.exterior);
 
         //merge the floating sequences
         this.floatings.addAll(candidate.floatings);
         //remove the second exterior
-        this.floatings.remove(candidate.exterior);
+//        this.floatings.remove(candidate.exterior);
 
         //merge the holes
         this.holes.addAll(candidate.holes);
 
+        candidate.floatings.clear();
+        candidate.holes.clear();
+
+        System.err.println("M > after : " + toStringFull());
+        checkValidity();
         return null;
     }
 
@@ -619,13 +321,18 @@ public class Boundary {
         sb.append(range.toString());
 
         for(LinkedList<Coordinate> coords : floatings){
-            sb.append("  \t");
+            sb.append("  \t{");
             for(Coordinate c : coords){
                 sb.append("["+Double.valueOf(c.x).intValue()+";"+Double.valueOf(c.y).intValue()+"]");
             }
+            sb.append("}");
         }
 
         return sb.toString();
+    }
+
+    public boolean isEmpty(){
+        return floatings.isEmpty();
     }
 
 }

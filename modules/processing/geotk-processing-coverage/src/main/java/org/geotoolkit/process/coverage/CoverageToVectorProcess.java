@@ -37,6 +37,7 @@ import javax.media.jai.iterator.RectIterFactory;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessEvent;
@@ -114,6 +115,15 @@ public class CoverageToVectorProcess extends AbstractProcess {
                                     append(gridPosition, value);
                                     //----------------------------------------------
 
+                                    //check validity
+//                                    for(int i=0; i< buffers[CURRENT_LINE].length;i++){
+//                                        Boundary bnd = buffers[CURRENT_LINE][i];
+//                                        if(bnd != null){
+//                                            System.err.println("checking "+i);
+//                                            bnd.checkValidity();
+//                                        }
+//                                    }
+
                                     gridPosition.x += 1;
                                 } while (!iter.nextPixelDone());
                             }
@@ -126,13 +136,11 @@ public class CoverageToVectorProcess extends AbstractProcess {
                             buffers[LAST_LINE] = buffers[CURRENT_LINE];
                             buffers[CURRENT_LINE] = oldLine;
                             final Set<Boundary> boundaries = new HashSet<Boundary>();
+                            System.err.println("--------------------------------------------------------------------------------------------");
                             for(int i=0; i< buffers[LAST_LINE].length; i++){
                                 System.err.println("> " + i + " " + block.y +" " + buffers[LAST_LINE][i].toStringFull());
                                 boundaries.add(buffers[LAST_LINE][i]);
                             }
-//                            for(final Boundary b : boundaries){
-//                                b.nextLine();
-//                            }
 
                             block.reset();
 
@@ -140,6 +148,18 @@ public class CoverageToVectorProcess extends AbstractProcess {
                             gridPosition.y += 1;
                         } while (!iter.nextLineDone());
                     }
+
+                    //we have finish the requested band, close all geometries
+                    for(int i=0;i<buffers[LAST_LINE].length;i++){
+                        Polygon poly = buffers[LAST_LINE][i].link(
+                                new Coordinate(i, gridPosition.y),
+                                new Coordinate(i+1, gridPosition.y)
+                                );
+                        if(poly != null){
+                            polygons.get(buffers[LAST_LINE][i].range).add(poly);
+                        }
+                    }
+
                 }
 
                 gridPosition.x = 0;
@@ -151,7 +171,12 @@ public class CoverageToVectorProcess extends AbstractProcess {
         final Geometry[] polygones = new Geometry[ranges.length];
         for (int i=0; i<ranges.length; i++) {
             final NumberRange range = ranges[i];
-            final MultiPolygon union = GF.createMultiPolygon(polygons.get(range).toArray(new Polygon[0]));
+            final List<Polygon> boundaries = polygons.get(range);
+            System.err.println("Range "+ range +"  "+ boundaries.size());
+            Geometry union = GF.createMultiPolygon(boundaries.toArray(new Polygon[0]));
+
+            union = JTS.transform(union, gridToCRS);
+
             union.setUserData(range);
             polygones[i] = union;
         }
@@ -251,26 +276,19 @@ public class CoverageToVectorProcess extends AbstractProcess {
                     if(currentBoundary == null){
                         //set the current boundary, will expend this one
                         currentBoundary = candidate;
-                    }else if(currentBoundary != null && currentBoundary != candidate){
-                        //those two blocks doesnt belong to the same boundaries, we must merge them
-                        currentBoundary.merge(candidate);
+                    }else if(currentBoundary != null){
+                        if(currentBoundary != candidate){
+                            //those two blocks doesnt belong to the same boundaries, we must merge them
+                            currentBoundary.merge(candidate);
+                        }
+                        currentBoundary.link(
+                            new Coordinate(lastAnchor, block.y),
+                            new Coordinate(candidateExtent[0], block.y)
+                            );
+
                         replaceInLastLigne(candidate, currentBoundary);
                         System.out.println("Merging : " + currentBoundary.toStringFull());
                     }
-
-//                    if(candidateExtent[0] <= block.startX && candidateExtent[1] >= block.startX){
-//                        candidate.add(
-//                                new Coordinate(block.startX, block.y),
-//                                new Coordinate(block.startX, block.y+1)
-//                                );
-//                    }
-
-//                    if(candidateExtent[0] <= block.endX && candidateExtent[1] >= block.endX){
-//                        candidate.add(
-//                                new Coordinate(candidateExtent[1]+1, block.y),
-//                                new Coordinate(block.endX+1, block.y+1)
-//                                );
-//                    }
 
                     if(candidateExtent[0] < firstAnchor){
                         firstAnchor = candidateExtent[0];
@@ -340,7 +358,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
                             );
                 }
 
-                
+                System.err.println(currentBoundary.toStringFull());
                 
             }
 
@@ -349,6 +367,10 @@ public class CoverageToVectorProcess extends AbstractProcess {
             //fill in the current line -----------------------------------------
             
             for(int i=block.startX; i<=block.endX; i++){
+                if(currentBoundary.isEmpty()){
+                    throw new IllegalArgumentException("An empty boundary inserted ? not possible.");
+                }
+
                 buffers[CURRENT_LINE][i] = currentBoundary;
             }
 
@@ -357,9 +379,13 @@ public class CoverageToVectorProcess extends AbstractProcess {
     }
 
     private void replaceInLastLigne(Boundary old, Boundary newone){
-        for(int i=0; i<buffers[LAST_LINE].length; i++){
+        for(int i=0,n=buffers[LAST_LINE].length; i<n; i++){
             if(buffers[LAST_LINE][i] == old){
                 buffers[LAST_LINE][i] = newone;
+            }
+
+            if(buffers[CURRENT_LINE][i] == old){
+                buffers[CURRENT_LINE][i] = newone;
             }
         }
     }
