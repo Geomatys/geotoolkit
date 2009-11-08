@@ -175,7 +175,7 @@
       <dependency>
         <groupId>postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>8.3-603.jdbc4</version>
+        <version>8.4-701.jdbc4</version>
       </dependency>
       <dependency>
         <groupId>javax.mail</groupId>
@@ -187,7 +187,7 @@
       <dependency>
         <groupId>org.swinglabs</groupId>
         <artifactId>swingx</artifactId>
-        <version>1.0</version>
+        <version>1.6</version>
       </dependency>
       <dependency>
         <groupId>org.netbeans</groupId>

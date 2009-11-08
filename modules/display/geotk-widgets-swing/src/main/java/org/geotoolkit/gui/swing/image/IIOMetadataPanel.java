@@ -240,6 +240,7 @@ public class IIOMetadataPanel extends JPanel {
         final void reset() {
             selectedFormat = null;
             visibleTable   = null;
+            tables.removeAll();
         }
 
         /**

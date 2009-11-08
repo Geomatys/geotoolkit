@@ -216,14 +216,21 @@ final class IIOMetadataChoice implements Serializable {
         final int index = selectedPart;
         IIOMetadataTreeTable table = tables[index];
         if (table == null) {
+            /*
+             * A new table needs to be created. Constructs an identifier to be used
+             * for locating the JTable in the java.awt.Container with CardLayout.
+             */
             final MetadataTreeTable metadata = this.metadata[index];
             String identifier = metadata.getMetadataFormat().getRootName();
             final int offset = hasStreamMetadata ? 1 : 0;
             if (index >= offset) {
                 identifier = identifier + ':' + (index - offset + 1);
             }
-            table = new IIOMetadataTreeTable(identifier, metadata.getRootNode(),
-                    (visibleTable != null) ? visibleTable.getColumnModel() : null);
+            /*
+             * Create the table and register the listener, which is for displaying
+             * the properties of the selected node in the widget bottom.
+             */
+            table = new IIOMetadataTreeTable(identifier, metadata.getRootNode(), visibleTable);
             panel.add(new JScrollPane(table), identifier);
             table.getTreeSelectionModel().addTreeSelectionListener(listener);
             tables[index] = table;

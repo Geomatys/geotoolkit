@@ -58,6 +58,8 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.primitive.Point;
+import org.opengis.util.InternationalString;
 
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
@@ -118,7 +120,7 @@ import org.geotoolkit.resources.Errors;
 │   ├───credits
 │   ├───status
 │   ├───<b>DescriptiveKeywords</b> : {@linkplain Keywords}[]
-│   │   └───DescriptiveKeywords entry
+│   │   └───DescriptiveKeywordsEntry
 │   │       ├───keywords
 │   │       ├───thesaurusName
 │   │       └───type
@@ -160,7 +162,7 @@ import org.geotoolkit.resources.Errors;
 │               ├───type
 │               └───description
 └───<b>QualityMetadata</b> : {@linkplain DataQuality}
-    └───Report
+    └───<b>Report</b> : {@linkplain Element}
         ├───namesOfMeasure
         ├───measureIdentification
         ├───measureDescription
@@ -194,6 +196,7 @@ import org.geotoolkit.resources.Errors;
 │   │       ├───sequenceIdentifier
 │   │       ├───minValue
 │   │       ├───maxValue
+│   │       ├───fillValues
 │   │       ├───units
 │   │       ├───peakResponse
 │   │       ├───bitsPerValue
@@ -205,19 +208,25 @@ import org.geotoolkit.resources.Errors;
 │   │       ├───transferFunctionType
 │   │       ├───transmittedPolarization
 │   │       └───detectedPolarization
-│   └───RangeElementDescriptions
+│   └───<b>RangeElementDescriptions</b> : {@linkplain RangeElementDescription}
 │       └───RangeElementDescription
 │           ├───name
 │           ├───definition
 │           └───rangeElements
+├───<b>SpatialRepresentation</b> : {@linkplain Georectified}
+│   ├───numberOfDimensions
+│   ├───cellGeometry
+│   ├───centerPoint
+│   └───pointInPixel
 └───<b>RectifiedGridDomain</b> : {@linkplain RectifiedGrid}
     ├───dimension
     ├───<b>Limits</b> : {@linkplain GridEnvelope}
     │   ├───low
     │   └───high
     ├───origin
-    └───offsetVectors
-        └───offsetVector</pre>
+    └───OffsetVectors
+        └───OffsetVector
+            └───values</pre>
 </tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -427,15 +436,29 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     protected void addTreeForImage() {
         final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(4);
-        substitution.put(Citation.class,       String.class);
-        substitution.put(RecordType.class,     null);
-        substitution.put(RangeDimension.class, Band.class);
+        substitution.put(Citation.class,       String.class);   // MD_ImageDescription.xxxCode
+        substitution.put(RecordType.class,     null);           // MD_CoverageDescription.attributeDescription
+        substitution.put(RangeDimension.class, Band.class);     // MD_CoverageDescription.dimension
         /*
          * Adds the "ImageDescription" node derived from ISO 19115.
+         * The 'fillValues' attribute is a Geotk extension.
          */
         final String root = getRootName();
         MetadataStandard standard = MetadataStandard.ISO_19115;
         addTree(standard, ImageDescription.class, "ImageDescription", root, substitution);
+        addAttribute("Dimension", "fillValues", DATATYPE_DOUBLE, false, 0, Integer.MAX_VALUE);
+        /*
+         * Adds the "SpatialRepresentation" node derived from ISO 19115.
+         * We ommit the information about spatial-temporal axis properties (the Dimension object)
+         * because it is redundant with the information provided in the CRS and offset vectors.
+         */
+        substitution.put(Dimension.class,           null);  // GridSpatialRepresentation.axisDimensionProperties
+        substitution.put(Point.class,     double[].class);  // MD_Georectified.centerPoint
+        substitution.put(GCP.class,                 null);  // MD_Georectified.checkPoint
+        substitution.put(Boolean.TYPE,              null);  // MD_Georectified.checkPointAvailability
+        substitution.put(InternationalString.class, null);  // MD_Georectified.various descriptions...
+        addTree(standard, Georectified.class, "SpatialRepresentation", root, substitution);
+        removeAttribute("SpatialRepresentation", "cornerPoints");
         /*
          * Adds the "RectifiedGridDomain" node derived from ISO 19123.
          */
@@ -605,12 +628,25 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             if (maxOccurence != 1) {
                 /*
                  * Collection  ⇒  Attribute VALUE_LIST
+                 *
+                 * In most case, we are adding a list of String or double values. But in a
+                 * few cases we add a list of double[] arrays (e.g. "offsetVectors"), in
+                 * which cases we need to insert a compound element in the tree.
                  */
                 final Class<?> component = type.getComponentType();
                 if (component != null) {
+                    // The container for the repeated elements (CHILD_POLICY_REPEAT)
+                    elementName = toElementName(elementName);
                     addElement(elementName, parentName, minOccurence, maxOccurence);
+
+                    // The repeated element with no child, only a single attribute.
                     parentName  = elementName;
-                    elementName = toComponentName(elementName, identifier);
+                    elementName = toComponentName(elementName, identifier, true);
+                    addElement(elementName, parentName, CHILD_POLICY_EMPTY);
+
+                    // The attribute of kind VALUE_LIST.
+                    parentName  = elementName;
+                    elementName = "values";
                     dataType    = typeOf(component);
                 }
                 addAttribute(parentName, elementName, dataType, mandatory, minOccurence, maxOccurence);
@@ -640,7 +676,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             return;
         }
         /*
-         * Collection of Metadata    ⇒    Element CHILD_POLICY_EMPTY
+         * Collection of Metadata    ⇒    Element CHILD_POLICY_REPEAT
          *
          * The 'elementName' is inferred from the method name and is typically in plural
          * form (at least in GeoAPI interfaces).  We add a node for 'elementName', which
@@ -654,7 +690,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             addElement(elementName, parentName, minOccurence, maxOccurence);
             parentName  = elementName;
             identifier  = toElementName(identifier);
-            elementName = toComponentName(elementName, identifier);
+            elementName = toComponentName(elementName, identifier, false);
         }
         /*
          * Metadata singleton    ⇒    Element CHILD_POLICY_SOME|ALL|CHOICE|EMPTY
@@ -837,15 +873,30 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param  elementName The Java-Beans name of the collection. This is usually plural.
      * @param  identifier  The UML identifier of the same element than above.
      *                     This is usually singular. It may be {@code null}
+     * @param  attribute   {@code true} if the {@code elementName} is actually for an attribute.
      * @return The name of an entry in the collection.
      */
-    private static String toComponentName(final String elementName, final String identifier) {
-        if (identifier != null && !identifier.equals(elementName)) {
+    private static String toComponentName(final String elementName, final String identifier, final boolean attribute) {
+        if (identifier != null && !identifier.equalsIgnoreCase(elementName)) {
             return identifier;
-        } else {
-            // This is used only as a fallback.
-            return (identifier != null ? identifier : elementName) + " entry";
         }
+        if (attribute && elementName.endsWith("s")) {
+            /*
+             * Try to make singular assuming an English speeling (we are already making the same
+             * assumption when adding the "Entry" suffix below). We do that only for attributes,
+             * not for elements, because elements may be complex structures in which the plural
+             * form is intentional.
+             *
+             * Examples:
+             *  - "DescriptiveKeywords" is an element with "Keywords" (and others) attributes.
+             *    We don't want to make it singular, because it can contains many keywords.
+             *  - "offsetVectors" is an attribute of type List<double[]>, which is converted
+             *    by this class as an "offserVectors" element with "offsetVector" childs.
+             */
+            return elementName.substring(0, elementName.length() - 1);
+        }
+        // This is used only as a fallback.
+        return (identifier != null ? identifier : elementName) + "Entry";
     }
 
     /**

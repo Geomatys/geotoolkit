@@ -18,10 +18,9 @@
 package org.geotoolkit.gui.swing.image;
 
 import java.awt.Component;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.jdesktop.swingx.JXTreeTable;
 import org.jdesktop.swingx.table.TableColumnExt;
@@ -44,7 +43,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * The {@code TreeTable} implementation for {@link IIOMetadataPanel}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @see MetadataTreeTable
  *
@@ -78,13 +77,17 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
      *
      * @param identifier An identifier, which must be unique for a given {@link IIOMetadataPanel}.
      * @param root The output of {@link MetadataTreeTable#getRootNode()}.
-     * @param settings The column model from which to copy the setting, or {@code null} if none.
+     * @param visibleTable The table which was show prior the invocation of this constructor, or
+     *        {@code null} if none. This is used for copying some properties like the columns
+     *        positions.
      */
-    IIOMetadataTreeTable(final String identifier, final TreeTableNode root, final TableColumnModel settings) {
+    IIOMetadataTreeTable(final String identifier, final TreeTableNode root,
+            final IIOMetadataTreeTable visibleTable)
+    {
         super(new Model(root));
         final Model model = (Model) getTreeTableModel();
-        model.owner = this;
-        this.identifier = identifier;
+        model.owner       = this;
+        this.identifier   = identifier;
         setRootVisible(false);
         setColumnControlVisible(true);
         setDefaultRenderer(Class.class, new DefaultTableRenderer(this));
@@ -111,27 +114,32 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
          * non-null values are usually "false" for the boolean type. The user can select
          * columns to be made visible with the icon in the upper-right corner.
          */
-        if (settings == null) {
+        if (visibleTable == null) {
             final int keep = (c == COLUMN_COUNT) ? VALUE_COLUMN : 2;
             while (--c >= 1) {
                 if (c != keep) {
                     ((TableColumnExt) columns.getColumn(c)).setVisible(false);
                 }
             }
-            // If the preferred colum width below is modified, consider
-            // updating the preferred panel width in IIOMetadataPanel.
+            /*
+             * --- MAINTENANCE NOTE: --------------------------------------
+             *
+             *     If the preferred colum width below is modified, consider
+             *     updating the preferred panel width in IIOMetadataPanel.
+             */
             columns.getColumn(0).setPreferredWidth(240);
         } else {
             /*
-             * Just replicate the settings of the given column model.
+             * Just replicate the settings of the previous table.
              */
-            JTables.copyConfiguration(settings, columns);
+            JTables.copyConfiguration(visibleTable.getColumnModel(), columns);
         }
     }
 
     /**
-     * The table model for the {@link IIOMetadata} or {@link IIOMetadataFormat}.
-     * The columns are documented in the {@link MetadataTreeTable} javadoc.
+     * The table model for the {@link javax.imageio.metadata.IIOMetadata}
+     * or {@link javax.imageio.metadata.IIOMetadataFormat}. The columns
+     * are documented in the {@link MetadataTreeTable} javadoc.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.05
