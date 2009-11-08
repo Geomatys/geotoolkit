@@ -177,6 +177,16 @@ public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymboliz
             ex.printStackTrace();
         }
 
+//        final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry = features.entrySet().iterator().next();
+//            final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
+//            projectedFeature.setFeature(entry.getKey());
+//
+//            for(final CachedSymbolizer cached : entry.getValue()){
+//                GO2Utilities.portray(projectedFeature, cached, context);
+//            }
+
+
+
         for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
             final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
             projectedFeature.setFeature(entry.getKey());
@@ -184,7 +194,7 @@ public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymboliz
             for(final CachedSymbolizer cached : entry.getValue()){
                 GO2Utilities.portray(projectedFeature, cached, context);
             }
-            
+
         }
 
         context.switchToDisplayCRS();

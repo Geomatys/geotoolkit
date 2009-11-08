@@ -5,11 +5,13 @@
 
 package org.geotoolkit.process.coverage;
 
+import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.util.NumberRange;
@@ -43,21 +45,21 @@ public class Boundary {
         exterior.addLast(new Coordinate(secondX, y+1));
         floatings.add(exterior);
 
-        checkValidity();
+        //checkValidity();
     }
 
     public void addFloating(final Coordinate from, final Coordinate to){
         if(from.equals2D(to)){
             throw new IllegalArgumentException("bugging algorithm");
         }
-        System.err.println("Add Floating From: " + from + " New : " + to );
+        //System.err.println("Add Floating From: " + from + " New : " + to );
 
         final LinkedList<Coordinate> ll = new LinkedList<Coordinate>();
         ll.addFirst(to);
         ll.addLast(from);
         floatings.add(ll);
 
-        checkValidity();
+        //checkValidity();
     }
 
     public void add(final Coordinate from, final Coordinate to){
@@ -65,7 +67,7 @@ public class Boundary {
             throw new IllegalArgumentException("bugging algorithm");
         }
 
-        System.err.println("Add From: " + from + " New : " + to );
+        //System.err.println("Add From: " + from + " New : " + to );
 
 
         for(final LinkedList<Coordinate> ll : floatings){
@@ -94,7 +96,7 @@ public class Boundary {
                     ll.addFirst(to);
                 }
 
-                checkValidity();
+                //checkValidity();
                 return;
             }
 
@@ -122,12 +124,12 @@ public class Boundary {
                     ll.addLast(to);
                 }
 
-                checkValidity();
+                //checkValidity();
                 return;
             }
         }
 
-        checkValidity();
+        //checkValidity();
         throw new IllegalArgumentException("bugging algorithm");
     }
 
@@ -136,7 +138,7 @@ public class Boundary {
             throw new IllegalArgumentException("bugging algorithm : " + to);
         }
 
-        System.err.println("Link From: " + from + " to : " + to );
+        //System.err.println("Link From: " + from + " to : " + to );
 
 
         LinkedList<Coordinate> fromList = null;
@@ -177,25 +179,25 @@ public class Boundary {
         if(fromList != null && toList != null){
             if(fromList == toList){
                 //same list finish it
-                checkValidity();
+                //checkValidity();
                 return finish(fromList);
             }else{
                 combine(fromList, fromStart, toList, toStart);
-                checkValidity();
+                //checkValidity();
                 return null;
             }
 
         }else if(fromList != null ){
             add(from, to);
-            checkValidity();
+            //checkValidity();
             return null;
         }else if(toList != null){
             add(to, from);
-            checkValidity();
+            //checkValidity();
             return null;
         }
 
-        checkValidity();
+        //checkValidity();
         throw new IllegalArgumentException("bugging algorithm");
     }
 
@@ -226,7 +228,7 @@ public class Boundary {
         }
 
         floatings.remove(toList);
-        checkValidity();
+        //checkValidity();
     }
 
 
@@ -235,7 +237,7 @@ public class Boundary {
         //check for list with less than 2 elements
         for(LinkedList<Coordinate> ll : floatings){
             if(ll.size() < 2){
-                System.err.println(">>>> ERROR : " + this.toStringFull());
+                //System.err.println(">>>> ERROR : " + this.toStringFull());
                 throw new IllegalArgumentException("What ? a list with less than 2 elements, not valid !");
             }
         }
@@ -246,7 +248,7 @@ public class Boundary {
             for(int i=1;i<ll.size();i++){
                 Coordinate current = ll.get(i);
                 if(last.x != current.x && last.y != current.y){
-                    System.err.println(">>>> ERROR : " + this.toStringFull());
+                    //System.err.println(">>>> ERROR : " + this.toStringFull());
                     throw new IllegalArgumentException("What ? a diagonal, not valid !");
                 }
                 last = current;
@@ -263,28 +265,47 @@ public class Boundary {
             //closing the polygon enveloppe
             //copy first point at the end
             coords.add(new Coordinate(coords.get(0)));
-            final LinearRing exterior = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
+            Coordinate[] ring = coords.toArray(new Coordinate[coords.size()]);
+//            if(CGAlgorithms.isCCW(ring)){
+//                reverse(ring);
+//            }
+            
+            final LinearRing exterior = GF.createLinearRing(ring);
             final Polygon polygon = GF.createPolygon(exterior, holes.toArray(EMPTY_RING_ARRAY));
             polygon.setUserData(range);
             floatings.remove(coords);
-            checkValidity();
+            //checkValidity();
             return polygon;
         }else{
             //closing a hole in the geometry
             //copy first point at the end
+
+
             coords.add(new Coordinate(coords.get(0)));
-            holes.add(GF.createLinearRing(coords.toArray(new Coordinate[coords.size()])));
+            Coordinate[] ring = coords.toArray(new Coordinate[coords.size()]);
+//            if(!CGAlgorithms.isCCW(ring)){
+//                reverse(ring);
+//            }
+            holes.add(GF.createLinearRing(ring));
             floatings.remove(coords);
-            checkValidity();
+            //checkValidity();
             return null;
         }
 
     }
 
+    private static void reverse(Coordinate[] array){
+        for(int l=0, r=array.length-1; l<r; l++, r--) {
+            Coordinate temp = array[l];
+            array[l] = array[r];
+            array[r] = temp;
+        }
+    }
+
     public Polygon merge(Boundary candidate){
 
-        System.err.println("M > before : " + toStringFull());
-        System.err.println("M > with : " + candidate.toStringFull());
+        //System.err.println("M > before : " + toStringFull());
+        //System.err.println("M > with : " + candidate.toStringFull());
 
 //        this.exterior.addAll(candidate.exterior);
 
@@ -299,8 +320,8 @@ public class Boundary {
         candidate.floatings.clear();
         candidate.holes.clear();
 
-        System.err.println("M > after : " + toStringFull());
-        checkValidity();
+        //System.err.println("M > after : " + toStringFull());
+        //checkValidity();
         return null;
     }
 
