@@ -37,7 +37,7 @@ public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapte
      * A proxy representation of the {@code <gco:Measure>} element.
      */
     @XmlElement(name = "Measure")
-    private UOMProxy measure;
+    private Measure measure;
 
     /**
      * Empty constructor used only by JAXB.
@@ -51,7 +51,7 @@ public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapte
      * @param value The value.
      */
     private MeasureInPixelAdapter(final Double value) {
-        measure = new UOMProxy(value, "pixel");
+        measure = new Measure(value, "pixel", false);
     }
 
     /**

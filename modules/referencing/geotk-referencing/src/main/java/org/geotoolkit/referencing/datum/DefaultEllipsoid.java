@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import static java.lang.Math.*;
@@ -34,7 +35,9 @@ import static java.lang.Double.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.internal.jaxb.referencing.Accessors;
 import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
+import org.geotoolkit.internal.jaxb.uom.Measure;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
@@ -57,12 +60,16 @@ import org.geotoolkit.lang.Immutable;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.06
  *
  * @since 1.2
  * @module
  */
 @Immutable
+@XmlType(propOrder={
+    "semiMajorAxisMeasure",
+    "secondDefiningParameter"
+})
 @XmlRootElement(name = "Ellipsoid")
 public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellipsoid {
     /**
@@ -122,7 +129,6 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      *
      * @see #getSemiMajorAxis
      */
-    @XmlElement(required = true)
     private final double semiMajorAxis;
 
     /**
@@ -366,6 +372,23 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
+     * Returns the semi-major axis value as a measurement.
+     * This method is invoked by JAXB for XML marshalling.
+     */
+    @XmlElement(name = "semiMajorAxis", required = true)
+    final Measure getSemiMajorAxisMeasure() {
+        return new Measure(semiMajorAxis, unit);
+    }
+
+    /**
+     * Sets the semi-major axis value. This method is invoked
+     * by JAXB at unmarshalling time only.
+     */
+    private void setSemiMajorAxisMeasure(final Measure uom) {
+        Accessors.SEMI_MAJOR.set(this, uom.value);
+    }
+
+    /**
      * Length of the semi-minor axis of the ellipsoid. This is the
      * polar radius in {@linkplain #getAxisUnit axis linear unit}.
      *
@@ -421,14 +444,52 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * Returns the object to be marshalled as the {@code SecondDefiningParameter} XML element.
-     * The returned object contains the values for {@link #semiMajorAxis} or {@link #inverseFlattening},
-     * according to the definition of the ellipsoid in presence. This is for JAXB usage only, to allow
-     * the (un)marshalling of this parameter.
+     * Returns the object to be marshalled as the {@code SecondDefiningParameter} XML element. The
+     * returned object contains the values for {@link #semiMinorAxis} or {@link #inverseFlattening},
+     * according to the {@link #isIvfDefinitive()} value. This method is for JAXB marshalling only.
      */
     @XmlElement(name = "secondDefiningParameter")
     final SecondDefiningParameter getSecondDefiningParameter() {
         return new SecondDefiningParameter(this, true);
+    }
+
+    /**
+     * Sets the second defining parameter value, either the inverse of the flattening
+     * value or the semi minor axis value, according to what have been defined in the
+     * second defining parameter given. This is for JAXB unmarshalling process only.
+     */
+    private void setSecondDefiningParameter(SecondDefiningParameter second) {
+        while (second.secondDefiningParameter != null) {
+            second = second.secondDefiningParameter;
+        }
+        Accessors<DefaultEllipsoid,Double> ac = Accessors.IVF;
+        Double value = second.inverseFlattening;
+        if (value == null) {
+            ac = Accessors.SEMI_MINOR;
+            value = second.semiMinorAxis;
+        }
+        ac.set(this, value);
+    }
+
+    /**
+     * After the unmarshalling process, only one value between {@link #semiMinorAxis} and
+     * {@link #inverseFlattening} has been defined. Since the {@link #semiMajorAxis} has
+     * been defined, it is now possible to calculate the value of the missing parameter
+     * using the values of those that are set.
+     * <p>
+     * This method is invoked by JAXB only.
+     */
+    private void afterUnmarshal(Object target, Object parent) {
+        final Accessors<DefaultEllipsoid,Double> ac;
+        final double value;
+        if (semiMinorAxis != 0) {
+            ac = Accessors.IVF;
+            value = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
+        } else {
+            ac = Accessors.SEMI_MINOR;
+            value = semiMajorAxis * (1 - 1/inverseFlattening);
+        }
+        ac.set(this, value);
     }
 
     /**

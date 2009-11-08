@@ -29,7 +29,7 @@ import org.geotoolkit.util.XArrays;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.06
  *
  * @since 3.00
  * @module
@@ -74,6 +74,21 @@ public final class StringUtilities {
         while ((i = buffer.lastIndexOf(target, i)) >= 0) {
             buffer.replace(i, i+length, replacement);
             i -= length;
+        }
+    }
+
+    /**
+     * Removes every occurences of the given string in the given buffer.
+     *
+     * @param buffer The string in which to perform the removals.
+     * @param toRemove The string to remove.
+     *
+     * @since 3.06
+     */
+    public static void remove(final StringBuilder buffer, final String toRemove) {
+        final int length = toRemove.length();
+        for (int i=buffer.lastIndexOf(toRemove); i>=0; i=buffer.lastIndexOf(toRemove, i)) {
+            buffer.delete(i, i + length);
         }
     }
 

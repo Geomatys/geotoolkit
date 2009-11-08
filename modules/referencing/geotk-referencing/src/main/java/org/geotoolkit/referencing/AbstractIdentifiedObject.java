@@ -35,6 +35,7 @@ import java.io.ObjectStreamException;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -58,6 +59,7 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.jaxb.text.StringConverter;
+import org.geotoolkit.internal.jaxb.referencing.ReferenceIdentifierAdapter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -90,6 +92,10 @@ import org.geotoolkit.xml.Namespaces;
  */
 @Immutable
 @ThreadSafe(concurrent = true)
+@XmlType(propOrder={
+    "identifier",
+    "name"
+})
 public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject, Serializable {
     /**
      * Serial number for interoperability with different versions.
@@ -211,7 +217,8 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
     /**
      * The name for this object or code. Should never be {@code null}.
      */
-    @XmlElement(name = "identifier")
+    @XmlElement
+    @XmlJavaTypeAdapter(ReferenceIdentifierAdapter.ToString.class)
     private final ReferenceIdentifier name;
 
     /**
@@ -624,6 +631,22 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             return Collections.emptySet();
         }
         return identifiers;
+    }
+
+    /**
+     * Returns the first identifier found, or {@code null} if none.
+     * This method is invoked by JAXB at marshalling time.
+     */
+    @XmlElement
+    final ReferenceIdentifier getIdentifier() {
+        final Set<ReferenceIdentifier> identifiers = this.identifiers;
+        if (identifiers != null) {
+            final Iterator<ReferenceIdentifier> it = identifiers.iterator();
+            if (it.hasNext()) {
+                return it.next();
+            }
+        }
+        return null;
     }
 
     /**

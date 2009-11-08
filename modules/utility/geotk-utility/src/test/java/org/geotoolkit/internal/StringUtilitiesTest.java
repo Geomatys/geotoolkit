@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  * Tests {@link StringUtilities} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.06
  *
  * @since 3.00
  */
@@ -40,6 +40,18 @@ public final class StringUtilitiesTest {
         assertEquals("One zero three zero one", buffer.toString());
         StringUtilities.replace(buffer, "zero", "ten");
         assertEquals("One ten three ten one", buffer.toString());
+    }
+
+    /**
+     * Tests the {@link StringUtilities#remove} method.
+     *
+     * @since 3.06
+     */
+    @Test
+    public void testRemove() {
+        final StringBuilder buffer = new StringBuilder("EPSG.6.7");
+        StringUtilities.remove(buffer, ".");
+        assertEquals("EPSG67", buffer.toString());
     }
 
     /**

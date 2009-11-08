@@ -26,6 +26,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.datum.PrimeMeridian;
 
@@ -49,6 +50,7 @@ import org.geotoolkit.lang.Immutable;
  * @module
  */
 @Immutable
+@XmlRootElement(name = "PrimeMeridian")
 public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements PrimeMeridian {
     /**
      * Serial number for interoperability with different versions.

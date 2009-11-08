@@ -35,9 +35,11 @@ import javax.measure.unit.Unit;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.spatial.GeometricObjectType;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
@@ -59,6 +61,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.test.TestData;
 
@@ -77,7 +80,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
  *
- * @version 3.04
+ * @version 3.06
  *
  * @since 3.04
  */
@@ -292,7 +295,9 @@ public class ReferencingMarsallingTest {
         final DefaultEllipsoid ellipsoid = DefaultEllipsoid.createFlattenedSphere(properties, 6378137.0, 298.257223563, SI.METRE);
 
         properties.clear();
-        properties.put(NAME_KEY, new DefaultReferenceIdentifier(new DefaultCitation("OGC"), "OGC", "WGS84"));
+        properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "World Geodetic System 1984"));
+        properties.put(DefaultGeodeticDatum.IDENTIFIERS_KEY,
+                new DefaultReferenceIdentifier(Citations.fromName("EPSG"), "EPSG", "6326"));
         final DefaultGeodeticDatum datum = new DefaultGeodeticDatum(properties, ellipsoid, primeMeridian);
         /*
          * Build the coordinate system.

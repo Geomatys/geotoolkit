@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -28,7 +29,7 @@ import org.opengis.referencing.ReferenceIdentifier;
  * and codespace of the identifier.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.06
  *
  * @since 3.00
  * @module
@@ -39,10 +40,10 @@ public final class SimpleReferenceIdentifier {
      * The XML value.
      */
     @XmlValue
-    protected String value;
+    protected String code;
 
     /**
-     * The code space as a XML attribute. This is often {@code "EPSG"}.
+     * The code space as a XML attribute. This is often {@code "EPSG"} with the version in use.
      */
     @XmlAttribute
     protected String codeSpace;
@@ -50,7 +51,7 @@ public final class SimpleReferenceIdentifier {
     /**
      * Empty constructor for JAXB only.
      */
-    private SimpleReferenceIdentifier() {
+    public SimpleReferenceIdentifier() {
     }
 
     /**
@@ -59,9 +60,19 @@ public final class SimpleReferenceIdentifier {
      * @param identifier The identifier from which to get the values.
      */
     SimpleReferenceIdentifier(final ReferenceIdentifier identifier) {
-        value     = identifier.getCode();
+        code     = identifier.getCode();
         codeSpace = identifier.getCodeSpace();
-        if (codeSpace == null)
+        if (codeSpace == null) {
             codeSpace = "";
+        }
+        String version = identifier.getVersion();
+        if (version != null) {
+            final StringBuilder buffer = new StringBuilder(codeSpace);
+            if (buffer.length() != 0) {
+                buffer.append('_');
+            }
+            StringUtilities.remove(buffer.append('v').append(version), ".");
+            codeSpace = buffer.toString();
+        }
     }
 }

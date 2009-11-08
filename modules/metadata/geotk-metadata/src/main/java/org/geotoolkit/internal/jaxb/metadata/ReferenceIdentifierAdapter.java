@@ -23,11 +23,13 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI interface. See
- * package documentation for more information about JAXB and interface.
+ * JAXB adapter mapping the GeoAPI {@link ReferenceIdentifier} to an implemention class that can
+ * be marshalled. See the package documentation for more information about JAXB and interfaces.
+ * <p>
+ * The XML produced by this adapter use the ISO 19139 syntax.
  * <p>
  * Note that a class of the same name is defined in the {@link org.geotoolkit.internal.jaxb.referencing}
- * package, which serves the same purpose (wrapping exactly the same object) but using the GML syntax
+ * package, which serves the same purpose (wrapping exactly the same interface) but using the GML syntax
  * instead.
  *
  * @author Guilhem Legal (Geomatys)

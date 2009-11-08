@@ -19,22 +19,26 @@ package org.geotoolkit.internal.jaxb.referencing.datum;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.geotoolkit.xml.Namespaces;
+import javax.measure.unit.Unit;
+
 import org.opengis.referencing.datum.Ellipsoid;
+
+import org.geotoolkit.internal.jaxb.uom.Measure;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
- * Stores the second defining parameter of an {@linkplain Ellipsoid ellipsoid}. If 
+ * Stores the second defining parameter of an {@linkplain Ellipsoid ellipsoid}. If
  * {@link Ellipsoid#isIvfDefinitive} is {@code true}, the {@link #inverseFlattening}
  * value should be initialized. Otherwise it is the {@link #semiMinorAxis} parameter
  * that should have be defined.
  * <p>
  * The goal of this class is to allow JAXB to handle a second defining parameter,
  * according to the kind of ellipsoid we are facing to. Exactly one field in this
- * call is non-null; all other fields shall be null.
+ * class is non-null; all other fields shall be null.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 3.05
  * @module
@@ -45,15 +49,14 @@ public final class SecondDefiningParameter {
      * Nested parameter, for JAXB purpose.
      */
     @XmlElement(name = "SecondDefiningParameter", namespace = Namespaces.GML)
-    private SecondDefiningParameter secondDefiningParameter;
+    public SecondDefiningParameter secondDefiningParameter;
 
     /**
      * The polar radius. {@code null} if the {@link #inverseFlattening} value is defined.
      *
      * @see Ellipsoid#getSemiMinorAxis
      */
-    @XmlElement(namespace = Namespaces.GML)
-    private Double semiMinorAxis;
+    public Double semiMinorAxis;
 
     /**
      * The inverse of the flattening value. {@code null} if the {@link #semiMinorAxis} value
@@ -61,13 +64,17 @@ public final class SecondDefiningParameter {
      *
      * @see Ellipsoid#getInverseFlattening
      */
-    @XmlElement(namespace = Namespaces.GML)
-    private Double inverseFlattening;
+    public Double inverseFlattening;
+
+    /**
+     * Unit of the ellipsoid axes.
+     */
+    public Unit<?> unit;
 
     /**
      * JAXB mandatory empty constructor.
      */
-    private SecondDefiningParameter() {
+    public SecondDefiningParameter() {
     }
 
     /**
@@ -79,10 +86,52 @@ public final class SecondDefiningParameter {
     public SecondDefiningParameter(final Ellipsoid ellipsoid, final boolean nested) {
         if (nested) {
             secondDefiningParameter = new SecondDefiningParameter(ellipsoid, false);
-        } else if (ellipsoid.isIvfDefinitive()) {
-            inverseFlattening = ellipsoid.getInverseFlattening();
         } else {
-            semiMinorAxis = ellipsoid.getSemiMinorAxis();
+            if (ellipsoid.isIvfDefinitive()) {
+                inverseFlattening = ellipsoid.getInverseFlattening();
+            } else {
+                semiMinorAxis = ellipsoid.getSemiMinorAxis();
+            }
+            unit = ellipsoid.getAxisUnit();
         }
+    }
+
+    /**
+     * Returns the semi-minor axis value as a measurement.
+     *
+     * @return The measure of the semi-minor axis.
+     */
+    @XmlElement(namespace = Namespaces.GML)
+    public Measure getSemiMinorAxis() {
+        return (semiMinorAxis != null) ? new Measure(semiMinorAxis, unit) : null;
+    }
+
+    /**
+     * Sets the semi-minor axis value. This is invoked by JAXB for unmarshalling.
+     *
+     * @param semiMinorAxis The semi-minor axis value.
+     */
+    public void setSemiMinorAxis(final Measure semiMinorAxis) {
+        this.semiMinorAxis = semiMinorAxis.value;
+    }
+
+    /**
+     * Returns the inverse of the flattening value as a measurement.
+     * Note: The unit of this measurement is dimensionless.
+     *
+     * @return The inverse of the flattening value as a measurement.
+     */
+    @XmlElement(namespace = Namespaces.GML)
+    public Measure getInverseFlattening() {
+        return (inverseFlattening != null) ? new Measure(inverseFlattening, null) : null;
+    }
+
+    /**
+     * Sets the inverse of the flattening value. This is invoked by JAXB for unmarshalling.
+     *
+     * @param inverseFlattening The inverse flattening value.
+     */
+    public void setInverseFlattening(final Measure inverseFlattening) {
+        this.inverseFlattening = inverseFlattening.value;
     }
 }

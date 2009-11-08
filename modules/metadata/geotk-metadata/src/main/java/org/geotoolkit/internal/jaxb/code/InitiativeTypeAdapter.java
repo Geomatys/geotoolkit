@@ -43,7 +43,7 @@ public final class InitiativeTypeAdapter extends CodeListAdapter<InitiativeTypeA
     /**
      * Empty constructor for JAXB only.
      */
-    private InitiativeTypeAdapter() {
+    public InitiativeTypeAdapter() {
     }
 
     /**

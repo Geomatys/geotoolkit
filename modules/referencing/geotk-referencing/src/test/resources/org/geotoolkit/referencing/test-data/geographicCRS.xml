@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <gml:GeographicCRS gml:id="WGS84(DD)" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gmx="http://www.isotc211.org/2005/gmx">
-  <gml:identifier codeSpace="">WGS84(DD)</gml:identifier>
+  <gml:name>WGS84(DD)</gml:name>
   <gml:ellipsoidalCS>
     <gml:EllipsoidalCS gml:id="Géodésique 2D">
-      <gml:identifier codeSpace="">Géodésique 2D</gml:identifier>
+      <gml:name>Géodésique 2D</gml:name>
       <gml:axis>
         <gml:CoordinateSystemAxis uom="°" gml:id="Geodetic longitude">
-          <gml:identifier codeSpace="">Geodetic longitude</gml:identifier>
+          <gml:name>Geodetic longitude</gml:name>
           <gml:axisAbbrev>λ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">east</gml:axisDirection>
         </gml:CoordinateSystemAxis>
       </gml:axis>
       <gml:axis>
         <gml:CoordinateSystemAxis uom="°" gml:id="Geodetic latitude">
-          <gml:identifier codeSpace="">Geodetic latitude</gml:identifier>
+          <gml:name>Geodetic latitude</gml:name>
           <gml:axisAbbrev>φ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">north</gml:axisDirection>
         </gml:CoordinateSystemAxis>
@@ -21,9 +21,10 @@
     </gml:EllipsoidalCS>
   </gml:ellipsoidalCS>
   <gml:geodeticDatum>
-    <gml:GeodeticDatum gml:id="OGCWGS84">
-        <gml:identifier codeSpace="OGC">WGS84</gml:identifier>
-        <gml:realizationEpoch/>
+    <gml:GeodeticDatum gml:id="EPSG6326">
+      <gml:identifier codeSpace="EPSG">6326</gml:identifier>
+      <gml:name>World Geodetic System 1984</gml:name>
+      <gml:realizationEpoch/>
     </gml:GeodeticDatum>
   </gml:geodeticDatum>
 </gml:GeographicCRS>

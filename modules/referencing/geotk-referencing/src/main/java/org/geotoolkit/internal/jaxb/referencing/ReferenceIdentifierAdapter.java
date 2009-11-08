@@ -26,11 +26,14 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
 
 /**
- * JAXB adapter in order to map implementing class with the GeoAPI interface. See
- * package documentation for more information about JAXB and interface.
+ * JAXB adapter mapping the GeoAPI {@link ReferenceIdentifier} to an implemention class that can
+ * be marshalled. See the package documentation for more information about JAXB and interfaces.
+ * <p>
+ * The XML produced by this adapter use the GML syntax. The {@code ToString} inner class performs
+ * a mapping in which only the code (without codespace) is marshalled.
  * <p>
  * Note that a class of the same name is defined in the {@link org.geotoolkit.internal.jaxb.metadata}
- * package, which serve the same purpose (wrapping exactly the same object) but using the ISO 19139
+ * package, which serve the same purpose (wrapping exactly the same interface) but using the ISO 19139
  * syntax instead.
  *
  * @author Guilhem Legal (Geomatys)
@@ -43,17 +46,11 @@ public final class ReferenceIdentifierAdapter extends
         XmlAdapter<SimpleReferenceIdentifier, ReferenceIdentifier>
 {
     /**
-     * Empty constructor for JAXB only.
-     */
-    public ReferenceIdentifierAdapter() {
-    }
-
-    /**
      * Substitutes the adapter value read from an XML stream by the object which will
      * contains the value. JAXB calls automatically this method at unmarshalling time.
      *
      * @param  adapter The adapter for this metadata value.
-     * @return A code list which represents the metadata value.
+     * @return A metadata which represents the value.
      */
     @Override
     public ReferenceIdentifier unmarshal(final SimpleReferenceIdentifier adapter) {
@@ -65,7 +62,7 @@ public final class ReferenceIdentifierAdapter extends
             } else {
                 authority = null;
             }
-            return new DefaultReferenceIdentifier(authority, Citations.getIdentifier(authority), adapter.value);
+            return new DefaultReferenceIdentifier(authority, Citations.getIdentifier(authority), adapter.code);
         }
         return null;
     }
@@ -74,14 +71,50 @@ public final class ReferenceIdentifierAdapter extends
      * Substitutes the identifier by the adapter to be marshalled into an XML file
      * or stream. JAXB calls automatically this method at marshalling time.
      *
-     * @param  value The code list value.
-     * @return The adapter for the given code list.
+     * @param  value The metadata value.
+     * @return The adapter for the given metadata.
      */
     @Override
     public SimpleReferenceIdentifier marshal(final ReferenceIdentifier value) {
-        if (value == null) {
+        return (value != null) ? new SimpleReferenceIdentifier(value) : null;
+    }
+
+    /**
+     * JAXB adapter in order to map a {@link ReferenceIdentifier} to a {@link String}.
+     * Its goal is to keep only the {@code name} part of a {@link ReferenceIdentifier}.
+     *
+     * @author Cédric Briançon (Geomatys)
+     * @version 3.06
+     *
+     * @since 3.06
+     * @module
+     */
+    public static final class ToString extends XmlAdapter<String, ReferenceIdentifier> {
+        /**
+         * Substitutes the value read from an XML stream by the object which will
+         * contains the value. JAXB calls automatically this method at unmarshalling time.
+         *
+         * @param  adapter The metadata value.
+         * @return A metadata which represents the metadata value.
+         */
+        @Override
+        public ReferenceIdentifier unmarshal(final String adapter) {
+            if (adapter != null) {
+                return new DefaultReferenceIdentifier(null, null, adapter);
+            }
             return null;
         }
-        return new SimpleReferenceIdentifier(value);
+
+        /**
+         * Substitutes the identifier by the adapter to be marshalled into an XML file
+         * or stream. JAXB calls automatically this method at marshalling time.
+         *
+         * @param  value The code list value.
+         * @return The adapter for the given code list.
+         */
+        @Override
+        public String marshal(final ReferenceIdentifier value) {
+            return (value != null) ? value.getCode() : null;
+        }
     }
 }

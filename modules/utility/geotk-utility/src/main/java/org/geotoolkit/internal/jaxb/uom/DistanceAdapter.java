@@ -37,7 +37,7 @@ public final class DistanceAdapter extends XmlAdapter<DistanceAdapter, Double> {
      * A proxy representation of the {@code <gco:Distance>} element.
      */
     @XmlElement(name = "Distance")
-    private UOMProxy distance;
+    private Measure distance;
 
     /**
      * Empty constructor used only by JAXB.
@@ -51,7 +51,7 @@ public final class DistanceAdapter extends XmlAdapter<DistanceAdapter, Double> {
      * @param value The value.
      */
     private DistanceAdapter(final Double value) {
-        distance = new UOMProxy(value, "pixel");
+        distance = new Measure(value, "pixel", false);
     }
 
     /**

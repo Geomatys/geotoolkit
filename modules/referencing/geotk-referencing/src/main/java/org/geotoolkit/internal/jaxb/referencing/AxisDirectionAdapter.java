@@ -34,12 +34,6 @@ import org.geotoolkit.internal.CodeLists;
  */
 public final class AxisDirectionAdapter extends XmlAdapter<AxisDirectionType, AxisDirection> {
     /**
-     * Empty constructor for JAXB only.
-     */
-    public AxisDirectionAdapter() {
-    }
-
-    /**
      * Substitutes the adapter value read from an XML stream by the object which will
      * contains the value. JAXB calls automatically this method at unmarshalling time.
      *

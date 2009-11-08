@@ -43,7 +43,7 @@ public final class AssociationTypeAdapter extends CodeListAdapter<AssociationTyp
     /**
      * Empty constructor for JAXB only.
      */
-    private AssociationTypeAdapter() {
+    public AssociationTypeAdapter() {
     }
 
     /**
