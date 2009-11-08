@@ -121,7 +121,7 @@ public class PackerSpecificMojo extends AbstractMojo {
             });
             packer.addPack(storage, all, new String[] {
                     "jlfgr-1.0.jar",
-                    "swingx-1.0.jar",
+                    "swingx-1.6.jar",
                     "wizard-0.998.1.jar",
                     "swing-worker-1.1.jar",
                     "filters-2.0.235.jar",
