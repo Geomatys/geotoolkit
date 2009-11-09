@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.se.xml.vext.RecolorType;
 
 
 /**
@@ -44,12 +45,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ColorReplacementType", propOrder = {
-    "recode"
+    "recode",
+    "recolor"
 })
 public class ColorReplacementType {
 
-    @XmlElement(name = "Recode", required = true)
+    @XmlElement(name = "Recode")
     protected RecodeType recode;
+    @XmlElement(name = "Recolor")
+    protected RecolorType recolor;
 
     /**
      * Gets the value of the recode property.
@@ -73,6 +77,32 @@ public class ColorReplacementType {
      */
     public void setRecode(RecodeType value) {
         this.recode = value;
+    }
+
+    /**
+     * Unnormalize
+     * Gets the value of the recolor property.
+     *
+     * @return
+     *     possible object is
+     *     {@link RecodeType }
+     *
+     */
+    public RecolorType getRecolor() {
+        return recolor;
+    }
+
+    /**
+     * Unnormalize
+     * Sets the value of the recode property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link RecodeType }
+     *
+     */
+    public void setRecolor(RecolorType value) {
+        this.recolor = value;
     }
 
 }

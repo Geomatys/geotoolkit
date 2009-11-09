@@ -95,18 +95,23 @@ import org.geotoolkit.se.xml.v110.StringPositionType;
 import org.geotoolkit.se.xml.v110.SubstringType;
 import org.geotoolkit.se.xml.v110.TrimType;
 
+import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
+import org.geotoolkit.se.xml.vext.RecolorType;
+import org.geotoolkit.style.DefaultColorReplacement;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 import org.geotoolkit.util.logging.Logging;
@@ -1062,6 +1067,20 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                     final Expression val = visitExpression(mit.getValue());
                 }
             }
+
+            final RecolorType rc = crt.getRecolor();
+
+            if(rc != null){
+                List<ColorItem> items = new ArrayList<ColorItem>();
+                for(final ColorItemType mit : rc.getColorItem()){
+                    final Literal data = (Literal) visitExpression(mit.getData());
+                    final Literal value = (Literal) visitExpression(mit.getValue());
+                    items.add(new ColorItem(data, value));
+                }
+                RecolorFunction recolor = new RecolorFunction(items,null);
+                replaces.add(new DefaultColorReplacement(recolor));
+            }
+
         }
 
         

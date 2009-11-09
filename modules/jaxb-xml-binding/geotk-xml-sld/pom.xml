@@ -79,7 +79,6 @@
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-filter</artifactId>
             <version>${geotoolkit.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>

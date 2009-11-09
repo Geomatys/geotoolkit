@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
+import org.geotoolkit.se.xml.vext.RecolorType;
 
 
 /**
@@ -146,6 +147,7 @@ public class ObjectFactory {
     //extension ----------------------------------------------------------------
     private static final QName _PatternSymbolizer_QNAME = new QName("http://www.opengis.net/se", "PatternSymbolizer");
     private static final QName _Range_QNAME = new QName("http://www.opengis.net/se", "Range");
+    private static final QName _Recolor_QNAME = new QName("http://www.opengis.net/se", "Recolor");
     //extension ----------------------------------------------------------------
 
     /**
@@ -602,6 +604,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RecolorType }
+     *
+     */
+    public RecolorType createRecolorType() {
+        return new RecolorType();
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PatternSymbolizerType }{@code >}}
      *
      */
@@ -617,6 +627,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.opengis.net/se", name = "Range")
     public JAXBElement<RangeType> createRange(RangeType value) {
         return new JAXBElement<RangeType>(_Range_QNAME, RangeType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RecolorType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/se", name = "Recolor", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Function")
+    public JAXBElement<RecolorType> createRecolor(RecolorType value) {
+        return new JAXBElement<RecolorType>(_Recode_QNAME, RecolorType.class, null, value);
     }
 
     //extension ----------------------------------------------------------------

@@ -81,7 +81,6 @@ import org.geotoolkit.se.xml.v110.LabelPlacementType;
 import org.geotoolkit.se.xml.v110.LegendGraphicType;
 import org.geotoolkit.se.xml.v110.LinePlacementType;
 import org.geotoolkit.se.xml.v110.LineSymbolizerType;
-import org.geotoolkit.se.xml.v110.MapItemType;
 import org.geotoolkit.se.xml.v110.MarkType;
 import org.geotoolkit.se.xml.v110.MethodType;
 import org.geotoolkit.se.xml.v110.ModeType;
@@ -99,15 +98,19 @@ import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 
+import org.geotoolkit.se.xml.vext.ColorItemType;
 import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
 import org.geotoolkit.se.xml.vext.RangeType;
+import org.geotoolkit.se.xml.vext.RecolorType;
 import org.geotoolkit.style.function.Categorize;
+import org.geotoolkit.style.function.ColorItem;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.Recode;
 import org.geotoolkit.style.function.RecodeFunction;
+import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 import org.geotoolkit.util.logging.Logging;
@@ -1273,6 +1276,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
     public ColorReplacementType visit(ColorReplacement colorReplacement, Object data) {
         final ColorReplacementType crt = se_factory.createColorReplacementType();
         final Function fct = colorReplacement.getRecoding();
+
+        if(fct instanceof RecolorFunction){
+            final RecolorFunction rf = (RecolorFunction) fct;
+            crt.setRecolor(visit(rf));
+        }
+
 //        if(fct instanceof RecodeFunction){
 //            final RecodeFunction recode = (RecodeFunction) fct;
 //            final RecodeType rt = se_factory.createRecodeType();
@@ -1288,6 +1297,22 @@ public class GTtoSE110Transformer implements StyleVisitor{
 //        }
         return crt;
     }
+
+    public RecolorType visit(RecolorFunction fct){
+        RecolorType rt = new RecolorType();
+
+        for(ColorItem item : fct.getColorItems()){
+            final ColorItemType cit = new ColorItemType();
+            final Literal data = item.getSourceColor();
+            final Literal value = item.getTargetColor();
+            cit.setData(visitExpression(data));
+            cit.setValue(visitExpression(value));
+            rt.getColorItem().add(cit);
+        }
+
+        return rt;
+    }
+
 
     /**
      * Transform a GT constrast enchancement in jaxb constrast enchancement
