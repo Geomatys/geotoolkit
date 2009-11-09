@@ -35,11 +35,9 @@ import javax.measure.unit.Unit;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.spatial.GeometricObjectType;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
@@ -61,7 +59,6 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.test.TestData;
 

@@ -35,7 +35,6 @@ import static java.lang.Double.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.internal.jaxb.referencing.Accessors;
 import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.uom.Measure;
 import org.geotoolkit.measure.CoordinateFormat;
@@ -125,33 +124,37 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             createEllipsoid("SPHERE", 6371000, 6371000, SI.METRE);
 
     /**
-     * The equatorial radius.
+     * The equatorial radius. This field should be considered as final.
+     * It is modified only by JAXB at unmarshalling time.
      *
      * @see #getSemiMajorAxis
      */
-    private final double semiMajorAxis;
+    private double semiMajorAxis;
 
     /**
-     * The polar radius.
+     * The polar radius. This field should be considered as final.
+     * It is modified only by JAXB at unmarshalling time.
      *
      * @see #getSemiMinorAxis
      */
-    private final double semiMinorAxis;
+    private double semiMinorAxis;
 
     /**
      * The inverse of the flattening value, or {@link Double#POSITIVE_INFINITY}
-     * if the ellipsoid is a sphere.
+     * if the ellipsoid is a sphere. This field should be considered as final.
+     * It is modified only by JAXB at unmarshalling time.
      *
      * @see #getInverseFlattening
      */
-    private final double inverseFlattening;
+    private double inverseFlattening;
 
     /**
-     * Tells if the Inverse Flattening is definitive for this ellipsoid.
+     * Tells if the Inverse Flattening is definitive for this ellipsoid. This field
+     * should be considered as final. It is modified only by JAXB at unmarshalling time.
      *
      * @see #isIvfDefinitive
      */
-    private final boolean ivfDefinitive;
+    private boolean ivfDefinitive;
 
     /**
      * The units of the semi-major and semi-minor axis values.
@@ -385,7 +388,10 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * by JAXB at unmarshalling time only.
      */
     private void setSemiMajorAxisMeasure(final Measure uom) {
-        Accessors.SEMI_MAJOR.set(this, uom.value);
+        if (semiMajorAxis != 0) {
+            throw new IllegalStateException();
+        }
+        semiMajorAxis = uom.value;
     }
 
     /**
@@ -462,13 +468,21 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         while (second.secondDefiningParameter != null) {
             second = second.secondDefiningParameter;
         }
-        Accessors<DefaultEllipsoid,Double> ac = Accessors.IVF;
-        Double value = second.inverseFlattening;
-        if (value == null) {
-            ac = Accessors.SEMI_MINOR;
-            value = second.semiMinorAxis;
+        final Double ivf = second.inverseFlattening;
+        if (ivf != null) {
+            if (inverseFlattening == 0) {
+                inverseFlattening = ivf;
+                ivfDefinitive = true;
+                return;
+            }
+        } else {
+            if (semiMinorAxis == 0) {
+                semiMinorAxis = second.semiMinorAxis;
+                ivfDefinitive = false;
+                return;
+            }
         }
-        ac.set(this, value);
+        throw new IllegalStateException();
     }
 
     /**
@@ -480,16 +494,11 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * This method is invoked by JAXB only.
      */
     private void afterUnmarshal(Object target, Object parent) {
-        final Accessors<DefaultEllipsoid,Double> ac;
-        final double value;
-        if (semiMinorAxis != 0) {
-            ac = Accessors.IVF;
-            value = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
+        if (ivfDefinitive) {
+            semiMinorAxis = semiMajorAxis * (1 - 1/inverseFlattening);
         } else {
-            ac = Accessors.SEMI_MINOR;
-            value = semiMajorAxis * (1 - 1/inverseFlattening);
+            inverseFlattening = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
         }
-        ac.set(this, value);
     }
 
     /**
