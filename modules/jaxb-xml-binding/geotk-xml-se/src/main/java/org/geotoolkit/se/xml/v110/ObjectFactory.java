@@ -21,6 +21,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
+import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
+import org.geotoolkit.se.xml.vext.RangeType;
 
 
 /**
@@ -140,6 +142,11 @@ public class ObjectFactory {
     private static final QName _FormatNumber_QNAME = new QName("http://www.opengis.net/se", "FormatNumber");
     private static final QName _Name_QNAME = new QName("http://www.opengis.net/se", "Name");
     private static final QName _ChangeCase_QNAME = new QName("http://www.opengis.net/se", "ChangeCase");
+
+    //extension ----------------------------------------------------------------
+    private static final QName _PatternSymbolizer_QNAME = new QName("http://www.opengis.net/se", "PatternSymbolizer");
+    private static final QName _Range_QNAME = new QName("http://www.opengis.net/se", "Range");
+    //extension ----------------------------------------------------------------
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.se
@@ -571,6 +578,51 @@ public class ObjectFactory {
     public ColorReplacementType createColorReplacementType() {
         return new ColorReplacementType();
     }
+
+
+
+
+
+    //extension ----------------------------------------------------------------
+
+    /**
+     * Create an instance of {@link PatternSymbolizerType }
+     *
+     */
+    public PatternSymbolizerType createPatternSymbolizerType() {
+        return new PatternSymbolizerType();
+    }
+
+    /**
+     * Create an instance of {@link RangeType }
+     *
+     */
+    public RangeType createRangeType() {
+        return new RangeType();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link PatternSymbolizerType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/se", name = "PatternSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/se", substitutionHeadName = "Symbolizer")
+    public JAXBElement<PatternSymbolizerType> createPatternSymbolizer(PatternSymbolizerType value) {
+        return new JAXBElement<PatternSymbolizerType>(_PatternSymbolizer_QNAME, PatternSymbolizerType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RangeType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/se", name = "Range")
+    public JAXBElement<RangeType> createRange(RangeType value) {
+        return new JAXBElement<RangeType>(_Range_QNAME, RangeType.class, null, value);
+    }
+
+    //extension ----------------------------------------------------------------
+
+
+
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}

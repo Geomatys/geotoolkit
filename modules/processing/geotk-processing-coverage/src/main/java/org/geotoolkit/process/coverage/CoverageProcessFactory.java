@@ -18,10 +18,12 @@
 package org.geotoolkit.process.coverage;
 
 import java.util.Collections;
+
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
+
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 

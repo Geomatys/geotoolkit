@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.ext.rastermask;
+package org.geotoolkit.display2d.ext.pattern;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +24,7 @@ import javax.measure.unit.NonSI;
 
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
 
+import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Symbolizer;
 
@@ -31,19 +32,33 @@ import org.opengis.style.Symbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class RasterMaskSymbolizer extends AbstractExtensionSymbolizer{
+public class PatternSymbolizer extends AbstractExtensionSymbolizer{
 
-    public static final String NAME = "RasterMask";
+    public static final String NAME = "Pattern";
 
     private final Map<Expression, List<Symbolizer>> thredholds =
             new HashMap<Expression, List<Symbolizer>>();
 
-    public RasterMaskSymbolizer(Map<Expression,List <Symbolizer>> thredholds) {
+    private final Expression channel;
+
+    private final ThreshholdsBelongTo belongTo;
+
+    public PatternSymbolizer(Expression channel, Map<Expression,List <Symbolizer>> ranges, ThreshholdsBelongTo belong) {
         super(NonSI.PIXEL, "", "", null);
-        this.thredholds.putAll(thredholds);
+        this.channel = channel;
+        this.thredholds.putAll(ranges);
+        this.belongTo = belong;
     }
 
-    public Map<Expression, List<Symbolizer>> getThredholds() {
+    public Expression getChannel(){
+        return channel;
+    }
+    
+    public ThreshholdsBelongTo getBelongTo(){
+        return belongTo;
+    }
+
+    public Map<Expression, List<Symbolizer>> getRanges() {
         return thredholds;
     }
 

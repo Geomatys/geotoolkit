@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.display2d.ext.rastermask;
+package org.geotoolkit.display2d.ext.pattern;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -58,33 +58,33 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymbolizer,CachedRasterMaskSymbolizer>{
+public class PatternRenderer implements SymbolizerRenderer<PatternSymbolizer,CachedPatternSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger(RasterMaskRenderer.class);
+    private static final Logger LOGGER = Logging.getLogger(PatternRenderer.class);
 
     @Override
-    public Class<RasterMaskSymbolizer> getSymbolizerClass() {
-        return RasterMaskSymbolizer.class;
+    public Class<PatternSymbolizer> getSymbolizerClass() {
+        return PatternSymbolizer.class;
     }
 
     @Override
-    public Class<CachedRasterMaskSymbolizer> getCachedSymbolizerClass() {
-        return CachedRasterMaskSymbolizer.class;
+    public Class<CachedPatternSymbolizer> getCachedSymbolizerClass() {
+        return CachedPatternSymbolizer.class;
     }
 
     @Override
-    public CachedRasterMaskSymbolizer createCachedSymbolizer(RasterMaskSymbolizer symbol) {
-        return new CachedRasterMaskSymbolizer(symbol);
+    public CachedPatternSymbolizer createCachedSymbolizer(PatternSymbolizer symbol) {
+        return new CachedPatternSymbolizer(symbol);
     }
 
     @Override
-    public void portray(ProjectedFeature graphic, CachedRasterMaskSymbolizer symbol, RenderingContext2D context)
+    public void portray(ProjectedFeature graphic, CachedPatternSymbolizer symbol, RenderingContext2D context)
             throws PortrayalException {
         //nothing to portray;
     }
 
     @Override
-    public void portray(ProjectedCoverage projectedCoverage, CachedRasterMaskSymbolizer symbol,
+    public void portray(ProjectedCoverage projectedCoverage, CachedPatternSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException {
 
         double[] resolution = context.getResolution();
@@ -191,13 +191,13 @@ public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymboliz
     }
 
     @Override
-    public boolean hit(ProjectedFeature graphic, CachedRasterMaskSymbolizer symbol, RenderingContext2D context,
+    public boolean hit(ProjectedFeature graphic, CachedPatternSymbolizer symbol, RenderingContext2D context,
             SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
     @Override
-    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedRasterMaskSymbolizer symbol,
+    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedPatternSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
 
 
@@ -228,12 +228,12 @@ public class RasterMaskRenderer implements SymbolizerRenderer<RasterMaskSymboliz
     }
 
     @Override
-    public Rectangle2D glyphPreferredSize(CachedRasterMaskSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedPatternSymbolizer symbol) {
         return null;
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedRasterMaskSymbolizer symbol) {
+    public void glyph(Graphics2D g, Rectangle2D rect, CachedPatternSymbolizer symbol) {
         //no glyph
     }
 

@@ -32,6 +32,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
+ * Description of a coverage to polygon process.
  *
  * @author Johann Sorel (Geomatys)
  */

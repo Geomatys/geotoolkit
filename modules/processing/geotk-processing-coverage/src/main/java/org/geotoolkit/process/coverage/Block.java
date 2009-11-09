@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.process.coverage;
@@ -8,10 +20,11 @@ package org.geotoolkit.process.coverage;
 import org.geotoolkit.util.NumberRange;
 
 /**
+ *  Define a group of pixels with the same range.
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
  */
-public class Block {
+class Block {
 
     public NumberRange range;
     public int startX;

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -35,6 +36,7 @@ import javax.swing.Icon;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
+import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.geotoolkit.feature.DefaultName;
@@ -93,6 +95,8 @@ import org.geotoolkit.se.xml.v110.StringPositionType;
 import org.geotoolkit.se.xml.v110.SubstringType;
 import org.geotoolkit.se.xml.v110.TrimType;
 
+import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
+import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -551,26 +555,10 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
                 if (st == null) {
                     continue;
                 }
-                if (st instanceof org.geotoolkit.se.xml.v110.PointSymbolizerType) {
-                    final org.geotoolkit.se.xml.v110.PointSymbolizerType pst = (org.geotoolkit.se.xml.v110.PointSymbolizerType) st;
-                    rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.se.xml.v110.LineSymbolizerType) {
-                    final org.geotoolkit.se.xml.v110.LineSymbolizerType pst = (org.geotoolkit.se.xml.v110.LineSymbolizerType) st;
-                    rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.se.xml.v110.PolygonSymbolizerType) {
-                    final org.geotoolkit.se.xml.v110.PolygonSymbolizerType pst = (org.geotoolkit.se.xml.v110.PolygonSymbolizerType) st;
-                    rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.se.xml.v110.TextSymbolizerType) {
-                    final org.geotoolkit.se.xml.v110.TextSymbolizerType pst = (org.geotoolkit.se.xml.v110.TextSymbolizerType) st;
-                    rule.symbolizers().add(visit(pst));
-                } else if (st instanceof org.geotoolkit.se.xml.v110.RasterSymbolizerType) {
-                    final org.geotoolkit.se.xml.v110.RasterSymbolizerType pst = (org.geotoolkit.se.xml.v110.RasterSymbolizerType) st;
-                    rule.symbolizers().add(visit(pst));
-                }
+
+                rule.symbolizers().add(visit(st));
             }
 
-
-            
         }
 
         return rule;
@@ -590,28 +578,36 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         final Collection<Symbolizer> rs = new ArrayList<Symbolizer>();
         for(JAXBElement<? extends SymbolizerType> jax : objs){
             final SymbolizerType st = jax.getValue();
-
             if(st == null) continue;
-
-            if(st instanceof PointSymbolizerType){
-                final PointSymbolizerType pst = (PointSymbolizerType) st;
-                rs.add( visit(pst));
-            }else if(st instanceof LineSymbolizerType){
-                final LineSymbolizerType pst = (LineSymbolizerType) st;
-                rs.add( visit(pst));
-            }else if(st instanceof PolygonSymbolizerType){
-                final PolygonSymbolizerType pst = (PolygonSymbolizerType) st;
-                rs.add( visit(pst));
-            }else if(st instanceof TextSymbolizerType){
-                final TextSymbolizerType pst = (TextSymbolizerType) st;
-                rs.add( visit(pst));
-            }else if(st instanceof RasterSymbolizerType){
-                final RasterSymbolizerType pst = (RasterSymbolizerType) st;
-                rs.add( visit(pst));
-            }
+            rs.add( visit(st));
         }
 
         return rs;
+    }
+
+    public Symbolizer visit(SymbolizerType st) {
+
+        if (st instanceof PointSymbolizerType) {
+            final PointSymbolizerType pst = (PointSymbolizerType) st;
+            return visit(pst);
+        } else if (st instanceof LineSymbolizerType) {
+            final LineSymbolizerType pst = (LineSymbolizerType) st;
+            return visit(pst);
+        } else if (st instanceof PolygonSymbolizerType) {
+            final PolygonSymbolizerType pst = (PolygonSymbolizerType) st;
+            return visit(pst);
+        } else if (st instanceof TextSymbolizerType) {
+            final TextSymbolizerType pst = (TextSymbolizerType) st;
+            return visit(pst);
+        } else if (st instanceof RasterSymbolizerType) {
+            final RasterSymbolizerType pst = (RasterSymbolizerType) st;
+            return visit(pst);
+        } else if (st instanceof PatternSymbolizerType) {
+            final PatternSymbolizerType pst = (PatternSymbolizerType) st;
+            return visit(pst);
+        }
+
+        throw new IllegalArgumentException("Unknowned Symbolizer : " + st.getClass().toString());
     }
 
     /**
@@ -707,8 +703,53 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         return styleFactory.textSymbolizer(name,geom,desc,uom,label, font, placement, halo, fill);
     }
 
+    /**
+     * Transform a SLD ext pattern symbolizer in GT pattern symbolizer.
+     */
+    public PatternSymbolizer visit(PatternSymbolizerType rst) {
+        if(rst == null) return null;
+
+        final Expression selection = visitExpression(rst.getChannel());
+
+        final ThreshholdsBelongTo belongs;
+        if(ThreshholdsBelongToType.PRECEDING.equals(rst.getThreshholdsBelongTo()) ){
+            belongs = ThreshholdsBelongTo.PRECEDING;
+        }else {
+            belongs = ThreshholdsBelongTo.SUCCEEDING;
+        }
+
+        final Map<Expression,List<Symbolizer>> ranges = visitRanges(rst.getRange());
+        final Unit uom = visitUOM(rst.getUom());
+        final String name = rst.getName();
+        final Description desc = visitDescription(rst.getDescription());
+
+        return new PatternSymbolizer(selection, ranges, belongs);
+    }
 
     //Sub elements -------------------------------------------------------------
+
+    public Map<Expression,List<Symbolizer>> visitRanges(List<JAXBElement<RangeType>> types){
+        final Map<Expression,List<Symbolizer>> ranges = new LinkedHashMap<Expression, List<Symbolizer>>();
+
+        for(final JAXBElement<RangeType> type : types){
+            final RangeType rt = type.getValue();
+
+            final Expression exp = visitExpression(rt.getThreshold());
+            final List<Symbolizer> symbols = new ArrayList<Symbolizer>();
+
+            for(final JAXBElement<? extends SymbolizerType> jst : rt.getSymbolizer()){
+                final SymbolizerType st = jst.getValue();
+                if(st == null) continue;
+
+                symbols.add(visit(st));
+            }
+
+            ranges.put(exp, symbols);
+        }
+
+        return ranges;
+    }
+
     /**
      * Transform a SLD v1.1 legend in GT legend.
      */
@@ -1014,9 +1055,12 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
         for(final ColorReplacementType crt : externalGraphicType.getColorReplacement()){
             final RecodeType rt = crt.getRecode();
-            for(final MapItemType mit : rt.getMapItem()){
-                final double d = mit.getData();
-                final Expression val = visitExpression(mit.getValue());
+
+            if(rt != null){
+                for(final MapItemType mit : rt.getMapItem()){
+                    final double d = mit.getData();
+                    final Expression val = visitExpression(mit.getValue());
+                }
             }
         }
 

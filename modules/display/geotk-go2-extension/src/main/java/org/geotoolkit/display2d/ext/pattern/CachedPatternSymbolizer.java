@@ -15,22 +15,18 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.display2d.ext.rastermask;
+package org.geotoolkit.display2d.ext.pattern;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import java.util.TreeMap;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -55,18 +51,16 @@ import org.opengis.style.Symbolizer;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class CachedRasterMaskSymbolizer extends CachedSymbolizer<RasterMaskSymbolizer>{
+public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>{
 
-    private static final BufferedImage TRANSLUCENT = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-
-    public CachedRasterMaskSymbolizer(RasterMaskSymbolizer symbol){
+    public CachedPatternSymbolizer(PatternSymbolizer symbol){
         super(symbol);
     }
 
     public Map<SimpleFeature,List<CachedSymbolizer>> getMasks(GridCoverage2D coverage) throws IOException, TransformException{
         final Map<SimpleFeature,List<CachedSymbolizer>> features = new LinkedHashMap<SimpleFeature, List<CachedSymbolizer>>();
         final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<NumberRange, List<CachedSymbolizer>>();
-        final Map<Expression, List<Symbolizer>> categorizes = styleElement.getThredholds();
+        final Map<Expression, List<Symbolizer>> categorizes = styleElement.getRanges();
         final Expression[] steps = categorizes.keySet().toArray(new Expression[categorizes.size()]);
         Arrays.sort(steps, new Comparator<Expression>() {
 

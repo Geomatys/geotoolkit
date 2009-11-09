@@ -1,24 +1,37 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.process.coverage;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.util.NumberRange;
 
 /**
+ * Define an "in construction" geometries.
+ * This type of objects contain a list of floeatings coordinates sequences
+ * that are progressivly merged together to obtain a polygon which might contain holes.
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
  */
 public class Boundary {
 
@@ -237,7 +250,7 @@ public class Boundary {
         //check for list with less than 2 elements
         for(LinkedList<Coordinate> ll : floatings){
             if(ll.size() < 2){
-                //System.err.println(">>>> ERROR : " + this.toStringFull());
+                //System.err.println(">>>> ERROR : " + this.toString());
                 throw new IllegalArgumentException("What ? a list with less than 2 elements, not valid !");
             }
         }
@@ -248,7 +261,7 @@ public class Boundary {
             for(int i=1;i<ll.size();i++){
                 Coordinate current = ll.get(i);
                 if(last.x != current.x && last.y != current.y){
-                    //System.err.println(">>>> ERROR : " + this.toStringFull());
+                    //System.err.println(">>>> ERROR : " + this.toString());
                     throw new IllegalArgumentException("What ? a diagonal, not valid !");
                 }
                 last = current;
@@ -265,11 +278,8 @@ public class Boundary {
             //closing the polygon enveloppe
             //copy first point at the end
             coords.add(new Coordinate(coords.get(0)));
-            Coordinate[] ring = coords.toArray(new Coordinate[coords.size()]);
-//            if(CGAlgorithms.isCCW(ring)){
-//                reverse(ring);
-//            }
-            
+
+            final Coordinate[] ring = coords.toArray(new Coordinate[coords.size()]);
             final LinearRing exterior = GF.createLinearRing(ring);
             final Polygon polygon = GF.createPolygon(exterior, holes.toArray(EMPTY_RING_ARRAY));
             polygon.setUserData(range);
@@ -279,13 +289,9 @@ public class Boundary {
         }else{
             //closing a hole in the geometry
             //copy first point at the end
-
-
             coords.add(new Coordinate(coords.get(0)));
-            Coordinate[] ring = coords.toArray(new Coordinate[coords.size()]);
-//            if(!CGAlgorithms.isCCW(ring)){
-//                reverse(ring);
-//            }
+
+            final Coordinate[] ring = coords.toArray(new Coordinate[coords.size()]);
             holes.add(GF.createLinearRing(ring));
             floatings.remove(coords);
             //checkValidity();
@@ -304,15 +310,11 @@ public class Boundary {
 
     public Polygon merge(Boundary candidate){
 
-        //System.err.println("M > before : " + toStringFull());
-        //System.err.println("M > with : " + candidate.toStringFull());
-
-//        this.exterior.addAll(candidate.exterior);
+        //System.err.println("M > before : " + toString());
+        //System.err.println("M > with : " + candidate.toString());
 
         //merge the floating sequences
         this.floatings.addAll(candidate.floatings);
-        //remove the second exterior
-//        this.floatings.remove(candidate.exterior);
 
         //merge the holes
         this.holes.addAll(candidate.holes);
@@ -320,25 +322,14 @@ public class Boundary {
         candidate.floatings.clear();
         candidate.holes.clear();
 
-        //System.err.println("M > after : " + toStringFull());
+        //System.err.println("M > after : " + toString());
         //checkValidity();
         return null;
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Boundary : ");
-        sb.append(range.toString());
-
-        for(LinkedList<Coordinate> coords : floatings){
-            sb.append("\n      line["+coords.getFirst()+","+coords.getLast()+"]");
-        }
-
-        return sb.toString();
-    }
-
-    public String toStringFull() {
-        StringBuilder sb = new StringBuilder("Boundary : ");
+        final StringBuilder sb = new StringBuilder("Boundary : ");
         sb.append(range.toString());
 
         for(LinkedList<Coordinate> coords : floatings){

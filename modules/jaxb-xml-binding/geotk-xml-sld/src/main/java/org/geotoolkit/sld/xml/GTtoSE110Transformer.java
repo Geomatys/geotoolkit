@@ -29,6 +29,7 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
@@ -98,6 +99,8 @@ import org.geotoolkit.se.xml.v110.SvgParameterType;
 import org.geotoolkit.se.xml.v110.TextSymbolizerType;
 import org.geotoolkit.se.xml.v110.ThreshholdsBelongToType;
 
+import org.geotoolkit.se.xml.vext.PatternSymbolizerType;
+import org.geotoolkit.se.xml.vext.RangeType;
 import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
@@ -699,6 +702,8 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 rt.getSymbolizer().add( visit((RasterSymbolizer)symbol,null));
             }else if(symbol instanceof TextSymbolizer){
                 rt.getSymbolizer().add( visit((TextSymbolizer)symbol,null));
+            }else if(symbol instanceof PatternSymbolizer){
+                rt.getSymbolizer().add( visit((PatternSymbolizer)symbol,null));
             }else if(symbol instanceof ExtensionSymbolizer){
                 //TODO provide jaxb binding for extension symbolizers
 //                rt.getSymbolizer().add( visit((ExtensionSymbolizer)symbol,null));
@@ -850,6 +855,62 @@ public class GTtoSE110Transformer implements StyleVisitor{
         }
         
         return se_factory.createRasterSymbolizer(tst);
+    }
+
+    /**
+     * Transform a GT raster symbolizer in jaxb raster symbolizer.
+     */
+    public JAXBElement<PatternSymbolizerType> visit(PatternSymbolizer pattern, Object data) {
+        final PatternSymbolizerType tst = se_factory.createPatternSymbolizerType();
+        tst.setName( pattern.getName() );
+        tst.setDescription( visit(pattern.getDescription(),null) );
+        tst.setUom( visitUOM(pattern.getUnitOfMeasure()));
+
+        if(pattern.getChannel() != null){
+            tst.setChannel( visitExpression(pattern.getChannel()) );
+        }
+        
+        if(ThreshholdsBelongTo.PRECEDING == pattern.getBelongTo()){
+            tst.setThreshholdsBelongTo(ThreshholdsBelongToType.PRECEDING);
+        }else{
+            tst.setThreshholdsBelongTo(ThreshholdsBelongToType.SUCCEEDING);
+        }
+
+        Map<Expression,List<Symbolizer>> ranges = pattern.getRanges();
+        for(Map.Entry<Expression,List<Symbolizer>> entry : ranges.entrySet()){
+            tst.getRange().add(visitRange(entry.getKey(), entry.getValue()));
+        }
+
+        return se_factory.createPatternSymbolizer(tst);
+    }
+
+    public JAXBElement<RangeType> visitRange(Expression thredhold, List<Symbolizer> symbols){
+        final RangeType type = se_factory.createRangeType();
+
+        if(thredhold != null){
+            type.setThreshold(visitExpression(thredhold));
+        }
+
+        for(final Symbolizer symbol : symbols){
+            if(symbol instanceof LineSymbolizer){
+                type.getSymbolizer().add( visit((LineSymbolizer)symbol,null));
+            }else if(symbol instanceof PolygonSymbolizer){
+                type.getSymbolizer().add( visit((PolygonSymbolizer)symbol,null));
+            }else if(symbol instanceof PointSymbolizer){
+                type.getSymbolizer().add( visit((PointSymbolizer)symbol,null));
+            }else if(symbol instanceof RasterSymbolizer){
+                type.getSymbolizer().add( visit((RasterSymbolizer)symbol,null));
+            }else if(symbol instanceof TextSymbolizer){
+                type.getSymbolizer().add( visit((TextSymbolizer)symbol,null));
+            }else if(symbol instanceof PatternSymbolizer){
+                type.getSymbolizer().add( visit((PatternSymbolizer)symbol,null));
+            }else if(symbol instanceof ExtensionSymbolizer){
+                //TODO provide jaxb binding for extension symbolizers
+//                rt.getSymbolizer().add( visit((ExtensionSymbolizer)symbol,null));
+            }
+        }
+        
+        return se_factory.createRange(type);
     }
 
     @Override
