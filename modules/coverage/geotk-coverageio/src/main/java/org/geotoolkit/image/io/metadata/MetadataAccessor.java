@@ -40,24 +40,48 @@ import org.geotoolkit.util.UnsupportedImplementationException;
 
 
 /**
- * Base class for {@linkplain SpatialMetadata spatial metadata} parsers. This class
- * provides convenience methods for encoding and decoding metadata information. A metadata
- * root {@linkplain Node node} is specified at construction time, together with a path to
- * the {@linkplain Element element} of interest. Example of valid paths:
+ * Convenience class for extracting attribute values from a {@link SpatialMetadata} object.
+ * The metadata object is specified at construction time, together with a path to the
+ * {@linkplain Element element} of interest. Examples of valid paths:
  * <p>
  * <ul>
- *   <li>{@code "RectifiedGridDomain/CRS/Datum"}</li>
- *   <li>{@code "RectifiedGridDomain/CRS/CoordinateSystem"}</li>
- *   <li>{@code "DiscoveryMetadata/Extent/GeographicElement"}</li>
+ *   <li>{@code "RectifiedGridDomain/CRS/Datum"} in {@linkplain SpatialMetadataFormat#IMAGE image} metadata</li>
+ *   <li>{@code "RectifiedGridDomain/CRS/CoordinateSystem"} in {@linkplain SpatialMetadataFormat#IMAGE image} metadata</li>
+ *   <li>{@code "DiscoveryMetadata/Extent/GeographicElement"} in {@linkplain SpatialMetadataFormat#STREAM stream} metadata</li>
  * </ul>
  * <p>
- * In addition, some elements contains an arbitrary amount of childs. The path to child
- * elements can also be specified to the constructor. Examples (note that child paths
- * are relative to the parent):
+ * If no node exists for the given path, then the node will be created at {@code MetadataAccessor}
+ * construction time. For example the last exemple in the above list will ensure that the metadata
+ * tree contains at least the nodes below, creating the missing ones if needed (Note: the value of
+ * {@code <root>} depends on the metadata format, but is typically
+ * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}):
+ *
+ * {@preformat text
+ *    <root>
+ *    └───DiscoveryMetadata
+ *        └───Extent
+ *            └───GeographicElement
+ * }
+ *
+ * After a {@code MetadataAccessor} instance has been created, the {@code getAttributeAs<Type>()}
+ * methods can be invoked for fetching any attribute values, taking care of conversions to
+ * {@link String}, {@link Double}, {@link Integer} or {@link Date}.
+ *
+ * {@section Accessing child elements}
+ * If order to access a child element when the child policy is
+ * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_ALL    CHILD_POLICY_ALL},
+ * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_SOME   CHILD_POLICY_SOME} or
+ * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_CHOICE CHILD_POLICY_CHOICE},
+ * create a new {@code MetadataAccessor} with the complete path to that element.
+ * <p>
+ * If the child policy of the node is
+ * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_REPEAT CHILD_POLICY_REPEAT},
+ * then this class provide convenience methods for accessing the attributes of the childs.
+ * The path to unique legal child elements shall be specified to the constructor, as in the
+ * examples below:
  * <p>
  * <ul>
- *   <li>({@code "CoordinateReferenceSystem/CoordinateSystem"}, {@code "Axis"})</li>
- *   <li>({@code "GridGeometry/Envelope"}, {@code "CoordinateValues"})</li>
+ *   <li>({@code "RectifiedGridDomain/CRS/CoordinateSystem"}, {@code "Axis"})</li>
  *   <li>({@code "ImageDescription/Dimensions"}, {@code "Dimension"})</li>
  * </ul>
  * <p>
@@ -66,18 +90,34 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  * specified at construction time, or one of its childs. The element can be selected
  * by {@link #selectParent} (the default) or {@link #selectChild}.
  * <p>
- * The example below creates an accessor for a node called {@code "coordinateSystem"}
- * which is expected to have childs called {@code "axis"}:
+ * Note that this mechanism is not suitable to nested childs, i.e. {@code MetadataAccessor} gives
+ * access only to the attributes of child elements. If an access to the childs nested in a child
+ * element is wanted, then the users may find more convenient to parse the XML tree by an other
+ * way than this convenience class.
+ *
+ * {@section Example reading attributes}
+ * The example below creates an accessor for a node called {@code "CoordinateSystem"}
+ * which is expected to have an arbitrary amount of childs called {@code "Axis"}. The
+ * name of the first axis is fetched.
  *
  * {@preformat java
  *     MetadataAccessor accessor = new MetadataAccessor(metadata,
- *             "CoordinateReferenceSystem/CoordinateSystem", "Axis");
+ *             "RectifiedGridDomain/CRS/CoordinateSystem", "Axis");
  *
  *     accessor.selectParent();
  *     String csName = accessor.getAttributeAsString("name");
  *
  *     accessor.selectChild(0);
  *     String firstAxisName = accessor.getAttributeAsString("name");
+ * }
+ *
+ * {@section Example adding childs and writting attributes}
+ * The example below uses the same accessor than above, but this time for adding a new
+ * child under the {@code "CoordinateSystem"} node:
+ *
+ * {@preformat java
+ *     accessor.selectChild(accessor.appendChild();
+ *     accessor.setAttributeAsString("name", "The name of a new axis");
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -139,7 +179,7 @@ public class MetadataAccessor {
      *
      * @param clone The accessor to clone.
      */
-    protected MetadataAccessor(final MetadataAccessor clone) {
+    public MetadataAccessor(final MetadataAccessor clone) {
         metadata  = clone.metadata;
         parent    = clone.parent;
         childPath = clone.childPath;
@@ -151,14 +191,14 @@ public class MetadataAccessor {
      * separated by the {@code '/'} character. See {@linkplain MetadataAccessor class javadoc}
      * for path examples.
      *
-     * @param  metadata   The metadata node.
+     * @param  metadata   The Image I/O metadata.
      * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
      *                    if the {@code metadata} root node is directly the node of interest.
      * @param  childPath  The path (relative to {@code parentPath}) to the child
      *                    {@linkplain Element elements}, or {@code null} if none.
      */
     @SuppressWarnings("fallthrough")
-    protected MetadataAccessor(final SpatialMetadata metadata, final String parentPath, final String childPath) {
+    public MetadataAccessor(final SpatialMetadata metadata, final String parentPath, final String childPath) {
         this.metadata = metadata;
         final Node root = metadata.getAsTree();
         /*
@@ -277,7 +317,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #selectChild
      * @see #appendChild
      */
-    protected int childCount() {
+    public int childCount() {
         return childs.size();
     }
 
@@ -293,7 +333,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #childCount
      * @see #selectChild
      */
-    protected int appendChild() {
+    public int appendChild() {
         final int size = childs.size();
         final Node child = appendChild(parent, childPath);
         if (child instanceof Element) {
@@ -315,7 +355,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #appendChild
      * @see #selectParent
      */
-    protected void selectChild(final int index) throws IndexOutOfBoundsException {
+    public void selectChild(final int index) throws IndexOutOfBoundsException {
         current = (Element) childs.get(index);
     }
 
@@ -327,7 +367,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * @see #selectChild
      */
-    protected void selectParent() throws NoSuchElementException {
+    public void selectParent() throws NoSuchElementException {
         if (parent instanceof Element) {
             current = (Element) parent;
         } else {
@@ -365,7 +405,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #getUserObject(Class)
      * @see #setUserObject
      */
-    protected Object getUserObject() {
+    public Object getUserObject() {
         final Element element = currentElement();
         if (element instanceof IIOMetadataNode) {
             final Object candidate = ((IIOMetadataNode) element).getUserObject();
@@ -394,7 +434,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #getUserObject()
      * @see #setUserObject
      */
-    protected <T> T getUserObject(Class<? extends T> type) throws ClassCastException {
+    public <T> T getUserObject(Class<? extends T> type) throws ClassCastException {
         type = Classes.primitiveToWrapper(type).asSubclass(type);
         Object value = getUserObject();
         if (value instanceof CharSequence) {
@@ -430,7 +470,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * @see #getUserObject()
      */
-    protected void setUserObject(final Object value) throws UnsupportedImplementationException {
+    public void setUserObject(final Object value) throws UnsupportedImplementationException {
         final Element element = currentElement();
         String asText = null;
         if (value != null) {
@@ -471,7 +511,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "name"}).
      * @return The attribute value (never an empty string), or {@code null} if none.
      */
-    protected String getAttributeAsString(final String attribute) {
+    public String getAttributeAsString(final String attribute) {
         String candidate = currentElement().getAttribute(attribute);
         if (candidate != null) {
             candidate = candidate.trim();
@@ -492,7 +532,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param value     The attribute value.
      */
-    protected void setAttributeAsString(final String attribute, String value) {
+    public void setAttributeAsString(final String attribute, String value) {
         final Element element = currentElement();
         if (value == null || (value=value.trim()).length() == 0) {
             if (element.hasAttribute(attribute)) {
@@ -532,7 +572,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      */
-    protected Integer getAttributeAsInteger(final String attribute) {
+    public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttributeAsString(attribute);
         if (value != null) {
             value = trimFractionalPart(value);
@@ -551,7 +591,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param value     The attribute value.
      */
-    protected void setAttributeAsInteger(final String attribute, final int value) {
+    public void setAttributeAsInteger(final String attribute, final int value) {
         setAttributeAsString(attribute, Integer.toString(value));
     }
 
@@ -565,7 +605,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
      */
-    protected int[] getAttributeAsIntegers(final String attribute, final boolean unique) {
+    public int[] getAttributeAsIntegers(final String attribute, final boolean unique) {
         return (int[]) parseSequence(getAttributeAsString(attribute), unique, true);
     }
 
@@ -576,7 +616,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param values    The attribute value.
      */
-    protected void setAttributeAsIntegers(final String attribute, final int[] values) {
+    public void setAttributeAsIntegers(final String attribute, final int... values) {
         setAttributeAsString(attribute, formatSequence(values));
     }
 
@@ -588,7 +628,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      */
-    protected Double getAttributeAsDouble(final String attribute) {
+    public Double getAttributeAsDouble(final String attribute) {
         final String value = getAttributeAsString(attribute);
         if (value != null) try {
             return Double.valueOf(value);
@@ -605,7 +645,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param value     The attribute value.
      */
-    protected void setAttributeAsDouble(final String attribute, final double value) {
+    public void setAttributeAsDouble(final String attribute, final double value) {
         String text = null;
         if (!Double.isNaN(value) && !Double.isInfinite(value)) {
             text = Double.toString(value);
@@ -623,7 +663,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
      */
-    protected double[] getAttributeAsDoubles(final String attribute, final boolean unique) {
+    public double[] getAttributeAsDoubles(final String attribute, final boolean unique) {
         return (double[]) parseSequence(getAttributeAsString(attribute), unique, false);
     }
 
@@ -634,7 +674,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param values    The attribute value.
      */
-    protected void setAttributeAsDoubles(final String attribute, final double[] values) {
+    public void setAttributeAsDoubles(final String attribute, final double... values) {
         setAttributeAsString(attribute, formatSequence(values));
     }
 
@@ -720,7 +760,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "origin"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      */
-    protected Date getAttributeAsDate(final String attribute) {
+    public Date getAttributeAsDate(final String attribute) {
         String value = getAttributeAsString(attribute);
         if (value != null) {
             value = trimFractionalPart(value);
@@ -735,7 +775,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param value     The attribute value.
      */
-    protected void setAttributeAsDate(final String attribute, final Date value) {
+    public void setAttributeAsDate(final String attribute, final Date value) {
         String text = null;
         if (value != null) {
             text = metadata.dateFormat().format(value);
@@ -746,8 +786,8 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     /**
      * Trims the factional part of the given string, provided that it doesn't change the value.
      * More specifically, this method removes the trailing {@code ".0"} characters if any. This
-     * method is automatically invoked before to {@linkplain #getAttributeAsInteger parse an integer}
-     * or to {@linkplain #getAttributeAsDate parse a date} (for simplifying fractional seconds).
+     * method is invoked before to {@linkplain #getAttributeAsInteger parse an integer} or to
+     * {@linkplain #getAttributeAsDate parse a date} (for simplifying fractional seconds).
      *
      * @param  value The value to trim.
      * @return The value without the trailing {@code ".0"} part.

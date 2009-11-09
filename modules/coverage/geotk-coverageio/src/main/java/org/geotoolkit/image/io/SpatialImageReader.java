@@ -48,6 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
 
 /**
@@ -297,7 +298,7 @@ public abstract class SpatialImageReader extends ImageReader {
         if (candidate instanceof SpatialMetadata) {
             parser = (SpatialMetadata) candidate;
         } else {
-            parser = new SpatialMetadata(this);
+            parser = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this);
             parser.mergeTree(candidate);
         }
         if (metadata == null) {

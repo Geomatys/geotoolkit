@@ -95,7 +95,7 @@ import org.geotoolkit.resources.Errors;
  * {@section Default formats}
  * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
  * {@link Metadata} and {@link ImageDescription} interfaces, respectively. Consequently those
- * instances can be considered as profiles of ISO 19115-2, with a few minor departures
+ * instances can be considered as profiles of ISO 19115-2, with a few minor departures:
  * <p>
  * <ul>
  *   <li>The {@link Band} interface defined by ISO 19115-2 is used only when the values are
@@ -132,7 +132,7 @@ import org.geotoolkit.resources.Errors;
 │   ├───environmentDescription
 │   ├───<b>Extent</b> : {@linkplain Extent}
 │   │   ├───description
-│   │   ├───<b>GeographicElement</b> : {@linkplain GeographicExtent}
+│   │   ├───<b>GeographicElement</b> : {@linkplain GeographicBoundingBox}
 │   │   │   ├───inclusion
 │   │   │   ├───westBoundLongitude
 │   │   │   ├───eastBoundLongitude
@@ -219,7 +219,6 @@ import org.geotoolkit.resources.Errors;
 │   ├───centerPoint
 │   └───pointInPixel
 └───<b>RectifiedGridDomain</b> : {@linkplain RectifiedGrid}
-    ├───dimension
     ├───<b>Limits</b> : {@linkplain GridEnvelope}
     │   ├───low
     │   └───high
@@ -231,6 +230,8 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
+ *
+ * @see SpatialMetadata
  *
  * @since 3.04
  * @module
@@ -262,7 +263,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     public static final SpatialMetadataFormat STREAM;
     static {
-        STREAM = new SpatialMetadataFormat(FORMAT_NAME, MetadataStandard.ISO_19115);
+        STREAM = new SpatialMetadataFormat(FORMAT_NAME);
         STREAM.addTreeForStream();
     }
 
@@ -276,15 +277,15 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     public static final SpatialMetadataFormat IMAGE;
     static {
-        IMAGE = new SpatialMetadataFormat(FORMAT_NAME, MetadataStandard.ISO_19115, MetadataStandard.ISO_19123);
+        IMAGE = new SpatialMetadataFormat(FORMAT_NAME);
         IMAGE.addTreeForImage();
     }
 
     /**
-     * The metadata standards represented by this format. At least one standard must
-     * be specified. This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
+     * The metadata standards represented by this format. The most
+     * common standard is {@link MetadataStandard#ISO_19115 ISO_19115}.
      */
-    private final MetadataStandard[] standards;
+    private final Map<String,MetadataStandard> standards = new HashMap<String,MetadataStandard>();
 
     /**
      * The last value returned by {@link #getDescriptions}, cached on the assumption
@@ -294,28 +295,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     private volatile transient MetadataDescriptions descriptions;
 
     /**
-     * Creates an initially empty format for the given standards. At least one standard
-     * must be specified. This is usually {@link MetadataStandard#ISO_19115 ISO_19115}.
-     * <p>
-     * Subclasses shall invoke the various {@code addFoo(...)} methods defined in this
-     * class or parent class for adding new elements and attributes.
+     * Creates an initially empty format. Subclasses shall invoke the various
+     * {@code addFoo(...)} methods defined in this class or parent class for
+     * adding new elements and attributes.
      *
      * @param rootName the name of the root element.
-     * @param standards The metadata standards represented by this format.
      */
-    protected SpatialMetadataFormat(final String rootName, MetadataStandard... standards) {
+    protected SpatialMetadataFormat(final String rootName) {
         super(rootName, CHILD_POLICY_SOME);
-        ensureNonNull("standards", standards);
-        if (standards.length == 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
-        }
-        this.standards = standards = standards.clone();
-        for (int i=0; i<standards.length; i++) {
-            if (standards[i] == null) {
-                throw new NullArgumentException(Errors.format(
-                        Errors.Keys.NULL_ARGUMENT_$1, "standards[" + i + ']'));
-            }
-        }
     }
 
     /**
@@ -447,6 +434,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         MetadataStandard standard = MetadataStandard.ISO_19115;
         addTree(standard, ImageDescription.class, "ImageDescription", root, substitution);
         addAttribute("Dimension", "fillValues", DATATYPE_DOUBLE, false, 0, Integer.MAX_VALUE);
+        addObjectValue("Dimension", SampleDimension.class, true, null); // Replace Band.class.
         /*
          * Adds the "SpatialRepresentation" node derived from ISO 19115.
          * We ommit the information about spatial-temporal axis properties (the Dimension object)
@@ -475,7 +463,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * but under different names. We use the "GML in JPEG 2000" names.
          */
         addTree(standard, GridEnvelope.class, "Limits", "RectifiedGridDomain", substitution);
-        removeAttribute("Limits", "dimension"); // Redundant with the one in RectifiedGridDomain.
+        removeAttribute("Limits",              "dimension"); // Redundant with the one in RectifiedGridDomain.
+        removeAttribute("RectifiedGridDomain", "dimension"); // Redundant with the one in SpatialRepresentation.
     }
 
     /**
@@ -484,12 +473,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * except that the element is added at the root and the name is inferred from the given type
      * for convenience.
      *
-     * @param type The type of the element or attribute to be added.
+     * @param standard     The metadata standard of the element or attribute to be added.
+     * @param type         The type of the element or attribute to be added.
      * @param substitution The map of children types to substitute by other types, or {@code null}.
      */
-    protected void addTree(final Class<?> type, final Map<Class<?>,Class<?>> substitution) {
-        ensureNonNull("type", type);
-        addTree(standards[0], type, type.getSimpleName(), getRootName(), substitution);
+    protected void addTree(final MetadataStandard standard, final Class<?> type,
+            final Map<Class<?>,Class<?>> substitution)
+    {
+        ensureNonNull("standard", standard);
+        ensureNonNull("type",     type);
+        addTree(standard, type, type.getSimpleName(), getRootName(), substitution);
     }
 
     /**
@@ -638,11 +631,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                     // The container for the repeated elements (CHILD_POLICY_REPEAT)
                     elementName = toElementName(elementName);
                     addElement(elementName, parentName, minOccurence, maxOccurence);
+                    standards.put(elementName, standard);
 
                     // The repeated element with no child, only a single attribute.
                     parentName  = elementName;
                     elementName = toComponentName(elementName, identifier, true);
                     addElement(elementName, parentName, CHILD_POLICY_EMPTY);
+                    standards.put(elementName, standard);
 
                     // The attribute of kind VALUE_LIST.
                     parentName  = elementName;
@@ -688,6 +683,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         elementName = toElementName(elementName);
         if (maxOccurence != 1) {
             addElement(elementName, parentName, minOccurence, maxOccurence);
+            standards.put(elementName, standard);
             parentName  = elementName;
             identifier  = toElementName(identifier);
             elementName = toComponentName(elementName, identifier, false);
@@ -754,6 +750,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          */
         addElement(elementName, parentName, childPolicy);
         addObjectValue(elementName, type, false, null);
+        standards.put(elementName, standard);
         for (final Map.Entry<String,Class<?>> entry : propertyTypes.entrySet()) {
             String childName = entry.getKey();
             final ValueRestriction vr = restrictions.get(childName);
@@ -932,9 +929,18 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the element which is the parent of the named element, or {@code null} if none.
+     * <p>
+     * <b>Note:</b> Current implementation is somewhat inefficient.  We could maintain a map of
+     * parents when new elements are added, but {@link IIOMetadataFormatImpl} already maintains
+     * such map - I'm not sure why they do no provide API for getting that info. This API could
+     * have been implemented as:
      *
-     * @todo Current implementation is somewhat inefficient. Maybe we should maintains a map
-     *       of parents when new elements are added.
+     * {@preformat java
+     *     public String[] getElementParents(String elementName) {
+     *         List<String> parents = getElement(elementName).parentList;
+     *         return parents.toString(new String[parents.size()]);
+     *     }
+     * }
      *
      * @param  root The root element from which to starts the scan.
      * @param  elementName The element for which the parent is desired.
@@ -1045,11 +1051,14 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 // We will set the description map to an empty map.
             }
             Map<String,String> desc = Collections.emptyMap();
-            if (type != null) try {
-                desc = standards[0].asDescriptionMap(type, locale, NAME_POLICY);
-            } catch (ClassCastException e) {
-                // The element type is not an instance of the expected standard.
-                // We will set the description map to an empty map.
+            if (type != null) {
+                final MetadataStandard standard = standards.get(elementName);
+                if (standard != null) try {
+                    desc = standard.asDescriptionMap(type, locale, NAME_POLICY);
+                } catch (ClassCastException e) {
+                    // The element type is not an instance of the expected standard.
+                    // We will set the description map to an empty map.
+                }
             }
             candidate = new MetadataDescriptions(desc, elementName, locale);
             descriptions = candidate;

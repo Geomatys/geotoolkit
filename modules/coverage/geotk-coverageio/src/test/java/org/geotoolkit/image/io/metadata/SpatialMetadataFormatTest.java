@@ -17,15 +17,31 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.io.Writer;
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import javax.imageio.metadata.IIOMetadataFormat;
+
 import org.opengis.metadata.Identifier;
+import org.opengis.metadata.identification.Keywords;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.VerticalExtent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.acquisition.EnvironmentalRecord;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.content.RangeElementDescription;
+import org.opengis.metadata.spatial.Georectified;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.junit.*;
+
 import static org.junit.Assert.*;
 import static javax.imageio.metadata.IIOMetadataFormat.*;
 
@@ -34,29 +50,250 @@ import static javax.imageio.metadata.IIOMetadataFormat.*;
  * Tests {@link SpatialMetadataFormat}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 3.04
  */
 public final class SpatialMetadataFormatTest {
     /**
-     * Tests the elements in the image metadata format instance.
+     * Tests the elements in the stream metadata format instance.
+     *
+     * @since 3.06
      */
     @Test
-    public void testImageElements() {
-        final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
-        assertEquals(Identifier.class, format.getObjectClass("ProcessingLevelCode"));
+    public void testStreamMetadataFormat() {
+        final IIOMetadataFormat f = SpatialMetadataFormat.STREAM;
+
+        assertEquals(DataIdentification.class,      f.getObjectClass           ("DiscoveryMetadata"));
+        assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("DiscoveryMetadata"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "citation"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("DiscoveryMetadata", "citation"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "abstract"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("DiscoveryMetadata", "abstract"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "purpose"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("DiscoveryMetadata", "purpose"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "credits"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("DiscoveryMetadata", "credits"));
+        assertEquals(0,                             f.getAttributeListMinLength("DiscoveryMetadata", "credits"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("DiscoveryMetadata", "credits"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "status"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("DiscoveryMetadata", "status"));
+        assertIsEnum("planned",                     f.getAttributeEnumerations ("DiscoveryMetadata", "status"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "topicCategories"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("DiscoveryMetadata", "topicCategories"));
+        assertIsEnum("environment",                 f.getAttributeEnumerations ("DiscoveryMetadata", "topicCategories"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "environmentDescription"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("DiscoveryMetadata", "environmentDescription"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DiscoveryMetadata", "supplementalInformation"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("DiscoveryMetadata", "supplementalInformation"));
+        assertEquals(CHILD_POLICY_REPEAT,           f.getChildPolicy           ("DescriptiveKeywords"));
+        assertEquals(Keywords.class,                f.getObjectClass           ("DescriptiveKeywordsEntry"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DescriptiveKeywordsEntry", "keywords"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("DescriptiveKeywordsEntry", "keywords"));
+        assertEquals(1,                             f.getAttributeListMinLength("DescriptiveKeywordsEntry", "keywords"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("DescriptiveKeywordsEntry", "keywords"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DescriptiveKeywordsEntry", "thesaurusName"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("DescriptiveKeywordsEntry", "thesaurusName"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("DescriptiveKeywordsEntry", "type"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("DescriptiveKeywordsEntry", "type"));
+        assertIsEnum("place",                       f.getAttributeEnumerations ("DescriptiveKeywordsEntry", "type"));
+        assertEquals(Resolution.class,              f.getObjectClass           ("SpatialResolution"));
+        assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("SpatialResolution"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("SpatialResolution", "distance"));
+        assertEquals(VALUE_RANGE,                   f.getAttributeValueType    ("SpatialResolution", "distance"));
+        assertEquals("0.0",                         f.getAttributeMinValue     ("SpatialResolution", "distance"));
+        assertNull  (                               f.getAttributeMaxValue     ("SpatialResolution", "distance"));
+        assertEquals(Extent.class,                  f.getObjectClass           ("Extent"));
+        assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("Extent"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Extent", "description"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Extent", "description"));
+        assertEquals(GeographicBoundingBox.class,   f.getObjectClass           ("GeographicElement"));
+        assertEquals(CHILD_POLICY_EMPTY,            f.getChildPolicy           ("GeographicElement"));
+        assertEquals(DATATYPE_BOOLEAN,              f.getAttributeDataType     ("GeographicElement", "inclusion"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("GeographicElement", "inclusion"));
+        assertIsEnum("TRUE",                        f.getAttributeEnumerations ("GeographicElement", "inclusion"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("GeographicElement", "westBoundLongitude"));
+        assertEquals(VALUE_RANGE_MIN_MAX_INCLUSIVE, f.getAttributeValueType    ("GeographicElement", "westBoundLongitude"));
+        assertEquals("-180.0",                      f.getAttributeMinValue     ("GeographicElement", "westBoundLongitude"));
+        assertEquals("180.0",                       f.getAttributeMaxValue     ("GeographicElement", "westBoundLongitude"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("GeographicElement", "eastBoundLongitude"));
+        assertEquals(VALUE_RANGE_MIN_MAX_INCLUSIVE, f.getAttributeValueType    ("GeographicElement", "eastBoundLongitude"));
+        assertEquals("-180.0",                      f.getAttributeMinValue     ("GeographicElement", "eastBoundLongitude"));
+        assertEquals("180.0",                       f.getAttributeMaxValue     ("GeographicElement", "eastBoundLongitude"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("GeographicElement", "southBoundLatitude"));
+        assertEquals(VALUE_RANGE_MIN_MAX_INCLUSIVE, f.getAttributeValueType    ("GeographicElement", "southBoundLatitude"));
+        assertEquals("-90.0",                       f.getAttributeMinValue     ("GeographicElement", "southBoundLatitude"));
+        assertEquals("90.0",                        f.getAttributeMaxValue     ("GeographicElement", "southBoundLatitude"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("GeographicElement", "northBoundLatitude"));
+        assertEquals(VALUE_RANGE_MIN_MAX_INCLUSIVE, f.getAttributeValueType    ("GeographicElement", "northBoundLatitude"));
+        assertEquals("-90.0",                       f.getAttributeMinValue     ("GeographicElement", "northBoundLatitude"));
+        assertEquals("90.0",                        f.getAttributeMaxValue     ("GeographicElement", "northBoundLatitude"));
+        assertEquals(VerticalExtent.class,          f.getObjectClass           ("VerticalElement"));
+        assertEquals(CHILD_POLICY_EMPTY,            f.getChildPolicy           ("VerticalElement"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("VerticalElement", "minimumValue"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("VerticalElement", "minimumValue"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("VerticalElement", "maximumValue"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("VerticalElement", "maximumValue"));
+        assertEquals(AcquisitionInformation.class,  f.getObjectClass           ("AcquisitionMetadata"));
+        assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("AcquisitionMetadata"));
+        assertEquals(EnvironmentalRecord.class,     f.getObjectClass           ("EnvironmentalConditions"));
+        assertEquals(CHILD_POLICY_EMPTY,            f.getChildPolicy           ("EnvironmentalConditions"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("EnvironmentalConditions", "averageAirTemperature"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("EnvironmentalConditions", "averageAirTemperature"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("EnvironmentalConditions", "maxRelativeHumidity"));
+        assertEquals(VALUE_RANGE_MIN_MAX_INCLUSIVE, f.getAttributeValueType    ("EnvironmentalConditions", "maxRelativeHumidity"));
+        assertEquals("0.0",                         f.getAttributeMinValue     ("EnvironmentalConditions", "maxRelativeHumidity"));
+        assertEquals("100.0",                       f.getAttributeMaxValue     ("EnvironmentalConditions", "maxRelativeHumidity"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("EnvironmentalConditions", "maxAltitude"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("EnvironmentalConditions", "maxAltitude"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("EnvironmentalConditions", "meteorologicalConditions"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("EnvironmentalConditions", "meteorologicalConditions"));
     }
 
     /**
-     * Tests the attributes in the image metadata format instance.
+     * Tests the elements in the image metadata format instance.
      */
     @Test
-    public void testImageAttributes() {
-        final IIOMetadataFormat format = SpatialMetadataFormat.IMAGE;
-        assertEquals(DATATYPE_BOOLEAN,    format.getAttributeDataType("ImageDescription", "cameraCalibrationInformationAvailable"));
-        assertEquals(DATATYPE_DOUBLE,     format.getAttributeDataType("ImageDescription", "cloudCoverPercentage"));
-        assertEquals(CHILD_POLICY_REPEAT, format.getChildPolicy("Dimensions"));
+    public void testImageMetadataFormat() {
+        final IIOMetadataFormat f = SpatialMetadataFormat.IMAGE;
+
+        assertEquals(ImageDescription.class,        f.getObjectClass           ("ImageDescription"));
+        assertEquals(CHILD_POLICY_SOME,             f.getChildPolicy           ("ImageDescription"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("ImageDescription", "contentType"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("ImageDescription", "contentType"));
+        assertIsEnum("physicalMeasurement",         f.getAttributeEnumerations ("ImageDescription", "contentType"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("ImageDescription", "illuminationElevationAngle"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("ImageDescription", "illuminationAzimuthAngle"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("ImageDescription", "imagingCondition"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("ImageDescription", "imagingCondition"));
+        assertIsEnum("cloud",                       f.getAttributeEnumerations ("ImageDescription", "imagingCondition"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("ImageDescription", "cloudCoverPercentage"));
+        assertEquals(VALUE_RANGE_MIN_MAX_INCLUSIVE, f.getAttributeValueType    ("ImageDescription", "cloudCoverPercentage"));
+        assertEquals("0.0",                         f.getAttributeMinValue     ("ImageDescription", "cloudCoverPercentage"));
+        assertEquals("100.0",                       f.getAttributeMaxValue     ("ImageDescription", "cloudCoverPercentage"));
+        assertEquals(DATATYPE_BOOLEAN,              f.getAttributeDataType     ("ImageDescription", "radiometricCalibrationDataAvailable"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("ImageDescription", "radiometricCalibrationDataAvailable"));
+        assertIsEnum("TRUE",                        f.getAttributeEnumerations ("ImageDescription", "radiometricCalibrationDataAvailable"));
+        assertEquals(DATATYPE_BOOLEAN,              f.getAttributeDataType     ("ImageDescription", "cameraCalibrationInformationAvailable"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("ImageDescription", "cameraCalibrationInformationAvailable"));
+        assertIsEnum("TRUE",                        f.getAttributeEnumerations ("ImageDescription", "cameraCalibrationInformationAvailable"));
+        assertEquals(DATATYPE_BOOLEAN,              f.getAttributeDataType     ("ImageDescription", "filmDistortionInformationAvailable"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("ImageDescription", "filmDistortionInformationAvailable"));
+        assertIsEnum("TRUE",                        f.getAttributeEnumerations ("ImageDescription", "filmDistortionInformationAvailable"));
+        assertEquals(DATATYPE_BOOLEAN,              f.getAttributeDataType     ("ImageDescription", "lensDistortionInformationAvailable"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("ImageDescription", "lensDistortionInformationAvailable"));
+        assertIsEnum("TRUE",                        f.getAttributeEnumerations ("ImageDescription", "lensDistortionInformationAvailable"));
+        assertEquals(Identifier.class,              f.getObjectClass           ("ImageQualityCode"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("ImageQualityCode", "code"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("ImageQualityCode", "code"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("ImageQualityCode", "authority"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("ImageQualityCode", "authority"));
+        assertEquals(Identifier.class,              f.getObjectClass           ("ProcessingLevelCode"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("ProcessingLevelCode", "code"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("ProcessingLevelCode", "code"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("ProcessingLevelCode", "authority"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("ProcessingLevelCode", "authority"));
+        assertEquals(CHILD_POLICY_REPEAT,           f.getChildPolicy           ("Dimensions"));
+        assertEquals(CHILD_POLICY_EMPTY,            f.getChildPolicy           ("Dimension"));
+        assertEquals(SampleDimension.class,         f.getObjectClass           ("Dimension"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Dimension", "descriptor"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "descriptor"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Dimension", "sequenceIdentifier"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "sequenceIdentifier"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "minValue"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "minValue"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "maxValue"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "maxValue"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "fillValues"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("Dimension", "fillValues"));
+        assertEquals(0,                             f.getAttributeListMinLength("Dimension", "fillValues"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("Dimension", "fillValues"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Dimension", "units"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "units"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "peakResponse"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "peakResponse"));
+        assertEquals(DATATYPE_INTEGER,              f.getAttributeDataType     ("Dimension", "bitsPerValue"));
+        assertEquals(VALUE_RANGE_MIN_INCLUSIVE,     f.getAttributeValueType    ("Dimension", "bitsPerValue"));
+        assertEquals("1",                           f.getAttributeMinValue     ("Dimension", "bitsPerValue"));
+        assertNull  (                               f.getAttributeMaxValue     ("Dimension", "bitsPerValue"));
+        assertEquals(DATATYPE_INTEGER,              f.getAttributeDataType     ("Dimension", "toneGradation"));
+        assertEquals(VALUE_RANGE_MIN_INCLUSIVE,     f.getAttributeValueType    ("Dimension", "toneGradation"));
+        assertEquals("0",                           f.getAttributeMinValue     ("Dimension", "toneGradation"));
+        assertNull  (                               f.getAttributeMaxValue     ("Dimension", "toneGradation"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "minValue"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "minValue"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "scaleFactor"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "scaleFactor"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "offset"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "offset"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Dimension", "bandBoundaryDefinition"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("Dimension", "bandBoundaryDefinition"));
+        assertIsEnum("fiftyPercent",                f.getAttributeEnumerations ("Dimension", "bandBoundaryDefinition"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "nominalSpatialResolution"));
+        assertEquals(VALUE_RANGE,                   f.getAttributeValueType    ("Dimension", "nominalSpatialResolution"));
+        assertEquals("0.0",                         f.getAttributeMinValue     ("Dimension", "nominalSpatialResolution"));
+        assertNull  (                               f.getAttributeMaxValue     ("Dimension", "nominalSpatialResolution"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Dimension", "transferFunctionType"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("Dimension", "transferFunctionType"));
+        assertIsEnum("logarithmic",                 f.getAttributeEnumerations ("Dimension", "transferFunctionType"));
+        assertEquals(CHILD_POLICY_REPEAT,           f.getChildPolicy           ("RangeElementDescriptions"));
+        assertEquals(CHILD_POLICY_EMPTY,            f.getChildPolicy           ("RangeElementDescription"));
+        assertEquals(RangeElementDescription.class, f.getObjectClass           ("RangeElementDescription"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("RangeElementDescription", "name"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("RangeElementDescription", "name"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("RangeElementDescription", "definition"));
+        assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("RangeElementDescription", "definition"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("RangeElementDescription", "rangeElements"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("RangeElementDescription", "rangeElements"));
+        assertEquals(1,                             f.getAttributeListMinLength("RangeElementDescription", "rangeElements"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("RangeElementDescription", "rangeElements"));
+        assertEquals(Georectified.class,            f.getObjectClass           ("SpatialRepresentation"));
+        assertEquals(DATATYPE_INTEGER,              f.getAttributeDataType     ("SpatialRepresentation", "numberOfDimensions"));
+        assertEquals(VALUE_RANGE_MIN_INCLUSIVE,     f.getAttributeValueType    ("SpatialRepresentation", "numberOfDimensions"));
+        assertEquals("0",                           f.getAttributeMinValue     ("SpatialRepresentation", "numberOfDimensions"));
+        assertNull  (                               f.getAttributeMaxValue     ("SpatialRepresentation", "numberOfDimensions"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("SpatialRepresentation", "cellGeometry"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("SpatialRepresentation", "cellGeometry"));
+        assertIsEnum("area",                        f.getAttributeEnumerations ("SpatialRepresentation", "cellGeometry"));
+        assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("SpatialRepresentation", "pointInPixel"));
+        assertEquals(VALUE_ENUMERATION,             f.getAttributeValueType    ("SpatialRepresentation", "pointInPixel"));
+        assertIsEnum("upperLeft",                   f.getAttributeEnumerations ("SpatialRepresentation", "pointInPixel"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("SpatialRepresentation", "centerPoint"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("SpatialRepresentation", "centerPoint"));
+        assertEquals(0,                             f.getAttributeListMinLength("SpatialRepresentation", "centerPoint"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("SpatialRepresentation", "centerPoint"));
+        assertEquals(RectifiedGrid.class,           f.getObjectClass           ("RectifiedGridDomain"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("RectifiedGridDomain", "origin"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("RectifiedGridDomain", "origin"));
+        assertEquals(1,                             f.getAttributeListMinLength("RectifiedGridDomain", "origin"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("RectifiedGridDomain", "origin"));
+        assertEquals(GridEnvelope.class,            f.getObjectClass           ("Limits"));
+        assertEquals(DATATYPE_INTEGER,              f.getAttributeDataType     ("Limits", "low"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("Limits", "low"));
+        assertEquals(1,                             f.getAttributeListMinLength("Limits", "low"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("Limits", "low"));
+        assertEquals(DATATYPE_INTEGER,              f.getAttributeDataType     ("Limits", "high"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("Limits", "high"));
+        assertEquals(1,                             f.getAttributeListMinLength("Limits", "high"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("Limits", "high"));
+        assertEquals(CHILD_POLICY_REPEAT,           f.getChildPolicy           ("OffsetVectors"));
+        assertEquals(CHILD_POLICY_EMPTY,            f.getChildPolicy           ("OffsetVector"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("OffsetVector", "values"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("OffsetVector", "values"));
+        assertEquals(1,                             f.getAttributeListMinLength("OffsetVector", "values"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("OffsetVector", "values"));
+    }
+
+    /**
+     * Asserts that the given enumeration contains the given value.
+     */
+    private static void assertIsEnum(final String value, final String[] enumeration) {
+        for (int i=0; i<enumeration.length; i++) {
+            if (value.equals(enumeration[i])) {
+                return;
+            }
+        }
+        fail("Value \"" + value + "\" is not found in the following enumeration: " + Arrays.toString(enumeration));
     }
 
     /**
@@ -69,6 +306,56 @@ public final class SpatialMetadataFormatTest {
                 format.getElementDescription("ProcessingLevelCode", Locale.ENGLISH));
         assertEquals("Area of the dataset obscured by clouds, expressed as a percentage of the spatial extent.",
                 format.getAttributeDescription("ImageDescription", "cloudCoverPercentage", Locale.ENGLISH));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadataFormat#getParent(String)} method on stream metadata.
+     *
+     * @since 3.06
+     */
+    @Test
+    public void testStreamParents() {
+        final SpatialMetadataFormat format = SpatialMetadataFormat.STREAM;
+        assertNull(format.getParent(SpatialMetadataFormat.FORMAT_NAME));
+
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("DiscoveryMetadata"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("AcquisitionMetadata"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("QualityMetadata"));
+        assertNull  ("'citation' is an attribute, not an element.", format.getParent("citation"));
+        assertEquals("DiscoveryMetadata",   format.getParent("DescriptiveKeywords"));
+        assertEquals("DescriptiveKeywords", format.getParent("DescriptiveKeywordsEntry"));
+        assertEquals("DiscoveryMetadata",   format.getParent("SpatialResolution"));
+        assertEquals("DiscoveryMetadata",   format.getParent("Extent"));
+        assertEquals("Extent",              format.getParent("GeographicElement"));
+        assertEquals("Extent",              format.getParent("VerticalElement"));
+        assertEquals("Extent",              format.getParent("VerticalElement"));
+        assertEquals("AcquisitionMetadata", format.getParent("EnvironmentalConditions"));
+        assertEquals("AcquisitionMetadata", format.getParent("Platform"));
+        assertEquals("Platform",            format.getParent("Instruments"));
+        assertEquals("Instruments",         format.getParent("Instrument"));
+        assertEquals("Instrument",          format.getParent("Identifier"));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadataFormat#getParent(String)} method on image metadata.
+     *
+     * @since 3.06
+     */
+    @Test
+    public void testImageParents() {
+        final SpatialMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        assertNull(format.getParent(SpatialMetadataFormat.FORMAT_NAME));
+
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("ImageDescription"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("SpatialRepresentation"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("RectifiedGridDomain"));
+        assertNull  ("'contentType' is an attribute, not an element.", format.getParent("contentType"));
+        assertEquals("ImageDescription",    format.getParent("ImageQualityCode"));
+        assertEquals("ImageDescription",    format.getParent("Dimensions"));
+        assertEquals("Dimensions",          format.getParent("Dimension"));
+        assertEquals("RectifiedGridDomain", format.getParent("Limits"));
+        assertEquals("RectifiedGridDomain", format.getParent("OffsetVectors"));
+        assertEquals("OffsetVectors",       format.getParent("OffsetVector"));
     }
 
     /**

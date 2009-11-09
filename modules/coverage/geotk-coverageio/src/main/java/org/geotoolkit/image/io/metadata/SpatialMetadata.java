@@ -50,10 +50,14 @@ import org.geotoolkit.image.io.SpatialImageWriter;
  * {@link IIOMetadataNode} elements and attribute values to ISO 19115-2 metadata objects.
  * The tree is expected conform to the {@linkplain SpatialMetadataFormat spatial metadata
  * format} defined in this package. The conversions are performed by the following methods:
- * <p>
- * <ul>
- *   <li>{@link #getSampleDimensions()}</li>
- * </ul>
+ *
+ * <blockquote><table>
+ *   <tr><th>Method</th><th>Node</th></tr>
+ *   <tr>
+ *     <td>{@link #getSampleDimensions()}&nbsp;</td>
+ *     <td>&nbsp;{@code "ImageDescription/Dimensions"}</td>
+ *   </tr>
+ * </table></blockquote>
  *
  * {@section Errors handling}
  * If some inconsistency are found while reading (for example if the coordinate system
@@ -66,6 +70,8 @@ import org.geotoolkit.image.io.SpatialImageWriter;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
+ *
+ * @see SpatialMetadataFormat
  *
  * @since 3.04 (derived from 2.4)
  * @module
@@ -93,35 +99,24 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     private transient LoggedFormat<Date> dateFormat;
 
     /**
-     * Creates a default metadata instance. The only format declared by this
-     * constructor is the {@link SpatialMetadataFormat#IMAGE} instance.
-     */
-    public SpatialMetadata() {
-        this(SpatialMetadataFormat.IMAGE, (Object) null);
-    }
-
-    /**
-     * Creates a default metadata instance for the given reader. The only format declared
-     * by this constructor is the {@link SpatialMetadataFormat#IMAGE} instance.
+     * Creates an initially empty metadata instance for the given format.
+     * The {@code format} argument is usually one of the {@code SpatialMetadataFormat}
+     * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
+     * constants, but other formats are allowed if the structure is compatible or the specialized
+     * getter methods are overloaded.
      *
-     * @param reader The source image reader, or {@code null} if none.
+     * @param format The metadata format.
      */
-    public SpatialMetadata(final ImageReader reader) {
-        this(SpatialMetadataFormat.IMAGE, (Object) reader);
+    public SpatialMetadata(final IIOMetadataFormat format) {
+        this(format, (Object) null);
     }
 
     /**
-     * Creates a default metadata instance for the given writer. The only format declared
-     * by this constructor is the {@link SpatialMetadataFormat#IMAGE} instance.
-     *
-     * @param writer The target image writer, or {@code null} if none.
-     */
-    public SpatialMetadata(final ImageWriter writer) {
-        this(SpatialMetadataFormat.IMAGE, (Object) writer);
-    }
-
-    /**
-     * Creates a default metadata instance for the given format and reader.
+     * Creates an initially empty metadata instance for the given format and reader.
+     * The {@code format} argument is usually one of the {@code SpatialMetadataFormat}
+     * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
+     * constants, but other formats are allowed if the structure is compatible or the specialized
+     * getter methods are overloaded.
      *
      * @param format The metadata format.
      * @param reader The source image reader, or {@code null} if none.
@@ -131,7 +126,11 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Creates a default metadata instance for the given format and writer.
+     * Creates an initially empty metadata instance for the given format and writer.
+     * The {@code format} argument is usually one of the {@code SpatialMetadataFormat}
+     * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
+     * constants, but other formats are allowed if the structure is compatible or the specialized
+     * getter methods are overloaded.
      *
      * @param format The metadata format.
      * @param writer The target image writer, or {@code null} if none.
@@ -141,7 +140,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Creates a default metadata instance for the given format and reader/writer.
+     * Creates an initially empty metadata instance for the given format and reader/writer.
      */
     private SpatialMetadata(final IIOMetadataFormat format, final Object owner) {
         super(false, // Can not return or accept a DOM tree using the standard metadata format.
@@ -432,8 +431,6 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
 
     /**
      * Returns a standard date format to be shared by {@link MetadataAccessor}.
-     *
-     * @todo Revisit {@code setCaller}.
      */
     final LoggedFormat<Date> dateFormat() {
         if (dateFormat == null) {
@@ -441,7 +438,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
             format.setTimeZone(TimeZone.getTimeZone("UTC"));
             dateFormat = createLoggedFormat(format, Date.class);
             dateFormat.setLogger("org.geotoolkit.image.io.metadata");
-            dateFormat.setCaller(SpatialMetadata.class, "getDate");
+            dateFormat.setCaller(MetadataAccessor.class, "getAttributeAsDate");
         }
         return dateFormat;
     }

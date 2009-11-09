@@ -48,6 +48,7 @@ import org.geotoolkit.util.MeasurementRange;
  * @version 3.06
  *
  * @see org.opengis.metadata.content.Band
+ * @see SpatialMetadata#getSampleDimensions()
  *
  * @since 3.06
  * @module
