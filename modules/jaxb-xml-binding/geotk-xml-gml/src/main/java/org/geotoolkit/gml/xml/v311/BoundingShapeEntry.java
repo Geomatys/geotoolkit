@@ -109,25 +109,6 @@ public class BoundingShapeEntry {
 
     /**
      * Gets the value of the null property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the null property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getNull().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getNull() {
         if (_null == null) {
@@ -155,15 +136,16 @@ public class BoundingShapeEntry {
         if (object == this) {
             return true;
         }
-        if (!(object instanceof BoundingShapeEntry)) {
-            return false;
-        }
-        final BoundingShapeEntry that = (BoundingShapeEntry) object;
+        if (object instanceof BoundingShapeEntry) {
+            
+            final BoundingShapeEntry that = (BoundingShapeEntry) object;
 
-        return Utilities.equals(this._null,                  that._null)                  &&
-               Utilities.equals(this.envelope,               that.envelope)               &&
-               Utilities.equals(this.envelopeWithTimePeriod, that.envelopeWithTimePeriod) &&
-               Utilities.equals(this.nilReason,              that.nilReason);
+            return Utilities.equals(this._null,                  that._null)                  &&
+                   Utilities.equals(this.envelope,               that.envelope)               &&
+                   Utilities.equals(this.envelopeWithTimePeriod, that.envelopeWithTimePeriod) &&
+                   Utilities.equals(this.nilReason,              that.nilReason);
+        }
+        return false;
     }
 
     @Override
