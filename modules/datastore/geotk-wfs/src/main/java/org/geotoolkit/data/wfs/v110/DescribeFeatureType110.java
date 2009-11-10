@@ -22,6 +22,7 @@ import org.geotoolkit.data.wfs.AbstractDescribeFeatureType;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DescribeFeatureType110 extends AbstractDescribeFeatureType{
 

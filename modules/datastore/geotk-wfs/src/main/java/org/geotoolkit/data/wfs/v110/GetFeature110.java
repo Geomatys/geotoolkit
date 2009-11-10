@@ -22,6 +22,7 @@ import org.geotoolkit.data.wfs.AbstractGetFeature;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class GetFeature110 extends AbstractGetFeature{
 
