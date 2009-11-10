@@ -113,17 +113,12 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         if (this == o) {
             return true;
         }
-        if (!super.equals(o)) {
-            return false;
+        if (o instanceof DefaultFeatureType && super.equals(o)) {
+            FeatureType that = (FeatureType) o;
+            return Utilities.equals(this.defaultGeometry, that.getGeometryDescriptor());
+                
         }
-        if (getClass() != o.getClass()) {
-            return false;
-        }
-        FeatureType other = (FeatureType) o;
-        if (!Utilities.equals(defaultGeometry, other.getGeometryDescriptor())) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /**

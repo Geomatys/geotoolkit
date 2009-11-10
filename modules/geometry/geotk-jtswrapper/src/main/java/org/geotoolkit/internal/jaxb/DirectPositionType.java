@@ -149,7 +149,12 @@ public class DirectPositionType implements DirectPosition {
             CoordinateReferenceSystem crs = position.getDirectPosition().getCoordinateReferenceSystem();
             if ( crs != null) {
                 try {
-                    this.srsName = CRS.lookupIdentifier(crs, true);
+                    srsName  = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
+                    if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
+                        srsName = CRS.lookupIdentifier(crs, false);
+                        CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
+
+                    }
                 } catch (FactoryException ex) {
                     Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
                 }

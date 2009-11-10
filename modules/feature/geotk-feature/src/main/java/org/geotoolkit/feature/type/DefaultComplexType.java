@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
@@ -133,17 +134,11 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         if (this == o) {
             return true;
         }
-        if (!super.equals(o)) {
-            return false;
+        if (o instanceof DefaultComplexType && super.equals(o)) {
+            DefaultComplexType that = (DefaultComplexType) o;
+            return Utilities.equals(this.descriptorsList, that.descriptorsList);
         }
-        if (getClass() != o.getClass()) {
-            return false;
-        }
-        DefaultComplexType other = (DefaultComplexType) o;
-        if (!descriptorsList.equals(other.descriptorsList)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /**

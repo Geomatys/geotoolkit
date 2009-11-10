@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Map.Entry;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.FeatureValidationUtilities;
@@ -545,6 +546,24 @@ public final class DefaultSimpleFeature implements SimpleFeature {
         }
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']').append('\n');
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (featureType != null) {
+            sb.append("featureType:").append(featureType).append('\n');
+        }
+        sb.append("values:").append('\n');
+        if (index != null && values != null) {
+            for (Entry<String, Integer> entry: index.entrySet()) {
+                sb.append(entry.getKey()).append(":").append(values[entry.getValue()]).append('\n');
+            }
+        }
+        return sb.toString();
     }
 
     /**
