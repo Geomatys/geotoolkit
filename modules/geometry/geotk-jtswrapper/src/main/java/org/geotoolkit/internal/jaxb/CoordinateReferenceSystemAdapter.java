@@ -28,7 +28,10 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
         if (v != null) {
             String identifier  = cachedIdentifier.get(v);
             if (identifier == null && !cachedIdentifier.containsKey(v)) {
-                identifier = CRS.lookupIdentifier(v, false);
+                identifier = CRS.toSRS(v);
+                if (identifier == null) {
+                    identifier = CRS.lookupIdentifier(v, false);
+                }
                 cachedIdentifier.put(v, identifier);
             }
             return identifier;

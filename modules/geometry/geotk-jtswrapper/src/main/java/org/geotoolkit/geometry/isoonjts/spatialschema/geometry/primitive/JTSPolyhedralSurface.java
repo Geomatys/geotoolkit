@@ -201,4 +201,15 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
         hash = 67 * hash + (this.patches != null ? this.patches.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (patches != null) {
+            for (JTSPolygon patche : patches) {
+                sb.append("patche:").append(patche).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

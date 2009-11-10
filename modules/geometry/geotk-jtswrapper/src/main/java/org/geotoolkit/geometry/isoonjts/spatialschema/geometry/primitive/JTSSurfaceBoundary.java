@@ -48,7 +48,9 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
     public JTSSurfaceBoundary(CoordinateReferenceSystem crs, Ring exterior, Ring [] interior) {
         super(crs);
         this.exterior = exterior;
-        this.interior = new ArrayList( Arrays.asList( interior) );
+        if (interior != null) {
+            this.interior = new ArrayList( Arrays.asList( interior) );
+        }
     }
 
     /**
@@ -86,5 +88,19 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
         hash = 17 * hash + (this.exterior != null ? this.exterior.hashCode() : 0);
         hash = 17 * hash + (this.interior != null ? this.interior.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (interior != null) {
+            for (Ring r : interior) {
+                sb.append("interior:").append(r).append('\n');
+            }
+        }
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior).append('\n');
+        }
+        return sb.toString();
     }
 }

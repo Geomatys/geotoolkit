@@ -173,7 +173,6 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
             JTSSurfacePatch that = (JTSSurfacePatch) object;
             return Utilities.equals(this.boundary,      that.boundary)      &&
                    Utilities.equals(this.interpolation, that.interpolation) &&
-                   Utilities.equals(this.jtsPeer,       that.jtsPeer)       &&
                    Utilities.equals(this.surface,       that.surface);
         }
         return false;

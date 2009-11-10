@@ -151,7 +151,10 @@ public class DirectPositionType implements DirectPosition {
                 try {
                     srsName  = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
                     if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
-                        srsName = CRS.lookupIdentifier(crs, false);
+                        srsName = CRS.toSRS(crs);
+                        if (srsName == null) {
+                            srsName = CRS.lookupIdentifier(crs, false);
+                        }
                         CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 
                     }

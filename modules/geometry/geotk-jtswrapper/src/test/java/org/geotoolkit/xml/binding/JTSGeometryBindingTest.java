@@ -1673,6 +1673,81 @@ public class JTSGeometryBindingTest {
         "</gml:MultiGeometry>"                                                                               + '\n';
 
         assertEquals(expResult, result);
+
+
+        crs = CRS.decode("epsg:27593");
+        assertTrue(crs != null);
+
+        /*
+         * FIRST POLYGON
+         */
+
+        // EXTERIOR
+        JTSRing exterior1    = new JTSRing(crs);
+
+        JTSCurve cu1 = new JTSCurve(crs);
+        JTSLineString c1l1 = new JTSLineString();
+
+        DirectPosition dp1 = new GeneralDirectPosition(crs);
+        dp1.setOrdinate(0, 656216.1977884835);
+        dp1.setOrdinate(1, 38574.31079256255);
+
+        DirectPosition dp2 = new GeneralDirectPosition(crs);
+        dp2.setOrdinate(0, 656209.434300029);
+        dp2.setOrdinate(1, 38569.570186997764);
+
+        c1l1.getControlPoints().add(dp1);
+        c1l1.getControlPoints().add(dp2);
+
+
+        cu1.getSegments().add(c1l1);
+        exterior1.getElements().add(cu1);
+
+        // INTERIOR
+        Ring[] interiors1 = new Ring[0];
+
+
+        JTSSurfaceBoundary bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
+        JTSPolygon poly1 = new JTSPolygon(bound1);
+
+        JTSPolyhedralSurface PS = new JTSPolyhedralSurface(crs);
+        PS.getPatches().add(poly1);
+
+        multip = new JTSMultiPrimitive();
+        multip.getElements().add(PS);
+
+        sw = new StringWriter();
+        m.marshal(factory.createJTSMultiGeometry(multip), sw);
+        result = sw.toString();
+
+        expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
+        "    <gml:geometryMember>" + '\n' +
+        "        <gml:PolyhedralSurface srsName=\"EPSG:27593\">" + '\n' +
+        "            <gml:polygonPatches>" + '\n' +
+        "                <gml:PolygonPatch>" + '\n' +
+        "                    <gml:exterior>" + '\n' +
+        "                        <gml:Ring srsName=\"EPSG:27593\">" + '\n' +
+        "                            <gml:curveMember>" + '\n' +
+        "                                <gml:Curve srsName=\"EPSG:27593\">" + '\n' +
+        "                                    <gml:segments>" + '\n' +
+        "                                        <gml:LineStringSegment interpolation=\"linear\">"                                                      + '\n' +
+        "                                            <gml:pos srsName=\"EPSG:27593\" srsDimension=\"2\">656216.1977884835 38574.31079256255</gml:pos>"  + '\n' +
+        "                                            <gml:pos srsName=\"EPSG:27593\" srsDimension=\"2\">656209.434300029 38569.570186997764</gml:pos>"  + '\n' +
+        "                                        </gml:LineStringSegment>"                                                                              + '\n' +
+        "                                    </gml:segments>" + '\n' +
+        "                                </gml:Curve>" + '\n' +
+        "                            </gml:curveMember>" + '\n' +
+        "                        </gml:Ring>" + '\n' +
+        "                    </gml:exterior>" + '\n' +
+        "                </gml:PolygonPatch>" + '\n' +
+        "            </gml:polygonPatches>" + '\n' +
+        "        </gml:PolyhedralSurface>" + '\n' +
+        "    </gml:geometryMember>" + '\n' +
+        "</gml:MultiGeometry>"                                                                               + '\n';
+
+        assertEquals(expResult, result);
     }
 
      /**
@@ -1779,6 +1854,91 @@ public class JTSGeometryBindingTest {
         resIt = result.getElements().iterator();
         assertEquals(expIt.next().hashCode(), resIt.next().hashCode());
         assertEquals(expIt.next().hashCode(), resIt.next().hashCode());
+        assertEquals(expResult.getElements(), result.getElements());
+        assertEquals(expResult, result);
+
+        crs = CRS.decode("epsg:27593");
+        assertTrue(crs != null);
+
+        xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
+        "    <gml:geometryMember>" + '\n' +
+        "        <gml:PolyhedralSurface srsName=\"EPSG:27593\">" + '\n' +
+        "            <gml:polygonPatches>" + '\n' +
+        "                <gml:PolygonPatch>" + '\n' +
+        "                    <gml:exterior>" + '\n' +
+        "                        <gml:Ring srsName=\"EPSG:27593\">" + '\n' +
+        "                            <gml:curveMember>" + '\n' +
+        "                                <gml:Curve srsName=\"EPSG:27593\">" + '\n' +
+        "                                    <gml:segments>" + '\n' +
+        "                                        <gml:LineStringSegment interpolation=\"linear\">"                                                      + '\n' +
+        "                                            <gml:pos srsName=\"EPSG:27593\" srsDimension=\"2\">656216.1977884835 38574.31079256255</gml:pos>"  + '\n' +
+        "                                            <gml:pos srsName=\"EPSG:27593\" srsDimension=\"2\">656209.434300029 38569.570186997764</gml:pos>"  + '\n' +
+        "                                        </gml:LineStringSegment>"                                                                              + '\n' +
+        "                                    </gml:segments>" + '\n' +
+        "                                </gml:Curve>" + '\n' +
+        "                            </gml:curveMember>" + '\n' +
+        "                        </gml:Ring>" + '\n' +
+        "                    </gml:exterior>" + '\n' +
+        "                </gml:PolygonPatch>" + '\n' +
+        "            </gml:polygonPatches>" + '\n' +
+        "        </gml:PolyhedralSurface>" + '\n' +
+        "    </gml:geometryMember>" + '\n' +
+        "</gml:MultiGeometry>" + '\n';
+
+       result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
+
+
+
+       /*
+         * FIRST POLYGON
+         */
+
+        // EXTERIOR
+        JTSRing exterior1    = new JTSRing(crs);
+
+        JTSCurve cu1 = new JTSCurve(crs);
+        JTSLineString c1l1 = new JTSLineString();
+
+        DirectPosition dp1 = new GeneralDirectPosition(crs);
+        dp1.setOrdinate(0, 656216.1977884835);
+        dp1.setOrdinate(1, 38574.31079256255);
+
+        DirectPosition dp2 = new GeneralDirectPosition(crs);
+        dp2.setOrdinate(0, 656209.434300029);
+        dp2.setOrdinate(1, 38569.570186997764);
+
+        c1l1.getControlPoints().add(dp1);
+        c1l1.getControlPoints().add(dp2);
+
+
+        cu1.getSegments().add(c1l1);
+        exterior1.getElements().add(cu1);
+
+        // INTERIOR
+        Ring[] interiors1 = null;
+
+
+        JTSSurfaceBoundary bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
+        JTSPolygon poly1 = new JTSPolygon(bound1);
+
+        JTSPolyhedralSurface PS = new JTSPolyhedralSurface(crs);
+        PS.getPatches().add(poly1);
+
+        expResult = new JTSMultiPrimitive();
+        expResult.getElements().add(PS);
+
+        JTSPolyhedralSurface expPoly = (JTSPolyhedralSurface) expResult.getElements().iterator().next();
+        JTSPolyhedralSurface resPoly = (JTSPolyhedralSurface) result.getElements().iterator().next();
+        assertEquals(expPoly.getPatches().get(0).getBoundary().getExterior(), resPoly.getPatches().get(0).getBoundary().getExterior());
+        assertEquals(expPoly.getPatches().get(0).getBoundary().getInteriors(), resPoly.getPatches().get(0).getBoundary().getInteriors());
+        assertEquals(expPoly.getPatches().get(0).getBoundary(), resPoly.getPatches().get(0).getBoundary());
+        assertEquals(expPoly.getPatches().get(0).getInterpolation(), resPoly.getPatches().get(0).getInterpolation());
+        assertEquals(expPoly.getPatches().get(0).getSurface(), resPoly.getPatches().get(0).getSurface());
+        assertEquals(expPoly.getPatches().get(0), resPoly.getPatches().get(0));
+        assertEquals(expPoly.getPatches(), resPoly.getPatches());
+        assertEquals(expPoly, resPoly);
         assertEquals(expResult.getElements(), result.getElements());
         assertEquals(expResult, result);
     }

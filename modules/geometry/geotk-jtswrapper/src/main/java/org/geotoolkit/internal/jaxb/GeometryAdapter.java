@@ -101,7 +101,8 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
             return (Geometry) v.polygon.getValue();
 
         } else if (v != null && v.polyhedralSurface != null) {
-            return (Geometry) v.polyhedralSurface.getValue();
+            PolyhedralSurfaceType poly = (PolyhedralSurfaceType) v.polyhedralSurface.getValue();
+            return poly.getIsoPolyHedralSurface();
 
         } else if (v != null && v.ring != null) {
             return (Geometry) v.ring.getValue();
