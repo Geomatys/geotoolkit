@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms;
+package org.geotoolkit.data.wfs;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -23,80 +23,47 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
+import org.geotoolkit.data.wfs.v110.GetCapabilities110;
+import org.geotoolkit.data.wfs.v110.GetFeature110;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.wms.v111.GetCapabilities111;
-import org.geotoolkit.wms.v111.GetMap111;
-import org.geotoolkit.wms.v130.GetCapabilities130;
-import org.geotoolkit.wms.v130.GetMap130;
-import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
-import org.geotoolkit.wms.xml.WMSBindingUtilities;
-import org.geotoolkit.wms.xml.WMSVersion;
+import org.geotoolkit.wfs.xml.WFSBindingUtilities;
+import org.geotoolkit.wfs.xml.WFSVersion;
+import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WebMapServer {
+public class WebFeatureServer {
 
-    private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
+    private static final Logger LOGGER = Logging.getLogger(WebFeatureServer.class);
 
-    private final WMSVersion version;
+    private final WFSVersion version;
     private final URL serverURL;
-    private AbstractWMSCapabilities capabilities;
+    private WFSCapabilitiesType capabilities;
 
-    public WebMapServer(URL serverURL, String version) {
-        final WMSVersion vers;
-        if (version.equals("1.1.1")) {
-            vers = WMSVersion.v111;
-        } else if (version.equals("1.3.0")) {
-            vers = WMSVersion.v130;
-        } else {
-            throw new IllegalArgumentException("Unknowned version : " + version);
+    public WebFeatureServer(URL serverURL, String version) {
+        if(version.equals("1.1.0")){
+            this.version = WFSVersion.v110;
+        }else{
+            throw new IllegalArgumentException("unkonwed version : "+ version);
         }
-
-        this.version = vers;
         this.serverURL = serverURL;
         this.capabilities = null;
-    }
-
-    public WebMapServer(URL serverURL, WMSVersion version) {
-        this.version = version;
-        this.serverURL = serverURL;
-        this.capabilities = null;
-    }
-
-    public WebMapServer(URL serverURL, String version, AbstractWMSCapabilities capabilities) {
-        final WMSVersion vers;
-        if (version.equals("1.1.1")) {
-            vers = WMSVersion.v111;
-        } else if (version.equals("1.3.0")) {
-            vers = WMSVersion.v130;
-        } else {
-            throw new IllegalArgumentException("Unknowned version : " + version);
-        }
-
-        this.version = vers;
-        this.serverURL = serverURL;
-        this.capabilities = capabilities;
-    }
-
-    public WebMapServer(URL serverURL, WMSVersion version, AbstractWMSCapabilities capabilities) {
-        this.version = version;
-        this.serverURL = serverURL;
-        this.capabilities = capabilities;
     }
 
     public URI getURI(){
         try {
             return serverURL.toURI();
         } catch (URISyntaxException ex) {
-            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WebFeatureServer.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
-    public AbstractWMSCapabilities getCapabilities() {
+    public WFSCapabilitiesType getCapabilities() {
 
         if (capabilities != null) {
             return capabilities;
@@ -106,7 +73,7 @@ public class WebMapServer {
             @Override
             public void run() {
                 try {
-                    capabilities = WMSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
+                    capabilities = WFSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -131,29 +98,36 @@ public class WebMapServer {
         return capabilities;
     }
 
-    public WMSVersion getVersion() {
+    public WFSVersion getVersion() {
         return version;
     }
 
-    public GetMapRequest createGetMap() {
+    public GetCapabilitiesRequest createGetCapabilities() {
+
         switch (version) {
-            case v111:
-                return new GetMap111(serverURL.toString());
-            case v130:
-                return new GetMap130(serverURL.toString());
+            case v110:
+                return new GetCapabilities110(serverURL.toString());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
 
-    public GetCapabilitiesRequest createGetCapabilities() {
+    public DescribeFeatureTypeRequest createDescribeFeatureType(){
         switch (version) {
-            case v111:
-                return new GetCapabilities111(serverURL.toString());
-            case v130:
-                return new GetCapabilities130(serverURL.toString());
+            case v110:
+                return new DescribeFeatureType110(serverURL.toString());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
+
+    public GetFeatureRequest createGetFeature(){
+        switch (version) {
+            case v110:
+                return new GetFeature110(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
 }

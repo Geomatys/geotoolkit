@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms.xml;
+
+package org.geotoolkit.wfs.xml;
 
 import java.io.File;
 import java.io.InputStream;
@@ -30,7 +31,10 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
 
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
+
 import org.opengis.metadata.citation.OnlineResource;
+
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
@@ -39,39 +43,31 @@ import org.xml.sax.InputSource;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
- public class WMSBindingUtilities {
+public class WFSBindingUtilities {
 
-    private static final JAXBContext jaxbContext111;
-    private static final JAXBContext jaxbContext130;
+
+    private static final JAXBContext jaxbContext110;
 
     static{
         JAXBContext temp = null;
         try{
-            temp = JAXBContext.newInstance(org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities.class);
+            temp = JAXBContext.newInstance(org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
-        jaxbContext111 = temp;
+        jaxbContext110 = temp;
 
-        temp = null;
-        try{
-            temp = JAXBContext.newInstance(org.geotoolkit.wms.xml.v130.WMSCapabilities.class);
-        }catch(JAXBException ex){
-            ex.printStackTrace();
-        }
-        jaxbContext130 = temp;
     }
 
-     public static AbstractWMSCapabilities unmarshall(Object source, WMSVersion version) throws JAXBException{
-         
+     public static WFSCapabilitiesType unmarshall(Object source, WFSVersion version) throws JAXBException{
+
          final Unmarshaller unMarshaller;
          switch(version){
-             case v111 : unMarshaller = jaxbContext111.createUnmarshaller(); break;
-             case v130 : unMarshaller = jaxbContext130.createUnmarshaller(); break;
+             case v110 : unMarshaller = jaxbContext110.createUnmarshaller(); break;
              default: throw new IllegalArgumentException("unknonwed version");
          }
 
-        return (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
+        return (WFSCapabilitiesType) unmarshall(source, unMarshaller);
      }
 
      private static final Object unmarshall(final Object source, final Unmarshaller unMarshaller)
@@ -100,7 +96,7 @@ import org.xml.sax.InputSource;
                 final URL url = online.getLinkage().toURL();
                 return unMarshaller.unmarshal(url);
             } catch (MalformedURLException ex) {
-                Logging.getLogger(WMSBindingUtilities.class).log(Level.SEVERE, null, ex);
+                Logging.getLogger(WFSBindingUtilities.class).log(Level.SEVERE, null, ex);
                 return null;
             }
 
