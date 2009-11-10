@@ -14,14 +14,14 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms;
+package org.geotoolkit.data.wfs;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
  *
- * @author Olivier Terral (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
@@ -38,7 +38,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        requestParameters.put("SERVICE",    "WS");
+        requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "GetCapabilities");
         requestParameters.put("VERSION",    version);        
         return super.getURL();
