@@ -83,7 +83,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public String getSRS() {
-        return CRS.toSRS(right.getValue().getCoordinateReferenceSystem());
+        return CRS.getDeclaredIdentifier(right.getValue().getCoordinateReferenceSystem());
     }
 
     /**
