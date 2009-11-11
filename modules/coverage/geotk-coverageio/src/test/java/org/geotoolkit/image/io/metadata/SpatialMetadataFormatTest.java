@@ -309,53 +309,101 @@ public final class SpatialMetadataFormatTest {
     }
 
     /**
-     * Tests the {@link SpatialMetadataFormat#getParent(String)} method on stream metadata.
+     * Tests the {@link SpatialMetadataFormat#getElementParent(String)} method on stream metadata.
      *
      * @since 3.06
      */
     @Test
     public void testStreamParents() {
         final SpatialMetadataFormat format = SpatialMetadataFormat.STREAM;
-        assertNull(format.getParent(SpatialMetadataFormat.FORMAT_NAME));
+        assertNull(format.getElementParent(SpatialMetadataFormat.FORMAT_NAME));
 
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("DiscoveryMetadata"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("AcquisitionMetadata"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("QualityMetadata"));
-        assertNull  ("'citation' is an attribute, not an element.", format.getParent("citation"));
-        assertEquals("DiscoveryMetadata",   format.getParent("DescriptiveKeywords"));
-        assertEquals("DescriptiveKeywords", format.getParent("DescriptiveKeywordsEntry"));
-        assertEquals("DiscoveryMetadata",   format.getParent("SpatialResolution"));
-        assertEquals("DiscoveryMetadata",   format.getParent("Extent"));
-        assertEquals("Extent",              format.getParent("GeographicElement"));
-        assertEquals("Extent",              format.getParent("VerticalElement"));
-        assertEquals("Extent",              format.getParent("VerticalElement"));
-        assertEquals("AcquisitionMetadata", format.getParent("EnvironmentalConditions"));
-        assertEquals("AcquisitionMetadata", format.getParent("Platform"));
-        assertEquals("Platform",            format.getParent("Instruments"));
-        assertEquals("Instruments",         format.getParent("Instrument"));
-        assertEquals("Instrument",          format.getParent("Identifier"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("DiscoveryMetadata"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("AcquisitionMetadata"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("QualityMetadata"));
+        assertNull  ("'citation' is an attribute, not an element.", format.getElementParent("citation"));
+        assertEquals("DiscoveryMetadata",   format.getElementParent("DescriptiveKeywords"));
+        assertEquals("DescriptiveKeywords", format.getElementParent("DescriptiveKeywordsEntry"));
+        assertEquals("DiscoveryMetadata",   format.getElementParent("SpatialResolution"));
+        assertEquals("DiscoveryMetadata",   format.getElementParent("Extent"));
+        assertEquals("Extent",              format.getElementParent("GeographicElement"));
+        assertEquals("Extent",              format.getElementParent("VerticalElement"));
+        assertEquals("AcquisitionMetadata", format.getElementParent("EnvironmentalConditions"));
+        assertEquals("AcquisitionMetadata", format.getElementParent("Platform"));
+        assertEquals("Platform",            format.getElementParent("Instruments"));
+        assertEquals("Instruments",         format.getElementParent("Instrument"));
+        assertEquals("Instrument",          format.getElementParent("Identifier"));
     }
 
     /**
-     * Tests the {@link SpatialMetadataFormat#getParent(String)} method on image metadata.
+     * Tests the {@link SpatialMetadataFormat#getElementParent(String)} method on image metadata.
      *
      * @since 3.06
      */
     @Test
     public void testImageParents() {
         final SpatialMetadataFormat format = SpatialMetadataFormat.IMAGE;
-        assertNull(format.getParent(SpatialMetadataFormat.FORMAT_NAME));
+        assertNull(format.getElementParent(SpatialMetadataFormat.FORMAT_NAME));
 
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("ImageDescription"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("SpatialRepresentation"));
-        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getParent("RectifiedGridDomain"));
-        assertNull  ("'contentType' is an attribute, not an element.", format.getParent("contentType"));
-        assertEquals("ImageDescription",    format.getParent("ImageQualityCode"));
-        assertEquals("ImageDescription",    format.getParent("Dimensions"));
-        assertEquals("Dimensions",          format.getParent("Dimension"));
-        assertEquals("RectifiedGridDomain", format.getParent("Limits"));
-        assertEquals("RectifiedGridDomain", format.getParent("OffsetVectors"));
-        assertEquals("OffsetVectors",       format.getParent("OffsetVector"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("ImageDescription"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("SpatialRepresentation"));
+        assertEquals(SpatialMetadataFormat.FORMAT_NAME, format.getElementParent("RectifiedGridDomain"));
+        assertNull  ("'contentType' is an attribute, not an element.", format.getElementParent("contentType"));
+        assertEquals("ImageDescription",    format.getElementParent("ImageQualityCode"));
+        assertEquals("ImageDescription",    format.getElementParent("Dimensions"));
+        assertEquals("Dimensions",          format.getElementParent("Dimension"));
+        assertEquals("RectifiedGridDomain", format.getElementParent("Limits"));
+        assertEquals("RectifiedGridDomain", format.getElementParent("OffsetVectors"));
+        assertEquals("OffsetVectors",       format.getElementParent("OffsetVector"));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadataFormat#getElementPath(String)} method on stream metadata.
+     *
+     * @since 3.06
+     */
+    @Test
+    public void testStreamPaths() {
+        final SpatialMetadataFormat format = SpatialMetadataFormat.STREAM;
+        assertNull(format.getElementPath(SpatialMetadataFormat.FORMAT_NAME));
+
+        assertNull  ("'citation' is an attribute, not an element.",                   format.getElementPath("citation"));
+        assertEquals("DiscoveryMetadata",                                             format.getElementPath("DiscoveryMetadata"));
+        assertEquals("DiscoveryMetadata/DescriptiveKeywords",                         format.getElementPath("DescriptiveKeywords"));
+        assertEquals("DiscoveryMetadata/DescriptiveKeywords/DescriptiveKeywordsEntry",format.getElementPath("DescriptiveKeywordsEntry"));
+        assertEquals("DiscoveryMetadata/SpatialResolution",                           format.getElementPath("SpatialResolution"));
+        assertEquals("DiscoveryMetadata/Extent",                                      format.getElementPath("Extent"));
+        assertEquals("DiscoveryMetadata/Extent/GeographicElement",                    format.getElementPath("GeographicElement"));
+        assertEquals("DiscoveryMetadata/Extent/VerticalElement",                      format.getElementPath("VerticalElement"));
+        assertEquals("AcquisitionMetadata",                                           format.getElementPath("AcquisitionMetadata"));
+        assertEquals("AcquisitionMetadata/EnvironmentalConditions",                   format.getElementPath("EnvironmentalConditions"));
+        assertEquals("AcquisitionMetadata/Platform",                                  format.getElementPath("Platform"));
+        assertEquals("AcquisitionMetadata/Platform/Instruments",                      format.getElementPath("Instruments"));
+        assertEquals("AcquisitionMetadata/Platform/Instruments/Instrument",           format.getElementPath("Instrument"));
+        assertEquals("AcquisitionMetadata/Platform/Instruments/Instrument/Identifier",format.getElementPath("Identifier"));
+        assertEquals("QualityMetadata",                                               format.getElementPath("QualityMetadata"));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadataFormat#getElementPath(String)} method on image metadata.
+     *
+     * @since 3.06
+     */
+    @Test
+    public void testImagePaths() {
+        final SpatialMetadataFormat format = SpatialMetadataFormat.IMAGE;
+        assertNull(format.getElementPath(SpatialMetadataFormat.FORMAT_NAME));
+
+        assertNull  ("'contentType' is an attribute, not an element.", format.getElementPath("contentType"));
+        assertEquals("ImageDescription",                               format.getElementPath("ImageDescription"));
+        assertEquals("ImageDescription/ImageQualityCode",              format.getElementPath("ImageQualityCode"));
+        assertEquals("ImageDescription/Dimensions",                    format.getElementPath("Dimensions"));
+        assertEquals("ImageDescription/Dimensions/Dimension",          format.getElementPath("Dimension"));
+        assertEquals("SpatialRepresentation",                          format.getElementPath("SpatialRepresentation"));
+        assertEquals("RectifiedGridDomain",                            format.getElementPath("RectifiedGridDomain"));
+        assertEquals("RectifiedGridDomain/Limits",                     format.getElementPath("Limits"));
+        assertEquals("RectifiedGridDomain/OffsetVectors",              format.getElementPath("OffsetVectors"));
+        assertEquals("RectifiedGridDomain/OffsetVectors/OffsetVector", format.getElementPath("OffsetVector"));
     }
 
     /**

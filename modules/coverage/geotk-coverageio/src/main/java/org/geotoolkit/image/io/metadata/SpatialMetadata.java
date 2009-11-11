@@ -80,7 +80,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
      * The metadata format.
      */
-    private final IIOMetadataFormat format;
+    final IIOMetadataFormat format;
 
     /**
      * The {@link ImageReader} or {@link ImageWriter} that holds the metadata,

@@ -63,9 +63,10 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  *            └───GeographicElement
  * }
  *
- * After a {@code MetadataAccessor} instance has been created, the {@code getAttributeAs<Type>()}
+ * After a {@code MetadataAccessor} instance has been created, the {@code getAttributeAs<Type>(String)}
  * methods can be invoked for fetching any attribute values, taking care of conversions to
- * {@link String}, {@link Double}, {@link Integer} or {@link Date}.
+ * {@link String}, {@link Double}, {@link Integer} or {@link Date}. Corresponding setter
+ * methods are also provided.
  *
  * {@section Accessing child elements}
  * If order to access a child element when the child policy is
@@ -116,7 +117,7 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  * child under the {@code "CoordinateSystem"} node:
  *
  * {@preformat java
- *     accessor.selectChild(accessor.appendChild();
+ *     accessor.selectChild(accessor.appendChild());
  *     accessor.setAttributeAsString("name", "The name of a new axis");
  * }
  *
@@ -211,8 +212,7 @@ public class MetadataAccessor {
             final int count = childs.size();
             switch (count) {
                 default: {
-                    warning("<init>", Errors.Keys.TOO_MANY_OCCURENCES_$2,
-                            new Object[] {parentPath, count});
+                    warning("<init>", Errors.Keys.TOO_MANY_OCCURENCES_$2, new Object[] {parentPath, count});
                     // Fall through for picking the first node.
                 }
                 case 1: {
@@ -231,7 +231,7 @@ public class MetadataAccessor {
         /*
          * Computes a full path to children. Searching from 'metadata' root node using 'path'
          * should be identical to searching from 'parent' node using 'childPath', except in
-         * case of badly formed metadata where the parent node appears more than once.
+         * case of unexpected metadata format where the parent node appears more than once.
          */
         this.childPath = childPath;
         if (childPath != null) {
@@ -306,6 +306,20 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         }
         final String name = path.substring(lower).trim().intern();
         return parent.appendChild(new IIOMetadataNode(name));
+    }
+
+    /**
+     * Returns the name of the element for which this accessor will fetch attribute values.
+     * This is the last part of the {@code parentPath} argument given at construction time.
+     * For example if the given path was {@code "DiscoveryMetadata/Extent/GeographicElement"},
+     * then the name returned by this method is {@code "GeographicElement"}.
+     *
+     * @return The name of the metadata element.
+     *
+     * @since 3.06
+     */
+    public String name() {
+        return parent.getNodeName();
     }
 
     /**

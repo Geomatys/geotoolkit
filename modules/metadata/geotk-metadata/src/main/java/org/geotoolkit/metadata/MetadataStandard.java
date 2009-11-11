@@ -34,6 +34,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -106,11 +107,16 @@ public final class MetadataStandard {
     public static final MetadataStandard ISO_19123;
     static {
         final String[] prefix = {"Default", "Abstract"};
-        ISO_19111 = new MetadataStandard("org.opengis.referencing.", "org.geotoolkit.referencing.",  prefix);
-        ISO_19115 = new MetadataStandard("org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix);
-        ISO_19119 = new MetadataStandard("org.opengis.service.");
-        ISO_19123 = new MetadataStandard("org.opengis.coverage.");
+        ISO_19111 = new MetadataStandard("ISO 19111", "org.opengis.referencing.", "org.geotoolkit.referencing.",  prefix);
+        ISO_19115 = new MetadataStandard("ISO 19115", "org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix);
+        ISO_19119 = new MetadataStandard("ISO 19119", "org.opengis.service.",  null, null);
+        ISO_19123 = new MetadataStandard("ISO 19123", "org.opengis.coverage.", null, null);
     }
+
+    /**
+     * The name, of {@link #toString()} purpose only.
+     */
+    private final String name;
 
     /**
      * The root packages for metadata interfaces. Must ends with {@code "."}.
@@ -158,18 +164,21 @@ public final class MetadataStandard {
      * @param interfacePackage The root package for metadata interfaces.
      */
     public MetadataStandard(String interfacePackage) {
-        this(interfacePackage, null, null);
+        this(interfacePackage.substring(interfacePackage.lastIndexOf('.')+1), interfacePackage, null, null);
     }
 
     /**
      * Creates a new instance working on implementation of interfaces defined
      * in the specified package.
      *
+     * @param name The name of the standard.
      * @param interfacePackage The root package for metadata interfaces.
      * @param implementationPackage The root package for metadata implementations.
      * @param prefix The prefix of implementation class. This array is not cloned.
      */
-    private MetadataStandard(String interfacePackage, String implementationPackage, final String[] prefix) {
+    private MetadataStandard(final String name, String interfacePackage,
+            String implementationPackage, final String[] prefix)
+    {
         if (!interfacePackage.endsWith(".")) {
             interfacePackage += '.';
         }
@@ -184,6 +193,7 @@ public final class MetadataStandard {
         this.interfacePackage      = interfacePackage;
         this.implementationPackage = implementationPackage;
         this.prefix                = prefix;
+        this.name                  = name;
     }
 
     /**
@@ -680,6 +690,15 @@ public final class MetadataStandard {
     }
 
     /**
+     * Ensures that the specified argument is non-null.
+     */
+    private static void ensureNonNull(String name, Object value) throws NullArgumentException {
+        if (value == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
+    }
+
+    /**
      * Computes a hash code for the specified metadata. The hash code is defined as the
      * sum of hash code values of all non-null properties. This is the same contract than
      * {@link java.util.Set#hashCode} and ensure that the hash code value is insensitive
@@ -712,11 +731,11 @@ public final class MetadataStandard {
     }
 
     /**
-     * Ensures that the specified argument is non-null.
+     * Returns a string representation of this metadata standard. This is
+     * for debugging purpose only and may change in any future version.
      */
-    private static void ensureNonNull(String name, Object value) throws NullArgumentException {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
+    @Override
+    public String toString() {
+        return Classes.getShortClassName(this) + '[' + name + ']';
     }
 }

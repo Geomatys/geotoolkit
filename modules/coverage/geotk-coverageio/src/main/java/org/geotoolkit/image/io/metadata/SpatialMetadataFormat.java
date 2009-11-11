@@ -250,7 +250,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * We use JavaBeans names instead of UML identifiers in order to get the plural
      * form for collections.
      */
-    private static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
+    static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
      * The default instance for <cite>stream</cite> metadata format. This is the
@@ -905,6 +905,18 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
+     * Removes an element from the format. If no element with the given
+     * name was present, nothing happens and no exception is thrown.
+     *
+     * @param elementName the name of the element to be removed.
+     */
+    @Override
+    protected void removeElement(final String elementName) {
+        super.removeElement(elementName);
+        standards.remove(elementName);
+    }
+
+    /**
      * Returns {@code true} if the element (and the subtree below it) is allowed to appear
      * in a metadata document for an image of the given type. The default implementation
      * always returns {@code true}.
@@ -916,15 +928,17 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the element which is the parent of the named element, or {@code null} if none.
+     * For example if this {@code SpatialMetadataFormat} is the {@link #STREAM} instance, then
+     * the parent of {@code "GeographicElement"} is {@code "Extent"}.
      *
      * @param  elementName The element for which the parent is desired.
      * @return The parent of the given element, or {@code null}.
      *
-     * @since 3.05
+     * @since 3.06
      */
-    public String getParent(final String elementName) {
+    public String getElementParent(final String elementName) {
         ensureNonNull("elementName", elementName);
-        return getParent(getRootName(), elementName);
+        return getElementParent(getRootName(), elementName, null);
     }
 
     /**
@@ -944,9 +958,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * @param  root The root element from which to starts the scan.
      * @param  elementName The element for which the parent is desired.
+     * @param  path If non-null, a buffer where to append the path before the node.
      * @return The parent of the given element, or {@code null}.
      */
-    private String getParent(final String root, final String elementName) {
+    private String getElementParent(final String root, final String elementName, final StringBuilder path) {
         final String[] childs = getChildNames(root);
         if (childs != null) {
             for (final String child : childs) {
@@ -957,13 +972,52 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             // Do recursive call only after we checked every childs at the root. If a name
             // appears twice (it should not), we will favor the one at the lowest depth.
             for (final String child : childs) {
-                final String candidate = getParent(child, elementName);
+                final String candidate = getElementParent(child, elementName, path);
                 if (candidate != null) {
+                    if (path != null) {
+                        path.insert(0, '/').insert(0, child);
+                    }
                     return candidate;
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the path to the named element, or {@code null} if none. For example if this
+     * {@code SpatialMetadataFormat} is the {@link #STREAM} instance, then the path to the
+     * {@code "GeographicElement"} is {@code "DiscoveryMetadata/Extent/GeographicElement"}.
+     *
+     * @param  elementName The element for which the path is desired.
+     * @return The path to the given element, or {@code null}.
+     *
+     * @since 3.06
+     */
+    public String getElementPath(final String elementName) {
+        ensureNonNull("elementName", elementName);
+        final StringBuilder path = new StringBuilder();
+        final String parent = getElementParent(getRootName(), elementName, path);
+        if (parent != null) {
+            // The parent is already in the path at this point.
+            return path.append(elementName).toString();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the metadata standard implemented by the element of the given name.
+     * If the given element does not implement a standard (which may happen if the
+     * element was not added by an {@link #addTree addTree(...)} method), then this
+     * method returns {@code null}.
+     *
+     * @param  elementName The element for which the standard is desired.
+     * @return The standard implemented by the given element, or {@code null}.
+     *
+     * @since 3.06
+     */
+    public MetadataStandard getElementStandard(final String elementName) {
+        return standards.get(elementName);
     }
 
     /**
@@ -1036,7 +1090,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         }
         if (attrName == null) {
             attrName = elementName;
-            elementName = getParent(elementName);
+            elementName = getElementParent(elementName);
             if (elementName == null) {
                 return null;
             }
