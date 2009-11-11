@@ -140,7 +140,7 @@ public final class CRS_Test {
                 "  AXIS[“x”, EAST], \n" +
                 "  AXIS[“y”, NORTH]]"));
 
-        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", CRS.toSRS(crs1));
+        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", CRS.getDeclaredIdentifier(crs1));
 
         final CoordinateReferenceSystem crs2 = CRS.parseWKT(decodeQuotes(
                 "PROJCS[“NAD83 / Massachusetts Mainland”, \n" +
@@ -166,7 +166,7 @@ public final class CRS_Test {
                 "  AXIS[“Northing”, NORTH], \n" +
                 "  AUTHORITY[“EPSG”,“26986”]]"));
 
-        assertEquals("EPSG:26986", CRS.toSRS(crs2));
+        assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs2));
 
         assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
     }

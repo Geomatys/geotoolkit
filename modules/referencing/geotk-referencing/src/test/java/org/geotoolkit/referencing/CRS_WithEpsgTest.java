@@ -70,7 +70,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
-        assertEquals("EPSG:4326", CRS.toSRS(crs));
+        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
 
@@ -91,7 +91,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
 
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
-        assertEquals("EPSG:4326", CRS.toSRS(crs));
+        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
 
@@ -384,7 +384,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
         assertNotNull(crs);
-        assertEquals("EPSG:26910", CRS.toSRS(crs));
+        assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:26910"));
     }
 
@@ -399,7 +399,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
         assertNotNull(crs);
-        assertEquals("EPSG:4326", CRS.toSRS(crs));
+        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4326"));
     }
 
@@ -414,7 +414,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
         assertNotNull(crs);
-        assertEquals("EPSG:4269", CRS.toSRS(crs));
+        assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4269"));
     }
 
@@ -428,7 +428,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26910");
         assertNotNull(crs);
-        assertEquals("EPSG:26910", CRS.toSRS(crs));
+        assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -441,7 +441,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
         assertNotNull(crs);
-        assertEquals("EPSG:26986", CRS.toSRS(crs));
+        assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -454,7 +454,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:4326");
         assertNotNull(crs);
-        assertEquals("EPSG:4326", CRS.toSRS(crs));
+        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -467,7 +467,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
         assertNotNull(crs);
-        assertEquals("EPSG:26742", CRS.toSRS(crs));
+        assertEquals("EPSG:26742", CRS.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -480,7 +480,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:4269");
         assertNotNull(crs);
-        assertEquals("EPSG:4269", CRS.toSRS(crs));
+        assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(crs));
     }
 
     /**

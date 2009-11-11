@@ -664,7 +664,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * threads may be delayed by some arbitrary amount of time. This method works only on a
      * "best effort" basis.
      *
-     * @see org.geotoolkit.referencing.CRS#reset
+     * @see org.geotoolkit.referencing.CRS#reset(String)
      *
      * @since 2.5
      */

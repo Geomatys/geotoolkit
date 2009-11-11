@@ -25,6 +25,7 @@ import java.util.StringTokenizer;
 import java.util.NoSuchElementException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform; // For javadoc
 import java.awt.RenderingHints;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -78,7 +79,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.05
+ * @version 3.06
  *
  * @since 2.1
  * @module
@@ -197,6 +198,7 @@ public final class CRS {
      *
      * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
      *
+     * @category factory
      * @since 2.3
      */
     public static CRSAuthorityFactory getAuthorityFactory(Boolean longitudeFirst)
@@ -239,6 +241,7 @@ public final class CRS {
      *        even when there is no information available for a datum shift.
      * @return The coordinate operation factory used for finding math transform in this class.
      *
+     * @category factory
      * @since 2.4
      */
     public static CoordinateOperationFactory getCoordinateOperationFactory(final boolean lenient) {
@@ -272,6 +275,7 @@ public final class CRS {
      * @throws FactoryRegistryException if no {@link CRSAuthorityFactory} implementation
      *         was found for the specified authority.
      *
+     * @category factory
      * @since 2.4
      */
     public static Version getVersion(final String authority) throws FactoryRegistryException {
@@ -331,6 +335,8 @@ public final class CRS {
      *
      * @param  authority The authority name (for example {@code "EPSG"}).
      * @return The set of supported codes. May be empty, but never null.
+     *
+     * @category factory
      */
     public static Set<String> getSupportedCodes(final String authority) {
         return DefaultAuthorityFactory.getSupportedCodes(authority);
@@ -344,6 +350,7 @@ public final class CRS {
      *         authority. If {@code false}, only the first one
      * @return The set of supported authorities. May be empty, but never null.
      *
+     * @category factory
      * @since 2.3.1
      */
     public static Set<String> getSupportedAuthorities(final boolean returnAliases) {
@@ -374,8 +381,10 @@ public final class CRS {
      * @throws NoSuchAuthorityCodeException If the code could not be understood.
      * @throws FactoryException if the CRS creation failed for an other reason.
      *
-     * @see #getSupportedCodes
-     * @see org.geotoolkit.referencing.factory.AllAuthoritiesFactory#createCoordinateReferenceSystem
+     * @see #getSupportedCodes(String)
+     * @see org.geotoolkit.referencing.factory.AllAuthoritiesFactory#createCoordinateReferenceSystem(String)
+     *
+     * @category factory
      */
     public static CoordinateReferenceSystem decode(String code)
             throws NoSuchAuthorityCodeException, FactoryException
@@ -401,6 +410,7 @@ public final class CRS {
      *
      * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
      *
+     * @category factory
      * @since 2.3
      */
     public static CoordinateReferenceSystem decode(String code, final boolean longitudeFirst)
@@ -423,6 +433,8 @@ public final class CRS {
      * @param wkt The WKT string to parse.
      * @return The parsed coordinate reference system.
      * @throws FactoryException if the given WKT can't be parsed.
+     *
+     * @category factory
      */
     public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
         return getCRSFactory().createFromWKT(wkt);
@@ -443,9 +455,10 @@ public final class CRS {
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The envelope in terms of the specified CRS, or {@code null} if none.
      *
-     * @see #getGeographicBoundingBox
-     * @see org.geotoolkit.geometry.GeneralEnvelope#normalize
+     * @see #getGeographicBoundingBox(CoordinateReferenceSystem)
+     * @see org.geotoolkit.geometry.GeneralEnvelope#normalize(boolean)
      *
+     * @category information
      * @since 2.2
      */
     public static Envelope getEnvelope(final CoordinateReferenceSystem crs) {
@@ -536,8 +549,9 @@ public final class CRS {
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The geographic area, or {@code null} if none.
      *
-     * @see #getEnvelope
+     * @see #getEnvelope(CoordinateReferenceSystem)
      *
+     * @category information
      * @since 2.3
      */
     public static GeographicBoundingBox getGeographicBoundingBox(final CoordinateReferenceSystem crs) {
@@ -599,6 +613,7 @@ public final class CRS {
      * @return {@code true} if the given CRS is non-null and comply with one of the above
      *         conditions, or {@code false} otherwise.
      *
+     * @category information
      * @since 3.05
      */
     public static boolean isHorizontalCRS(CoordinateReferenceSystem crs) {
@@ -627,6 +642,7 @@ public final class CRS {
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The horizontal CRS, or {@code null} if none.
      *
+     * @category information
      * @since 2.4
      */
     public static SingleCRS getHorizontalCRS(final CoordinateReferenceSystem crs) {
@@ -713,6 +729,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The projected CRS, or {@code null} if none.
      *
+     * @category information
      * @since 2.4
      */
     public static ProjectedCRS getProjectedCRS(final CoordinateReferenceSystem crs) {
@@ -738,6 +755,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The vertical CRS, or {@code null} if none.
      *
+     * @category information
      * @since 2.4
      */
     public static VerticalCRS getVerticalCRS(final CoordinateReferenceSystem crs) {
@@ -763,6 +781,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The temporal CRS, or {@code null} if none.
      *
+     * @category information
      * @since 2.4
      */
     public static TemporalCRS getTemporalCRS(final CoordinateReferenceSystem crs) {
@@ -788,6 +807,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @param  crs The coordinate reference system, or {@code null}.
      * @return The ellipsoid, or {@code null} if none.
      *
+     * @category information
      * @since 2.4
      */
     public static Ellipsoid getEllipsoid(final CoordinateReferenceSystem crs) {
@@ -805,38 +825,6 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             }
         }
         return null;
-    }
-
-    /**
-     * Compares the specified objects for equality. If both objects are Geotk
-     * implementations of class {@link AbstractIdentifiedObject}, then this method
-     * will ignore the metadata during the comparison.
-     *
-     * @param  object1 The first object to compare (may be null).
-     * @param  object2 The second object to compare (may be null).
-     * @return {@code true} if both objects are equals.
-     *
-     * @since 2.2
-     */
-    public static boolean equalsIgnoreMetadata(final Object object1, final Object object2) {
-        if (object1 == object2) {
-            return true;
-        }
-        if (object1 instanceof AbstractIdentifiedObject &&
-            object2 instanceof AbstractIdentifiedObject)
-        {
-            return ((AbstractIdentifiedObject) object1).equals(
-                   ((AbstractIdentifiedObject) object2), false);
-        }
-        if (object2 instanceof MathTransform && object1 instanceof AbstractMathTransform) {
-            return ((AbstractMathTransform) object1).equivalent((MathTransform) object2, false);
-            /*
-             * Note: the 'false' boolean argument causes the comparison to tolerate small numerical
-             * departures, presumed due to rounding errors.  Consequently the two MT may not produce
-             * strictly identical transformed values.
-             */
-        }
-        return object1!=null && object1.equals(object2);
     }
 
     /**
@@ -873,11 +861,61 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @see AbstractIdentifiedObject#getIdentifier(IdentifiedObject, Citation)
      *
      * @since 2.5
+     *
+     * @deprecated Renamed as {@code getDeclaredIdentifier(crs)}.
      */
+    @Deprecated
     public static String toSRS(final CoordinateReferenceSystem crs) {
-        if (crs != null) {
+         return getDeclaredIdentifier(crs);
+    }
+
+    /**
+     * Returns the declared identifier, or {@code null} if none. This method searchs for the first
+     * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
+     * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
+     * <em>This method does not verify the identifier validity</em>.
+     * <p>
+     * More specifically, this method uses the first non-null element found in
+     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}. If there is
+     * none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()} - which
+     * is not garanteed to be a valid identifier.
+     *
+     * {@section Recommanded alternatives}
+     * If the code of a specific authority is wanted (typically EPSG), then consider
+     * using the static methods defined in {@link AbstractIdentifiedObject} instead.
+     * <p>
+     * In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
+     * database looking for a match, use one of the lookup methods below.
+     *
+     * {@section Note on Spatial Reference System (SRS) identifiers}
+     * OGC Web Services have the concept of a Spatial Reference System identifier used to
+     * communicate CRS information between systems. In <cite>Well Known Text</cite> (WKT)
+     * format, this identifier is declared in the {@code AUTHORITY} element.
+     * <p>
+     * Examples of Spatial Reference System (SRS) values:
+     * <ul>
+     *   <li>{@code EPSG:4326} - this was understood to mean <cite>force XY axis order</cite> in
+     *       old Web Map Services (WMS). Note that latest WMS specifications require the respect
+     *       of axis order as declared in the EPSG database, which is (<var>latitude</var>,
+     *       <var>longitude</var>).</li>
+     *   <li>{@code urn:ogc:def:crs:EPSG:4326} - understood to match the EPSG database axis order
+     *       in all cases, no matter the WMS version.</li>
+     *   <li>{@code AUTO:43200} - without the parameters that are specific to AUTO codes.</li>
+     * </ul>
+     *
+     * @param  object The identified object, or {@code null}.
+     * @return Identifier represented as a string for communication between systems, or {@code null}.
+     *
+     * @see #lookupIdentifier(IdentifiedObject, boolean)
+     * @see AbstractIdentifiedObject#getIdentifier(IdentifiedObject, Citation)
+     *
+     * @category information
+     * @since 3.6 (derived from 2.5)
+     */
+    public static String getDeclaredIdentifier(final IdentifiedObject object) {
+        if (object != null) {
             ReferenceIdentifier name = null;
-            final Set<ReferenceIdentifier> identifiers = crs.getIdentifiers();
+            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
             if (identifiers != null) {
                 for (final Iterator<ReferenceIdentifier> it=identifiers.iterator(); it.hasNext();) {
                     if ((name = it.next()) != null) {
@@ -886,7 +924,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
                 }
             }
             if (name == null) {
-                name = crs.getName();
+                name = object.getName();
             }
             if (name != null) {
                 return name.toString();
@@ -902,6 +940,15 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * object. If such an object is found, then its first identifier is returned. Otherwise
      * this method returns {@code null}.
      * <p>
+     * <strong>Note that this method checks the identifier validity</strong>. If the given object
+     * declares explicitly an identifier, then this method will instantiate an object from the
+     * authority factory using that identifier and compare it with the given object. If the
+     * comparison fails, then this method returns {@code null}. Consequently this method may
+     * returns {@code null} even if the given object declares explicitly its identifier. If
+     * the declared identifier is wanted inconditionnaly, use {@link #getDeclaredIdentifier
+     * getDeclaredIdentifier(...)} instead.
+     *
+     * {@section Recommanded alternatives}
      * This convenience method delegates its work to {@link IdentifiedObjectFinder}. If you
      * want more control, consider using that class. For example, use that class if the search
      * should be performed only against some {@linkplain AuthorityFactory authority factories}
@@ -916,9 +963,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @return The identifier, or {@code null} if not found.
      * @throws FactoryException If an unexpected failure occured during the search.
      *
-     * @see AbstractAuthorityFactory#getIdentifiedObjectFinder
-     * @see IdentifiedObjectFinder#find
+     * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
+     * @see IdentifiedObjectFinder#findIdentifier(IdentifiedObject)
      *
+     * @category information
      * @since 2.4
      */
     public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
@@ -939,8 +987,9 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * Looks up an {@linkplain ReferenceIdentifier identifier} in the namespace of the given
      * authority, such as {@link Citations#EPSG EPSG}, of the specified CRS. Invoking this
      * method is similar to invoking
-     * {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier(object, fullScan)}
-     * except that the search is performed only among the factories of the given authority.
+     * <code>{@linkplain #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier}(object,
+     * fullScan)</code> except that the search is performed only among the factories of the given
+     * authority.
      *
      * @param  authority The authority for the code to search.
      * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
@@ -950,6 +999,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @return The CRS identifier, or {@code null} if none was found or if the given CRS was null.
      * @throws FactoryException If an unexpected failure occured during the search.
      *
+     * @category information
      * @since 2.5
      */
     // Note on method signature: the type is restricted to CoordinateReferenceSystem instead than
@@ -986,7 +1036,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * Looks up an EPSG code of the given {@linkplain CoordinateReferenceSystem
      * coordinate reference system}). This is a convenience method for <code>{@linkplain
      * #lookupIdentifier(Citation, CoordinateReferenceSystem, boolean) lookupIdentifier}({@linkplain
-     * Citations#EPSG}, crs, fullScan)</code> except that code is parsed as an integer.
+     * Citations#EPSG EPSG}, crs, fullScan)</code> with the returned code parsed as an integer.
      *
      * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
      * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects
@@ -995,6 +1045,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @return The CRS identifier, or {@code null} if none was found or if the given CRS was null.
      * @throws FactoryException If an unexpected failure occured during the search.
      *
+     * @category information
      * @since 2.5
      */
     public static Integer lookupEpsgCode(final CoordinateReferenceSystem crs, final boolean fullScan)
@@ -1023,6 +1074,60 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
     /////////////////////////////////////////////////
 
     /**
+     * Compares the specified objects for equality, ignoring metadata. If this method returns
+     * {@code true}, then:
+     *
+     * <ul>
+     *   <li><p>If the two given objects are {@link MathTransform} instances, then transforming a
+     *       set of coordinate values using one transform will produce <em>approximatively</em>
+     *       (see below) the same results than transforming the same coordinates with the other
+     *       transform.</p></li>
+     *
+     *   <li><p>If the two given objects are {@link CoordinateReferenceSystem} instances,
+     *       then a call to <code>{@linkplain #findMathTransform(CoordinateReferenceSystem,
+     *       CoordinateReferenceSystem) findMathTransform}(crs1, crs2)</code> will return
+     *       an identity transform.</p></li>
+     * </ul>
+     *
+     * {@section Implementation note}
+     * If the given objects are instances of {@link AbstractIdentifiedObject}, then this method delegates to
+     * <code>{@link AbstractIdentifiedObject#equals(AbstractIdentifiedObject,boolean) equals}(..., false)</code>.
+     * Otherwise if the given objects are instances of {@link AbstractMathTransform}, then this method delegates to
+     * <code>{@link AbstractMathTransform#equivalent(MathTransform,boolean) equivalent}(..., false)</code>.
+     * <p>
+     * The {@code false} boolean argument value in the later case explains why the comparison of math
+     * transforms is only approximative. <strong>Note that it may change in a future release</strong>.
+     * See <a href="http://jira.geotoolkit.org/browse/GEOTK-62">GEOTK-62</a>.
+     *
+     * @param  object1 The first object to compare (may be null).
+     * @param  object2 The second object to compare (may be null).
+     * @return {@code true} if both objects are equals.
+     *
+     * @category information
+     * @since 2.2
+     */
+    public static boolean equalsIgnoreMetadata(final Object object1, final Object object2) {
+        if (object1 == object2) {
+            return true;
+        }
+        if (object1 instanceof AbstractIdentifiedObject &&
+            object2 instanceof AbstractIdentifiedObject)
+        {
+            return ((AbstractIdentifiedObject) object1).equals(
+                   ((AbstractIdentifiedObject) object2), false);
+        }
+        if (object2 instanceof MathTransform && object1 instanceof AbstractMathTransform) {
+            return ((AbstractMathTransform) object1).equivalent((MathTransform) object2, false);
+            /*
+             * Note: the 'false' boolean argument causes the comparison to tolerate small numerical
+             * departures, presumed due to rounding errors. Consequently the two MT may not produce
+             * strictly identical transformed values.
+             */
+        }
+        return (object1 != null) && object1.equals(object2);
+    }
+
+    /**
      * Grabs a transform between two Coordinate Reference Systems. This convenience method is a
      * shorthand for the following:
      *
@@ -1049,6 +1154,8 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @return The math transform from {@code sourceCRS} to {@code targetCRS}.
      * @throws FactoryException If no math transform can be created for the specified source and
      *         target CRS.
+     *
+     * @category transform
      */
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS)
@@ -1083,6 +1190,8 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         target CRS.
      *
      * @see Hints#LENIENT_DATUM_SHIFT
+     *
+     * @category transform
      */
     public static MathTransform findMathTransform(final CoordinateReferenceSystem sourceCRS,
                                                   final CoordinateReferenceSystem targetCRS,
@@ -1116,6 +1225,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         if no transformation was required.
      * @throws TransformException If a transformation was required and failed.
      *
+     * @category transform
      * @since 2.5
      */
     public static Envelope transform(Envelope envelope, final CoordinateReferenceSystem targetCRS)
@@ -1158,9 +1268,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @return The transformed envelope, or {@code null} if {@code envelope} was null.
      * @throws TransformException if a transform failed.
      *
-     * @since 2.4
-     *
      * @see #transform(CoordinateOperation, Envelope)
+     *
+     * @category transform
+     * @since 2.4
      */
     public static GeneralEnvelope transform(final MathTransform transform, final Envelope envelope)
             throws TransformException
@@ -1270,9 +1381,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @return The transformed envelope, or {@code null} if {@code envelope} was null.
      * @throws TransformException if a transform failed.
      *
-     * @since 2.4
-     *
      * @see #transform(MathTransform, Envelope)
+     *
+     * @category transform
+     * @since 2.4
      */
     public static GeneralEnvelope transform(final CoordinateOperation operation, final Envelope envelope)
             throws TransformException
@@ -1477,11 +1589,11 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         and {@code envelope} was null.
      * @throws TransformException if a transform failed.
      *
-     * @since 2.4
-     *
      * @see #transform(CoordinateOperation, Rectangle2D, Rectangle2D)
-     * @see org.geotoolkit.referencing.operation.matrix.XAffineTransform#transform(
-     *      java.awt.geom.AffineTransform, Rectangle2D, Rectangle2D)
+     * @see org.geotoolkit.referencing.operation.matrix.XAffineTransform#transform(AffineTransform, Rectangle2D, Rectangle2D)
+     *
+     * @category transform
+     * @since 2.4
      */
     public static Rectangle2D transform(final MathTransform2D transform,
                                         final Rectangle2D     envelope,
@@ -1570,11 +1682,11 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *         and {@code envelope} was null.
      * @throws TransformException if a transform failed.
      *
-     * @since 2.4
-     *
      * @see #transform(MathTransform2D, Rectangle2D, Rectangle2D)
-     * @see org.geotoolkit.referencing.operation.matrix.XAffineTransform#transform(
-     *      java.awt.geom.AffineTransform, Rectangle2D, Rectangle2D)
+     * @see org.geotoolkit.referencing.operation.matrix.XAffineTransform#transform(AffineTransform, Rectangle2D, Rectangle2D)
+     *
+     * @category transform
+     * @since 2.4
      */
     public static Rectangle2D transform(final CoordinateOperation operation,
                                         final Rectangle2D         envelope,

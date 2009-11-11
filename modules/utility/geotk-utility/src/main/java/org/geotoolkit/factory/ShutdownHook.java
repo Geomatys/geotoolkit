@@ -80,5 +80,14 @@ final class ShutdownHook extends Thread {
                 }
             }
         }
+        /*
+         * The following method should be invoked only when we think there is not any code still
+         * runnning that may invoke Threads.executor(boolean). It is actually hard to ensure that,
+         * but a search on Threads.SHUTDOWN_HOOKS and Threads.executor(boolean) is helpful.
+         */
+        if (!Threads.shutdown()) {
+            // We can't use java.util.logging at this point since we are shutting down.
+            System.err.println("WARNING: some background threads were not terminated.");
+        }
     }
 }

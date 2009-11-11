@@ -54,10 +54,10 @@ import org.geotoolkit.util.logging.Logging;
  * <ol>
  *   <li>Get a new instance by calling
  *       {@link AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)}.</li>
- *   <li>Optionaly configure that instance calling its setter methods.</li>
- *   <li>Perform a search by invoking the {@link #find(IdentifiedObject)} method.
- *       The same {@code IdentifiedObjectFinder} instance can be reused for many
- *       consecutive searchs.</li>
+ *   <li>Optionaly configure that instance by calling its setter methods.</li>
+ *   <li>Perform a search by invoking the {@link #find(IdentifiedObject)} or
+ *       {@link #findIdentifier(IdentifiedObject)} methods.</li>
+ *   <li>Reuse the same {@code IdentifiedObjectFinder} instance for consecutive searchs.</li>
  * </ol>
  *
  * {@section Thread safety}
@@ -69,6 +69,7 @@ import org.geotoolkit.util.logging.Logging;
  * @version 3.06
  *
  * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
+ * @see CRS#lookupIdentifier(IdentifiedObject, boolean)
  *
  * @since 2.4
  * @module

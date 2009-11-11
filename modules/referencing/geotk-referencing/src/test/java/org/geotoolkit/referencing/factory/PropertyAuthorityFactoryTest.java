@@ -102,7 +102,7 @@ public final class PropertyAuthorityFactoryTest {
          */
         crs = factory.createCoordinateReferenceSystem("42101");
         assertEquals("WGS 84 / LCC Canada", crs.getName().getCode());
-        assertEquals("EPSG:42101", CRS.toSRS(crs));
+        assertEquals("EPSG:42101", CRS.getDeclaredIdentifier(crs));
         assertMultilinesEquals(WKT.PROJCS_LAMBERT_CONIC, crs.toWKT());
         factory.dispose(false);
     }
@@ -132,7 +132,7 @@ public final class PropertyAuthorityFactoryTest {
         assertEquals(3, factory.getAuthorityCodes(null).size());
         CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("3035");
         assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());
-        assertEquals("EPSG:3035", CRS.toSRS(crs));
+        assertEquals("EPSG:3035", CRS.getDeclaredIdentifier(crs));
         CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
@@ -141,7 +141,7 @@ public final class PropertyAuthorityFactoryTest {
          */
         crs = factory.createCoordinateReferenceSystem("27572");
         assertEquals("NTF (Paris) / Lambert zone II", crs.getName().getCode());
-        assertEquals("EPSG:27572", CRS.toSRS(crs));
+        assertEquals("EPSG:27572", CRS.getDeclaredIdentifier(crs));
         cs = ((ProjectedCRS) crs).getBaseCRS().getCoordinateSystem();
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
@@ -161,7 +161,7 @@ public final class PropertyAuthorityFactoryTest {
         assertEquals(3, factory.getAuthorityCodes(null).size());
         crs = factory.createCoordinateReferenceSystem("3035");
         assertEquals("ETRS89 / ETRS-LAEA", crs.getName().getCode());
-        assertEquals("EPSG:3035", CRS.toSRS(crs));
+        assertEquals("EPSG:3035", CRS.getDeclaredIdentifier(crs));
         cs = crs.getCoordinateSystem();
         assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
@@ -170,7 +170,7 @@ public final class PropertyAuthorityFactoryTest {
          */
         crs = factory.createCoordinateReferenceSystem("27572");
         assertEquals("NTF (Paris) / Lambert zone II", crs.getName().getCode());
-        assertEquals("EPSG:27572", CRS.toSRS(crs));
+        assertEquals("EPSG:27572", CRS.getDeclaredIdentifier(crs));
         cs = ((ProjectedCRS) crs).getBaseCRS().getCoordinateSystem();
         assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());

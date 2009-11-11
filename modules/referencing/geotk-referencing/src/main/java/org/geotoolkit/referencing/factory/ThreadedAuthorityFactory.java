@@ -21,13 +21,12 @@ import java.util.Map;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.awt.RenderingHints;
 
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -53,11 +52,6 @@ import org.geotoolkit.lang.ThreadSafe;
  */
 @ThreadSafe(concurrent = true)
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
-    /**
-     * The threads which will dispose the factories used as backing store.
-     */
-    private static Executor DISPOSERS = Executors.newCachedThreadPool();
-
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created
      * everytime a backing factory is {@linkplain ThreadedAuthorityFactory#release released}.
@@ -442,7 +436,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * run the user-code while we hold a synchronization lock on this factory.
      */
     private void dispose(final AbstractAuthorityFactory factory, final boolean shutdown) {
-        DISPOSERS.execute(new Runnable() {
+        Threads.executor(!shutdown).execute(new Runnable() {
             @Override public void run() {
                 if (shutdown || canDisposeBackingStore(factory)) {
                     factory.dispose(shutdown);

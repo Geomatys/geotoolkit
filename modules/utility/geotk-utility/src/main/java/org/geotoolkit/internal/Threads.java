@@ -19,7 +19,10 @@ package org.geotoolkit.internal;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.geotoolkit.lang.Static;
 
@@ -36,7 +39,8 @@ import org.geotoolkit.lang.Static;
  * @module
  */
 @Static
-public final class Threads extends ThreadGroup implements ThreadFactory {
+@SuppressWarnings("serial")
+public final class Threads extends AtomicInteger implements ThreadFactory {
     /**
      * The group of shutdown hooks. This group has the default priority.
      */
@@ -76,42 +80,49 @@ public final class Threads extends ThreadGroup implements ThreadFactory {
      * The executor to be returned by {@link #executor()}.
      * Will be created only when first needed.
      */
-    private static volatile Executor executor;
+    private static volatile ExecutorService normalExecutor, daemonExecutor;
+
+    /**
+     * {@code true} if the threads to be created should be daemon threads.
+     */
+    private final boolean daemon;
 
     /**
      * For internal usage only.
      */
-    private Threads(final String name) {
-        super(DAEMONS.getParent(), name);
+    private Threads(final boolean daemon) {
+        this.daemon = daemon;
     }
 
     /**
-     * A pool of threads to be shared by different Geotk utility classes. This pool is useful
-     * only for thread living for a limited amount of time. If a thread is to live until the
-     * JVM shutdown, don't use this executor - create the thread directly instead.
-     * <p>
-     * Every threads created by this executor are daemon threads. Consequenty the tasks submitted
-     * to this executor should be only house-keeping work. If the tasks need to be completed before
-     * JVM shutdown, then define your own executor.
+     * A pool of threads to be shared by different Geotk utility classes. The tasks submitted
+     * to this executor should be only house-keeping works. For tasks doing "real" computation,
+     * use your own executor.
      * <p>
      * The threads in this executor have a priority slightly higher than the normal priority.
      * This is on the assumption that the tasks will spend most of their time waiting for some
      * condition, and complete quickly when the condition become true.
+     * <p>
+     * Callers should not keep a reference to the returned executor for a long time.
+     * It is preferrable to use it as soon as possible and discart.
      *
+     * @param  daemon {@code true} if the threads to be created should be daemon threads.
      * @return The executor.
-     *
-     * @todo We need to shutdown the executor and reset the field to null. When?
-     *       After a timeout?
      */
-    public static Executor executor() {
-        Executor exec = executor;
+    public static Executor executor(final boolean daemon) {
+        ExecutorService exec = daemon ? daemonExecutor : normalExecutor;
         if (exec == null) {
             // Double-check: was a deprecated practice before Java 5, is okay
             // since Java 5 provided that the field is declared volatile.
             synchronized (Threads.class) {
-                exec = executor;
+                exec = daemon ? daemonExecutor : normalExecutor;
                 if (exec == null) {
-                    executor = exec = Executors.newCachedThreadPool(new Threads("ThreadPool"));
+                    exec = Executors.newCachedThreadPool(new Threads(daemon));
+                    if (daemon) {
+                        daemonExecutor = exec;
+                    } else {
+                        normalExecutor = exec;
+                    }
                 }
             }
         }
@@ -126,9 +137,35 @@ public final class Threads extends ThreadGroup implements ThreadFactory {
      */
     @Override
     public Thread newThread(final Runnable task) {
-        final Thread thread = new Thread(this, task);
+        final String name = (daemon ? "PooledDaemon-" : "PooledThread-") + incrementAndGet();
+        final Thread thread = new Thread(RESOURCE_DISPOSERS, task, name);
         thread.setPriority(Thread.NORM_PRIORITY + 1);
-        thread.setDaemon(true);
+        thread.setDaemon(daemon);
         return thread;
+    }
+
+    /**
+     * Shutdowns the executors and wait for the non-daemon threads to complete.
+     * This method should be invoked only when we thing that no more tasks are
+     * going to be submitted to the executor (it is actually hard to ensure that).
+     *
+     * @return {@code true} if the pending tasks have been completed, or {@code false}
+     *         if this method returned before every tasks were completed.
+     *
+     * @since 3.06
+     */
+    public static synchronized boolean shutdown() {
+        ExecutorService exec = daemonExecutor;
+        if (exec != null) {
+            exec.shutdown();
+        }
+        exec = normalExecutor;
+        if (exec != null) try {
+            exec.shutdown();
+            return exec.awaitTermination(4, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            // Too late for logging since we are in process of shuting down.
+        }
+        return false;
     }
 }
