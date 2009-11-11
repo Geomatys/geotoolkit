@@ -24,6 +24,7 @@ import java.util.concurrent.DelayQueue;
 import java.util.Iterator;
 
 import org.geotoolkit.math.XMath;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -65,7 +66,7 @@ final class StoreDisposer extends Thread {
      * is invoked by the unique {@link #INSTANCE} only.
      */
     private StoreDisposer() {
-        super("BackingStores disposer");
+        super(Threads.RESOURCE_DISPOSERS, "StoreDisposer");
         setPriority(Thread.NORM_PRIORITY + 1);
         setDaemon(true);
     }

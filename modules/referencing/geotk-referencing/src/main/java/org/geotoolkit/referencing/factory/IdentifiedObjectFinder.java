@@ -37,6 +37,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -64,17 +65,35 @@ import org.geotoolkit.util.logging.Logging;
  * even if the underlying factory is thread-safe. If concurrent searchs are desired,
  * then a new instance should be created for each thread.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.06
+ *
+ * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
  *
  * @since 2.4
  * @module
  */
 public class IdentifiedObjectFinder {
     /**
-     * The proxy for object creation.
+     * The proxy for objects creation. This is usually set at construction time.
+     * But in the particular case of {@link CachingAuthorityFactory#Finder}, this
+     * is left to {@code null} and assigned only when a backing store factory is
+     * in use.
+     * <p>
+     * If this field is initialized only when needed, then the following methods
+     * must be overriden and ensure that the initialization has been performed:
+     * <p>
+     * <ul>
+     *   <li>{@link #getAuthority}</li>
+     *   <li>{@link #getCodeCandidates}</li>
+     *   <li>{@link #find} (see note below)</li>
+     *   <li>{@link #findIdentifier} (see note below)</li>
+     * </ul>
+     * <p>
+     * Note: the {@code find} methods do not need to be overriden if all other methods
+     * are overrided and the {@link #create} method in overrided too.
      */
-    final AuthorityFactoryProxy proxy;
+    AuthorityFactoryProxy proxy;
 
     /**
      * {@code true} for performing full scans, or {@code false} otherwise.
@@ -82,10 +101,10 @@ public class IdentifiedObjectFinder {
     private boolean fullScan = true;
 
     /**
-     * Creates a finder using the same proxy than the specified finder.
+     * Creates a finder using no proxy. The {@link #proxy} field must be
+     * assigned by the sub-class before any method in this class is used.
      */
-    IdentifiedObjectFinder(final IdentifiedObjectFinder finder) {
-        this.proxy = finder.proxy;
+    IdentifiedObjectFinder() {
     }
 
     /**
@@ -95,11 +114,21 @@ public class IdentifiedObjectFinder {
      *
      * @param factory The factory to scan for the identified objects.
      * @param type    The type of objects to lookup.
+     *
+     * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
      */
     protected IdentifiedObjectFinder(final AuthorityFactory factory,
             final Class<? extends IdentifiedObject> type)
     {
         proxy = AuthorityFactoryProxy.getInstance(factory, type);
+    }
+
+    /**
+     * Returns the type of the objects to be created by the proxy instance.
+     * This method needs to be overriden by the sub-classes that do not define a proxy.
+     */
+    Class<? extends IdentifiedObject> getObjectType() {
+        return proxy.getObjectType();
     }
 
     /*
@@ -118,9 +147,18 @@ public class IdentifiedObjectFinder {
      * Returns the authority of the factory examined by this finder.
      *
      * @return The authority of the factory used for the searches.
+     * @throws FactoryException If an error occured while fetching the authority.
      */
-    public Citation getAuthority(){
+    public Citation getAuthority() throws FactoryException {
         return proxy.getAuthorityFactory().getAuthority();
+    }
+
+    /**
+     * Copies the configuration of the given finder. This method provides a central place
+     * where to add call to setters methods if such methods are added in a future version.
+     */
+    final void copyConfiguration(final IdentifiedObjectFinder other) {
+        setFullScanAllowed(other.isFullScanAllowed());
     }
 
     /**
@@ -213,9 +251,13 @@ public class IdentifiedObjectFinder {
     }
 
     /**
-     * Returns the identifier for the specified object.
+     * Returns the identifier for the specified object. This method is invoked only from
+     * {@link #findIdentifier(IdentifiedObject)}, either the method defined above or its
+     * overriden implementation defined in {@link CachingAuthorityFactory}.
+     *
+     * @throws FactoryException If an error occured while fetching the identifier.
      */
-    final String getIdentifier(final IdentifiedObject object) {
+    final String getIdentifier(final IdentifiedObject object) throws FactoryException {
         Citation authority = getAuthority();
         if (ReferencingFactory.ALL.equals(authority)) {
             /*
@@ -269,7 +311,7 @@ public class IdentifiedObjectFinder {
                     candidate = create(code, n);
                 } catch (NoSuchAuthorityCodeException e) {
                     // The identifier was not recognized. No problem, let's go on.
-                    continue;
+                    break;
                 }
                 if (candidate == null) break;
                 if (CRS.equalsIgnoreMetadata(candidate, object)) {
@@ -311,7 +353,7 @@ public class IdentifiedObjectFinder {
                  *       not supported by the underlying database for primary key, duplicated
                  *       name found, etc.).
                  */
-                continue;
+                break;
             }
             if (candidate == null) break;
             if (CRS.equalsIgnoreMetadata(candidate, object)) {
@@ -326,7 +368,7 @@ public class IdentifiedObjectFinder {
                     candidate = create(code, n);
                 } catch (FactoryException e) {
                     // The name was not recognized. No problem, let's go on.
-                    continue;
+                    break;
                 }
                 if (candidate == null) break;
                 if (CRS.equalsIgnoreMetadata(candidate, object)) {
@@ -360,23 +402,25 @@ public class IdentifiedObjectFinder {
      */
     final IdentifiedObject createFromCodes(final IdentifiedObject object) throws FactoryException {
         final Set<String> codes = getCodeCandidates(object);
-        for (final String code : codes) {
-            for (int n=0; ; n++) {
-                final IdentifiedObject candidate;
-                try {
-                    candidate = create(code, n);
-                } catch (FactoryException e) {
-                    continue;
-                }
-                if (candidate == null) break;
-                if (CRS.equalsIgnoreMetadata(candidate, object)) {
-                    return candidate;
+        if (!codes.isEmpty()) {
+            for (final String code : codes) {
+                for (int n=0; ; n++) {
+                    final IdentifiedObject candidate;
+                    try {
+                        candidate = create(code, n);
+                    } catch (FactoryException e) {
+                        break;
+                    }
+                    if (candidate == null) break;
+                    if (CRS.equalsIgnoreMetadata(candidate, object)) {
+                        return candidate;
+                    }
                 }
             }
-        }
-        final Logger logger = Logging.getLogger(IdentifiedObjectFinder.class);
-        if (logger.isLoggable(Level.FINEST)) {
-            logger.finest("No match found for \"" + object.getName() + "\" among " + codes);
+            final Logger logger = Logging.getLogger(IdentifiedObjectFinder.class);
+            if (logger.isLoggable(Level.FINEST)) {
+                logger.finest("No match found for \"" + object.getName() + "\" among " + codes);
+            }
         }
         return null;
     }
@@ -387,9 +431,9 @@ public class IdentifiedObjectFinder {
      * axis order forced or not). The {@code attempt} argument gives the number of attempts prior
      * this one. This method shall return {@code null} if no more attempt should be done.
      * <p>
-     * The default implementation delegates to the factory only for the first attempt,
-     * and returns {@code null} in all other cases. This method is aimed to be overriden,
-     * but do NOT override it with caching service. See {@link Adapter#create} for details.
+     * The default implementation delegates to the factory only for the first attempt, and returns
+     * {@code null} in all other cases. This method is aimed to be overriden, but do NOT override
+     * it with caching service. See {@link CachingAuthorityFactory#Finder} for details.
      *
      * @param  code The authority code for which to create an object.
      * @param  count The number of previous attempt before this one.
@@ -432,69 +476,10 @@ public class IdentifiedObjectFinder {
      */
     @Override
     public String toString() {
-        return proxy.toString(IdentifiedObjectFinder.class);
-    }
-
-
-
-
-    /**
-     * A finder which delegates part of its work to an other finder. This adapter forwards
-     * some method calls to the underlying finder. This class should not be public, because
-     * not all method are overriden. The choice is tuned for {@link CachingAuthorityFactory}
-     * and {@link AuthorityFactoryAdapter} needs and may not be appropriate in the general case.
-     *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
-     *
-     * @since 2.4
-     * @module
-     */
-    static class Adapter extends IdentifiedObjectFinder {
-        /**
-         * The finder on which to delegate the work.
-         */
-        protected final IdentifiedObjectFinder finder;
-
-        /**
-         * Creates an adapter for the specified finder.
-         */
-        protected Adapter(final IdentifiedObjectFinder finder) {
-            super(finder);
-            this.finder = finder;
-        }
-
-        /**
-         * Sets whatever an exhaustive scan against all registered objects is allowed.
-         */
-        @Override
-        public void setFullScanAllowed(final boolean fullScan) {
-            finder.setFullScanAllowed(fullScan);
-            super .setFullScanAllowed(fullScan);
-        }
-
-        /**
-         * Returns a set of authority codes that <strong>may</strong> identify the same object
-         * than the specified one. The default implementation delegates to the backing finder.
-         */
-        @Override
-        protected Set<String> getCodeCandidates(final IdentifiedObject object) throws FactoryException {
-            return finder.getCodeCandidates(object);
-        }
-
-        /**
-         * Creates an object from the given code. This method must delegate to the wrapped finder.
-         * We may be tempted to not delegate and instead make {@link CachingAuthorityFactory}
-         * override it with caching service, but it conflicts with {@link AuthorityFactoryAdapter}
-         * work. The later (or to be more accurate, {@link OrderedAxisAuthorityFactory}) expects
-         * axis in (latitude,longitude) order first, in order to test this CRS before to switch to
-         * (longitude,latitude) order and test again. If the {@link CachingAuthorityFactory} cache
-         * is in the way, we get directly (longitude,latitude) order and miss an opportunity
-         * to identify the user's CRS.
-         */
-        @Override
-        IdentifiedObject create(final String code, final int attempt) throws FactoryException {
-            return finder.create(code, attempt);
+        if (proxy != null) {
+            return proxy.toString(getClass());
+        } else {
+            return Classes.getShortClassName(this);
         }
     }
 }

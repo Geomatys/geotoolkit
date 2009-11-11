@@ -1210,43 +1210,133 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * A {@link IdentifiedObjectFinder} which tests
-     * {@linkplain AuthorityFactoryAdapter#replaceObject modified objects}
-     * in addition of original object.
+     * A {@link IdentifiedObjectFinder} which compares two time the object created by the factory
+     * with the object supplied by the user.
+     * <p>
+     * <ul>
+     *   <li>First, the object created by the factory is compared without modification.</li>
+     *   <li>If the previous comparison failed, then the object created by the factory is
+     *       {@linkplain AuthorityFactoryAdapter#replaceObject modified} and the comparaison
+     *       is performed again.</li>
+     * </ul>
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.06
+     *
+     * @since 2.4
+     * @module
      */
-    class Finder extends IdentifiedObjectFinder.Adapter {
+    class Finder extends IdentifiedObjectFinder {
         /**
-         * The unmodified object.
+         * The finder on which to delegate the work.
          */
-        private IdentifiedObject original;
+        protected final IdentifiedObjectFinder finder;
 
         /**
-         * Creates a finder for the underlying backing store.
+         * The unmodified object created during the last call to {@link #create},
+         * or {@code null} if none. This is used for derivating a modified object
+         * during the second pass on {@code create(...)}.
          */
-        protected Finder(final Class<? extends IdentifiedObject> type) throws FactoryException {
-            super(getGeotoolkitFactory("getIdentifiedObjectFinder", null).getIdentifiedObjectFinder(type));
+        private transient IdentifiedObject original;
+
+        /**
+         * The code of the {@linkplain #original} object.
+         */
+        private transient String originalCode;
+
+        /**
+         * Creates a finder for the underlying backing store. This constructor sets the
+         * {@link #finder} field only, not {@link #proxy}. The proxy should be the same
+         * than {@code finder.proxy}, but we can't set it at construction time because
+         * it may change at any time (e.g. {@link ThreadedAuthorityFactory}).
+         */
+        Finder(final Class<? extends IdentifiedObject> type) throws FactoryException {
+            finder = getGeotoolkitFactory("getIdentifiedObjectFinder", null).getIdentifiedObjectFinder(type);
+            // Do not set the proxy; see javadoc.
         }
 
         /**
-         * Creates an object from the given code.
+         * Returns the type of the objects to be created by the proxy instance. We need to delegate
+         * to the {@linkplain #finder}, not to the proxy used by the super-class, because the later
+         * may be null.
+         */
+        @Override
+        final Class<? extends IdentifiedObject> getObjectType() {
+            return finder.getObjectType();
+        }
+
+        /**
+         * Returns the authority of the factory examined by this finder. We need to delegate
+         * to the {@linkplain #finder}, not to the proxy used by the super-class, because the
+         * later may be null.
+         */
+        @Override
+        public final Citation getAuthority() throws FactoryException {
+            return finder.getAuthority();
+        }
+
+        /**
+         * Returns a set of authority codes that <strong>may</strong> identify the same
+         * object than the specified one. We need to delegate to the {@linkplain #finder},
+         * not to the proxy used by the super-class, because the later may be null.
+         */
+        @Override
+        protected final Set<String> getCodeCandidates(IdentifiedObject object) throws FactoryException {
+            return finder.getCodeCandidates(object);
+        }
+
+        /**
+         * Sets whatever an exhaustive scan against all registered objects is allowed.
+         */
+        @Override
+        public final void setFullScanAllowed(final boolean fullScan) {
+            finder.setFullScanAllowed(fullScan);
+            super .setFullScanAllowed(fullScan);
+        }
+
+        /**
+         * Creates an object from the given code. On the first attempt, this method create the
+         * object using the backing store and returns it. On the second attempt, it modifies
+         * the object and returns the modified version.
          *
          * @throws FactoryException if an error occured while creating the object.
          */
         @Override
         final IdentifiedObject create(final String code, final int attempt) throws FactoryException {
+            IdentifiedObject original = this.original;
             switch (attempt) {
+                /*
+                 * On the first attempt, checks if the previous object can be returned directly.
+                 * This is acting like a cache, which we perform opportunistly only because we
+                 * have this information anyway.
+                 */
                 case 0: {
-                    return original = super.create(code, attempt);
+                    if (code.equals(originalCode)) {
+                        return original;
+                    }
+                    // Do not use directly the proxy; it may be null.
+                    original = finder.create(code, attempt);
+                    if (original != null) {
+                        this.original = original;
+                        this.originalCode = code;
+                        return original;
+                    }
+                    break;
                 }
+                /*
+                 * Second attempt. The 'original' field has been set by
+                 * a previous call to this method with 'attempt == 0'.
+                 */
                 case 1: {
+                    assert code.equals(originalCode) : code;
                     final IdentifiedObject object = replaceObject(original);
-                    original = null;
-                    return object;
-                }
-                default: {
-                    return null;
+                    if (object != original) {
+                        return object;
+                    }
+                    break;
                 }
             }
+            return null;
         }
     }
 

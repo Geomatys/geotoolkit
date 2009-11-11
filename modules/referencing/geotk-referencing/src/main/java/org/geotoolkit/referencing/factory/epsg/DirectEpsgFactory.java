@@ -2858,9 +2858,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     return super.getCodeCandidates(object);
                 }
                 dependency = buffered.getIdentifiedObjectFinder(dependency.getClass()).find(dependency);
+                if (dependency == null) {
+                    // Dependency not found.
+                    return Collections.emptySet();
+                }
                 Identifier id = AbstractIdentifiedObject.getIdentifier(dependency, getAuthority());
                 if (id == null || (code = id.getCode()) == null) {
-                    // Dependency not found (malformed CRS object?).
+                    // Identifier not found (malformed CRS object?).
                     // Conservatively scans all objects.
                     return super.getCodeCandidates(object);
                 }

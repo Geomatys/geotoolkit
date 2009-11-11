@@ -947,6 +947,12 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     /**
      * A {@link IdentifiedObjectFinder} which fallback to the second factory
      * if the primary one can't find a match.
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.06
+     *
+     * @since 2.4
+     * @module
      */
     private final class Finder extends AuthorityFactoryAdapter.Finder {
         /**
@@ -966,9 +972,15 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
          */
         private void ensureFallback() throws FactoryException {
             if (fallback == null) {
-                fallback = FallbackAuthorityFactory.this.fallback.getIdentifiedObjectFinder(proxy.getObjectType());
+                /*
+                 * Remainder: since this class is a subclass of AuthorityFactoryAdapter.Finder,
+                 * the 'this.proxy' field may be null. Consequently we must use the one in the
+                 * backing finder instead.
+                 */
+                final Class<? extends IdentifiedObject> type = getObjectType();
+                fallback = FallbackAuthorityFactory.this.fallback.getIdentifiedObjectFinder(type);
             }
-            fallback.setFullScanAllowed(isFullScanAllowed());
+            fallback.copyConfiguration(this);
         }
 
         /**

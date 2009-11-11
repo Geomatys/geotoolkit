@@ -939,17 +939,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     public IdentifiedObjectFinder getIdentifiedObjectFinder(
             final Class<? extends IdentifiedObject> type) throws FactoryException
     {
-        final AbstractAuthorityFactory factory = getBackingStore();
-        try {
-            return new Finder(factory.getIdentifiedObjectFinder(type));
-        } finally {
-            /*
-             * We are cheating a bit here since the factory may still in use. However our
-             * backing store implementations are synchronized.  We may suffer from thread
-             * contentions, but hopefully not much more problem than that.
-             */
-            release();
-        }
+        return new Finder(type);
     }
 
     /**
@@ -960,43 +950,190 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * store, not using the cache. This is because hundred of objects may be created during a
      * scan while only one will be typically retained. We don't want to overload the cache with
      * every false candidates that we encounter during the scan.
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.06
+     *
+     * @since 2.4
+     * @module
      */
-    private final class Finder extends IdentifiedObjectFinder.Adapter {
+    private final class Finder extends IdentifiedObjectFinder {
         /**
-         * Creates a finder for the underlying backing store.
+         * The type of objects to be created.
          */
-        Finder(final IdentifiedObjectFinder finder) {
-            super(finder);
+        private final Class<? extends IdentifiedObject> type;
+
+        /**
+         * The finder on which to delegate the work. This is acquired by {@link #acquire()}
+         * <strong>and must be released</strong> by call to {@link #release()} once finished.
+         */
+        private transient IdentifiedObjectFinder finder;
+
+        /**
+         * Number of time that {@link #acquire()} has been invoked. When
+         * this count reaches zero, the {@linkplain #finder} is released.
+         */
+        private transient int acquireCount;
+
+        /**
+         * Creates a finder for the given type of objects.
+         */
+        Finder(final Class<? extends IdentifiedObject> type) {
+            this.type = type;
+        }
+
+        /**
+         * Returns the type of the objects to be created by the proxy instance.
+         */
+        @Override
+        final Class<? extends IdentifiedObject> getObjectType() {
+            return type;
+        }
+
+        /*
+         * Note on synchronization: our public API claims that IdentifiedObjectFinder are not
+         * thread-safe. Nevertheless we synchronize this particular implementation for safety,
+         * because the consequence of misuse are more dangerous than other implementations.
+         * Furthermore this is also a way to assert that no code path go to the 'create' method
+         * from a non-overrided public method.
+         */
+
+        /**
+         * Acquires a new {@linkplain #finder}. The {@link #release()} method must
+         * be invoked in a {@code finally} block after the call to {@code acquire}.
+         * The pattern must be as below (note that the call to {@code acquire()} is
+         * inside the {@code try} block):
+         *
+         * {@preformat java
+         *     try {
+         *         acquire();
+         *         (finder or proxy).doSomeStuff();
+         *     } finally {
+         *         release();
+         *     }
+         * }
+         */
+        private void acquire() throws FactoryException {
+            assert Thread.holdsLock(this);
+            assert (acquireCount == 0) == (finder == null) : acquireCount;
+            if (acquireCount == 0) {
+                final AbstractAuthorityFactory factory = getBackingStore();
+                /*
+                 * Set 'acquireCount' only after we succeed in fetching the factory, and before
+                 * any operation on it.  The intend is to get CachingAuthorityFactory.release()
+                 * invoked if and only if the 'getBackingStore()' method succeed, no matter what
+                 * happen after this point.
+                 */
+                acquireCount = 1;
+                finder = factory.getIdentifiedObjectFinder(type);
+                proxy  = finder.proxy;
+                finder.copyConfiguration(this);
+            } else {
+                acquireCount++;
+            }
+        }
+
+        /**
+         * Releases the {@linkplain #finder}.
+         */
+        private void release() {
+            assert Thread.holdsLock(this);
+            if (acquireCount == 0) {
+                // May happen only if a failure occured during getBackingStore() execution.
+                return;
+            }
+            if (--acquireCount == 0) {
+                proxy  = null;
+                finder = null;
+                CachingAuthorityFactory.this.release();
+            }
+        }
+
+        /**
+         * Returns the authority of the factory examined by this finder.
+         */
+        @Override
+        public synchronized Citation getAuthority() throws FactoryException {
+            try {
+                acquire();
+                return finder.getAuthority();
+            } finally {
+                release();
+            }
+        }
+
+        /**
+         * Returns a set of authority codes that <strong>may</strong> identify the same
+         * object than the specified one. This method delegates to the backing finder.
+         */
+        @Override
+        protected synchronized Set<String> getCodeCandidates(final IdentifiedObject object)
+                throws FactoryException
+        {
+            try {
+                acquire();
+                return finder.getCodeCandidates(object);
+            } finally {
+                release();
+            }
+        }
+
+        /**
+         * Creates an object from the given code. This method must delegate to the wrapped finder.
+         * We may be tempted to not delegate and instead make use of the caching services at this
+         * point, but such approach conflicts with {@link AuthorityFactoryAdapter} work. The later
+         * (or to be more accurate, {@link OrderedAxisAuthorityFactory}) expects axes in (latitude,
+         * longitude) order first, in order to test this CRS before to switch to the opposite order
+         * and test again. If the {@link CachingAuthorityFactory} cache is used, we get directly
+         * (longitude,latitude) order and miss an opportunity to identify the user's CRS.
+         */
+        @Override
+        final synchronized IdentifiedObject create(final String code, final int attempt) throws FactoryException {
+            try {
+                acquire();
+                return finder.create(code, attempt);
+            } finally {
+                release();
+            }
         }
 
         /**
          * Looks up an object from this authority factory which is equal, ignoring metadata,
          * to the specified object. The default implementation performs the same lookup than
          * the backing store and caches the result.
+         *
+         * @todo avoid to search for the same object twice. For now we consider that this
+         *       is not a big deal if the same object is searched twice; it is "just" a
+         *       waste of CPU.
          */
         @Override
         public IdentifiedObject find(final IdentifiedObject object) throws FactoryException {
-            /*
-             * Do not synchronize on 'CachingAuthorityFactory.this'. This method may take a
-             * while to execute and we don't want to block other threads. The synchronizations
-             * in the 'create' methods and in the 'findPool' map should be suffisient.
-             *
-             * TODO: avoid to search for the same object twice. For now we consider that this
-             *       is not a big deal if the same object is searched twice; it is "just" a
-             *       waste of CPU.
-             */
             IdentifiedObject candidate;
             synchronized (findPool) {
                 candidate = findPool.get(object);
+                // A null value may be explicitly stored if a
+                // previous search failed for the given object.
+                if (candidate != null || findPool.containsKey(object)) {
+                    return candidate;
+                }
             }
-            if (candidate == null) {
-                // Must delegates to 'finder' (not to 'super') in order to take
-                // advantage of the method overriden by AllAuthoritiesFactory.
-                candidate = finder.find(object);
-                if (candidate != null) {
-                    synchronized (findPool) {
-                        findPool.put(object, candidate);
-                    }
+            synchronized (this) {
+                try {
+                    acquire();
+                    // Must delegates to 'finder' (not to 'super') in order to take
+                    // advantage of the method overriden by AllAuthoritiesFactory.
+                    candidate = finder.find(object);
+                } finally {
+                    release();
+                }
+            }
+            /*
+             * If the full scan was allowed, then stores the result even if null so
+             * we can remember that no object has been found for the given argument.
+             */
+            if (candidate != null || isFullScanAllowed()) {
+                synchronized (findPool) {
+                    findPool.put(object, candidate);
                 }
             }
             return candidate;
@@ -1010,13 +1147,23 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             IdentifiedObject candidate;
             synchronized (findPool) {
                 candidate = findPool.get(object);
+                if (candidate == null && findPool.containsKey(object)) {
+                    return null;
+                }
             }
             if (candidate != null) {
                 return getIdentifier(candidate);
             }
-            // We don't rely on super-class implementation, because we want to
-            // take advantage of the method overriden by AllAuthoritiesFactory.
-            return finder.findIdentifier(object);
+            synchronized (this) {
+                try {
+                    acquire();
+                    // We don't rely on super-class implementation, because we want to
+                    // take advantage of the method overriden by AllAuthoritiesFactory.
+                    return finder.findIdentifier(object);
+                } finally {
+                    release();
+                }
+            }
         }
     }
 

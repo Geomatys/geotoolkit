@@ -21,6 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.internal.Threads;
 
 
 /**
@@ -76,8 +77,8 @@ final class CacheReferences extends Thread {
      * Ensures that we have a singleton instance of this class.
      */
     private CacheReferences() {
-        super("CacheReferences");
-        setPriority(MAX_PRIORITY - 1);
+        super(Threads.REFERENCE_CLEANERS, "CacheReferences");
+        setPriority(MAX_PRIORITY - 2);
         setDaemon(true);
     }
 

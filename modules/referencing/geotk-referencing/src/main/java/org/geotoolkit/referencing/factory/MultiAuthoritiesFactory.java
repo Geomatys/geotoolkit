@@ -855,7 +855,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
          * to {@link MultiAuthoritiesFactory#fromFactoryRegistry(String,Class,Set)}.
          */
         final Class<? extends AuthorityFactory> getFactoryType() {
-            final Class<? extends IdentifiedObject> type = proxy.getObjectType();
+            final Class<? extends IdentifiedObject> type = getObjectType();
             for (int i=0; i<OBJECT_TYPES.length; i++) {
                 if (OBJECT_TYPES[i].isAssignableFrom(type)) {
                     return FACTORY_TYPES[i];
@@ -888,9 +888,9 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                 }
                 if (factory instanceof AbstractAuthorityFactory) {
                     final AbstractAuthorityFactory af = (AbstractAuthorityFactory) factory;
-                    final IdentifiedObjectFinder finder = af.getIdentifiedObjectFinder(proxy.getObjectType());
+                    final IdentifiedObjectFinder finder = af.getIdentifiedObjectFinder(getObjectType());
                     if (finder != null) {
-                        finder.setFullScanAllowed(isFullScanAllowed());
+                        finder.copyConfiguration(this);
                         return finder;
                     }
                 }

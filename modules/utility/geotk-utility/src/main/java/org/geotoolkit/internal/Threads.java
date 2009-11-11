@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
  * grouping the threads created by Geotk together under the same parent tree node.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 3.03
  * @module
@@ -46,7 +46,12 @@ public final class Threads extends ThreadGroup implements ThreadFactory {
      * The group of {@code ReferenceQueueConsumer} threads running.
      * Threads in this group have a high priority and should be completed quickly.
      */
-    static final ThreadGroup REFERENCE_CLEANERS;
+    public static final ThreadGroup REFERENCE_CLEANERS;
+
+    /**
+     * The group of threads disposing resources, typically after a timeout.
+     */
+    public static final ThreadGroup RESOURCE_DISPOSERS;
 
     /**
      * The group of low-priority dameons. Tasks in this thread are executed only
@@ -60,9 +65,11 @@ public final class Threads extends ThreadGroup implements ThreadFactory {
         final ThreadGroup parent = new ThreadGroup("Geotoolkit.org");
         SHUTDOWN_HOOKS     = new ThreadGroup(parent, "ShutdownHooks");
         REFERENCE_CLEANERS = new ThreadGroup(parent, "ReferenceQueueConsumers");
+        RESOURCE_DISPOSERS = new ThreadGroup(parent, "ResourceDisposers");
         DAEMONS            = new ThreadGroup(parent, "Daemons");
-        REFERENCE_CLEANERS.setMaxPriority(Thread.MAX_PRIORITY - 2);
-        DAEMONS           .setMaxPriority(Thread.MIN_PRIORITY);
+        REFERENCE_CLEANERS.setMaxPriority(Thread.MAX_PRIORITY  - 2);
+        RESOURCE_DISPOSERS.setMaxPriority(Thread.NORM_PRIORITY + 1);
+        DAEMONS           .setMaxPriority(Thread.MIN_PRIORITY  + 1);
     }
 
     /**
