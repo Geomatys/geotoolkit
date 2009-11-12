@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.List;
 import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.content.ImagingCondition;
+
 import org.geotoolkit.test.Depend;
 import org.junit.*;
 
@@ -54,5 +57,54 @@ public final class MetadataProxyTest {
         accessor.setAttributeAsString("imagingCondition", "cloud");
         accessor.setAttributeAsDouble("cloudCoverPercentage", 20);
         assertEquals(20.0, proxy.getCloudCoverPercentage(), 0.0);
+        assertEquals(ImagingCondition.CLOUD, proxy.getImagingCondition());
+        /*
+         * Ask for an element which was excluded from the metadata format.
+         * The intend is to ensure that no exception is thrown.
+         */
+        assertNull(proxy.getAttributeDescription());
+    }
+
+    /**
+     * Tests {@link MetadataProxyList} using the {@code "ImageDescription/Dimensions"} node.
+     */
+    @Test
+    public void testDimensionList() {
+        final SpatialMetadata   metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final MetadataAccessor  accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions");
+        final List<SampleDimension> list = new MetadataProxyList<SampleDimension>(SampleDimension.class, accessor);
+        assertEquals(0, list.size());
+        /*
+         * Add a few childs.
+         */
+        for (int i=1; i<=4; i++) {
+            accessor.selectChild(accessor.appendChild());
+            assertNull(accessor.getAttributeAsDouble("minValue"));
+            assertNull(accessor.getAttributeAsDouble("maxValue"));
+            accessor.setAttributeAsDouble("minValue", -i);
+            accessor.setAttributeAsDouble("maxValue",  i);
+            assertEquals(i, accessor.childCount());
+        }
+        /*
+         * Test the child proxies.
+         */
+        int index = 0;
+        for (final SampleDimension dim : list) {
+            assertSame(dim, list.get(index++));
+            assertEquals(Double.valueOf(-index), dim.getMinValue());
+            assertEquals(Double.valueOf( index), dim.getMaxValue());
+        }
+    }
+
+    /**
+     * Tests the proxy with the children defined under the {@code "ImageDescription/Dimensions"}
+     * node.
+     */
+    @Test
+    public void testDimensions() {
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions", "Dimension");
+        final ImageDescription proxy    = MetadataProxy.newProxyInstance(ImageDescription.class, accessor, -1);
+        // TODO: test the method that create a MetadataProxyList.
     }
 }

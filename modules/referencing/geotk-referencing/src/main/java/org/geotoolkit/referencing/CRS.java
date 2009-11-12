@@ -75,6 +75,14 @@ import org.geotoolkit.resources.Errors;
  * implementations. This utility class is made up of static final functions. This class is
  * not a factory or a builder. It makes use of the GeoAPI factory interfaces provided by
  * {@link FactoryFinder}.
+ * <p>
+ * The methods defineed in this class can be grouped in three categories:
+ * <p>
+ * <ul>
+ *   <li>Methods working with factories, like {@link #decode(String)}.</li>
+ *   <li>Methods providing informations, like {@link #lookupIdentifier(IdentifiedObject,boolean)}.</li>
+ *   <li>Methods performing coordinate transformations, like {@link #transform(CoordinateOperation,Envelope)}.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
@@ -876,16 +884,17 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * <em>This method does not verify the identifier validity</em>.
      * <p>
      * More specifically, this method uses the first non-null element found in
-     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}. If there is
-     * none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()} - which
-     * is not garanteed to be a valid identifier.
+     * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
+     * is none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()}</code> -
+     * which is not garanteed to be a valid identifier.
      *
      * {@section Recommanded alternatives}
-     * If the code of a specific authority is wanted (typically EPSG), then consider
-     * using the static methods defined in {@link AbstractIdentifiedObject} instead.
-     * <p>
-     * In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
-     * database looking for a match, use one of the lookup methods below.
+     * <ul>
+     *   <li>If the code of a specific authority is wanted (typically EPSG), then consider
+     *       using the static methods defined in {@link AbstractIdentifiedObject} instead.</li>
+     *   <li>In many cases, the identifier is not specified. For an exhaustive scan of the EPSG
+     *       database looking for a match, use one of the lookup methods below.</li>
+     * </ul>
      *
      * {@section Note on Spatial Reference System (SRS) identifiers}
      * OGC Web Services have the concept of a Spatial Reference System identifier used to

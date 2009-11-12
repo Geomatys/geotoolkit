@@ -17,15 +17,26 @@
  */
 
 /**
- * Measures (like {@linkplain org.geotoolkit.measure.Angle angles}) and their
- * formatter.
+ * Measures (like {@linkplain org.geotoolkit.measure.Angle angles}) and their formatters.
+ * This package defines:
+ * <p>
+ * <ul>
+ *   <li>{@link org.geotoolkit.measure.Angle} and its subclasses
+ *      ({@link org.geotoolkit.measure.Longitude},
+ *       {@link org.geotoolkit.measure.Latitude})</li>
+ *   <li>Formatters
+ *      ({@link org.geotoolkit.measure.AngleFormat},
+ *       {@link org.geotoolkit.measure.CoordinateFormat},
+ *       {@link org.geotoolkit.measure.RangeFormat})</li>
+ * </ul>
  *
  * {@note <code>MeasurementRange</code> is a class closely related to measurements, but
  *        defined in the <code>org.geotoolkit.util</code> package for consistency with
- *        the <code>Range</code> base class.}
+ *        the <code>Range</code> base class. However its formatter is defined in this
+ *        package for consistency with other measurement-related formatters.}
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @version 3.06
  *
  * @since 2.0
  * @module

@@ -28,8 +28,8 @@ import org.geotoolkit.util.converter.Classes;
  * A range between a minimum and maximum comparable. The minimum/maximum may be included, excluded
  * or unbounded. The later case is indicated by {@code null} values on one or both ends.
  * <p>
- * This class is a method compatible replacement for the {@link javax.media.jai.util.Range} class
- * with the following differences:
+ * This class is a method compatible replacement for the <cite>Java Advanced Imaging</cite>
+ * {@link javax.media.jai.util.Range} class with the following differences:
  *
  * <ul>
  *   <li><p>Unbounded ranges (i.e. {@code null} minimal or maximal values) are considered
@@ -38,7 +38,7 @@ import org.geotoolkit.util.converter.Classes;
  *       implementation and usage (e.g. a loop over the values should not attempt to process
  *       the {@code null} value).</p></li>
  *
- *   <li><p>{@link #subtract} returns an empty array if the whole range is subtracted.</p></li>
+ *   <li><p>{@link #subtract(Range)} returns an empty array if the whole range is subtracted.</p></li>
  * </ul>
  *
  * The exact {@linkplain #getElementClass element class} doesn't need to be known at compile time.
@@ -47,6 +47,11 @@ import org.geotoolkit.util.converter.Classes;
  * is invoked with an argument value of illegal class, then an {@link IllegalArgumentException} is
  * thrown. The {@link ClassCastException} is thrown only in case of bug in the {@code Range} class
  * or subclasses implementation.
+ * <p>
+ * The {@linkplain #toString() string representation} of a {@code Range} is
+ * defined in a locale-insensitive way. In order to format a range using the
+ * current {@linkplain java.util.Locale locale}, or for parsing a range, use
+ * {@link org.geotoolkit.measure.RangeFormat}.
  *
  * @param <T> The type of range elements, typically {@link java.util.Date} or some subclass
  *            of {@link Number}.
@@ -56,6 +61,7 @@ import org.geotoolkit.util.converter.Classes;
  * @version 3.00
  *
  * @see javax.media.jai.util.Range
+ * @see org.geotoolkit.measure.RangeFormat
  *
  * @since 2.5
  * @module

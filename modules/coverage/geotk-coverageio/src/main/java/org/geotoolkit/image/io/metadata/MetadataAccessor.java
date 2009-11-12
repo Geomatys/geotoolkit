@@ -24,19 +24,26 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.logging.LogRecord;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
+import javax.imageio.metadata.IIOMetadataFormat;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -70,13 +77,12 @@ import org.geotoolkit.util.UnsupportedImplementationException;
  *
  * {@section Accessing child elements}
  * If order to access a child element when the child policy is
- * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_ALL    CHILD_POLICY_ALL},
- * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_SOME   CHILD_POLICY_SOME} or
- * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_CHOICE CHILD_POLICY_CHOICE},
+ * {@link IIOMetadataFormat#CHILD_POLICY_ALL    CHILD_POLICY_ALL},
+ * {@link IIOMetadataFormat#CHILD_POLICY_SOME   CHILD_POLICY_SOME} or
+ * {@link IIOMetadataFormat#CHILD_POLICY_CHOICE CHILD_POLICY_CHOICE},
  * create a new {@code MetadataAccessor} with the complete path to that element.
  * <p>
- * If the child policy of the node is
- * {@link javax.imageio.metadata.IIOMetadataFormat#CHILD_POLICY_REPEAT CHILD_POLICY_REPEAT},
+ * If the child policy of the node is {@link IIOMetadataFormat#CHILD_POLICY_REPEAT CHILD_POLICY_REPEAT},
  * then this class provide convenience methods for accessing the attributes of the childs.
  * The path to unique legal child elements shall be specified to the constructor, as in the
  * examples below:
@@ -137,7 +143,12 @@ public class MetadataAccessor {
     /**
      * The owner of this accessor.
      */
-    final SpatialMetadata metadata;
+    final IIOMetadata metadata;
+
+    /**
+     * The metadata format used by this accessor.
+     */
+    final IIOMetadataFormat format;
 
     /**
      * The parent of child {@linkplain Element elements}.
@@ -176,32 +187,76 @@ public class MetadataAccessor {
      * independently.
      * <p>
      * The main purpose of this constructor is to create many views over the same list
-     * of childs, where each view {@linkplain #selectChild select} a different child.
+     * of childs, where each view can {@linkplain #selectChild select} a different child.
      *
      * @param clone The accessor to clone.
      */
     public MetadataAccessor(final MetadataAccessor clone) {
         metadata  = clone.metadata;
+        format    = clone.format;
         parent    = clone.parent;
         childPath = clone.childPath;
         childs    = clone.childs;
     }
 
     /**
-     * Creates an accessor for the {@linkplain Element element} at the given path. Paths are
-     * separated by the {@code '/'} character. See {@linkplain MetadataAccessor class javadoc}
-     * for path examples.
+     * Creates an accessor for the {@linkplain Element element} at the given path.
+     * This method tries to detect automatically if the node at the given path can
+     * have children. This auto-detection may throw an {@link IllegalArgumentException}
+     * if the node is not defined by the {@link IIOMetadataFormat}.
+     * <p>
+     * To specify explicitly the children (in which case no exception is thrown), use the
+     * {@linkplain #MetadataAccessor(IIOMetadata, String, String) constructor below} instead.
      *
-     * @param  metadata   The Image I/O metadata.
+     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                    sub-class is recommanded, but not mandatory.
+     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
+     *                    if the {@code metadata} root node is directly the node of interest.
+     * @throws IllegalArgumentException If {@link IIOMetadataFormat} does not define a node
+     *         at the given path.
+     *
+     * @since 3.06
+     */
+    public MetadataAccessor(final IIOMetadata metadata, final String parentPath)
+            throws IllegalArgumentException
+    {
+        this(metadata, parentPath, "#auto");
+    }
+
+    /**
+     * Creates an accessor for the {@linkplain Element element} at the given path. Paths are
+     * separated by the {@code '/'} character. The following examples assume the
+     * {@link SpatialMetadataFormat#IMAGE IMAGE} metadata format:
+     * <p>
+     * <table>
+     * <tr><th>Parent path</th><th>Child path</th></tr>
+     * <tr><td>{@code "RectifiedGridDomain/Limits"}&nbsp;</td><td>&nbsp;{@code null}</td></tr>
+     * <tr><td>{@code "ImageDescription/Dimensions"}&nbsp;</td><td>&nbsp;{@code "Dimension"}</td></tr>
+     * </table>
+     * <p>
+     * See {@linkplain MetadataAccessor class javadoc} for more details.
+     *
+     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                    sub-class is recommanded, but not mandatory.
      * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
      *                    if the {@code metadata} root node is directly the node of interest.
      * @param  childPath  The path (relative to {@code parentPath}) to the child
      *                    {@linkplain Element elements}, or {@code null} if none.
      */
     @SuppressWarnings("fallthrough")
-    public MetadataAccessor(final SpatialMetadata metadata, final String parentPath, final String childPath) {
+    public MetadataAccessor(final IIOMetadata metadata, final String parentPath, String childPath) {
         this.metadata = metadata;
-        final Node root = metadata.getAsTree();
+        final Node root;
+        if (metadata instanceof SpatialMetadata) {
+            final SpatialMetadata sp = (SpatialMetadata) metadata;
+            format = sp.format;
+            root = sp.getAsTree();
+        } else {
+            // In preference order: native, standard, extra formats.
+            final String name = metadata.getMetadataFormatNames()[0];
+            format = metadata.getMetadataFormat(name);
+            root = metadata.getAsTree(name);
+        }
         /*
          * Fetches the parent node and ensure that we got a singleton. If there is more nodes than
          * expected, log a warning and pickup the first one. If there is no node, create a new one.
@@ -227,6 +282,21 @@ public class MetadataAccessor {
             }
         } else {
             parent = root;
+        }
+        /*
+         * If the child is "#auto", get the name from the metadata format. We will pick the
+         * child name only if there is no ambiguity: only one child with the repeat policy.
+         * If we can not find an unambiguous child, we will process as if there is no child.
+         */
+        if ("#auto".equals(childPath)) {
+            childPath = null;
+            final String name = parent.getNodeName();
+            if (format.getChildPolicy(name) == IIOMetadataFormat.CHILD_POLICY_REPEAT) {
+                final String[] childNames = format.getChildNames(name);
+                if (childNames != null && childNames.length == 1) {
+                    childPath = childNames[0];
+                }
+            }
         }
         /*
          * Computes a full path to children. Searching from 'metadata' root node using 'path'
@@ -778,7 +848,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         String value = getAttributeAsString(attribute);
         if (value != null) {
             value = trimFractionalPart(value);
-            return metadata.dateFormat().parse(value);
+            if (metadata instanceof SpatialMetadata) {
+                return ((SpatialMetadata) metadata).dateFormat().parse(value);
+            } else try {
+                return XmlUtilities.parseDateTime(value);
+            } catch (IllegalArgumentException e) {
+                warning("getAttributeAsDate", -1, e.getLocalizedMessage());
+            }
         }
         return null;
     }
@@ -792,9 +868,56 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public void setAttributeAsDate(final String attribute, final Date value) {
         String text = null;
         if (value != null) {
-            text = metadata.dateFormat().format(value);
+            if (metadata instanceof SpatialMetadata) {
+                text = ((SpatialMetadata) metadata).dateFormat().format(value);
+            } else {
+                text = XmlUtilities.printDateTime(value);
+            }
         }
         setAttributeAsString(attribute, text);
+    }
+
+    /**
+     * Returns an attribute as a boolean for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a boolean, then this
+     * method logs a warning and returns {@code null}.
+     *
+     * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
+     * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @since 3.06
+     */
+    public Boolean getAttributeAsBoolean(final String attribute) {
+        final String value = getAttributeAsString(attribute);
+        if (value != null) {
+            if (value.equalsIgnoreCase("true") ||
+                value.equalsIgnoreCase("yes")  ||
+                value.equalsIgnoreCase("on"))
+            {
+                return Boolean.TRUE;
+            }
+            if (value.equalsIgnoreCase("false") ||
+                value.equalsIgnoreCase("no")    ||
+                value.equalsIgnoreCase("off"))
+            {
+                return Boolean.FALSE;
+            }
+            warning("getAttributeAsBoolean", Errors.Keys.BAD_PARAMETER_$2,
+                    new String[] {attribute, value});
+        }
+        return null;
+    }
+
+    /**
+     * Sets the attribute to the specified boolean value.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     *
+     * @since 3.06
+     */
+    public void setAttributeAsBoolean(final String attribute, final boolean value) {
+        setAttributeAsString(attribute, Boolean.toString(value));
     }
 
     /**
@@ -824,8 +947,14 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     final void warning(final String method, final int key, final Object value) {
         if (warningsEnabled) {
-            final LogRecord record = Errors.getResources(metadata.getLocale()).
-                    getLogRecord(Level.WARNING, key, value);
+            final LogRecord record;
+            if (key >= 0) {
+                final Locale locale = (metadata instanceof Localized) ?
+                        ((Localized) metadata).getLocale() : Locale.getDefault();
+                record = Errors.getResources(locale).getLogRecord(Level.WARNING, key, value);
+            } else {
+                record = new LogRecord(Level.WARNING, value.toString());
+            }
             record.setSourceClassName(MetadataAccessor.class.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
@@ -841,7 +970,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     protected void warningOccurred(final LogRecord record) {
         if (warningsEnabled) {
-            metadata.warningOccurred(record);
+            if (metadata instanceof SpatialMetadata) {
+                ((SpatialMetadata) metadata).warningOccurred(record);
+            } else {
+                final Logger logger = Logging.getLogger(MetadataAccessor.class);
+                record.setLoggerName(logger.getName());
+                logger.log(record);
+            }
         }
     }
 

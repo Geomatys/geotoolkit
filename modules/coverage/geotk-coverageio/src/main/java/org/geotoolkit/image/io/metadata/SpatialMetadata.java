@@ -434,7 +434,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      */
     final LoggedFormat<Date> dateFormat() {
         if (dateFormat == null) {
-            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
             format.setTimeZone(TimeZone.getTimeZone("UTC"));
             dateFormat = createLoggedFormat(format, Date.class);
             dateFormat.setLogger("org.geotoolkit.image.io.metadata");

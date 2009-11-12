@@ -23,7 +23,7 @@ import org.geotoolkit.lang.Immutable;
 
 
 /**
- * A scalar with an unit.
+ * A scalar with a unit.
  *
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.00

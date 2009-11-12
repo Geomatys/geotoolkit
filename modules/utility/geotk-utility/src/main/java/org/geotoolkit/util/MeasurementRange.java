@@ -35,6 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * @version 3.00
  *
  * @see org.geotoolkit.measure
+ * @see org.geotoolkit.measure.RangeFormat
  *
  * @since 2.4
  * @module

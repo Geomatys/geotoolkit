@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.metadata;
 
 import java.util.List;
 import java.util.ArrayList;
+import javax.imageio.metadata.IIOMetadata;
 import org.w3c.dom.Element;
 import org.geotoolkit.resources.Errors;
 
@@ -49,7 +50,7 @@ abstract class ChildList<T extends MetadataAccessor> extends MetadataAccessor {
      * @param  childPath  The path (relative to {@code parentPath}) to the child
      *                    {@linkplain Element elements}, or {@code null} if none.
      */
-    protected ChildList(final SpatialMetadata metadata,
+    protected ChildList(final IIOMetadata metadata,
             final String parentPath, final String childPath)
     {
         super(metadata, parentPath, childPath);

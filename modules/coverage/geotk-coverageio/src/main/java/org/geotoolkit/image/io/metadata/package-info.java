@@ -17,7 +17,7 @@
  */
 
 /**
- * Geographic informations encoded in images as metadata.
+ * Spatial (usually geographic) informations encoded in images as metadata.
  * <p>
  * This package defines a {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadataFormat spatial
  * metadata format} which is aimed image format neutral. The metadata format defines a structure for
@@ -29,8 +29,8 @@
  * wish.
  *
  * {@section Relationship with ISO/OGC standards}
- * The {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadataFormat spatial metadata format}
- * defined in this package is inspired by the following material:
+ * The <a href="SpatialMetadataFormat.html#default-formats">default metadata formats</a>
+ * defined in this package are inspired by the following material:
  * <p>
  * <ul>
  *   <li><a href="http://www.opengeospatial.org/standards/gmljp2">GML in JPEG 2000 for Geographic Imagery Encoding</a></li>

@@ -80,6 +80,7 @@ import org.geotoolkit.resources.Errors;
  * This class infers the tree structure from metadata objects defined by some
  * {@linkplain MetadataStandard metadata standard}, typically ISO 19115-2. New
  * metadata elements are declared by calls to the {@link #addTree addTree} method.
+ * Default formats are defined <a href="#default-formats">below</a>.
  *
  * {@section String formatting in attributes}
  * The following formatting rules apply:
@@ -92,7 +93,7 @@ import org.geotoolkit.resources.Errors;
  *       {@linkplain java.util.TimeZone timezone}.</li>
  * </ul>
  *
- * {@section Default formats}
+ * <a name="default-formats">{@section Default formats}</a>
  * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
  * {@link Metadata} and {@link ImageDescription} interfaces, respectively. Consequently those
  * instances can be considered as profiles of ISO 19115-2, with a few minor departures:
@@ -253,9 +254,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
-     * The default instance for <cite>stream</cite> metadata format. This is the
-     * metadata format that apply to file as a whole, which may contain more than
-     * one image.
+     * The default instance for <cite>stream</cite> metadata format. This is the metadata
+     * format that apply to file as a whole, which may contain more than one image. The
+     * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
      * @see #addTreeForStream()
      *
@@ -270,6 +271,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     /**
      * The default instance for <cite>image</cite> metadata format. This
      * is the metadata format that apply to a particular image in a file.
+     * The tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
      * @see #addTreeForImage()
      *
@@ -319,8 +321,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Adds an {@link Metadata} node at the root of the tree.
-     * This is used for <cite>stream</cite> metadata.
+     * Adds the tree structure for <cite>stream</cite> metadata. The default implementation
+     * adds the tree structure documented in the "<cite>Stream metadata</cite>" column of the
+     * <a href="#default-formats">class javadoc</a>.
      *
      * @see #STREAM
      *
@@ -414,8 +417,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Adds an {@link ImageDescription} node at the root of the tree.
-     * This is used for <cite>image</cite> metadata.
+     * Adds the tree structure for <cite>image</cite> metadata. The default implementation
+     * adds the tree structure documented in the "<cite>Image metadata</cite>" column of the
+     * <a href="#default-formats">class javadoc</a>.
      *
      * @see #IMAGE
      *
@@ -928,11 +932,22 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the element which is the parent of the named element, or {@code null} if none.
-     * For example if this {@code SpatialMetadataFormat} is the {@link #STREAM} instance, then
-     * the parent of {@code "GeographicElement"} is {@code "Extent"}.
+     * For example if this metadata format is the {@link #STREAM} instance, then:
+     * <p>
+     * <ul>
+     *   <li>The path to {@code "GeographicElement"} is {@code "DiscoveryMetadata/Extent/GeographicElement"}.</li>
+     *   <li>The parent of {@code "GeographicElement"} returned by this method is {@code "Extent"}.</li>
+     * </ul>
+     *
+     * {@note An element may have more than one parent, since the same element can be copied under
+     *        many nodes using <code>addChildElement(...)</code>. In such case, this method returns
+     *        only the first parent. Note that this case does not occur with the <code>STREAM</code>
+     *        and <code>IMAGE</code> formats defined in <code>SpatialMetadataFormat</code>.}
      *
      * @param  elementName The element for which the parent is desired.
      * @return The parent of the given element, or {@code null}.
+     *
+     * @see #getElementPath(String)
      *
      * @since 3.06
      */
@@ -986,11 +1001,18 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the path to the named element, or {@code null} if none. For example if this
-     * {@code SpatialMetadataFormat} is the {@link #STREAM} instance, then the path to the
+     * metadata format is the {@link #STREAM} instance, then the path to the
      * {@code "GeographicElement"} is {@code "DiscoveryMetadata/Extent/GeographicElement"}.
+     *
+     * {@note An element may have more than one path, since the same element can be copied under
+     *        many nodes using <code>addChildElement(...)</code>. In such case, this method returns
+     *        only the first path. Note that this case does not occur with the <code>STREAM</code>
+     *        and <code>IMAGE</code> formats defined in <code>SpatialMetadataFormat</code>.}
      *
      * @param  elementName The element for which the path is desired.
      * @return The path to the given element, or {@code null}.
+     *
+     * @see #getElementParent(String)
      *
      * @since 3.06
      */

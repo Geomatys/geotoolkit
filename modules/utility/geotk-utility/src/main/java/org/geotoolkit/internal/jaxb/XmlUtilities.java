@@ -18,7 +18,11 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -32,7 +36,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  * Utilities methods related to XML.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.06
  *
  * @since 3.00
  * @module
@@ -43,6 +47,18 @@ public final class XmlUtilities {
      * The factory for creating {@link javax.xml.datatype} objects.
      */
     private static DatatypeFactory factory;
+
+    /**
+     * The gregorian calendar to use for {@link #printDateTime}.
+     *
+     * @since 3.06
+     */
+    private static final ThreadLocal<Calendar> CALENDAR = new ThreadLocal<Calendar>() {
+        @Override
+        protected Calendar initialValue() {
+            return new GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.CANADA);
+        }
+    };
 
     /**
      * Do not allow instantiation of this class.
@@ -98,5 +114,45 @@ public final class XmlUtilities {
             return xml.toGregorianCalendar().getTime();
         }
         return null;
+    }
+
+    /**
+     * Parses a date value from a string.
+     * This method should be used only for occasional parsing.
+     *
+     * @param  date The date to parse, or {@code null}.
+     * @return The parsed date, or {@code null} if the given string was null.
+     * @throws IllegalArgumentException If string parameter does not conform to
+     *         XML Schema Part 2: Datatypes for {@code xsd:dateTime}.
+     *
+     * @see DatatypeConverter#parseDateTime(String)
+     *
+     * @since 3.06
+     */
+    public static Date parseDateTime(final String date) throws IllegalArgumentException {
+        if (date == null) {
+            return null;
+        }
+        return DatatypeConverter.parseDateTime(date).getTime();
+    }
+
+    /**
+     * Formats a date value in a string, assuming UTC timezone and Canada locale.
+     * This method should be used only for occasional formatting.
+     *
+     * @param  date The date to format, or {@code null}.
+     * @return The formatted date, or {@code null} if the given date was null.
+     *
+     * @see DatatypeConverter#printDateTime(Calendar)
+     *
+     * @since 3.06
+     */
+    public static String printDateTime(final Date date) {
+        if (date == null) {
+            return null;
+        }
+        final Calendar calendar = CALENDAR.get();
+        calendar.setTime(date);
+        return DatatypeConverter.printDateTime(calendar);
     }
 }

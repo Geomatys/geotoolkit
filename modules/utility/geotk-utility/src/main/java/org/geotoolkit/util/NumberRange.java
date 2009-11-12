@@ -28,12 +28,17 @@ import static org.geotoolkit.util.converter.Classes.widestClass;
 /**
  * A range of numbers. {@linkplain #union Union} and {@linkplain #intersect intersection}
  * are computed as usual, except that widening conversions will be applied as needed.
+ * <p>
+ * {@code NumberRange} has no units. For a range of physical measurements with units of
+ * measure, see {@link MeasurementRange}.
  *
  * @param <T> The type of range elements as a subclass of {@link Number}.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
  * @version 3.04
+ *
+ * @see org.geotoolkit.measure.RangeFormat
  *
  * @since 2.0
  * @module
@@ -543,12 +548,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
          * the ranges used in the intersection calculation.
          */
         type = finestClass(elementClass, rangeType);
-        if (range.minValue != null) {
-            type = widestClass(type, finestClass(((Number) range.minValue).doubleValue()));
-        }
-        if (range.maxValue != null) {
-            type = widestClass(type, finestClass(((Number) range.maxValue).doubleValue()));
-        }
+        type = widestClass(type, finestClass((Number) range.minValue));
+        type = widestClass(type, finestClass((Number) range.maxValue));
         return convertAndCast((Range) range, (Class) type);
     }
 

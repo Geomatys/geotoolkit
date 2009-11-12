@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import javax.imageio.metadata.IIOMetadata;
 import org.opengis.parameter.ParameterValue;
 
 
@@ -104,7 +105,7 @@ public class Parameter extends MetadataAccessor {
     @Deprecated
     static final class List extends ChildList<Parameter> {
         /** Creates a parser for parameters. */
-        public List(final SpatialMetadata metadata) {
+        public List(final IIOMetadata metadata) {
             super(metadata, "rectifiedGridDomain/crs/projection", "parameter");
         }
 

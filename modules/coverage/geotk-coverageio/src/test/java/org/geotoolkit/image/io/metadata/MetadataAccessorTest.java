@@ -43,18 +43,19 @@ public final class MetadataAccessorTest {
     public void testImageDescription() {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         assertMultilinesEquals("The metadata should initially contains only the root node.",
-            "geotk-coverageio_3.06\n",
+            SpatialMetadataFormat.FORMAT_NAME + "\n",
             metadata.toString());
         /*
          * Ensure that the metadata is initially empty and that
          * attempts to access attributes do not throw an exception.
          */
         final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        assertEquals("ImageDescription", accessor.name());
         assertEquals("Initially empty metadata should have no child.", 0, accessor.childCount());
         assertNull(accessor.getAttributeAsString("imagingCondition"));
         assertNull(accessor.getAttributeAsDouble("cloudCoverPercentage"));
         assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
-            "geotk-coverageio_3.06\n" +
+            SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───ImageDescription\n",
             metadata.toString());
         /*
@@ -68,8 +69,7 @@ public final class MetadataAccessorTest {
          */
         assertEquals("cloud", accessor.getAttributeAsString("imagingCondition"));
         assertEquals(Double.valueOf(20), accessor.getAttributeAsDouble("cloudCoverPercentage"));
-        assertMultilinesEquals("The values should be defined.",
-            "geotk-coverageio_3.06\n" +
+        assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───ImageDescription\n"  +
             "    ├───imagingCondition=\"cloud\"\n" +
             "    └───cloudCoverPercentage=\"20.0\"\n",
@@ -91,17 +91,35 @@ public final class MetadataAccessorTest {
      */
     @Test
     public void testOffsetVectors() {
+        testOffsetVectors("OffsetVector");
+    }
+
+    /**
+     * Same tests than {@link #testOffsetVectors()}, but without explicit specification
+     * of the child name.
+     */
+    @Test
+    public void testAutoDetectChilds() {
+        testOffsetVectors("#auto");
+    }
+
+    /**
+     * Tests the accessor with some properties defined under the {@code "OffsetVectors"} node.
+     * The child name shall be either {@code "OffsetVector"} or {@code "#auto"}.
+     */
+    private void testOffsetVectors(final String childName) {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         assertMultilinesEquals("The metadata should initially contains only the root node.",
-            "geotk-coverageio_3.06\n",
+            SpatialMetadataFormat.FORMAT_NAME + "\n",
             metadata.toString());
         /*
          * Ensure that the metadata is initially empty and that
          * attempts to access attributes do not throw an exception.
          */
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "RectifiedGridDomain/OffsetVectors", "OffsetVector");
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, "RectifiedGridDomain/OffsetVectors", childName);
+        assertEquals("OffsetVectors", accessor.name());
         assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
-            "geotk-coverageio_3.06\n"   +
+            SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n" +
             "    └───OffsetVectors\n",
             metadata.toString());
@@ -124,8 +142,7 @@ public final class MetadataAccessorTest {
         assertTrue(Arrays.equals(accessor.getAttributeAsDoubles("values", false), new double[] {2, 5, 8}));
         accessor.selectChild(1);
         assertTrue(Arrays.equals(accessor.getAttributeAsDoubles("values", false), new double[] {3, 1, 4}));
-        assertMultilinesEquals("The values should be defined.",
-            "geotk-coverageio_3.06\n"    +
+        assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n"  +
             "    └───OffsetVectors\n"    +
             "        ├───OffsetVector\n" +

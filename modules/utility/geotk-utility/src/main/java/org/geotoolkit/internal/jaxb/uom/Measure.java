@@ -30,6 +30,8 @@ import javax.measure.unit.Unit;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
  *
+ * @see org.geotoolkit.measure.Measure
+ *
  * @since 2.5
  * @module
  */

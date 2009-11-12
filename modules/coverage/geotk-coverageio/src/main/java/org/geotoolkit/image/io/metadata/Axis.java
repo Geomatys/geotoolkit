@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.metadata;
 
 import java.util.Date;
+import javax.imageio.metadata.IIOMetadata;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 
@@ -141,7 +142,7 @@ public class Axis extends MetadataAccessor {
     @Deprecated
     static final class List extends ChildList<Axis> {
         /** Creates a parser for axis. */
-        public List(final SpatialMetadata metadata) {
+        public List(final IIOMetadata metadata) {
             super(metadata, "rectifiedGridDomain/crs/cs", "axis");
         }
 

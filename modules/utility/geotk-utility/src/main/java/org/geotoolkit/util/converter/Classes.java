@@ -62,7 +62,7 @@ public final class Classes {
     private static final Map<Class<?>,Classes> MAPPING = new HashMap<Class<?>,Classes>(16);
     static {
         new Classes(BigDecimal.class, true, false, (byte) (DOUBLE+2)); // Undocumented enum.
-        new Classes(BigInteger.class, false, true, (byte) (DOUBLE+1));  // Undocumented enum.
+        new Classes(BigInteger.class, false, true, (byte) (DOUBLE+1)); // Undocumented enum.
         new Classes(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE,    'D');
         new Classes(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT,     'F');
         new Classes(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG,      'J');
@@ -91,7 +91,7 @@ public final class Classes {
         this.isInteger = isInteger;
         this.size      = -1;
         this.ordinal   = ordinal;
-        this.internal  = 'L';
+        this.internal  = 'L'; // Defined by Java, and tested elsewhere in this class.
         if (MAPPING.put(type, this) != null) {
             throw new AssertionError(); // Should never happen.
         }
@@ -545,15 +545,29 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns {@code true} if the given {@code type} is an integer type.
+     * Returns {@code true} if the given {@code type} is an integer type. The integer types are
+     * {@link Long}, {@code long}, {@link Integer}, {@code int}, {@link Short}, {@code short},
+     * {@link Byte}, {@code byte} and {@link BigInteger}.
+     *
+     * @param  type The type to test (may be {@code null}).
+     * @return {@code true} if {@code type} is an integer type.
+     */
+    public static boolean isInteger(final Class<?> type) {
+        final Classes mapping = MAPPING.get(type);
+        return (mapping != null) && mapping.isInteger;
+    }
+
+    /**
+     * Returns {@code true} if the given {@code type} is an integer type. This method performs
+     * the same test than {@link #isPrimitiveInteger}, excluding {@link BigInteger}.
      *
      * @param  type The type to test (may be {@code null}).
      * @return {@code true} if {@code type} is the primitive of wrapper class of
      *         {@link Long}, {@link Integer}, {@link Short} or {@link Byte}.
      */
-    public static boolean isInteger(final Class<?> type) {
+    private static boolean isPrimitiveInteger(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isInteger;
+        return (mapping != null) && mapping.isInteger && (mapping.internal != 'L');
     }
 
     /**
@@ -603,9 +617,12 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns the widest type of two numbers. Numbers {@code n1} and {@code n2} must be instance
-     * of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float} or
-     * {@link Double} types. At most one of the arguments can be null.
+     * Returns the widest type of two numbers. Numbers {@code n1} and {@code n2} can be instance of
+     * {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float}, {@link Double},
+     * {@link BigInteger} or {@link BigDecimal} types.
+     * <p>
+     * If one of the given argument is null, then this method returns the class of the
+     * non-null argument. If both arguments are null, then this method returns {@code null}.
      *
      * @param  n1 The first number, or {@code null}.
      * @param  n2 The second number, or {@code null}.
@@ -620,14 +637,25 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns the widest of the given types. Classes {@code c1} and {@code c2}
-     * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
-     * {@link Float}, {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
+     * Returns the widest of the given types. Classes {@code c1} and {@code c2} can be
+     * {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float},
+     * {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
+     * <p>
+     * If one of the given argument is null, then this method returns the non-null argument.
+     * If both arguments are null, then this method returns {@code null}.
+     * <p>
+     * Example:
+     *
+     * {@preformat java
+     *     widestClass(Short.class, Long.class);
+     * }
+     *
+     * returns {@code Long.class}.
      *
      * @param  c1 The first number type, or {@code null}.
      * @param  c2 The second number type, or {@code null}.
      * @return The widest of the given types, or {@code null} if both {@code c1} and {@code c2} are null.
-     * @throws IllegalArgumentException If one of the given type is unknown.
+     * @throws IllegalArgumentException If one of the given types is unknown.
      */
     public static Class<? extends Number> widestClass(final Class<? extends Number> c1,
                                                       final Class<? extends Number> c2)
@@ -664,14 +692,25 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns the finest of the given types. Classes {@code c1} and {@code c2}
-     * must be of any of {@link Byte}, {@link Short}, {@link Integer}, {@link Long},
-     * {@link Float}, {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
+     * Returns the finest of the given types. Classes {@code c1} and {@code c2} can be
+     * {@link Byte}, {@link Short}, {@link Integer}, {@link Long}, {@link Float},
+     * {@link Double}, {@link BigInteger} or {@link BigDecimal} types.
+     * <p>
+     * If one of the given argument is null, then this method returns the non-null argument.
+     * If both arguments are null, then this method returns {@code null}.
+     * <p>
+     * Example:
+     *
+     * {@preformat java
+     *     finestClass(Short.class, Long.class);
+     * }
+     *
+     * returns {@code Short.class}.
      *
      * @param  c1 The first number type, or {@code null}.
      * @param  c2 The second number type, or {@code null}.
      * @return The finest of the given types, or {@code null} if both {@code c1} and {@code c2} are null.
-     * @throws IllegalArgumentException If one of the given type is unknown.
+     * @throws IllegalArgumentException If one of the given types is unknown.
      */
     public static Class<? extends Number> finestClass(final Class<? extends Number> c1,
                                                       final Class<? extends Number> c2)
@@ -691,7 +730,29 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
+     * Returns the smallest class capable to hold the specified value. If the given value is
+     * {@code null}, then this method returns {@code null}. Otherwise this method delegates
+     * to {@link #finestClass(double)} or {@link #finestClass(long)} depending on the value type.
+     *
+     * @param  value The value to be wrapped in a finer (if possible) {@link Number}.
+     * @return The finest type capable to hold the given value.
+     *
+     * @since 3.06
+     */
+    public static Class<? extends Number> finestClass(final Number value) {
+        if (value == null) {
+            return null;
+        }
+        if (isPrimitiveInteger(value.getClass())) {
+            return finestClass(value.longValue());
+        } else {
+            return finestClass(value.doubleValue());
+        }
+    }
+
+    /**
      * Returns the smallest class capable to hold the specified value.
+     * This is similar to {@link #finestClass(long)}, but extented to floating point values.
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
@@ -710,6 +771,17 @@ compare:for (int i=0; i<c1.length; i++) {
 
     /**
      * Returns the smallest class capable to hold the specified value.
+     * This method makes the following choice:
+     * <p>
+     * <ul>
+     *   <li>If the given value is between {@value java.lang.Byte#MIN_VALUE} and
+     *       {@value java.lang.Byte#MAX_VALUE}, then this method returns {@code Byte.class};</li>
+     *   <li>If the given value is between {@value java.lang.Short#MIN_VALUE} and
+     *       {@value java.lang.Short#MAX_VALUE}, then this method returns {@code Short.class};</li>
+     *   <li>If the given value is between {@value java.lang.Integer#MIN_VALUE} and
+     *       {@value java.lang.Integer#MAX_VALUE}, then this method returns {@code Integer.class};</li>
+     *   <li>Otherwise this method returns {@code Long.class};</li>
+     * </ul>
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
@@ -725,7 +797,33 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns the smallest number capable to hold the specified value.
+     * Returns the number of the smallest class capable to hold the specified value. If the
+     * given value is {@code null}, then this method returns {@code null}. Otherwise this
+     * method delegates to {@link #finestNumber(double)} or {@link #finestNumber(long)}
+     * depending on the value type.
+     *
+     * @param  value The value to be wrapped in a finer (if possible) {@link Number}.
+     * @return The finest type capable to hold the given value.
+     *
+     * @since 3.06
+     */
+    public static Number finestNumber(final Number value) {
+        if (value == null) {
+            return null;
+        }
+        final Number candidate;
+        if (isPrimitiveInteger(value.getClass())) {
+            candidate = finestNumber(value.longValue());
+        } else {
+            candidate = finestNumber(value.doubleValue());
+        }
+        // Keep the existing instance if possible.
+        return value.equals(candidate) ? value : candidate;
+    }
+
+    /**
+     * Returns the number of the smallest class capable to hold the specified value.
+     * This is similar to {@link #finestNumber(long)}, but extented to floating point values.
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
@@ -743,10 +841,21 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns the smallest number capable to hold the specified value.
+     * Returns the number of the smallest type capable to hold the specified value.
+     * This method makes the following choice:
+     * <p>
+     * <ul>
+     *   <li>If the given value is between {@value java.lang.Byte#MIN_VALUE} and
+     *       {@value java.lang.Byte#MAX_VALUE}, then it is wrapped in a {@link Byte} object.</li>
+     *   <li>If the given value is between {@value java.lang.Short#MIN_VALUE} and
+     *       {@value java.lang.Short#MAX_VALUE}, then it is wrapped in a {@link Short} object.</li>
+     *   <li>If the given value is between {@value java.lang.Integer#MIN_VALUE} and
+     *       {@value java.lang.Integer#MAX_VALUE}, then it is wrapped in an {@link Integer} object.</li>
+     *   <li>Otherwise the value is wrapped in a {@link Long} object.</li>
+     * </ul>
      *
      * @param  value The value to be wrapped in a {@link Number}.
-     * @return The finest type capable to hold the given value.
+     * @return The given value as a number of the finest type capable to hold it.
      *
      * @since 3.00
      */
@@ -782,6 +891,15 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Casts a number to the specified class. The class must by one of {@link Byte},
      * {@link Short}, {@link Integer}, {@link Long}, {@link Float} or {@link Double}.
+     * This method makes the following choice:
+     * <p>
+     * <ul>
+     *   <li>If the given type is {@code Double.class}, then this method returns
+     *       <code>{@linkplain Double#valueOf(double) Double.valueOf}(n.doubleValue())</code>;</li>
+     *   <li>If the given type is {@code Float.class}, then this method returns
+     *       <code>{@linkplain Float#valueOf(float) Float.valueOf}(n.floatValue())</code>;</li>
+     *   <li>And likewise for all remaining known types.</li>
+     * </ul>
      *
      * {@note This method is intentionnaly restricted to primitive types. Other types
      *        like <code>BigDecimal</code> are not the purpose of this method. See the
@@ -812,7 +930,16 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Converts the specified string into a value object. The value object can be an instance of
      * {@link Double}, {@link Float}, {@link Long}, {@link Integer}, {@link Short}, {@link Byte},
-     * {@link Boolean}, {@link Character} or {@link String} according the specified type.
+     * {@link Boolean}, {@link Character} or {@link String} according the specified type. This
+     * method makes the following choice:
+     * <p>
+     * <ul>
+     *   <li>If the given type is {@code Double.class}, then this method returns
+     *       <code>{@linkplain Double#valueOf(String) Double.valueOf}(value)</code>;</li>
+     *   <li>If the given type is {@code Float.class}, then this method returns
+     *       <code>{@linkplain Float#valueOf(String) Float.valueOf}(value)</code>;</li>
+     *   <li>And likewise for all remaining known types.</li>
+     * </ul>
      *
      * {@note This method is intentionnaly restricted to primitive types, with the addition of
      *        <code>String</code> which can be though as an identity operation.. Other types

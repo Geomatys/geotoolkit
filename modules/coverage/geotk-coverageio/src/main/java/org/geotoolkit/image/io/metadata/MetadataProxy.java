@@ -22,11 +22,16 @@ import java.util.Date;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
+
+import org.opengis.metadata.content.Band;
 
 import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.AnyConverter;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Errors;
 
 
@@ -42,6 +47,13 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 final class MetadataProxy implements InvocationHandler {
+    /**
+     * {@code true} for enabling the process of a few Geotk-specific special cases. This field
+     * should always be {@code true}. It is defined mostly as a way to spot every places where
+     * some special cases are defined.
+     */
+    private static final boolean SPECIAL_CASE = true;
+
     /**
      * The metadata accessor. This is used for fetching the value of an attribute. The name of
      * the attribute is inferred from the method name using the {@linkplain #namesMapping} map.
@@ -60,15 +72,33 @@ final class MetadataProxy implements InvocationHandler {
     private final Map<String, String> namesMapping;
 
     /**
+     * The converter from {@link String} to target type.
+     * Will be created when first needed.
+     */
+    private transient AnyConverter converter;
+
+    /**
      * Creates a new proxy for the given metadata accessor.
      */
-    private MetadataProxy(final Class<?> type, final MetadataAccessor accessor, final int index) {
+    private MetadataProxy(Class<?> type, final MetadataAccessor accessor, final int index) {
         this.accessor = accessor;
         this.index    = index;
-        final IIOMetadataFormat format = accessor.metadata.format;
+        final IIOMetadataFormat format = accessor.format;
         if (format instanceof SpatialMetadataFormat) {
             final MetadataStandard standard = ((SpatialMetadataFormat) format).getElementStandard(accessor.name());
             if (standard != null) {
+                if (SPECIAL_CASE) {
+                    /*
+                     * If the metadata standard is ISO 19115, then we must process SampleDimension
+                     * especially because this interface is not defined by ISO 19115. It is a Geotk
+                     * interface designed as a sub-set of the ISO Band interface, plus a few additions.
+                     */
+                    if (MetadataStandard.ISO_19115.equals(standard)) {
+                        if (SampleDimension.class.equals(type)) {
+                            type = Band.class;
+                        }
+                    }
+                }
                 namesMapping = standard.asNameMap(type, SpatialMetadataFormat.NAME_POLICY, KeyNamePolicy.METHOD_NAME);
                 return;
             }
@@ -89,8 +119,10 @@ final class MetadataProxy implements InvocationHandler {
     }
 
     /**
-     * Returns the attribute name for the given method name.
+     * Returns the attribute name for the given method name. The caller must have verified
+     * that the method name starts with either {@code "get"}, {@code "set"} or {@code "is"}.
      */
+    @SuppressWarnings("fallthrough")
     private final String toAttributeName(final String methodName) {
         if (namesMapping != null) {
             final String attribute = namesMapping.get(methodName);
@@ -98,7 +130,37 @@ final class MetadataProxy implements InvocationHandler {
                 return attribute;
             }
         }
-        throw new IllegalArgumentException(methodName); // TODO: infer using JavaBeans conventions.
+        /*
+         * If no mapping is explicitly declared for the given method name,
+         * apply JavaBeans conventions.
+         */
+        final int offset = methodName.startsWith("is") ? 2 : 3;
+        switch (methodName.length() - offset) {
+            default: {
+                /*
+                 * If there is at least 2 characters after the prefix, assume that
+                 * we have an acronym if the two first character are upper case.
+                 */
+                if (Character.isUpperCase(methodName.charAt(offset)) &&
+                    Character.isUpperCase(methodName.charAt(offset+1)))
+                {
+                    return methodName.substring(offset);
+                }
+                // Fall through
+            }
+            case 1: {
+                /*
+                 * If we have at least one character, make the first character lower-case.
+                 */
+                return Character.toLowerCase(methodName.charAt(offset)) + methodName.substring(offset + 1);
+            }
+            case 0: {
+                /*
+                 * If we have only the prefix, return it unchanged.
+                 */
+                return methodName;
+            }
+        }
     }
 
     /**
@@ -108,11 +170,14 @@ final class MetadataProxy implements InvocationHandler {
      * @param  method The method from the interface which have been invoked.
      * @param  args   The arguments, or {@code null} if the method takes no argument.
      * @return The value to return from the method invocation on the proxy instance.
+     * @throws IllegalStateException If the attribute value can not be converted to the return type.
      */
     @Override
-    public Object invoke(final Object proxy, final Method method, final Object[] args) {
+    public Object invoke(final Object proxy, final Method method, final Object[] args)
+            throws IllegalStateException
+    {
         String name = method.getName();
-        if (!name.startsWith("get")) {
+        if (!name.startsWith("get") && !name.startsWith("is")) {
             throw new UnsupportedOperationException(Errors.format(
                     Errors.Keys.UNKNOW_COMMAND_$1, name));
         }
@@ -141,9 +206,21 @@ final class MetadataProxy implements InvocationHandler {
         if (int[]   .class.equals(targetType)) return accessor.getAttributeAsIntegers(name, false);
         if (Date    .class.equals(targetType)) return accessor.getAttributeAsDate    (name);
         /*
-         * Other type. (TODO)
+         * String, CharSequence and Object can accepts directly the attribute value.
+         * For all other types, we need to apply a type conversion.
          */
         final String value = accessor.getAttributeAsString(name);
-        return null;
+        if (value == null || targetType.isAssignableFrom(String.class)) {
+            return value;
+        }
+        if (converter == null) {
+            converter = new AnyConverter();
+        }
+        try {
+            return converter.convert(value, targetType);
+        } catch (NonconvertibleObjectException e) {
+            throw new IllegalStateException(Errors.format(
+                    Errors.Keys.CANT_PROCESS_PROPERTY_$2, name, value), e);
+        }
     }
 }

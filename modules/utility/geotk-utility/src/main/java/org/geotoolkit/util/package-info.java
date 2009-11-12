@@ -17,25 +17,35 @@
  */
 
 /**
- * Miscellaneous utilities for managements of strings and other simple objects.
- * This package provides general purpose static methods working on:
- * <p>
+ * Simple data objects and miscellaneous utilities. This package provides:
+ *
  * <ul>
- *   <li>{@code Object} or primitive types: {@link org.geotoolkit.util.Utilities},
- *       {@link org.geotoolkit.util.Characters}</li>
- *   <li>Arrays: {@link org.geotoolkit.util.XArrays}, {@link org.geotoolkit.util.Utilities},
- *       {@link org.geotoolkit.util.Ranks}</li>
- *   <li>Other standard Java types: {@link org.geotoolkit.util.Comparators},
- *       {@link org.geotoolkit.util.Exceptions}</li>
+ *   <li><p>Data objects:
+ *   <ul>
+ *     <li>{@link org.geotoolkit.util.Range} and its subclasses
+ *        ({@link org.geotoolkit.util.DateRange},
+ *         {@link org.geotoolkit.util.NumberRange},
+ *         {@link org.geotoolkit.util.MeasurementRange})</li>
+ *
+ *     <li>Various implementations of {@link org.opengis.util.InternationalString}
+ *        ({@link org.geotoolkit.util.SimpleInternationalString},
+ *         {@link org.geotoolkit.util.DefaultInternationalString},
+ *         {@link org.geotoolkit.util.ResourceInternationalString})</li>
+ *   </ul></p></li>
+ *
+ *   <li><p>General purpose static methods working on:
+ *   <ul>
+ *     <li>{@code Object} or primitive types: {@link org.geotoolkit.util.Utilities},
+ *         {@link org.geotoolkit.util.Characters}</li>
+ *     <li>Arrays: {@link org.geotoolkit.util.XArrays}, {@link org.geotoolkit.util.Utilities},
+ *         {@link org.geotoolkit.util.Ranks}</li>
+ *     <li>Other standard Java types: {@link org.geotoolkit.util.Comparators},
+ *         {@link org.geotoolkit.util.Exceptions}</li>
+ *   </ul></p></li>
  * </ul>
- * <p>
- * This package provides also a few data objects: {@link org.geotoolkit.util.Range} with its
- * subclasses ({@link org.geotoolkit.util.DateRange}, {@link org.geotoolkit.util.NumberRange},
- * {@link org.geotoolkit.util.MeasurementRange}) and various implementations of
- * {@link org.opengis.util.InternationalString}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @version 3.04
  *
  * @since 2.0
  * @module

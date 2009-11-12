@@ -180,11 +180,6 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_CREATE_FROM_TEXT_$1 = 25;
 
         /**
-         * An error occurred while cropping.
-         */
-        public static final int CANT_CROP = 26;
-
-        /**
          * Can't evaluate a value for coordinate ({0}).
          */
         public static final int CANT_EVALUATE_$1 = 27;
@@ -193,6 +188,11 @@ public final class Errors extends IndexedResourceBundle {
          * Failed to get the data source for name "{0}".
          */
         public static final int CANT_GET_DATASOURCE_$1 = 28;
+
+        /**
+         * Can not process the "{0}={1}" property.
+         */
+        public static final int CANT_PROCESS_PROPERTY_$2 = 26;
 
         /**
          * Can't read file "{0}".
