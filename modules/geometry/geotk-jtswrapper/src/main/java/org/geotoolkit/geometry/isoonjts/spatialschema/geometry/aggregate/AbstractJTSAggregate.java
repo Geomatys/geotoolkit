@@ -9,6 +9,9 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -54,6 +57,19 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
                 throw new IllegalStateException("Only JTSGeometries are allowed in the JTSAggregate class.");
             }
         }
+
+        // we want a multi geometry event if there is only one geometry
+        if (childParts.size() == 1) {
+            com.vividsolutions.jts.geom.Geometry geom = childParts.get(0);
+            if (geom instanceof LineString) {
+                return JTSUtils.GEOMETRY_FACTORY.createMultiLineString(new LineString[] {(LineString)geom});
+            } if (geom instanceof Polygon) {
+                return JTSUtils.GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] {(Polygon)geom});
+            } if (geom instanceof Point) {
+                return JTSUtils.GEOMETRY_FACTORY.createMultiPoint(new Point[] {(Point)geom});
+            }
+        }
+
         return JTSUtils.GEOMETRY_FACTORY.buildGeometry(childParts);
     }
 
