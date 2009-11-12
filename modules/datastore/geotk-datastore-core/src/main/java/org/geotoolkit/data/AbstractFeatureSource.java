@@ -17,17 +17,18 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.DefaultQuery;
-import org.geotoolkit.data.diff.Diff;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.data.query.DefaultQuery;
+import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -36,7 +37,6 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.data.collection.FeatureCollection;
 
 /**
  * This is a starting point for providing your own FeatureSource<SimpleFeatureType, SimpleFeature> implementation.
@@ -115,6 +115,14 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     }
 
     /**
+     * By default, no Hints are supported
+     */
+    @Override
+    public Set getSupportedHints() {
+        return hints;
+    }
+
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -133,6 +141,42 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     public Transaction getTransaction() {
         return Transaction.AUTO_COMMIT;
+    }
+
+    /**
+     * Ensure query modified with typeName.
+     * <p>
+     * This method will make copy of the provided query, using
+     * DefaultQuery, if query.getTypeName is not equal to
+     * getSchema().getTypeName().
+     * </p>
+     * @param query Original query
+     * @return Query with getTypeName() equal to getSchema().getTypeName()
+     */
+    protected Query namedQuery(final Query query) {
+        final String typeName = getSchema().getTypeName();
+        final String candidate = query.getTypeName();
+        if (!typeName.equals(candidate)) {
+            return new DefaultQuery(
+                    typeName,
+                    query.getFilter(),
+                    query.getMaxFeatures(),
+                    query.getPropertyNames(),
+                    query.getHandle());
+        }
+        return query;
+    }
+
+    /**
+     * Retrieve all Features.
+     *
+     * @return FeatureResults of all Features in FeatureSource
+     *
+     * @throws IOException If features could not be obtained
+     */
+    @Override
+    public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures() throws IOException {
+        return getFeatures(Filter.INCLUDE);
     }
 
     /**
@@ -183,18 +227,6 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     }
 
     /**
-     * Retrieve all Features.
-     *
-     * @return FeatureResults of all Features in FeatureSource
-     *
-     * @throws IOException If features could not be obtained
-     */
-    @Override
-    public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures() throws IOException {
-        return getFeatures(Filter.INCLUDE);
-    }
-
-    /**
      * Retrieve Bounds of all Features.
      *
      * <p>
@@ -212,6 +244,14 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     @Override
     public JTSEnvelope2D getBounds() throws IOException {
         return getBounds(Query.ALL);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public JTSEnvelope2D getBounds(final Filter filter) throws IOException {
+        return getBounds(new DefaultQuery(getSchema().getTypeName(), filter));
     }
 
     /**
@@ -249,27 +289,19 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     }
 
     /**
-     * Ensure query modified with typeName.
-     * <p>
-     * This method will make copy of the provided query, using
-     * DefaultQuery, if query.getTypeName is not equal to
-     * getSchema().getTypeName().
-     * </p>
-     * @param query Original query
-     * @return Query with getTypeName() equal to getSchema().getTypeName()
+     * {@inheritDoc }
      */
-    protected Query namedQuery(final Query query) {
-        final String typeName = getSchema().getTypeName();
-        final String candidate = query.getTypeName();
-        if (!typeName.equals(candidate)) {
-            return new DefaultQuery(
-                    typeName,
-                    query.getFilter(),
-                    query.getMaxFeatures(),
-                    query.getPropertyNames(),
-                    query.getHandle());
-        }
-        return query;
+    @Override
+    public int getCount() throws IOException {
+        return getCount(Filter.INCLUDE);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getCount(final Filter filter) throws IOException {
+        return getCount(new DefaultQuery(getSchema().getTypeName(), filter));
     }
 
     /**
@@ -341,11 +373,4 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
         return nativeCount + delta;
     }
 
-    /**
-     * By default, no Hints are supported
-     */
-    @Override
-    public Set getSupportedHints() {
-        return hints;
-    }
 }

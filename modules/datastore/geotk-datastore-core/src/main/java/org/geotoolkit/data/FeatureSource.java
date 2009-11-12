@@ -149,6 +149,16 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
     QueryCapabilities getQueryCapabilities();
 
     /**
+     * Returns the set of hints this {@link FeatureSource} is able to support.<p>
+     * Hints are to be specified in the {@link Query}, for each data access where they
+     * may be required.<br>
+     * Depending on the actual value provide by the user, the {@link FeatureSource}
+     * may decide not to honor the hint.
+     * @return a set of {@link RenderingHints} keys objects (eventually empty, never null).
+     */
+    Set<RenderingHints.Key> getSupportedHints();
+
+    /**
      * Adds a listener to the list that's notified each time a change to the
      * FeatureStore occurs.
      *
@@ -163,6 +173,33 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * @param listener FeatureListener
      */
     void removeFeatureListener(FeatureListener listener);
+
+    /**
+     * Loads all features from the datasource into the return FeatureResults.
+     *
+     * <p>
+     * Filter.INCLUDE can also be used to get all features.  Calling this function
+     * is equivalent to using {@link Query#ALL}
+     * </p>
+     *
+     * @return Collection The collection to put the features into.
+     *
+     * @throws IOException For all data source errors.
+     */
+    FeatureCollection<T, F> getFeatures() throws IOException;
+
+    /**
+     * Loads features from the datasource into the returned FeatureResults,
+     * based on the passed filter.
+     *
+     * @param filter An OpenGIS filter; specifies which features to retrieve.
+     *        <tt>null</tt> is not allowed, use Filter.INCLUDE instead.
+     *
+     * @return Collection The collection to put the features into.
+     *
+     * @throws IOException For all data source errors.
+     */
+    FeatureCollection<T, F> getFeatures(Filter filter) throws IOException;
 
     /**
      * Loads features from the datasource into the returned FeatureResults,
@@ -180,40 +217,7 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
     FeatureCollection<T, F> getFeatures(Query query) throws IOException;
 
     /**
-     * Loads features from the datasource into the returned FeatureResults,
-     * based on the passed filter.
-     *
-     * @param filter An OpenGIS filter; specifies which features to retrieve.
-     *        <tt>null</tt> is not allowed, use Filter.INCLUDE instead.
-     *
-     * @return Collection The collection to put the features into.
-     *
-     * @throws IOException For all data source errors.
-     */
-    FeatureCollection<T, F> getFeatures(Filter filter) throws IOException;
-
-    /**
-     * Loads all features from the datasource into the return FeatureResults.
-     *
-     * <p>
-     * Filter.INCLUDE can also be used to get all features.  Calling this function
-     * is equivalent to using {@link Query#ALL}
-     * </p>
-     *
-     * @return Collection The collection to put the features into.
-     *
-     * @throws IOException For all data source errors.
-     */
-    FeatureCollection<T, F> getFeatures() throws IOException;
-
-    /**
      * Gets the bounding box of this datasource.
-     *
-     * <p>
-     * With getBounds(Query) this becomes a convenience method for
-     * getBounds(Query.ALL), that is the bounds for all features contained
-     * here.
-     * </p>
      *
      * <p>
      * If getBounds() returns <code>null</code> due to expense consider using
@@ -228,6 +232,23 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * @todo REVISIT: Do we need this or can we use getBounds( Query.ALL )?
      */
     JTSEnvelope2D getBounds() throws IOException;
+
+    /**
+     * Gets the bounding box of the features that would be returned by this filter.
+     *
+     * <p>
+     * If getBounds(Query) returns <code>null</code> due to expense consider
+     * using <code>getFeatures(Query).getBounds()</code> as a an alternative.
+     * </p>
+     *
+     * @param filter the Filter to find the bounds for.
+     *
+     * @return The bounding box of the datasource or null if unknown and too
+     *         expensive for the method to calculate or any errors occur.
+     *
+     * @throws IOException DOCUMENT ME!
+     */
+    JTSEnvelope2D getBounds(Filter filter) throws IOException;
 
     /**
      * Gets the bounding box of the features that would be returned by this
@@ -259,6 +280,38 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
     JTSEnvelope2D getBounds(Query query) throws IOException;
 
     /**
+     * Gets the number of the features contained in this source.
+     *
+     * <p>
+     * If getBounds(Query) returns <code>-1</code> due to expense consider
+     * using <code>getFeatures(Query).getCount()</code> as a an alternative.
+     * </p>
+     *
+     * @return The number of Features or <code>-1</code>
+     *         if count is too expensive to calculate or any errors or occur.
+     *
+     * @throws IOException if there are errors getting the count
+     */
+    int getCount() throws IOException;
+
+    /**
+     * Gets the number of the features that would be returned by this filter.
+     *
+     * <p>
+     * If getBounds(Filter) returns <code>-1</code> due to expense consider
+     * using <code>getFeatures(Query).getCount()</code> as a an alternative.
+     * </p>
+     *
+     * @param filter Contains the Filter to find the count for.
+     *
+     * @return The number of Features provided by the filter or <code>-1</code>
+     *         if count is too expensive to calculate or any errors or occur.
+     *
+     * @throws IOException if there are errors getting the count
+     */
+    int getCount(Filter filter) throws IOException;
+
+    /**
      * Gets the number of the features that would be returned by this query.
      * 
      * <p>
@@ -280,15 +333,5 @@ public interface FeatureSource<T extends FeatureType, F extends Feature> {
      * @throws IOException if there are errors getting the count
      */
     int getCount(Query query) throws IOException;
-
-    /**
-     * Returns the set of hints this {@link FeatureSource} is able to support.<p>
-     * Hints are to be specified in the {@link Query}, for each data access where they
-     * may be required.<br>
-     * Depending on the actual value provide by the user, the {@link FeatureSource}
-     * may decide not to honor the hint.
-     * @return a set of {@link RenderingHints} keys objects (eventually empty, never null).
-     */
-    public Set<RenderingHints.Key> getSupportedHints();
     
 }

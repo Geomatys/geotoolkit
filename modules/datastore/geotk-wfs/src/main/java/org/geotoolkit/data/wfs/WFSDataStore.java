@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
@@ -49,12 +50,12 @@ public class WFSDataStore extends AbstractDataStore{
         super(false);
 
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
-
-        capabilities = server.getCapabilities();
+        this.capabilities = server.getCapabilities();
 
         final FeatureTypeListType lst = capabilities.getFeatureTypeList();
         for(final FeatureTypeType ftt : lst.getFeatureType()){
-            types.put(ftt.getName().getLocalPart(),null);
+            final String typeName = ftt.getName().getLocalPart();
+            types.put(typeName,requestType(typeName));
         }
 
     }
@@ -87,6 +88,21 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
+        return null;
+    }
+
+    private SimpleFeatureType requestType(String typeName){
+        final DescribeFeatureTypeRequest request = server.createDescribeFeatureType();
+        request.setTypeName(typeName);
+
+//        request.getURL();
+
+        return null;
+    }
+
+    private FeatureCollection<SimpleFeatureType,SimpleFeature> requestFeature(String typeName) throws IOException {
+        final SimpleFeatureType sft = types.get(typeName);
+
         return null;
     }
 

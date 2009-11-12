@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.diff.DiffFeatureReader;
-import org.geotoolkit.data.diff.Diff;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +26,8 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.diff.DiffFeatureReader;
+import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.view.DefaultView;
 import org.geotoolkit.feature.FeatureTypeUtilities;

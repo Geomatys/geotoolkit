@@ -272,6 +272,14 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public JTSEnvelope2D getBounds(final Filter filter) throws IOException {
+        return getBounds(new DefaultQuery(getSchema().getTypeName(), filter));
+    }
+
+    /**
      * Returns the bounds of the results of the specified query against the 
      * feature source.
      * <p>
@@ -315,6 +323,22 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * method.
      */
     protected abstract JTSEnvelope2D getBoundsInternal(final Query query) throws IOException;
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getCount() throws IOException {
+        return getCount(Filter.INCLUDE);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getCount(final Filter filter) throws IOException {
+        return getCount(new DefaultQuery(getSchema().getTypeName(), filter));
+    }
 
     /**
      * Returns the count of the number of features of the feature source.

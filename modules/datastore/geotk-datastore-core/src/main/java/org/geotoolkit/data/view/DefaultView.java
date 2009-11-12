@@ -442,6 +442,14 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public JTSEnvelope2D getBounds(Filter filter) throws IOException {
+        return getBounds(new DefaultQuery(getSchema().getTypeName(), filter));
+    }
+
+    /**
      * Retrive the extent of the Query.
      *
      * <p>
@@ -479,6 +487,22 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
         // features, and will
         // properly compute the bouds
         return getFeatures(query).getBounds();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getCount() throws IOException {
+        return getCount(Filter.INCLUDE);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int getCount(Filter filter) throws IOException {
+        return getCount(new DefaultQuery(getSchema().getTypeName(), filter));
     }
 
     /**
@@ -530,4 +554,5 @@ public class DefaultView implements FeatureSource<SimpleFeatureType, SimpleFeatu
     public QueryCapabilities getQueryCapabilities() {
         return source.getQueryCapabilities();
     }
+
 }
