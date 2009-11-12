@@ -47,7 +47,7 @@ import static java.awt.GridBagConstraints.*;
  * {@section Demo}
  * The image on the left side gives an example of this widget appearance.
  * To try this component in your browser, see the
- * <a href="{@docRoot}/../demos/geotk-simples/applet/GradientKernelEditor.html">demonstration applet</a>.
+ * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/GradientKernelEditor.html">demonstration applet</a>.
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD)

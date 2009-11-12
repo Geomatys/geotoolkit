@@ -87,7 +87,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
  * <td width="500" bgcolor="lightblue">
  * {@section Demo}
  * To try this component in your browser, see the
- * <a href="{@docRoot}/../demos/geotk-simples/applet/IIOMetadataPanel.html">demonstration applet</a>.
+ * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/IIOMetadataPanel.html">demonstration applet</a>.
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (Geomatys)

@@ -107,7 +107,7 @@ import org.geotoolkit.resources.Errors;
  * The tree structures are show below. As a general rule, the name of <em>elements</em> start with
  * a upper case letter while the name of <em>attributes</em> start with a lower case letter.
  * For browsing these trees in an applet together with additional information, see the
- * <a href="{@docRoot}/../demos/geotk-simples/applet/IIOMetadataPanel.html">IIOMetadataPanel applet</a>.
+ * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/IIOMetadataPanel.html">IIOMetadataPanel applet</a>.
  *
 <blockquote><table border="1" cellpadding="12">
 <tr bgcolor="lightblue"><th>Stream metadata</th><th>Image metadata</th></tr>

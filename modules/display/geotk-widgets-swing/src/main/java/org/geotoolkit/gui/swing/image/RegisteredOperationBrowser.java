@@ -84,7 +84,7 @@ import org.geotoolkit.util.logging.Logging;
  * <td width="500" bgcolor="lightblue">
  * {@section Demo}
  * To try this component in your browser, see the
- * <a href="{@docRoot}/../demos/geotk-simples/applet/RegisteredOperationBrowser.html">demonstration applet</a>.
+ * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/RegisteredOperationBrowser.html">demonstration applet</a>.
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (IRD)
