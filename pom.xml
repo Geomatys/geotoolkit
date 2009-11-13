@@ -330,6 +330,12 @@
         <version>1.1</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.sun.xml.parsers</groupId>
+	<artifactId>jaxp-ri</artifactId>
+	<version>1.4.2</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
