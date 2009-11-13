@@ -1,0 +1,568 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.measure;
+
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.text.Format;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+
+import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
+
+import org.geotoolkit.util.Range;
+import org.geotoolkit.util.DateRange;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.AnyConverter;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.resources.Errors;
+
+
+/**
+ * Parses and formats {@linkplain Range ranges} of the given type. The kind of ranges created
+ * by the {@code parse} method is determined by the class of range components:
+ * <p>
+ * <ul>
+ *   <li>If the components type is assignable to {@link Date}, then the {@code parse} method
+ *       will create {@link DateRange} objects.</li>
+ *   <li>If the components type is assignable to {@link Number}, then the {@code parse} method
+ *       will create {@link MeasurementRange} objects if the text to parse contains a
+ *       {@linkplain Unit unit} of measure, or {@link NumberRange} otherwise.</li>
+ * </ul>
+ *
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.06
+ *
+ * @see Range
+ * @see DateRange
+ * @see NumberRange
+ * @see MeasurementRange
+ *
+ * @since 3.06
+ * @module
+ */
+public class RangeFormat extends Format {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = 6700474540675919894L;
+
+    /**
+     * The constant value for {@link FieldPosition} which designate the minimal value.
+     * This constant can be combined with one of the {@code *_FIELD} constants defined
+     * in {@link NumberFormat} or {@link DateFormat} classes for fetching the position
+     * of a formatted field. For example in order to get the position where the fraction
+     * digits of the {@linkplain Range#getMinValue() minimal value} begin, use:
+     *
+     * {@preformat java
+     *     FieldPosition pos = new FieldPosition(NumberFormat.FRACTION_FIELD | RangeFormat.MIN_VALUE_FIELD);
+     *     rangeFormat.format(range, buffer, pos);
+     *     int beginIndex = pos.getBeginIndex();
+     * }
+     */
+    public static final int MIN_VALUE_FIELD = 0;
+    // Note: the implementation in this class requires that MIN_VALUE_FIELD is 0.
+
+    /**
+     * The constant value for {@link FieldPosition} which designate the maximal value.
+     * This constant can be combined with one of the {@code *_FIELD} constants defined
+     * in {@link NumberFormat} or {@link DateFormat} classes for fetching the position
+     * of a formatted field. For example in order to get the position where the fraction
+     * digits of the {@linkplain Range#getMaxValue() maximal value} begin, use:
+     *
+     * {@preformat java
+     *     FieldPosition pos = new FieldPosition(NumberFormat.FRACTION_FIELD | RangeFormat.MAX_VALUE_FIELD);
+     *     rangeFormat.format(range, buffer, pos);
+     *     int beginIndex = pos.getBeginIndex();
+     * }
+     */
+    public static final int MAX_VALUE_FIELD = 0x40000000;
+    // Note: do not use the sign bit, since the JDK uses -1 for "no field ID".
+    // The maximal value used by the formats (as of JDK 1.6) is 17.
+
+    /**
+     * The constant value for {@link FieldPosition} which designate the units of measurement.
+     * This field can <strong>not</strong> be combined with other field masks.
+     */
+    public static final int UNIT_FIELD = 0x20000000;
+
+    /**
+     * The symbols used for parsing and formatting a range.
+     */
+    private RangeSymbols symbols;
+
+    /**
+     * Symbols used by this format, inferred from {@link DecimalFormatSymbols}.
+     */
+    private final char minusSign;
+
+    /**
+     * Symbols used by this format, inferred from {@link DecimalFormatSymbols}.
+     */
+    private final String infinity;
+
+    /**
+     * The type of the range components. Valid types are {@link Number}, {@link Angle},
+     * {@link Date} or a subclass of those types. This value determines the kind of range
+     * to be created by the parse method:
+     * <p>
+     * <ul>
+     *   <li>{@link NumberRange} if the element class is assignable to {@link Number}.</li>
+     *   <li>{@link DateRange}   if the element class is assignable to {@link Date}.</li>
+     * </ul>
+     */
+    protected final Class<?> elementClass;
+
+    /**
+     * The format to use for parsing and formatting the range components.
+     * The format is determined from the {@linkplain #elementClass element class}:
+     * <p>
+     * <ul>
+     *   <li>{@link AngleFormat}  if the element class is assignable to {@link Angle}.</li>
+     *   <li>{@link NumberFormat} if the element class is assignable to {@link Number}.</li>
+     *   <li>{@link DateFormat}   if the element class is assignable to {@link Date}.</li>
+     * </ul>
+     */
+    protected final Format elementFormat;
+
+    /**
+     * The format for units of measurement, or {@code null} if none. This is non-null if and
+     * only if {@link #elementClass} is assignable to {@link Number} but not to {@link Angle}.
+     */
+    protected final UnitFormat unitFormat;
+
+    /**
+     * Converter from the parsed element to {@link #elementClass}.
+     * Will be created only when first needed.
+     */
+    private transient AnyConverter converter;
+
+    /**
+     * Creates a new format for parsing and formatting {@linkplain NumberRange number ranges}
+     * using the {@linkplain Locale#getDefault() default locale}.
+     */
+    public RangeFormat() {
+        this(Locale.getDefault());
+    }
+
+    /**
+     * Creates a new format for parsing and formatting {@linkplain NumberRange number ranges}
+     * using the given locale.
+     *
+     * @param  locale The locale for parsing and formatting range components.
+     */
+    public RangeFormat(final Locale locale) {
+        this(locale, Number.class);
+    }
+
+    /**
+     * Creates a new format for parsing and formatting {@linkplain DateRange date ranges}
+     * using the given locale and timezone.
+     *
+     * @param locale   The locale for parsing and formatting range components.
+     * @param timezone The timezone for the date to be formatted.
+     */
+    public RangeFormat(final Locale locale, final TimeZone timezone) {
+        this(locale, Date.class);
+        ((DateFormat) elementFormat).setTimeZone(timezone);
+    }
+
+    /**
+     * Creates a new format for parsing and formatting {@linkplain Range ranges} of
+     * the given element class using the given locale. The element class is typically
+     * {@code Date.class} or some subclass of {@code Number.class}.
+     *
+     * @param  locale The locale for parsing and formatting range components.
+     * @param  elementClass The type of range components.
+     * @throws IllegalArgumentException If the given type is not recognized by this constructor.
+     */
+    public RangeFormat(final Locale locale, final Class<?> elementClass) throws IllegalArgumentException {
+        this.elementClass = elementClass;
+        if (Angle.class.isAssignableFrom(elementClass)) {
+            elementFormat = AngleFormat.getInstance(locale);
+            unitFormat    = null;
+        } else if (Number.class.isAssignableFrom(elementClass)) {
+            elementFormat = NumberFormat.getNumberInstance(locale);
+            unitFormat    = UnitFormat.getInstance(locale);
+        } else if (Date.class.isAssignableFrom(elementClass)) {
+            elementFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
+            unitFormat    = null;
+        } else {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, elementClass));
+        }
+        final DecimalFormatSymbols ds;
+        if (elementFormat instanceof DecimalFormat) {
+            ds = ((DecimalFormat) elementFormat).getDecimalFormatSymbols();
+        } else {
+            ds = DecimalFormatSymbols.getInstance(locale);
+        }
+        minusSign = ds.getMinusSign();
+        infinity  = ds.getInfinity();
+        symbols   = new RangeSymbols();
+    }
+
+    /**
+     * Returns the symbols used for parsing and formatting ranges.
+     *
+     * @return The symbols used by this format.
+     */
+    public RangeSymbols getSymbols() {
+        return symbols.clone();
+    }
+
+    /**
+     * Sets the symbols to use for parsing and formatting ranges.
+     *
+     * @param symbols The new symbols to use for this format.
+     */
+    public void setSymbols(final RangeSymbols symbols) {
+        this.symbols = symbols.clone();
+    }
+
+    /**
+     * Formats a {@link Range} and appends the resulting text to a given string buffer. The default
+     * implementation formats the range using the same rules than {@link Range#toString()}, except
+     * that the values (numbers, angles or dates) are formatted using the {@link Format} object
+     * appropriate for the locale given at construction time.
+     *
+     * @param  range      The {@link Range} object to format.
+     * @param  toAppendTo Where the text is to be appended.
+     * @param  pos        Identifies a field in the formatted text.
+     * @return The string buffer passed in as {@code toAppendTo}, with formatted text appended.
+     * @throws IllegalArgumentException If this formatter can not format the given object.
+     */
+    @Override
+    public StringBuffer format(final Object range, final StringBuffer toAppendTo, final FieldPosition pos) {
+        if (!(range instanceof Range<?>)) {
+            final String message;
+            if (range == null) {
+                message = Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "range");
+            } else {
+                message = Errors.format(Errors.Keys.ILLEGAL_CLASS_$2, range.getClass(), Range.class);
+            }
+            throw new IllegalArgumentException(message);
+        }
+        /*
+         * Special case for an empty range. This is typically formatted as "[]". The field
+         * position is inconditionnaly set to the empty substring inside the brackets.
+         */
+        final Range<?> r = (Range<?>) range;
+        final RangeSymbols s = symbols;
+        if (r.isEmpty()) {
+            toAppendTo.append(s.openInclusive);
+            final int p = toAppendTo.length();
+            pos.setBeginIndex(p); // First index, inclusive.
+            pos.setEndIndex  (p); // Last index, exclusive
+            return toAppendTo.append(s.closeInclusive);
+        }
+        /*
+         * Prepares the FieldPosition for the minimal and the maximal values. We need to
+         * ensure that those two FieldPositions have their MAX_VALUE_FIELD bit cleared.
+         * We opportunistically reuse the FieldPosition provided by the user if suitable
+         * (this approach assumes that MIN_VALUE_FIELD is zero).
+         */
+        final FieldPosition minPos, maxPos;
+        final int fieldID = pos.getField();
+        if ((fieldID & MAX_VALUE_FIELD) == 0) {
+            minPos = pos; // User is interested in minimal value.
+            maxPos = new FieldPosition(fieldID);
+        } else {
+            minPos = new FieldPosition(fieldID & ~MAX_VALUE_FIELD);
+            maxPos = minPos; // Will overwrite the value of minPos.
+        }
+        final Comparable<?> minValue = r.getMinValue();
+        final Comparable<?> maxValue = r.getMaxValue();
+        if (minValue != null && minValue.equals(maxValue)) {
+            /*
+             * Special case: minimal and maximal values are the same.  Formats only the minimal
+             * value. If the user asked for the position of the maximal value, then the indexes
+             * of the minimal value (which is also the maximal value) will be copied at the end
+             * of this method (this work because maxPos == minPos in such case).
+             */
+            elementFormat.format(minValue, toAppendTo, minPos);
+        } else {
+            /*
+             * General case: format the minimal and maximal values between brackets.
+             * Units of measurement are added in the range is actually a MeasurementRange.
+             */
+            toAppendTo.append(r.isMinIncluded() ? s.openInclusive : s.openExclusive);
+            if (minValue == null) {
+                toAppendTo.append(minusSign);
+                minPos.setBeginIndex(toAppendTo.length());
+                toAppendTo.append(infinity);
+                minPos.setEndIndex(toAppendTo.length());
+            } else {
+                elementFormat.format(minValue, toAppendTo, minPos);
+            }
+            toAppendTo.append(' ').append(s.separator).append(' ');
+            if (maxValue == null) {
+                maxPos.setBeginIndex(toAppendTo.length());
+                toAppendTo.append(infinity);
+                maxPos.setEndIndex(toAppendTo.length());
+            } else {
+                elementFormat.format(maxValue, toAppendTo, maxPos);
+            }
+            toAppendTo.append(r.isMaxIncluded() ? s.closeInclusive : s.closeExclusive);
+        }
+        /*
+         * If the user asked for the position of the minimal value, then 'pos' is already defined
+         * correctly because 'minPos == pos'. If the user asked for the position of the maximal
+         * value, then we need to copy the indexes from the 'maxPos' instance.
+         */
+        if (pos != minPos) {
+            pos.setBeginIndex(maxPos.getBeginIndex());
+            pos.setEndIndex  (maxPos.getEndIndex());
+        }
+        /*
+         * Formats the unit, if there is any. Note that the above lines processed UNIT_FIELD as
+         * if it was MIN_VALUE_FIELD with some code not recognized by the formatter, so we need
+         * to overwrite those indexes below in such case.
+         */
+        final boolean isUnitField = (pos.getField() == UNIT_FIELD);
+        if (unitFormat != null && range instanceof MeasurementRange<?>) {
+            final Unit<?> units = ((MeasurementRange<?>) range).getUnits();
+            if (units != null) {
+                toAppendTo.append(' ');
+                if (isUnitField) {
+                    pos.setBeginIndex(toAppendTo.length());
+                }
+                unitFormat.format(units, toAppendTo, pos);
+                if (isUnitField) {
+                    pos.setEndIndex(toAppendTo.length());
+                }
+                return toAppendTo;
+            }
+        }
+        if (isUnitField) {
+            final int length = toAppendTo.length();
+            pos.setBeginIndex(length);
+            pos.setEndIndex  (length);
+        }
+        return toAppendTo;
+    }
+
+    /**
+     * Parses text from a string to produce a range. The default implementation delegates to
+     * {@link #parse(String, ParsePosition)} with no additional work.
+     *
+     * @param  source The text, part of which should be parsed.
+     * @param  pos    Index and error index information as described above.
+     * @return A range parsed from the string, or {@code null} in case of error.
+     */
+    @Override
+    public Object parseObject(final String source, final ParsePosition pos) {
+        return parse(source, pos);
+    }
+
+    /**
+     * Parses text from a string to produce a range. The method attempts to parse text starting
+     * at the index given by {@code pos}. If parsing succeeds, then the index of {@code pos} is
+     * updated to the index after the last character used, and the parsed range is returned. If
+     * an error occurs, then the index of {@code pos} is not changed, the error index of {@code pos}
+     * is set to the index of the character where the error occurred, and {@code null} is returned.
+     *
+     * @param  source The text, part of which should be parsed.
+     * @param  pos    Index and error index information as described above.
+     * @return A range parsed from the string, or {@code null} in case of error.
+     */
+    public Range<?> parse(final String source, final ParsePosition pos) {
+        final int origin = pos.getIndex();
+        Range<?> range;
+        try {
+            // Remainder: tryParse may return null.
+            range = tryParse(source, pos);
+        } catch (NonconvertibleObjectException e) {
+            // Ignore - the error will be reported through the error index.
+            range = null;
+        }
+        if (range != null) {
+            pos.setErrorIndex(-1);
+        } else {
+            pos.setIndex(origin);
+        }
+        return range;
+    }
+
+    /**
+     * Tries to parse the given text. In case of success, the error index is indetermined and
+     * need to be reset to -1.  In case of failure (including an exception being thrown), the
+     * parse index is indetermined and need to be reset to its initial value.
+     */
+    private Range<?> tryParse(final String source, final ParsePosition pos)
+            throws NonconvertibleObjectException
+    {
+        final int length = source.length();
+        int index = pos.getIndex();
+        /*
+         * Skip leading whitespace and find the first non-blank character.  It is usually
+         * an opening bracket, except if minimal and maximal values are the same in which
+         * case the brackets may be ommited.
+         */
+        char c;
+        do if (index >= length) {
+            pos.setErrorIndex(length);
+            return null;
+        } while ((Character.isWhitespace(c = source.charAt(index++))));
+        /*
+         * Get the minimal and maximal values, and whatever they are inclusive or exclusive.
+         */
+        final RangeSymbols s = symbols;
+        final Object minValue, maxValue;
+        final boolean isMinIncluded, isMaxIncluded;
+        if (!s.isOpen(c)) {
+            /*
+             * No bracket. Assume that we have a single value for the range.
+             */
+            pos.setIndex(index - 1);
+            final Object value = elementFormat.parseObject(source, pos);
+            if (value == null) {
+                return null;
+            }
+            pos.setErrorIndex(index - 1); // In case of failure during the conversion.
+            minValue = maxValue = convert(value);
+            isMinIncluded = isMaxIncluded = true;
+        } else {
+            /*
+             * We found an opening bracket. Skip the whitespaces. If the next
+             * character is a closing bracket, then we have an empty range.
+             */
+            isMinIncluded = (c == s.openInclusive);
+            do if (index >= length) {
+                pos.setErrorIndex(length);
+                return null;
+            } while ((Character.isWhitespace(c = source.charAt(index++))));
+            if (s.isClose(c)) {
+                pos.setIndex(index);
+                pos.setErrorIndex(index - 1); // In case of failure during the conversion.
+                minValue = maxValue = convert(0);
+                isMaxIncluded = false;
+            } else {
+                /*
+                 * At this point, we have determined that the range is non-empty and there
+                 * is at least one value to parse. First, parse the minimal value.
+                 */
+                pos.setIndex(index - 1);
+                Object value = elementFormat.parseObject(source, pos);
+                if (pos == null) {
+                    return null;
+                }
+                pos.setErrorIndex(index - 1); // In case of failure during the conversion.
+                minValue = convert(value);
+                /*
+                 * Parsing of minimal value succeed and its type is valid. Now look for the
+                 * separator. If it is not present, then assume that we have a single value
+                 * for the range. The default RangeFormat implementation does not format
+                 * brackets in such case (see the "No bracket" case above), but we make the
+                 * parser tolerant to the case where the brackets are present.
+                 */
+                index = pos.getIndex();
+                do if (index >= length) {
+                    pos.setErrorIndex(length);
+                    return null;
+                } while ((Character.isWhitespace(c = source.charAt(index++))));
+                final String separator = s.separator;
+                if (source.regionMatches(index-1, separator, 0, separator.length())) {
+                    index += separator.length() - 1;
+                    do if (index >= length) {
+                        pos.setErrorIndex(length);
+                        return null;
+                    } while ((Character.isWhitespace(c = source.charAt(index++))));
+                    pos.setIndex(index - 1);
+                    value = elementFormat.parseObject(source, pos);
+                    if (pos == null) {
+                        return null;
+                    }
+                    pos.setErrorIndex(index - 1); // In case of failure during the conversion.
+                    maxValue = convert(value);
+                    /*
+                     * Skip one last time the whitespaces. The check for the closing bracket
+                     * (which is mandatory) is performed outside the "if" block since it is
+                     * common to the two "if ... else" cases.
+                     */
+                    index = pos.getIndex();
+                    do if (index >= length) {
+                        pos.setErrorIndex(length);
+                        return null;
+                    } while ((Character.isWhitespace(c = source.charAt(index++))));
+                } else {
+                    maxValue = minValue;
+                }
+                if (!s.isClose(c)) {
+                    pos.setErrorIndex(index - 1);
+                    return null;
+                }
+                isMaxIncluded = (c == s.closeInclusive);
+            }
+            pos.setIndex(index);
+        }
+        /*
+         * At this point, all required informations are available. Now build the range.
+         * In the special case were the target type is the generic Number type instead
+         * than a more specialized type, the finest suitable type will be determined.
+         */
+        if (Number.class.isAssignableFrom(elementClass)) {
+            @SuppressWarnings({"unchecked","rawtypes"})
+            Class<? extends Number> type = (Class) elementClass;
+            Number min = (Number) minValue;
+            Number max = (Number) maxValue;
+            if (Number.class.equals(type)) {
+                type = Classes.widestClass(Classes.finestClass(min), Classes.finestClass(max));
+                min  = Classes.cast(min, type);
+                max  = Classes.cast(max, type);
+            }
+            @SuppressWarnings({"unchecked","rawtypes"})
+            final NumberRange<?> range = new NumberRange(type, min, isMinIncluded, max, isMaxIncluded);
+            return range;
+        } else if (Date.class.isAssignableFrom(elementClass)) {
+            final Date min = (Date) minValue;
+            final Date max = (Date) maxValue;
+            return new DateRange(min, isMinIncluded, max, isMaxIncluded);
+        } else {
+            @SuppressWarnings({"unchecked","rawtypes"})
+            final Class<? extends Comparable<?>> type = (Class) elementClass;
+            final Comparable<?> min = (Comparable<?>) minValue;
+            final Comparable<?> max = (Comparable<?>) maxValue;
+            @SuppressWarnings({"unchecked","rawtypes"})
+            final Range<?> range = new Range(type, min, isMinIncluded, max, isMaxIncluded);
+            return range;
+        }
+    }
+
+    /**
+     * Converts the given value to the a {@link #elementClass} type. The given value should not
+     * be null, since a null values means that a parsing failed. The caller shall check for null
+     * values before to invoke this method.
+     */
+    private Object convert(final Object value) throws NonconvertibleObjectException {
+        if (elementClass.isInstance(value)) {
+            return value;
+        }
+        if (converter == null) {
+            converter = new AnyConverter();
+        }
+        return converter.convert(value, elementClass);
+    }
+}

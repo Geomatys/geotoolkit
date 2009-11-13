@@ -20,7 +20,7 @@
  * Simple data objects and miscellaneous utilities. This package provides:
  *
  * <ul>
- *   <li><p>Data objects:
+ *   <li><p>Data objects:</p>
  *   <ul>
  *     <li>{@link org.geotoolkit.util.Range} and its subclasses
  *        ({@link org.geotoolkit.util.DateRange},
@@ -31,9 +31,9 @@
  *        ({@link org.geotoolkit.util.SimpleInternationalString},
  *         {@link org.geotoolkit.util.DefaultInternationalString},
  *         {@link org.geotoolkit.util.ResourceInternationalString})</li>
- *   </ul></p></li>
+ *   </ul></li>
  *
- *   <li><p>General purpose static methods working on:
+ *   <li><p>General purpose static methods working on:</p>
  *   <ul>
  *     <li>{@code Object} or primitive types: {@link org.geotoolkit.util.Utilities},
  *         {@link org.geotoolkit.util.Characters}</li>
@@ -41,8 +41,17 @@
  *         {@link org.geotoolkit.util.Ranks}</li>
  *     <li>Other standard Java types: {@link org.geotoolkit.util.Comparators},
  *         {@link org.geotoolkit.util.Exceptions}</li>
- *   </ul></p></li>
+ *   </ul></li>
  * </ul>
+ * <p>
+ * More public static methods are defined in the packages relevant to their services, for example:
+ * {@link org.geotoolkit.math.XMath} for a few additional mathematic functions,
+ * {@link org.geotoolkit.referencing.operation.matrix.XAffineTransform} for informations about affine transforms,
+ * {@link org.geotoolkit.display.shape.ShapeUtilities} for calculation with <cite>Java2D</cite> lines and curves,
+ * {@link org.geotoolkit.gui.swing.tree.Trees} for parsing and formatting <cite>Swing</cite> trees,
+ * {@link org.geotoolkit.util.converter.Classes} for conversions of numeric types,
+ * {@link org.geotoolkit.referencing.CRS} for methods related to <cite>Coordinate Reference Systems</cite>, and
+ * {@link org.geotoolkit.factory.FactoryFinder} for factories of CRS and other objects,
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.04

@@ -1307,8 +1307,8 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             switch (attempt) {
                 /*
                  * On the first attempt, checks if the previous object can be returned directly.
-                 * This is acting like a cache, which we perform opportunistly only because we
-                 * have this information anyway.
+                 * This is acting like a cache, which we perform opportunistically only because
+                 * we have this information anyway.
                  */
                 case 0: {
                     if (code.equals(originalCode)) {

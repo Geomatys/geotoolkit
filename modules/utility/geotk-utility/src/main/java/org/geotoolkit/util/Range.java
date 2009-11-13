@@ -652,6 +652,8 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * <p>
      * If this range is a {@link MeasurementRange}, then the unit of measurement is
      * appended to the above string representation.
+     *
+     * @see org.geotoolkit.measure.RangeFormat
      */
     @Override
     public String toString() {
@@ -661,7 +663,12 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
         final T minValue = this.minValue;
         final T maxValue = this.maxValue;
         if (minValue != null && minValue.equals(maxValue)) {
-            return minValue.toString();
+            String value = minValue.toString();
+            final Unit<?> units = getUnits();
+            if (units != null) {
+                value = value + ' ' + units;
+            }
+            return value;
         }
         final StringBuilder buffer = new StringBuilder();
         buffer.append(isMinIncluded ? '[' : '(');

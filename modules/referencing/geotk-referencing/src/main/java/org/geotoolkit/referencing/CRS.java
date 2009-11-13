@@ -76,7 +76,7 @@ import org.geotoolkit.resources.Errors;
  * not a factory or a builder. It makes use of the GeoAPI factory interfaces provided by
  * {@link FactoryFinder}.
  * <p>
- * The methods defineed in this class can be grouped in three categories:
+ * The methods defined in this class can be grouped in three categories:
  * <p>
  * <ul>
  *   <li>Methods working with factories, like {@link #decode(String)}.</li>

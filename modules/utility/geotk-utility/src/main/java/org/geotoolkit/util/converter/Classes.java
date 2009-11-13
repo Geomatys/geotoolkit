@@ -37,9 +37,13 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Miscellaneous static methods working on {@link Class} objects. Some methods are specialized
- * on primitive types, sometime more specifically on numeric types and their {@link Number}
- * wrappers.
+ * Miscellaneous static methods working on {@link Class} objects. The methods provided in this
+ * class can be grouped in two categories:
+ * <p>
+ * <ul>
+ *   <li>Methods specialized for handling the {@link Number} type and its subclasses.</li>
+ *   <li>Generic methods for handling any kind of classes or interfaces.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.06
@@ -147,6 +151,7 @@ public final class Classes {
      * @return The type of an array of the given element type augmented by the given
      *         number of dimensions (which may be negative), or {@code null}.
      *
+     * @category type
      * @since 3.03
      */
     public static Class<?> changeArrayDimension(Class<?> element, int dimension) {
@@ -202,6 +207,8 @@ public final class Classes {
      * @param  field The field for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given field
      *         is not of a parameterized type.
+     *
+     * @category type
      */
     public static Class<?> boundOfParameterizedAttribute(final Field field) {
         return getActualTypeArgument(field.getGenericType());
@@ -221,6 +228,8 @@ public final class Classes {
      * @param  method The getter or setter method for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given method
      *         do not opperate on an object of a parameterized type.
+     *
+     * @category type
      */
     public static Class<?> boundOfParameterizedAttribute(final Method method) {
         Class<?> c = getActualTypeArgument(method.getGenericReturnType());
@@ -237,6 +246,8 @@ public final class Classes {
      * Delegates to {@link ParameterizedType#getActualTypeArguments} and returns the result as a
      * {@link Class}, provided that every objects are of the expected classes and the result was
      * an array of length 1 (so there is no ambiguity). Otherwise returns {@code null}.
+     *
+     * @category type
      */
     private static Class<?> getActualTypeArgument(Type type) {
         if (type instanceof ParameterizedType) {
@@ -280,6 +291,8 @@ public final class Classes {
      * @param  <T> The type of the given object.
      * @param  object The object for which to get the class, or {@code null}.
      * @return The class of the given object, or {@code null} if the given object was null.
+     *
+     * @category type
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends T> getClass(final T object) {
@@ -297,6 +310,7 @@ public final class Classes {
      * @param  objects The collection of objects.
      * @return The set of classes of all objects in the given collection.
      *
+     * @category type
      * @since 3.00
      */
     public static <T> Set<Class<? extends T>> getClasses(final Collection<? extends T> objects) {
@@ -318,6 +332,7 @@ public final class Classes {
      * @return All implemented interfaces (not including the given {@code type} if it was an
      *         interface), or an empty set if none. Callers can freely modify the returned set.
      *
+     * @category type
      * @since 3.01
      */
     public static Set<Class<?>> getAllInterfaces(final Class<?> type) {
@@ -328,6 +343,8 @@ public final class Classes {
 
     /**
      * Adds to the given collection every interfaces implemented by the given class or interface.
+     *
+     * @category type
      */
     private static void getAllInterfaces(final Class<?> type, final Set<Class<?>> interfaces) {
         for (final Class<?> i : type.getInterfaces()) {
@@ -348,6 +365,7 @@ public final class Classes {
      * @return The most specialized class, or {@code null} if the given collection does not contain
      *         at least one non-null element.
      *
+     * @category type
      * @since 3.01 (derived from 2.5)
      */
     public static Class<?> findSpecializedClass(final Collection<?> objects) {
@@ -377,6 +395,8 @@ public final class Classes {
      *
      * @param  types The collection where to search for a common parent.
      * @return The common parent, or {@code null} if the given collection is empty.
+     *
+     * @category type
      */
     private static Class<?> common(final Set<Class<?>> types) {
         final Iterator<Class<?>> it = types.iterator();
@@ -402,6 +422,7 @@ public final class Classes {
      * @return The most specific class common to all supplied objects, or {@code null} if the
      *         given collection does not contain at least one non-null element.
      *
+     * @category type
      * @since 3.01 (derived from 2.5)
      */
     public static Class<?> findCommonClass(final Collection<?> objects) {
@@ -422,6 +443,7 @@ public final class Classes {
      * @return The most specific class common to the supplied classes, or {@code null}
      *         if both {@code c1} and {@code c2} are null.
      *
+     * @category type
      * @since 3.01 (derived from 3.00)
      */
     public static Class<?> findCommonClass(Class<?> c1, Class<?> c2) {
@@ -451,6 +473,7 @@ public final class Classes {
      * @return The interfaces common to both classes, or an empty set if none.
      *         Callers can freely modify the returned set.
      *
+     * @category type
      * @since 3.01
      */
     public static Set<Class<?>> findCommonInterfaces(final Class<?> c1, final Class<?> c2) {
@@ -476,7 +499,9 @@ public final class Classes {
      * CS implementations has the same geometry with the following code:
      *
      * {@preformat java
-     *     if (implementSameInterfaces(cs1, cs2, CoordinateSystem.class))
+     *     if (implementSameInterfaces(cs1, cs2, CoordinateSystem.class)) {
+     *         // The two Coordinate System are of the same kind.
+     *     }
      * }
      *
      * @param <T>     A common parent for both objects.
@@ -486,6 +511,7 @@ public final class Classes {
      * @return        {@code true} if both objects implement the same set of interfaces,
      *                considering only sub-interfaces of {@code base}.
      *
+     * @category type
      * @since 3.01 (derived from 2.5)
      */
     public static <T> boolean implementSameInterfaces(
@@ -538,6 +564,10 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  type The type to test (may be {@code null}).
      * @return {@code true} if {@code type} is the primitive or wrapper class of
      *         {@link Float} or {@link Double}.
+     *
+     * @see #isInteger(Class)
+     *
+     * @category number
      */
     public static boolean isFloat(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
@@ -551,6 +581,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  type The type to test (may be {@code null}).
      * @return {@code true} if {@code type} is an integer type.
+     *
+     * @see #isFloat(Class)
+     *
+     * @category number
      */
     public static boolean isInteger(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
@@ -564,6 +598,10 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  type The type to test (may be {@code null}).
      * @return {@code true} if {@code type} is the primitive of wrapper class of
      *         {@link Long}, {@link Integer}, {@link Short} or {@link Byte}.
+     *
+     * @see #isInteger(Class)
+     *
+     * @category number
      */
     private static boolean isPrimitiveInteger(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
@@ -577,6 +615,8 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  type The primitive type (may be {@code null}).
      * @return The number of bits, or 0 if {@code type} is null.
      * @throws IllegalArgumentException if the given type is unknown.
+     *
+     * @category number
      */
     public static int primitiveBitCount(final Class<?> type) throws IllegalArgumentException {
         final Classes mapping = MAPPING.get(type);
@@ -598,6 +638,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  type The primitive type (may be {@code null}).
      * @return The type as a wrapper.
+     *
+     * @see #wrapperToPrimitive(Class)
+     *
+     * @category number
      */
     public static Class<?> primitiveToWrapper(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
@@ -610,6 +654,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  type The wrapper type (may be {@code null}).
      * @return The type as a primitive.
+     *
+     * @see #primitiveToWrapper(Class)
+     *
+     * @category number
      */
     public static Class<?> wrapperToPrimitive(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
@@ -628,6 +676,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  n2 The second number, or {@code null}.
      * @return The widest type of the given numbers, or {@code null} if not {@code n1} and {@code n2} are null.
      * @throws IllegalArgumentException If a number is not of a known type.
+     *
+     * @see #widestClass(Number, Number)
+     * @see #finestClass(Number, Number)
+     *
+     * @category number
      */
     public static Class<? extends Number> widestClass(final Number n1, final Number n2)
             throws IllegalArgumentException
@@ -656,6 +709,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  c2 The second number type, or {@code null}.
      * @return The widest of the given types, or {@code null} if both {@code c1} and {@code c2} are null.
      * @throws IllegalArgumentException If one of the given types is unknown.
+     *
+     * @see #widestClass(Class, Class)
+     * @see #finestClass(Number, Number)
+     *
+     * @category number
      */
     public static Class<? extends Number> widestClass(final Class<? extends Number> c1,
                                                       final Class<? extends Number> c2)
@@ -683,6 +741,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  n2 The second number.
      * @return The finest type of the given numbers.
      * @throws IllegalArgumentException If a number is not of a known type.
+     *
+     * @see #finestClass(Class, Class)
+     * @see #widestClass(Class, Class)
+     *
+     * @category number
      */
     public static Class<? extends Number> finestClass(final Number n1, final Number n2)
             throws IllegalArgumentException
@@ -711,6 +774,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  c2 The second number type, or {@code null}.
      * @return The finest of the given types, or {@code null} if both {@code c1} and {@code c2} are null.
      * @throws IllegalArgumentException If one of the given types is unknown.
+     *
+     * @see #finestClass(Number, Number)
+     * @see #widestClass(Class, Class)
+     *
+     * @category number
      */
     public static Class<? extends Number> finestClass(final Class<? extends Number> c1,
                                                       final Class<? extends Number> c2)
@@ -737,6 +805,9 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  value The value to be wrapped in a finer (if possible) {@link Number}.
      * @return The finest type capable to hold the given value.
      *
+     * @see #finestNumber(Number)
+     *
+     * @category number
      * @since 3.06
      */
     public static Class<? extends Number> finestClass(final Number value) {
@@ -756,6 +827,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
+     *
+     * @see #finestNumber(double)
+     *
+     * @category number
      */
     public static Class<? extends Number> finestClass(final double value) {
         final long lg = (long) value;
@@ -786,6 +861,9 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
      *
+     * @see #finestNumber(long)
+     *
+     * @category number
      * @since 3.00
      */
     public static Class<? extends Number> finestClass(final long value) {
@@ -805,6 +883,9 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  value The value to be wrapped in a finer (if possible) {@link Number}.
      * @return The finest type capable to hold the given value.
      *
+     * @see #finestClass(Number)
+     *
+     * @category number
      * @since 3.06
      */
     public static Number finestNumber(final Number value) {
@@ -827,6 +908,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
+     *
+     * @see #finestClass(double)
+     *
+     * @category number
      */
     public static Number finestNumber(final double value) {
         final long lg = (long) value;
@@ -857,6 +942,9 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The given value as a number of the finest type capable to hold it.
      *
+     * @see #finestClass(long)
+     *
+     * @category number
      * @since 3.00
      */
     public static Number finestNumber(final long value) {
@@ -874,6 +962,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @return The finest type capable to hold the given value.
      * @throws NumberFormatException if the given value can not be parsed as a number.
      *
+     * @see #finestNumber(Number)
+     * @see #finestNumber(double)
+     * @see #finestNumber(long)
+     *
+     * @category number
      * @since 3.00
      */
     public static Number finestNumber(String value) throws NumberFormatException {
@@ -910,6 +1003,8 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param c The destination type.
      * @return The number casted to the given type.
      * @throws IllegalArgumentException If the given type is unknown.
+     *
+     * @category number
      */
     @SuppressWarnings("unchecked")
     public static <N extends Number> N cast(final Number n, final Class<N> c)
@@ -953,6 +1048,8 @@ compare:for (int i=0; i<c1.length; i++) {
      * @throws IllegalArgumentException if {@code type} is not a recognized type.
      * @throws NumberFormatException if {@code type} is a subclass of {@link Number} and the
      *         string value is not parseable as a number of the specified type.
+     *
+     * @category number
      */
     @SuppressWarnings("unchecked")
     public static <T> T valueOf(final Class<T> type, final String value)
@@ -991,6 +1088,8 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param type A type (usually either a primitive type or its wrapper).
      * @return The constant for the given type, or {@link #OTHER} if unknow.
+     *
+     * @category number
      */
     public static byte getEnumConstant(final Class<?> type) {
         final Classes mapping = MAPPING.get(type);
@@ -1012,6 +1111,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  classe The object class (may be {@code null}).
      * @return A short class name for the specified object.
+     *
+     * @see #getShortClassName(Object)
+     *
+     * @category type
      */
     public static String getShortName(Class<?> classe) {
         if (classe == null) {
@@ -1035,6 +1138,10 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @param  object The object (may be {@code null}).
      * @return A short class name for the specified object.
+     *
+     * @see #getShortName(Class)
+     *
+     * @category type
      */
     public static String getShortClassName(final Object object) {
         return getShortName(getClass(object));
