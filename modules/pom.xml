@@ -125,6 +125,7 @@
     <module>processing</module>
     <module>display</module>
     <module>jaxb-xml-binding</module>
+    <module>jaxp-xml-parser</module>
     <module>coverage</module>
   </modules>
 
