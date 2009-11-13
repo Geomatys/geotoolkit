@@ -109,7 +109,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             final MutableStyle selectionStyle = layer.getSelectionStyle();
             if(selectionStyle == null){
                 selectionRules = GO2Utilities.getValidRules(
-                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getScale(), sft);
+                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getGeographicScale(), sft);
             }else{
                 selectionRules = GO2Utilities.getValidRules(
                         selectionStyle, renderingContext.getScale(), sft);
@@ -146,7 +146,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         }else{
             rules = GO2Utilities.getValidCachedRules(
-                layer.getStyle(), renderingContext.getScale(), sft);
+                layer.getStyle(), renderingContext.getGeographicScale(), sft);
         }
 
         //we perform a first check on the style to see if there is at least
@@ -474,7 +474,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if (!layer.isVisible()) return graphics;
 
         final Name featureTypeName = layer.getFeatureSource().getSchema().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getScale(), featureTypeName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getGeographicScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just return null.
