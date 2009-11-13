@@ -38,7 +38,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        requestParameters.put("SERVICE",    "WS");
+        requestParameters.put("SERVICE",    "WMS");
         requestParameters.put("REQUEST",    "GetCapabilities");
         requestParameters.put("VERSION",    version);        
         return super.getURL();
