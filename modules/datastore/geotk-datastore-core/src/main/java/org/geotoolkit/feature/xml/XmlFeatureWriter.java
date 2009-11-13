@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.feature.xml;
 
+import java.io.Writer;
+import java.io.OutputStream;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -23,7 +25,6 @@ import org.opengis.feature.simple.SimpleFeature;
  * A interface to serialize feature in XML.
  *
  * @module pending
- * 
  * @author Guilhem Legal (Geomatys)
  */
 public interface XmlFeatureWriter {
@@ -37,11 +38,41 @@ public interface XmlFeatureWriter {
     String write(SimpleFeature feature);
 
     /**
+     * Write an XML representation of the specified feature into the Writer.
+     *
+     * @param feature The feature to marshall.
+     */
+    void write(SimpleFeature feature, Writer writer);
+
+
+    /**
+     * Write an XML representation of the specified feature into the Stream.
+     *
+     * @param feature The feature to marshall.
+     */
+    void write(SimpleFeature feature, OutputStream stream);
+    
+    /**
      * Return an XML representation of the specified feature collection.
      *
      * @param feature The feature collection to marshall.
      * @return An XML string representing the feature collection.
      */
     String write(FeatureCollection featureCollection);
+
+    /**
+     * Write an XML representation of the specified feature collection into the Writer.
+     *
+     * @param feature The feature to marshall.
+     */
+    void write(FeatureCollection collection, Writer writer);
+
+
+    /**
+     * Write an XML representation of the specified feature collection into the Stream.
+     *
+     * @param feature The feature to marshall.
+     */
+    void write(FeatureCollection collection, OutputStream stream);
     
 }
