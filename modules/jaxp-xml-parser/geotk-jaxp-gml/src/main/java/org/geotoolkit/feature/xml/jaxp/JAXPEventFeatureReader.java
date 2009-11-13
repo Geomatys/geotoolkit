@@ -18,7 +18,6 @@
 package org.geotoolkit.feature.xml.jaxp;
 
 
-import com.sun.xml.internal.stream.events.EndElementEvent;
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
 import java.io.Reader;
@@ -42,10 +41,8 @@ import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.Converters;
@@ -55,7 +52,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.filter.identity.FeatureId;
 
 /**
  *
@@ -138,7 +134,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                         return readFeatureCollection(eventReader);
 
                     } else if (featureType.getName().equals(name)) {
-                        return readFeature(eventReader);
+                        return readFeature(eventReader, 1);
                     } else {
                         throw new IllegalArgumentException("The xml does not describte the same type of feature: \n " +
                                                            "Expected: " + featureType.getName() + '\n'                  +
@@ -152,7 +148,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
-    public SimpleFeature readFeature(XMLEventReader eventReader) {
+    public SimpleFeature readFeature(XMLEventReader eventReader, int ordinal) {
         builder.reset();
         try {
             while (eventReader.hasNext()) {
@@ -166,7 +162,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                         XMLEvent contentEvent = eventReader.nextEvent();
                         if (contentEvent.isCharacters()) {
                             Characters content = contentEvent.asCharacters();
-                            LOGGER.info("find value:" + content.getData() + " for attribute :" + q.getLocalPart());
+                            LOGGER.finer("find value:" + content.getData() + " for attribute :" + q.getLocalPart());
                             PropertyDescriptor pdesc = featureType.getDescriptor(q.getLocalPart());
                             if (pdesc != null) {
                                 Class propertyType       = pdesc.getType().getBinding();
@@ -185,7 +181,6 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                         try {
                             Unmarshaller un     = marshallpool.acquireUnmarshaller();
                             JTSGeometry isoGeom = (JTSGeometry) ((JAXBElement)un.unmarshal(eventReader)).getValue();
-                            System.out.println("isogeom:" + isoGeom.getClass());
                             Geometry jtsGeom    = isoGeom.getJTSGeometry();
                             builder.set("the_geom", jtsGeom);
                         } catch (JAXBException ex) {
@@ -202,7 +197,6 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                 }
             }
 
-            int ordinal   = 1;
             return builder.buildFeature(featureType.getName().getLocalPart() + '.' + ordinal);
 
 
@@ -214,19 +208,21 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
 
     private FeatureCollection readFeatureCollection(XMLEventReader eventReader) {
         FeatureCollection collection = FeatureCollectionUtilities.createCollection(null, (SimpleFeatureType) featureType);
+        List<SimpleFeature> features = new ArrayList<SimpleFeature>();
         try {
+            int i = 1;
              while (eventReader.hasNext()) {
                 XMLEvent event = eventReader.nextEvent();
                 if (event.isStartElement()) {
                     StartElement startEvent = event.asStartElement();
                     Name name               = getNameFromQname(startEvent.getName());
-                    System.out.println("name:" + name);
                     if (name.getLocalPart().equals("featureMember")) {
                         continue;
 
                     } else if (featureType.getName().equals(name)) {
-                        SimpleFeature feature = readFeature(eventReader);
+                        SimpleFeature feature = readFeature(eventReader, i);
                         collection.add(feature);
+                        i++;
                     } else {
                         throw new IllegalArgumentException("The xml does not describte the same type of feature: \n " +
                                                            "Expected: " + featureType.getName() + '\n'                  +
