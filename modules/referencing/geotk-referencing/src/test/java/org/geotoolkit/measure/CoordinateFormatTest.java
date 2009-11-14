@@ -34,7 +34,6 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -45,7 +44,6 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.0
  */
-@Depend({UnitsTest.class, AngleFormatTest.class})
 public final class CoordinateFormatTest {
     /**
      * Tests formatting of a 4-dimensional coordinate. The same format is configured in many

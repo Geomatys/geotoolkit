@@ -29,7 +29,6 @@ import org.opengis.parameter.*;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.measure.UnitsTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
 import org.junit.*;
@@ -46,7 +45,7 @@ import static org.geotoolkit.test.Commons.serialize;
  *
  * @since 2.1
  */
-@Depend({UnitsTest.class, ParameterDescriptorTest.class})
+@Depend(ParameterDescriptorTest.class)
 public final class ParameterTest {
     /**
      * Strict tolerance factor for floating point comparisons. In the particular
