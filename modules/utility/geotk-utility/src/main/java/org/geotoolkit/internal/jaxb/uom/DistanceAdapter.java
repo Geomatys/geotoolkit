@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
+import javax.measure.unit.NonSI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -24,6 +25,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * The ISO-19103 {@code Distance} with a {@code unit of measure} defined, using the
  * {@code gco} namespace linked to the {@link http://www.isotc211.org/2005/gco} URL.
+ * <p>
+ * This class is identical to {@link MeasureAdapter} except for the name of the
+ * element, which is {@code "Distance"}.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
@@ -51,7 +55,7 @@ public final class DistanceAdapter extends XmlAdapter<DistanceAdapter, Double> {
      * @param value The value.
      */
     private DistanceAdapter(final Double value) {
-        distance = new Measure(value, "pixel", false);
+        distance = new Measure(value, NonSI.PIXEL);
     }
 
     /**

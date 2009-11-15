@@ -71,8 +71,13 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 
 
 /**
- * Tests the marshalling and unmarshalling of a {@linkplain DefaultMetadata metadata}
- * object, containing a {@linkplain DefaultVerticalCRS vertical CRS}.
+ * Tests the marshalling and unmarshalling of a few CRS objects.
+ * <p>
+ * <ul>
+ *   <li>{@linkplain DefaultMetadata Metadata} object containing a
+ *       {@linkplain DefaultVerticalCRS vertical CRS}</li>
+ *   <li>{@linkplain GeographicCRS Geographic CRS}</li>
+ * </ul>
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)

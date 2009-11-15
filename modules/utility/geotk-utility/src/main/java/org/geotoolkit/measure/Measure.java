@@ -81,7 +81,7 @@ public final class Measure extends Number {
     @Override
     public int hashCode() {
         long code = Double.doubleToLongBits(value);
-        return (int) code ^ (int)(code >>> 32) ^ unit.hashCode();
+        return Utilities.hash(unit, (int) code ^ (int)(code >>> 32));
     }
 
     /**
@@ -105,7 +105,7 @@ public final class Measure extends Number {
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = new StringBuilder();
-        return buffer.append(value).append(' ').append(unit).toString();
+        final String n = String.valueOf(value);
+        return (unit != null) ? n + ' ' + unit : n;
     }
 }

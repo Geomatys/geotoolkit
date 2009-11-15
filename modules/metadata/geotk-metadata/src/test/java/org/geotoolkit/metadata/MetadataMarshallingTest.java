@@ -69,13 +69,13 @@ import org.geotoolkit.test.Depend;
 @Depend(MetadataStandardTest.class)
 public final class MetadataMarshallingTest {
     /**
-     * Generates an XML tree from the annotations on the {@link DefaultMetadata} class,
-     * and writes it in a temporary buffer. This file is then read by the unmarshaller.
+     * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
+     * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.
      * Some assertions about the validity of the unmarshalled data are checked.
      *
      * @throws JAXBException If an error occured during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException If a writing error in the temporary file occured.
+     * @throws IOException Should never happen since we are writting to a buffer.
      */
     @Test
     public void testMarshalling() throws JAXBException, IOException {

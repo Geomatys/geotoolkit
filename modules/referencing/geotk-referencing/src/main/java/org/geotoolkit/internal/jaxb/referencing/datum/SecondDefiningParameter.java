@@ -23,8 +23,10 @@ import javax.measure.unit.Unit;
 
 import org.opengis.referencing.datum.Ellipsoid;
 
-import org.geotoolkit.internal.jaxb.uom.Measure;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.Measure;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -38,6 +40,7 @@ import org.geotoolkit.xml.Namespaces;
  * class is non-null; all other fields shall be null.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
  *
  * @since 3.05
@@ -52,24 +55,14 @@ public final class SecondDefiningParameter {
     public SecondDefiningParameter secondDefiningParameter;
 
     /**
-     * The polar radius. {@code null} if the {@link #inverseFlattening} value is defined.
+     * The measure, which is either the polar radius or the inverse of the flattening value.
+     * We distinguish those two cases by the unit: if the measure is the inverse flattening,
+     * then the unit must be {@link Unit#ONE}.
      *
      * @see Ellipsoid#getSemiMinorAxis
-     */
-    public Double semiMinorAxis;
-
-    /**
-     * The inverse of the flattening value. {@code null} if the {@link #semiMinorAxis} value
-     * is defined.
-     *
      * @see Ellipsoid#getInverseFlattening
      */
-    public Double inverseFlattening;
-
-    /**
-     * Unit of the ellipsoid axes.
-     */
-    public Unit<?> unit;
+    public Measure measure;
 
     /**
      * JAXB mandatory empty constructor.
@@ -88,11 +81,32 @@ public final class SecondDefiningParameter {
             secondDefiningParameter = new SecondDefiningParameter(ellipsoid, false);
         } else {
             if (ellipsoid.isIvfDefinitive()) {
-                inverseFlattening = ellipsoid.getInverseFlattening();
+                measure = new Measure(ellipsoid.getInverseFlattening(), Unit.ONE);
             } else {
-                semiMinorAxis = ellipsoid.getSemiMinorAxis();
+                measure = new Measure(ellipsoid.getSemiMinorAxis(), ellipsoid.getAxisUnit());
+                ensureLinearUnit();
             }
-            unit = ellipsoid.getAxisUnit();
+        }
+    }
+
+    /**
+     * Returns {@code true} if the measure is the inverse of the flattening value.
+     *
+     * @return {@code true} if the measure is the inverse of the flattening value.
+     */
+    public boolean isIvfDefinitive() {
+        return Unit.ONE.equals(measure.unit);
+    }
+
+    /**
+     * Ensure that the unit of measurement is a linear unit. Actually the main purpose
+     * of this method is to make sure that the unit is not {@link Unit#ONE}, in order
+     * to avoid confusion with the inverse of flattening value.
+     */
+    private void ensureLinearUnit() {
+        final Unit<?> unit = measure.unit;
+        if (unit != null && !Units.isLinear(unit)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
         }
     }
 
@@ -103,16 +117,17 @@ public final class SecondDefiningParameter {
      */
     @XmlElement(namespace = Namespaces.GML)
     public Measure getSemiMinorAxis() {
-        return (semiMinorAxis != null) ? new Measure(semiMinorAxis, unit) : null;
+        return isIvfDefinitive() ? null : measure;
     }
 
     /**
      * Sets the semi-minor axis value. This is invoked by JAXB for unmarshalling.
      *
-     * @param semiMinorAxis The semi-minor axis value.
+     * @param measure The semi-minor axis value.
      */
-    public void setSemiMinorAxis(final Measure semiMinorAxis) {
-        this.semiMinorAxis = semiMinorAxis.value;
+    public void setSemiMinorAxis(final Measure measure) {
+        this.measure = measure;
+        ensureLinearUnit();
     }
 
     /**
@@ -123,15 +138,20 @@ public final class SecondDefiningParameter {
      */
     @XmlElement(namespace = Namespaces.GML)
     public Measure getInverseFlattening() {
-        return (inverseFlattening != null) ? new Measure(inverseFlattening, null) : null;
+        return isIvfDefinitive() ? measure : null;
     }
 
     /**
      * Sets the inverse of the flattening value. This is invoked by JAXB for unmarshalling.
+     * <p>
+     * Note that some GML wrongly assign the "m" unit to this measure, which is wrong. This
+     * method overwrite the unit with a dimensionless one. This is required anyway in order
+     * to distinguish between the two cases.
      *
-     * @param inverseFlattening The inverse flattening value.
+     * @param measure The inverse flattening value.
      */
-    public void setInverseFlattening(final Measure inverseFlattening) {
-        this.inverseFlattening = inverseFlattening.value;
+    public void setInverseFlattening(final Measure measure) {
+        this.measure = measure;
+        measure.unit = Unit.ONE;
     }
 }

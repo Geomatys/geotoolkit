@@ -159,7 +159,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     /**
      * The units of the semi-major and semi-minor axis values.
      */
-    private final Unit<Length> unit;
+    private Unit<Length> unit;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -392,6 +392,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             throw new IllegalStateException();
         }
         semiMajorAxis = uom.value;
+        unit = uom.unit.asType(Length.class);
     }
 
     /**
@@ -468,21 +469,32 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
         while (second.secondDefiningParameter != null) {
             second = second.secondDefiningParameter;
         }
-        final Double ivf = second.inverseFlattening;
-        if (ivf != null) {
-            if (inverseFlattening == 0) {
-                inverseFlattening = ivf;
-                ivfDefinitive = true;
-                return;
+        final Measure measure = second.measure;
+        if (measure != null) {
+            double value = measure.value;
+            if (second.isIvfDefinitive()) {
+                if (inverseFlattening == 0) {
+                    inverseFlattening = value;
+                    ivfDefinitive = true;
+                    return;
+                }
+            } else {
+                final Unit<?> uom = measure.unit;
+                if (uom != null) {
+                    if (unit != null) {
+                        value = uom.getConverterTo(unit).convert(value);
+                    } else {
+                        unit = uom.asType(Length.class);
+                    }
+                }
+                if (semiMinorAxis == 0) {
+                    semiMinorAxis = value;
+                    ivfDefinitive = false;
+                    return;
+                }
             }
-        } else {
-            if (semiMinorAxis == 0) {
-                semiMinorAxis = second.semiMinorAxis;
-                ivfDefinitive = false;
-                return;
-            }
+            throw new IllegalStateException();
         }
-        throw new IllegalStateException();
     }
 
     /**

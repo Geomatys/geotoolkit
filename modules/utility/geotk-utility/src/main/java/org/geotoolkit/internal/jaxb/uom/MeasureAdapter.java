@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
+import javax.measure.unit.NonSI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
@@ -24,6 +25,9 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 /**
  * The ISO-19103 {@code Measures} with a {@code unit of measure} defined, using the
  * {@code gco} namespace linked to the {@link http://www.isotc211.org/2005/gco} URL.
+ * <p>
+ * This class is identical to {@link DistanceAdapter} except for the name of the
+ * element, which is {@code "Measure"}.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
@@ -32,7 +36,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @since 2.5
  * @module
  */
-public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapter, Double> {
+public final class MeasureAdapter extends XmlAdapter<MeasureAdapter, Double> {
     /**
      * A proxy representation of the {@code <gco:Measure>} element.
      */
@@ -42,7 +46,7 @@ public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapte
     /**
      * Empty constructor used only by JAXB.
      */
-    public MeasureInPixelAdapter() {
+    public MeasureAdapter() {
     }
 
     /**
@@ -50,8 +54,8 @@ public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapte
      *
      * @param value The value.
      */
-    private MeasureInPixelAdapter(final Double value) {
-        measure = new Measure(value, "pixel", false);
+    private MeasureAdapter(final Double value) {
+        measure = new Measure(value, NonSI.PIXEL);
     }
 
     /**
@@ -61,7 +65,7 @@ public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapte
      * @return The double value extracted from the adapter.
      */
     @Override
-    public Double unmarshal(final MeasureInPixelAdapter value) {
+    public Double unmarshal(final MeasureAdapter value) {
         if (value == null || value.measure == null) {
             return null;
         }
@@ -77,10 +81,10 @@ public final class MeasureInPixelAdapter extends XmlAdapter<MeasureInPixelAdapte
      *         by {@code <gco:Measure>} element, with an {@code uom} attribute.
      */
     @Override
-    public MeasureInPixelAdapter marshal(final Double value) {
+    public MeasureAdapter marshal(final Double value) {
         if (value == null) {
             return null;
         }
-        return new MeasureInPixelAdapter(value);
+        return new MeasureAdapter(value);
     }
 }
