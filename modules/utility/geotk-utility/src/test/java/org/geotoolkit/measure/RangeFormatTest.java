@@ -17,13 +17,18 @@
  */
 package org.geotoolkit.measure;
 
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.FieldPosition;
 import java.text.ParsePosition;
+import java.text.ParseException;
 import javax.measure.unit.SI;
 
 import org.geotoolkit.util.Range;
+import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 
@@ -237,5 +242,53 @@ public final class RangeFormatTest {
         assertEquals(NumberRange.create((int)      10, (int)  40000), parse("[   10 … 40000]" ));
         assertEquals(NumberRange.create((int)       1, (int)  50000), parse("[ 1.00 … 50000]" ));
         assertEquals(NumberRange.create((float)   8.5, (float)    4), parse("[ 8.50 …     4]" ));
+    }
+
+    /**
+     * Tests the parsing of invalid ranges.
+     */
+    @Test
+    public void testParseFailure() {
+        format   = new RangeFormat(Locale.CANADA);
+        parsePos = new ParsePosition(0);
+
+        assertNull(parse("[-A … 20]")); assertEquals(1, parsePos.getErrorIndex());
+        assertNull(parse("[10 … TB]")); assertEquals(6, parsePos.getErrorIndex());
+        assertNull(parse("[10 x 20]")); assertEquals(4, parsePos.getErrorIndex());
+        assertNull(parse("[10 … 20" )); assertEquals(8, parsePos.getErrorIndex());
+        try {
+            assertNull(format.parse("[10 … TB]"));
+            fail("Parsing should have failed.");
+        } catch (ParseException e) {
+            // This is the expected exception.
+            assertEquals(6, e.getErrorOffset());
+        }
+    }
+
+    /**
+     * Tests formatting and parsing with dates.
+     */
+    @Test
+    public void testDateRange() {
+        format   = new RangeFormat(Locale.FRANCE, TimeZone.getTimeZone("UTC"));
+        minPos   = new FieldPosition(RangeFormat.MIN_VALUE_FIELD | DateFormat.YEAR_FIELD);
+        maxPos   = new FieldPosition(RangeFormat.MAX_VALUE_FIELD | DateFormat.YEAR_FIELD);
+        parsePos = new ParsePosition(0);
+
+        final long HOUR = 60L * 60 * 1000;
+        final long DAY  = 24L * HOUR;
+        final long YEAR = Math.round(365.25 * DAY);
+
+        final DateRange range = new DateRange(new Date(15*DAY + 18*HOUR), new Date(20*YEAR + 15*DAY + 9*HOUR));
+        final String text =  format(range);
+        assertEquals("[16/01/70 18:00 … 16/01/90 09:00]", text);
+        assertEquals(range, parse(text));
+        /*
+         * Following is for a visual check of the default toString() method,
+         * but is not part of the test suite because it may vary.
+         */
+        if (false) {
+            System.out.println(range);
+        }
     }
 }

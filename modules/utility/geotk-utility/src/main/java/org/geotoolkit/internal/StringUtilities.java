@@ -152,7 +152,7 @@ public final class StringUtilities {
         int last = 0;
         for (int i=1; i<=length; i++) {
             if (i == length ||
-                (Character.isUpperCase(identifier.charAt(i  )) &&
+                (Character.isUpperCase(identifier.charAt(i)) &&
                  Character.isLowerCase(identifier.charAt(i-1))))
             {
                 final int pos = buffer.length();
@@ -171,6 +171,58 @@ public final class StringUtilities {
             buffer.setLength(lg);
         }
         return buffer;
+    }
+
+    /**
+     * Returns the token starting at the given offset in the given text. For the purpose of this
+     * method, a "token" is any sequence of consecutive characters of the same type, as defined
+     * below.
+     * <p>
+     * Lets define <var>c</var> as the first non-blank character located at an index equals or
+     * greater than the given offset. Then the characters that are considered of the same type
+     * are:
+     * <p>
+     * <ul>
+     *   <li>If <var>c</var> is a
+     *       {@linkplain Character#isJavaIdentifierStart(char) Java identifier start},
+     *       then any following character that are
+     *       {@linkplain Character#isJavaIdentifierPart(char) Java identifier part}.</li>
+     *   <li>Otherwise any character for which {@link Character#getType(char)} returns
+     *       the same value than for <var>c</var>.</li>
+     * </ul>
+     *
+     * @param  text The text for which to get the token.
+     * @param  offset Index of the fist character to consider in the given text.
+     * @return A sub-sequence of {@code text} starting at the given offset, or an empty string
+     *         if there is no non-blank character at or after the given offset.
+     *
+     * @since 3.06
+     */
+    public static CharSequence token(final CharSequence text, int offset) {
+        final int length = text.length();
+        int upper = offset;
+        /*
+         * Skip whitespaces. At the end of this loop,
+         * 'c' will be the first non-blank character.
+         */
+        char c;
+        do if (upper >= length) return "";
+        while (Character.isWhitespace(c = text.charAt(upper++)));
+        /*
+         * Advance over all characters "of the same type".
+         */
+        offset = upper - 1;
+        if (Character.isJavaIdentifierStart(c)) {
+            while (upper<length && Character.isJavaIdentifierPart(text.charAt(upper))) {
+                upper++;
+            }
+        } else {
+            final int type = Character.getType(text.charAt(offset));
+            while (upper<length && Character.getType(text.charAt(upper)) == type) {
+                upper++;
+            }
+        }
+        return text.subSequence(offset, upper);
     }
 
     /**
@@ -298,7 +350,7 @@ cmp:    while (ia < lga) {
     }
 
     /**
-     * Returns the leading part which is common to the two given string.
+     * Returns the leading part which is common in to the two given strings.
      * If one of those string is {@code null}, then the other string is returned.
      *
      * @param s1 The first string, or {@code null}.
@@ -330,7 +382,7 @@ cmp:    while (ia < lga) {
     }
 
     /**
-     * Returns the trailing part which is common to the two given string.
+     * Returns the trailing part which is common in to the two given strings.
      * If one of those string is {@code null}, then the other string is returned.
      *
      * @param s1 The first string, or {@code null}.

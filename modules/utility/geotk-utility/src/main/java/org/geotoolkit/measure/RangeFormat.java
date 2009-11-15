@@ -26,6 +26,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
+import java.text.ParseException;
 import java.text.ParsePosition;
 
 import javax.measure.unit.Unit;
@@ -38,6 +39,7 @@ import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -366,6 +368,19 @@ public class RangeFormat extends Format {
 
     /**
      * Parses text from a string to produce a range. The default implementation delegates to
+     * {@link #parse(String)} with no additional work.
+     *
+     * @param  source The text, part of which should be parsed.
+     * @return A range parsed from the string, or {@code null} in case of error.
+     * @throws ParseException If the given string can not be fully parsed.
+     */
+    @Override
+    public Object parseObject(final String source) throws ParseException {
+        return parse(source);
+    }
+
+    /**
+     * Parses text from a string to produce a range. The default implementation delegates to
      * {@link #parse(String, ParsePosition)} with no additional work.
      *
      * @param  source The text, part of which should be parsed.
@@ -375,6 +390,33 @@ public class RangeFormat extends Format {
     @Override
     public Object parseObject(final String source, final ParsePosition pos) {
         return parse(source, pos);
+    }
+
+    /**
+     * Parses text from the given string to produce a range. This method use the full string.
+     * If there is some unparsed characters after the parsed range, then this method thrown an
+     * exception.
+     *
+     * @param  source The text to parse.
+     * @return The parsed range (never {@code null}).
+     * @throws ParseException If the given string can not be fully parsed.
+     */
+    public Range<?> parse(final String source) throws ParseException {
+        final ParsePosition pos = new ParsePosition(0);
+        NonconvertibleObjectException failure = null;
+        try {
+            final Range<?> range = tryParse(source, pos);
+            if (range != null) {
+                return range;
+            }
+        } catch (NonconvertibleObjectException e) {
+            failure = e;
+        }
+        final int errorIndex = pos.getErrorIndex();
+        final ParseException e = new ParseException(Errors.format(Errors.Keys.UNPARSABLE_STRING_$2,
+                source, StringUtilities.token(source, errorIndex)), errorIndex);
+        e.initCause(failure);
+        throw e;
     }
 
     /**
@@ -444,6 +486,7 @@ public class RangeFormat extends Format {
             pos.setErrorIndex(index - 1); // In case of failure during the conversion.
             minValue = maxValue = convert(value);
             isMinIncluded = isMaxIncluded = true;
+            index = pos.getIndex();
         } else {
             /*
              * We found an opening bracket. Skip the whitespaces. If the next
@@ -519,6 +562,25 @@ public class RangeFormat extends Format {
             pos.setIndex(index);
         }
         /*
+         * Parses the unit, if any. The units are always optional: if we can not parse
+         * them, then we will consider that the parsing stopped before the units.
+         */
+        Unit<?> unit = null;
+        if (unitFormat != null) {
+            while (index < length) {
+                if (Character.isWhitespace(source.charAt(index))) {
+                    index++;
+                    continue;
+                }
+                // At this point we found a character that could be
+                // the begining of a unit symbol. Try to parse that.
+                pos.setIndex(index);
+// TODO: Uncomment when we have upgrated JSR-275 dependency.
+//              unit = unitFormat.parse(source, pos);
+                break;
+            }
+        }
+        /*
          * At this point, all required informations are available. Now build the range.
          * In the special case were the target type is the generic Number type instead
          * than a more specialized type, the finest suitable type will be determined.
@@ -532,6 +594,11 @@ public class RangeFormat extends Format {
                 type = Classes.widestClass(Classes.finestClass(min), Classes.finestClass(max));
                 min  = Classes.cast(min, type);
                 max  = Classes.cast(max, type);
+            }
+            if (unit != null) {
+                @SuppressWarnings({"unchecked","rawtypes"})
+                final MeasurementRange<?> range = new MeasurementRange(type, min, isMinIncluded, max, isMaxIncluded, unit);
+                return range;
             }
             @SuppressWarnings({"unchecked","rawtypes"})
             final NumberRange<?> range = new NumberRange(type, min, isMinIncluded, max, isMaxIncluded);

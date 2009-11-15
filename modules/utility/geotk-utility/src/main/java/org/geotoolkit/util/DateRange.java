@@ -29,10 +29,13 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A range of dates.
+ * A range of dates. The elements in this range are {@link Date} objects.
+ * Consequently the precision of {@code DateRange} objects is milliseconds.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
+ *
+ * @see org.geotoolkit.measure.RangeFormat
  *
  * @since 2.5
  * @module

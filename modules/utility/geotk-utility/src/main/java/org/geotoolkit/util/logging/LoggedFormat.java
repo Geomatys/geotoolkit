@@ -29,6 +29,7 @@ import java.util.logging.LogRecord;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -347,16 +348,7 @@ public class LoggedFormat<T> extends Format {
             }
             return resources.getString(Errors.Keys.UNEXPECTED_END_OF_STRING);
         }
-        int upper = errorIndex;
-        if (upper < length) {
-            final int type = Character.getType(text.charAt(upper));
-            while (++upper < length) {
-                if (Character.getType(text.charAt(upper)) != type) {
-                    break;
-                }
-            }
-        }
-        final String error = text.substring(errorIndex, upper);
+        final String error = StringUtilities.token(text, errorIndex).toString();
         text = text.substring(index);
         if (level != null) {
             return resources.getLogRecord(level, Errors.Keys.UNPARSABLE_STRING_$2, text, error);

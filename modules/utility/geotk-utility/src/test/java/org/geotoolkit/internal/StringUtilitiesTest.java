@@ -93,6 +93,15 @@ public final class StringUtilitiesTest {
     }
 
     /**
+     * Tests the {@link StringUtilities#token} method.
+     */
+    @Test
+    public void testToken() {
+        assertEquals("Id4", StringUtilities.token("..Id4  56B..", 2));
+        assertEquals("56",  StringUtilities.token("..Id4  56B..", 6));
+    }
+
+    /**
      * Tests the {@link StringUtilities#equalsAcronym} method.
      */
     @Test
