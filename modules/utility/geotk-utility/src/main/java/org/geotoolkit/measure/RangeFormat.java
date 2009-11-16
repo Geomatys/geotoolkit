@@ -505,12 +505,20 @@ public class RangeFormat extends Format {
             } else {
                 /*
                  * At this point, we have determined that the range is non-empty and there
-                 * is at least one value to parse. First, parse the minimal value.
+                 * is at least one value to parse. First, parse the minimal value. If we
+                 * fail to parse, check if it was the infinity value (note that infinity
+                 * should have been parsed successfully if the format is DecimalFormat).
                  */
                 pos.setIndex(index - 1);
                 Object value = elementFormat.parseObject(source, pos);
-                if (pos == null) {
-                    return null;
+                if (value == null) {
+                    if (c != minusSign) {
+                        index--;
+                    }
+                    if (!source.regionMatches(index, infinity, 0, infinity.length())) {
+                        return null;
+                    }
+                    pos.setIndex(index += infinity.length());
                 }
                 pos.setErrorIndex(index - 1); // In case of failure during the conversion.
                 minValue = convert(value);
@@ -535,8 +543,11 @@ public class RangeFormat extends Format {
                     } while ((Character.isWhitespace(c = source.charAt(index++))));
                     pos.setIndex(index - 1);
                     value = elementFormat.parseObject(source, pos);
-                    if (pos == null) {
-                        return null;
+                    if (value == null) {
+                        if (!source.regionMatches(--index, infinity, 0, infinity.length())) {
+                            return null;
+                        }
+                        pos.setIndex(index += infinity.length());
                     }
                     pos.setErrorIndex(index - 1); // In case of failure during the conversion.
                     maxValue = convert(value);

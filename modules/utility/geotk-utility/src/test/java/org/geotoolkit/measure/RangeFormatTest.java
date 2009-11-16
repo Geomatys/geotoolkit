@@ -279,8 +279,8 @@ public final class RangeFormatTest {
         final long DAY  = 24L * HOUR;
         final long YEAR = Math.round(365.25 * DAY);
 
-        final DateRange range = new DateRange(new Date(15*DAY + 18*HOUR), new Date(20*YEAR + 15*DAY + 9*HOUR));
-        final String text =  format(range);
+        DateRange range = new DateRange(new Date(15*DAY + 18*HOUR), new Date(20*YEAR + 15*DAY + 9*HOUR));
+        String text =  format(range);
         assertEquals("[16/01/70 18:00 … 16/01/90 09:00]", text);
         assertEquals(range, parse(text));
         /*
@@ -290,5 +290,17 @@ public final class RangeFormatTest {
         if (false) {
             System.out.println(range);
         }
+        /*
+         * Try again with the infinity symbol in one bounds.
+         */
+        range = new DateRange((Date) null, new Date(20*YEAR));
+        text  = format(range);
+        assertEquals("(-∞ … 01/01/90 00:00]", text);
+        assertEquals(range, parse(text));
+
+        range = new DateRange(new Date(20*YEAR), (Date) null);
+        text  = format(range);
+        assertEquals("[01/01/90 00:00 … ∞)", text);
+        assertEquals(range, parse(text));
     }
 }
