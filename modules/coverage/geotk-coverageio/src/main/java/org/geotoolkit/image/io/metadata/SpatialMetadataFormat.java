@@ -195,9 +195,10 @@ import org.geotoolkit.resources.Errors;
 │   │   └───Dimension
 │   │       ├───descriptor
 │   │       ├───sequenceIdentifier
+│   │       ├───validSampleValues
+│   │       ├───fillSampleValues
 │   │       ├───minValue
 │   │       ├───maxValue
-│   │       ├───fillValues
 │   │       ├───units
 │   │       ├───peakResponse
 │   │       ├───bitsPerValue
@@ -432,12 +433,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         substitution.put(RangeDimension.class, Band.class);     // MD_CoverageDescription.dimension
         /*
          * Adds the "ImageDescription" node derived from ISO 19115.
-         * The 'fillValues' attribute is a Geotk extension.
+         * The 'fillSampleValues' attribute is a Geotk extension.
          */
         final String root = getRootName();
         MetadataStandard standard = MetadataStandard.ISO_19115;
         addTree(standard, ImageDescription.class, "ImageDescription", root, substitution);
-        addAttribute("Dimension", "fillValues", DATATYPE_DOUBLE, false, 0, Integer.MAX_VALUE);
+        addAttribute("Dimension", "validSampleValues", DATATYPE_STRING, false, null);
+        addAttribute("Dimension", "fillSampleValues",  DATATYPE_DOUBLE, false, 0, Integer.MAX_VALUE);
         addObjectValue("Dimension", SampleDimension.class, true, null); // Replace Band.class.
         /*
          * Adds the "SpatialRepresentation" node derived from ISO 19115.

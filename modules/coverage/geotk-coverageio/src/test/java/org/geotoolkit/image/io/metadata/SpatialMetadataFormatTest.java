@@ -204,10 +204,10 @@ public final class SpatialMetadataFormatTest {
         assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "minValue"));
         assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "maxValue"));
         assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "maxValue"));
-        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "fillValues"));
-        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("Dimension", "fillValues"));
-        assertEquals(0,                             f.getAttributeListMinLength("Dimension", "fillValues"));
-        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("Dimension", "fillValues"));
+        assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "fillSampleValues"));
+        assertEquals(VALUE_LIST,                    f.getAttributeValueType    ("Dimension", "fillSampleValues"));
+        assertEquals(0,                             f.getAttributeListMinLength("Dimension", "fillSampleValues"));
+        assertEquals(Integer.MAX_VALUE,             f.getAttributeListMaxLength("Dimension", "fillSampleValues"));
         assertEquals(DATATYPE_STRING,               f.getAttributeDataType     ("Dimension", "units"));
         assertEquals(VALUE_ARBITRARY,               f.getAttributeValueType    ("Dimension", "units"));
         assertEquals(DATATYPE_DOUBLE,               f.getAttributeDataType     ("Dimension", "peakResponse"));

@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.metadata;
 
 import java.util.Map;
 import java.util.Date;
+import java.util.List;
+import java.util.HashMap;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
@@ -32,6 +34,7 @@ import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.resources.Errors;
 
 
@@ -55,6 +58,11 @@ final class MetadataProxy implements InvocationHandler {
     private static final boolean SPECIAL_CASE = true;
 
     /**
+     * The implemented interface. This is used mostly for {@code toString()} implementation.
+     */
+    private final Class<?> interfaceType;
+
+    /**
      * The metadata accessor. This is used for fetching the value of an attribute. The name of
      * the attribute is inferred from the method name using the {@linkplain #namesMapping} map.
      */
@@ -67,9 +75,19 @@ final class MetadataProxy implements InvocationHandler {
 
     /**
      * The mapping from method names to attribute names, or {@code null} if this mapping
-     * is unknown.
+     * is unknown. Keys are method names, and values are the attribute name as determined
+     * by {@link SpatialMetadataFormat#NAME_POLICY}.
      */
     private final Map<String, String> namesMapping;
+
+    /**
+     * The lists created up to date. This is used only when the return type of some
+     * invoked methods is a {@link java.util.Collection} or {@link java.util.List}.
+     * <p>
+     * The keys are method names (instead than attribute names) because they are
+     * usually internalized by the JVM, which is not the case of the attribute names.
+     */
+    private transient Map<String, List<?>> lists;
 
     /**
      * The converter from {@link String} to target type.
@@ -81,6 +99,7 @@ final class MetadataProxy implements InvocationHandler {
      * Creates a new proxy for the given metadata accessor.
      */
     private MetadataProxy(Class<?> type, final MetadataAccessor accessor, final int index) {
+        interfaceType = type;
         this.accessor = accessor;
         this.index    = index;
         final IIOMetadataFormat format = accessor.format;
@@ -121,9 +140,13 @@ final class MetadataProxy implements InvocationHandler {
     /**
      * Returns the attribute name for the given method name. The caller must have verified
      * that the method name starts with either {@code "get"}, {@code "set"} or {@code "is"}.
+     *
+     * @param  methodName The value of {@link Method#getName()}.
+     * @return The name of the attribute to search in the {@code IIOMetadataNode}
+     *         wrapped by the {@linkplain #accessor}.
      */
     @SuppressWarnings("fallthrough")
-    private final String toAttributeName(final String methodName) {
+    private String getAttributeName(final String methodName) {
         if (namesMapping != null) {
             final String attribute = namesMapping.get(methodName);
             if (attribute != null) {
@@ -131,10 +154,10 @@ final class MetadataProxy implements InvocationHandler {
             }
         }
         /*
-         * If no mapping is explicitly declared for the given method name,
-         * apply JavaBeans conventions.
+         * If no mapping is explicitly declared for the given method name, apply JavaBeans
+         * conventions. If the prefix is not "is", the code below assumes "get" or "set".
          */
-        final int offset = methodName.startsWith("is") ? 2 : 3;
+        final int offset = methodName.startsWith("is") ? 2 : 3; // Prefix length
         switch (methodName.length() - offset) {
             default: {
                 /*
@@ -176,21 +199,24 @@ final class MetadataProxy implements InvocationHandler {
     public Object invoke(final Object proxy, final Method method, final Object[] args)
             throws IllegalStateException
     {
-        String name = method.getName();
-        if (!name.startsWith("get") && !name.startsWith("is")) {
+        final String methodName = method.getName();
+        if (!methodName.startsWith("get") && !methodName.startsWith("is")) {
+            if (methodName.equals("toString") && args == null) {
+                return accessor.toString(interfaceType);
+            }
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.UNKNOW_COMMAND_$1, name));
+                    Errors.Keys.UNKNOW_COMMAND_$1, methodName));
         }
         if (args != null && args.length != 0) {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1, name));
+                    Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1, methodName));
         }
         /*
          * Gets the name of the attribute to fetch, and set the accessor
          * child index on the children represented by this proxy (if any).
          */
         final MetadataAccessor accessor = this.accessor;
-        name = toAttributeName(name);
+        final String name = getAttributeName(methodName);
         if (index >= 0) {
             accessor.selectChild(index);
         } else {
@@ -200,17 +226,39 @@ final class MetadataProxy implements InvocationHandler {
          * First, process the cases that are handled in a special way.
          */
         final Class<?> targetType = Classes.primitiveToWrapper(method.getReturnType());
-        if (Double  .class.equals(targetType)) return accessor.getAttributeAsDouble  (name);
-        if (Integer .class.equals(targetType)) return accessor.getAttributeAsInteger (name);
-        if (double[].class.equals(targetType)) return accessor.getAttributeAsDoubles (name, false);
-        if (int[]   .class.equals(targetType)) return accessor.getAttributeAsIntegers(name, false);
-        if (Date    .class.equals(targetType)) return accessor.getAttributeAsDate    (name);
+        final boolean canReturnString = targetType.isAssignableFrom(String.class);
+        if (!canReturnString) {
+            if (targetType.isAssignableFrom(Double     .class)) return accessor.getAttributeAsDouble  (name);
+            if (targetType.isAssignableFrom(Integer    .class)) return accessor.getAttributeAsInteger (name);
+            if (targetType.isAssignableFrom(double[]   .class)) return accessor.getAttributeAsDoubles (name, false);
+            if (targetType.isAssignableFrom(int[]      .class)) return accessor.getAttributeAsIntegers(name, false);
+            if (targetType.isAssignableFrom(Date       .class)) return accessor.getAttributeAsDate    (name);
+            if (targetType.isAssignableFrom(NumberRange.class)) return accessor.getAttributeAsRange   (name);
+            if (targetType.isAssignableFrom(List.class)) {
+                /*
+                 * For lists, we instantiate MetadataProxyList only when first needed and cache
+                 * the result for reuse.
+                 */
+                final Class<?> componentType = Classes.boundOfParameterizedAttribute(method);
+                if (componentType != null) {
+                    if (lists == null) {
+                        lists = new HashMap<String, List<?>>();
+                    }
+                    List<?> list = lists.get(methodName);
+                    if (list == null) {
+                        list = MetadataProxyList.create(componentType, accessor);
+                        lists.put(methodName, list);
+                    }
+                    return list;
+                }
+            }
+        }
         /*
          * String, CharSequence and Object can accepts directly the attribute value.
          * For all other types, we need to apply a type conversion.
          */
         final String value = accessor.getAttributeAsString(name);
-        if (value == null || targetType.isAssignableFrom(String.class)) {
+        if (value == null || canReturnString) {
             return value;
         }
         if (converter == null) {
@@ -220,7 +268,16 @@ final class MetadataProxy implements InvocationHandler {
             return converter.convert(value, targetType);
         } catch (NonconvertibleObjectException e) {
             throw new IllegalStateException(Errors.format(
-                    Errors.Keys.CANT_PROCESS_PROPERTY_$2, name, value), e);
+                    Errors.Keys.CANT_PROCESS_PROPERTY_$2, methodName, value), e);
         }
+    }
+
+    /**
+     * Returns a string representation of the {@linkplain #accessor}, but declaring the
+     * class as {@code MetadataProxy} instead than {@code MetadataAccessor}.
+     */
+    @Override
+    public String toString() {
+        return accessor.toString(getClass());
     }
 }

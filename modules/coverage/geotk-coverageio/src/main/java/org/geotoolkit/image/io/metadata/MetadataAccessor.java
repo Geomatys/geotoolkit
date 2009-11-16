@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +43,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.util.logging.Logging;
@@ -267,7 +270,7 @@ public class MetadataAccessor {
             final int count = childs.size();
             switch (count) {
                 default: {
-                    warning("<init>", Errors.Keys.TOO_MANY_OCCURENCES_$2, new Object[] {parentPath, count});
+                    warning("<init>", Errors.Keys.TOO_MANY_OCCURENCES_$2, parentPath, count);
                     // Fall through for picking the first node.
                 }
                 case 1: {
@@ -476,18 +479,26 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
 
     /**
      * Returns the {@linkplain IIOMetadataNode#getUserObject user object} associated with the
-     * {@linkplain #selectChild selected element}, or {@code null} if none. If no user object
-     * is defined for the element, then the {@linkplain Node#getNodeValue node value} is returned
-     * as a fallback. This is consistent with {@link #setUserObject} implementation, and allows
-     * some parsing of nodes that are not {@link IIOMetadataNode} instances.
+     * {@linkplain #selectChild selected element}, or {@code null} if none. This method returns
+     * the first of the following methods which return a non-null value:
      * <p>
-     * The {@code getUserObject} methods are the only ones to not parse the value returned by
-     * {@link #getAttributeAsString}.
+     * <ul>
+     *   <li>{@link IIOMetadataNode#getUserObject()} (only if the node is an instance of {@code IIOMetadata})</li>
+     *   <li>{@link Node#getNodeValue()}</li>
+     * </ul>
+     * <p>
+     * The <cite>node value</cite> fallback is consistent with {@link #setUserObject(Object)}
+     * implementation, and allows processing of nodes that are not {@link IIOMetadataNode}
+     * instances.
+     *
+     * {@note This <code>getUserObject()</code> method and the <code>getUserObject(Class)</code>
+     *        method below are the only getters that do not fetch the string to parse by a call
+     *        to <code>getAttributeAsString</code>.}
      *
      * @return The user object, or {@code null} if none.
      *
      * @see #getUserObject(Class)
-     * @see #setUserObject
+     * @see #setUserObject(Object)
      */
     public Object getUserObject() {
         final Element element = currentElement();
@@ -506,30 +517,42 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Returns the user object associated as an instance of the specified class. If the value
-     * returned by {@link #getUserObject()} is not of the expected type, then this method will
-     * tries to parse it as a string.
+     * Returns the user object as an instance of the specified class. This method first invokes
+     * {@link #getUserObject()}, then checks the type of the returned object. The type shall be
+     * the requested one - this method does not attempt conversions.
+     * <p>
+     * A special processing is performed if the type of the user object is assignable to
+     * {@link CharSequence}. This special processing is performed because if the node is
+     * not an instance of {@link IIOMetadataNode}, then {@code getUserObject()} fallbacks
+     * on {@link Node#getNodeValue()}, which can return only a {@code String}. In such
+     * case, this method will attempt a parsing of the string if the requested type is
+     * a subclass of {@link Number}, {@link Date}, {@code double[]} or {@code int[]}.
      *
      * @param  <T>  The expected class.
      * @param  type The expected class.
      * @return The user object, or {@code null} if none.
-     * @throws ClassCastException if the user object can not be casted to the specified type.
+     * @throws NumberFormatException If attempt to parse the user object as a number failed.
+     * @throws IllegalArgumentException If attempt to parse the user object as a date failed.
+     * @throws ClassCastException If the user object can not be casted to the specified type.
      *
      * @see #getUserObject()
-     * @see #setUserObject
+     * @see #setUserObject(Object)
      */
-    public <T> T getUserObject(Class<? extends T> type) throws ClassCastException {
-        type = Classes.primitiveToWrapper(type).asSubclass(type);
+    public <T> T getUserObject(final Class<? extends T> type) throws ClassCastException {
         Object value = getUserObject();
         if (value instanceof CharSequence) {
-            if (Number.class.isAssignableFrom(type)) {
+            if (String.class.isAssignableFrom(type)) {
+                value = value.toString();
+            } else if (Number.class.isAssignableFrom(type)) {
                 value = Classes.valueOf(type, value.toString());
-            } else {
+            } else if (Date.class.isAssignableFrom(type)) {
+                value = XmlUtilities.parseDateTime(value.toString());
+            } else if (type.isArray()) {
                 final Class<?> component = Classes.primitiveToWrapper(type.getComponentType());
                 if (Double.class.equals(component)) {
-                    value = parseSequence(value.toString(), false, false);
+                    value = parseSequence(value.toString(), false, false, false);
                 } else if (Integer.class.equals(component)) {
-                    value = parseSequence(value.toString(), false, true);
+                    value = parseSequence(value.toString(), false, true, false);
                 }
             }
         }
@@ -538,8 +561,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
 
     /**
      * Sets the {@linkplain IIOMetadataNode#setUserObject user object} associated with the
-     * {@linkplain #selectChild selected element}. This is the only {@code set} method that
-     * doesn't invoke {@link #setAttributeAsString} with a formatted value.
+     * {@linkplain #selectChild selected element}. At the difference of every {@code setAttribute}
+     * methods defined in this class, this method does not delegate to
+     * {@link #setAttributeAsString(String, String)}.
      * <p>
      * If the specified value is formattable (i.e. is a {@linkplain CharSequence character
      * sequence}, a {@linkplain Number number} or an array of the above), then this method
@@ -559,7 +583,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         String asText = null;
         if (value != null) {
             final Class<?> type = value.getClass();
-            if (isFormattable(type)) {
+            if (Date.class.isAssignableFrom(type)) {
+                asText = XmlUtilities.printDateTime((Date) value);
+            } else if (isFormattable(type)) {
                 asText = value.toString();
             } else if (isFormattable(type.getComponentType())) {
                 asText = formatSequence(value);
@@ -588,9 +614,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * Returns an attribute as a string for the {@linkplain #selectChild selected element},
      * or {@code null} if none. This method never returns an empty string.
      * <p>
-     * Every {@code get} methods in this class except {@link #getUserObject getUserObject}
-     * invoke this method first. Consequently, this method provides a single point for
-     * overriding if subclasses want to process the attribute before parsing.
+     * Every {@code getAttribute} methods in this class invoke this method first. Consequently,
+     * this method provides a single overriding point for subclasses that want to process the
+     * attribute before parsing.
      *
      * @param attribute The attribute to fetch (e.g. {@code "name"}).
      * @return The attribute value (never an empty string), or {@code null} if none.
@@ -609,9 +635,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     /**
      * Sets the attribute to the specified value, or remove the attribute if the value is null.
      * <p>
-     * Every {@code set} methods in this class except {@link #setUserObject setUserObject}
-     * invoke this method last. Consequently, this method provides a single point for
-     * overriding if subclasses want to process the attribute after formatting.
+     * Every {@code setAttribute} methods in this class invoke this method last. Consequently,
+     * this method provides a single overriding point for subclasses that want to process the
+     * attribute after formatting.
      *
      * @param attribute The attribute name.
      * @param value     The attribute value.
@@ -646,6 +672,48 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             }
         }
         setAttributeAsString(attribute, value);
+    }
+
+    /**
+     * Returns an attribute as a boolean for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a boolean, then this
+     * method logs a warning and returns {@code null}.
+     *
+     * @param attribute The attribute to fetch (e.g. {@code "inclusion"}).
+     * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @since 3.06
+     */
+    public Boolean getAttributeAsBoolean(final String attribute) {
+        final String value = getAttributeAsString(attribute);
+        if (value != null) {
+            if (value.equalsIgnoreCase("true") ||
+                value.equalsIgnoreCase("yes")  ||
+                value.equalsIgnoreCase("on"))
+            {
+                return Boolean.TRUE;
+            }
+            if (value.equalsIgnoreCase("false") ||
+                value.equalsIgnoreCase("no")    ||
+                value.equalsIgnoreCase("off"))
+            {
+                return Boolean.FALSE;
+            }
+            warning("getAttributeAsBoolean", Errors.Keys.BAD_PARAMETER_$2, attribute, value);
+        }
+        return null;
+    }
+
+    /**
+     * Sets the attribute to the specified boolean value.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     *
+     * @since 3.06
+     */
+    public void setAttributeAsBoolean(final String attribute, final boolean value) {
+        setAttributeAsString(attribute, Boolean.toString(value));
     }
 
     /**
@@ -690,7 +758,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute values, or {@code null} if none.
      */
     public int[] getAttributeAsIntegers(final String attribute, final boolean unique) {
-        return (int[]) parseSequence(getAttributeAsString(attribute), unique, true);
+        return (int[]) parseSequence(getAttributeAsString(attribute), unique, true, true);
     }
 
     /**
@@ -748,7 +816,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute values, or {@code null} if none.
      */
     public double[] getAttributeAsDoubles(final String attribute, final boolean unique) {
-        return (double[]) parseSequence(getAttributeAsString(attribute), unique, false);
+        return (double[]) parseSequence(getAttributeAsString(attribute), unique, false, true);
     }
 
     /**
@@ -765,14 +833,24 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     /**
      * Implementation of {@link #getAttributeAsIntegers} and {@link #getAttributeAsDoubles} methods.
      *
-     * @param  sequence The sequence to parse.
-     * @param  unique {@code true} if duplicated values should be collapsed into unique values,
-     *         or {@code false} for preserving duplicated values.
-     * @param  integers {@code true} for parsing as {@code int}, or {@code false} for parsing as
-     *         {@code double}.
+     * @param sequence
+     *          The character sequence to parse.
+     * @param unique
+     *          {@code true} if duplicated values should be collapsed into unique values, or
+     *          {@code false} for preserving duplicated values.
+     * @param integers
+     *          {@code true} for parsing as {@code int}, or
+     *          {@code false} for parsing as {@code double}.
+     * @param logFailures
+     *          {@code true} for logging parse failure without throwing exception, or
+     *          {@code false} for letting the exceptions propagate.
      * @return The attribute values, or {@code null} if none.
+     * @throws NumberFormatException if {@code logFailures} if {@code false} and an exception
+     *         occured while parsing a number.
      */
-    private Object parseSequence(final String sequence, final boolean unique, final boolean integers) {
+    private Object parseSequence(final String sequence, final boolean unique, final boolean integers,
+            final boolean logFailures) throws NumberFormatException
+    {
         if (sequence == null) {
             return null;
         }
@@ -793,6 +871,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                     number = Double.valueOf(token);
                 }
             } catch (NumberFormatException e) {
+                if (!logFailures) {
+                    throw e;
+                }
                 warning(integers ? "getAttributeAsIntegers" : "getAttributeAsDoubles",
                         Errors.Keys.UNPARSABLE_NUMBER_$1, token);
                 continue;
@@ -851,9 +932,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             if (metadata instanceof SpatialMetadata) {
                 return ((SpatialMetadata) metadata).dateFormat().parse(value);
             } else try {
-                return XmlUtilities.parseDateTime(value);
-            } catch (IllegalArgumentException e) {
-                warning("getAttributeAsDate", -1, e.getLocalizedMessage());
+                // Inefficient fallback, but should usually not happen anyway.
+                return SpatialMetadata.parse(Date.class, value);
+            } catch (ParseException e) {
+                warning("getAttributeAsDate", e);
             }
         }
         return null;
@@ -871,53 +953,57 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             if (metadata instanceof SpatialMetadata) {
                 text = ((SpatialMetadata) metadata).dateFormat().format(value);
             } else {
-                text = XmlUtilities.printDateTime(value);
+                // Inefficient fallback, but should usually not happen anyway.
+                text = SpatialMetadata.format(Date.class, value);
             }
         }
         setAttributeAsString(attribute, text);
     }
 
     /**
-     * Returns an attribute as a boolean for the {@linkplain #selectChild selected element},
-     * or {@code null} if none. If the attribute can't be parsed as a boolean, then this
+     * Returns an attribute as a range of numbers for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a range of numbers, then this
      * method logs a warning and returns {@code null}.
      *
-     * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
+     * @param attribute The attribute to fetch (e.g. {@code "validSampleValues"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
      * @since 3.06
      */
-    public Boolean getAttributeAsBoolean(final String attribute) {
+    public NumberRange<?> getAttributeAsRange(final String attribute) {
         final String value = getAttributeAsString(attribute);
         if (value != null) {
-            if (value.equalsIgnoreCase("true") ||
-                value.equalsIgnoreCase("yes")  ||
-                value.equalsIgnoreCase("on"))
-            {
-                return Boolean.TRUE;
+            if (metadata instanceof SpatialMetadata) {
+                return ((SpatialMetadata) metadata).rangeFormat().parse(value);
+            } else try {
+                // Inefficient fallback, but should usually not happen anyway.
+                return (NumberRange<?>) SpatialMetadata.parse(NumberRange.class, value);
+            } catch (ParseException e) {
+                warning("getAttributeAsRange", e);
             }
-            if (value.equalsIgnoreCase("false") ||
-                value.equalsIgnoreCase("no")    ||
-                value.equalsIgnoreCase("off"))
-            {
-                return Boolean.FALSE;
-            }
-            warning("getAttributeAsBoolean", Errors.Keys.BAD_PARAMETER_$2,
-                    new String[] {attribute, value});
         }
         return null;
     }
 
     /**
-     * Sets the attribute to the specified boolean value.
+     * Sets the attribute to the specified range value.
      *
      * @param attribute The attribute name.
      * @param value     The attribute value.
      *
      * @since 3.06
      */
-    public void setAttributeAsBoolean(final String attribute, final boolean value) {
-        setAttributeAsString(attribute, Boolean.toString(value));
+    public void setAttributeAsRange(final String attribute, final NumberRange<?> value) {
+        String text = null;
+        if (value != null) {
+            if (metadata instanceof SpatialMetadata) {
+                text = ((SpatialMetadata) metadata).rangeFormat().format(value);
+            } else {
+                // Inefficient fallback, but should usually not happen anyway.
+                text = SpatialMetadata.format(NumberRange.class, value);
+            }
+        }
+        setAttributeAsString(attribute, text);
     }
 
     /**
@@ -942,8 +1028,29 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Convenience method for logging a warning. Do not allow overriding, because
-     * it would not work for warnings emitted by the {@link #getAttributeAsDate} method.
+     * Convenience flavor of {@link #warning(String, int, Object)} with a message fetched
+     * from the given exception. This is invoked when we failed to parse an attribute.
+     */
+    final void warning(final String method, final Exception exception) {
+        if (warningsEnabled) {
+            warning(method, -1, exception.getLocalizedMessage());
+        }
+    }
+
+    /**
+     * Convenience flavor of {@link #warning(String, int, Object)} with two arguments.
+     * We do not use the "variable argument list" syntax because of possible confusion
+     * with the {@code Object} type, which is too generic.
+     */
+    final void warning(final String method, final int key, final Object arg1, final Object arg2) {
+        if (warningsEnabled) {
+            warning(method, key, new Object[] {arg1, arg2});
+        }
+    }
+
+    /**
+     * Convenience method for logging a warning. Do not allow overriding, because it
+     * would not work for warnings emitted by the {@link #getAttributeAsDate} method.
      */
     final void warning(final String method, final int key, final Object value) {
         if (warningsEnabled) {
@@ -964,7 +1071,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     /**
      * Invoked when a warning occured. This method is invoked when some inconsistency has
      * been detected in the geographic metadata. The default implementation delegates
-     * to {@link GeographicMetadata#warningOccurred}.
+     * to {@link SpatialMetadata#warningOccurred(LogRecord)}.
+     * <p>
+     * If failures to parse a string should be considered as fatal errors, consider
+     * overwritting the method defined in {@code SpatialMetadata}.
      *
      * @param record The logging record to log.
      */
@@ -997,10 +1107,33 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Returns a string representation of metadata, mostly for debugging purpose.
+     * Returns a string representation of the wrapped {@link IIOMetadata} as a tree. The root of
+     * the tree contains the class of this accessor and the value defined in the {@link #name()}
+     * javadoc. Attributes are leafs formatted as <var>key</var>=<var>value</var>, while elements
+     * and child branches.
+     * <p>
+     * This method is useful for visual check of the {@link IIOMetadata} content and should be
+     * used only for debugging purpose. Note that the output may span many lines.
      */
     @Override
     public String toString() {
-        return Trees.toString(Trees.xmlToSwing(parent));
+        return toString(getClass());
+    }
+
+    /**
+     * Implementation of {@link #toString()} using the name of the given class for formatting
+     * the root.
+     */
+    final String toString(final Class<?> owner) {
+        final StringBuilder buffer = new StringBuilder(Classes.getShortName(owner)).append("[\"");
+        int offset = buffer.length();
+        final String lineSeparator = System.getProperty("line.separator", "\n");
+        try {
+            Trees.format(Trees.xmlToSwing(parent), buffer, lineSeparator);
+        } catch (IOException e) {
+            throw new AssertionError(e); // Should never happen.
+        }
+        offset = buffer.indexOf(lineSeparator, offset); // Should never be -1.
+        return buffer.insert(offset, "\"]").toString();
     }
 }

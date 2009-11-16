@@ -55,9 +55,16 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
     private T[] elements;
 
     /**
-     * Creates a new list
+     * Creates a new list.
      */
-    MetadataProxyList(final Class<T> elementType, final MetadataAccessor accessor) {
+    static <T> MetadataProxyList<T> create(final Class<T> elementType, final MetadataAccessor accessor) {
+        return new MetadataProxyList<T>(elementType, accessor);
+    }
+
+    /**
+     * Creates a new list.
+     */
+    private MetadataProxyList(final Class<T> elementType, final MetadataAccessor accessor) {
         this.elementType = elementType;
         this.accessor    = accessor;
     }

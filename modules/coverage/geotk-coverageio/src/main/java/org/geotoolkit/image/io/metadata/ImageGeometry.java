@@ -118,7 +118,7 @@ public class ImageGeometry extends MetadataAccessor {
             return dim2;
         }
         if (dim1 != dim2) {
-            warning("getDimension", Errors.Keys.MISMATCHED_DIMENSION_$2, new int[] {dim1, dim2});
+            warning("getDimension", Errors.Keys.MISMATCHED_DIMENSION_$2, dim1, dim2);
         }
         return Math.min(dim1, dim2);
     }
@@ -284,8 +284,7 @@ public class ImageGeometry extends MetadataAccessor {
         if (lows != null && highs != null) {
             final int last = Math.max(lows.length, highs.length);
             if (last != lows.length || last != highs.length) {
-                warning("addOrdinates", Errors.Keys.MISMATCHED_DIMENSION_$2,
-                        new int[]{lows.length, highs.length});
+                warning("addOrdinates", Errors.Keys.MISMATCHED_DIMENSION_$2, lows.length, highs.length);
             }
             lows  = Arrays.copyOf(lows,  last + 1);
             highs = Arrays.copyOf(highs, last + 1);
@@ -381,7 +380,7 @@ public class ImageGeometry extends MetadataAccessor {
                 return;
             }
         }
-        warning("setPixelOrientation", Errors.Keys.BAD_PARAMETER_$2, new Object[] {"pixelOrientation", pixelOrientation});
+        warning("setPixelOrientation", Errors.Keys.BAD_PARAMETER_$2, "pixelOrientation", pixelOrientation);
     }
 
     /**

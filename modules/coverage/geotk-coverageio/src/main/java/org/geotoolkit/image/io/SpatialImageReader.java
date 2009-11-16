@@ -351,19 +351,19 @@ public abstract class SpatialImageReader extends ImageReader {
     /**
      * Returns an image type specifier indicating the {@link SampleModel} and {@link ColorModel}
      * which most closely represents the "raw" internal format of the image. The default
-     * implementation applies the following rules:
+     * implementation applies the following steps:
      *
      * <ol>
-     *   <li><p>The {@linkplain Band#getValidRange range of expected values} and the
-     *       {@linkplain Band#getNoDataValues no-data values} are extracted from the
-     *       {@linkplain #getSpatialMetadata spatial metadata}, if any.</p></li>
+     *   <li><p>The {@linkplain SampleDimension#getValidSampleValues() range of expected values}
+     *       and the {@linkplain SampleDimension#getFillSampleValues() fill values} are extracted
+     *       from the {@linkplain #getSpatialMetadata spatial metadata}, if any.</p></li>
      *
      *   <li><p>If the given {@code parameters} argument is an instance of {@link SpatialImageReadParam},
      *       then the user-supplied {@linkplain SpatialImageReadParam#getPaletteName palette name}
      *       is fetched. Otherwise or if no palette name was explicitly set, then this method default
      *       to {@value org.geotoolkit.image.io.SpatialImageReadParam#DEFAULT_PALETTE_NAME}. The
-     *       palette name will be used in order to {@linkplain PaletteFactory#getColors read a
-     *       predefined set of colors} (as RGB values) to be given to the
+     *       palette name will be used in order to {@linkplain PaletteFactory#getColors(String)
+     *       read a predefined set of colors} (as [A]RGB values) to be given to the
      *       {@linkplain IndexColorModel index color model}.</p></li>
      *
      *   <li><p>If the {@linkplain #getRawDataType raw data type} is {@link DataBuffer#TYPE_FLOAT
@@ -384,19 +384,20 @@ public abstract class SpatialImageReader extends ImageReader {
      *       will be the {@linkplain SampleConverter#IDENTITY identity converter} except in the
      *       following cases:
      *       <ul>
-     *         <li>The {@linkplain Band#getValidRange range of valid values} is outside the range
-     *             allowed by the {@linkplain #getRawDataType raw data type} (e.g. the range of
-     *             valid values contains negative integers). In this case, the sample converter
-     *             will shift the values to a strictly positive range and replace no-data values
-     *             by 0.</li>
-     *         <li>At least one {@linkplain Band#getNoDataValues no-data value} is outside the range
-     *             of values allowed by the {@linkplain #getRawDataType raw data type}. In this case,
-     *             this method will try to only replace the no-data values by 0, without shifting
-     *             the valid values if this shift can be avoided.</li>
-     *         <li>At least one {@linkplain Band#getNoDataValues no-data value} is far away from the
-     *             {@linkplain Band#getValidRange range of valid values} (for example 9999 while
-     *             the range of valid values is [0..255]). The meaning of "far away" is determined
-     *             by the {@link #collapseNoDataValues collapseNoDataValues} method.</li>
+     *         <li>The {@linkplain SampleDimension#getValidSampleValues() range of valid values} is
+     *             outside the range allowed by the {@linkplain #getRawDataType raw data type} (e.g.
+     *             the range of valid values contains negative integers). In this case, the sample
+     *             converter will shift the values to a strictly positive range and replace fill
+     *             values by 0.</li>
+     *         <li>At least one {@linkplain SampleDimension#getFillSampleValues() fill value} is
+     *             outside the range of values allowed by the {@linkplain #getRawDataType raw data
+     *             type}. In this case, this method will try to only replace the fill values by 0,
+     *             without shifting the valid values if this shift can be avoided.</li>
+     *         <li>At least one {@linkplain SampleDimension#getFillSampleValues() fill value} is
+     *             far away from the {@linkplain SampleDimension#getValidSampleValues() range of
+     *             valid values} (for example 9999 while the range of valid values is [0..255]).
+     *             The meaning of "far away" is determined by the {@link #collapseNoDataValues
+     *             collapseNoDataValues} method.</li>
      *       </ul>
      *       </p></li>
      *
@@ -556,8 +557,8 @@ public abstract class SpatialImageReader extends ImageReader {
                         }
                     }
                     final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
-                    final double[] nodataValues = band.getFillValues();
-                    final NumberRange<?> range = band.getValueRange();
+                    final double[] nodataValues = band.getFillSampleValues();
+                    final NumberRange<?> range = band.getValidSampleValues();
                     double minimum, maximum;
                     if (range != null) {
                         minimum = range.getMinimum();
@@ -781,7 +782,7 @@ public abstract class SpatialImageReader extends ImageReader {
      * Returns {@code true} if the no-data values should be collapsed to 0 in order to save memory.
      * This method is invoked automatically by the {@link #getRawImageType(int, ImageReadParam,
      * SampleConverter[]) getRawImageType} method when it detected some unused space between the
-     * {@linkplain Band#getValidRange range of valid values} and at least one
+     * {@linkplain Band#getValidSampleValues range of valid values} and at least one
      * {@linkplain Band#getNoDataValues no-data value}.
      * <p>
      * The default implementation returns {@code false} in all cases, thus avoiding arbitrary

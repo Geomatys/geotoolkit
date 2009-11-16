@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.metadata;
 
 import java.text.Format;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -39,10 +40,12 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
+import org.geotoolkit.measure.RangeFormat;
 
 
 /**
@@ -95,8 +98,17 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
 
     /**
      * The standard date format. Will be created only when first needed.
+     *
+     * @see #dateFormat()
      */
     private transient LoggedFormat<Date> dateFormat;
+
+    /**
+     * The standard range format. Will be created only when first needed.
+     *
+     * @see #rangeFormat()
+     */
+    private transient LoggedFormat<NumberRange<?>> rangeFormat;
 
     /**
      * Creates an initially empty metadata instance for the given format.
@@ -430,17 +442,92 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
+     * Creates a logged format of the given type.
+     *
+     * @param  <T>    The expected type of parsed values.
+     * @param  type   The expected type of parsed values.
+     * @param  format The method to logs as the "caller" when the parsing fails.
+     * @return A format that log warnings when it can't parse fully a string.
+     */
+    private <T> LoggedFormat<T> createLoggedFormat(final Class<T> type, final String caller) {
+        final LoggedFormat<T> format = createLoggedFormat(createFormat(type), type);
+        format.setLogger("org.geotoolkit.image.io.metadata");
+        format.setCaller(MetadataAccessor.class, caller);
+        return format;
+    }
+
+    /**
+     * Creates the format to use for parsing and formatting dates or number ranges.
+     *
+     * {@note We use the Canada locale because it is a bit closer to ISO standards than
+     *        the US locale (e.g. order of elements in a date) while using the English
+     *        symbols (e.g. the dot as a decimal separator instead than coma).}
+     *
+     * @param  type The expected type of parsed values.
+     * @return The format to use.
+     */
+    private static Format createFormat(final Class<?> type) {
+        if (Date.class.isAssignableFrom(type)) {
+            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return format;
+        }
+        if (NumberRange.class.isAssignableFrom(type)) {
+            return new RangeFormat(Locale.CANADA);
+        }
+        throw new IllegalArgumentException(String.valueOf(type));
+    }
+
+    /**
+     * Parses the given string as an object of the given type. This method should never be invoked,
+     * except as a (admitly inefficient) fallback when the {@link IIOMetadata} in use is not an
+     * instance of {@code SpatialMetadata} (this usually don't happen).
+     *
+     * @param  type The expected type of the parsed value.
+     * @param  text The text to parse
+     * @return The parsed value.
+     * @throws ParseException If the parsing failed.
+     */
+    static <T> T parse(final Class<T> type, final String text) throws ParseException {
+        return type.cast(createFormat(type).parseObject(text));
+    }
+
+    /**
+     * Formats the given object as a string. This method should never be invoked, except as a
+     * (admitly inefficient) fallback when the {@link IIOMetadata} in use is not an instance of
+     * {@code SpatialMetadata} (this usually don't happen).
+     *
+     * @param  type The expected type of the value.
+     * @param  value The value to format.
+     * @return The formatted value.
+     */
+    static <T> String format(final Class<T> type, final T value) {
+        return createFormat(type).format(value);
+    }
+
+    /**
      * Returns a standard date format to be shared by {@link MetadataAccessor}.
+     * This method creates a new format only when first invoked, and reuses the
+     * existing instance on subsequent invocations.
      */
     final LoggedFormat<Date> dateFormat() {
         if (dateFormat == null) {
-            final DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
-            format.setTimeZone(TimeZone.getTimeZone("UTC"));
-            dateFormat = createLoggedFormat(format, Date.class);
-            dateFormat.setLogger("org.geotoolkit.image.io.metadata");
-            dateFormat.setCaller(MetadataAccessor.class, "getAttributeAsDate");
+            dateFormat = createLoggedFormat(Date.class, "getAttributeAsDate");
         }
         return dateFormat;
+    }
+
+    /**
+     * Returns a standard range format to be shared by {@link MetadataAccessor}.
+     * This method creates a new format only when first invoked, and reuses the
+     * existing instance on subsequent invocations.
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    final LoggedFormat<NumberRange<?>> rangeFormat() {
+        if (rangeFormat == null) {
+            rangeFormat = (LoggedFormat) createLoggedFormat(NumberRange.class, "getAttributeAsRange");
+        }
+        return rangeFormat;
     }
 
     /**
