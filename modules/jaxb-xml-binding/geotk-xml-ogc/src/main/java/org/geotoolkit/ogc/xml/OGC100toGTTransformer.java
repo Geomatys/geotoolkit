@@ -16,19 +16,21 @@
  */
 package org.geotoolkit.ogc.xml;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
+
 import org.geotoolkit.ogc.xml.v100.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v100.FunctionType;
 import org.geotoolkit.ogc.xml.v100.LiteralType;
 import org.geotoolkit.ogc.xml.v100.PropertyNameType;
+
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
 
 /**
@@ -305,7 +307,11 @@ public class OGC100toGTTransformer {
     public Expression visit(JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> ele){
         throw new UnsupportedOperationException("not supported yet, need GML");
     }
-    
+
+    public PropertyName visitPropertyName(PropertyNameType pnt){
+        return filterFactory.property(pnt.getContent());
+    }
+
     /**
      * Transform a JaxBelement in Expression.
      */
@@ -342,8 +348,7 @@ public class OGC100toGTTransformer {
             throw new IllegalArgumentException("Unknowed expression element : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             
         }else if(obj instanceof PropertyNameType){
-            final PropertyNameType pnt = (PropertyNameType) obj;
-            return filterFactory.property(pnt.getContent());
+            return visitPropertyName((PropertyNameType) obj);
         }else if(obj instanceof FunctionType){
             final FunctionType ft = (FunctionType) obj;
             final Expression[] exps = new Expression[ft.getExpression().size()];
