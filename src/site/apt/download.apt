@@ -93,8 +93,10 @@ Downloading Geotoolkit.org Binaries
 
     * {{{http://hudson.geomatys.com/job/Geotoolkit/}Nightly builds (last 2 weeks)}}
 
-  Serveral bundles are available, each one providing successively more functionality. Choose
-  <<only one>> of the following <<<pack.gz>>> files:
+  Serveral bundles are available, each one providing successively more functionality.
+  The JAR files included in each bundles are listed below (see the
+  {{{dependency-management.html}dependency-management}} page for version numbers).
+  Choose <<only one>> of the following <<<pack.gz>>> files:
 
 *----------------------------------------+----------------------------------+-------------------------------+
 || File                                  || Content                         || Prerequites                 ||

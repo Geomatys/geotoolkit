@@ -187,6 +187,18 @@ final class MetadataProxy implements InvocationHandler {
     }
 
     /**
+     * Returns the type of user object for the given element. This typically equals to the
+     *
+     * @param name
+     * @return
+     */
+    private Class<?> getElementClass(final String name) {
+        final IIOMetadataFormat format = accessor.format;
+        accessor.name();
+        return null;
+    }
+
+    /**
      * Invoked when a method from the metadata interface has been invoked.
      *
      * @param  proxy  The proxy instance that the method was invoked on.

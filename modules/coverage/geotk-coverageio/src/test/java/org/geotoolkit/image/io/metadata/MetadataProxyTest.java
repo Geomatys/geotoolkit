@@ -119,5 +119,13 @@ public final class MetadataProxyTest {
             accessor.setAttributeAsDouble("maxValue",  i);
             assertEquals(i, dimensions.size());
         }
+        int index = 0;
+        for (final RangeDimension dim : dimensions) {
+            index++;
+            assertTrue(dim instanceof SampleDimension);
+            final SampleDimension sd = (SampleDimension) dim;
+            assertEquals(Double.valueOf(-index), sd.getMinValue());
+            assertEquals(Double.valueOf( index), sd.getMaxValue());
+        }
     }
 }
