@@ -857,7 +857,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *
      * @since 3.06
      */
-    private static String toElementName(String elementName) {
+    static String toElementName(String elementName) {
         if (elementName != null && (elementName = elementName.trim()).length() != 0) {
             final char c = elementName.charAt(0);
             final char u = Character.toUpperCase(c);

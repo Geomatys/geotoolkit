@@ -188,14 +188,16 @@ final class MetadataProxy implements InvocationHandler {
 
     /**
      * Returns the type of user object for the given element. This typically equals to the
+     * {@linkplain Method#getReturnType() method return type}, but is some occasion the
+     * {@link IIOMetadataFormat} forces a sub-type.
      *
-     * @param name
-     * @return
+     * @param  name The element name.
+     * @param  methodType The type inferred from the method signature, or {@code null} if unknown.
+     * @return The type to use, which is garanteed to be assignable to the method type.
      */
-    private Class<?> getElementClass(final String name) {
-        final IIOMetadataFormat format = accessor.format;
-        accessor.name();
-        return null;
+    private Class<?> getElementClass(final String name, final Class<?> methodType) {
+        final Class<?> declaredType = accessor.format.getObjectClass(name); // Not allowed to be null.
+        return (methodType == null || methodType.isAssignableFrom(declaredType)) ? declaredType : methodType;
     }
 
     /**
@@ -248,21 +250,40 @@ final class MetadataProxy implements InvocationHandler {
             if (targetType.isAssignableFrom(NumberRange.class)) return accessor.getAttributeAsRange   (name);
             if (targetType.isAssignableFrom(List.class)) {
                 /*
-                 * For lists, we instantiate MetadataProxyList only when first needed and cache
-                 * the result for reuse.
+                 * TODO: process after the line below the cases that are not collection of
+                 *       metadata. For example it could be a collection of dates.
                  */
-                final Class<?> componentType = Classes.boundOfParameterizedAttribute(method);
-                if (componentType != null) {
-                    if (lists == null) {
-                        lists = new HashMap<String, List<?>>();
-                    }
-                    List<?> list = lists.get(methodName);
-                    if (list == null) {
-                        list = MetadataProxyList.create(componentType, accessor);
-                        lists.put(methodName, list);
-                    }
-                    return list;
+                Class<?> componentType = Classes.boundOfParameterizedAttribute(method);
+                /*
+                 * For lists, we instantiate MetadataProxyList only when first needed and cache
+                 * the result for reuse. The type of elements are garanteed to be compatible
+                 * with the type declared in the method signature (inferred from generic types).
+                 * However it can also be restricted to a subtype, if the metadata format makes
+                 * such restriction.
+                 */
+                if (lists == null) {
+                    lists = new HashMap<String, List<?>>();
                 }
+                List<?> list = lists.get(methodName);
+                if (list == null) {
+                    final String[] childs;
+                    final IIOMetadataFormat format = accessor.format;
+                    String elementName = SpatialMetadataFormat.toElementName(name);
+                    if (format.getChildPolicy(elementName) != IIOMetadataFormat.CHILD_POLICY_REPEAT ||
+                            (childs = format.getChildNames(elementName)) == null || childs.length != 1)
+                    {
+                        /*
+                         * The return type is a collection, but it doesn't seem
+                         * to be compatible with what the metadata format saids.
+                         */
+                        throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, targetType));
+                    }
+                    elementName = childs[0];
+                    componentType = getElementClass(elementName, componentType);
+                    list = MetadataProxyList.create(componentType, accessor);
+                    lists.put(methodName, list);
+                }
+                return list;
             }
         }
         /*
