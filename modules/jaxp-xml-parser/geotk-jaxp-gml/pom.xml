@@ -63,11 +63,6 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-xml-xsd</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.sun.xml.parsers</groupId>
       <artifactId>jaxp-ri</artifactId>
     </dependency>

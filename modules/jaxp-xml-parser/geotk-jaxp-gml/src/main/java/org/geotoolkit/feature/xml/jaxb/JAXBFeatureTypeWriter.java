@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml.jaxb;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -58,6 +59,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         marshallpool = new MarshallerPool(ObjectFactory.class);
     }
 
+    @Override
     public String write(FeatureType feature) {
         Schema schema         = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
@@ -76,6 +78,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         return null;
     }
 
+    @Override
     public void write(FeatureType feature, Writer writer) {
         Schema schema         = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
@@ -91,6 +94,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         }
     }
 
+    @Override
     public void write(FeatureType feature, OutputStream stream) {
         Schema schema         = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
@@ -106,12 +110,37 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         }
     }
 
-    private Schema getSchemaFromFeatureType(FeatureType featureType) {
-        String typeNamespace = featureType.getName().getNamespaceURI();
-        String elementName   = featureType.getName().getLocalPart();
-        String typeName      = elementName + "Type";
-        Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
-        schema.addImport(gmlImport);
+    @Override
+    public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
+        if (featureTypes != null && featureTypes.size() > 0) {
+            String typeNamespace = featureTypes.get(0).getName().getNamespaceURI();
+            Schema schema        = new Schema(FormChoice.QUALIFIED, typeNamespace);
+            schema.addImport(gmlImport);
+            for (FeatureType ftype : featureTypes) {
+                schema = getSchemaFromFeatureType(ftype, schema);
+            }
+            return schema;
+        }
+        return null;
+    }
+
+    @Override
+    public Schema getSchemaFromFeatureType(FeatureType featureType) {
+        if (featureType != null) {
+            String typeNamespace = featureType.getName().getNamespaceURI();
+            Schema schema        = new Schema(FormChoice.QUALIFIED, typeNamespace);
+            schema.addImport(gmlImport);
+            schema               = getSchemaFromFeatureType(featureType, schema);
+            return schema;
+        }
+        return null;
+    }
+
+    private Schema getSchemaFromFeatureType(FeatureType featureType, Schema schema) {
+        
+        String typeNamespace    = featureType.getName().getNamespaceURI();
+        String elementName      = featureType.getName().getLocalPart();
+        String typeName         = elementName + "Type";
         TopLevelElement element = new TopLevelElement(elementName, new QName(typeNamespace, typeName));
         schema.addElement(element);
 

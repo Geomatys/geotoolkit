@@ -57,6 +57,11 @@
       <artifactId>geotk-datastore-core</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-xsd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

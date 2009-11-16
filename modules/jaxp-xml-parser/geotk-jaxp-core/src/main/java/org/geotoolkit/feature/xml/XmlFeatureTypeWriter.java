@@ -19,6 +19,8 @@ package org.geotoolkit.feature.xml;
 
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.List;
+import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -51,4 +53,20 @@ public interface XmlFeatureTypeWriter {
      * @param feature The featureType to marshall.
      */
     void write(FeatureType feature, OutputStream stream);
+
+    /**
+     * Create an xsd schema from a list of feature type.
+     * 
+     * @param featureTypes
+     * @return
+     */
+    Schema getSchemaFromFeatureType(List<FeatureType> featureTypes);
+
+    /**
+     * Create a xsd schema from a feature type.
+     * 
+     * @param featureType
+     * @return
+     */
+    Schema getSchemaFromFeatureType(FeatureType featureType);
 }
