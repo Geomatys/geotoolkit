@@ -35,11 +35,13 @@ import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.LogicOpsType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -325,11 +327,26 @@ public class OGC110toGTTransformer {
         
         return filterFactory.id(ids);
     }
-    
+
+    public List<SortBy> visitSortBy(SortByType type){
+        final List<SortBy> sorts = new ArrayList<SortBy>();
+
+        for(final SortPropertyType spt : type.getSortProperty()){
+            final PropertyName pn = visitPropertyName(spt.getPropertyName());
+            sorts.add(filterFactory.sort(pn.getPropertyName(), spt.getSortOrder()));
+        }
+
+        return sorts;
+    }
+
     public Expression visit(JAXBElement<? extends AbstractGeometryType> ele){
         throw new UnsupportedOperationException("not supported yet, need GML");
     }
-    
+
+    public PropertyName visitPropertyName(PropertyNameType pnt){
+        return filterFactory.property(pnt.getContent());
+    }
+
     /**
      * Transform a JaxBelement in Expression.
      */
@@ -366,8 +383,7 @@ public class OGC110toGTTransformer {
             throw new IllegalArgumentException("Unknowed expression element : Name > " + expName +"  JAXB > " + jax + " OBJECT >" + obj);
             
         }else if(obj instanceof PropertyNameType){
-            final PropertyNameType pnt = (PropertyNameType) obj;
-            return filterFactory.property(pnt.getContent());
+            return visitPropertyName((PropertyNameType) obj);
         }else if(obj instanceof FunctionType){
             final FunctionType ft = (FunctionType) obj;
             final Expression[] exps = new Expression[ft.getExpression().size()];

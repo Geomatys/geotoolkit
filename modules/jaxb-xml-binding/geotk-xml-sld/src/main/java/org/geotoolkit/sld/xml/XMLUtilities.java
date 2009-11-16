@@ -39,6 +39,7 @@ import javax.xml.transform.Source;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
@@ -49,6 +50,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -119,7 +121,15 @@ public final class XMLUtilities {
         this.styleFactory = styleFactory;
         this.sldFactory = sldFactory;
     }
-    
+
+    public SLD100toGTTransformer getTransformer100(){
+        return transformerGTv100;
+    }
+
+    public SLD110toGTTransformer getTransformer110(){
+        return transformerGTv110;
+    }
+
     private Object unmarshall(final Object source, final Unmarshaller unMarshaller) 
             throws JAXBException{
         if(source instanceof File){
@@ -155,7 +165,18 @@ public final class XMLUtilities {
         }
         
     }
-    
+
+    public Object unmarshall(final Object source, final Specification.StyledLayerDescriptor version) throws JAXBException{
+        switch(version){
+            case V_1_0_0:
+                return unmarshallV100(source);
+            case V_1_1_0:
+                return unmarshallV110(source);
+            default:
+                throw new IllegalArgumentException("Unknowned version :" + version);
+        }
+    }
+
     private Object unmarshallV100(final Object source) throws JAXBException{
         if (transformerGTv100 == null) {
             transformerGTv100 = new SLD100toGTTransformer(filterFactory, styleFactory, sldFactory);
@@ -649,5 +670,32 @@ public final class XMLUtilities {
         }
         
     }
-    
+
+    // OGC property ------------------------------------------------------------
+    public PropertyName readPropertyName(final Object source,
+            final Specification.Filter version) throws JAXBException{
+        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+
+        final Object obj;
+
+        switch(version){
+            case V_1_0_0 :
+                obj = unmarshallV100(source);
+                if(obj instanceof PropertyNameType){
+                    return transformerGTv100.visitPropertyName((org.geotoolkit.ogc.xml.v100.PropertyNameType) obj);
+                }else{
+                    throw new JAXBException("Source is not a valid OGC PropertyName v1.0.0");
+                }
+            case V_1_1_0 :
+                obj = unmarshallV110(source);
+                if(obj instanceof PropertyNameType){
+                    return transformerGTv110.visitPropertyName((PropertyNameType) obj);
+                }else{
+                    throw new JAXBException("Source is not a valid OGC PropertyName v1.1.0");
+                }
+            default :
+                throw new IllegalArgumentException("Unable to read source, specified version is not supported");
+        }
+    }
+
 }
