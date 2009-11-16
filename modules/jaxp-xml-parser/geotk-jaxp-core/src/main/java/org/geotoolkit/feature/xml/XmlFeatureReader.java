@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ public interface XmlFeatureReader {
     /**
      * Read a feature or featureCollection from the specified String XML representation.
      *
-     * @param xml An Xml represenation of the featire/feature collection.
+     * @param xml An Xml representation of the feature/feature collection.
      *
      * @return A SimpleFeature / featureCollection or {@code null}
      */
@@ -40,7 +40,7 @@ public interface XmlFeatureReader {
     /**
      * Read a feature or featureCollection from the specified XML stream.
      *
-     * @param xml An Xml represenation of the featire/feature collection.
+     * @param xml An Xml representation of the feature/feature collection.
      *
      * @return A SimpleFeature / featureCollection or {@code null}
      */
@@ -49,7 +49,7 @@ public interface XmlFeatureReader {
     /**
      * Read a feature or featureCollection from the specified XML reader.
      *
-     * @param xml An Xml represenation of the featire/feature collection.
+     * @param xml An Xml representation of the feature/feature collection.
      *
      * @return A SimpleFeature / featureCollection or {@code null}
      */

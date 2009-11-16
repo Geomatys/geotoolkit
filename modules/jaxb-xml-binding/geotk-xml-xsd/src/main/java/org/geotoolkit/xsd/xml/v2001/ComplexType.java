@@ -97,6 +97,15 @@ public abstract class ComplexType extends Annotated {
     @XmlSchemaType(name = "derivationSet")
     private List<String> block;
 
+    public ComplexType() {
+
+    }
+
+    public ComplexType(String name, ComplexContent complexContent) {
+        this.name           = name;
+        this.complexContent = complexContent;
+    }
+    
     /**
      * Gets the value of the simpleContent property.
      * 
@@ -243,21 +252,7 @@ public abstract class ComplexType extends Annotated {
 
     /**
      * Gets the value of the attributeOrAttributeGroup property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeOrAttributeGroup property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttributeOrAttributeGroup().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link Attribute }
      * {@link AttributeGroupRef }

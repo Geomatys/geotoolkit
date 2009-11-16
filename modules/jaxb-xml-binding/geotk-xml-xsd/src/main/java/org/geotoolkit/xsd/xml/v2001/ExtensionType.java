@@ -77,6 +77,14 @@ public class ExtensionType extends Annotated {
     @XmlAttribute(required = true)
     private QName base;
 
+    public ExtensionType() {
+
+    }
+
+    public ExtensionType(QName base, ExplicitGroup sequence) {
+        this.base     = base;
+        this.sequence = sequence;
+    }
     /**
      * Gets the value of the group property.
      * 

@@ -58,13 +58,16 @@ public class ComplexContent extends Annotated {
     @XmlAttribute
     private Boolean mixed;
 
+    public ComplexContent() {
+
+    }
+
+    public ComplexContent(ExtensionType extension) {
+        this.extension = extension;
+    }
+
     /**
      * Gets the value of the restriction property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ComplexRestrictionType }
-     *     
      */
     public ComplexRestrictionType getRestriction() {
         return restriction;
@@ -72,10 +75,6 @@ public class ComplexContent extends Annotated {
 
     /**
      * Sets the value of the restriction property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ComplexRestrictionType }
      *     
      */
     public void setRestriction(ComplexRestrictionType value) {
@@ -84,10 +83,6 @@ public class ComplexContent extends Annotated {
 
     /**
      * Gets the value of the extension property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link ExtensionType }
      *     
      */
     public ExtensionType getExtension() {
@@ -96,11 +91,6 @@ public class ComplexContent extends Annotated {
 
     /**
      * Sets the value of the extension property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link ExtensionType }
-     *     
      */
     public void setExtension(ExtensionType value) {
         this.extension = value;
@@ -109,10 +99,6 @@ public class ComplexContent extends Annotated {
     /**
      * Gets the value of the mixed property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
      */
     public Boolean isMixed() {
         return mixed;
@@ -120,11 +106,6 @@ public class ComplexContent extends Annotated {
 
     /**
      * Sets the value of the mixed property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
      */
     public void setMixed(Boolean value) {
         this.mixed = value;

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -40,8 +40,8 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
@@ -54,7 +54,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
- *
+ * @module pending
  * @author Guilhem Legal (Geomatys)
  */
 public class JAXPEventFeatureReader implements XmlFeatureReader {
@@ -128,7 +128,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                 //we are looking for the root mark
                 if (event.isStartElement()) {
                     StartElement startEvent = event.asStartElement();
-                    Name name               = getNameFromQname(startEvent.getName());
+                    Name name               = Utils.getNameFromQname(startEvent.getName());
                     
                     if (name.getLocalPart().equals("FeatureCollection")) {
                         return readFeatureCollection(eventReader);
@@ -215,7 +215,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                 XMLEvent event = eventReader.nextEvent();
                 if (event.isStartElement()) {
                     StartElement startEvent = event.asStartElement();
-                    Name name               = getNameFromQname(startEvent.getName());
+                    Name name               = Utils.getNameFromQname(startEvent.getName());
                     if (name.getLocalPart().equals("featureMember")) {
                         continue;
 
@@ -237,16 +237,4 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         }
         return null;
     }
-
-
-    private Name getNameFromQname(QName qname) {
-        Name name;
-        if (qname.getNamespaceURI() == null || "".equals(qname.getNamespaceURI())) {
-            name = new DefaultName(qname.getLocalPart());
-        } else {
-            name = new DefaultName(qname);
-        }
-        return name;
-    }
-    
 }

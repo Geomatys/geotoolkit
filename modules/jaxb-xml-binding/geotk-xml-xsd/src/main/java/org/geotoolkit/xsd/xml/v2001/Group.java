@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -68,12 +67,12 @@ import javax.xml.namespace.QName;
 public abstract class Group extends Annotated {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "group", namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
-        @XmlElementRef(name = "all", namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
-        @XmlElementRef(name = "choice", namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
+        @XmlElementRef(name = "group",    namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
+        @XmlElementRef(name = "all",      namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
+        @XmlElementRef(name = "choice",   namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
         @XmlElementRef(name = "sequence", namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class),
-        @XmlElementRef(name = "any", namespace = "http://www.w3.org/2001/XMLSchema", type = Any.class),
-        @XmlElementRef(name = "element", namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class)
+        @XmlElementRef(name = "any",      namespace = "http://www.w3.org/2001/XMLSchema", type = Any.class),
+        @XmlElementRef(name = "element",  namespace = "http://www.w3.org/2001/XMLSchema", type = JAXBElement.class)
     })
     private List<Object> particle;
     @XmlAttribute
@@ -84,28 +83,16 @@ public abstract class Group extends Annotated {
     private QName ref;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger minOccurs;
+    private Integer minOccurs;
     @XmlAttribute
     @XmlSchemaType(name = "allNNI")
     private String maxOccurs;
 
+    private static final ObjectFactory FACTORY = new ObjectFactory();
+
     /**
      * Gets the value of the particle property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the particle property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getParticle().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Any }
      * {@link JAXBElement }{@code <}{@link ExplicitGroup }{@code >}
@@ -121,6 +108,26 @@ public abstract class Group extends Annotated {
             particle = new ArrayList<Object>();
         }
         return this.particle;
+    }
+
+    public List<Element> getElements() {
+        List<Element> result = new ArrayList<Element>();
+        for (Object obj : particle) {
+            if (obj instanceof JAXBElement) {
+                JAXBElement jb = (JAXBElement) obj;
+                if (jb.getValue() instanceof Element) {
+                    result.add((Element) jb.getValue());
+                }
+            }
+        }
+        return result;
+    }
+
+    public void addElement(TopLevelElement element) {
+        if (particle == null) {
+            particle = new ArrayList<Object>();
+        }
+        particle.add(FACTORY.createElement(element));
     }
 
     /**
@@ -179,9 +186,9 @@ public abstract class Group extends Annotated {
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getMinOccurs() {
+    public Integer getMinOccurs() {
         if (minOccurs == null) {
-            return new BigInteger("1");
+            return 1;
         } else {
             return minOccurs;
         }
@@ -195,7 +202,7 @@ public abstract class Group extends Annotated {
      *     {@link BigInteger }
      *     
      */
-    public void setMinOccurs(BigInteger value) {
+    public void setMinOccurs(Integer value) {
         this.minOccurs = value;
     }
 

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -53,6 +54,18 @@ import javax.xml.bind.annotation.XmlType;
     NarrowMaxMin.class
 })
 public class LocalElement extends Element {
+
+    public LocalElement() {
+
+    }
+
+    public LocalElement(String name, QName type) {
+        super(name, type);
+    }
+
+    public LocalElement(String name, QName type, Integer minOccurs, String maxOccurs) {
+        super(name, type, minOccurs, maxOccurs);
+    }
 
 
 }

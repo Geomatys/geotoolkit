@@ -19,6 +19,7 @@ package org.geotoolkit.xsd.xml.v2001;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -51,5 +52,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "topLevelElement")
 public class TopLevelElement extends Element {
 
+    public TopLevelElement() {
 
+    }
+
+    public TopLevelElement(String name, QName type) {
+        super(name, type);
+    }
+
+    public TopLevelElement(String name, QName type, Integer minOccurs, String maxOccurs) {
+        super(name, type, minOccurs, maxOccurs);
+    }
 }

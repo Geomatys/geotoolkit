@@ -73,75 +73,62 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "simpleTypeOrComplexTypeOrGroup"
 })
 @XmlRootElement(name = "schema")
-public class Schema
-    extends OpenAttrs
-{
+public class Schema extends OpenAttrs {
 
     @XmlElements({
         @XmlElement(name = "import", type = Import.class),
         @XmlElement(name = "redefine", type = Redefine.class),
         @XmlElement(name = "include", type = Include.class)
     })
-    protected List<OpenAttrs> includeOrImportOrRedefine;
+    private List<OpenAttrs> includeOrImportOrRedefine;
+
     @XmlElements({
-        @XmlElement(name = "complexType", type = TopLevelComplexType.class),
-        @XmlElement(name = "element", type = TopLevelElement.class),
-        @XmlElement(name = "notation", type = Notation.class),
-        @XmlElement(name = "attribute", type = TopLevelAttribute.class),
-        @XmlElement(name = "group", type = NamedGroup.class),
-        @XmlElement(name = "annotation", type = Annotation.class),
-        @XmlElement(name = "simpleType", type = TopLevelSimpleType.class),
+        @XmlElement(name = "complexType",    type = TopLevelComplexType.class),
+        @XmlElement(name = "element",        type = TopLevelElement.class),
+        @XmlElement(name = "notation",       type = Notation.class),
+        @XmlElement(name = "attribute",      type = TopLevelAttribute.class),
+        @XmlElement(name = "group",          type = NamedGroup.class),
+        @XmlElement(name = "annotation",     type = Annotation.class),
+        @XmlElement(name = "simpleType",     type = TopLevelSimpleType.class),
         @XmlElement(name = "attributeGroup", type = NamedAttributeGroup.class)
     })
-    protected List<OpenAttrs> simpleTypeOrComplexTypeOrGroup;
+    private List<OpenAttrs> simpleTypeOrComplexTypeOrGroup;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String targetNamespace;
+    private String targetNamespace;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlSchemaType(name = "token")
-    protected String version;
+    private String version;
     @XmlAttribute
     @XmlSchemaType(name = "fullDerivationSet")
-    protected List<String> finalDefault;
+    private List<String> finalDefault;
     @XmlAttribute
     @XmlSchemaType(name = "blockSet")
-    protected List<String> blockDefault;
+    private List<String> blockDefault;
     @XmlAttribute
-    protected FormChoice attributeFormDefault;
+    private FormChoice attributeFormDefault;
     @XmlAttribute
-    protected FormChoice elementFormDefault;
+    private FormChoice elementFormDefault;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
-    protected String id;
+    private String id;
     @XmlAttribute(namespace = "http://www.w3.org/XML/1998/namespace")
-    protected String lang;
+    private String lang;
+
+    public Schema() {
+
+    }
+
+    public Schema(FormChoice elementFormDefault, String targetNamespace) {
+        this.elementFormDefault = elementFormDefault;
+        this.targetNamespace    = targetNamespace;
+    }
 
     /**
      * Gets the value of the includeOrImportOrRedefine property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the includeOrImportOrRedefine property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIncludeOrImportOrRedefine().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Import }
-     * {@link Redefine }
-     * {@link Include }
-     * 
-     * 
      */
     public List<OpenAttrs> getIncludeOrImportOrRedefine() {
         if (includeOrImportOrRedefine == null) {
@@ -152,21 +139,7 @@ public class Schema
 
     /**
      * Gets the value of the simpleTypeOrComplexTypeOrGroup property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the simpleTypeOrComplexTypeOrGroup property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSimpleTypeOrComplexTypeOrGroup().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
+     *
      * Objects of the following type(s) are allowed in the list
      * {@link TopLevelComplexType }
      * {@link TopLevelElement }
@@ -185,6 +158,93 @@ public class Schema
         }
         return this.simpleTypeOrComplexTypeOrGroup;
     }
+
+    /**
+     * Return all the Top elements of the schema
+     * @return
+     */
+    public List<TopLevelElement> getElements() {
+         List<TopLevelElement> result = new ArrayList<TopLevelElement>();
+        if (simpleTypeOrComplexTypeOrGroup != null) {
+            for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
+                if (element instanceof TopLevelElement) {
+                    result.add((TopLevelElement) element);
+                }
+            }
+        }
+        return result;
+    }
+
+    public TopLevelElement getElementByName(String name) {
+        if (name != null) {
+            if (simpleTypeOrComplexTypeOrGroup != null) {
+                for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
+                    if (element instanceof TopLevelElement) {
+                        TopLevelElement tLElement = (TopLevelElement) element;
+                        if (tLElement.getName().equals(name)) {
+                            return tLElement;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return all the ComplexType of the schema
+     * @return
+     */
+    public List<TopLevelComplexType> getComplexTypes() {
+         List<TopLevelComplexType> result = new ArrayList<TopLevelComplexType>();
+        if (simpleTypeOrComplexTypeOrGroup != null) {
+            for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
+                if (element instanceof TopLevelComplexType) {
+                    result.add((TopLevelComplexType) element);
+                }
+            }
+        }
+        return result;
+    }
+
+    public TopLevelComplexType getComplexTypeByName(String name) {
+        if (name != null) {
+            if (simpleTypeOrComplexTypeOrGroup != null) {
+                for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
+                    if (element instanceof TopLevelComplexType) {
+                        TopLevelComplexType tLElement = (TopLevelComplexType) element;
+                        if (tLElement.getName().equals(name)) {
+                            return tLElement;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
+    public void addImport(Import _import) {
+        if (includeOrImportOrRedefine == null) {
+            includeOrImportOrRedefine = new ArrayList<OpenAttrs>();
+        }
+        this.includeOrImportOrRedefine.add(_import);
+    }
+
+    public void addElement(TopLevelElement element) {
+        if (simpleTypeOrComplexTypeOrGroup == null) {
+            simpleTypeOrComplexTypeOrGroup = new ArrayList<OpenAttrs>();
+        }
+        this.simpleTypeOrComplexTypeOrGroup.add(element);
+    }
+
+    public void addComplexType(TopLevelComplexType element) {
+        if (simpleTypeOrComplexTypeOrGroup == null) {
+            simpleTypeOrComplexTypeOrGroup = new ArrayList<OpenAttrs>();
+        }
+        this.simpleTypeOrComplexTypeOrGroup.add(element);
+    }
+
 
     /**
      * Gets the value of the targetNamespace property.
@@ -236,25 +296,6 @@ public class Schema
 
     /**
      * Gets the value of the finalDefault property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the finalDefault property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFinalDefault().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getFinalDefault() {
         if (finalDefault == null) {
@@ -265,25 +306,6 @@ public class Schema
 
     /**
      * Gets the value of the blockDefault property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the blockDefault property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBlockDefault().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getBlockDefault() {
         if (blockDefault == null) {

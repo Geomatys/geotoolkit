@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.xsd.xml.v2001;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -117,7 +116,7 @@ public abstract class Element extends Annotated {
     private FormChoice form;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger minOccurs;
+    private Integer minOccurs;
     @XmlAttribute
     @XmlSchemaType(name = "allNNI")
     private String maxOccurs;
@@ -127,6 +126,22 @@ public abstract class Element extends Annotated {
     private String name;
     @XmlAttribute
     private QName ref;
+
+    public Element() {
+
+    }
+
+    public Element(String name, QName type) {
+        this.name = name;
+        this.type = type;
+    }
+
+    public Element(String name, QName type, Integer minOccurs, String maxOccurs) {
+        this.name      = name;
+        this.type      = type;
+        this.minOccurs = minOccurs;
+        this.maxOccurs = maxOccurs;
+    }
 
     /**
      * Gets the value of the simpleType property.
@@ -449,9 +464,9 @@ public abstract class Element extends Annotated {
      *     {@link BigInteger }
      *     
      */
-    public BigInteger getMinOccurs() {
+    public Integer getMinOccurs() {
         if (minOccurs == null) {
-            return new BigInteger("1");
+            return 1;
         } else {
             return minOccurs;
         }
@@ -465,7 +480,7 @@ public abstract class Element extends Annotated {
      *     {@link BigInteger }
      *     
      */
-    public void setMinOccurs(BigInteger value) {
+    public void setMinOccurs(Integer value) {
         this.minOccurs = value;
     }
 

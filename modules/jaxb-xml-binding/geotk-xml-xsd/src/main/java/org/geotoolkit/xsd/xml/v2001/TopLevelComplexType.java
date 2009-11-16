@@ -47,5 +47,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "topLevelComplexType")
 public class TopLevelComplexType extends ComplexType {
 
+    public TopLevelComplexType() {
+        super();
+    }
+
+    public TopLevelComplexType(String name, ComplexContent complexContent) {
+        super(name, complexContent);
+    }
 
 }

@@ -55,13 +55,17 @@ public class Import extends Annotated {
     @XmlSchemaType(name = "anyURI")
     private String schemaLocation;
 
+    public Import() {
+
+    }
+
+    public Import(String namespace, String schemaLocation) {
+        this.namespace      = namespace;
+        this.schemaLocation = schemaLocation;
+    }
+    
     /**
      * Gets the value of the namespace property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getNamespace() {
         return namespace;
@@ -69,11 +73,6 @@ public class Import extends Annotated {
 
     /**
      * Sets the value of the namespace property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
     public void setNamespace(String value) {
         this.namespace = value;
@@ -81,11 +80,6 @@ public class Import extends Annotated {
 
     /**
      * Gets the value of the schemaLocation property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
     public String getSchemaLocation() {
         return schemaLocation;
@@ -94,10 +88,6 @@ public class Import extends Annotated {
     /**
      * Sets the value of the schemaLocation property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
     public void setSchemaLocation(String value) {
         this.schemaLocation = value;
