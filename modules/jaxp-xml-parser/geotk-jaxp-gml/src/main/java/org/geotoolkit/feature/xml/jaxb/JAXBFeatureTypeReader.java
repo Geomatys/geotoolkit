@@ -17,7 +17,6 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;

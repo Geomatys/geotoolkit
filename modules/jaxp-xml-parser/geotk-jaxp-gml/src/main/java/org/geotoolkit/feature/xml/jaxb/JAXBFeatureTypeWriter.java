@@ -130,7 +130,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 maxOcc = maxOccurs + "";
             }
             TopLevelElement localElement = new TopLevelElement(name, type, minOccurs, maxOcc);
-            if (!type.getLocalPart().equals("AbstractGeometryType")) {
+            if (!type.getLocalPart().equals("GeometryPropertyType")) {
                 sequence.addElement(localElement);
             } else {
                 geomElement = localElement;

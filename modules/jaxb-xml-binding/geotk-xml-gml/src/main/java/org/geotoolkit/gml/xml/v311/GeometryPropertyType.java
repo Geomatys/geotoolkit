@@ -29,8 +29,8 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * A geometric property can either be any geometry element encapsulated in an element of this type or an XLink reference 
- * 			to a remote geometry element (where remote includes geometry elements located elsewhere in the same document). Note that either 
- * 			the reference or the contained element must be given, but not both or none.
+ * to a remote geometry element (where remote includes geometry elements located elsewhere in the same document). 
+ * Note that either the reference or the contained element must be given, but not both or none.
  * 
  * <p>Java class for GeometryPropertyType complex type.
  * 

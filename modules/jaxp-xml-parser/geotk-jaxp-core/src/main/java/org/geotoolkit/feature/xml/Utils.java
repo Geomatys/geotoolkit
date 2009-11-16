@@ -61,7 +61,7 @@ public class Utils {
                 return String.class;
             } else if ("double".equals(name.getLocalPart())) {
                 return Double.class;
-            } else if ("AbstractGeometryType".equals(name.getLocalPart())) {
+            } else if ("GeometryPropertyType".equals(name.getLocalPart())) {
                 return Geometry.class;
             } else {
                 throw new IllegalArgumentException("unexpected type:" + name);
@@ -81,7 +81,7 @@ public class Utils {
             } else if (Double.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "double");
             } else if (Geometry.class.isAssignableFrom(binding)) {
-                return new QName("http://www.opengis.net/gml", "AbstractGeometryType");
+                return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
             } else {
                 throw new IllegalArgumentException("unexpected type:" + binding);
             }
