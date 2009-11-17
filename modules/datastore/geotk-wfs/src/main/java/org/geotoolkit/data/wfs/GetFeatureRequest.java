@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.util.List;
 import javax.xml.namespace.QName;
 import org.opengis.filter.Filter;
 
@@ -34,5 +35,13 @@ public interface GetFeatureRequest extends Request{
     Filter getFilter();
 
     void setFilter(Filter filter);
+
+    Integer getMaxFeatures();
+
+    void setMaxFeatures(Integer max);
+
+    String[] getPropertyNames();
+
+    void setPropertyNames(String[] properties);
     
 }

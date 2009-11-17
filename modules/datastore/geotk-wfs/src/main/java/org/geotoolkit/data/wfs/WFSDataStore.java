@@ -56,6 +56,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -197,11 +198,19 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
+        return getFeatureReader(typeName, Query.ALL);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
         for(Name n : typeNames){
             if(n.getLocalPart().equals(typeName)){
                 final SimpleFeatureType sft = types.get(n);
                 final QName q = new QName(n.getNamespaceURI(), n.getLocalPart(), prefixes.get(n.getNamespaceURI()));
-                FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q);
+                FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
 
                 System.out.println("coll : " + collection);
 
@@ -211,7 +220,23 @@ public class WFSDataStore extends AbstractDataStore{
                     System.out.println("coll size : " + collection.size());
                     return DataUtilities.wrapToReader(sft, collection.features());
                 }
-                
+
+            }
+        }
+
+        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected JTSEnvelope2D getBounds(Query query) throws IOException {
+        final String typeName = query.getTypeName();
+
+        for(Name n : typeNames){
+            if(n.getLocalPart().equals(typeName)){
+                return new JTSEnvelope2D(bounds.get(n));
             }
         }
 
@@ -237,12 +262,29 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
-    private FeatureCollection<SimpleFeatureType,SimpleFeature> requestFeature(QName typeName) throws IOException {
+    private FeatureCollection<SimpleFeatureType,SimpleFeature> requestFeature(QName typeName, Query query) throws IOException {
         final Name name = new DefaultName(typeName);
         final SimpleFeatureType sft = types.get(name);
 
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);
+
+        if(query != null){
+
+            final Filter filter = query.getFilter();
+            if(filter == null){
+                request.setFilter(Filter.INCLUDE);
+            }else{
+                request.setFilter(filter);
+            }
+
+            final int max = query.getMaxFeatures();
+            if(max != Query.DEFAULT_MAX){
+                request.setMaxFeatures(max);
+            }
+
+            request.setPropertyNames(query.getPropertyNames());
+        }
 
         try {
             final XmlFeatureReader reader = new JAXPEventFeatureReader(sft);
@@ -268,20 +310,5 @@ public class WFSDataStore extends AbstractDataStore{
         }
 
     }
-
-    @Override
-    protected JTSEnvelope2D getBounds(Query query) throws IOException {
-        final String typeName = query.getTypeName();
-
-        for(Name n : typeNames){
-            if(n.getLocalPart().equals(typeName)){
-                return new JTSEnvelope2D(bounds.get(n));
-            }
-        }
-
-        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
-    }
-
-
 
 }
