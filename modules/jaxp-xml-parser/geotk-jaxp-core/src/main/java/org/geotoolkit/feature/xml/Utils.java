@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Date;
 import javax.xml.namespace.QName;
+import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.feature.DefaultName;
 import org.opengis.feature.type.Name;
 
@@ -92,5 +93,26 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public final static String getEventTypeString(int eventType) {
+        switch (eventType) {
+            case XMLEvent.START_DOCUMENT:
+                return "START_DOCUMENT";
+            case XMLEvent.END_DOCUMENT:
+                return "END_DOCUMENT";
+            case XMLEvent.START_ELEMENT:
+                return "START_ELEMENT";
+            case XMLEvent.END_ELEMENT:
+                return "END_ELEMENT";
+            case XMLEvent.PROCESSING_INSTRUCTION:
+                return "PROCESSING_INSTRUCTION";
+            case XMLEvent.CHARACTERS:
+                return "CHARACTERS";
+            case XMLEvent.COMMENT:
+                return "COMMENT";
+
+        }
+        return "UNKNOWN_EVENT_TYPE";
     }
 }

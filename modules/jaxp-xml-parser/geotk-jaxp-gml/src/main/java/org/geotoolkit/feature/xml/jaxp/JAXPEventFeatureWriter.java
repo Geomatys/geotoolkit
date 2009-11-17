@@ -68,65 +68,71 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
 
     @Override
     public String write(SimpleFeature feature) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            StringWriter sw = new StringWriter();
-            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(sw);
+        if (feature != null) {
+            try {
+                XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+                StringWriter sw = new StringWriter();
+                XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(sw);
 
-            // the XML header
-            eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
+                // the XML header
+                eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
 
-            write(feature, eventWriter, true);
+                write(feature, eventWriter, true);
 
-            // we close the stream
-            eventWriter.flush();
-            eventWriter.close();
-            
-            return sw.toString();
-            
-        } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+                // we close the stream
+                eventWriter.flush();
+                eventWriter.close();
+
+                return sw.toString();
+
+            } catch (XMLStreamException ex) {
+                LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+            }
         }
         return null;
     }
 
     @Override
     public void write(SimpleFeature feature, Writer writer) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(writer);
+        if (feature != null) {
+            try {
+                XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+                XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(writer);
 
-            // the XML header
-            eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
+                // the XML header
+                eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
 
-            write(feature, eventWriter, true);
+                write(feature, eventWriter, true);
 
-            // we close the stream
-            eventWriter.flush();
-            eventWriter.close();
+                // we close the stream
+                eventWriter.flush();
+                eventWriter.close();
 
-        } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+            } catch (XMLStreamException ex) {
+                LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+            }
         }
     }
 
     @Override
     public void write(SimpleFeature feature, OutputStream out) {
-        try {
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(out);
+        if (feature != null) {
+            try {
+                XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+                XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(out);
 
-            // the XML header
-            eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
+                // the XML header
+                eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
 
-            write(feature, eventWriter,true);
+                write(feature, eventWriter,true);
 
-            // we close the stream
-            eventWriter.flush();
-            eventWriter.close();
+                // we close the stream
+                eventWriter.flush();
+                eventWriter.close();
 
-        } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+            } catch (XMLStreamException ex) {
+                LOGGER.severe("XMl stream exception while writing the feature: " + ex.getMessage());
+            }
         }
     }
 

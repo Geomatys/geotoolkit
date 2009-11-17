@@ -22,8 +22,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
@@ -175,11 +173,15 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                             }
                         
                         } else {
-                            LOGGER.severe("unexpected event");
+                            LOGGER.severe("unexpected event:" + Utils.getEventTypeString(contentEvent.getEventType()));
                         }
 
                     } else {
-                        eventReader.next();
+                        XMLEvent nextEvent = eventReader.peek();
+                        if (nextEvent.getEventType() == XMLEvent.CHARACTERS) {
+                            eventReader.next();
+                        }
+                        
                         try {
                             Unmarshaller un     = marshallpool.acquireUnmarshaller();
                             JTSGeometry isoGeom = (JTSGeometry) ((JAXBElement)un.unmarshal(eventReader)).getValue();

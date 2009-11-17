@@ -20,7 +20,9 @@ package org.geotoolkit.internal.jaxb;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -46,6 +48,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
     "value"
 })
 public class DirectPositionType implements DirectPosition {
+
+    public static final Map<String, CoordinateReferenceSystem> cachedCRS = new HashMap<String, CoordinateReferenceSystem>();
+
 
     @XmlValue
     protected List<Double> value;
@@ -248,14 +253,20 @@ public class DirectPositionType implements DirectPosition {
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        CoordinateReferenceSystem crs = null;
         try {
-            return CRS.decode(srsName);
+            if (cachedCRS.containsKey(srsName)) {
+                return cachedCRS.get(srsName);
+            } else {
+                crs =  CRS.decode(srsName);
+            }
         } catch (NoSuchAuthorityCodeException ex) {
             Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, ex.getMessage());
         } catch (FactoryException ex) {
             Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
         }
-        return null;
+        cachedCRS.put(srsName, crs);
+        return crs;
     }
 
     @Override
