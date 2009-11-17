@@ -18,6 +18,7 @@
 package org.geotoolkit.feature.xml;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.Date;
 import javax.xml.namespace.QName;
 import org.geotoolkit.feature.DefaultName;
 import org.opengis.feature.type.Name;
@@ -59,6 +60,8 @@ public class Utils {
                 return Integer.class;
             } else if ("string".equals(name.getLocalPart())) {
                 return String.class;
+            } else if ("date".equals(name.getLocalPart())) {
+                return Date.class;
             } else if ("double".equals(name.getLocalPart())) {
                 return Double.class;
             } else if ("GeometryPropertyType".equals(name.getLocalPart())) {
@@ -80,6 +83,8 @@ public class Utils {
                 return new QName("http://www.w3.org/2001/XMLSchema", "string");
             } else if (Double.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "double");
+            } else if (Date.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "date");
             } else if (Geometry.class.isAssignableFrom(binding)) {
                 return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
             } else {
