@@ -83,6 +83,10 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         return crs;
     }
 
+     public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+         this.crs = crs;
+     }
+     
     /**
      * {@inheritDoc }
      */

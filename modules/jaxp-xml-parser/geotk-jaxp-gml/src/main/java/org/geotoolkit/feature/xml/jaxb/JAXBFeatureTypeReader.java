@@ -137,6 +137,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         List<FeatureType> result = new ArrayList<FeatureType>();
         for (TopLevelElement element : schema.getElements()) {
             QName typeName           = element.getType();
+            builder.setName(new DefaultName(typeName));
             TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
             result.add(getFeatureTypeFromSchema(type));
         }

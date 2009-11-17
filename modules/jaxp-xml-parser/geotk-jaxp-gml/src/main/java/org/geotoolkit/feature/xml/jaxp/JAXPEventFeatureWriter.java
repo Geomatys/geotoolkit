@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
+import com.sun.xml.internal.stream.events.AttributeImpl;
 import com.sun.xml.internal.stream.events.CharacterEvent;
 import com.sun.xml.internal.stream.events.EndElementEvent;
 import com.sun.xml.internal.stream.events.NamespaceImpl;
@@ -43,6 +44,7 @@ import org.geotoolkit.xml.Namespaces;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.geometry.Geometry;
 
 /**
@@ -137,7 +139,10 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             String localPart = type.getName().getLocalPart();
             String prefix    = Namespaces.getPreferredPrefix(namespace, null);
             QName rootName   = new QName(namespace, localPart, prefix);
-            eventWriter.add(new StartElementEvent(rootName));
+            StartElementEvent rootEvent = new StartElementEvent(rootName);
+            eventWriter.add(rootEvent);
+            eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "id", feature.getID(), null));
+
 
             if (root) {
                 NamespaceImpl namespaceEvent = new NamespaceImpl("gml", "http://www.opengis.net/gml");
@@ -145,34 +150,42 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             }
 
             //the simple nodes (attributes of the feature)
+            String geometryName = null;
             for (Property a : feature.getProperties()) {
-                if (!"the_geom".equals(a.getName().getLocalPart())) {
-                    QName property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart());
-                    eventWriter.add(new StartElementEvent(property));
-                    eventWriter.add(new CharacterEvent(getStringValue(a.getValue())));
-                    eventWriter.add(new EndElementEvent(property));
+                if (!(a.getType() instanceof GeometryType)) {
+                    if (a.getName() != null)  {
+                        QName property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart());
+                        eventWriter.add(new StartElementEvent(property));
+                        eventWriter.add(new CharacterEvent(getStringValue(a.getValue())));
+                        eventWriter.add(new EndElementEvent(property));
+                    } else {
+                        LOGGER.severe("the propertyName is null for property:" + a);
+                    }
+                } else {
+                    geometryName = a.getName().getLocalPart();
                 }
             }
 
             // we add the geometry
-            QName geomQname = new QName("the_geom");
-            eventWriter.add(new StartElementEvent(geomQname));
-            Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
+            if (feature.getDefaultGeometry() != null) {
+                QName geomQname = new QName(geometryName);
+                eventWriter.add(new StartElementEvent(geomQname));
+                Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
 
-            Marshaller m = null;
-            try {
-                m= pool.acquireMarshaller();
-                m.setProperty(m.JAXB_FRAGMENT, true);
-                m.setProperty(m.JAXB_FORMATTED_OUTPUT, true);
-                m.marshal(factory.buildAnyGeometry(isoGeometry), eventWriter);
-            } catch (JAXBException ex) {
-                LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
-            } finally {
-                if (m != null)
-                    pool.release(m);
+                Marshaller m = null;
+                try {
+                    m= pool.acquireMarshaller();
+                    m.setProperty(m.JAXB_FRAGMENT, true);
+                    m.setProperty(m.JAXB_FORMATTED_OUTPUT, true);
+                    m.marshal(factory.buildAnyGeometry(isoGeometry), eventWriter);
+                } catch (JAXBException ex) {
+                    LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
+                } finally {
+                    if (m != null)
+                        pool.release(m);
+                }
+                eventWriter.add(new EndElementEvent(geomQname));
             }
-            eventWriter.add(new EndElementEvent(geomQname));
-
 
             eventWriter.add(new EndElementEvent(rootName));
         } catch (XMLStreamException ex) {
