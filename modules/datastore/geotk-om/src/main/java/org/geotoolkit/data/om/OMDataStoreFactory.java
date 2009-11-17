@@ -48,9 +48,19 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     public static final GeneralParameterDescriptor PORT = new DefaultParameterDescriptor("port","Port",Integer.class,5432,true);
 
     /**
-     * Parameter for database type (postgres, derby, ...)
+     * Parameter identifying the OM datastore
      */
     public static final GeneralParameterDescriptor DBTYPE = new DefaultParameterDescriptor("dbtype","DbType",String.class, "OM",true);
+
+    /**
+     * Parameter for database type (postgres, derby, ...)
+     */
+    public static final GeneralParameterDescriptor SGBDTYPE = new DefaultParameterDescriptor("sgbdtype","SGBDType",String.class, "postgres",true);
+
+    /**
+     * Parameter for database url for derby database
+     */
+    public static final GeneralParameterDescriptor DERBYURL = new DefaultParameterDescriptor("derbyurl","DerbyURL",String.class, null,true);
 
     /**
      * Parameter for database host
@@ -122,10 +132,16 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
 
 
     private String getJDBCUrl(final ParameterValueGroup params) throws IOException {
-        final String host  = (String) params.parameter(HOST.getName().toString()).getValue();
-        final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
-        final String db    = (String) params.parameter(DATABASE.getName().toString()).getValue();
-        return "jdbc:postgresql" + "://" + host + ":" + port + "/" + db;
+        final String type  = (String) params.parameter(SGBDTYPE.getName().toString()).getValue();
+        if (type.equals("derby")) {
+            final String derbyURL = (String) params.parameter(DERBYURL.getName().toString()).getValue();
+            return derbyURL;
+        } else {
+            final String host  = (String) params.parameter(HOST.getName().toString()).getValue();
+            final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
+            final String db    = (String) params.parameter(DATABASE.getName().toString()).getValue();
+            return "jdbc:postgresql" + "://" + host + ":" + port + "/" + db;
+        }
     }
    
 
