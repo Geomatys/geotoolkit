@@ -16,6 +16,9 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.util.List;
+import javax.xml.namespace.QName;
+
 
 /**
  *
@@ -24,8 +27,8 @@ package org.geotoolkit.data.wfs;
  */
 public interface DescribeFeatureTypeRequest extends Request{
 
-    String getTypeName();
+    List<QName> getTypeNames();
 
-    void setTypeName(String type);
+    void setTypeNames(List<QName> typeNames);
 
 }

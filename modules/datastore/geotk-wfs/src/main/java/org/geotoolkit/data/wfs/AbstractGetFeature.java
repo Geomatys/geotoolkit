@@ -19,9 +19,12 @@ package org.geotoolkit.data.wfs;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.opengis.filter.Filter;
 
@@ -34,8 +37,10 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
     protected final String version;
 
-    private String typeName = null;
+    private QName typeName = null;
     private Filter filter = null;
+    private Integer maxFeatures = null;
+    private String[] propertyNames = null;
 
     protected AbstractGetFeature(String serverURL, String version){
         super(serverURL);
@@ -46,15 +51,16 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public String getTypeName() {
-        return requestParameters.get("TYPENAME");
+    public QName getTypeName() {
+        return typeName;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void setTypeName(String type) {
+    public void setTypeName(QName type) {
+        this.typeName = type;
     }
 
     /**
@@ -77,13 +83,66 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
+    public Integer getMaxFeatures(){
+        return maxFeatures;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setMaxFeatures(Integer max){
+        max = maxFeatures;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String[] getPropertyNames() {
+        return propertyNames;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setPropertyNames(String[] properties) {
+        this.propertyNames = properties;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public URL getURL() throws MalformedURLException {
-        requestParameters.put("SERVICE",    "WFS");
-        requestParameters.put("REQUEST",    "DescribeFeatureType");
-        requestParameters.put("VERSION",    version);
+        requestParameters.put("SERVICE", "WFS");
+        requestParameters.put("REQUEST", "GETFEATURE");
+        requestParameters.put("VERSION", version);
+
+        if(maxFeatures != null){
+            requestParameters.put("MAXFEATURES", maxFeatures.toString());
+        }
 
         if(typeName != null){
-            requestParameters.put("TYPENAME",typeName);
+            final StringBuilder sbN = new StringBuilder();
+            final StringBuilder sbNS = new StringBuilder("{");
+
+            sbN.append(typeName.getPrefix()).append(':').append(typeName.getLocalPart()).append(',');
+            sbNS.append("xmlns(").append(typeName.getPrefix()).append('=').append(typeName.getNamespaceURI()).append(')').append(',');
+
+            if(sbN.length() > 0 && sbN.charAt(sbN.length()-1) == ','){
+                sbN.deleteCharAt(sbN.length()-1);
+            }
+
+            if(sbNS.length() > 0 && sbNS.charAt(sbNS.length()-1) == ','){
+                sbNS.deleteCharAt(sbNS.length()-1);
+            }
+
+            sbNS.append("}");
+
+            requestParameters.put("TYPENAME",sbN.toString());
+            requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
         if(filter != null){
@@ -101,8 +160,22 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             requestParameters.put("FILTER",strFilter);
         }
 
+        if(propertyNames != null){
+            final StringBuilder sb = new StringBuilder();
+
+            for(final String prop : propertyNames){
+                sb.append(prop).append(',');
+            }
+
+            if(sb.length() > 0 && sb.charAt(sb.length()-1) == ','){
+                sb.deleteCharAt(sb.length()-1);
+            }
+
+            requestParameters.put("PROPERTYNAME", sb.toString());
+        }
+
+
         return super.getURL();
     }
-
 
 }

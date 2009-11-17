@@ -156,7 +156,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
     
-    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type) {
+    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type) {        
         if (type != null) {
             ComplexContent content = type.getComplexContent();
             if (content != null) {

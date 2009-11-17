@@ -18,6 +18,8 @@ package org.geotoolkit.data.wfs;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -28,7 +30,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
 
     protected final String version;
 
-    private String typeName;
+    private List<QName> typeNames;
 
     protected AbstractDescribeFeatureType(String serverURL, String version){
         super(serverURL);
@@ -36,13 +38,13 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     }
 
     @Override
-    public String getTypeName() {
-        return typeName;
+    public List<QName> getTypeNames() {
+        return typeNames;
     }
 
     @Override
-    public void setTypeName(String type) {
-        this.typeName = type;
+    public void setTypeNames(List<QName> typeNames) {
+        this.typeNames = typeNames;
     }
 
     /**
@@ -54,8 +56,26 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
         requestParameters.put("REQUEST",    "DescribeFeatureType");
         requestParameters.put("VERSION",    version);
 
-        if(typeName != null){
-            requestParameters.put("TYPENAME",typeName);
+        if(typeNames != null){
+            final StringBuilder sbN = new StringBuilder();
+            final StringBuilder sbNS = new StringBuilder("{");
+            for(QName q : typeNames){
+                sbN.append(q.getPrefix()).append(':').append(q.getLocalPart()).append(',');
+                sbNS.append("xmlns(").append(q.getPrefix()).append('=').append(q.getNamespaceURI()).append(')').append(',');
+            }
+
+            if(sbN.charAt(sbN.length()-1) == ','){
+                sbN.deleteCharAt(sbN.length()-1);
+            }
+
+            if(sbNS.charAt(sbNS.length()-1) == ','){
+                sbNS.deleteCharAt(sbNS.length()-1);
+            }
+
+            sbNS.append("}");
+
+            requestParameters.put("TYPENAME",sbN.toString());
+            requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
         return super.getURL();
