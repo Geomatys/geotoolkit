@@ -936,6 +936,8 @@ public abstract class SpatialImageReader extends ImageReader {
      * throwing exception if some warnings should be considered as fatal errors.
      *
      * @param record The warning to log.
+     *
+     * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
      */
     public void warningOccurred(final LogRecord record) {
         if (warningListeners == null) {

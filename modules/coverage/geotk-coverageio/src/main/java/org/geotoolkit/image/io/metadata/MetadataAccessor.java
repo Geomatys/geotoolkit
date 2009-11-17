@@ -32,6 +32,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
+import javax.imageio.ImageReader; // For javadoc
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
@@ -39,14 +40,20 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.opengis.util.CodeList;
+import org.opengis.metadata.citation.Citation;
+
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
@@ -160,12 +167,14 @@ public class MetadataAccessor {
 
     /**
      * The {@linkplain #childs} path. This is the {@code childPath} parameter
-     * given to the constructor.
+     * given to the constructor if explicitly specified, or the computed value
+     * if the parmeter given to the contructor was {@code "#auto"}.
      */
-    private final String childPath;
+    final String childPath;
 
     /**
-     * The list of child elements. May be empty but never null.
+     * The list of child elements. May be empty but never null. This list is non-modifiable if
+     * {@link #childPath} is {@code null}. Otherwise, new elements can be added to this list.
      */
     private final List<Node> childs;
 
@@ -178,9 +187,9 @@ public class MetadataAccessor {
     private transient Element current;
 
     /**
-     * {@code true} if warnings are enabled.
+     * The warning levels, or {@link Level#OFF} if disabled.
      */
-    private transient boolean warningsEnabled = true;
+    private transient Level warningsLevel = Level.WARNING;
 
     /**
      * Creates an accessor with the same parent and childs than the specified one. The two
@@ -204,40 +213,16 @@ public class MetadataAccessor {
 
     /**
      * Creates an accessor for the {@linkplain Element element} at the given path.
-     * This method tries to detect automatically if the node at the given path can
-     * have children. This auto-detection may throw an {@link IllegalArgumentException}
-     * if the node is not defined by the {@link IIOMetadataFormat}.
-     * <p>
-     * To specify explicitly the children (in which case no exception is thrown), use the
-     * {@linkplain #MetadataAccessor(IIOMetadata, String, String) constructor below} instead.
+     * The paths can contains many elements separated by the {@code '/'} character.
+     * See the <a href="#skip-navbar_top">class javadoc</a> for more details.
      *
-     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                    sub-class is recommanded, but not mandatory.
-     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
-     *                    if the {@code metadata} root node is directly the node of interest.
-     * @throws IllegalArgumentException If {@link IIOMetadataFormat} does not define a node
-     *         at the given path.
-     *
-     * @since 3.06
-     */
-    public MetadataAccessor(final IIOMetadata metadata, final String parentPath)
-            throws IllegalArgumentException
-    {
-        this(metadata, parentPath, "#auto");
-    }
-
-    /**
-     * Creates an accessor for the {@linkplain Element element} at the given path. Paths are
-     * separated by the {@code '/'} character. The following examples assume the
-     * {@link SpatialMetadataFormat#IMAGE IMAGE} metadata format:
-     * <p>
-     * <table>
-     * <tr><th>Parent path</th><th>Child path</th></tr>
-     * <tr><td>{@code "RectifiedGridDomain/Limits"}&nbsp;</td><td>&nbsp;{@code null}</td></tr>
-     * <tr><td>{@code "ImageDescription/Dimensions"}&nbsp;</td><td>&nbsp;{@code "Dimension"}</td></tr>
-     * </table>
-     * <p>
-     * See {@linkplain MetadataAccessor class javadoc} for more details.
+     * {@section Auto-detection of children}
+     * If the metadata node has no child, then {@code childPath} shall be {@code null}.
+     * If the caller does not know whatever the node has childs or not, then the
+     * {@code "#auto"} special value can be used. Note that this auto-detection may
+     * throw an {@link IllegalArgumentException} if the node is not defined by the
+     * {@link IIOMetadataFormat}. It is preferable to specify explicitly the child
+     * element name when this name is known.
      *
      * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
      *                    sub-class is recommanded, but not mandatory.
@@ -246,11 +231,40 @@ public class MetadataAccessor {
      * @param  childPath  The path (relative to {@code parentPath}) to the child
      *                    {@linkplain Element elements}, or {@code null} if none.
      */
-    @SuppressWarnings("fallthrough")
     public MetadataAccessor(final IIOMetadata metadata, final String parentPath, String childPath) {
+        this(null, metadata, parentPath, childPath);
+    }
+
+    /**
+     * Creates an accessor for the {@linkplain Element element} at the given path. This constructor
+     * is identical to the {@linkplain #MetadataAccessor(IIOMetadata, String, String) above one},
+     * except that the path is relative to the given accessor instead than the metadata root.
+     *
+     * @param parent    The accessor for which the {@code path} is relative.
+     * @param path      The path to the {@linkplain Node node} of interest.
+     * @param childPath The path to the child {@linkplain Element elements}, or {@code null} if none.
+     *
+     * @since 3.06
+     */
+    public MetadataAccessor(final MetadataAccessor parent, final String path, String childPath) {
+        this(parent, parent.metadata, path, childPath);
+    }
+
+    /**
+     * Implementation of the public constructors. If the {@code parentAccessor}
+     * argument is non-null, then {@code parentPath} is relative to that parent.
+     */
+    @SuppressWarnings("fallthrough")
+    private MetadataAccessor(final MetadataAccessor parentAccessor, final IIOMetadata metadata,
+            final String parentPath, String childPath)
+    {
+        ensureNonNull("metadata", metadata);
         this.metadata = metadata;
         final Node root;
-        if (metadata instanceof SpatialMetadata) {
+        if (parentAccessor != null) {
+            format = parentAccessor.format;
+            root   = parentAccessor.parent;
+        } else if (metadata instanceof SpatialMetadata) {
             final SpatialMetadata sp = (SpatialMetadata) metadata;
             format = sp.format;
             root = sp.getAsTree();
@@ -382,6 +396,19 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Makes sure an argument is non-null.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws NullArgumentException if {@code object} is null.
+     */
+    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
+        if (object == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
+    }
+
+    /**
      * Returns the name of the element for which this accessor will fetch attribute values.
      * This is the last part of the {@code parentPath} argument given at construction time.
      * For example if the given path was {@code "DiscoveryMetadata/Extent/GeographicElement"},
@@ -409,6 +436,17 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Returns {@code true} if this accessor allows children. If this method returns
+     * {@code false}, then attempts to {@linkplain #appendChild() append a child} will
+     * throw a {@link UnsupportedOperationException}.
+     *
+     * @return {@code true) if this accessor allows children.
+     */
+    final boolean allowsChildren() {
+        return childs != Collections.EMPTY_LIST;
+    }
+
+    /**
      * Adds a new child {@linkplain Element element} at the path given at construction time.
      * The {@linkplain #childCount child count} will be increased by 1.
      * <p>
@@ -416,11 +454,12 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * new child, the {@link #selectChild} method must be invoked explicitly.
      *
      * @return The index of the new child element.
+     * @throws UnsupportedOperationException If this accessor does not allow children.
      *
      * @see #childCount
      * @see #selectChild
      */
-    public int appendChild() {
+    public int appendChild() throws UnsupportedOperationException {
         final int size = childs.size();
         final Node child = appendChild(parent, childPath);
         if (child instanceof Element) {
@@ -539,6 +578,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #setUserObject(Object)
      */
     public <T> T getUserObject(final Class<? extends T> type) throws ClassCastException {
+        ensureNonNull("type", type);
         Object value = getUserObject();
         if (value instanceof CharSequence) {
             if (String.class.isAssignableFrom(type)) {
@@ -622,6 +662,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute value (never an empty string), or {@code null} if none.
      */
     public String getAttributeAsString(final String attribute) {
+        ensureNonNull("attribute", attribute);
         String candidate = currentElement().getAttribute(attribute);
         if (candidate != null) {
             candidate = candidate.trim();
@@ -643,6 +684,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value     The attribute value.
      */
     public void setAttributeAsString(final String attribute, String value) {
+        ensureNonNull("attribute", attribute);
         final Element element = currentElement();
         if (value == null || (value=value.trim()).length() == 0) {
             if (element.hasAttribute(attribute)) {
@@ -661,6 +703,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value     The attribute value.
      * @param enums     The set of allowed values, or {@code null} if unknown.
      */
+    @Deprecated
     final void setAttributeAsEnum(final String attribute, String value, final Collection<String> enums) {
         if (value != null) {
             value = value.replace('_', ' ').trim();
@@ -672,6 +715,39 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             }
         }
         setAttributeAsString(attribute, value);
+    }
+
+    /**
+     * Returns an attribute as a code for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the code stored in the given attribute is not a known
+     * element, then this method logs a warning and returns {@code null}.
+     *
+     * @param  <T> The type of the code list.
+     * @param  attribute The attribute to fetch (e.g. {@code "imagingCondition"}).
+     * @param  codeType The type of the code list. This is used for determining the expected values.
+     * @return The attribute value, or {@code null} if none or unknown.
+     *
+     * @since 3.06
+     */
+    public <T extends CodeList<T>> T getAttributeAsCode(final String attribute, final Class<T> codeType) {
+        final String value = getAttributeAsString(attribute);
+        final T code = CodeLists.valueOf(codeType, value, false);
+        if (code == null && value != null) {
+            warning("getAttributeAsCode", Errors.Keys.BAD_PARAMETER_$2, attribute, value);
+        }
+        return code;
+    }
+
+    /**
+     * Sets the attribute to the specified code value, or remove the attribute if the value is null.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     *
+     * @since 3.06
+     */
+    public void setAttributeAsCode(final String attribute, final CodeList<?> value) {
+        setAttributeAsString(attribute, CodeLists.identifier(value));
     }
 
     /**
@@ -779,6 +855,43 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @since 3.06
+     */
+    public Float getAttributeAsFloat(final String attribute) {
+        final String value = getAttributeAsString(attribute);
+        if (value != null) try {
+            return Float.valueOf(value);
+        } catch (NumberFormatException e) {
+            warning("getAttributeAsFloat", Errors.Keys.UNPARSABLE_NUMBER_$1, value);
+        }
+        return null;
+    }
+
+    /**
+     * Sets the attribute to the specified floating point value,
+     * or remove the attribute if the value is NaN or infinity.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     *
+     * @since 3.06
+     */
+    public void setAttributeAsFloat(final String attribute, final float value) {
+        String text = null;
+        if (!Float.isNaN(value) && !Float.isInfinite(value)) {
+            text = Float.toString(value);
+        }
+        setAttributeAsString(attribute, text);
+    }
+
+    /**
+     * Returns an attribute as a floating point for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a floating point, then this
+     * method logs a warning and returns {@code null}.
+     *
+     * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
+     * @return The attribute value, or {@code null} if none or unparseable.
      */
     public Double getAttributeAsDouble(final String attribute) {
         final String value = getAttributeAsString(attribute);
@@ -792,7 +905,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
 
     /**
      * Sets the attribute to the specified floating point value,
-     * or remove the attribute if the value is NaN.
+     * or remove the attribute if the value is NaN or infinity.
      *
      * @param attribute The attribute name.
      * @param value     The attribute value.
@@ -935,7 +1048,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 // Inefficient fallback, but should usually not happen anyway.
                 return SpatialMetadata.parse(Date.class, value);
             } catch (ParseException e) {
-                warning("getAttributeAsDate", e);
+                warning(MetadataAccessor.class, "getAttributeAsDate", e);
             }
         }
         return null;
@@ -979,7 +1092,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 // Inefficient fallback, but should usually not happen anyway.
                 return (NumberRange<?>) SpatialMetadata.parse(NumberRange.class, value);
             } catch (ParseException e) {
-                warning("getAttributeAsRange", e);
+                warning(MetadataAccessor.class, "getAttributeAsRange", e);
             }
         }
         return null;
@@ -1007,6 +1120,32 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Returns an attribute as a citation for the {@linkplain #selectChild selected element},
+     * or {@code null} if none.
+     *
+     * @param  attribute The attribute to fetch (e.g. {@code "authority"}).
+     * @return The attribute value, or {@code null} if none.
+     *
+     * @since 3.06
+     */
+    public Citation getAttributeAsCitation(final String attribute) {
+        return Citations.fromName(getAttributeAsString(attribute));
+    }
+
+    /**
+     * Sets the attribute to the specified citation value,
+     * or remove the attribute if the value is null.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     *
+     * @since 3.06
+     */
+    public void setAttributeAsCitation(final String attribute, final Citation value) {
+        setAttributeAsString(attribute, Citations.getIdentifier(value));
+    }
+
+    /**
      * Trims the factional part of the given string, provided that it doesn't change the value.
      * More specifically, this method removes the trailing {@code ".0"} characters if any. This
      * method is invoked before to {@linkplain #getAttributeAsInteger parse an integer} or to
@@ -1028,22 +1167,12 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Convenience flavor of {@link #warning(String, int, Object)} with a message fetched
-     * from the given exception. This is invoked when we failed to parse an attribute.
-     */
-    final void warning(final String method, final Exception exception) {
-        if (warningsEnabled) {
-            warning(method, -1, exception.getLocalizedMessage());
-        }
-    }
-
-    /**
      * Convenience flavor of {@link #warning(String, int, Object)} with two arguments.
      * We do not use the "variable argument list" syntax because of possible confusion
      * with the {@code Object} type, which is too generic.
      */
     final void warning(final String method, final int key, final Object arg1, final Object arg2) {
-        if (warningsEnabled) {
+        if (!Level.OFF.equals(warningsLevel)) {
             warning(method, key, new Object[] {arg1, arg2});
         }
     }
@@ -1053,15 +1182,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * would not work for warnings emitted by the {@link #getAttributeAsDate} method.
      */
     final void warning(final String method, final int key, final Object value) {
-        if (warningsEnabled) {
-            final LogRecord record;
-            if (key >= 0) {
-                final Locale locale = (metadata instanceof Localized) ?
-                        ((Localized) metadata).getLocale() : Locale.getDefault();
-                record = Errors.getResources(locale).getLogRecord(Level.WARNING, key, value);
-            } else {
-                record = new LogRecord(Level.WARNING, value.toString());
-            }
+        if (!Level.OFF.equals(warningsLevel)) {
+            final Locale locale = (metadata instanceof Localized) ?
+                    ((Localized) metadata).getLocale() : Locale.getDefault();
+            final LogRecord record = Errors.getResources(locale).getLogRecord(warningsLevel, key, value);
             record.setSourceClassName(MetadataAccessor.class.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
@@ -1069,17 +1193,45 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Invoked when a warning occured. This method is invoked when some inconsistency has
-     * been detected in the geographic metadata. The default implementation delegates
-     * to {@link SpatialMetadata#warningOccurred(LogRecord)}.
+     * Convenience flavor of {@link #warning(String, int, Object)} with a message fetched
+     * from the given exception. This is invoked when we failed to parse an attribute.
+     */
+    final void warning(final Class<?> classe, final String method, final Exception exception) {
+        if (!Level.OFF.equals(warningsLevel)) {
+            String text = Classes.getShortClassName(exception);
+            final String message = exception.getLocalizedMessage();
+            if (message != null) {
+                text = text + ": " + message;
+            }
+            final LogRecord record = new LogRecord(warningsLevel, text);
+            record.setSourceClassName(classe.getName());
+            record.setSourceMethodName(method);
+            warningOccurred(record);
+        }
+    }
+
+    /**
+     * Invoked when a warning occured. This method is invoked when some inconsistency
+     * has been detected in the spatial metadata. The default implementation tries to
+     * send the message to the warning listeners, if possible. The record is actually
+     * logged only if no listener can be reached.
      * <p>
-     * If failures to parse a string should be considered as fatal errors, consider
-     * overwritting the method defined in {@code SpatialMetadata}.
+     * More specifically, the typical chain of method calls is as below. Note that the
+     * actual chain may be different since any of those methods can be overriden, and
+     * the {@code ImageReader} can be an {@code ImageWriter} instead.
+     * <p>
+     * <ol>
+     *   <li>{@code MetadataAccessor.warningOccurred(LogRecord)}</li>
+     *   <li>{@link SpatialMetadata#warningOccurred(LogRecord)}</li>
+     *   <li>{@link org.geotoolkit.image.io.SpatialImageReader#warningOccurred(LogRecord)}</li>
+     *   <li>{@link ImageReader#processWarningOccurred(String)}</li>
+     *   <li>{@link javax.imageio.event.IIOReadWarningListener#warningOccurred(ImageReader, String)}</li>
+     * </ol>
      *
      * @param record The logging record to log.
      */
     protected void warningOccurred(final LogRecord record) {
-        if (warningsEnabled) {
+        if (!Level.OFF.equals(warningsLevel)) {
             if (metadata instanceof SpatialMetadata) {
                 ((SpatialMetadata) metadata).warningOccurred(record);
             } else {
@@ -1091,18 +1243,39 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Enables or disables the warnings. Warnings are enabled by default. Subclasses way want
-     * to temporarily disable the warnings when failures are expected as the normal behavior.
-     * For example a subclass may invokes {@link #getAttributeAsInteger} and fallbacks on {@link #getAttributeAsDouble}
-     * if the former failed. In such case, the warnings should be disabled for the integer parsing,
-     * but not for the floating point parsing.
+     * Returns the level at which warnings are emitted, or {@link Level#OFF} if they are disabled.
+     * The default value is {@link Level#WARNING}.
+     * <p>
+     * Note that the warnings are effectively sent to the logging framework only if there is
+     * no registered Image I/O warning listeners. See the {@link #warningOccured(LogRecord)}
+     * javadoc for details.
      *
-     * @param  enabled {@code true} for enabling warnings, or {@code false} for disabling.
+     * @return The current level at which warnings are emitted.
+     */
+    public Level getWarningsLevel() {
+        return warningsLevel;
+    }
+
+    /**
+     * Sets the warning level, or disable warnings. By default, warnings are enabled and set to
+     * the {@link Level#WARNING WARNING} level. Subclasses way want to temporarily disable the
+     * warnings (using the {@link Level#OFF} argument value) when failures are expected as the
+     * normal behavior. For example a subclass may invokes {@link #getAttributeAsInteger} and
+     * fallbacks on {@link #getAttributeAsDouble} if the former failed. In such case, the warnings
+     * should be disabled for the integer parsing, but not for the floating point parsing.
+     * <p>
+     * Note that a low warning level like {@link Level#FINE} may prevent the warnings to
+     * be sent to the console logger, but does not prevent the warnings to be sent to the
+     * Image I/O warning listeners (see {@link #warningOccured(LogRecord)} javadoc). Only
+     * {@link Level#OFF} really disables warnings.
+     *
+     * @param  level {@link Level#OFF} for disabling warnings, or an other value for enabling them.
      * @return The previous state before this method has been invoked.
      */
-    protected boolean setWarningsEnabled(final boolean enabled) {
-        final boolean old = warningsEnabled;
-        warningsEnabled = enabled;
+    public Level setWarningsLevel(final Level level) {
+        ensureNonNull("level", level);
+        final Level old = warningsLevel;
+        warningsLevel = level;
         return old;
     }
 

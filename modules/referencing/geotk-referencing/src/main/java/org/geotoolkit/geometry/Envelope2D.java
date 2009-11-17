@@ -105,7 +105,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * toward ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}).
      * Those parameter names simply match the {@linkplain #x x} and {@linkplain #y y} fields.
      * The actual axis orientations are determined by the specified CRS.
-     * See the {@linkplain Envelope2D class javadoc} for details.
+     * See the <a href="#skip-navbar_top">class javadoc</a> for details.
      *
      * @param crs The coordinate reference system, or {@code null}.
      * @param x The <var>x</var> minimal value.
@@ -126,7 +126,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * toward ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}).
      * Those parameter names simply match the {@linkplain #x x} and {@linkplain #y y} fields.
      * The actual axis orientations are determined by the specified CRS.
-     * See the {@linkplain Envelope2D class javadoc} for details.
+     * See the <a href="#skip-navbar_top">class javadoc</a> for details.
      * <p>
      * The {@code minDP} and {@code maxDP} arguments usually contains the minimal and maximal
      * ordinate values respectively, but this is not mandatory. The ordinates will be rearanged

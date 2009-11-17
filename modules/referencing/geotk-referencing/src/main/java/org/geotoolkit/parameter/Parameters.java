@@ -546,9 +546,9 @@ public final class Parameters {
      * </ul>
      *
      * @param  param The parameter to inspect.
-     * @param  name  The name of the parameter to search for. See the class javadoc
-     *               for a rational about the usage of name as a key instead of
-     *               {@linkplain ParameterDescriptor descriptor}.
+     * @param  name  The name of the parameter to search for. See the
+     *               <a href="#skip-navbar_top">class javadoc</a> for a rational about the usage
+     *               of name as a key instead of {@linkplain ParameterDescriptor descriptor}.
      * @param maxDepth The maximal depth while descending down the parameter tree.
      * @return The set (possibly empty) of parameters with the given name.
      */

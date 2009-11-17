@@ -385,15 +385,22 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Invoked when a warning occured. This method is invoked when some inconsistency has
-     * been detected in the geographic metadata. The default implementation delegates to
-     * {@link SpatialImageReader#warningOccurred(LogRecord)} if possible, or send the record to
-     * the {@code "org.geotoolkit.image.io.metadata"} logger otherwise.
+     * Invoked when some inconsistency has been detected in the spatial metadata. The default
+     * implementation delegates to the first of the following choices which is applicable:
      * <p>
-     * Subclasses may override this method if more processing is wanted, or for
+     * <ul>
+     *   <li>{@link SpatialImageReader#warningOccurred(LogRecord)}</li>
+     *   <li>{@link SpatialImageWriter#warningOccurred(LogRecord)}</li>
+     *   <li>Send the record to the {@code "org.geotoolkit.image.io"} logger otherwise.</li>
+     * </ul>
+     * <p>
+     * Subclasses can override this method if more processing is wanted, or for
      * throwing exception if some warnings should be considered as fatal errors.
      *
      * @param record The warning record to log.
+     *
+     * @see MetadataAccessor#warningOccurred(LogRecord)
+     * @see javax.imageio.event.IIOReadWarningListener
      */
     protected void warningOccurred(final LogRecord record) {
         if (owner instanceof SpatialImageReader) {
@@ -401,7 +408,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
         } else if (owner instanceof SpatialImageWriter) {
             ((SpatialImageWriter) owner).warningOccurred(record);
         } else {
-            final Logger logger = Logging.getLogger(SpatialMetadata.class);
+            final Logger logger = Logging.getLogger("org.geotoolkit.image.io");
             record.setLoggerName(logger.getName());
             logger.log(record);
         }
@@ -435,7 +442,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @param  <T>    The expected type of parsed values.
      * @param  format The format to use for parsing and formatting.
      * @param  type   The expected type of parsed values.
-     * @return A format that log warnings when it can't parse fully a string.
+     * @return A format that logs warnings when it can't parse fully a string.
      */
     protected <T> LoggedFormat<T> createLoggedFormat(final Format format, final Class<T> type) {
         return new FormatAdapter<T>(format, type);
@@ -447,7 +454,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @param  <T>    The expected type of parsed values.
      * @param  type   The expected type of parsed values.
      * @param  format The method to logs as the "caller" when the parsing fails.
-     * @return A format that log warnings when it can't parse fully a string.
+     * @return A format that logs warnings when it can't parse fully a string.
      */
     private <T> LoggedFormat<T> createLoggedFormat(final Class<T> type, final String caller) {
         final LoggedFormat<T> format = createLoggedFormat(createFormat(type), type);

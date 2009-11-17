@@ -156,9 +156,10 @@ public abstract class LoggerAdapter extends Logger {
      * {@section Implementation tip}
      * Given that {@link Level#intValue} for all predefined levels are documented in the {@link Level}
      * specification and are multiple of 100, given that integer divisions are rounded toward zero and
-     * given rule documented in this class javadoc, then logging levels can be efficiently mapped to
-     * predefined levels using {@code switch} statements as below. This statement has good chances to
-     * be compiled to the {@code tableswitch} bytecode rather than {@code lookupswitch} (see
+     * given rule documented in this <a href="#skip-navbar_top">class javadoc</a>, then logging levels
+     * can be efficiently mapped to predefined levels using {@code switch} statements as below. This
+     * statement has good chances to be compiled to the {@code tableswitch} bytecode rather than
+     * {@code lookupswitch} (see
      * <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Compiling.doc.html#14942">Compiling
      * Switches</a> in <cite>The Java Virtual Machine Specification</cite>).
      *

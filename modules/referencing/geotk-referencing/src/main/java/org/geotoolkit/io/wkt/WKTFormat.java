@@ -299,8 +299,9 @@ public class WKTFormat extends Format {
     }
 
     /**
-     * Returns a map of short identifiers to substitute by WKT string before parsing.
-     * See the "<cite>String expansion</cite>" section in class javadoc for details.
+     * Returns a map of short identifiers to substitute by WKT string before parsing. See the
+     * "<cite>String expansion</cite>" section in <a href="#skip-navbar_top">class javadoc</a>
+     * for details.
      * <p>
      * Entries added in the definitions map will have immediate effect in this {@code WKTFormat}
      * object. They must obey the following constraints:

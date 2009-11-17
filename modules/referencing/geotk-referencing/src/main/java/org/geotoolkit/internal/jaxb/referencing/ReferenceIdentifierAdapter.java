@@ -55,13 +55,7 @@ public final class ReferenceIdentifierAdapter extends
     @Override
     public ReferenceIdentifier unmarshal(final SimpleReferenceIdentifier adapter) {
         if (adapter != null) {
-            final Citation authority;
-            final String codeSpace = adapter.codeSpace;
-            if (codeSpace != null && codeSpace.length() != 0) {
-                authority = Citations.fromName(codeSpace);
-            } else {
-                authority = null;
-            }
+            final Citation authority = Citations.fromName(adapter.codeSpace); // May be null.
             return new DefaultReferenceIdentifier(authority, Citations.getIdentifier(authority), adapter.code);
         }
         return null;

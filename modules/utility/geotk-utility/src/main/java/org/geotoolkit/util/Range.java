@@ -284,9 +284,9 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
 
     /**
      * Returns {@code true} if this range contains the given value. A range never contains the
-     * {@code null} value. This is consistent with the {@linkplain Range class javadoc} stating
-     * that null {@linkplain #getMinValue minimum} or {@linkplain #getMaxValue maximum} values
-     * are exclusive.
+     * {@code null} value. This is consistent with the <a href="#skip-navbar_top">class javadoc</a>
+     * stating that null {@linkplain #getMinValue minimum} or {@linkplain #getMaxValue maximum}
+     * values are exclusive.
      *
      * @param  value The value to check for inclusion in this range.
      * @return {@code true} if the given value is included in this range.

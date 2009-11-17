@@ -145,7 +145,7 @@ public class MosaicImageReadParam extends ImageReadParam {
      * change the {@linkplain #setSourceSubsampling subsampling} to some more efficient value.
      * <strong>Users are strongly encouraged to set this value to {@code true}</strong>, which
      * is not the default because doing so would violate the {@link javax.imageio.ImageReader}
-     * contract. See {@linkplain MosaicImageReadParam class javadoc} for more details.
+     * contract. See the <a href="#skip-navbar_top">class javadoc</a> for more details.
      *
      * @param allowed {@code true} if the mosaic image reader is allowed to change the subsampling.
      */

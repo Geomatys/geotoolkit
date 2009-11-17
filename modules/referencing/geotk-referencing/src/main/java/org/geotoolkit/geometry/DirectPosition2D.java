@@ -100,7 +100,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * the (<var>x</var>,<var>y</var>) coordinates don't need to be oriented toward
      * ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}).
      * Those parameter names simply match the {@linkplain #x x} and {@linkplain #y y}
-     * fields. See the {@linkplain DirectPosition2D class javadoc} for details.
+     * fields. See the <a href="#skip-navbar_top">class javadoc</a> for details.
      *
      * @param x The <var>x</var> value.
      * @param y The <var>y</var> value.
@@ -115,7 +115,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}).
      * Those parameter names simply match the {@linkplain #x x} and {@linkplain #y y}
      * fields. The actual axis orientations are determined by the specified CRS.
-     * See the {@linkplain DirectPosition2D class javadoc} for details.
+     * See the <a href="#skip-navbar_top">class javadoc</a> for details.
      *
      * @param crs The coordinate reference system, or {@code null}.
      * @param x The <var>x</var> value.

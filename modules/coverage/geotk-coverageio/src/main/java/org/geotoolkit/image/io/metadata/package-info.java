@@ -28,6 +28,26 @@
  * attributes only, but image readers can optionaly attach fully constructed GeoAPI objects if they
  * wish.
  *
+ * {@section Supported attribute types}
+ * This package uses {@link org.geotoolkit.image.io.metadata.SpatialMetadata.MetadataAccessor} for
+ * reading and writting attribute values. That accessor provides parsing and formatting support
+ * for the following types:
+ * <p>
+ * <table>
+ *   <tr><th>Java type</th>  <th>{@code IIOMetadataFormat type}</th></tr>
+ *   <tr><td>{@link java.lang.String}  &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING  DATATYPE_STRING}</td></tr>
+ *   <tr><td>{@link java.lang.Boolean} &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_BOOLEAN DATATYPE_BOOLEAN}</td></tr>
+ *   <tr><td>{@link java.lang.Integer} &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_INTEGER DATATYPE_INTEGER}</td></tr>
+ *   <tr><td>{@link java.lang.Float}   &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_FLOAT   DATATYPE_FLOAT}</td></tr>
+ *   <tr><td>{@link java.lang.Double}  &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_DOUBLE  DATATYPE_DOUBLE}</td></tr>
+ *   <tr><td>{@code int[]}             &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_INTEGER DATATYPE_INTEGER}</td></tr>
+ *   <tr><td>{@code double[]}          &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_DOUBLE  DATATYPE_DOUBLE}</td></tr>
+ *   <tr><td>{@link org.geotoolkit.util.NumberRange}        &nbsp;</td><td>&nbsp;</td></tr>
+ *   <tr><td>{@link java.util.Date}                         &nbsp;</td><td>&nbsp;</td></tr>
+ *   <tr><td>{@link org.opengis.util.CodeList}              &nbsp;</td><td>&nbsp;</td></tr>
+ *   <tr><td>{@link org.opengis.metadata.citation.Citation} &nbsp;</td><td>&nbsp;</td></tr>
+ * </table>
+ *
  * {@section Relationship with ISO/OGC standards}
  * The <a href="SpatialMetadataFormat.html#default-formats">default metadata formats</a>
  * defined in this package are inspired by the following material:

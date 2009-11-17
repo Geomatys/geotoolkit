@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.logging.Level;
 import java.awt.image.DataBuffer;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.resources.Errors;
@@ -95,12 +96,12 @@ public class Band extends MetadataAccessor {
     @SuppressWarnings({"unchecked","rawtypes"})
     public NumberRange<? extends Number> getValidRange() {
         Number minimum, maximum;
-        final boolean enabled = setWarningsEnabled(false);
+        final Level level = setWarningsLevel(Level.OFF);
         try {
             minimum = getAttributeAsInteger("minValue");
             maximum = getAttributeAsInteger("maxValue");
         } finally {
-            setWarningsEnabled(enabled);
+            setWarningsLevel(level);
         }
         final Class<? extends Number> type;
         if (minimum == null || maximum == null) {

@@ -473,16 +473,26 @@ public final class Citations {
     };
 
     /**
-     * Returns a citation of the given name. If the given name matches a {@linkplain
-     * Citation#getTitle title} or an {@linkplain Citation#getAlternateTitles alternate titles}
-     * of one of the pre-defined constants ({@link #EPSG}, {@link #GEOTIFF}, <cite>etc.</cite>),
-     * then this constant is returned. Otherwise, a new citation is created with the specified
-     * name as the title.
+     * Returns a citation of the given name. The method makes the following choice:
+     * <p>
+     * <ul>
+     *   <li>If the given title is {@code null} or empty (ignoring spaces), then this method
+     *       returns {@code null}.</li>
+     *   <li>Otherwise if the given name matches a {@linkplain Citation#getTitle title} or an
+     *       {@linkplain Citation#getAlternateTitles alternate titles} of one of the pre-defined
+     *       constants ({@link #EPSG}, {@link #GEOTIFF}, <cite>etc.</cite>), then that constant
+     *       is returned.</li>
+     *   <li>Otherwise, a new citation is created with the specified name as the title.</li>
+     * </ul>
      *
-     * @param  title The citation title (or alternate title).
-     * @return A citation using the specified name
+     * @param  title The citation title (or alternate title), or {@code null}.
+     * @return A citation using the specified name, or {@code null} if the given title is null
+     *         or empty.
      */
-    public static Citation fromName(final String title) {
+    public static Citation fromName(String title) {
+        if (title == null || ((title = title.trim()).length() == 0)) {
+            return null;
+        }
         for (int i=0; i<AUTHORITIES.length; i++) {
             final Citation citation = AUTHORITIES[i];
             if (titleMatches(citation, title)) {

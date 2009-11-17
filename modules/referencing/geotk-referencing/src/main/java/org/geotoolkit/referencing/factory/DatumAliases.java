@@ -267,7 +267,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
             StringTokenizer st = new StringTokenizer(line, SEPARATORS);
             while (st.hasMoreTokens()) {
                 final String name = st.nextToken().trim();
-                final Citation authority = (name.length() != 0) ? Citations.fromName(name) : null;
+                final Citation authority = Citations.fromName(name); // May be null.
                 elements.add(authority);
             }
             authorities = elements.toArray(new Citation[elements.size()]);

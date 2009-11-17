@@ -157,7 +157,7 @@ import org.geotoolkit.resources.Errors;
 │       └───Instruments
 │           └───<b>Instrument</b> : {@linkplain Instrument}
 │               ├───citation
-│               ├───Identifier
+│               ├───Identifier : {@linkplain Identifier}
 │               │   ├───code
 │               │   └───authority
 │               ├───type
@@ -178,11 +178,11 @@ import org.geotoolkit.resources.Errors;
 │   ├───illuminationElevationAngle
 │   ├───illuminationAzimuthAngle
 │   ├───imagingCondition
-│   ├───ImageQualityCode
+│   ├───ImageQualityCode : {@linkplain Identifier}
 │   │   ├───code
 │   │   └───authority
 │   ├───cloudCoverPercentage
-│   ├───ProcessingLevelCode
+│   ├───ProcessingLevelCode : {@linkplain Identifier}
 │   │   ├───code
 │   │   └───authority
 │   ├───compressionGenerationQuantity
@@ -235,7 +235,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @see SpatialMetadata
  *
- * @since 3.04
+ * @since 3.04 (derived from 2.4)
  * @module
  */
 public class SpatialMetadataFormat extends IIOMetadataFormatImpl {

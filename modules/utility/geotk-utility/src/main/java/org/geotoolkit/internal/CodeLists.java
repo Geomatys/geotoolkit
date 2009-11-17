@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * and treats the {@code '_'} character like whitespace.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.06
  *
  * @since 3.02
  * @module
@@ -46,10 +46,34 @@ public final class CodeLists implements CodeList.Filter {
     private final String codename;
 
     /**
+     * {@code true} if {@link #valueOf} is allowed to create new code lists.
+     */
+    private final boolean canCreate;
+
+    /**
      * Creates a new filter for the specified code name.
      */
-    private CodeLists(final String name) {
-        codename = name;
+    private CodeLists(final String codename, final boolean canCreate) {
+        this.codename  = codename;
+        this.canCreate = canCreate;
+    }
+
+    /**
+     * Returns the UML identifier for the given code. If the code has no UML identifier,
+     * then the programmatic name is used as a fallback.
+     *
+     * @param  code The code for which to get the UML identifier, or {@code null}.
+     * @return The UML identifiers or programmatic name for the given code,
+     *         or {@code null} if the given code null.
+     *
+     * @since 3.06
+     */
+    public static String identifier(final CodeList<?> code) {
+        if (code == null) {
+            return null;
+        }
+        final String id = code.identifier();
+        return (id != null) ? id : code.name();
     }
 
     /**
@@ -66,12 +90,7 @@ public final class CodeLists implements CodeList.Filter {
         final CodeList<?>[] codes = values(codeType);
         final String[] ids = new String[codes.length];
         for (int i=0; i<codes.length; i++) {
-            final CodeList<?> code = codes[i];
-            String id = code.identifier();
-            if (id == null) {
-                id = code.name();
-            }
-            ids[i] = id;
+            ids[i] = identifier(codes[i]);
         }
         return ids;
     }
@@ -108,7 +127,7 @@ public final class CodeLists implements CodeList.Filter {
     /**
      * Returns the code of the given type that matches the given name, or returns a new one if none
      * match it. This method performs the same work than the GeoAPI method, except that it is more
-     * tolerant on string comparisons (see the class javadoc).
+     * tolerant on string comparisons (see the <a href="#skip-navbar_top">class javadoc</a>).
      *
      * @param <T> The compile-time type given as the {@code codeType} parameter.
      * @param codeType The type of code list.
@@ -117,7 +136,27 @@ public final class CodeLists implements CodeList.Filter {
      *
      * @see CodeList#valueOf(Class, String)
      */
-    public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, String name) {
+    public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, final String name) {
+        return valueOf(codeType, name, true);
+    }
+
+    /**
+     * Returns the code of the given type that matches the given name, as described in the
+     * {@link #valueOf(Class, String)} method. If no existing code matches, then this method
+     * creates a new code if {@code canCreate} is {@code true}, or returns {@code false} otherwise.
+     *
+     * @param <T> The compile-time type given as the {@code codeType} parameter.
+     * @param codeType The type of code list.
+     * @param name The name of the code to obtain.
+     * @param canCreate {@code true} if this method is allowed to create new code.
+     * @return A code matching the given name, or {@code null} if the name is null
+     *         or if no matching code is found and {@code canCreate} is {@code false).
+     *
+     * @see CodeList#valueOf(Class, String)
+     *
+     * @since 3.06
+     */
+    public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, String name, final boolean canCreate) {
         if (name == null || (name = name.trim()).length() == 0) {
             return null;
         }
@@ -128,7 +167,7 @@ public final class CodeLists implements CodeList.Filter {
         } catch (ClassNotFoundException e) {
             throw new AssertionError(e); // Should never happen.
         }
-        return CodeList.valueOf(codeType, new CodeLists(name));
+        return CodeList.valueOf(codeType, new CodeLists(name, canCreate));
     }
 
     /**
@@ -137,7 +176,7 @@ public final class CodeLists implements CodeList.Filter {
      */
     @Override
     public String codename() {
-        return codename;
+        return canCreate ? codename : null;
     }
 
     /**

@@ -65,7 +65,7 @@ final class ComparableAxisWrapper implements Comparable<ComparableAxisWrapper> {
     }
 
     /**
-     * Compares with the specified object. See class javadoc
+     * Compares with the specified object. See <a href="#skip-navbar_top">class javadoc</a>
      * for a description of the sorting order.
      */
     @Override

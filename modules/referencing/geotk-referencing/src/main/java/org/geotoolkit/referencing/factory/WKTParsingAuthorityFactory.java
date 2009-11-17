@@ -128,7 +128,8 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
      * Creates a factory for the specified authorities using the definitions in the given map.
      * There is usually only one authority, but more can be given when the objects to create
      * should have more than one {@linkplain CoordinateReferenceSystem#getIdentifiers identifier},
-     * each with the same code but different namespace. See the class javadoc for more details.
+     * each with the same code but different namespace. See the <a href="#skip-navbar_top">class
+     * javadoc</a> for more details.
      *
      * @param userHints
      *          An optional set of hints, or {@code null} for the default ones.

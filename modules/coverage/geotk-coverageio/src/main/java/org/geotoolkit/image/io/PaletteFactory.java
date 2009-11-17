@@ -191,8 +191,8 @@ public class PaletteFactory {
 
     /**
      * Gets the default palette factory. The returned factory can provide the palettes listed in
-     * the class javadoc, together with the palettes defined by any custom factories registered
-     * in the way defined by the class javadoc.
+     * the <a href="#skip-navbar_top">class javadoc</a>, together with the palettes defined by any
+     * custom factories registered in the way defined by the class javadoc.
      *
      * {@note The scan for custom factories is performed only when this method is first invoked. If
      *        a new scan is desired (for example because new JAR files are added on the classpath,
@@ -263,7 +263,8 @@ public class PaletteFactory {
      * and the locale is {@linkplain Locale#US US}.
      * <p>
      * This constructor is protected because is it merely a convenience for subclasses registering
-     * themself as a service in the following file (see class javadoc for more details):
+     * themself as a service in the following file (see <a href="#skip-navbar_top">class javadoc</a>
+     * for more details):
      *
      * {@preformat text
      *     META-INF/services/org.geotoolkit.image.io.PaletteFactory
