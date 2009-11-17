@@ -23,6 +23,11 @@ zip -d xml-apis-1.3.04.jar org/w3c/dom/events/*
 zip -d xml-apis-1.3.04.jar org/w3c/dom/xpath/*
 
 #
+# Remove entries that duplicate jaxp-api.jar
+#
+zip -d xml-apis-1.3.04.jar javax.xml.*
+
+#
 # Remove entries that duplicate netcdf-2.2.20.jar.
 #
 zip -d grib-5.1.03.jar ucar/unidata/io/*

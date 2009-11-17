@@ -100,9 +100,10 @@ public class WFSDataStore extends AbstractDataStore{
 
             //extract the feature type -----------------------------------------
             CoordinateReferenceSystem crs;
+            SimpleFeatureType sft;
             try {
                 crs = CRS.decode(ftt.getDefaultSRS());
-                SimpleFeatureType sft = requestType(typeName);
+                sft = requestType(typeName);
                 SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
                 sftb.init(sft);
                 sftb.setCRS(crs);
