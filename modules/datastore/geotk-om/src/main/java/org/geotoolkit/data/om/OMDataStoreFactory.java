@@ -90,7 +90,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("OMParameters",
-                new GeneralParameterDescriptor[]{DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE});
+                new GeneralParameterDescriptor[]{DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL});
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
     
