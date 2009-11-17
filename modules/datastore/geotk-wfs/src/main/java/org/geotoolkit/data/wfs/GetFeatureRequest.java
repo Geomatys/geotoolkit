@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.wfs;
 
+import javax.xml.namespace.QName;
 import org.opengis.filter.Filter;
 
 
@@ -26,9 +27,9 @@ import org.opengis.filter.Filter;
  */
 public interface GetFeatureRequest extends Request{
 
-    String getTypeName();
+    QName getTypeName();
 
-    void setTypeName(String type);
+    void setTypeName(QName type);
 
     Filter getFilter();
 

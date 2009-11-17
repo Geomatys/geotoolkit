@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 import org.geotoolkit.sld.xml.XMLUtilities;
 import org.opengis.filter.Filter;
 
@@ -34,7 +35,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
     protected final String version;
 
-    private String typeName = null;
+    private QName typeName = null;
     private Filter filter = null;
 
     protected AbstractGetFeature(String serverURL, String version){
@@ -46,15 +47,16 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public String getTypeName() {
-        return requestParameters.get("TYPENAME");
+    public QName getTypeName() {
+        return typeName;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void setTypeName(String type) {
+    public void setTypeName(QName type) {
+        this.typeName = type;
     }
 
     /**
@@ -83,7 +85,25 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         requestParameters.put("VERSION",    version);
 
         if(typeName != null){
-            requestParameters.put("TYPENAME",typeName);
+            final StringBuilder sbN = new StringBuilder();
+            final StringBuilder sbNS = new StringBuilder("{");
+
+            sbN.append(typeName.getPrefix()).append(':').append(typeName.getLocalPart()).append(',');
+            sbNS.append("xmlns(").append(typeName.getPrefix()).append('=').append(typeName.getNamespaceURI()).append(')').append(',');
+
+
+            if(sbN.charAt(sbN.length()-1) == ','){
+                sbN.deleteCharAt(sbN.length()-1);
+            }
+
+            if(sbNS.charAt(sbNS.length()-1) == ','){
+                sbNS.deleteCharAt(sbNS.length()-1);
+            }
+
+            sbNS.append("}");
+
+            requestParameters.put("TYPENAME",sbN.toString());
+            requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
         if(filter != null){
