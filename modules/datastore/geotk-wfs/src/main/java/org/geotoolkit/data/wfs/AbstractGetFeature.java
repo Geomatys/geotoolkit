@@ -81,7 +81,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     @Override
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WFS");
-        requestParameters.put("REQUEST",    "DescribeFeatureType");
+        requestParameters.put("REQUEST",    "GETFEATURE");
         requestParameters.put("VERSION",    version);
 
         if(typeName != null){

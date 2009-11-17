@@ -38,6 +38,7 @@ import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.store.EmptyFeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
@@ -200,9 +201,17 @@ public class WFSDataStore extends AbstractDataStore{
             if(n.getLocalPart().equals(typeName)){
                 final SimpleFeatureType sft = types.get(n);
                 final QName q = new QName(n.getNamespaceURI(), n.getLocalPart(), prefixes.get(n.getNamespaceURI()));
-                final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q);
+                FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q);
 
-                return DataUtilities.wrapToReader(sft, collection.features());
+                System.out.println("coll : " + collection);
+
+                if(collection == null){
+                    return DataUtilities.wrapToReader(sft, new EmptyFeatureCollection(sft).features());
+                }else{
+                    System.out.println("coll size : " + collection.size());
+                    return DataUtilities.wrapToReader(sft, collection.features());
+                }
+                
             }
         }
 
@@ -241,6 +250,8 @@ public class WFSDataStore extends AbstractDataStore{
             LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
 
+            System.out.println("result : " + result);
+
             if(result instanceof SimpleFeature){
                 final SimpleFeature sf = (SimpleFeature) result;
                 final FeatureCollection<SimpleFeatureType,SimpleFeature> col = FeatureCollectionUtilities.createCollection("id", sft);
@@ -248,13 +259,14 @@ public class WFSDataStore extends AbstractDataStore{
                 return col;
             }else if(result instanceof FeatureCollection){
                 return (FeatureCollection<SimpleFeatureType, SimpleFeature>) result;
+            }else{
+                throw new IOException("unexpected type : " + result);
             }
 
         } catch (JAXBException ex) {
             throw new IOException(ex);
         }
 
-        return null;
     }
 
     @Override
