@@ -1,0 +1,22 @@
+Coverage core
+
+  Implementations of Grid Coverage services, derived from ISO 19123 and OGC 01-004 specifications.
+
+  See {{{../index.html}Overview of Coverage support in Geotoolkit.org}}.
+
+
+* Packages provided in this module
+
+  The main packages are listed below.
+
+  * <<<org.geotoolkit.coverage>>>
+
+  * <<<org.geotoolkit.coverage.grid>>>
+
+  * <<<org.geotoolkit.coverage.processing>>>
+
+  * <<<org.geotoolkit.coverage.processing.operation>>>
+
+  * <<<org.geotoolkit.image>>>
+
+  * <<<org.geotoolkit.image.jai>>>

@@ -1,0 +1,75 @@
+Coverage I/O
+
+  Base classes for image and coverage I/O operations.
+
+  See {{{../index.html}Overview of Coverage support in Geotoolkit.org}}.
+
+
+* Packages provided in this module
+
+  The main packages are listed below.
+
+  * <<<org.geotoolkit.image.io>>>
+
+  * <<<org.geotoolkit.image.io.metadata>>>
+
+  * <<<org.geotoolkit.image.io.mosaic>>>
+
+  * <<<org.geotoolkit.image.io.stream>>>
+
+  * <<<org.geotoolkit.image.io.text>>>
+
+
+* Overview
+
+  The process of creating a <<<GridCoverage2D>>> starts with creating an <<<ImageReader>>> to access
+  the contents of the original data in some source, such as a file on disk. This <<<ImageReader>>>
+  will need to provide both a <<<RenderedImage>>> and an object which extends <<<IIOMetadata>>>
+  since the interface calls for these methods.
+
+  The final step involves writing code which can create a <<<GridCoverage2D>>>. That class will
+  need to get the <<<RenderedImage>>> from the <<<ImageReader>>> and will need to parse the
+  <<<IIOMetadata>>> instance also obtained from the <<<ImageReader>>> to extract the required
+  information on both the meaning of the data and the georeferencing of the image. With that
+  information, the class will use the <<<GridCoverageFactory>>> in the coverage module to instantiate
+  the <<<GridCoverage2D>>>.
+
+  Unfortunately, we have not yet arrived at a design sufficiently powerful and flexible to handle
+  the creation of <<<GridCoverage>>> instances from all the different kinds of data a user can have.
+  Therefore, it is the programmer using the Geotk library who must create a system to generate a new
+  <<<GridCoverage>>> for each data file type they need to access. It is up to that programmer, based
+  on the knowledge of the data format and the data contents of the files their applications use, to
+  extract any generalization which they can get to avoid having to write a new class for every file.
+
+  Some work has been done in GeoAPI and Geotk to start to create a more general framework. For example,
+  the class that builds a <<<GridCoverage>>> is generally called a <<<GridCoverageReader>>> since it is
+  based on an <<<ImageReader>>>. Unfortunately, this is work in progress and the API will probably change
+  once we start work to finalize the standard way to acces grid data. Programmers today should ignore all
+  that work and build their own.
+
+
+* Create an ImageReader
+
+  The ImageReader class is part of the <<<javax.imageio>>> package. It is an abstract class which
+  needs only a few methods defined to work the critical ones being:
+
+  * <<<getImageMetadata(...)>>> : <<<IIOMetaData>>>
+
+  * <<<read(...)>>> : <<<BufferedImage>>>
+
+  with the key difficulty, apart from being able to generate the image, being how to build the
+  <<<IIOMetadata>>> object. In our case, we subclass that object adding the metadata information
+  we will need.
+
+  The core functionality of this class follows the standard Java Image I/O framework which is explained
+  in the package documentation which includes the useful Java Image I/O API Guide.
+
+  The metadata which is required to build the <<<GridCoverage2D>>> objects may be contained in the
+  image file itself, as is frequently the case in complex file formats such as NetCDF, or may have
+  to be obtained from the user based on their knowledge of the files they are using.
+
+  The programmer, obviously, can choose where in their input chain they wish to obtain from the user
+  the required information. Because sometimes the information can be obtained from the file, it seems
+  reasonable to place this query at the level of the image reader; however, that implies designing the
+  exchange of this information through the <<<IIOMetadata>>> structure. Alternatively, the programmer
+  could obtaine the required information in the next step.
