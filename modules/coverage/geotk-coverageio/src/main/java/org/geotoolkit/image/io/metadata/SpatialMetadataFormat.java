@@ -879,7 +879,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param  attribute   {@code true} if the {@code elementName} is actually for an attribute.
      * @return The name of an entry in the collection.
      */
-    private static String toComponentName(final String elementName, final String identifier, final boolean attribute) {
+    static String toComponentName(final String elementName, final String identifier, final boolean attribute) {
         if (identifier != null && !identifier.equalsIgnoreCase(elementName)) {
             return identifier;
         }

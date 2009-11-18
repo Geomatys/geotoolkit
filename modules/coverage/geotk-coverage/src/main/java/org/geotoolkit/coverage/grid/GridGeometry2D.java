@@ -172,7 +172,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      *
      * @param other The other grid geometry to copy.
      *
-     * @see #wrap
+     * @see #wrap(GridGeometry)
      *
      * @since 2.5
      */

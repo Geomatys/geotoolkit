@@ -18,15 +18,22 @@
 package org.geotoolkit.image.io.metadata;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Collection;
 import java.util.logging.Level;
+
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
+import org.opengis.metadata.identification.Keywords;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.identification.DataIdentification;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
@@ -112,6 +119,46 @@ public final class MetadataProxyTest {
     }
 
     /**
+     * Test the {@code "DiscoveryMetadata/DescriptiveKeywords/.../keywords"} metadata.
+     * This attribute is of kind {@code Collection<String>}.
+     */
+    @Test
+    public void testKeywords() {
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata,
+                "DiscoveryMetadata/DescriptiveKeywords", "DescriptiveKeywordsEntry");
+        accessor.selectChild(accessor.appendChild());
+        accessor.setAttribute("keywords", "red", "yellow or green", "blue");
+        accessor.selectChild(accessor.appendChild());
+        accessor.setAttribute("keywords", "rouge", "jaune ou vert", "bleu");
+        /*
+         * Build the metadata objects.
+         */
+        final DataIdentification identification = MetadataProxy.newProxyInstance(
+                DataIdentification.class, new MetadataAccessor(metadata, "DiscoveryMetadata", null));
+        assertMultilinesEquals(decodeQuotes(
+            "DataIdentification[“DiscoveryMetadata”]\n" +
+            "└───DescriptiveKeywords\n" +
+            "    ├───DescriptiveKeywordsEntry\n" +
+            "    │   └───keywords=“red yellow\u00A0or\u00A0green blue”\n" +
+            "    └───DescriptiveKeywordsEntry\n" +
+            "        └───keywords=“rouge jaune\u00A0ou\u00A0vert bleu”\n"), identification.toString());
+
+        final Iterator<? extends Keywords> it = identification.getDescriptiveKeywords().iterator();
+        assertTrue(it.hasNext());
+        assertEquals(Arrays.asList(
+                new SimpleInternationalString("red"),
+                new SimpleInternationalString("yellow or green"),
+                new SimpleInternationalString("blue")), it.next().getKeywords());
+        assertTrue(it.hasNext());
+        assertEquals(Arrays.asList(
+                new SimpleInternationalString("rouge"),
+                new SimpleInternationalString("jaune ou vert"),
+                new SimpleInternationalString("bleu")), it.next().getKeywords());
+        assertFalse(it.hasNext());
+    }
+
+    /**
      * Tests the list of {@code "ImageDescription/Dimensions/Dimension"} elements.
      * This method is actually a test of the {@link MetadataProxyList} class.
      */
@@ -143,7 +190,6 @@ public final class MetadataProxyTest {
             assertEquals("hashCode consistency.", dim.hashCode(), dim.hashCode());
             assertEquals(dim, dim);
             assertFalse(dim.equals(accessor));
-            assertTrue(dim.toString().startsWith("SampleDimension[\"Dimensions\"]"));
         }
     }
 
@@ -188,5 +234,31 @@ public final class MetadataProxyTest {
         assertEquals(proxy, proxy);
         assertFalse(proxy.equals(accessor));
         assertTrue(proxy.toString().startsWith("ImageDescription[\"ImageDescription\"]"));
+    }
+
+    /**
+     * Test the {@code "DiscoveryMetadata/SpatialResolution"} metadata. This is a collection
+     * in metadata interface, but declared as a singleton in {@link SpatialMetadataFormat}.
+     * The proxy should be able to handle that.
+     */
+    @Test
+    public void testSpatialResolution() {
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, "DiscoveryMetadata/SpatialResolution", null);
+        accessor.setAttribute("distance", 40);
+        /*
+         * Build the metadata objects.
+         */
+        final DataIdentification identification = MetadataProxy.newProxyInstance(
+                DataIdentification.class, new MetadataAccessor(metadata, "DiscoveryMetadata", null));
+        assertMultilinesEquals(decodeQuotes(
+            "DataIdentification[“DiscoveryMetadata”]\n" +
+            "└───SpatialResolution\n" +
+            "    └───distance=“40”\n"), identification.toString());
+
+        final Iterator<? extends Resolution> it = identification.getSpatialResolutions().iterator();
+        assertTrue(it.hasNext());
+        assertEquals(Double.valueOf(40), it.next().getDistance());
+        assertFalse(it.hasNext());
     }
 }

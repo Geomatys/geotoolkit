@@ -151,6 +151,13 @@ public class MetadataAccessor {
     private static final char SEPARATOR = '/';
 
     /**
+     * No-break space. This is used for replacing ordinary spaces in a string which is to
+     * be included in a list of strings. We can not keep the ordinary space since it is the
+     * item separator.
+     */
+    private static final char NBSP = '\u00A0';
+
+    /**
      * The owner of this accessor.
      */
     final IIOMetadata metadata;
@@ -590,9 +597,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             } else if (type.isArray()) {
                 final Class<?> component = Classes.primitiveToWrapper(type.getComponentType());
                 if (Double.class.equals(component)) {
-                    value = parseSequence(value.toString(), false, false, false);
+                    value = parseSequence(value.toString(), Double.TYPE, false, null);
                 } else if (Integer.class.equals(component)) {
-                    value = parseSequence(value.toString(), false, true, false);
+                    value = parseSequence(value.toString(), Integer.TYPE, false, null);
                 }
             }
         }
@@ -673,6 +680,26 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             }
         }
         return candidate;
+    }
+
+    /**
+     * Returns an attribute as an array of strings for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. This method gets the attribute as a single string, then splits that
+     * string on the ordinary space separator. If some items in the resulting strings contain the
+     * no-break space ({@code '\\u00A0'}), then those characters are replaced by ordinary spaces
+     * after the split.
+     *
+     * @param  attribute The attribute to fetch (e.g. {@code "keywords"}).
+     * @param  unique {@code true} if duplicated values should be collapsed into unique values,
+     *         or {@code false} for preserving duplicated values.
+     * @return The attribute values, or {@code null} if none.
+     *
+     * @see #setAttribute(String, String[])
+     *
+     * @since 3.06
+     */
+    public String[] getAttributeAsStrings(final String attribute, final boolean unique) {
+        return (String[]) parseSequence(getAttribute(attribute), String.class, unique, "getAttributeAsStrings");
     }
 
     /**
@@ -766,13 +793,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #setAttribute(String, int[])
      */
     public int[] getAttributeAsIntegers(final String attribute, final boolean unique) {
-        return (int[]) parseSequence(getAttribute(attribute), unique, true, true);
+        return (int[]) parseSequence(getAttribute(attribute), Integer.TYPE, unique, "getAttributeAsIntegers");
     }
 
     /**
-     * Returns an attribute as a floating point for the {@linkplain #selectChild selected element},
-     * or {@code null} if none. If the attribute can't be parsed as a floating point, then this
-     * method logs a warning and returns {@code null}.
+     * Returns an attribute as a floating point values for the {@linkplain #selectChild selected
+     * element}, or {@code null} if none. If the attribute can't be parsed as a floating point,
+     * then this method logs a warning and returns {@code null}.
      *
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
@@ -789,6 +816,24 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             warning("getAttributeAsFloat", Errors.Keys.UNPARSABLE_NUMBER_$1, value);
         }
         return null;
+    }
+
+    /**
+     * Returns an attribute as an array of floating point values for the {@linkplain #selectChild
+     * selected element}, or {@code null} if none. If an element can't be parsed as a floating
+     * point, then this method logs a warning and returns {@code null}.
+     *
+     * @param  attribute The attribute to fetch (e.g. {@code "fillValues"}).
+     * @param  unique {@code true} if duplicated values should be collapsed into unique values,
+     *         or {@code false} for preserving duplicated values.
+     * @return The attribute values, or {@code null} if none.
+     *
+     * @see #setAttribute(String, float[])
+     *
+     * @since 3.06
+     */
+    public float[] getAttributeAsFloats(final String attribute, final boolean unique) {
+        return (float[]) parseSequence(getAttribute(attribute), Float.TYPE, unique, "getAttributeAsFloats");
     }
 
     /**
@@ -824,7 +869,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #setAttribute(String, double[])
      */
     public double[] getAttributeAsDoubles(final String attribute, final boolean unique) {
-        return (double[]) parseSequence(getAttribute(attribute), unique, false, true);
+        return (double[]) parseSequence(getAttribute(attribute), Double.TYPE, unique, "getAttributeAsDoubles");
     }
 
     /**
@@ -896,72 +941,64 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Implementation of {@link #getAttributeAsIntegers} and {@link #getAttributeAsDoubles} methods.
+     * Implementation of methods that parse a list.
+     * Example: {@link #getAttributeAsIntegers}, {@link #getAttributeAsDoubles}.
      *
      * @param sequence
      *          The character sequence to parse.
+     * @param type
+     *          {@code Integer.TYPE} for parsing as {@code int},
+     *          {@code Double.TYPE}  for parsing as {@code double} or
+     *          {@code String.class} for parsing as {@link String}.
      * @param unique
      *          {@code true} if duplicated values should be collapsed into unique values, or
      *          {@code false} for preserving duplicated values.
-     * @param integers
-     *          {@code true} for parsing as {@code int}, or
-     *          {@code false} for parsing as {@code double}.
-     * @param logFailures
-     *          {@code true} for logging parse failure without throwing exception, or
-     *          {@code false} for letting the exceptions propagate.
+     * @param caller
+     *          The method to report as the caller when logging warnings, or {@code null}
+     *          for throwing exceptions instead than logging warnings.
      * @return The attribute values, or {@code null} if none.
      * @throws NumberFormatException if {@code logFailures} if {@code false} and an exception
      *         occured while parsing a number.
      */
-    private Object parseSequence(final String sequence, final boolean unique, final boolean integers,
-            final boolean logFailures) throws NumberFormatException
+    private Object parseSequence(final String sequence, final Class<?> type, final boolean unique,
+            final String caller) throws NumberFormatException
     {
         if (sequence == null) {
             return null;
         }
-        final Collection<Number> numbers;
+        final Collection<Object> values;
         if (unique) {
-            numbers = new LinkedHashSet<Number>();
+            values = new LinkedHashSet<Object>();
         } else {
-            numbers = new ArrayList<Number>();
+            values = new ArrayList<Object>();
         }
+        final Class<?> wrapperType = Classes.primitiveToWrapper(type);
         final StringTokenizer tokens = new StringTokenizer(sequence);
         while (tokens.hasMoreTokens()) {
-            final String token = tokens.nextToken();
-            final Number number;
+            final String token = tokens.nextToken().replace(NBSP, ' ').trim();
+            final Object value;
             try {
-                if (integers) {
-                    number = Integer.valueOf(token);
-                } else {
-                    number = Double.valueOf(token);
-                }
+                value = Classes.valueOf(wrapperType, token);
             } catch (NumberFormatException e) {
-                if (!logFailures) {
+                if (caller == null) {
                     throw e;
                 }
-                warning(integers ? "getAttributeAsIntegers" : "getAttributeAsDoubles",
-                        Errors.Keys.UNPARSABLE_NUMBER_$1, token);
+                warning(caller, Errors.Keys.UNPARSABLE_NUMBER_$1, token);
                 continue;
             }
-            numbers.add(number);
+            values.add(value);
         }
         int count = 0;
-        final Object values;
-        if (integers) {
-            values = new int[numbers.size()];
-        } else {
-            values = new double[numbers.size()];
+        final Object array = Array.newInstance(type, values.size());
+        for (final Object n : values) {
+            Array.set(array, count++, n);
         }
-        for (final Number n : numbers) {
-            Array.set(values, count++, n);
-        }
-        assert Array.getLength(values) == count;
-        return values;
+        assert Array.getLength(array) == count;
+        return array;
     }
 
     /**
-     * Formats a sequence for {@link #setAttribute} and {@link #setAttribute}
-     * implementations.
+     * Formats a sequence for {@link #setAttribute} implementations working on list arguments.
      *
      * @param  value The attribute value.
      * @return The formatted sequence.
@@ -975,7 +1012,15 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 if (i != 0) {
                     buffer.append(' ');
                 }
-                buffer.append(Array.get(values, i));
+                final Object value = Array.get(values, i);
+                if (value != null) {
+                    final String s = value.toString().trim();
+                    final int sl = s.length();
+                    for (int j=0; j<sl; j++) {
+                        final char c = s.charAt(j);
+                        buffer.append(Character.isWhitespace(c) ? NBSP : c);
+                    }
+                }
             }
             text = buffer.toString();
         }
@@ -1004,6 +1049,24 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         } else {
             element.setAttribute(attribute, value);
         }
+    }
+
+    /**
+     * Sets the attribute to the specified array of values, or remove the attribute if the array
+     * is {@code null}. The given items are formatted in a single string with an ordinary space
+     * used as the item separator, as mandated by {@link IIOMetadataFormat#VALUE_LIST}. If some
+     * of the given items contain spaces, then those spaces are replaced by a no-break space
+     * ({@code '\\u00A0'}) for avoiding confusion with the space separator.
+     *
+     * @param attribute The attribute name.
+     * @param values The attribute values, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsStrings(String, boolean)
+     *
+     * @since 3.06
+     */
+    public void setAttribute(final String attribute, final String... values) {
+        setAttribute(attribute, formatSequence(values));
     }
 
     /**
@@ -1098,6 +1161,21 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             text = Float.toString(value);
         }
         setAttribute(attribute, text);
+    }
+
+    /**
+     * Set the attribute to the specified array of values,
+     * or remove the attribute if the array is {@code null}.
+     *
+     * @param attribute The attribute name.
+     * @param values The attribute values, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsDoubles(String, boolean)
+     *
+     * @since 3.06
+     */
+    public void setAttribute(final String attribute, final float... values) {
+        setAttribute(attribute, formatSequence(values));
     }
 
     /**

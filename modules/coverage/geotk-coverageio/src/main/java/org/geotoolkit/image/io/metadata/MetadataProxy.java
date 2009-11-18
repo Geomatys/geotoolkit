@@ -29,20 +29,43 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.opengis.util.CodeList;
+import org.opengis.annotation.UML;
 import org.opengis.metadata.content.Band;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.resources.Errors;
+import org.opengis.util.InternationalString;
 
 
 /**
  * Implementation of metadata interfaces. Calls to getter methods are converted into calls to the
  * metadata accessor extracting an attribute from the {@link javax.imageio.metadata.IIOMetadata}
  * object.
+ *
+ * {@section Naming conventions for elements and attributes}
+ * This class assumes that the elements and attributes are named according the same rules than
+ * the ones used by the {@code SpatialMetadataFormat.addTree(...)} methods. More specifically:
+ *
+ * <ul>
+ *   <li><p>Attribute names are inferred from the method names according the
+ *       {@link SpatialMetadataFormat#NAME_POLICY}, which follow Java-Beans conventions.</p></li>
+ *
+ *   <li><p>Element names are inferred in the same way than attribute names (see above),
+ *       except that the first character is converted to an upper-case character using
+ *       the {@link SpatialMetadataFormat#toElementName(String)} method.</p></li>
+ *
+ *   <li><p><b>Special case for lists:</b> if an element is not found, then this class looks
+ *       for an element having a name in the singular form, where the name is inferred from
+ *       the UML identifier and {@link SpatialMetadataFormat#toComponentName}. The intend is
+ *       to support the case where the XML tree has been simplified with the replacement of
+ *       collections by singletons.</p></li>
+ * </ul>
  *
  * @param <T> The metadata interface implemented by the proxy.
  *
@@ -247,7 +270,7 @@ final class MetadataProxy<T> implements InvocationHandler {
             switch (numArgs) {
                 case 0: {
                     if (methodName.equals("toString")) {
-                        return accessor.toString(interfaceType);
+                        return toProxyString();
                     }
                     if (methodName.equals("hashCode")) {
                         return System.identityHashCode(proxy);
@@ -286,36 +309,81 @@ final class MetadataProxy<T> implements InvocationHandler {
          * Double rather than Integer if the target type is Number).
          */
         final Class<?> targetType = Classes.primitiveToWrapper(method.getReturnType());
-        if (targetType.isAssignableFrom(String     .class)) return accessor.getAttribute  (name);
+        if (targetType.isAssignableFrom(String     .class)) return accessor.getAttribute          (name);
         if (targetType.isAssignableFrom(Double     .class)) return accessor.getAttributeAsDouble  (name);
         if (targetType.isAssignableFrom(Float      .class)) return accessor.getAttributeAsFloat   (name);
         if (targetType.isAssignableFrom(Integer    .class)) return accessor.getAttributeAsInteger (name);
         if (targetType.isAssignableFrom(Boolean    .class)) return accessor.getAttributeAsBoolean (name);
+        if (targetType.isAssignableFrom(String[]   .class)) return accessor.getAttributeAsStrings (name, false);
         if (targetType.isAssignableFrom(double[]   .class)) return accessor.getAttributeAsDoubles (name, false);
+        if (targetType.isAssignableFrom(float[]    .class)) return accessor.getAttributeAsFloats  (name, false);
         if (targetType.isAssignableFrom(int[]      .class)) return accessor.getAttributeAsIntegers(name, false);
         if (targetType.isAssignableFrom(Date       .class)) return accessor.getAttributeAsDate    (name);
         if (targetType.isAssignableFrom(NumberRange.class)) return accessor.getAttributeAsRange   (name);
         if (targetType.isAssignableFrom(Citation   .class)) return accessor.getAttributeAsCitation(name);
+        if (targetType.isAssignableFrom(InternationalString.class)) {
+            return SimpleInternationalString.wrap(accessor.getAttribute(name));
+        }
         if (targetType.isAssignableFrom(List.class)) {
             /*
-             * TODO: process after the line below the cases that are not collection of
-             *       metadata. For example it could be a collection of dates.
+             * The return type is a list or a collection. If the collection elements are some
+             * simple types, then we assume that it still an attribute. We do not cache this
+             * value because we want to recompute it on next method call (the returned list
+             * is not "live").
              */
             Class<?> componentType = Classes.boundOfParameterizedAttribute(method);
+            if (componentType.isAssignableFrom(String.class)) {
+                return UnmodifiableArrayList.wrap(accessor.getAttributeAsStrings(name, false));
+            }
+            if (componentType.isAssignableFrom(InternationalString.class)) {
+                return UnmodifiableArrayList.wrap(SimpleInternationalString.wrap(
+                        accessor.getAttributeAsStrings(name, false)));
+            }
             /*
-             * For lists, we instantiate MetadataProxyList only when first needed and cache
-             * the result for reuse. The type of elements are garanteed to be compatible
-             * with the type declared in the method signature (inferred from generic types).
-             * However it can also be restricted to a subtype, if the metadata format makes
-             * such restriction.
+             * Assume a nested element. We will create a "live" list and cache it for future
+             * reuse. The type of list elements may be a subtype of 'componentType' because
+             * IIOMetadataFormat may specify restrictions.
              */
             if (childs == null) {
                 childs = new HashMap<String, Object>();
             }
             List<?> list = (List<?>) childs.get(methodName);
             if (list == null) {
-                final String elementName = SpatialMetadataFormat.toElementName(name);
-                final MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
+                String elementName = SpatialMetadataFormat.toElementName(name);
+                MetadataAccessor acc;
+                try {
+                    acc = new MetadataAccessor(accessor, elementName, "#auto");
+                } catch (IllegalArgumentException e) {
+                    /*
+                     * This exception may happen if SpatialMetadata.addTree(...) replaced the
+                     * collection by a singleton in order to simplify the XML tree  (sometime
+                     * a singleton is considered suffisient). In such case the name should be
+                     * singular (the above code tried the plural form of the name).  The code
+                     * below looks for the singular form (using the UML annotation if possible)
+                     * and tries again. In case of failure, the original exception is retrown
+                     * since the exception we get here may be misleading: the name that we
+                     * tried to infer may have no sense.
+                     */
+                    final UML uml = method.getAnnotation(UML.class);
+                    final String singular = SpatialMetadataFormat.toElementName(
+                            SpatialMetadataFormat.toComponentName(elementName,
+                            (uml != null) ? uml.identifier() : null, false));
+                    if (elementName.equals(singular)) {
+                        throw e;
+                    }
+                    elementName = singular;
+                    try {
+                        acc = new MetadataAccessor(accessor, elementName, "#auto");
+                    } catch (IllegalArgumentException ignore) {
+                        throw e;
+                    }
+                }
+                /*
+                 * At this point we have a MetadataAccessor to a node which is known to exist.
+                 * This node may have no children (this happen typically when the code in the
+                 * above "catch" block has been executed), in which case we need to wraps the
+                 * singleton in a list.
+                 */
                 if (acc.allowsChildren()) {
                     componentType = getElementClass(acc.childPath, componentType);
                     list = MetadataProxyList.create(componentType, acc);
@@ -359,6 +427,17 @@ final class MetadataProxy<T> implements InvocationHandler {
             childs.put(methodName, child);
         }
         return (child != Void.TYPE) ? child : null;
+    }
+
+    /**
+     * Returns a string representation of the proxy. This is mostly for debugging
+     * purpose and may change in any future version.
+     */
+    private String toProxyString() {
+        if (index >= 0) {
+            return Classes.getShortName(interfaceType) + '[' + index + ']';
+        }
+        return accessor.toString(interfaceType);
     }
 
     /**

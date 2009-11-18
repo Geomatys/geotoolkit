@@ -181,7 +181,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      *
      * @since 2.2
      *
-     * @see #wrap
+     * @see #wrap(Ellipsoid)
      */
     protected DefaultEllipsoid(final Ellipsoid ellipsoid) {
         super(ellipsoid);

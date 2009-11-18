@@ -166,7 +166,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      *
      * @since 2.2
      *
-     * @see #wrap
+     * @see #wrap(TemporalCRS)
      */
     public DefaultTemporalCRS(final TemporalCRS crs) {
         super(crs);

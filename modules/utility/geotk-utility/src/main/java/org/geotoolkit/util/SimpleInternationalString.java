@@ -33,7 +33,7 @@ import org.opengis.util.InternationalString;
  * effective than other implementations provided in this package.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.06
  *
  * @since 2.1
  * @module
@@ -56,18 +56,47 @@ public class SimpleInternationalString extends AbstractInternationalString imple
     }
 
     /**
-     * If the specified string is null or an instance of
-     * {@link AbstractInternationalString}, returns it unchanged.
-     * Otherwise, wraps the string value in a {@code SimpleInternationalString}.
+     * Returns the given characters sequence as an international string. If the given sequence is
+     * null or an instance of {@link InternationalString}, this this method returns it unchanged.
+     * Otherwise, this method wraps the sequence in a new {@code SimpleInternationalString}
+     * instance and returns it.
      *
-     * @param string The string to wrap.
-     * @return The given string as an international string.
+     * @param  string The characters sequence to wrap, or {@code null}.
+     * @return The given sequence as an international string, or {@code null} if the
+     *         given sequence was null.
      */
-    public static AbstractInternationalString wrap(final CharSequence string) {
-        if (string == null || string instanceof AbstractInternationalString) {
-            return (AbstractInternationalString) string;
+    public static InternationalString wrap(final CharSequence string) {
+        if (string == null || string instanceof InternationalString) {
+            return (InternationalString) string;
         }
         return new SimpleInternationalString(string.toString());
+    }
+
+    /**
+     * Returns the given array of {@code CharSequence}s as an array of {@code InternationalString}s.
+     * If the given array is null or an instance of {@code InternationalString[]}, then this method
+     * returns it unchanged. Otherwise a new array of type {@code InternationalString[]} is created
+     * and every elements from the given array is {@linkplain #wrap(CharSequence) wrapped} in the
+     * new array.
+     * <p>
+     * If a defensive copy of the {@code strings} array is wanted, then the caller needs to check
+     * if the returned array is the same instance than the one given in argument to this method.
+     *
+     * @param  strings The characters sequences to wrap, or {@code null}.
+     * @return The given array as an array of type {@code InternationalString[]},
+     *         or {@code null} if the given array was null.
+     *
+     * @since 3.06
+     */
+    public static InternationalString[] wrap(final CharSequence... strings) {
+        if (strings == null || strings instanceof InternationalString[]) {
+            return (InternationalString[]) strings;
+        }
+        final InternationalString[] copy = new InternationalString[strings.length];
+        for (int i=0; i<strings.length; i++) {
+            copy[i] = wrap(strings[i]);
+        }
+        return copy;
     }
 
     /**

@@ -69,10 +69,11 @@ public final class MetadataAccessorTest {
          */
         assertEquals("cloud", accessor.getAttribute("imagingCondition"));
         assertEquals(Double.valueOf(20), accessor.getAttributeAsDouble("cloudCoverPercentage"));
-        assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───ImageDescription\n"  +
-            "    ├───imagingCondition=\"cloud\"\n" +
-            "    └───cloudCoverPercentage=\"20.0\"\n",
+            "    ├───imagingCondition=“cloud”\n" +
+            "    └───cloudCoverPercentage=“20.0”\n"),
             metadata.toString());
         /*
          * Ensure that attempt to select a child thrown an exception,
@@ -142,13 +143,27 @@ public final class MetadataAccessorTest {
         assertTrue(Arrays.equals(accessor.getAttributeAsDoubles("values", false), new double[] {2, 5, 8}));
         accessor.selectChild(1);
         assertTrue(Arrays.equals(accessor.getAttributeAsDoubles("values", false), new double[] {3, 1, 4}));
-        assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───RectifiedGridDomain\n"  +
             "    └───OffsetVectors\n"    +
             "        ├───OffsetVector\n" +
-            "        │   └───values=\"2.0 5.0 8.0\"\n" +
+            "        │   └───values=“2.0 5.0 8.0”\n" +
             "        └───OffsetVector\n" +
-            "            └───values=\"3.0 1.0 4.0\"\n",
+            "            └───values=“3.0 1.0 4.0”\n"),
             metadata.toString());
+    }
+
+    /**
+     * Tests the accessor with a non-existent attribute under the {@code "ImageDescription"} node.
+     * Actually nothing special happen except that the resulting {@code IIOMetadata} is invalid,
+     * but this is not {@link MetadataAccessor} job to verify that.
+     */
+    @Test
+    public void testNonExistentAttribute() {
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        accessor.setAttribute("cloudCoverPercentage", 20.0); // For comparison purpose.
+        accessor.setAttribute("inexistent", 10.0);
     }
 }
