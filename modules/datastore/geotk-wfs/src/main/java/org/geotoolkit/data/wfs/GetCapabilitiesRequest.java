@@ -16,16 +16,14 @@
  */
 package org.geotoolkit.data.wfs;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
+ * WFS GetCapabilities mutable request interface.
+ * The request shall be correctly configured before calling the getURL method.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetCapabilitiesRequest {
-
-    URL getURL() throws MalformedURLException;
+public interface GetCapabilitiesRequest extends Request {
     
 }

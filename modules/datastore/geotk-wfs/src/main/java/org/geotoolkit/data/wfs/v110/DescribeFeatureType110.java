@@ -20,6 +20,7 @@ package org.geotoolkit.data.wfs.v110;
 import org.geotoolkit.data.wfs.AbstractDescribeFeatureType;
 
 /**
+ * Describe feature request for WFS 1.1.0
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

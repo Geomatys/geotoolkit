@@ -66,7 +66,8 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- *
+ * WFS Datastore, This implementation is read only.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

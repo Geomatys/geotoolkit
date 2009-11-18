@@ -32,7 +32,8 @@ import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 /**
- *
+ * WFS server, used to aquiere capabilites and requests objects.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -54,6 +55,9 @@ public class WebFeatureServer {
         this.capabilities = null;
     }
 
+    /**
+     * @return URI : server URI
+     */
     public URI getURI(){
         try {
             return serverURL.toURI();
@@ -63,6 +67,9 @@ public class WebFeatureServer {
         return null;
     }
 
+    /**
+     * @return WFSCapabilitiesType : WFS server capabilities
+     */
     public WFSCapabilitiesType getCapabilities() {
 
         if (capabilities != null) {
@@ -98,10 +105,17 @@ public class WebFeatureServer {
         return capabilities;
     }
 
+    /**
+     * @return WFSVersion : currently used version for this server
+     */
     public WFSVersion getVersion() {
         return version;
     }
 
+    /**
+     * Create a getCapabilities request.
+     * @return GetCapabilitiesRequest : getCapabilities request.
+     */
     public GetCapabilitiesRequest createGetCapabilities() {
 
         switch (version) {
@@ -112,6 +126,10 @@ public class WebFeatureServer {
         }
     }
 
+    /**
+     * Create a describe feature request
+     * @return DescribeFeatureTypeRequest : describe feature request.
+     */
     public DescribeFeatureTypeRequest createDescribeFeatureType(){
         switch (version) {
             case v110:
@@ -121,6 +139,10 @@ public class WebFeatureServer {
         }
     }
 
+    /**
+     * Create a get feature request
+     * @return GetFeatureRequest : get feature request.
+     */
     public GetFeatureRequest createGetFeature(){
         switch (version) {
             case v110:

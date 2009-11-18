@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 /**
+ * Abstract describe feature request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -37,11 +38,17 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
         this.version = version;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public List<QName> getTypeNames() {
         return typeNames;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void setTypeNames(List<QName> typeNames) {
         this.typeNames = typeNames;

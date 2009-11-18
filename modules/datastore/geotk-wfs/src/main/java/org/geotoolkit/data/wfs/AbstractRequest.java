@@ -23,10 +23,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.geotoolkit.util.logging.Logging;
 
 /**
+ * Simple abstract request, takes care to generate the url from the parameters
+ * in the requestParameters map.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -78,6 +80,9 @@ public class AbstractRequest implements Request{
         return str.replaceAll(" ", "%20").replaceAll("\n", "");
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public boolean equals(Object candidate) {
 

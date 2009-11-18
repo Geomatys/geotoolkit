@@ -20,6 +20,7 @@ package org.geotoolkit.data.wfs.v110;
 import org.geotoolkit.data.wfs.AbstractGetFeature;
 
 /**
+ * Get feature request for WFS 1.1.0
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -29,4 +30,5 @@ public class GetFeature110 extends AbstractGetFeature{
     public GetFeature110(String serverURL){
         super(serverURL,"1.1.0");
     }
+    
 }

@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
+ * Abstract get capabilities request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
