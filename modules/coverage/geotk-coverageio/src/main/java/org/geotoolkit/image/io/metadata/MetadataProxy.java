@@ -63,7 +63,7 @@ final class MetadataProxy<T> implements InvocationHandler {
     /**
      * The interface implemented by the proxy.
      */
-    private final Class<T> interfaceType;
+    final Class<T> interfaceType;
 
     /**
      * The metadata accessor. This is used for fetching the value of an attribute. The name of
@@ -107,10 +107,10 @@ final class MetadataProxy<T> implements InvocationHandler {
     /**
      * Creates a new proxy for the given metadata accessor.
      */
-    private MetadataProxy(final Class<T> type, final MetadataAccessor accessor, final int index) {
+    MetadataProxy(final Class<T> type, final MetadataAccessor accessor) {
         interfaceType = type;
         this.accessor = accessor;
-        this.index    = index;
+        this.index    = -1;
         final IIOMetadataFormat format = accessor.format;
         if (format instanceof SpatialMetadataFormat) {
             final MetadataStandard standard = ((SpatialMetadataFormat) format).getElementStandard(accessor.name());
@@ -145,19 +145,7 @@ final class MetadataProxy<T> implements InvocationHandler {
      */
     static <T> T newProxyInstance(final Class<T> type, final MetadataAccessor accessor) {
         return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
-                new Class<?>[] {type}, new MetadataProxy<T>(type, accessor, -1)));
-    }
-
-    /**
-     * Returns a new instance of a proxy class for the specified metadata interface.
-     *
-     * @param type     The interface for which to create a proxy instance.
-     * @param accessor The metadata accessor.
-     * @param index    The index of the child element, or -1 if none.
-     */
-    static <T> T newProxyInstance(final Class<T> type, final MetadataAccessor accessor, final int index) {
-        return type.cast(Proxy.newProxyInstance(MetadataProxy.class.getClassLoader(),
-                new Class<?>[] {type}, new MetadataProxy<T>(type, accessor, index)));
+                new Class<?>[] {type}, new MetadataProxy<T>(type, accessor)));
     }
 
     /**

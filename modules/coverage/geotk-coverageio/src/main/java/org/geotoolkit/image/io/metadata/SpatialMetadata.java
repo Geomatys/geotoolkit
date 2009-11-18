@@ -221,7 +221,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      */
     final Node getAsTree() {
         if (root == null) {
-            root = new IIOMetadataNode(format.getRootName());
+            root = new IIONode(format.getRootName());
         }
         return root;
     }

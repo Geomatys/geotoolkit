@@ -389,10 +389,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                     continue search;
                 }
             }
-            parent = parent.appendChild(new IIOMetadataNode(name.intern()));
+            parent = parent.appendChild(new IIONode(name.intern()));
         }
         final String name = path.substring(lower).trim().intern();
-        return parent.appendChild(new IIOMetadataNode(name));
+        return parent.appendChild(new IIONode(name));
     }
 
     /**
@@ -1247,7 +1247,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * The default value is {@link Level#WARNING}.
      * <p>
      * Note that the warnings are effectively sent to the logging framework only if there is
-     * no registered Image I/O warning listeners. See the {@link #warningOccured(LogRecord)}
+     * no registered Image I/O warning listeners. See the {@link #warningOccurred(LogRecord)}
      * javadoc for details.
      *
      * @return The current level at which warnings are emitted.
@@ -1260,13 +1260,14 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * Sets the warning level, or disable warnings. By default, warnings are enabled and set to
      * the {@link Level#WARNING WARNING} level. Subclasses way want to temporarily disable the
      * warnings (using the {@link Level#OFF} argument value) when failures are expected as the
-     * normal behavior. For example a subclass may invokes {@link #getAttributeAsInteger} and
-     * fallbacks on {@link #getAttributeAsDouble} if the former failed. In such case, the warnings
-     * should be disabled for the integer parsing, but not for the floating point parsing.
+     * normal behavior. For example a subclass may invoke {@link #getAttributeAsInteger(String)}
+     * and fallback on {@link #getAttributeAsDouble(String)} if the former failed. In such case,
+     * the warnings should be disabled for the integer parsing, but not for the floating point
+     * parsing.
      * <p>
      * Note that a low warning level like {@link Level#FINE} may prevent the warnings to
      * be sent to the console logger, but does not prevent the warnings to be sent to the
-     * Image I/O warning listeners (see {@link #warningOccured(LogRecord)} javadoc). Only
+     * Image I/O warning listeners (see {@link #warningOccurred(LogRecord)} javadoc). Only
      * {@link Level#OFF} really disables warnings.
      *
      * @param  level {@link Level#OFF} for disabling warnings, or an other value for enabling them.
@@ -1282,7 +1283,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     /**
      * Returns a string representation of the wrapped {@link IIOMetadata} as a tree. The root of
      * the tree contains the class of this accessor and the value defined in the {@link #name()}
-     * javadoc. Attributes are leafs formatted as <var>key</var>=<var>value</var>, while elements
+     * javadoc. Attributes are leafs formatted as <var>key</var>="<var>value</var>", while elements
      * and child branches.
      * <p>
      * This method is useful for visual check of the {@link IIOMetadata} content and should be

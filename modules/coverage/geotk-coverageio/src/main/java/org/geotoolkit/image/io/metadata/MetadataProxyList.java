@@ -29,6 +29,11 @@ import org.geotoolkit.util.collection.CheckedCollection;
  * A list of {@link MetadataProxy} instances. This list is <cite>live</cite>: changes to the
  * backing {@link javax.imageio.metadata.IIOMetadata} are immediately reflected in this list.
  *
+ * {@note Current implementation has a limitation, in that changes in existing elements are
+ *        reflected by this view as expected, but <em>addition</em> or <em>removal</em> of
+ *        elements are not visible if they are not performed by the <code>MetadataAccessor</code>
+ *        instance wrapped by this class.}
+ *
  * @param <T> The type of elements in this list.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -39,14 +44,9 @@ import org.geotoolkit.util.collection.CheckedCollection;
  */
 final class MetadataProxyList<T> extends AbstractList<T> implements CheckedCollection<T>, RandomAccess {
     /**
-     * The type of elements in this list.
+     * The proxy which is the parent of all elements in this list.
      */
-    private final Class<T> elementType;
-
-    /**
-     * The metadata accessor to be given to every proxy to be created.
-     */
-    private final MetadataAccessor accessor;
+    private final MetadataProxy<T> parent;
 
     /**
      * The proxies which have been created up to date. Elements in this array
@@ -65,8 +65,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
      * Creates a new list.
      */
     private MetadataProxyList(final Class<T> elementType, final MetadataAccessor accessor) {
-        this.elementType = elementType;
-        this.accessor    = accessor;
+        parent = new MetadataProxy<T>(elementType, accessor);
     }
 
     /**
@@ -74,7 +73,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
      */
     @Override
     public Class<T> getElementType() {
-        return elementType;
+        return parent.interfaceType;
     }
 
     /**
@@ -82,7 +81,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
      */
     @Override
     public int size() {
-        return accessor.childCount();
+        return parent.accessor.childCount();
     }
 
     /**
@@ -106,7 +105,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
         }
         T element = elements[index];
         if (element == null) {
-            element = MetadataProxy.newProxyInstance(elementType, accessor, index);
+            element = parent.newProxyInstance(index);
             elements[index] = element;
         }
         return element;

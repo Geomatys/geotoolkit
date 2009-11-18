@@ -29,12 +29,14 @@
  * wish.
  *
  * {@section Supported attribute types}
- * This package uses {@link org.geotoolkit.image.io.metadata.SpatialMetadata.MetadataAccessor} for
- * reading and writting attribute values. That accessor provides parsing and formatting support
- * for the following types:
+ * This package uses {@link org.geotoolkit.image.io.metadata.MetadataAccessor} for reading and
+ * writting attribute values. That accessor provides parsing and formatting support for the
+ * following attribute types. Note that this restriction applies to attributes only;
+ * {@linkplain javax.imageio.metadata.IIOMetadataNode#getUserObject() user object} attached
+ * to elements can be of any type.
  * <p>
- * <table>
- *   <tr><th>Java type</th>  <th>{@code IIOMetadataFormat type}</th></tr>
+ * <table border="1" cellspacing="0">
+ *   <tr bgcolor="lightblue"><th>Java type</th>  <th>{@code IIOMetadataFormat} type</th></tr>
  *   <tr><td>{@link java.lang.String}  &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_STRING  DATATYPE_STRING}</td></tr>
  *   <tr><td>{@link java.lang.Boolean} &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_BOOLEAN DATATYPE_BOOLEAN}</td></tr>
  *   <tr><td>{@link java.lang.Integer} &nbsp;</td><td>&nbsp;{@link javax.imageio.metadata.IIOMetadataFormat#DATATYPE_INTEGER DATATYPE_INTEGER}</td></tr>

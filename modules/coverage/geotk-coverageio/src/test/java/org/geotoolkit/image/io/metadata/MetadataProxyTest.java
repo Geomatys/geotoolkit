@@ -112,18 +112,14 @@ public final class MetadataProxyTest {
     }
 
     /**
-     * Tests the proxy with the children defined under the {@code "ImageDescription/Dimensions"}
-     * node. This is also an indirect test of {@link MetadataProxyList}, except that this time
-     * the list is created implicitly.
+     * Tests the list of {@code "ImageDescription/Dimensions/Dimension"} elements.
+     * This method is actually a test of the {@link MetadataProxyList} class.
      */
     @Test
-    @Ignore
-    public void testDimensions() {
+    public void testDimensionList() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions", "Dimension");
-        final ImageDescription proxy    = MetadataProxy.newProxyInstance(ImageDescription.class, accessor, -1);
-        final Collection<? extends RangeDimension> dimensions = proxy.getDimensions();
-        assertTrue(dimensions.isEmpty());
+        final List<SampleDimension> dimensions = MetadataProxyList.create(SampleDimension.class, accessor);
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
             assertNull(accessor.getAttributeAsDouble("minValue"));
@@ -134,9 +130,8 @@ public final class MetadataProxyTest {
             assertEquals(i, dimensions.size());
         }
         int index = 0;
-        final List<?> list = (List<?>) dimensions;
         for (final RangeDimension dim : dimensions) {
-            assertSame(dim, list.get(index++));
+            assertSame(dim, dimensions.get(index++));
             assertTrue(dim instanceof SampleDimension);
             final SampleDimension sd = (SampleDimension) dim;
             assertEquals(Double.valueOf(-index), sd.getMinValue());
@@ -150,12 +145,48 @@ public final class MetadataProxyTest {
             assertFalse(dim.equals(accessor));
             assertTrue(dim.toString().startsWith("SampleDimension[\"Dimensions\"]"));
         }
+    }
+
+    /**
+     * Tests the proxy with the children defined under the {@code "ImageDescription/Dimensions"}
+     * node. This is also an indirect test of {@link MetadataProxyList}, except that this time
+     * the list is created implicitly.
+     */
+    @Test
+    public void testDimensions() {
+        final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions", "Dimension");
+        for (int i=1; i<=4; i++) {
+            accessor.selectChild(accessor.appendChild());
+            accessor.setAttributeAsDouble("minValue", -i);
+            accessor.setAttributeAsDouble("maxValue",  i);
+        }
+        /*
+         * We need to create the list only after the elements have been added, because the
+         * current implementation does not detect element additions when they are not performed
+         * by the same accessor.
+         */
+        final MetadataAccessor reader = new MetadataAccessor(metadata, "ImageDescription", null);
+        final ImageDescription proxy  = MetadataProxy.newProxyInstance(ImageDescription.class, reader);
+        final Collection<? extends RangeDimension> dimensions = proxy.getDimensions();
+        assertEquals(4, dimensions.size());
+        /*
+         * Check the content.
+         */
+        int index = 0;
+        for (final RangeDimension dim : dimensions) {
+            index++;
+            assertTrue(dim instanceof SampleDimension);
+            final SampleDimension sd = (SampleDimension) dim;
+            assertEquals(Double.valueOf(-index), sd.getMinValue());
+            assertEquals(Double.valueOf( index), sd.getMaxValue());
+        }
         /*
          * Check the methods defined in java.lang.Object.
          */
         assertEquals("hashCode consistency.", proxy.hashCode(), proxy.hashCode());
         assertEquals(proxy, proxy);
         assertFalse(proxy.equals(accessor));
-        assertTrue(proxy.toString().startsWith("ImageDescription[\"Dimensions\"]"));
+        assertTrue(proxy.toString().startsWith("ImageDescription[\"ImageDescription\"]"));
     }
 }
