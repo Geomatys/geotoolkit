@@ -147,6 +147,12 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         ExplicitGroup sequence  = new ExplicitGroup();
         // we put the geom at the end (why it comme first ??)
         TopLevelElement geomElement = null;
+        String geomName             = null;
+        PropertyDescriptor geomDesc = featureType.getGeometryDescriptor();
+        if (geomDesc != null) {
+            geomName = geomDesc.getName().getLocalPart();
+        }
+        
         for (PropertyDescriptor pdesc : featureType.getDescriptors()) {
             String name   = pdesc.getName().getLocalPart();
             QName type    = Utils.getQNameFromType(pdesc.getType().getBinding());
@@ -159,7 +165,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 maxOcc = maxOccurs + "";
             }
             TopLevelElement localElement = new TopLevelElement(name, type, minOccurs, maxOcc);
-            if (!type.getLocalPart().equals("GeometryPropertyType")) {
+            if (!name.equals(geomName)) {
                 sequence.addElement(localElement);
             } else {
                 geomElement = localElement;

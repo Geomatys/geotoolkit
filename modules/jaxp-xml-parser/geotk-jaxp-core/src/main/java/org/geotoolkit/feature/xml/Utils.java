@@ -17,7 +17,16 @@
 
 package org.geotoolkit.feature.xml;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -88,6 +97,25 @@ public class Utils {
                 return Double.class;
             } else if ("GeometryPropertyType".equals(name.getLocalPart())) {
                 return Geometry.class;
+            } else if ("MultiPoint".equals(name.getLocalPart())) {
+                return MultiPoint.class;
+            } else if ("Point".equals(name.getLocalPart())) {
+                return Point.class;
+            } else if ("Curve".equals(name.getLocalPart())) {
+                return LineString.class;
+            } else if ("MultiGeometry".equals(name.getLocalPart())) {
+                return GeometryCollection.class;
+            } else if ("CompositeCurve".equals(name.getLocalPart())) {
+                return MultiLineString.class;
+            } else if ("Envelope".equals(name.getLocalPart())) {
+                return Envelope.class;
+            } else if ("PolyHedralSurface".equals(name.getLocalPart())) {
+                return MultiPolygon.class;
+            } else if ("Polygon".equals(name.getLocalPart())) {
+                return Polygon.class;
+            } else if ("Ring".equals(name.getLocalPart())) {
+                return LinearRing.class;
+
             } else {
                 throw new IllegalArgumentException("unexpected type:" + name);
             }
@@ -113,8 +141,30 @@ public class Utils {
                 return new QName("http://www.w3.org/2001/XMLSchema", "double");
             } else if (Date.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "date");
+
             } else if (Geometry.class.isAssignableFrom(binding)) {
-                return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
+
+                if (MultiPoint.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "MultiPoint");
+                } else if (Point.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "Point");
+                } else if (LineString.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "Curve");
+                } else if (GeometryCollection.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "MultiGeometry");
+                } else if (MultiLineString.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "CompositeCurve");
+                } else if (Envelope.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "Envelope");
+                } else if (MultiPolygon.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "PolyHedralSurface");
+                } else if (Polygon.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "Polygon");
+                } else if (LinearRing.class.equals(binding)) {
+                    return new QName("http://www.opengis.net/gml", "Ring");
+                } else {
+                    return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
+                }
             } else {
                 throw new IllegalArgumentException("unexpected type:" + binding);
             }
