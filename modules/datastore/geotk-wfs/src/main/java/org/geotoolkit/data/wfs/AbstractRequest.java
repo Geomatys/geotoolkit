@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
@@ -74,5 +77,22 @@ public class AbstractRequest implements Request{
     private static String noSpaces(String str){
         return str.replaceAll(" ", "%20").replaceAll("\n", "");
     }
+
+    @Override
+    public boolean equals(Object candidate) {
+
+        if(candidate instanceof Request){
+            try {
+                return getURL().equals(((Request) candidate).getURL());
+            } catch (MalformedURLException ex) {
+                Logging.getLogger(AbstractRequest.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+
 
 }

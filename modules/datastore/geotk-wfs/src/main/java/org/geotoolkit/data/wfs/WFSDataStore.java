@@ -18,6 +18,7 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -79,6 +80,10 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<Name,SimpleFeatureType> types = new HashMap<Name,SimpleFeatureType>();
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
+
+    private Request lastRequest = null;
+    private SoftReference<FeatureCollection<SimpleFeatureType,SimpleFeature>> lastCollection = null;
+
 
     public WFSDataStore(URI serverURI) throws MalformedURLException{
         //not transactional for the moment
@@ -305,19 +310,33 @@ public class WFSDataStore extends AbstractDataStore{
             request.setPropertyNames(query.getPropertyNames());
         }
 
+        if(request.equals(lastRequest)){
+            FeatureCollection<SimpleFeatureType,SimpleFeature> col = lastCollection.get();
+            if(col != null){
+                return col;
+            }
+        }
+
         try {
             final XmlFeatureReader reader = new JAXPEventFeatureReader(sft);
             final URL url = request.getURL();
             LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
 
+            lastRequest = request;
+
             if(result instanceof SimpleFeature){
                 final SimpleFeature sf = (SimpleFeature) result;
                 final FeatureCollection<SimpleFeatureType,SimpleFeature> col = FeatureCollectionUtilities.createCollection("id", sft);
                 col.add(sf);
+
+                lastCollection = new SoftReference<FeatureCollection<SimpleFeatureType, SimpleFeature>>(col);
+
                 return col;
             }else if(result instanceof FeatureCollection){
-                return (FeatureCollection<SimpleFeatureType, SimpleFeature>) result;
+                final FeatureCollection<SimpleFeatureType,SimpleFeature> col = (FeatureCollection<SimpleFeatureType, SimpleFeature>) result;
+                lastCollection = new SoftReference<FeatureCollection<SimpleFeatureType, SimpleFeature>>(col);
+                return col;
             }else{
                 throw new IOException("unexpected type : " + result);
             }
