@@ -146,10 +146,15 @@ public class OGC110toGTTransformer {
             final String pnt = binary.getPropertyName();
             
             final Expression geom = filterFactory.property(pnt);
-            final double minx = box.getPos().get(0).getOrdinate(0);
-            final double maxx = box.getPos().get(0).getOrdinate(1);
-            final double miny = box.getPos().get(1).getOrdinate(0);
-            final double maxy = box.getPos().get(1).getOrdinate(1);
+            final double minx = box.getLowerCorner().getOrdinate(0);
+            final double maxx = box.getUpperCorner().getOrdinate(0);
+            final double miny = box.getLowerCorner().getOrdinate(1);
+            final double maxy = box.getUpperCorner().getOrdinate(1);
+
+//            final double minx = box.getPos().get(0).getOrdinate(0);
+//            final double maxx = box.getPos().get(0).getOrdinate(1);
+//            final double miny = box.getPos().get(1).getOrdinate(0);
+//            final double maxy = box.getPos().get(1).getOrdinate(1);
             final String srs =  box.getSrsName();
             
             if (OGCJAXBStatics.FILTER_SPATIAL_BBOX.equalsIgnoreCase(OpName)) {
@@ -209,7 +214,14 @@ public class OGC110toGTTransformer {
                     }
                 }
                 
-                return filterFactory.and(filters);
+                if(filters.isEmpty()){
+                    return Filter.INCLUDE;
+                }else if(filters.size() == 1){
+                    return filters.get(0);
+                }else{
+                    return filterFactory.and(filters);
+                }
+                
             } else if (OGCJAXBStatics.FILTER_LOGIC_OR.equalsIgnoreCase(OpName)) {
                 final List<Filter> filters = new ArrayList<Filter>();
                 
@@ -228,8 +240,14 @@ public class OGC110toGTTransformer {
                         filters.add(visitSpatialOp(ele));
                     }
                 }
-                
-                return filterFactory.or(filters);
+
+                if(filters.isEmpty()){
+                    return Filter.INCLUDE;
+                }else if(filters.size() == 1){
+                    return filters.get(0);
+                }else{
+                    return filterFactory.and(filters);
+                }
             }
 
         }

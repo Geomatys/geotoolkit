@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.sld.xml;
 
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -31,7 +34,10 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.ogc.xml.v110.AndType;
+import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
@@ -56,6 +62,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
@@ -151,6 +158,7 @@ import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.referencing.FactoryException;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -438,18 +446,23 @@ public class GTtoSE110Transformer implements StyleVisitor{
             final And and = (And) filter;
             final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
             for(final Filter f : and.getChildren()){
-                lot.getLogicOps().add((JAXBElement<? extends LogicOpsType>) visitFilter(f));
+                final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) visitFilter(f);
+                if(ele != null){
+                    lot.getLogicOps().add(ele);
+                }
             }
-            return ogc_factory.createAnd(new AndType(lot.getLogicOps().get(0).getValue(),
-                                                     lot.getLogicOps().get(1).getValue()));
+
+            return ogc_factory.createAnd(new AndType(lot.getLogicOps().toArray()));
         }else if(filter instanceof Or){
             final Or or = (Or) filter;
             final BinaryLogicOpType lot = ogc_factory.createBinaryLogicOpType();
             for(final Filter f : or.getChildren()){
-                lot.getLogicOps().add((JAXBElement<? extends LogicOpsType>) visitFilter(f));
+                final JAXBElement<? extends LogicOpsType> ele = (JAXBElement<? extends LogicOpsType>) visitFilter(f);
+                if(ele != null){
+                    lot.getLogicOps().add(ele);
+                }
             }
-            return ogc_factory.createOr(new OrType(lot.getLogicOps().get(0).getValue(),
-                                                   lot.getLogicOps().get(1).getValue()));
+            return ogc_factory.createOr(new OrType(lot.getLogicOps().toArray()));
         }else if(filter instanceof Not){
             final Not not = (Not) filter;
             final UnaryLogicOpType lot = ogc_factory.createUnaryLogicOpType();
@@ -470,32 +483,106 @@ public class GTtoSE110Transformer implements StyleVisitor{
             //should not happen
             throw new IllegalArgumentException("invalide filter element : " + sf);
         }else if(filter instanceof FeatureId){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof BBOX){
-            
+            final BBOX bbox = (BBOX) filter;
+
+            final Expression left = bbox.getExpression1();
+            final Expression right = bbox.getExpression2();
+
+            final String property;
+            final double minx;
+            final double maxx;
+            final double miny;
+            final double maxy;
+            final String srs;
+
+            if(left instanceof PropertyName){
+                property = ((PropertyName)left).getPropertyName();
+
+                final Object objGeom = ((Literal)right).getValue();
+                if(objGeom instanceof org.opengis.geometry.Envelope){
+                    final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
+                    minx = env.getMinimum(0);
+                    maxx = env.getMaximum(0);
+                    miny = env.getMinimum(1);
+                    maxy = env.getMaximum(1);
+                    try {
+                        srs = CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                    } catch (FactoryException ex) {
+                        throw new IllegalArgumentException("invalide bbox element : " + filter +" "+ ex.getMessage(), ex);
+                    }
+                }else if(objGeom instanceof Geometry){
+                    final Geometry geom = (Geometry) objGeom;
+                    final Envelope env = geom.getEnvelopeInternal();
+                    minx = env.getMinX();
+                    maxx = env.getMaxX();
+                    miny = env.getMinY();
+                    maxy = env.getMaxY();
+                    srs = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+                }else{
+                    throw new IllegalArgumentException("invalide bbox element : " + filter);
+                }
+
+            }else if(right instanceof PropertyName){
+                property = ((PropertyName)right).getPropertyName();
+
+                final Object objGeom = ((Literal)left).getValue();
+                if(objGeom instanceof org.opengis.geometry.Envelope){
+                    final org.opengis.geometry.Envelope env = (org.opengis.geometry.Envelope) objGeom;
+                    minx = env.getMinimum(0);
+                    maxx = env.getMaximum(0);
+                    miny = env.getMinimum(1);
+                    maxy = env.getMaximum(1);
+                    try {
+                        srs = CRS.lookupIdentifier(env.getCoordinateReferenceSystem(), true);
+                    } catch (FactoryException ex) {
+                        throw new IllegalArgumentException("invalide bbox element : " + filter +" "+ ex.getMessage(), ex);
+                    }
+                }else if(objGeom instanceof Geometry){
+                    final Geometry geom = (Geometry) objGeom;
+                    final Envelope env = geom.getEnvelopeInternal();
+                    minx = env.getMinX();
+                    maxx = env.getMaxX();
+                    miny = env.getMinY();
+                    maxy = env.getMaxY();
+                    srs = SRIDGenerator.toSRS(geom.getSRID(), SRIDGenerator.Version.V1);
+                }else{
+                    throw new IllegalArgumentException("invalide bbox element : " + filter);
+                }
+            }else{
+                throw new IllegalArgumentException("invalide bbox element : " + filter);
+            }
+
+
+            final BBOXType bbtype = new BBOXType(property, minx, miny, maxx, maxy, srs);
+
+
+            return ogc_factory.createBBOX(bbtype);
         }else if(filter instanceof Beyond){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Contains){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Crosses){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof DWithin){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Disjoint){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Equals){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Intersects){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Overlaps){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Touches){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Within){
-            
+            throw new IllegalArgumentException("Not parsed yet : " + filter);
+        }else{
+            throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
         }
         
-        throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
     }
     
     public FilterType visit(Filter filter) {

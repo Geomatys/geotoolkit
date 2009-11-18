@@ -81,7 +81,11 @@ public class BinaryLogicOpType extends LogicOpsType {
          this.spatialOps    = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
          
          for (Object obj: operators) {
-             
+
+             if(obj instanceof JAXBElement){
+                 obj = ((JAXBElement)obj).getValue();
+             }
+
              // comparison operator
              if (obj instanceof ComparisonOpsType)  {
                  this.comparisonOps.add(FilterType.createComparisonOps((ComparisonOpsType)obj));

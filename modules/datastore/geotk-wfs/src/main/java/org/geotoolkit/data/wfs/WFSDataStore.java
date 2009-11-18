@@ -39,6 +39,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.store.EmptyFeatureCollection;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
@@ -54,7 +55,9 @@ import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.Envelope;
@@ -104,14 +107,8 @@ public class WFSDataStore extends AbstractDataStore{
             CoordinateReferenceSystem crs;
             SimpleFeatureType sft;
             try {
-                crs = CRS.decode(ftt.getDefaultSRS());
-                sft = requestType(typeName);
-                SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-                sftb.init(sft);
-                sftb.setCRS(crs);
-                sft = sftb.buildFeatureType();
-
-                types.put(name, sft);
+                crs = CRS.decode(ftt.getDefaultSRS(),true);
+                sft = requestType(typeName);                
             } catch (IOException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
                 continue;
@@ -119,12 +116,38 @@ public class WFSDataStore extends AbstractDataStore{
                 LOGGER.log(Level.SEVERE, null, ex);
                 continue;
             }
+
+            final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+            sftb.setCRS(crs);
+            sftb.setName(sft.getName());
+            for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
+                if(desc instanceof GeometryDescriptor){
+                    System.out.println("la");
+                    GeometryDescriptor gd = (GeometryDescriptor) desc;
+                    final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+                    atb.init(gd);
+                    atb.setCRS(crs);
+                    gd = atb.buildDescriptor(gd.getLocalName(), atb.buildGeometryType());
+                    sftb.add(gd);
+                }else{
+                    sftb.add(desc);
+                }
+            }
+            sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
+            sft = sftb.buildFeatureType();
+
+            CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
+            if(val == null){
+                throw new IllegalArgumentException("CRS should not be null");
+            }
+
+            types.put(name, sft);
             typeNames.add(name);
 
             //extract the bounds -----------------------------------------------
             final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
             try {
-                crs = CRS.decode(bbox.getCrs());
+                crs = CRS.decode(bbox.getCrs(),true);
                 final GeneralEnvelope env = new GeneralEnvelope(crs);
                 final BigInteger dims = bbox.getDimensions();
                 final List<Double> upper = bbox.getUpperCorner();
@@ -206,18 +229,26 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
+
+        System.err.println("--------------------------- " + typeName);
+
         for(Name n : typeNames){
             if(n.getLocalPart().equals(typeName)){
+                System.err.println("-------------- top go search 1");
                 final SimpleFeatureType sft = types.get(n);
-                final QName q = new QName(n.getNamespaceURI(), n.getLocalPart(), prefixes.get(n.getNamespaceURI()));
-                FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
 
-                System.out.println("coll : " + collection);
+                System.err.println("-------------- top go search 2");
+                final QName q = new QName(n.getNamespaceURI(), n.getLocalPart(), prefixes.get(n.getNamespaceURI()));
+                System.err.println("-------------- top go search 3");
+                FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
+                System.err.println("-------------- top go search 4");
+
+                System.err.println("+++++++++++++++++++++ coll : " + collection);
 
                 if(collection == null){
                     return DataUtilities.wrapToReader(sft, new EmptyFeatureCollection(sft).features());
                 }else{
-                    System.out.println("coll size : " + collection.size());
+                    System.err.println("+++++++++++++++++++++ coll size : " + collection.size());
                     return DataUtilities.wrapToReader(sft, collection.features());
                 }
 
@@ -291,8 +322,7 @@ public class WFSDataStore extends AbstractDataStore{
             final URL url = request.getURL();
             LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
-
-            System.out.println("result : " + result);
+            LOGGER.log(Level.INFO, "[WFS Client] result parsed : " + result);
 
             if(result instanceof SimpleFeature){
                 final SimpleFeature sf = (SimpleFeature) result;

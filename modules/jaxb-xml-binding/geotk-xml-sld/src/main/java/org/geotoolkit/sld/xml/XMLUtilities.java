@@ -123,10 +123,16 @@ public final class XMLUtilities {
     }
 
     public SLD100toGTTransformer getTransformer100(){
+        if (transformerGTv100 == null) {
+            transformerGTv100 = new SLD100toGTTransformer(filterFactory, styleFactory, sldFactory);
+        }
         return transformerGTv100;
     }
 
     public SLD110toGTTransformer getTransformer110(){
+        if (transformerGTv110 == null) {
+            transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory);
+        }
         return transformerGTv110;
     }
 

@@ -19,13 +19,13 @@ package org.geotoolkit.data.wfs;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+
 import org.geotoolkit.sld.xml.XMLUtilities;
+
 import org.opengis.filter.Filter;
 
 /**
@@ -145,10 +145,10 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
-        if(filter != null){
+        if(filter != null && filter != Filter.INCLUDE){
             final XMLUtilities util = new XMLUtilities();
-
             final StringWriter writer = new StringWriter();
+
             try {
                 util.writeFilter(writer, filter, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
             } catch (JAXBException ex) {

@@ -279,9 +279,11 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
             try {
                 return !reader.hasNext();
             } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Error while iterating on reader.",e);
                 return true; // error seems like no features are available
             }
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error while getting reader",e);
             return true;
         } finally {
             if (reader != null) {
