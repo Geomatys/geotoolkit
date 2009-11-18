@@ -36,6 +36,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -62,14 +63,22 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 
     private static MarshallerPool pool;
+    static {
+        try {
+            pool = new MarshallerPool(ObjectFactory.class);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+        }
+    }
 
     private static ObjectFactory factory = new ObjectFactory();
     
-    public JAXPEventFeatureWriter() throws JAXBException {
-         // for GML geometries unmarshall
-        pool = new MarshallerPool(ObjectFactory.class);
+    public JAXPEventFeatureWriter(){
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String write(SimpleFeature feature) {
         if (feature != null) {
@@ -96,6 +105,9 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void write(SimpleFeature feature, Writer writer) {
         if (feature != null) {
@@ -118,6 +130,9 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void write(SimpleFeature feature, OutputStream out) {
         if (feature != null) {
@@ -177,7 +192,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                             property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart());
                         }
                         eventWriter.add(new StartElementEvent(property));
-                        eventWriter.add(new CharacterEvent(getStringValue(a.getValue())));
+                        eventWriter.add(new CharacterEvent(Utils.getStringValue(a.getValue())));
                         eventWriter.add(new EndElementEvent(property));
                     } else {
                         LOGGER.severe("the propertyName is null for property:" + a);
@@ -220,6 +235,9 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void write(FeatureCollection fc, Writer writer) {
         try {
@@ -234,6 +252,9 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void write(FeatureCollection fc, OutputStream out) {
         try {
@@ -248,6 +269,9 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String write(FeatureCollection featureCollection) {
         try {
@@ -351,26 +375,6 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             eventWriter.add(new EndElementEvent(env));
             eventWriter.add(new EndElementEvent(bounded));
         }
-    }
-
-    /**
-     * Return a String representation of an Object.
-     * Accepted types are : - Integer, Long, String
-     * Else it return null.
-     * 
-     * @param obj A primitive object
-     * @return A String representation of the Object.
-     */
-    public static String getStringValue(Object obj) {
-        if (obj instanceof String) {
-            return (String) obj;
-        } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double) {
-            return obj + "";
-
-        } else if (obj != null) {
-            LOGGER.warning("unexpected type:" + obj.getClass());
-        } 
-        return null;
     }
 
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.feature.xml;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Date;
+import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.feature.DefaultName;
@@ -31,8 +32,16 @@ import org.opengis.feature.type.Name;
  */
 public class Utils {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
+    
     private Utils() {}
 
+    /**
+     * Return a Name from a QName.
+     *
+     * @param qname a XML QName.
+     * @return a GeoAPI Name.
+     */
     public static Name getNameFromQname(QName qname) {
         Name name;
         if (qname.getNamespaceURI() == null || "".equals(qname.getNamespaceURI())) {
@@ -43,6 +52,12 @@ public class Utils {
         return name;
     }
 
+    /**
+     * Return A QName from a Name.
+     *
+     * @param name a GeoAPI name.
+     * @return A XML QName.
+     */
     public static QName getQnameFromName(Name name) {
         QName qname;
         if (name.getNamespaceURI() == null || "".equals(name.getNamespaceURI())) {
@@ -53,6 +68,12 @@ public class Utils {
         return qname;
     }
 
+    /**
+     * Return a primitive Class from the specified XML QName (extracted from an xsd file).
+     *
+     * @param name A XML QName.
+     * @return A Class.
+     */
     public static Class getTypeFromQName(QName name) {
         if (name != null) {
             if ("long".equals(name.getLocalPart())) {
@@ -74,6 +95,12 @@ public class Utils {
         return null;
     }
 
+    /**
+     * Return a QName intended to be used in a xsd XML file fro mthe specified class.
+     *
+     * @param binding A prmitive type Class.
+     * @return A QName describing the class.
+     */
     public static QName getQNameFromType(Class binding) {
         if (binding != null) {
             if (Long.class.equals(binding)) {
@@ -95,6 +122,12 @@ public class Utils {
         return null;
     }
 
+    /**
+     * Return an String representation of an Event Type.
+     *
+     * @param eventType An XMLEvent type.
+     * @return A string representation or "UNKNOWN_EVENT_TYPE" if the integer does not correspound to an XMLEvent type.
+     */
     public final static String getEventTypeString(int eventType) {
         switch (eventType) {
             case XMLEvent.START_DOCUMENT:
@@ -114,5 +147,25 @@ public class Utils {
 
         }
         return "UNKNOWN_EVENT_TYPE";
+    }
+
+    /**
+     * Return a String representation of an Object.
+     * Accepted types are : - Integer, Long, String
+     * Else it return null.
+     *
+     * @param obj A primitive object
+     * @return A String representation of the Object.
+     */
+    public static String getStringValue(Object obj) {
+        if (obj instanceof String) {
+            return (String) obj;
+        } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double) {
+            return obj + "";
+
+        } else if (obj != null) {
+            LOGGER.warning("unexpected type:" + obj.getClass());
+        }
+        return null;
     }
 }

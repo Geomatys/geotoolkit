@@ -210,4 +210,8 @@ public class JAXPStreamFeatureReader implements XmlFeatureReader {
         }
         return null;
     }
+
+    public void setFeatureType(FeatureType featureType) {
+        this.featureType = featureType;
+    }
 }

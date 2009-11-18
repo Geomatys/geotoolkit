@@ -77,6 +77,9 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object read(String xml)  {
         try {
@@ -91,6 +94,9 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object read(InputStream in) {
         try {
@@ -105,6 +111,9 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object read(Reader reader) {
         try {
@@ -120,6 +129,12 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
     }
 
 
+    /**
+     * Start to read An object from the XML datasource.
+     *
+     * @param eventReader The XML event reader.
+     * @return A feature or featureCollection described in the XML stream.
+     */
     private Object read(XMLEventReader eventReader) {
         try {
             while (eventReader.hasNext()) {
@@ -150,6 +165,13 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
+    /**
+     * Read a simpleFeature from the XML stream.
+     *
+     * @param eventReader The XML event reader.
+     * @param id the extracted id of the feature.
+     * @return A simpleFeature object.
+     */
     private SimpleFeature readFeature(XMLEventReader eventReader, String id) {
         builder.reset();
         String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
@@ -218,6 +240,13 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
+    /**
+     * Read a Feature collection from the XML stream.
+     *
+     * @param eventReader The XML event reader.
+     * @param id The extract id of the feature collection
+     * @return A feature Collection.
+     */
     private FeatureCollection readFeatureCollection(XMLEventReader eventReader, String id) {
         FeatureCollection collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) featureType);
         try {
@@ -258,6 +287,15 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
+    /**
+     * Extract An envelope from the BoundedBy XML mark of a feature collection.
+     * 
+     * @param eventReader The XML event reader.
+     * @param srsName The extracted CRS identifier.
+     *
+     * @return An envelope of the collection bounds.
+     * @throws XMLStreamException
+     */
     private JTSEnvelope2D readBounds(XMLEventReader eventReader, String srsName) throws XMLStreamException {
        JTSEnvelope2D bounds = null;
        while (eventReader.hasNext()) {
@@ -270,38 +308,13 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
             }
 
        }
-        /*String srsName = null;
-        if (bounds.getCoordinateReferenceSystem() != null) {
-            try {
-                srsName = CRS.lookupIdentifier(bounds.getCoordinateReferenceSystem(), true);
-            } catch (FactoryException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            }
-        }
-        QName bounded = new QName("http://www.opengis.net/gml", "boundedBy", "gml");
-        eventWriter.add(new StartElementEvent(bounded));
-        QName env     = new QName("http://www.opengis.net/gml", "Envelope", "gml");
-        eventWriter.add(new StartElementEvent(env));
-        if (srsName != null) {
-            eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "srsName", srsName, null));
-        }
-
-        // lower corner
-        QName lowc    = new QName("http://www.opengis.net/gml", "lowerCorner", "gml");
-        eventWriter.add(new StartElementEvent(lowc));
-        String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
-        eventWriter.add(new CharacterEvent(lowValue));
-        eventWriter.add(new EndElementEvent(lowc));
-
-        // upper corner
-        QName uppc    = new QName("http://www.opengis.net/gml", "upperCorner", "gml");
-        eventWriter.add(new StartElementEvent(uppc));
-        String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
-        eventWriter.add(new CharacterEvent(uppValue));
-        eventWriter.add(new EndElementEvent(uppc));
-
-        eventWriter.add(new EndElementEvent(env));
-        eventWriter.add(new EndElementEvent(bounded));*/
         return bounds;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    public void setFeatureType(FeatureType featureType) {
+        this.featureType = featureType;
     }
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.feature.xml;
 
 import java.io.InputStream;
 import java.io.Reader;
+import org.opengis.feature.type.FeatureType;
 
 /**
  * An interface for feature / feature collection XML parsing.
@@ -54,4 +55,6 @@ public interface XmlFeatureReader {
      * @return A SimpleFeature / featureCollection or {@code null}
      */
     public Object read(Reader reader);
+
+    public void setFeatureType(FeatureType featureType);
 }
