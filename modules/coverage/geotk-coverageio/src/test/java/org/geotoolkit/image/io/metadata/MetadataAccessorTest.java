@@ -52,7 +52,7 @@ public final class MetadataAccessorTest {
         final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
         assertEquals("ImageDescription", accessor.name());
         assertEquals("Initially empty metadata should have no child.", 0, accessor.childCount());
-        assertNull(accessor.getAttributeAsString("imagingCondition"));
+        assertNull(accessor.getAttribute("imagingCondition"));
         assertNull(accessor.getAttributeAsDouble("cloudCoverPercentage"));
         assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
             SpatialMetadataFormat.FORMAT_NAME + "\n" +
@@ -62,12 +62,12 @@ public final class MetadataAccessorTest {
          * Define a few values conform to the structure declared
          * in SpatialMetadataFormat.IMAGE.
          */
-        accessor.setAttributeAsString("imagingCondition", "cloud");
-        accessor.setAttributeAsDouble("cloudCoverPercentage", 20);
+        accessor.setAttribute("imagingCondition", "cloud");
+        accessor.setAttribute("cloudCoverPercentage", 20.0);
         /*
          * Check the value that we have set.
          */
-        assertEquals("cloud", accessor.getAttributeAsString("imagingCondition"));
+        assertEquals("cloud", accessor.getAttribute("imagingCondition"));
         assertEquals(Double.valueOf(20), accessor.getAttributeAsDouble("cloudCoverPercentage"));
         assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
             "└───ImageDescription\n"  +
@@ -129,10 +129,10 @@ public final class MetadataAccessorTest {
          */
         accessor.selectChild(accessor.appendChild());
         assertNull(accessor.getAttributeAsDoubles("values", false));
-        accessor.setAttributeAsDoubles("values", 2, 5, 8);
+        accessor.setAttribute("values", new double[] {2, 5, 8});
         accessor.selectChild(accessor.appendChild());
         assertNull(accessor.getAttributeAsDoubles("values", false));
-        accessor.setAttributeAsDoubles("values", 3, 1, 4);
+        accessor.setAttribute("values", new double[] {3, 1, 4});
         /*
          * Check the value that we have set.
          */

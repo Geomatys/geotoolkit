@@ -71,7 +71,7 @@ public class Band extends MetadataAccessor {
      * @return The band name.
      */
     public String getName() {
-        return getAttributeAsString("name");
+        return getAttribute("name");
     }
 
     /**
@@ -80,7 +80,7 @@ public class Band extends MetadataAccessor {
      * @param name The band name, or {@code null} if none.
      */
     public void setName(final String name) {
-        setAttributeAsString("name", name);
+        setAttribute("name", name);
     }
 
     /**
@@ -135,11 +135,11 @@ public class Band extends MetadataAccessor {
         final int minIndex = (int) minValue;
         final int maxIndex = (int) maxValue;
         if (minIndex == minValue && maxIndex == maxValue) {
-            setAttributeAsInteger("minValue", minIndex);
-            setAttributeAsInteger("maxValue", maxIndex);
+            setAttribute("minValue", minIndex);
+            setAttribute("maxValue", maxIndex);
         } else {
-            setAttributeAsDouble("minValue", minValue);
-            setAttributeAsDouble("maxValue", maxValue);
+            setAttribute("minValue", minValue);
+            setAttribute("maxValue", maxValue);
         }
     }
 
@@ -172,11 +172,11 @@ public class Band extends MetadataAccessor {
                 }
             }
             if (asIntegers != null) {
-                setAttributeAsIntegers("fillValues", asIntegers);
+                setAttribute("fillValues", asIntegers);
                 return;
             }
         }
-        setAttributeAsDoubles("fillValues", fillValues);
+        setAttribute("fillValues", fillValues);
     }
 
     /**
@@ -294,7 +294,7 @@ public class Band extends MetadataAccessor {
      * @param scale The scale from packed to geophysics values, or {@code 1} if none.
      */
     public void setScale(final double scale) {
-        setAttributeAsDouble("scale", scale);
+        setAttribute("scale", scale);
     }
 
     /**
@@ -313,7 +313,7 @@ public class Band extends MetadataAccessor {
      * @param offset The offset from packed to geophysics values, or {@code 0} if none.
      */
     public void setOffset(final double offset) {
-        setAttributeAsDouble("offset", offset);
+        setAttribute("offset", offset);
     }
 
     /**

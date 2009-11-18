@@ -69,8 +69,8 @@ public class Identification implements CharSequence, Serializable {
      * @param accessor The accessor from which to fetch the name and type.
      */
     public Identification(final MetadataAccessor accessor) {
-        name = accessor.getAttributeAsString("name");
-        type = accessor.getAttributeAsString("type");
+        name = accessor.getAttribute("name");
+        type = accessor.getAttribute("type");
     }
 
     /**

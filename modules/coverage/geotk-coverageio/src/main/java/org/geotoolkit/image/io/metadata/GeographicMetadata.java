@@ -159,7 +159,7 @@ public class GeographicMetadata extends SpatialMetadata {
      * @return The type of sample values.
      */
     public String getSampleType() {
-        return getBands().getAttributeAsString("type");
+        return getBands().getAttribute("type");
     }
 
     /**
@@ -170,7 +170,7 @@ public class GeographicMetadata extends SpatialMetadata {
      * @param type The sample type, or {@code null} if none.
      */
     public void setSampleType(final String type) {
-        getBands().setAttributeAsEnum("type", type, GeographicMetadataFormat.SAMPLE_TYPES);
+        getBands().setAttribute("type", type, GeographicMetadataFormat.SAMPLE_TYPES);
     }
 
     /**

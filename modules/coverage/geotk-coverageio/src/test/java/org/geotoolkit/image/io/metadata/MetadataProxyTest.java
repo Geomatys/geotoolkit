@@ -61,8 +61,8 @@ public final class MetadataProxyTest {
         /*
          * Now define the properties and test again.
          */
-        accessor.setAttributeAsString("imagingCondition", "cloud");
-        accessor.setAttributeAsDouble("cloudCoverPercentage", 20);
+        accessor.setAttribute("imagingCondition", "cloud");
+        accessor.setAttribute("cloudCoverPercentage", 20.0);
         assertEquals(20.0, proxy.getCloudCoverPercentage(), 0.0);
         assertEquals(ImagingCondition.CLOUD, proxy.getImagingCondition());
         /*
@@ -93,9 +93,9 @@ public final class MetadataProxyTest {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
         final MetadataAccessor qualityA = new MetadataAccessor(metadata, "ImageDescription/ImageQualityCode", null);
-        qualityA.setAttributeAsString("code",      "okay");
-        qualityA.setAttributeAsString("authority", "Geotoolkit.org");
-        accessor.setAttributeAsDouble("cloudCoverPercentage", 20); // Test mixing attributes with elements.
+        qualityA.setAttribute("code",      "okay");
+        qualityA.setAttribute("authority", "Geotoolkit.org");
+        accessor.setAttribute("cloudCoverPercentage", 20); // Test mixing attributes with elements.
 
         final ImageDescription proxy = MetadataProxy.newProxyInstance(ImageDescription.class, accessor);
         assertEquals("Safety check against regression.", 20.0, proxy.getCloudCoverPercentage(), 0.0);
@@ -124,9 +124,9 @@ public final class MetadataProxyTest {
             accessor.selectChild(accessor.appendChild());
             assertNull(accessor.getAttributeAsDouble("minValue"));
             assertNull(accessor.getAttributeAsDouble("maxValue"));
-            accessor.setAttributeAsDouble("minValue", -i);
-            accessor.setAttributeAsDouble("maxValue",  i);
-            accessor.setAttributeAsRange("validSampleValues", NumberRange.create(-i, i));
+            accessor.setAttribute("minValue", -i);
+            accessor.setAttribute("maxValue",  i);
+            accessor.setAttribute("validSampleValues", NumberRange.create(-i, i));
             assertEquals(i, dimensions.size());
         }
         int index = 0;
@@ -158,8 +158,8 @@ public final class MetadataProxyTest {
         final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions", "Dimension");
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
-            accessor.setAttributeAsDouble("minValue", -i);
-            accessor.setAttributeAsDouble("maxValue",  i);
+            accessor.setAttribute("minValue", -i);
+            accessor.setAttribute("maxValue",  i);
         }
         /*
          * We need to create the list only after the elements have been added, because the

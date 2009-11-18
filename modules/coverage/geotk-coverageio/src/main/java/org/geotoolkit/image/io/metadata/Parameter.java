@@ -69,7 +69,7 @@ public class Parameter extends MetadataAccessor {
      * @return The parameter name.
      */
     public String getName() {
-        return getAttributeAsString("name");
+        return getAttribute("name");
     }
 
     /**
@@ -78,7 +78,7 @@ public class Parameter extends MetadataAccessor {
      * @param name The parameter name, or {@code null} if none.
      */
     public void setName(final String name) {
-        setAttributeAsString("name", name);
+        setAttribute("name", name);
     }
 
     /**
@@ -96,7 +96,7 @@ public class Parameter extends MetadataAccessor {
      * @param value The parameter value, or {@code null} if none.
      */
     public void setValue(final double value) {
-        setAttributeAsDouble("value", value);
+        setAttribute("value", value);
     }
 
     /**

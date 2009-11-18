@@ -125,8 +125,8 @@ public class ImageReferencing extends MetadataAccessor {
      * @category CoordinateReferenceSystem
      */
     public void setCoordinateReferenceSystem(final String name, final String type) {
-        setAttributeAsString("name", name);
-        setAttributeAsEnum  ("type", type, GeographicMetadataFormat.CRS_TYPES);
+        setAttribute("name", name);
+        setAttribute  ("type", type, GeographicMetadataFormat.CRS_TYPES);
     }
 
     /**
@@ -154,8 +154,8 @@ public class ImageReferencing extends MetadataAccessor {
      */
     public void setDatum(final String name, final String type) {
         final MetadataAccessor datum = getDatumAccessor();
-        datum.setAttributeAsString("name", name);
-        datum.setAttributeAsEnum  ("type", type, GeographicMetadataFormat.DATUM_TYPES);
+        datum.setAttribute("name", name);
+        datum.setAttribute  ("type", type, GeographicMetadataFormat.DATUM_TYPES);
     }
 
     /**
@@ -166,7 +166,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @category Datum
      */
     public String getPrimeMeridianName() {
-        return (primeMeridian != null) ? primeMeridian.getAttributeAsString("name") : null;
+        return (primeMeridian != null) ? primeMeridian.getAttribute("name") : null;
     }
 
     /**
@@ -177,7 +177,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @category Datum
      */
     public void setPrimeMeridianName(final String name) {
-        getPrimeMeridianAccessor().setAttributeAsString("name", name);
+        getPrimeMeridianAccessor().setAttribute("name", name);
     }
 
     /**
@@ -204,7 +204,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     public void setPrimeMeridianGreenwichLongitude(final double greenwichLongitude) {
         getPrimeMeridianAccessor().
-                setAttributeAsDouble("greenwichLongitude", greenwichLongitude);
+                setAttribute("greenwichLongitude", greenwichLongitude);
     }
 
     /**
@@ -216,7 +216,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @category Ellipsoid
      */
     public String getEllipsoidName() {
-        return (ellipsoid != null) ? ellipsoid.getAttributeAsString("name") : null;
+        return (ellipsoid != null) ? ellipsoid.getAttribute("name") : null;
     }
 
     /**
@@ -227,7 +227,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @category Ellipsoid
      */
     public void setEllipsoidName(final String name) {
-        getEllipsoidAccessor().setAttributeAsString("name", name);
+        getEllipsoidAccessor().setAttribute("name", name);
     }
 
     /**
@@ -239,7 +239,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @category Ellipsoid
      */
     public String getEllipsoidUnit() {
-        return (ellipsoid != null) ? ellipsoid.getAttributeAsString("unit") : null;
+        return (ellipsoid != null) ? ellipsoid.getAttribute("unit") : null;
     }
 
     /**
@@ -250,7 +250,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @category Ellipsoid
      */
     public void setEllipsoidUnit(final String unit) {
-        getEllipsoidAccessor().setAttributeAsString("unit", unit);
+        getEllipsoidAccessor().setAttribute("unit", unit);
     }
 
     /**
@@ -367,8 +367,8 @@ public class ImageReferencing extends MetadataAccessor {
      */
     public void setCoordinateSystem(final String name, final String type) {
         final MetadataAccessor cs = getCoordinateSystemAccessor();
-        cs.setAttributeAsString("name", name);
-        cs.setAttributeAsEnum  ("type", type, GeographicMetadataFormat.CS_TYPES);
+        cs.setAttribute("name", name);
+        cs.setAttribute  ("type", type, GeographicMetadataFormat.CS_TYPES);
     }
 
     /**
@@ -416,7 +416,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @see Projection
      */
     public String getProjectionName() {
-        return (projection != null) ? projection.getAttributeAsString("name") : null;
+        return (projection != null) ? projection.getAttribute("name") : null;
     }
 
     /**
@@ -428,7 +428,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @see Projection
      */
     public void setProjectionName(final String name) {
-        getProjectionAccessor().setAttributeAsString("name", name);
+        getProjectionAccessor().setAttribute("name", name);
     }
 
     /**
@@ -491,7 +491,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @return The coordinate reference system in WKT format.
      */
     public String getWKT() {
-        return getAttributeAsString("WKT");
+        return getAttribute("WKT");
     }
 
     /**
@@ -502,7 +502,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @param wkt The coordinate reference system in WKT format.
      */
     public void setWKT(final String wkt) {
-        setAttributeAsString("WKT", wkt);
+        setAttribute("WKT", wkt);
     }
 
     /**

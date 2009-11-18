@@ -70,7 +70,7 @@ public class Axis extends MetadataAccessor {
      * @return The axis name.
      */
     public String getName() {
-        return getAttributeAsString("name");
+        return getAttribute("name");
     }
 
     /**
@@ -79,7 +79,7 @@ public class Axis extends MetadataAccessor {
      * @param name The axis name, or {@code null} if none.
      */
     public void setName(final String name) {
-        setAttributeAsString("name", name);
+        setAttribute("name", name);
     }
 
     /**
@@ -88,7 +88,7 @@ public class Axis extends MetadataAccessor {
      * @return The axis direction.
      */
     public String getDirection() {
-        return getAttributeAsString("direction");
+        return getAttribute("direction");
     }
 
     /**
@@ -97,7 +97,7 @@ public class Axis extends MetadataAccessor {
      * @param direction The axis direction, or {@code null} if none.
      */
     public void setDirection(final String direction) {
-        setAttributeAsEnum("direction", direction, GeographicMetadataFormat.DIRECTIONS);
+        setAttribute("direction", direction, GeographicMetadataFormat.DIRECTIONS);
     }
 
     /**
@@ -106,7 +106,7 @@ public class Axis extends MetadataAccessor {
      * @return The axis units.
      */
     public String getUnits() {
-        return getAttributeAsString("units");
+        return getAttribute("units");
     }
 
     /**
@@ -115,7 +115,7 @@ public class Axis extends MetadataAccessor {
      * @param units The axis units, or {@code null} if none.
      */
     public void setUnits(final String units) {
-        setAttributeAsString("units", units);
+        setAttribute("units", units);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Axis extends MetadataAccessor {
      * @param origin The axis time origin, or {@code null} if none.
      */
     public void setTimeOrigin(final Date origin) {
-        setAttributeAsDate("origin", origin);
+        setAttribute("origin", origin);
     }
 
     /**

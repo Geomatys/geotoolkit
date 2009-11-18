@@ -122,10 +122,10 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *             "RectifiedGridDomain/CRS/CoordinateSystem", "Axis");
  *
  *     accessor.selectParent();
- *     String csName = accessor.getAttributeAsString("name");
+ *     String csName = accessor.getAttribute("name");
  *
  *     accessor.selectChild(0);
- *     String firstAxisName = accessor.getAttributeAsString("name");
+ *     String firstAxisName = accessor.getAttribute("name");
  * }
  *
  * {@section Example adding childs and writting attributes}
@@ -134,7 +134,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * {@preformat java
  *     accessor.selectChild(accessor.appendChild());
- *     accessor.setAttributeAsString("name", "The name of a new axis");
+ *     accessor.setAttribute("name", "The name of a new axis");
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -532,7 +532,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * {@note This <code>getUserObject()</code> method and the <code>getUserObject(Class)</code>
      *        method below are the only getters that do not fetch the string to parse by a call
-     *        to <code>getAttributeAsString</code>.}
+     *        to <code>getAttribute</code>.}
      *
      * @return The user object, or {@code null} if none.
      *
@@ -603,7 +603,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * Sets the {@linkplain IIOMetadataNode#setUserObject user object} associated with the
      * {@linkplain #selectChild selected element}. At the difference of every {@code setAttribute}
      * methods defined in this class, this method does not delegate to
-     * {@link #setAttributeAsString(String, String)}.
+     * {@link #setAttribute(String, String)}.
      * <p>
      * If the specified value is formattable (i.e. is a {@linkplain CharSequence character
      * sequence}, a {@linkplain Number number} or an array of the above), then this method
@@ -660,8 +660,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * @param attribute The attribute to fetch (e.g. {@code "name"}).
      * @return The attribute value (never an empty string), or {@code null} if none.
+     *
+     * @see #setAttribute(String, String)
      */
-    public String getAttributeAsString(final String attribute) {
+    public String getAttribute(final String attribute) {
         ensureNonNull("attribute", attribute);
         String candidate = currentElement().getAttribute(attribute);
         if (candidate != null) {
@@ -674,50 +676,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Sets the attribute to the specified value, or remove the attribute if the value is null.
-     * <p>
-     * Every {@code setAttribute} methods in this class invoke this method last. Consequently,
-     * this method provides a single overriding point for subclasses that want to process the
-     * attribute after formatting.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     */
-    public void setAttributeAsString(final String attribute, String value) {
-        ensureNonNull("attribute", attribute);
-        final Element element = currentElement();
-        if (value == null || (value=value.trim()).length() == 0) {
-            if (element.hasAttribute(attribute)) {
-                element.removeAttribute(attribute);
-            }
-        } else {
-            element.setAttribute(attribute, value);
-        }
-    }
-
-    /**
-     * Sets the attribute to the specified enumeration value,
-     * or remove the attribute if the value is null.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     * @param enums     The set of allowed values, or {@code null} if unknown.
-     */
-    @Deprecated
-    final void setAttributeAsEnum(final String attribute, String value, final Collection<String> enums) {
-        if (value != null) {
-            value = value.replace('_', ' ').trim();
-            for (final String e : enums) {
-                if (value.equalsIgnoreCase(e)) {
-                    value = e;
-                    break;
-                }
-            }
-        }
-        setAttributeAsString(attribute, value);
-    }
-
-    /**
      * Returns an attribute as a code for the {@linkplain #selectChild selected element},
      * or {@code null} if none. If the code stored in the given attribute is not a known
      * element, then this method logs a warning and returns {@code null}.
@@ -727,27 +685,17 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  codeType The type of the code list. This is used for determining the expected values.
      * @return The attribute value, or {@code null} if none or unknown.
      *
+     * @see #setAttribute(String, CodeList)
+     *
      * @since 3.06
      */
     public <T extends CodeList<T>> T getAttributeAsCode(final String attribute, final Class<T> codeType) {
-        final String value = getAttributeAsString(attribute);
+        final String value = getAttribute(attribute);
         final T code = CodeLists.valueOf(codeType, value, false);
         if (code == null && value != null) {
             warning("getAttributeAsCode", Errors.Keys.BAD_PARAMETER_$2, attribute, value);
         }
         return code;
-    }
-
-    /**
-     * Sets the attribute to the specified code value, or remove the attribute if the value is null.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     *
-     * @since 3.06
-     */
-    public void setAttributeAsCode(final String attribute, final CodeList<?> value) {
-        setAttributeAsString(attribute, CodeLists.identifier(value));
     }
 
     /**
@@ -758,10 +706,12 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "inclusion"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
+     * @see #setAttribute(String, boolean)
+     *
      * @since 3.06
      */
     public Boolean getAttributeAsBoolean(final String attribute) {
-        final String value = getAttributeAsString(attribute);
+        final String value = getAttribute(attribute);
         if (value != null) {
             if (value.equalsIgnoreCase("true") ||
                 value.equalsIgnoreCase("yes")  ||
@@ -781,27 +731,17 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Sets the attribute to the specified boolean value.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     *
-     * @since 3.06
-     */
-    public void setAttributeAsBoolean(final String attribute, final boolean value) {
-        setAttributeAsString(attribute, Boolean.toString(value));
-    }
-
-    /**
      * Returns an attribute as an integer for the {@linkplain #selectChild selected element},
      * or {@code null} if none. If the attribute can't be parsed as an integer, then this method
      * logs a warning and returns {@code null}.
      *
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @see #setAttribute(String, int)
      */
     public Integer getAttributeAsInteger(final String attribute) {
-        String value = getAttributeAsString(attribute);
+        String value = getAttribute(attribute);
         if (value != null) {
             value = trimFractionalPart(value);
             try {
@@ -814,16 +754,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Sets the attribute to the specified integer value.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     */
-    public void setAttributeAsInteger(final String attribute, final int value) {
-        setAttributeAsString(attribute, Integer.toString(value));
-    }
-
-    /**
      * Returns an attribute as an array of integers for the {@linkplain #selectChild selected
      * element}, or {@code null} if none. If an element can't be parsed as an integer, then this
      * method logs a warning and returns {@code null}.
@@ -832,20 +762,11 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param unique {@code true} if duplicated values should be collapsed into unique values,
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
+     *
+     * @see #setAttribute(String, int[])
      */
     public int[] getAttributeAsIntegers(final String attribute, final boolean unique) {
-        return (int[]) parseSequence(getAttributeAsString(attribute), unique, true, true);
-    }
-
-    /**
-     * Set the attribute to the specified array of values,
-     * or remove the attribute if the array is {@code null}.
-     *
-     * @param attribute The attribute name.
-     * @param values    The attribute value.
-     */
-    public void setAttributeAsIntegers(final String attribute, final int... values) {
-        setAttributeAsString(attribute, formatSequence(values));
+        return (int[]) parseSequence(getAttribute(attribute), unique, true, true);
     }
 
     /**
@@ -856,10 +777,12 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
      *
+     * @see #setAttribute(String, float)
+     *
      * @since 3.06
      */
     public Float getAttributeAsFloat(final String attribute) {
-        final String value = getAttributeAsString(attribute);
+        final String value = getAttribute(attribute);
         if (value != null) try {
             return Float.valueOf(value);
         } catch (NumberFormatException e) {
@@ -869,53 +792,23 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Sets the attribute to the specified floating point value,
-     * or remove the attribute if the value is NaN or infinity.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     *
-     * @since 3.06
-     */
-    public void setAttributeAsFloat(final String attribute, final float value) {
-        String text = null;
-        if (!Float.isNaN(value) && !Float.isInfinite(value)) {
-            text = Float.toString(value);
-        }
-        setAttributeAsString(attribute, text);
-    }
-
-    /**
      * Returns an attribute as a floating point for the {@linkplain #selectChild selected element},
      * or {@code null} if none. If the attribute can't be parsed as a floating point, then this
      * method logs a warning and returns {@code null}.
      *
      * @param attribute The attribute to fetch (e.g. {@code "minimum"}).
      * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @see #setAttribute(String, double)
      */
     public Double getAttributeAsDouble(final String attribute) {
-        final String value = getAttributeAsString(attribute);
+        final String value = getAttribute(attribute);
         if (value != null) try {
             return Double.valueOf(value);
         } catch (NumberFormatException e) {
             warning("getAttributeAsDouble", Errors.Keys.UNPARSABLE_NUMBER_$1, value);
         }
         return null;
-    }
-
-    /**
-     * Sets the attribute to the specified floating point value,
-     * or remove the attribute if the value is NaN or infinity.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     */
-    public void setAttributeAsDouble(final String attribute, final double value) {
-        String text = null;
-        if (!Double.isNaN(value) && !Double.isInfinite(value)) {
-            text = Double.toString(value);
-        }
-        setAttributeAsString(attribute, text);
     }
 
     /**
@@ -927,20 +820,79 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  unique {@code true} if duplicated values should be collapsed into unique values,
      *         or {@code false} for preserving duplicated values.
      * @return The attribute values, or {@code null} if none.
+     *
+     * @see #setAttribute(String, double[])
      */
     public double[] getAttributeAsDoubles(final String attribute, final boolean unique) {
-        return (double[]) parseSequence(getAttributeAsString(attribute), unique, false, true);
+        return (double[]) parseSequence(getAttribute(attribute), unique, false, true);
     }
 
     /**
-     * Set the attribute to the specified array of values,
-     * or remove the attribute if the array is {@code null}.
+     * Returns an attribute as a date for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a date, then this method
+     * logs a warning and returns {@code null}.
      *
-     * @param attribute The attribute name.
-     * @param values    The attribute value.
+     * @param attribute The attribute to fetch (e.g. {@code "origin"}).
+     * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @see #setAttribute(String, Date)
      */
-    public void setAttributeAsDoubles(final String attribute, final double... values) {
-        setAttributeAsString(attribute, formatSequence(values));
+    public Date getAttributeAsDate(final String attribute) {
+        String value = getAttribute(attribute);
+        if (value != null) {
+            value = trimFractionalPart(value);
+            if (metadata instanceof SpatialMetadata) {
+                return ((SpatialMetadata) metadata).dateFormat().parse(value);
+            } else try {
+                // Inefficient fallback, but should usually not happen anyway.
+                return SpatialMetadata.parse(Date.class, value);
+            } catch (ParseException e) {
+                warning(MetadataAccessor.class, "getAttributeAsDate", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns an attribute as a range of numbers for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a range of numbers, then this
+     * method logs a warning and returns {@code null}.
+     *
+     * @param attribute The attribute to fetch (e.g. {@code "validSampleValues"}).
+     * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @see #setAttribute(String, NumberRange)
+     *
+     * @since 3.06
+     */
+    public NumberRange<?> getAttributeAsRange(final String attribute) {
+        final String value = getAttribute(attribute);
+        if (value != null) {
+            if (metadata instanceof SpatialMetadata) {
+                return ((SpatialMetadata) metadata).rangeFormat().parse(value);
+            } else try {
+                // Inefficient fallback, but should usually not happen anyway.
+                return (NumberRange<?>) SpatialMetadata.parse(NumberRange.class, value);
+            } catch (ParseException e) {
+                warning(MetadataAccessor.class, "getAttributeAsRange", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns an attribute as a citation for the {@linkplain #selectChild selected element},
+     * or {@code null} if none.
+     *
+     * @param  attribute The attribute to fetch (e.g. {@code "authority"}).
+     * @return The attribute value, or {@code null} if none.
+     *
+     * @see #setAttribute(String, Citation)
+     *
+     * @since 3.06
+     */
+    public Citation getAttributeAsCitation(final String attribute) {
+        return Citations.fromName(getAttribute(attribute));
     }
 
     /**
@@ -1008,7 +960,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Formats a sequence for {@link #setAttributeAsIntegers} and {@link #setAttributeAsDoubles}
+     * Formats a sequence for {@link #setAttribute} and {@link #setAttribute}
      * implementations.
      *
      * @param  value The attribute value.
@@ -1031,36 +983,162 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Returns an attribute as a date for the {@linkplain #selectChild selected element},
-     * or {@code null} if none. If the attribute can't be parsed as a date, then this method
-     * logs a warning and returns {@code null}.
+     * Sets the attribute to the specified value, or remove the attribute if the value is null.
+     * <p>
+     * Every {@code setAttribute} methods in this class invoke this method last. Consequently,
+     * this method provides a single overriding point for subclasses that want to process the
+     * attribute after formatting.
      *
-     * @param attribute The attribute to fetch (e.g. {@code "origin"}).
-     * @return The attribute value, or {@code null} if none or unparseable.
+     * @param attribute The attribute name.
+     * @param value The attribute value, or {@code null} for removing the attribute.
+     *
+     * @see #getAttribute(String)
      */
-    public Date getAttributeAsDate(final String attribute) {
-        String value = getAttributeAsString(attribute);
+    public void setAttribute(final String attribute, String value) {
+        ensureNonNull("attribute", attribute);
+        final Element element = currentElement();
+        if (value == null || (value=value.trim()).length() == 0) {
+            if (element.hasAttribute(attribute)) {
+                element.removeAttribute(attribute);
+            }
+        } else {
+            element.setAttribute(attribute, value);
+        }
+    }
+
+    /**
+     * Sets the attribute to the specified enumeration value,
+     * or remove the attribute if the value is null.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     * @param enums     The set of allowed values, or {@code null} if unknown.
+     */
+    @Deprecated
+    final void setAttribute(final String attribute, String value, final Collection<String> enums) {
         if (value != null) {
-            value = trimFractionalPart(value);
-            if (metadata instanceof SpatialMetadata) {
-                return ((SpatialMetadata) metadata).dateFormat().parse(value);
-            } else try {
-                // Inefficient fallback, but should usually not happen anyway.
-                return SpatialMetadata.parse(Date.class, value);
-            } catch (ParseException e) {
-                warning(MetadataAccessor.class, "getAttributeAsDate", e);
+            value = value.replace('_', ' ').trim();
+            for (final String e : enums) {
+                if (value.equalsIgnoreCase(e)) {
+                    value = e;
+                    break;
+                }
             }
         }
-        return null;
+        setAttribute(attribute, value);
+    }
+
+    /**
+     * Sets the attribute to the specified code value, or remove the attribute if the value is null.
+     *
+     * @param attribute The attribute name.
+     * @param value The attribute value, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsCode(String, Class)
+     *
+     * @since 3.06
+     */
+    public void setAttribute(final String attribute, final CodeList<?> value) {
+        setAttribute(attribute, CodeLists.identifier(value));
+    }
+
+    /**
+     * Sets the attribute to the specified boolean value.
+     *
+     * @param attribute The attribute name.
+     * @param value The attribute value.
+     *
+     * @see #getAttributeAsBoolean(String)
+     *
+     * @since 3.06
+     */
+    public void setAttribute(final String attribute, final boolean value) {
+        setAttribute(attribute, Boolean.toString(value));
+    }
+
+    /**
+     * Sets the attribute to the specified integer value.
+     *
+     * @param attribute The attribute name.
+     * @param value The attribute value.
+     *
+     * @see #getAttributeAsInteger(String)
+     */
+    public void setAttribute(final String attribute, final int value) {
+        setAttribute(attribute, Integer.toString(value));
+    }
+
+    /**
+     * Set the attribute to the specified array of values,
+     * or remove the attribute if the array is {@code null}.
+     *
+     * @param attribute The attribute name.
+     * @param values The attribute values, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsIntegers(String, boolean)
+     */
+    public void setAttribute(final String attribute, final int... values) {
+        setAttribute(attribute, formatSequence(values));
+    }
+
+    /**
+     * Sets the attribute to the specified floating point value,
+     * or remove the attribute if the value is NaN or infinity.
+     *
+     * @param attribute The attribute name.
+     * @param value The attribute value.
+     *
+     * @see #getAttributeAsFloat(String)
+     *
+     * @since 3.06
+     */
+    public void setAttribute(final String attribute, final float value) {
+        String text = null;
+        if (!Float.isNaN(value) && !Float.isInfinite(value)) {
+            text = Float.toString(value);
+        }
+        setAttribute(attribute, text);
+    }
+
+    /**
+     * Sets the attribute to the specified floating point value,
+     * or remove the attribute if the value is NaN or infinity.
+     *
+     * @param attribute The attribute name.
+     * @param value The attribute values.
+     *
+     * @see #getAttributeAsDouble(String)
+     */
+    public void setAttribute(final String attribute, final double value) {
+        String text = null;
+        if (!Double.isNaN(value) && !Double.isInfinite(value)) {
+            text = Double.toString(value);
+        }
+        setAttribute(attribute, text);
+    }
+
+    /**
+     * Set the attribute to the specified array of values,
+     * or remove the attribute if the array is {@code null}.
+     *
+     * @param attribute The attribute name.
+     * @param values The attribute values, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsDoubles(String, boolean)
+     */
+    public void setAttribute(final String attribute, final double... values) {
+        setAttribute(attribute, formatSequence(values));
     }
 
     /**
      * Sets the attribute to the specified value, or remove the attribute if the value is null.
      *
      * @param attribute The attribute name.
-     * @param value     The attribute value.
+     * @param value The attribute value, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsDate(String)
      */
-    public void setAttributeAsDate(final String attribute, final Date value) {
+    public void setAttribute(final String attribute, final Date value) {
         String text = null;
         if (value != null) {
             if (metadata instanceof SpatialMetadata) {
@@ -1070,43 +1148,20 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 text = SpatialMetadata.format(Date.class, value);
             }
         }
-        setAttributeAsString(attribute, text);
-    }
-
-    /**
-     * Returns an attribute as a range of numbers for the {@linkplain #selectChild selected element},
-     * or {@code null} if none. If the attribute can't be parsed as a range of numbers, then this
-     * method logs a warning and returns {@code null}.
-     *
-     * @param attribute The attribute to fetch (e.g. {@code "validSampleValues"}).
-     * @return The attribute value, or {@code null} if none or unparseable.
-     *
-     * @since 3.06
-     */
-    public NumberRange<?> getAttributeAsRange(final String attribute) {
-        final String value = getAttributeAsString(attribute);
-        if (value != null) {
-            if (metadata instanceof SpatialMetadata) {
-                return ((SpatialMetadata) metadata).rangeFormat().parse(value);
-            } else try {
-                // Inefficient fallback, but should usually not happen anyway.
-                return (NumberRange<?>) SpatialMetadata.parse(NumberRange.class, value);
-            } catch (ParseException e) {
-                warning(MetadataAccessor.class, "getAttributeAsRange", e);
-            }
-        }
-        return null;
+        setAttribute(attribute, text);
     }
 
     /**
      * Sets the attribute to the specified range value.
      *
      * @param attribute The attribute name.
-     * @param value     The attribute value.
+     * @param value The attribute value, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsNumberRange(String)
      *
      * @since 3.06
      */
-    public void setAttributeAsRange(final String attribute, final NumberRange<?> value) {
+    public void setAttribute(final String attribute, final NumberRange<?> value) {
         String text = null;
         if (value != null) {
             if (metadata instanceof SpatialMetadata) {
@@ -1116,20 +1171,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 text = SpatialMetadata.format(NumberRange.class, value);
             }
         }
-        setAttributeAsString(attribute, text);
-    }
-
-    /**
-     * Returns an attribute as a citation for the {@linkplain #selectChild selected element},
-     * or {@code null} if none.
-     *
-     * @param  attribute The attribute to fetch (e.g. {@code "authority"}).
-     * @return The attribute value, or {@code null} if none.
-     *
-     * @since 3.06
-     */
-    public Citation getAttributeAsCitation(final String attribute) {
-        return Citations.fromName(getAttributeAsString(attribute));
+        setAttribute(attribute, text);
     }
 
     /**
@@ -1137,33 +1179,14 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * or remove the attribute if the value is null.
      *
      * @param attribute The attribute name.
-     * @param value     The attribute value.
+     * @param value The attribute value, or {@code null} for removing the attribute.
+     *
+     * @see #getAttributeAsCitation(String)
      *
      * @since 3.06
      */
-    public void setAttributeAsCitation(final String attribute, final Citation value) {
-        setAttributeAsString(attribute, Citations.getIdentifier(value));
-    }
-
-    /**
-     * Trims the factional part of the given string, provided that it doesn't change the value.
-     * More specifically, this method removes the trailing {@code ".0"} characters if any. This
-     * method is invoked before to {@linkplain #getAttributeAsInteger parse an integer} or to
-     * {@linkplain #getAttributeAsDate parse a date} (for simplifying fractional seconds).
-     *
-     * @param  value The value to trim.
-     * @return The value without the trailing {@code ".0"} part.
-     */
-    public static String trimFractionalPart(String value) {
-        value = value.trim();
-        for (int i=value.length(); --i>=0;) {
-            switch (value.charAt(i)) {
-                case '0': continue;
-                case '.': return value.substring(0, i);
-                default : return value;
-            }
-        }
-        return value;
+    public void setAttribute(final String attribute, final Citation value) {
+        setAttribute(attribute, Citations.getIdentifier(value));
     }
 
     /**
@@ -1278,6 +1301,27 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final Level old = warningsLevel;
         warningsLevel = level;
         return old;
+    }
+
+    /**
+     * Trims the factional part of the given string, provided that it doesn't change the value.
+     * More specifically, this method removes the trailing {@code ".0"} characters if any. This
+     * method is invoked before to {@linkplain #getAttributeAsInteger parse an integer} or to
+     * {@linkplain #getAttributeAsDate parse a date} (for simplifying fractional seconds).
+     *
+     * @param  value The value to trim.
+     * @return The value without the trailing {@code ".0"} part.
+     */
+    public static String trimFractionalPart(String value) {
+        value = value.trim();
+        for (int i=value.length(); --i>=0;) {
+            switch (value.charAt(i)) {
+                case '0': continue;
+                case '.': return value.substring(0, i);
+                default : return value;
+            }
+        }
+        return value;
     }
 
     /**

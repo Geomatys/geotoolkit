@@ -286,7 +286,7 @@ final class MetadataProxy<T> implements InvocationHandler {
          * Double rather than Integer if the target type is Number).
          */
         final Class<?> targetType = Classes.primitiveToWrapper(method.getReturnType());
-        if (targetType.isAssignableFrom(String     .class)) return accessor.getAttributeAsString  (name);
+        if (targetType.isAssignableFrom(String     .class)) return accessor.getAttribute  (name);
         if (targetType.isAssignableFrom(Double     .class)) return accessor.getAttributeAsDouble  (name);
         if (targetType.isAssignableFrom(Float      .class)) return accessor.getAttributeAsFloat   (name);
         if (targetType.isAssignableFrom(Integer    .class)) return accessor.getAttributeAsInteger (name);
