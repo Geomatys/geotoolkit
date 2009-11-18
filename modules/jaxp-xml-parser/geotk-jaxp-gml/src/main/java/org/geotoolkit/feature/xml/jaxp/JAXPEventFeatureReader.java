@@ -31,6 +31,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
@@ -43,6 +44,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.xml.MarshallerPool;
@@ -128,12 +130,13 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                 if (event.isStartElement()) {
                     StartElement startEvent = event.asStartElement();
                     Name name               = Utils.getNameFromQname(startEvent.getName());
+                    Attribute id            = startEvent.getAttributeByName(new QName("http://www.opengis.net/gml", "id"));
                     
                     if (name.getLocalPart().equals("FeatureCollection")) {
-                        return readFeatureCollection(eventReader);
+                        return readFeatureCollection(eventReader, id.getValue());
 
                     } else if (featureType.getName().equals(name)) {
-                        return readFeature(eventReader, 1);
+                        return readFeature(eventReader, id.getValue());
                     } else {
                         throw new IllegalArgumentException("The xml does not describte the same type of feature: \n " +
                                                            "Expected: " + featureType.getName() + '\n'                  +
@@ -147,7 +150,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
-    public SimpleFeature readFeature(XMLEventReader eventReader, int ordinal) {
+    private SimpleFeature readFeature(XMLEventReader eventReader, String id) {
         builder.reset();
         String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
@@ -163,13 +166,18 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                         if (contentEvent.isCharacters()) {
                             Characters content = contentEvent.asCharacters();
                             LOGGER.finer("find value:" + content.getData() + " for attribute :" + q.getLocalPart());
-                            PropertyDescriptor pdesc = featureType.getDescriptor(q.getLocalPart());
+                            PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q));
                             if (pdesc != null) {
                                 Class propertyType       = pdesc.getType().getBinding();
                                 builder.set(q.getLocalPart(), Converters.convert(content.getData(), propertyType));
                                 
                             } else {
-                                throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart());
+                                StringBuilder exp = new StringBuilder("expected ones are:").append('\n');
+                                for (PropertyDescriptor pd : featureType.getDescriptors()) {
+                                    exp.append(pd.getName().getLocalPart()).append('\n');
+                                }
+                                throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart() + '\n' + exp.toString());
+
                             }
                         
                         } else {
@@ -201,7 +209,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                 }
             }
 
-            return builder.buildFeature(featureType.getName().getLocalPart() + '.' + ordinal);
+            return builder.buildFeature(id);
 
 
         } catch (XMLStreamException ex) {
@@ -210,24 +218,33 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
         return null;
     }
 
-    private FeatureCollection readFeatureCollection(XMLEventReader eventReader) {
-        FeatureCollection collection = FeatureCollectionUtilities.createCollection(null, (SimpleFeatureType) featureType);
+    private FeatureCollection readFeatureCollection(XMLEventReader eventReader, String id) {
+        FeatureCollection collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) featureType);
         try {
-            int i = 1;
              while (eventReader.hasNext()) {
                 XMLEvent event = eventReader.nextEvent();
                 if (event.isStartElement()) {
                     StartElement startEvent = event.asStartElement();
                     Name name               = Utils.getNameFromQname(startEvent.getName());
+                    Attribute fid           = startEvent.getAttributeByName(new QName("http://www.opengis.net/gml", "id"));
+
                     if (name.getLocalPart().equals("featureMember")) {
                         continue;
+                    
+                    } else if (name.getLocalPart().equals("boundedBy")) {
+                        Attribute srsNameAtt = startEvent.getAttributeByName(new QName("http://www.opengis.net/gml", "srsName"));
+                        String srsName       = null;
+                        if (srsNameAtt != null) {
+                            srsName = srsNameAtt.getValue();
+                        }
+                        JTSEnvelope2D bounds = readBounds(eventReader, srsName);
+                        
 
                     } else if (featureType.getName().equals(name)) {
-                        SimpleFeature feature = readFeature(eventReader, i);
+                        SimpleFeature feature = readFeature(eventReader, fid.getValue());
                         collection.add(feature);
-                        i++;
                     } else {
-                        throw new IllegalArgumentException("The xml does not describte the same type of feature: \n " +
+                        throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
                                                            "Expected: " + featureType.getName() + '\n'                  +
                                                            "But was: "  + name);
                     }
@@ -239,5 +256,52 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
             LOGGER.log(Level.SEVERE, "XMl stream exception while reading the feature: " + ex.getMessage(), ex);
         }
         return null;
+    }
+
+    private JTSEnvelope2D readBounds(XMLEventReader eventReader, String srsName) throws XMLStreamException {
+       JTSEnvelope2D bounds = null;
+       while (eventReader.hasNext()) {
+            XMLEvent event = eventReader.nextEvent();
+            if (event.isEndElement()) {
+                EndElement endElement = event.asEndElement();
+                if (endElement.getName().getLocalPart().equals("boundedBy")) {
+                    return null;
+                }
+            }
+
+       }
+        /*String srsName = null;
+        if (bounds.getCoordinateReferenceSystem() != null) {
+            try {
+                srsName = CRS.lookupIdentifier(bounds.getCoordinateReferenceSystem(), true);
+            } catch (FactoryException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+        }
+        QName bounded = new QName("http://www.opengis.net/gml", "boundedBy", "gml");
+        eventWriter.add(new StartElementEvent(bounded));
+        QName env     = new QName("http://www.opengis.net/gml", "Envelope", "gml");
+        eventWriter.add(new StartElementEvent(env));
+        if (srsName != null) {
+            eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "srsName", srsName, null));
+        }
+
+        // lower corner
+        QName lowc    = new QName("http://www.opengis.net/gml", "lowerCorner", "gml");
+        eventWriter.add(new StartElementEvent(lowc));
+        String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
+        eventWriter.add(new CharacterEvent(lowValue));
+        eventWriter.add(new EndElementEvent(lowc));
+
+        // upper corner
+        QName uppc    = new QName("http://www.opengis.net/gml", "upperCorner", "gml");
+        eventWriter.add(new StartElementEvent(uppc));
+        String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
+        eventWriter.add(new CharacterEvent(uppValue));
+        eventWriter.add(new EndElementEvent(uppc));
+
+        eventWriter.add(new EndElementEvent(env));
+        eventWriter.add(new EndElementEvent(bounded));*/
+        return bounds;
     }
 }

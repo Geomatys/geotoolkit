@@ -38,14 +38,18 @@ import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.Name;
 import org.opengis.geometry.Geometry;
+import org.opengis.referencing.FactoryException;
 
 /**
  *
@@ -77,7 +81,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                 // the XML header
                 eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
 
-                write(feature, eventWriter, true);
+                writeFeature(feature, eventWriter, true);
 
                 // we close the stream
                 eventWriter.flush();
@@ -102,7 +106,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                 // the XML header
                 eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
 
-                write(feature, eventWriter, true);
+                writeFeature(feature, eventWriter, true);
 
                 // we close the stream
                 eventWriter.flush();
@@ -124,7 +128,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                 // the XML header
                 eventWriter.add(new StartDocumentEvent("UTF-8", "1.0"));
 
-                write(feature, eventWriter,true);
+                writeFeature(feature, eventWriter,true);
 
                 // we close the stream
                 eventWriter.flush();
@@ -136,7 +140,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         }
     }
 
-    private void write(SimpleFeature feature, XMLEventWriter eventWriter, boolean root) {
+    private void writeFeature(SimpleFeature feature, XMLEventWriter eventWriter, boolean root) {
 
         try {
         //the root element of the xml document (type of the feature)
@@ -153,14 +157,25 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             if (root) {
                 NamespaceImpl namespaceEvent = new NamespaceImpl("gml", "http://www.opengis.net/gml");
                 eventWriter.add(namespaceEvent);
+                if (!namespace.equals("http://www.opengis.net/gml")) {
+                    NamespaceImpl namespaceEvent2 = new NamespaceImpl(prefix, namespace);
+                    eventWriter.add(namespaceEvent2);
+
+                }
             }
 
             //the simple nodes (attributes of the feature)
-            String geometryName = null;
+            Name geometryName = null;
             for (Property a : feature.getProperties()) {
                 if (!(a.getType() instanceof GeometryType)) {
                     if (a.getName() != null)  {
-                        QName property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart());
+                        QName property;
+                        if (a.getName().getNamespaceURI() != null) {
+                            prefix   = Namespaces.getPreferredPrefix(a.getName().getNamespaceURI(), "");
+                            property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart(), prefix);
+                        } else {
+                            property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart());
+                        }
                         eventWriter.add(new StartElementEvent(property));
                         eventWriter.add(new CharacterEvent(getStringValue(a.getValue())));
                         eventWriter.add(new EndElementEvent(property));
@@ -168,13 +183,19 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                         LOGGER.severe("the propertyName is null for property:" + a);
                     }
                 } else {
-                    geometryName = a.getName().getLocalPart();
+                    geometryName = a.getName();
                 }
             }
 
             // we add the geometry
             if (feature.getDefaultGeometry() != null) {
-                QName geomQname = new QName(geometryName);
+                QName geomQname;
+                if (geometryName.getNamespaceURI() != null) {
+                    prefix    = Namespaces.getPreferredPrefix(geometryName.getNamespaceURI(), "");
+                    geomQname = new QName(geometryName.getNamespaceURI(), geometryName.getLocalPart(), prefix);
+                } else {
+                    geomQname = new QName(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                }
                 eventWriter.add(new StartElementEvent(geomQname));
                 Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
 
@@ -206,7 +227,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
             XMLEventWriter eventWriter     = outputFactory.createXMLEventWriter(writer);
 
-            write(fc, eventWriter);
+            writeFeatureCollection(fc, eventWriter);
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
@@ -220,7 +241,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
             XMLEventWriter eventWriter     = outputFactory.createXMLEventWriter(out);
 
-            write(fc, eventWriter);
+            writeFeatureCollection(fc, eventWriter);
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
@@ -235,7 +256,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             StringWriter sw                = new StringWriter();
             XMLEventWriter eventWriter     = outputFactory.createXMLEventWriter(sw);
             eventWriter.setDefaultNamespace("");
-            write(featureCollection, eventWriter);
+            writeFeatureCollection(featureCollection, eventWriter);
 
             return sw.toString();
         } catch (XMLStreamException ex) {
@@ -244,7 +265,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
         return null;
     }
 
-    private void write(FeatureCollection featureCollection, XMLEventWriter eventWriter) {
+    private void writeFeatureCollection(FeatureCollection featureCollection, XMLEventWriter eventWriter) {
         try {
             
             // the XML header
@@ -255,9 +276,24 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             QName root = new QName("http://www.opengis.net/gml", "FeatureCollection", "gml");
             StartElementEvent ste = new StartElementEvent(root);
             eventWriter.add(ste);
+            eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "id", featureCollection.getID(), null));
 
-            NamespaceImpl namespace = new NamespaceImpl("gml", "http://www.opengis.net/gml");
-            eventWriter.add(namespace);
+            NamespaceImpl namespaceEvent = new NamespaceImpl("gml", "http://www.opengis.net/gml");
+            eventWriter.add(namespaceEvent);
+
+            FeatureType type = featureCollection.getSchema();
+            String namespace = type.getName().getNamespaceURI();
+            if (!namespace.equals("http://www.opengis.net/gml")) {
+                String prefix    = Namespaces.getPreferredPrefix(namespace, null);
+                NamespaceImpl namespaceEvent2 = new NamespaceImpl(prefix, namespace);
+                eventWriter.add(namespaceEvent2);
+
+            }
+
+            /*
+             * The boundedby part
+             */
+            writeBounds(featureCollection.getBounds(), eventWriter);
 
             // we write each feature member of the collection
             QName memberName = new QName("http://www.opengis.net/gml", "featureMember", "gml");
@@ -266,7 +302,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                 final SimpleFeature f = (SimpleFeature) iterator.next();
 
                 eventWriter.add(new StartElementEvent(memberName));
-                write(f, eventWriter, false);
+                writeFeature(f, eventWriter, false);
                 eventWriter.add(new EndElementEvent(memberName));
             }
 
@@ -277,6 +313,43 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        }
+    }
+
+    private void writeBounds(JTSEnvelope2D bounds, XMLEventWriter eventWriter) throws XMLStreamException {
+        if (bounds != null) {
+            String srsName = null;
+            if (bounds.getCoordinateReferenceSystem() != null) {
+                try {
+                    srsName = CRS.lookupIdentifier(bounds.getCoordinateReferenceSystem(), true);
+                } catch (FactoryException ex) {
+                    LOGGER.log(Level.SEVERE, null, ex);
+                }
+            }
+            QName bounded = new QName("http://www.opengis.net/gml", "boundedBy", "gml");
+            eventWriter.add(new StartElementEvent(bounded));
+            QName env     = new QName("http://www.opengis.net/gml", "Envelope", "gml");
+            eventWriter.add(new StartElementEvent(env));
+            if (srsName != null) {
+                eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "srsName", srsName, null));
+            }
+
+            // lower corner
+            QName lowc    = new QName("http://www.opengis.net/gml", "lowerCorner", "gml");
+            eventWriter.add(new StartElementEvent(lowc));
+            String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
+            eventWriter.add(new CharacterEvent(lowValue));
+            eventWriter.add(new EndElementEvent(lowc));
+
+            // upper corner
+            QName uppc    = new QName("http://www.opengis.net/gml", "upperCorner", "gml");
+            eventWriter.add(new StartElementEvent(uppc));
+            String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
+            eventWriter.add(new CharacterEvent(uppValue));
+            eventWriter.add(new EndElementEvent(uppc));
+
+            eventWriter.add(new EndElementEvent(env));
+            eventWriter.add(new EndElementEvent(bounded));
         }
     }
 

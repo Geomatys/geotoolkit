@@ -64,7 +64,7 @@ public class OMDataStore extends AbstractDataStore {
 
     private PreparedStatement getAllSamplingPoint;
 
-    private static final Name ID       = new DefaultName("http://www.opengis.net/gml", "id");
+    //private static final Name ID       = new DefaultName("http://www.opengis.net/gml", "id");
     private static final Name DESC     = new DefaultName("http://www.opengis.net/gml", "description");
     private static final Name NAME     = new DefaultName("http://www.opengis.net/gml", "name");
     private static final Name SAMPLED  = new DefaultName("http://www.opengis.net/sampling/1.0", "sampledFeature");
@@ -94,7 +94,7 @@ public class OMDataStore extends AbstractDataStore {
 
         featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sampling/1.0", "SamplingPoint"));
         
-        // gml:id (attribute)
+        /* gml:id (attribute)
         Name propertyName = ID;
         attributeTypeBuilder.setBinding(String.class);
         attributeTypeBuilder.setMaxOccurs(1);
@@ -102,17 +102,17 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.setNillable(false);
         AttributeType propertyType = attributeTypeBuilder.buildType();
         AttributeDescriptor attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(0, attdesc);
+        featureTypeBuilder.add(0, attdesc);*/
 
         // gml:description
-        propertyName = DESC;
+        Name propertyName = DESC;
         attributeTypeBuilder.setBinding(String.class);
         attributeTypeBuilder.setMaxOccurs(1);
         attributeTypeBuilder.setMinOccurs(0);
         attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(1, attdesc);
+        AttributeType propertyType = attributeTypeBuilder.buildType();
+        AttributeDescriptor attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        featureTypeBuilder.add(0, attdesc);
 
         // gml:name
         propertyName = NAME;
@@ -122,7 +122,7 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.setNillable(false);
         propertyType = attributeTypeBuilder.buildType();
         attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(2, attdesc);
+        featureTypeBuilder.add(1, attdesc);
 
         // To see BoundedBy
 
@@ -134,7 +134,7 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.setNillable(true);
         propertyType = attributeTypeBuilder.buildType();
         attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(3, attdesc);
+        featureTypeBuilder.add(2, attdesc);
 
         // sa:Position 
         propertyName = POSITION;
@@ -144,7 +144,7 @@ public class OMDataStore extends AbstractDataStore {
         attributeTypeBuilder.setNillable(false);
         propertyType = attributeTypeBuilder.buildGeometryType();
         attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(4, attdesc);
+        featureTypeBuilder.add(3, attdesc);
         featureTypeBuilder.setDefaultGeometry(POSITION.getLocalPart());
 
         SimpleFeatureType samplingPointType = featureTypeBuilder.buildFeatureType();
@@ -200,7 +200,6 @@ public class OMDataStore extends AbstractDataStore {
                 }
                 builder.reset();
                 String id = result.getString("id");
-                builder.set(ID, id);
                 builder.set(DESC, result.getString("description"));
                 builder.set(NAME, result.getString("name"));
                 builder.set(SAMPLED, result.getString("sampled_feature"));
