@@ -122,7 +122,6 @@ public class WFSDataStore extends AbstractDataStore{
             sftb.setName(sft.getName());
             for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
                 if(desc instanceof GeometryDescriptor){
-                    System.out.println("la");
                     GeometryDescriptor gd = (GeometryDescriptor) desc;
                     final AttributeTypeBuilder atb = new AttributeTypeBuilder();
                     atb.init(gd);
@@ -230,25 +229,15 @@ public class WFSDataStore extends AbstractDataStore{
     @Override
     protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
 
-        System.err.println("--------------------------- " + typeName);
-
         for(Name n : typeNames){
             if(n.getLocalPart().equals(typeName)){
-                System.err.println("-------------- top go search 1");
                 final SimpleFeatureType sft = types.get(n);
-
-                System.err.println("-------------- top go search 2");
                 final QName q = new QName(n.getNamespaceURI(), n.getLocalPart(), prefixes.get(n.getNamespaceURI()));
-                System.err.println("-------------- top go search 3");
                 FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
-                System.err.println("-------------- top go search 4");
-
-                System.err.println("+++++++++++++++++++++ coll : " + collection);
 
                 if(collection == null){
                     return DataUtilities.wrapToReader(sft, new EmptyFeatureCollection(sft).features());
                 }else{
-                    System.err.println("+++++++++++++++++++++ coll size : " + collection.size());
                     return DataUtilities.wrapToReader(sft, collection.features());
                 }
 
@@ -277,7 +266,6 @@ public class WFSDataStore extends AbstractDataStore{
     private SimpleFeatureType requestType(QName typeName) throws IOException{
         final DescribeFeatureTypeRequest request = server.createDescribeFeatureType();
         request.setTypeNames(Collections.singletonList(typeName));
-
 
         try {
             final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
@@ -322,7 +310,6 @@ public class WFSDataStore extends AbstractDataStore{
             final URL url = request.getURL();
             LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
-            LOGGER.log(Level.INFO, "[WFS Client] result parsed : " + result);
 
             if(result instanceof SimpleFeature){
                 final SimpleFeature sf = (SimpleFeature) result;
