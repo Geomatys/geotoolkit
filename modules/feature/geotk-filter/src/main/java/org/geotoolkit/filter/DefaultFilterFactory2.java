@@ -60,7 +60,6 @@ import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
 
-import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
@@ -117,7 +116,6 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -158,48 +156,48 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         }
 
         CoordinateReferenceSystem crs = null;
+        FactoryException firstException = null;
         try {
             crs = CRS.decode(srs);
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
         } catch (FactoryException ex) {
-            Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
+            firstException = ex;
         }
 
         //TODO : Datastore from geotools sucks, they dont even provide the authority name sometimes !!!
         // we are forced add the two next tests
 
-        if(crs == null && !srs.startsWith("EPSG:")){
+        if(crs == null && !srs.startsWith("CRS:") && !srs.startsWith("EPSG:")){
             //we presume all epsg given are using the epsg authority
             //this is a necessity since the last geotools modules aren't correctly providing the authority
             String test = "EPSG:"+srs;
 
             try {
                 crs = CRS.decode(test);
-            } catch (NoSuchAuthorityCodeException ex) {
-                Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
             } catch (FactoryException ex) {
-                Logging.recoverableException(DefaultFilterFactory2.class, "bbox", ex);
+                if(firstException == null){
+                    firstException = ex;
+                }
             }
         }
 
-        if(crs == null && !srs.startsWith("CRS:")){
+        if(crs == null && !srs.startsWith("CRS:") && !srs.startsWith("EPSG:")){
             //we presume all epsg given are using the epsg authority
             //this is a necessity since the last geotools modules aren't correctly providing the authority
             String test = "CRS:"+srs;
 
             try {
                 crs = CRS.decode(test);
-            } catch (NoSuchAuthorityCodeException ex) {
-                Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
             } catch (FactoryException ex) {
-                Logging.unexpectedException(DefaultFilterFactory2.class, "bbox", ex);
+                if(firstException == null){
+                    firstException = ex;
+                }
             }
         }
 
 
         if(crs == null){
-            throw new IllegalArgumentException("Invalid srs : " +srs);
+            throw new IllegalArgumentException("Invalid srs : " +srs +" , check that you have the corresponding authority registered." +
+                    "\n primary exception : "+firstException.getMessage(), firstException);
         }
 
         env = new DefaultBoundingBox(crs);
