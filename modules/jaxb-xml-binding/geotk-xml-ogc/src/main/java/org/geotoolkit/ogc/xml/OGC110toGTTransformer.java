@@ -246,7 +246,7 @@ public class OGC110toGTTransformer {
                 }else if(filters.size() == 1){
                     return filters.get(0);
                 }else{
-                    return filterFactory.and(filters);
+                    return filterFactory.or(filters);
                 }
             }
 
