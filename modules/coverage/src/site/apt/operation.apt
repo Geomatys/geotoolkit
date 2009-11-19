@@ -20,7 +20,8 @@ Operations on a Grid Coverage
 
 * Available Operations
 
-  The package summary javadoc should contain the full list of available operations. Unfortunately,
+  The {{{../../apidocs/org/geotoolkit/coverage/processing/operation/package-summary.html#package_description}package summary}}
+  javadoc should contain the full list of available operations. Unfortunately,
   the system is not automatic so it is possible to create new operations without documenting them.
 
   The full list of available operations can be obtained from the library with:
