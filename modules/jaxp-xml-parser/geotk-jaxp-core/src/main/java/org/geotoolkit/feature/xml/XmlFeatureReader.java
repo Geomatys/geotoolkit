@@ -57,4 +57,9 @@ public interface XmlFeatureReader {
     public Object read(Reader reader);
 
     public void setFeatureType(FeatureType featureType);
+
+    /**
+     * Free the resources.
+     */
+    void dispose();
 }

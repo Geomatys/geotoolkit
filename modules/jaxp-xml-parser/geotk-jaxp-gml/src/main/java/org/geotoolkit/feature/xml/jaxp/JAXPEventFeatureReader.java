@@ -73,11 +73,14 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
 
     private FeatureType featureType ;
 
-    private  SimpleFeatureBuilder builder;
+    private SimpleFeatureBuilder builder;
+
+    private final Unmarshaller unmarshaller;
 
     public JAXPEventFeatureReader(FeatureType featureType) throws JAXBException {
-         builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-         this.featureType = featureType;
+         this.builder      = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
+         this.featureType  = featureType;
+         this.unmarshaller = marshallpool.acquireUnmarshaller();
 
     }
 
@@ -217,8 +220,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
                         }
                         
                         try {
-                            Unmarshaller un     = marshallpool.acquireUnmarshaller();
-                            JTSGeometry isoGeom = (JTSGeometry) ((JAXBElement)un.unmarshal(eventReader)).getValue();
+                            JTSGeometry isoGeom = (JTSGeometry) ((JAXBElement)unmarshaller.unmarshal(eventReader)).getValue();
                             Geometry jtsGeom    = isoGeom.getJTSGeometry();
                             builder.set(geometryName, jtsGeom);
                         } catch (JAXBException ex) {
@@ -320,5 +322,9 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
      */
     public void setFeatureType(FeatureType featureType) {
         this.featureType = featureType;
+    }
+
+    public void dispose() {
+        marshallpool.release(unmarshaller);
     }
 }

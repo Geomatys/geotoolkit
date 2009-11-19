@@ -214,4 +214,8 @@ public class JAXPStreamFeatureReader implements XmlFeatureReader {
     public void setFeatureType(FeatureType featureType) {
         this.featureType = featureType;
     }
+
+    public void dispose() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

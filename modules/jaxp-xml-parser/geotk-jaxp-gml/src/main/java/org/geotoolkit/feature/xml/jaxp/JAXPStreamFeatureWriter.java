@@ -267,4 +267,8 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
         }
         return null;
     }
+
+    public void dispose() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

@@ -26,6 +26,8 @@ import com.sun.xml.internal.stream.events.StartElementEvent;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -65,15 +67,23 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
     private static MarshallerPool pool;
     static {
         try {
-            pool = new MarshallerPool(ObjectFactory.class);
+            Map<String, String> properties = new HashMap<String, String>();
+            properties.put(Marshaller.JAXB_FRAGMENT, "true");
+            properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, "false");
+            pool = new MarshallerPool(properties, ObjectFactory.class);
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
         }
     }
 
     private static ObjectFactory factory = new ObjectFactory();
+
+    private final Marshaller marshaller;
     
-    public JAXPEventFeatureWriter(){
+    public JAXPEventFeatureWriter() throws JAXBException {
+         marshaller = pool.acquireMarshaller();
+         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
     }
 
     /**
@@ -213,19 +223,11 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
                 }
                 eventWriter.add(new StartElementEvent(geomQname));
                 Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
-
-                Marshaller m = null;
                 try {
-                    m= pool.acquireMarshaller();
-                    m.setProperty(m.JAXB_FRAGMENT, true);
-                    m.setProperty(m.JAXB_FORMATTED_OUTPUT, true);
-                    m.marshal(factory.buildAnyGeometry(isoGeometry), eventWriter);
+                    marshaller.marshal(factory.buildAnyGeometry(isoGeometry), eventWriter);
                 } catch (JAXBException ex) {
                     LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
-                } finally {
-                    if (m != null)
-                        pool.release(m);
-                }
+                } 
                 eventWriter.add(new EndElementEvent(geomQname));
             }
 
@@ -376,6 +378,10 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             eventWriter.add(new EndElementEvent(env));
             eventWriter.add(new EndElementEvent(bounded));
         }
+    }
+
+    public void dispose() {
+        pool.release(marshaller);
     }
 
 }

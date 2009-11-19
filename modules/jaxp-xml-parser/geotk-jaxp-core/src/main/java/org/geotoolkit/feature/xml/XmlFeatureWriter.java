@@ -74,5 +74,10 @@ public interface XmlFeatureWriter {
      * @param feature The feature to marshall.
      */
     void write(FeatureCollection collection, OutputStream stream);
+
+    /**
+     * Free the resources.
+     */
+    void dispose();
     
 }
