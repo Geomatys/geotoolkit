@@ -63,15 +63,19 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
     private static final Logger LOGGER = Logger.getLogger("jaxp");
 
     private static MarshallerPool marshallpool;
+    static {
+        try {
+            marshallpool = new MarshallerPool(ObjectFactory.class);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+        }
+    }
 
     private FeatureType featureType ;
 
     private  SimpleFeatureBuilder builder;
 
     public JAXPEventFeatureReader(FeatureType featureType) throws JAXBException {
-         // for GML geometries marshall
-         marshallpool = new MarshallerPool(ObjectFactory.class);
-
          builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
          this.featureType = featureType;
 

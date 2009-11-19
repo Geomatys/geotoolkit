@@ -19,7 +19,6 @@ package org.geotoolkit.feature.xml.jaxp;
 
 import com.sun.xml.internal.stream.events.AttributeImpl;
 import com.sun.xml.internal.stream.events.CharacterEvent;
-import com.sun.xml.internal.stream.events.EndDocumentEvent;
 import com.sun.xml.internal.stream.events.EndElementEvent;
 import com.sun.xml.internal.stream.events.NamespaceImpl;
 import com.sun.xml.internal.stream.events.StartDocumentEvent;

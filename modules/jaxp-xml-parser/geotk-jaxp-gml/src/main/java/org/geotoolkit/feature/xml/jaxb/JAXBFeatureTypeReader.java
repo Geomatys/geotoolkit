@@ -51,15 +51,23 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     private static Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     
     private static MarshallerPool marshallpool;
+    static {
+        try {
+            marshallpool = new MarshallerPool(ObjectFactory.class);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+        }
+    }
 
     private SimpleFeatureTypeBuilder builder;
 
     public JAXBFeatureTypeReader() throws JAXBException {
-         marshallpool = new MarshallerPool(ObjectFactory.class);
-
          builder = new SimpleFeatureTypeBuilder();
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public List<FeatureType> read(String xml) {
         try {
@@ -72,6 +80,9 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public List<FeatureType> read(InputStream in) {
         try {
@@ -84,6 +95,9 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public List<FeatureType> read(Reader reader) {
         try {
@@ -96,6 +110,9 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureType read(String xml, String name) {
         try {
@@ -108,6 +125,9 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureType read(InputStream in, String name) {
         try {
@@ -120,6 +140,9 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureType read(Reader reader, String name) {
         try {

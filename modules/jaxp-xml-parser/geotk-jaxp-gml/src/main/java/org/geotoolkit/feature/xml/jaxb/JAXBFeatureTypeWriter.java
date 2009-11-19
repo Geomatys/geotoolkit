@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -49,6 +50,13 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 
     private static MarshallerPool marshallpool;
+    static {
+        try {
+            marshallpool = new MarshallerPool(ObjectFactory.class);
+        } catch (JAXBException ex) {
+            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
+        }
+    }
 
     private static final Import gmlImport = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
 
@@ -56,9 +64,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
 
 
     public JAXBFeatureTypeWriter() throws JAXBException {
-        marshallpool = new MarshallerPool(ObjectFactory.class);
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public String write(FeatureType feature) {
         Schema schema         = getSchemaFromFeatureType(feature);
@@ -78,6 +88,9 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public void write(FeatureType feature, Writer writer) {
         Schema schema         = getSchemaFromFeatureType(feature);
@@ -94,6 +107,9 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         }
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public void write(FeatureType feature, OutputStream stream) {
         Schema schema         = getSchemaFromFeatureType(feature);
@@ -110,6 +126,9 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         }
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
         if (featureTypes != null && featureTypes.size() > 0) {
@@ -124,6 +143,9 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         return null;
     }
 
+     /**
+     * {@inheritDoc }
+     */
     @Override
     public Schema getSchemaFromFeatureType(FeatureType featureType) {
         if (featureType != null) {
