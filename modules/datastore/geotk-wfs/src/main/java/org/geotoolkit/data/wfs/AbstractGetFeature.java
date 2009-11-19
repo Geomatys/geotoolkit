@@ -29,7 +29,8 @@ import org.geotoolkit.sld.xml.XMLUtilities;
 import org.opengis.filter.Filter;
 
 /**
- *
+ * Abstract Get feature request.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

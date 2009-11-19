@@ -19,16 +19,25 @@ package org.geotoolkit.data.wfs;
 import java.util.List;
 import javax.xml.namespace.QName;
 
-
 /**
+ * WFS DescribeFeature mutable request interface.
+ * The request shall be correctly configured before calling the getURL method.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public interface DescribeFeatureTypeRequest extends Request{
 
+    /**
+     * @return QName : requested type namse, can be empty
+     * if not yet configured.
+     */
     List<QName> getTypeNames();
 
+    /**
+     * @param typeNames : requested type names, can be null
+     * if not yet configured.
+     */
     void setTypeNames(List<QName> typeNames);
 
 }

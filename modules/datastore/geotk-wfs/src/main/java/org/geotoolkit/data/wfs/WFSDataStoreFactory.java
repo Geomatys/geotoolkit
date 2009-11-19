@@ -33,6 +33,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
+ * Datastore factory for WFS client.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

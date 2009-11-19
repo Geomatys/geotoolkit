@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
+ * Simple request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
