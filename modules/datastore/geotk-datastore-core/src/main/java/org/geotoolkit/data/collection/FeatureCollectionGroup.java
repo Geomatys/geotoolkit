@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Provide a collection that link several collections in one.
@@ -36,7 +37,7 @@ public class FeatureCollectionGroup extends AbstractFeatureCollection{
     private final FeatureCollection[] wrapped;
 
     private FeatureCollectionGroup(FeatureCollection[] wrapped){
-        super( (SimpleFeatureType)wrapped[0].getSchema(), "dummyId");
+        super( (SimpleFeatureType)wrapped[0].getSchema(), "featureCollection");
         this.wrapped = wrapped;
     }
 
@@ -67,7 +68,11 @@ public class FeatureCollectionGroup extends AbstractFeatureCollection{
 
     @Override
     public JTSEnvelope2D getBounds() {
-        final JTSEnvelope2D env = new JTSEnvelope2D();
+        CoordinateReferenceSystem crs = null;
+        if (wrapped.length > 0) {
+            crs = wrapped[0].getBounds().getCoordinateReferenceSystem();
+        }
+        final JTSEnvelope2D env = new JTSEnvelope2D(crs);
 
         for(FeatureCollection c : wrapped){
             env.expandToInclude(c.getBounds());

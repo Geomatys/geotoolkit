@@ -157,7 +157,7 @@ public class Utils {
                 } else if (Envelope.class.equals(binding)) {
                     return new QName("http://www.opengis.net/gml", "Envelope");
                 } else if (MultiPolygon.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "PolyHedralSurface");
+                    return new QName("http://www.opengis.net/gml", "MultiGeometry");
                 } else if (Polygon.class.equals(binding)) {
                     return new QName("http://www.opengis.net/gml", "Polygon");
                 } else if (LinearRing.class.equals(binding)) {
