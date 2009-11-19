@@ -37,6 +37,7 @@ import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.collection.SubFeatureCollection;
 import org.geotoolkit.util.NullProgressListener;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.IllegalAttributeException;
@@ -574,5 +575,29 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
     @Override
     public SimpleFeatureType getSchema() {
         return schema;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        }
+
+        if (object instanceof DataFeatureCollection) {
+            DataFeatureCollection that = (DataFeatureCollection) object;
+            return Utilities.equals(this.id,     that.id)     &&
+                   Utilities.equals(this.open,   that.open)   &&
+                   Utilities.equals(this.schema, that.schema);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.open != null ? this.open.hashCode() : 0);
+        hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 37 * hash + (this.schema != null ? this.schema.hashCode() : 0);
+        return hash;
     }
 }

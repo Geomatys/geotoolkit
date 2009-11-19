@@ -101,4 +101,19 @@ public class EmptyFeatureCollection extends DataFeatureCollection {
     public boolean isValid() {
         return true;
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) {
+            return true;
+        } else  if (object instanceof EmptyFeatureCollection && super.equals(object)) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

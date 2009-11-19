@@ -322,6 +322,7 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
      */
     public void setFeatureType(FeatureType featureType) {
         this.featureType = featureType;
+        this.builder     = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
     }
 
     public void dispose() {

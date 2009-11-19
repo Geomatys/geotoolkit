@@ -67,7 +67,7 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
     "supportsGMLObjectTypeList",
     "filterCapabilities"
 })
-@XmlRootElement(name = "WFSCapabilities")
+@XmlRootElement(name = "WFS_Capabilities")
 public class WFSCapabilitiesType extends CapabilitiesBaseType {
 
     @XmlElement(name = "FeatureTypeList")
