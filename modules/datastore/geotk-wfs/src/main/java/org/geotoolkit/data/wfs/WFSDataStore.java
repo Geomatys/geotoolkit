@@ -318,8 +318,9 @@ public class WFSDataStore extends AbstractDataStore{
             }
         }
 
+        XmlFeatureReader reader = null;
         try {
-            final XmlFeatureReader reader = new JAXPEventFeatureReader(sft);
+            reader = new JAXPEventFeatureReader(sft);
             final URL url = request.getURL();
             LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
@@ -344,6 +345,10 @@ public class WFSDataStore extends AbstractDataStore{
 
         } catch (JAXBException ex) {
             throw new IOException(ex);
+        }finally{
+            if(reader != null){
+                reader.dispose();
+            }
         }
 
     }
