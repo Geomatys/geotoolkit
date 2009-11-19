@@ -389,7 +389,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                     list = MetadataProxyList.create(componentType, acc);
                 } else {
                     componentType = getElementClass(elementName, componentType);
-                    list = Collections.singletonList(newProxyInstance(componentType, acc));
+                    list = Collections.singletonList(acc.newProxyInstance(componentType));
                 }
                 childs.put(methodName, list);
             }
@@ -417,7 +417,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 final String   elementName = SpatialMetadataFormat.toElementName(name);
                 final Class<?> elementType = getElementClass(elementName, targetType);
                 final MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
-                child = newProxyInstance(elementType, acc);
+                child = acc.newProxyInstance(elementType);
             } catch (IllegalArgumentException e) {
                 // Report the warning and remember that we can not return a
                 // value for this element, so we don't try again next time.

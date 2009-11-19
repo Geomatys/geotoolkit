@@ -89,7 +89,7 @@ public class GeographicMetadata extends SpatialMetadata {
      * @param reader The source image reader, or {@code null} if none.
      */
     public GeographicMetadata(final ImageReader reader) {
-        super(GeographicMetadataFormat.getInstance(), reader);
+        super(GeographicMetadataFormat.getInstance(), reader, null);
         init();
     }
 
@@ -99,7 +99,7 @@ public class GeographicMetadata extends SpatialMetadata {
      * @param writer The target image writer, or {@code null} if none.
      */
     public GeographicMetadata(final ImageWriter writer) {
-        super(GeographicMetadataFormat.getInstance(), writer);
+        super(GeographicMetadataFormat.getInstance(), writer, null);
         init();
     }
 

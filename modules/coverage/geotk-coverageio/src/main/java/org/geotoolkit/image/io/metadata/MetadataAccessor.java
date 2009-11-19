@@ -46,6 +46,7 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.CodeLists;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
@@ -770,7 +771,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = trimFractionalPart(value);
+            value = StringUtilities.trimFractionalPart(value);
             try {
                 return Integer.valueOf(value);
             } catch (NumberFormatException e) {
@@ -885,7 +886,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Date getAttributeAsDate(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = trimFractionalPart(value);
+            value = StringUtilities.trimFractionalPart(value);
             if (metadata instanceof SpatialMetadata) {
                 return ((SpatialMetadata) metadata).dateFormat().parse(value);
             } else try {
@@ -1268,6 +1269,122 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Returns a view of the wrapped {@link IIOMetadata} as an implementation of the given
+     * interface. This method returns an implementation of the given interface in which each
+     * getter method fetches the value of the attribute named like the getter method, modified
+     * according <cite>Java Beans</cite> conventions.
+     * <p>
+     * <b>Example:</b> Suppose a metadata format conforms to the
+     * <a href="SpatialMetadataFormat.html#default-formats"><cite>Stream metadata</cite>
+     * format documented here</a>. Then in the code below, every call to the
+     * {@link org.opengis.metadata.identification.Resolution#getDistance()} method on the instance
+     * returned by this {@code newProxyInstance(...)} method while be converted into a call to the
+     * <code>{@linkplain #getAttributeAsDouble(String) getAttributeAsDouble}("distance")</code>
+     * method on this {@code MetadataAccessor} instance.
+     *
+     * {@preformat java
+     *     IIOMetadata       metadata   = ...;
+     *     MetadataAccessor  accessor   = new MetadataAccessor(metadata, "DiscoveryMetadata/SpatialResolution", null);
+     *     SpatialResolution resolution = accessor.asPojo(SpatialResolution.class);
+     *     Double            distance   = resolution.getDistance();
+     *     // Note that changes to the underlying IIOMetadata attributes
+     *     // are immediately reflected in the Resolution object.
+     *     accessor.setAttribute("distance", 20);
+     *     distance = resolution.getDistance(); // Should now return 20.
+     * }
+     *
+     * Note that the {@code type} argument given to this method is typically one of the types given
+     * to the {@link SpatialMetadataFormat#addTree(org.geotoolkit.metadata.MetadataStandard,
+     * Class, String, String, java.util.Map) SpatialMetadataFormat.addTree(...)} method, but
+     * this is not mandatory.
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface for which to create a proxy instance.
+     * @return An implementation of the given interface with getter methods that fetch
+     *         their return values from the attribute values.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @see SpatialMetadata#getProxyInstance(Class)
+     * @see java.lang.reflect.Proxy
+     *
+     * @since 3.06
+     */
+    public <T> T newProxyInstance(final Class<T> type) throws IllegalArgumentException {
+        return MetadataProxy.newProxyInstance(type, this);
+    }
+
+    /**
+     * Returns a vie of the given {@code IIOMetadata} as an implementation of the given interface.
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  metadata The metadata for which to create the view.
+     * @param  formatName The name of the metadata format to use.
+     * @param  type The interface for which to create a proxy instance.
+     * @return An implementation of the given interface with getter methods that fetch
+     *         their return values from the attribute values.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @see SpatialMetadata#getProxyInstance(Class)
+     * @see java.lang.reflect.Proxy
+     *
+     * @since 3.06
+     */
+    public static <T> T newProxyInstance(final IIOMetadata metadata, final String formatName, final Class<T> type)
+            throws IllegalArgumentException
+    {
+        final List<String> paths = new ArrayList<String>(4);
+        final IIOMetadataFormat format = metadata.getMetadataFormat(formatName);
+        path(type, format, format.getRootName(), new StringBuilder(), paths);
+        switch (paths.size()) {
+            case 0: {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+            }
+            case 1: {
+                return new MetadataAccessor(metadata, paths.get(0), "#auto").newProxyInstance(type);
+            }
+            default: {
+                throw new IllegalArgumentException(); // TODO: format an error message.
+            }
+        }
+    }
+
+    /**
+     * Adds to the given list the path to every elements of the given type.
+     * This method invokes itself recursively for scanning down the tree.
+     *
+     * @param type        The type we are looking for.
+     * @param format      The metadata format.
+     * @param elementName The current element to be scaned.
+     * @param buffer      An initially empty buffer, for internal use by this method.
+     * @param paths       The list where to add the paths that we found.
+     */
+    private static void path(final Class<?> type, final IIOMetadataFormat format,
+            final String elementName, final StringBuilder buffer, final List<String> paths)
+    {
+        final String[] childs = format.getChildNames(elementName);
+        if (childs != null) {
+            final int base = buffer.length();
+            for (final String child : childs) {
+                buffer.append('/').append(child);
+                final int valueType = format.getObjectValueType(child);
+                if (valueType != IIOMetadataFormat.VALUE_NONE) {
+                    final Class<?> candidate = format.getObjectClass(child);
+                    if (type != null && type.isAssignableFrom(candidate)) {
+                        /*
+                         * We found an element. If this element is to be repeated in a collection,
+                         * the use the path of the parent which describe the whole collection.
+                         */
+                        paths.add(valueType == IIOMetadataFormat.CHILD_POLICY_REPEAT ?
+                                buffer.substring(0, base) : buffer.toString());
+                    }
+                }
+                path(type, format, child, buffer, paths);
+                buffer.setLength(base);
+            }
+        }
+    }
+
+    /**
      * Convenience flavor of {@link #warning(String, int, Object)} with two arguments.
      * We do not use the "variable argument list" syntax because of possible confusion
      * with the {@code Object} type, which is too generic.
@@ -1379,27 +1496,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final Level old = warningsLevel;
         warningsLevel = level;
         return old;
-    }
-
-    /**
-     * Trims the factional part of the given string, provided that it doesn't change the value.
-     * More specifically, this method removes the trailing {@code ".0"} characters if any. This
-     * method is invoked before to {@linkplain #getAttributeAsInteger parse an integer} or to
-     * {@linkplain #getAttributeAsDate parse a date} (for simplifying fractional seconds).
-     *
-     * @param  value The value to trim.
-     * @return The value without the trailing {@code ".0"} part.
-     */
-    public static String trimFractionalPart(String value) {
-        value = value.trim();
-        for (int i=value.length(); --i>=0;) {
-            switch (value.charAt(i)) {
-                case '0': continue;
-                case '.': return value.substring(0, i);
-                default : return value;
-            }
-        }
-        return value;
     }
 
     /**

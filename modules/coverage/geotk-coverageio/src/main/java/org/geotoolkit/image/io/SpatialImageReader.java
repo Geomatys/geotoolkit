@@ -298,7 +298,7 @@ public abstract class SpatialImageReader extends ImageReader {
         if (candidate instanceof SpatialMetadata) {
             parser = (SpatialMetadata) candidate;
         } else {
-            parser = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this);
+            parser = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
             parser.mergeTree(candidate);
         }
         if (metadata == null) {

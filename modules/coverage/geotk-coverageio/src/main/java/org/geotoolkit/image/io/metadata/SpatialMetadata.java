@@ -21,6 +21,7 @@ import java.text.Format;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.measure.RangeFormat;
@@ -92,6 +94,13 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     private final Object owner;
 
     /**
+     * The metadata provided by standard {@link ImageReader} instances, on which to fallback
+     * if the user asked for something else than the spatial metadata managed by this class.
+     * This is {@code null} if there is no such fallback.
+     */
+    private final IIOMetadata fallback;
+
+    /**
      * The root node to be returned by {@link #getAsTree}.
      */
     private Node root;
@@ -120,7 +129,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @param format The metadata format.
      */
     public SpatialMetadata(final IIOMetadataFormat format) {
-        this(format, (Object) null);
+        this(format, (Object) null, null);
     }
 
     /**
@@ -129,12 +138,22 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
      * constants, but other formats are allowed if the structure is compatible or the specialized
      * getter methods are overloaded.
+     * <p>
+     * If the {@code fallback} argument is non-null, then any call to a
+     * {@link #getMetadataFormat(String) getMetadataFormat}, {@link #getAsTree(String) getAsTree},
+     * {@link #mergeTree(String,Node) mergeTree} or {@link #setFromTree(String,Node) setFromTree}
+     * method with a format name different than
+     * <code>format.{@linkplain IIOMetadataFormat#getRootName() getRootName()}</code> will be
+     * delegated to that fallback. This is useful when the given {@code ImageReader} is actually
+     * a wrapper around an other image reader adding geospatial information.
      *
-     * @param format The metadata format.
-     * @param reader The source image reader, or {@code null} if none.
+     * @param format   The metadata format.
+     * @param reader   The source image reader, or {@code null} if none.
+     * @param fallback The fallback for any format name different than {@code format.getRootName()},
+     *                 or {@code null} if none.
      */
-    public SpatialMetadata(final IIOMetadataFormat format, final ImageReader reader) {
-        this(format, (Object) reader);
+    public SpatialMetadata(final IIOMetadataFormat format, final ImageReader reader, final IIOMetadata fallback) {
+        this(format, (Object) reader, fallback);
     }
 
     /**
@@ -143,29 +162,74 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * {@link SpatialMetadataFormat#STREAM STREAM} or {@link SpatialMetadataFormat#IMAGE IMAGE}
      * constants, but other formats are allowed if the structure is compatible or the specialized
      * getter methods are overloaded.
+     * <p>
+     * If the {@code fallback} argument is non-null, then any call to a
+     * {@link #getMetadataFormat(String) getMetadataFormat}, {@link #getAsTree(String) getAsTree},
+     * {@link #mergeTree(String,Node) mergeTree} or {@link #setFromTree(String,Node) setFromTree}
+     * method with a format name different than
+     * <code>format.{@linkplain IIOMetadataFormat#getRootName() getRootName()}</code> will be
+     * delegated to that fallback. This is useful when the given {@code ImageWriter} is actually
+     * a wrapper around an other image writer adding geospatial information.
      *
-     * @param format The metadata format.
-     * @param writer The target image writer, or {@code null} if none.
+     * @param format   The metadata format.
+     * @param writer   The target image writer, or {@code null} if none.
+     * @param fallback The fallback for any format name different than {@code format.getRootName()},
+     *                 or {@code null} if none.
      */
-    public SpatialMetadata(final IIOMetadataFormat format, final ImageWriter writer) {
-        this(format, (Object) writer);
+    public SpatialMetadata(final IIOMetadataFormat format, final ImageWriter writer, final IIOMetadata fallback) {
+        this(format, (Object) writer, fallback);
     }
 
     /**
      * Creates an initially empty metadata instance for the given format and reader/writer.
+     * The format name of the given fallback are merged with the name of the given format.
      */
-    private SpatialMetadata(final IIOMetadataFormat format, final Object owner) {
-        super(false, // Can not return or accept a DOM tree using the standard metadata format.
-              null,  // There is no native metadata format.
-              null,  // There is no native metadata format.
-              new String[] {
-                  format.getRootName()
-              },
-              new String[] {
-                  "org.geotoolkit.image.io.metadata.SpatialMetadataFormat"
-              });
-        this.format = format;
-        this.owner  = owner;
+    private SpatialMetadata(final IIOMetadataFormat format, final Object owner, final IIOMetadata fallback) {
+        if (format == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "format"));
+        }
+        this.format   = format;
+        this.owner    = owner;
+        this.fallback = fallback;
+        if (fallback != null) {
+            standardFormatSupported   = fallback.isStandardMetadataFormatSupported();
+            nativeMetadataFormatName  = fallback.getNativeMetadataFormatName();
+            String[] extraFormatNames = fallback.getExtraMetadataFormatNames();
+            if (extraFormatNames != null) {
+                final int length = extraFormatNames.length;
+                extraFormatNames = Arrays.copyOf(extraFormatNames, length + 1);
+                extraFormatNames[length] = format.getRootName();
+                extraMetadataFormatNames = extraFormatNames;
+                return;
+            }
+            /*
+             * Note: we leave 'nativeMetadataFormatClassName' and 'extraMetadataFormatClassNames'
+             * to null, which is illegal. However the only method to use those informations is
+             * IIOMetadata.getMetadataFormat(String), so this is okay if we overload that method.
+             *
+             * Getting the format class would be costly since there is no IIOMetadata method
+             * giving that information.
+             */
+        }
+        extraMetadataFormatNames = new String[] {format.getRootName()};
+    }
+
+    /**
+     * Returns a this {@code IIOMetadata} as an implementation of the given interface.
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface for which to create a proxy instance.
+     * @return An implementation of the given interface with getter methods that fetch
+     *         their return values from the attribute values.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @see MetadataAccessor#newProxyInstance(Class)
+     * @see java.lang.reflect.Proxy
+     *
+     * @since 3.06
+     */
+    public <T> T getProxyInstance(final Class<T> type) throws IllegalArgumentException {
+        return MetadataAccessor.newProxyInstance(this, format.getRootName(), type);
     }
 
     /**
@@ -206,12 +270,45 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Checks the format name.
+     * Returns {@code true} if we should use the format given at construction time,
+     * {@code false} if we should use the fallback, or thrown an exception otherwise.
      */
-    private void checkFormatName(final String formatName) throws IllegalArgumentException {
-        if (!format.getRootName().equals(formatName)) {
-            throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
+    private boolean isValidName(final String formatName) throws IllegalArgumentException {
+        if (formatName == null) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "formatName"));
+        }
+        if (format.getRootName().equalsIgnoreCase(formatName)) {
+            return true;
+        }
+        if (fallback != null) {
+            return false;
+        }
+        throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
+                Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
+    }
+
+    /**
+     * Returns an object describing the given metadata format, or {@code null} if no description is
+     * available. The default implementation is as below:
+     * <p>
+     * <ul>
+     *   <li>If {@code formatName} is equals, ignoring case, to {@code format.getRootName()} where
+     *       {@code format} is the argument given at construction time, then return that format.</li>
+     *   <li>Otherwise if a fallback has been specified at construction time, delegate to that
+     *       fallback.</li>
+     *   <li>Otherwise throw an {@code IllegalArgumentException}.</li>
+     * </ul>
+     *
+     * @param  formatName The desired metadata format.
+     * @return The desired metadata format, or {@code null} if none.
+     * @throws IllegalArgumentException If the specified format name is not recognized.
+     */
+    @Override
+    public IIOMetadataFormat getMetadataFormat(final String formatName) throws IllegalArgumentException {
+        if (isValidName(formatName)) {
+            return format;
+        } else {
+            return fallback.getMetadataFormat(formatName);
         }
     }
 
@@ -237,31 +334,42 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      */
     @Override
     public Node getAsTree(final String formatName) throws IllegalArgumentException {
-        checkFormatName(formatName);
-        return getAsTree();
+        if (isValidName(formatName)) {
+            return getAsTree();
+        } else {
+            return fallback.getAsTree(formatName);
+        }
     }
 
     /**
      * Alters the internal state of this metadata from a tree whose syntax is defined by
-     * the given metadata format. The default implementation simply replaces all existing
-     * state with the contents of the given tree.
+     * the given metadata format. The semantics of how a tree or subtree may be merged with
+     * another tree are format-specific. It may be simply replacing all existing state with
+     * the contents of the given tree.
      *
-     * @param formatName The desired metadata format.
-     * @param root An XML DOM Node object forming the root of a tree.
-     *
-     * @todo We need to performs a real merge; this is required by mosaic image readers.
+     * @param  formatName The desired metadata format.
+     * @param  root An XML DOM Node object forming the root of a tree.
+     * @throws IIOInvalidTreeException If the tree cannot be parsed successfully using the
+     *         rules of the given format.
      */
     @Override
     public void mergeTree(final String formatName, final Node root) throws IIOInvalidTreeException {
-        checkFormatName(formatName);
-        reset();
-        this.root = root;
+        if (isValidName(formatName)) {
+            this.root = root;
+        } else {
+            fallback.mergeTree(formatName, root);
+        }
     }
 
     /**
      * Alters the internal state of this metadata from a tree defined by the specified metadata.
-     * The default implementation asks the format described by the {@link SpatialMetadataFormat}
-     * argument, then delegates to {@link #mergeTree(String, Node)}.
+     * The default implementation is equivalent to the code below (omitting exception handling)
+     * where {@code format} is the metadata format given at construction time:
+     *
+     * {@preformat java
+     *     String formatName = format.getRootName();
+     *     mergeTree(formatName, metadata.getAsTree(formatName);
+     * }
      *
      * @param  metadata The metadata to merge to this object.
      * @throws IIOInvalidTreeException If the metadata can not be merged.
@@ -368,11 +476,14 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns {@code false} since this metadata supports some write operations.
+     * Returns {@code true} if this object does not support the {@link #mergeTree mergeTree},
+     * {@link #setFromTree setFromTree}, and {@link #reset reset} methods. The default
+     * implementation conservatively returns {@code true} if a fallback has been given
+     * to the constructor and that fallback is read only.
      */
     @Override
     public boolean isReadOnly() {
-        return false;
+        return (fallback == null) || fallback.isReadOnly();
     }
 
     /**
@@ -382,6 +493,9 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     @Override
     public void reset() {
         root = null;
+        if (fallback != null) {
+            fallback.reset();
+        }
     }
 
     /**
@@ -539,6 +653,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
 
     /**
      * Returns a string representation of this metadata, mostly for debugging purpose.
+     * The default implementation formats the metadata as a tree similar to the one
+     * formatted by {@link MetadataAccessor#toString()}.
      */
     @Override
     public String toString() {

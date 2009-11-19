@@ -136,6 +136,29 @@ public final class StringUtilities {
     }
 
     /**
+     * Trims the factional part of the given string, provided that it doesn't change the value.
+     * More specifically, this method removes the trailing {@code ".0"} characters if any. This
+     * method is invoked before to parse an intege} or to parse a date (for omitting fractional
+     * seconds).
+     *
+     * @param  value The value to trim.
+     * @return The value without the trailing {@code ".0"} part.
+     *
+     * @since 3.06
+     */
+    public static String trimFractionalPart(String value) {
+        value = value.trim();
+        for (int i=value.length(); --i>=0;) {
+            switch (value.charAt(i)) {
+                case '0': continue;
+                case '.': return value.substring(0, i);
+                default : return value;
+            }
+        }
+        return value;
+    }
+
+    /**
      * Returns the given identifier (e.g. a class name) with spaces inserted after words.
      * A word begin with a upper-case character following a lower-case character. For
      * example if the given identifier is {@code "PixelInterleavedSampleModel"}, then this

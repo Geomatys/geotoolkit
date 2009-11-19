@@ -59,7 +59,7 @@ public final class MetadataProxyTest {
     public void testImageDescription() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
-        final ImageDescription proxy    = MetadataProxy.newProxyInstance(ImageDescription.class, accessor);
+        final ImageDescription proxy    = accessor.newProxyInstance(ImageDescription.class);
         /*
          * Test the properties before they are defined.
          */
@@ -104,7 +104,7 @@ public final class MetadataProxyTest {
         qualityA.setAttribute("authority", "Geotoolkit.org");
         accessor.setAttribute("cloudCoverPercentage", 20); // Test mixing attributes with elements.
 
-        final ImageDescription proxy = MetadataProxy.newProxyInstance(ImageDescription.class, accessor);
+        final ImageDescription proxy = accessor.newProxyInstance(ImageDescription.class);
         assertEquals("Safety check against regression.", 20.0, proxy.getCloudCoverPercentage(), 0.0);
 
         final Identifier identifier = proxy.getImageQualityCode();
@@ -134,8 +134,8 @@ public final class MetadataProxyTest {
         /*
          * Build the metadata objects.
          */
-        final DataIdentification identification = MetadataProxy.newProxyInstance(
-                DataIdentification.class, new MetadataAccessor(metadata, "DiscoveryMetadata", null));
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, "DiscoveryMetadata", null);
+        final DataIdentification identification = rootAccessor.newProxyInstance(DataIdentification.class);
         assertMultilinesEquals(decodeQuotes(
             "DataIdentification[“DiscoveryMetadata”]\n" +
             "└───DescriptiveKeywords\n" +
@@ -212,8 +212,8 @@ public final class MetadataProxyTest {
          * current implementation does not detect element additions when they are not performed
          * by the same accessor.
          */
-        final MetadataAccessor reader = new MetadataAccessor(metadata, "ImageDescription", null);
-        final ImageDescription proxy  = MetadataProxy.newProxyInstance(ImageDescription.class, reader);
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        final ImageDescription proxy = rootAccessor.newProxyInstance(ImageDescription.class);
         final Collection<? extends RangeDimension> dimensions = proxy.getDimensions();
         assertEquals(4, dimensions.size());
         /*
@@ -249,8 +249,8 @@ public final class MetadataProxyTest {
         /*
          * Build the metadata objects.
          */
-        final DataIdentification identification = MetadataProxy.newProxyInstance(
-                DataIdentification.class, new MetadataAccessor(metadata, "DiscoveryMetadata", null));
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, "DiscoveryMetadata", null);
+        final DataIdentification identification = rootAccessor.newProxyInstance(DataIdentification.class);
         assertMultilinesEquals(decodeQuotes(
             "DataIdentification[“DiscoveryMetadata”]\n" +
             "└───SpatialResolution\n" +
