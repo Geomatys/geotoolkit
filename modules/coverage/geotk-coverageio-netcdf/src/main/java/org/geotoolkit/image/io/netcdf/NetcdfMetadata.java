@@ -47,6 +47,7 @@ import org.geotoolkit.image.io.metadata.ImageReferencing;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.image.io.metadata.GeographicMetadata;
 import org.geotoolkit.image.io.metadata.GeographicMetadataFormat;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.resources.Errors;
 
@@ -241,7 +242,7 @@ public class NetcdfMetadata extends GeographicMetadata {
             }
             Date epoch = null;
             if (origin != null) {
-                origin = MetadataAccessor.trimFractionalPart(origin);
+                origin = StringUtilities.trimFractionalPart(origin);
                 epoch = parse(type, origin, Date.class, "addCoordinateAxis");
             }
             axisNode.setTimeOrigin(epoch);
