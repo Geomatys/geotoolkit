@@ -56,7 +56,7 @@ import org.opengis.referencing.cs.SphericalCS;
  * two-dimensional rendering. Those same base classes could be used for a 3D rendering engine
  * as well. {@link ReferencedCanvas2D} is the first subclass targeting specifically 2D rendering.
  * <p>
- * In Geotools implementation, there is four {@linkplain CoordinateReferenceSystem coordinate
+ * In GeotoolKit implementation, there is four {@linkplain CoordinateReferenceSystem coordinate
  * reference systems} involved in rendering. {@code AbstractCanvas} declares abstract methods
  * for three of them, but the actual CRS management is performed in the {@link ReferencedCanvas}
  * subclass. The CRS are enumerated below (arrows are {@linkplain MathTransform transforms}):
@@ -370,7 +370,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * {@linkplain java.awt.Graphics2D Java2D space}: coordinates are in "dots" (about 1/72 of inch),
      * <var>x</var> values increasing right and <var>y</var> values increasing <strong>down</strong>.
      * <p>
-     * In the Geotools implementation, the display CRS must be
+     * In the GeotoolKit implementation, the display CRS must be
      * {@linkplain DerivedCRS#getBaseCRS derived from} the
      * {@linkplain #getObjectiveCRS objective CRS}. The
      * {@linkplain DerivedCRS#getConversionFromBase conversion from base} is usually an

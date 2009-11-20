@@ -213,8 +213,8 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * </ul>
      * </p>
      * <p>
-     * The method getSchema() is named for compatability with the geotools 2.0 API. In the
-     * Geotools 2.2 time frame we should be able to replace this method with a careful check
+     * The method getSchema() is named for compatability with the geotoolkit 2.0 API. In the
+     * GeotoolKit 2.2 time frame we should be able to replace this method with a careful check
      * of getFeatureType() and its attributes.
      *  </p>
      * @return FeatureType describing the "common" schema to all child features of this collection

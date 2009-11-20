@@ -36,7 +36,7 @@ import org.opengis.display.canvas.Canvas;       //for javadoc
  * The base class for {@linkplain AbstractCanvas canvas} and
  * {@linkplain AbstractGraphic graphic primitives}. This base class
  * provides support for {@linkplain PropertyChangeListener property change listeners}, and some
- * basic services particular to the Geotools implementation like {@linkplain #getLogger logging},
+ * basic services particular to the GeotoolKit implementation like {@linkplain #getLogger logging},
  * <cite>etc.</cite>
  *
  * @module pending
@@ -97,7 +97,7 @@ public class DisplayObject {
     }
 
     /**
-     * Returns the logger for all messages to be logged by the Geotools implementation.
+     * Returns the logger for all messages to be logged by the GeotoolKit implementation.
      *
      * @return Logger for this object
      */

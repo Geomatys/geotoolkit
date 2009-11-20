@@ -208,7 +208,7 @@ public abstract class ReferencedCanvas2D extends ReferencedCanvas {
      * (instead, the content displayed in the widget changes). In the later case,
      * {@code setDisplayBounds} is usually not invoked after {@link #setDisplayCRS}.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#DISPLAY_BOUNDS_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#DISPLAY_BOUNDS_PROPERTY}
      * property change event.
      *
      * @param bounds The new canvas bounds in display coordinates.

@@ -55,7 +55,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 public class JAXPStreamFeatureReader implements XmlFeatureReader {
 
-    private static final Logger LOGGER = Logger.getLogger("jaxp");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     
     private static MarshallerPool pool;
     static {
@@ -221,7 +221,7 @@ public class JAXPStreamFeatureReader implements XmlFeatureReader {
                         int contentEvent = streamReader.next();
                         if (contentEvent == XMLEvent.CHARACTERS) {
                             String content =streamReader.getText();
-                            LOGGER.info("find value:" + content + " for attribute :" + q.getLocalPart());
+                            
                             PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q));
                             if (pdesc != null) {
                                 Class propertyType       = pdesc.getType().getBinding();

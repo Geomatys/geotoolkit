@@ -35,12 +35,14 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -228,4 +230,21 @@ public class OMDataStore extends AbstractDataStore {
         }
 
     }
+
+    @Override
+    protected JTSEnvelope2D getBounds(Query query) throws IOException {
+        return super.getBounds(query);
+    }
+
+    @Override
+    protected int getCount(Query query) throws IOException {
+        return super.getCount(query);
+    }
+
+    @Override
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
+        return super.getFeatureReader(typeName, query);
+    }
+
+    
 }

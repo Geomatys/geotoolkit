@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -184,7 +184,7 @@ public class ShpFilesTest extends TestCase{
 
     public void testNonFileURLs() throws IOException {
         Map<ShpFileType, URL> expected = new HashMap<ShpFileType, URL>();
-        String base = "http://www.geotools.org/testFile";
+        String base = "http://www.geotoolkit.org/testFile";
         ShpFileType[] types = ShpFileType.values();
         for (ShpFileType type : types) {
             expected.put(type, new URL(base + type.extensionWithPeriod));

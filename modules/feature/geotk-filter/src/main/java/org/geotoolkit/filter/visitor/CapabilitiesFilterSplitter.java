@@ -114,7 +114,7 @@ import org.opengis.filter.spatial.Within;
  * 
  * @author dzwiers
  * @author commented and ported from gt to ogc filters by saul.farber
- * @author ported to work upon {@code org.geotools.filter.Capabilities} by Gabriel Roldan
+ * @author ported to work upon {@code org.geotoolkit.filter.Capabilities} by Gabriel Roldan
  * @module pending
  * @since 2.5.3
  */
@@ -174,10 +174,10 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
 
     /**
      * Gets the filter that cannot be sent to the server and must be post-processed on the client by
-     * geotools.
+     * geotoolkit.
      * 
      * @return the filter that cannot be sent to the server and must be post-processed on the client
-     *         by geotools.
+     *         by geotoolkit.
      */
     public Filter getFilterPost() {
         if (!changedStack.isEmpty()){

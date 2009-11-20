@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -65,7 +65,7 @@ import java.util.zip.ZipFile;
  * <p>
  * By convention you should try and locate {@code test-data} near the JUnit test
  * cases that uses it. If you need an access to shared test data, import the
- * {@link org.geotools.TestData} class from the {@code sample-module} instead
+ * {@link org.geotoolkit.TestData} class from the {@code sample-module} instead
  * of this one.
  *
  * @module pending
@@ -75,7 +75,6 @@ import java.util.zip.ZipFile;
  * @author Simone Giannecchiin
  * @author Martin Desruisseaux
  *
- * @tutorial http://www.geotools.org/display/GEOT/5.8+Test+Data
  */
 public class UtilTestData extends org.geotoolkit.test.TestData {
     /**
@@ -85,7 +84,7 @@ public class UtilTestData extends org.geotoolkit.test.TestData {
      * {@code true}. The value for this property is typically defined on the command line as a
      * <code>-D{@value}=true</code> option at Java or Maven starting time.
      */
-    public static final String EXTENSIVE_TEST_KEY = "org.geotools.test.extensive";
+    public static final String EXTENSIVE_TEST_KEY = "org.geotoolkit.test.extensive";
 
     /**
      * The {@linkplain System#getProperty(String) system property} key for interactive tests.
@@ -95,7 +94,7 @@ public class UtilTestData extends org.geotoolkit.test.TestData {
      * The value for this property is typically defined on the command line as a
      * <code>-D{@value}=true</code> option at Java or Maven starting time.
      */
-    public static final String INTERACTIVE_TEST_KEY = "org.geotools.test.interactive";
+    public static final String INTERACTIVE_TEST_KEY = "org.geotoolkit.test.interactive";
 
     /**
      * {@code true} if JAI media lib is available.
@@ -124,18 +123,18 @@ public class UtilTestData extends org.geotoolkit.test.TestData {
         try {
             return Boolean.getBoolean(name);
         } catch (SecurityException exception) {
-            // Note: we use Java Logger instead of Geotools Logging because this module
+            // Note: we use Java Logger instead of Geotoolkit Logging because this module
             // do not depends on the module that defines Logging. This class is used for
             // test purpose only anyway, so it should not be an issue.
-            Logger.getLogger("org.geotools").warning(exception.getLocalizedMessage());
+            Logger.getLogger("org.geotoolkit").warning(exception.getLocalizedMessage());
             return false;
         }
     }
 
     /**
      * Returns {@code true} if the running Java virtual machine is 1.5. This is the lowest
-     * Java version currently supported by Geotools. This version will increase in future
-     * Geotools version.
+     * Java version currently supported by Geotoolkit. This version will increase in future
+     * Geotoolkit version.
      * <p>
      * This method was used for some broken JUnit tests that were know to run on JSE 1.4 but
      * not on JSE 1.6 for example.

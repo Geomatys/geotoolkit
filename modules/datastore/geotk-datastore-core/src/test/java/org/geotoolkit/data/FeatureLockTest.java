@@ -23,7 +23,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
  * Test of LockingAPI FeatureLock data object.
  * <p>
  * 
- * @see org.geotools.data
+ * @see org.geotoolkit.data
  * @author jgarnett, Refractions Reasearch Inc.
  * @version CVS Version
  * @module pending

@@ -79,7 +79,7 @@ public class J2DScaleBarUtilities {
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the scale must be painted
      * @param template : scalebar template
-     * @throws org.geotools.display.exception.PortrayalException
+     * @throws org.geotoolkit.display.exception.PortrayalException
      */
     public static void paint(final CoordinateReferenceSystem objectiveCRS,
                               final CoordinateReferenceSystem displayCRS,

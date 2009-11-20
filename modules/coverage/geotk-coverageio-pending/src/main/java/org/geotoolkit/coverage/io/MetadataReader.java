@@ -198,7 +198,7 @@ public class MetadataReader {
         if (axisFound != null) {
             return axisFound;
         }
-        /* The current axis defined in the metadata tree is not already known in the Geotools
+        /* The current axis defined in the metadata tree is not already known in the Geotoolkit
          * implementation, so one will build it using those information.
          */
         final String unitName = axis.getUnits();

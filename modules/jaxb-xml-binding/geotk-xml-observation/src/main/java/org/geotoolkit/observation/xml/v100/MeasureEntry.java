@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
 
-// GeoTools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.util.Utilities;
 import org.opengis.observation.Measure;
 

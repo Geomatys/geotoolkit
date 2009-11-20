@@ -19,13 +19,13 @@ MODULE RENDER
   - afabiani: apart usa.png the other test-data is safe. usa.png comes from GIDB client
               it shouldn't be reliable to be distributed under LGPL license.
 
-* org.geotools.renderer
+* org.geotoolkit.renderer
   ~~~~~~~~~~~~~~~~~~~~~
   Contains a "unified" rendering interface for which several implementations have been
   made available.
 
   
-* org.geotools.renderer.lite
+* org.geotoolkit.renderer.lite
   ~~~~~~~~~~~~~~~~~~~~~~~~~~
   Andrea's experimental simplified rendering pipeline, on the grounds that simple
   code can be debugged, and go fast.
@@ -33,18 +33,18 @@ MODULE RENDER
     * ListenerList appears to hava JFace javadocs ... this needs to be fixed (or reimplemented)
 
 
-* org.geotools.renderer.lite.gridcoverage2d
+* org.geotoolkit.renderer.lite.gridcoverage2d
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Think this was recently added from the coverage branch, (C) says 2002 ... going to guess 2005.
 
 
-* org.geotools.renderer.style
+* org.geotoolkit.renderer.style
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Some code here dates back to 2003, appears to be some cross over with the geovista project (supporting
   dynamic style obejcts and the like).
 
 
-* org.geotools.renderer.[lite|style] (test)
+* org.geotoolkit.renderer.[lite|style] (test)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Fun with JUnit.
 
@@ -53,13 +53,13 @@ MODULE RENDER
 
 * Resources
   ~~~~~~~~~
-  ** render/src/test/resources/org/geotools/referencing/piecewise/test-data/usa.png
+  ** render/src/test/resources/org/geotoolkit/referencing/piecewise/test-data/usa.png
        Some unclassified image with vector overlay from Alessio Fabiani
-  ** render/src/test/resources/org/geotools/renderer/lite/test-data/
+  ** render/src/test/resources/org/geotoolkit/renderer/lite/test-data/
        A slew of files
-  ** render/src/test/resources/org/geotools/renderer/lite/gridcoverage2d/test-data/
+  ** render/src/test/resources/org/geotoolkit/renderer/lite/gridcoverage2d/test-data/
        A slew of files
-  ** render/src/test/resources/org/geotools/renderer/style/test-data/star.sld
+  ** render/src/test/resources/org/geotoolkit/renderer/style/test-data/star.sld
        Taken from the user list, so ok.
        
        

@@ -26,7 +26,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 
-// Geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 

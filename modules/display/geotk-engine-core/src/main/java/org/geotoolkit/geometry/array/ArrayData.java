@@ -23,7 +23,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.IllegalPathStateException;
 
-// Geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.util.XArrays;
 
 

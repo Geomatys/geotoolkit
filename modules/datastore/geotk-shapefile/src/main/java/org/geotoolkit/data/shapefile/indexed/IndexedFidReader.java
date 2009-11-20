@@ -43,7 +43,7 @@ import org.geotoolkit.resources.NIOUtilities;
  */
 public class IndexedFidReader implements FIDReader, FileReader {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
+            .getLogger("org.geotoolkit.data.shapefile");
     private ReadableByteChannel readChannel;
     private ByteBuffer buffer;
     private long count;

@@ -114,7 +114,7 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
     /**
      * Sets the name of this {@code Graphic} to the given value.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#NAME_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#NAME_PROPERTY}
      * property change event.
      */
     public void setName(final String name) {
@@ -137,7 +137,7 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
     /**
      * Sets the parent of this {@code Graphic}.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#PARENT_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#PARENT_PROPERTY}
      * property change event.
      */
     public void setParent(final Graphic parent) {
@@ -164,7 +164,7 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
      * Sets the visible value. This method may be invoked when the user wants to hide momentarily
      * this graphic.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#VISIBLE_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#VISIBLE_PROPERTY}
      * property change event.
      */
     @Override
@@ -211,7 +211,7 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
     }
 
     /**
-     * Returns the logger for all messages to be logged by the Geotools implementation of GO-1. If
+     * Returns the logger for all messages to be logged by the GeotoolKit implementation of GO-1. If
      * this object is a {@linkplain Graphic graphic} which is contained in a {@linkplain Canvas
      * canvas}, then the default implementation returns the canvas logger. Otherwise, this method
      * returns a default one.

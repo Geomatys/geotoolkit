@@ -68,7 +68,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     static public NullFilterVisitor BOUNDS_VISITOR = new ExtractBoundsFilterVisitor();
     
     private static Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.index.rtree");
+            .getLogger("org.geotoolkit.index.rtree");
 
     /**
      * This FilterVisitor is stateless - use ExtractBoundsFilterVisitor.BOUNDS_VISITOR.

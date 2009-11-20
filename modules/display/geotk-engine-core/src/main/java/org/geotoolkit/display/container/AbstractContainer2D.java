@@ -177,7 +177,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
      * entirely within the indicated rectangle.
      * <p>
      * This envelope is different from
-     * {@link org.geotools.display.canvas.map.DefaultMapState#getEnvelope}, since the later returns
+     * {@link org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope}, since the later returns
      * an envelope that encloses only the <em>visible</em> canvas area and is scale-dependent. This
      * {@code ReferencedCanvas2D.getEnvelope2D()} method is scale-independent. Both envelopes are
      * equal if the {@linkplain #getScale scale} is choosen in such a way that all graphics can fit
@@ -186,7 +186,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
      * @return The envelope for this canvas in terms of {@linkplain #getObjectiveCRS objective CRS}.
      *
      * @see #getEnvelope
-     * @see org.geotools.display.canvas.map.DefaultMapState#getEnvelope
+     * @see org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope
      */
     public abstract Rectangle2D getGraphicsEnvelope2D();
 

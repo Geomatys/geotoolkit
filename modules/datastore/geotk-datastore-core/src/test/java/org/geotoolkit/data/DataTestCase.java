@@ -53,7 +53,7 @@ import org.geotoolkit.geometry.jts.JTSEnvelope2D;
  * {@code Geometry.equals( Object )} not working as expected.
  * </p>
  * <p>
- * This code has been made part of the public {@code geotools.jar} to provide
+ * This code has been made part of the public {@code geotoolkit.jar} to provide
  * a starting point for test cases involving Data constructs.
  * </p>
  *

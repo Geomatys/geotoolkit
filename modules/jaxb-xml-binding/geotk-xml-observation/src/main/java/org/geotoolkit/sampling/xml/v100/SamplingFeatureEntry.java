@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
-// Geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.observation.xml.v100.ObservationEntry;

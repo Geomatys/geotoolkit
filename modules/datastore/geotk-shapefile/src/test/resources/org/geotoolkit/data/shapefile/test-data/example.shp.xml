@@ -27,7 +27,7 @@
 			  	<geoform Sync="TRUE">vector digital data</geoform> 
 			  	<edition>2004</edition> 
 			 	<serinfo>
-			  		<sername>Geotools</sername> 
+			  		<sername>Geotoolkit</sername>
 			  		<issue>2.1.x</issue> 
 			  	</serinfo>
 			 	<pubinfo>
@@ -104,9 +104,9 @@
 			</cntaddr>
 			<cntvoice>555-555-1234</cntvoice> 
 			<cntfax>555-555-1234</cntfax> 
-			<cntemail>geotools-devel@lists.sourceforge.net</cntemail> 
+			<cntemail>geotoolkit-devel@lists.sourceforge.net</cntemail>
   			<hours>24 hours everyday of the week</hours> 
-  			<cntinst>Please direct inquires to geotools-devel@lists.sourceforge.net</cntinst> 
+  			<cntinst>Please direct inquires to geotoolkit-devel@lists.sourceforge.net</cntinst>
   		</cntinfo>
 	  	</ptcontac>
 		<browse BrowseGraphicType="Thumbnail">

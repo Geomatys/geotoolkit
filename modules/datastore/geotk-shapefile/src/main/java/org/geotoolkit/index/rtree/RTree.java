@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class RTree {
     private Logger logger = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.index.rtree");
+            .getLogger("org.geotoolkit.index.rtree");
     private PageStore store;
 
     public RTree(PageStore store) throws TreeException {

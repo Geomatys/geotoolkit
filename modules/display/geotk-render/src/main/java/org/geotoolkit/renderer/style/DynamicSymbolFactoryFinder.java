@@ -32,9 +32,9 @@ import org.geotoolkit.factory.FactoryRegistry;
  * In addition to implementing this interface dynamic symbol handlers should
  * have a services file:
  * <ul>
- * <li><code>META-INF/services/org.geotools.renderer.style.MarkFactory</code>
+ * <li><code>META-INF/services/org.geotoolkit.renderer.style.MarkFactory</code>
  * if the are {@link MarkFactory} instances</li>
- * <li><code>META-INF/services/org.geotools.renderer.style.ExternalGraphicFactory</code>
+ * <li><code>META-INF/services/org.geotoolkit.renderer.style.ExternalGraphicFactory</code>
  * if the are {@link ExternalGraphicFactory} instances</li>
  * </ul>
  * 
@@ -46,7 +46,7 @@ import org.geotoolkit.factory.FactoryRegistry;
  * </p>
  * 
  * <p>
- * Example:<br/><code>org.geotools.data.jdbc.DBCPDataSourceFactory</code>
+ * Example:<br/><code>org.geotoolkit.data.jdbc.DBCPDataSourceFactory</code>
  * </p>
  * @module pending
  */

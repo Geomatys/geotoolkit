@@ -57,7 +57,7 @@ public class TestData {
     public int initialFidValue = 0;
     public GeometryFactory gf;
     public FilterFactory ff;
-    public String namespace = "http://www.geotools.org/test";
+    public String namespace = "http://www.geotoolkit.org/test";
     public SimpleFeatureType roadType;
     public SimpleFeatureType subRoadType;
     public SimpleFeature[] roadFeatures;
