@@ -98,7 +98,7 @@ public class ImageGeometry extends MetadataAccessor {
      * @param metadata The metadata node.
      */
     protected ImageGeometry(final GeographicMetadata metadata) {
-        super(metadata, "rectifiedGridDomain", null);
+        super(metadata, null, "rectifiedGridDomain", null);
     }
 
     /**
@@ -389,7 +389,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getLowerCornerAccessor() {
         if (lowerCorner == null) {
-            lowerCorner = new MetadataAccessor(metadata, "boundedBy/lowerCorner", null);
+            lowerCorner = new MetadataAccessor(metadata, null, "boundedBy/lowerCorner", null);
         }
         return lowerCorner;
     }
@@ -400,7 +400,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getUpperCornerAccessor() {
         if (upperCorner == null) {
-            upperCorner = new MetadataAccessor(metadata, "boundedBy/upperCorner", null);
+            upperCorner = new MetadataAccessor(metadata, null, "boundedBy/upperCorner", null);
         }
         return upperCorner;
     }
@@ -411,7 +411,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getLowAccessor() {
         if (low == null) {
-            low = new MetadataAccessor(metadata, "rectifiedGridDomain/limits/low", null);
+            low = new MetadataAccessor(metadata, null, "rectifiedGridDomain/limits/low", null);
         }
         return low;
     }
@@ -422,7 +422,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getHighAccessor() {
         if (high == null) {
-            high = new MetadataAccessor(metadata, "rectifiedGridDomain/limits/high", null);
+            high = new MetadataAccessor(metadata, null, "rectifiedGridDomain/limits/high", null);
         }
         return high;
     }
@@ -433,7 +433,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getLocalizationGridAccessor() {
         if (localizationGrid == null) {
-            localizationGrid = new MetadataAccessor(metadata,
+            localizationGrid = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/localizationGrid", "ordinates");
         }
         return localizationGrid;
@@ -445,7 +445,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getPixelOrientationAccessor() {
         if (pixelOrientation == null) {
-            pixelOrientation = new MetadataAccessor(metadata,
+            pixelOrientation = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/pixelOrientation", null);
         }
         return pixelOrientation;
@@ -457,7 +457,7 @@ public class ImageGeometry extends MetadataAccessor {
      */
     private MetadataAccessor getCellsAccessor() {
         if (cells == null) {
-            cells = new MetadataAccessor(metadata, "rectifiedGridDomain/cells", "offsetVector");
+            cells = new MetadataAccessor(metadata, null, "rectifiedGridDomain/cells", "offsetVector");
         }
         return cells;
     }

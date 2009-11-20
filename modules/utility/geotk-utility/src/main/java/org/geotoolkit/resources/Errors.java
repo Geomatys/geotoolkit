@@ -55,6 +55,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int AMBIGIOUS_AXIS_LENGTH = 0;
 
         /**
+         * Value "{0}" is ambiguous since it associated to the following possibilities:
+         */
+        public static final int AMBIGIOUS_VALUE_$1 = 222;
+
+        /**
          * Angle {0} is too high.
          */
         public static final int ANGLE_OVERFLOW_$1 = 1;
@@ -962,6 +967,11 @@ public final class Errors extends IndexedResourceBundle {
          * Too many occurences of "{0}". There is already {1} of them.
          */
         public static final int TOO_MANY_OCCURENCES_$2 = 179;
+
+        /**
+         * Format "{0}" is unknown.
+         */
+        public static final int UNDEFINED_FORMAT_$1 = 223;
 
         /**
          * Undefined property.

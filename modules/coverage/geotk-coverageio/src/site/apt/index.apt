@@ -53,9 +53,9 @@ Coverage I/O
   The ImageReader class is part of the <<<javax.imageio>>> package. It is an abstract class which
   needs only a few methods defined to work the critical ones being:
 
-  * <<<getImageMetadata(...)>>> : <<<IIOMetaData>>>
+   * <<<getImageMetadata(...)>>> : <<<IIOMetaData>>>
 
-  * <<<read(...)>>> : <<<BufferedImage>>>
+   * <<<read(...)>>> : <<<BufferedImage>>>
 
   with the key difficulty, apart from being able to generate the image, being how to build the
   <<<IIOMetadata>>> object. In our case, we subclass that object adding the metadata information

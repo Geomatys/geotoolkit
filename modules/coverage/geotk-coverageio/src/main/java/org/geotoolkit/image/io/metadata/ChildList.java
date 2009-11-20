@@ -53,7 +53,7 @@ abstract class ChildList<T extends MetadataAccessor> extends MetadataAccessor {
     protected ChildList(final IIOMetadata metadata,
             final String parentPath, final String childPath)
     {
-        super(metadata, parentPath, childPath);
+        super(metadata, null, parentPath, childPath);
         final int count = childCount();
         childs = new ArrayList<T>(count != 0 ? count : 4);
     }

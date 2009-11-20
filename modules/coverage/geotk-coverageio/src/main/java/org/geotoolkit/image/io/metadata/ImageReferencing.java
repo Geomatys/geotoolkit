@@ -97,7 +97,7 @@ public class ImageReferencing extends MetadataAccessor {
      * @param metadata The metadata node.
      */
     protected ImageReferencing(final GeographicMetadata metadata) {
-        super(metadata, "rectifiedGridDomain/crs", null);
+        super(metadata, null, "rectifiedGridDomain/crs", null);
     }
 
     /**
@@ -522,7 +522,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private MetadataAccessor getDatumAccessor() {
         if (datum == null) {
-            datum = new MetadataAccessor(metadata, "rectifiedGridDomain/crs/datum", null);
+            datum = new MetadataAccessor(metadata, null, "rectifiedGridDomain/crs/datum", null);
         }
         return datum;
     }
@@ -533,7 +533,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private MetadataAccessor getEllipsoidAccessor() {
         if (ellipsoid == null) {
-            ellipsoid = new MetadataAccessor(metadata,
+            ellipsoid = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/crs/datum/ellipsoid", null);
         }
         return ellipsoid;
@@ -545,7 +545,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private MetadataAccessor getInverseFlatteningAccessor() {
         if (inverseFlattening == null) {
-            inverseFlattening = new MetadataAccessor(metadata,
+            inverseFlattening = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/crs/datum/ellipsoid/secondDefiningParameter/inverseFlattening", null);
         }
         return inverseFlattening;
@@ -557,7 +557,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private MetadataAccessor getPrimeMeridianAccessor() {
         if (primeMeridian == null) {
-            primeMeridian = new MetadataAccessor(metadata,
+            primeMeridian = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/crs/datum/primeMeridian", null);
         }
         return primeMeridian;
@@ -580,7 +580,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private MetadataAccessor getSemiMajorAxisAccessor() {
         if (semiMajorAxis == null) {
-            semiMajorAxis = new MetadataAccessor(metadata,
+            semiMajorAxis = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/crs/datum/ellipsoid/semiMajorAxis", null);
         }
         return semiMajorAxis;
@@ -592,7 +592,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     private MetadataAccessor getSemiMinorAxisAccessor() {
         if (semiMinorAxis == null) {
-            semiMinorAxis     = new MetadataAccessor(metadata,
+            semiMinorAxis     = new MetadataAccessor(metadata, null,
                 "rectifiedGridDomain/crs/datum/ellipsoid/secondDefiningParameter/semiMinorAxis", null);
         }
         return semiMinorAxis;

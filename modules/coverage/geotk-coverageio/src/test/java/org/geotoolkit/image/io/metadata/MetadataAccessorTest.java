@@ -17,7 +17,13 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.List;
 import java.util.Arrays;
+import java.util.HashSet;
+
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.acquisition.Instrument;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 import org.geotoolkit.test.Depend;
 import org.junit.*;
@@ -49,7 +55,7 @@ public final class MetadataAccessorTest {
          * Ensure that the metadata is initially empty and that
          * attempts to access attributes do not throw an exception.
          */
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         assertEquals("ImageDescription", accessor.name());
         assertEquals("Initially empty metadata should have no child.", 0, accessor.childCount());
         assertNull(accessor.getAttribute("imagingCondition"));
@@ -117,7 +123,7 @@ public final class MetadataAccessorTest {
          * Ensure that the metadata is initially empty and that
          * attempts to access attributes do not throw an exception.
          */
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "RectifiedGridDomain/OffsetVectors", childName);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain/OffsetVectors", childName);
         assertEquals("OffsetVectors", accessor.name());
         assertMultilinesEquals("MetadataAccessor constructor should have created its node.",
             SpatialMetadataFormat.FORMAT_NAME + "\n" +
@@ -162,8 +168,66 @@ public final class MetadataAccessorTest {
     @Test
     public void testNonExistentAttribute() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         accessor.setAttribute("cloudCoverPercentage", 20.0); // For comparison purpose.
         accessor.setAttribute("inexistent", 10.0);
+    }
+
+    /**
+     * Tests the {@link MetadataAccessor#listPaths} static method.
+     */
+    @Test
+    public void testListPaths() {
+        /*
+         * Simpliest cases: the element below is known to appear only once.
+         */
+        List<String> paths = MetadataAccessor.listPaths(SpatialMetadataFormat.STREAM, GeographicBoundingBox.class);
+        assertEquals(Arrays.asList("DiscoveryMetadata/Extent/GeographicElement"), paths);
+        /*
+         * Simpliest case again, but deeper path. Note that it cross a collection (Instruments).
+         */
+        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.STREAM, Identifier.class);
+        assertEquals(Arrays.asList("AcquisitionMetadata/Platform/Instruments/Instrument/Identifier"), paths);
+        /*
+         * The element below appears more than once.
+         * We don't consider elements order.
+         */
+        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.IMAGE, Identifier.class);
+        assertEquals(new HashSet<String>(Arrays.asList("ImageDescription/ImageQualityCode",
+                "ImageDescription/ProcessingLevelCode")), new HashSet<String>(paths));
+        /*
+         * More tricky case: 'Instrument' is the type of elements in a collection.
+         * But we want the path to the whole collection.
+         */
+        paths = MetadataAccessor.listPaths(SpatialMetadataFormat.STREAM, Instrument.class);
+        assertEquals(Arrays.asList("AcquisitionMetadata/Platform/Instruments"), paths);
+    }
+
+    /**
+     * Tests the {@link MetadataAccessor} constructors which locate the path
+     * automatically from the given type, searching in the whole tree.
+     */
+    @Test
+    public void testAutomaticLocation() {
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
+        accessor.setAttribute("inclusion", true);
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            "└───DiscoveryMetadata\n" +
+            "    └───Extent\n" +
+            "        └───GeographicElement\n" +
+            "            └───inclusion=“true”\n"),
+            metadata.toString());
+        /*
+         * Following should fails because of ambiguity (there is many identifier).
+         */
+        metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        try {
+            accessor = new MetadataAccessor(metadata, "#auto", Identifier.class);
+            fail(accessor.toString());
+        } catch (IllegalArgumentException e) {
+            // This is the expected exception.
+        }
     }
 }

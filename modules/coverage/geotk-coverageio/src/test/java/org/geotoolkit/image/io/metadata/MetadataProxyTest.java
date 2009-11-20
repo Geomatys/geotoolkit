@@ -58,7 +58,7 @@ public final class MetadataProxyTest {
     @Test
     public void testImageDescription() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         final ImageDescription proxy    = accessor.newProxyInstance(ImageDescription.class);
         /*
          * Test the properties before they are defined.
@@ -98,8 +98,8 @@ public final class MetadataProxyTest {
     @Test
     public void testImageQualityCode() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription", null);
-        final MetadataAccessor qualityA = new MetadataAccessor(metadata, "ImageDescription/ImageQualityCode", null);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
+        final MetadataAccessor qualityA = new MetadataAccessor(metadata, null, "ImageDescription/ImageQualityCode", null);
         qualityA.setAttribute("code",      "okay");
         qualityA.setAttribute("authority", "Geotoolkit.org");
         accessor.setAttribute("cloudCoverPercentage", 20); // Test mixing attributes with elements.
@@ -125,7 +125,7 @@ public final class MetadataProxyTest {
     @Test
     public void testKeywords() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata,
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null,
                 "DiscoveryMetadata/DescriptiveKeywords", "DescriptiveKeywordsEntry");
         accessor.selectChild(accessor.appendChild());
         accessor.setAttribute("keywords", "red", "yellow or green", "blue");
@@ -134,7 +134,7 @@ public final class MetadataProxyTest {
         /*
          * Build the metadata objects.
          */
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, "DiscoveryMetadata", null);
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata", null);
         final DataIdentification identification = rootAccessor.newProxyInstance(DataIdentification.class);
         assertMultilinesEquals(decodeQuotes(
             "DataIdentification[“DiscoveryMetadata”]\n" +
@@ -165,8 +165,8 @@ public final class MetadataProxyTest {
     @Test
     public void testDimensionList() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions", "Dimension");
-        final List<SampleDimension> dimensions = MetadataProxyList.create(SampleDimension.class, accessor);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
+        final List<SampleDimension> dimensions = accessor.newProxyList(SampleDimension.class);
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
             assertNull(accessor.getAttributeAsDouble("minValue"));
@@ -201,7 +201,7 @@ public final class MetadataProxyTest {
     @Test
     public void testDimensions() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "ImageDescription/Dimensions", "Dimension");
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription/Dimensions", "Dimension");
         for (int i=1; i<=4; i++) {
             accessor.selectChild(accessor.appendChild());
             accessor.setAttribute("minValue", -i);
@@ -212,7 +212,7 @@ public final class MetadataProxyTest {
          * current implementation does not detect element additions when they are not performed
          * by the same accessor.
          */
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, "ImageDescription", null);
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         final ImageDescription proxy = rootAccessor.newProxyInstance(ImageDescription.class);
         final Collection<? extends RangeDimension> dimensions = proxy.getDimensions();
         assertEquals(4, dimensions.size());
@@ -244,12 +244,12 @@ public final class MetadataProxyTest {
     @Test
     public void testSpatialResolution() {
         final SpatialMetadata  metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
-        final MetadataAccessor accessor = new MetadataAccessor(metadata, "DiscoveryMetadata/SpatialResolution", null);
+        final MetadataAccessor accessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata/SpatialResolution", null);
         accessor.setAttribute("distance", 40);
         /*
          * Build the metadata objects.
          */
-        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, "DiscoveryMetadata", null);
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "DiscoveryMetadata", null);
         final DataIdentification identification = rootAccessor.newProxyInstance(DataIdentification.class);
         assertMultilinesEquals(decodeQuotes(
             "DataIdentification[“DiscoveryMetadata”]\n" +

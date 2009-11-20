@@ -386,7 +386,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                  */
                 if (acc.allowsChildren()) {
                     componentType = getElementClass(acc.childPath, componentType);
-                    list = MetadataProxyList.create(componentType, acc);
+                    list = acc.newProxyList(componentType);
                 } else {
                     componentType = getElementClass(elementName, componentType);
                     list = Collections.singletonList(acc.newProxyInstance(componentType));

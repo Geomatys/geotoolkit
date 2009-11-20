@@ -83,9 +83,10 @@ import org.geotoolkit.measure.RangeFormat;
  */
 public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
-     * The metadata format.
+     * The metadata format given at construction time. This is typically
+     * {@link SpatialMetadataFormat#IMAGE} or {@link SpatialMetadataFormat#STREAM}.
      */
-    final IIOMetadataFormat format;
+    protected final IIOMetadataFormat format;
 
     /**
      * The {@link ImageReader} or {@link ImageWriter} that holds the metadata,
@@ -215,24 +216,6 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns a this {@code IIOMetadata} as an implementation of the given interface.
-     *
-     * @param  <T> The compile-time type specified as the {@code type} argument.
-     * @param  type The interface for which to create a proxy instance.
-     * @return An implementation of the given interface with getter methods that fetch
-     *         their return values from the attribute values.
-     * @throws IllegalArgumentException If the given type is not a valid interface.
-     *
-     * @see MetadataAccessor#newProxyInstance(Class)
-     * @see java.lang.reflect.Proxy
-     *
-     * @since 3.06
-     */
-    public <T> T getProxyInstance(final Class<T> type) throws IllegalArgumentException {
-        return MetadataAccessor.newProxyInstance(this, format.getRootName(), type);
-    }
-
-    /**
      * Returns the list of all {@code dimension} elements under the {@code "ImageDescription/Dimensions"}
      * node. If this node does not exist or has no element, then this method returns an empty list
      * (never {@code null}).
@@ -243,12 +226,67 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @return The list of every {@code "Dimension"} elements.
      *
      * @since 3.06
-     *
-     * @todo Current implementation returns an unmodifiable empty list if all cases.
-     *       Real implementation will be provided soon.
      */
     public List<SampleDimension> getSampleDimensions() {
-        return java.util.Collections.emptyList();
+        return getListForType(SampleDimension.class);
+    }
+
+    /**
+     * Returns an instance of the given type extracted from this {@code IIOMetadata}.
+     * This method performs the following steps:
+     *
+     * <ol>
+     *   <li><p><code>{@linkplain MetadataAccessor#listPaths MetadataAccessor.listPaths}({@linkplain #format}, type)</code>:</br>
+     *       Search for an element declared in the format specified at construction time which
+     *       accept a {@linkplain IIOMetadataNode#getUserObject() user object} of the given type.
+     *       Exactly one element is expected, otherwise an {@link IllegalArgumentException} is
+     *       thrown.</p></li>
+     *
+     *   <li><p><code>{@linkplain MetadataAccessor#getUserObject(Class) MetadataAccessor.getUserObject}(type)</code>:</br>
+     *       If a user object was explicitly specified, return that object.</p></li>
+     *
+     *   <li><p><code>{@linkplain MetadataAccessor#newProxyInstance(Class) MetadataAccessor.newProxyInstance}(type)</code>:</br>
+     *       If no explicit user object was found, create a proxy which will implement the getter
+     *       methods by a code that fetch the value from the corresponding attribute.</p></li>
+     * </ol>
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface implemented by the instance to fetch.
+     * @return An implementation of the given interface.
+     * @throws IllegalArgumentException If the given type is not a valid interface,
+     *         or if no element or more than one element exist for the given type.
+     *
+     * @see MetadataAccessor#newProxyInstance(Class)
+     *
+     * @since 3.06
+     */
+    public <T> T getInstanceForType(final Class<T> type) throws IllegalArgumentException {
+        final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
+        T object = accessor.getUserObject(type);
+        if (type == null) {
+            object = accessor.newProxyInstance(type);
+        }
+        return object;
+    }
+
+    /**
+     * Returns a list of instances of the given type extracted from this {@code IIOMetadata}.
+     * This method performs the same work than {@link #getInstanceForType(Class)}, but for a
+     * list.
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface implemented by the elements of the list to fetch.
+     * @return A list of implementations of the given interface.
+     * @throws IllegalArgumentException If the given type is not a valid interface,
+     *         or if no element or more than one element exist for the given type.
+     *
+     * @see MetadataAccessor#newProxyList(Class)
+     *
+     * @since 3.06
+     */
+    public <T> List<T> getListForType(final Class<T> type) throws IllegalArgumentException {
+        final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
+        return accessor.newProxyList(type);
     }
 
     /**
@@ -270,8 +308,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns {@code true} if we should use the format given at construction time,
-     * {@code false} if we should use the fallback, or thrown an exception otherwise.
+     * Returns {@code true} if we should use the {@linkplain #format} given at construction
+     * time, {@code false} if we should use the fallback, or thrown an exception otherwise.
      */
     private boolean isValidName(final String formatName) throws IllegalArgumentException {
         if (formatName == null) {
@@ -292,8 +330,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * available. The default implementation is as below:
      * <p>
      * <ul>
-     *   <li>If {@code formatName} is equals, ignoring case, to {@code format.getRootName()} where
-     *       {@code format} is the argument given at construction time, then return that format.</li>
+     *   <li>If {@code formatName} is equals, ignoring case, to <code>{@linkplain #format}.getRootName()</code>
+     *       where {@code format} is the argument given at construction time, then return that format.</li>
      *   <li>Otherwise if a fallback has been specified at construction time, delegate to that
      *       fallback.</li>
      *   <li>Otherwise throw an {@code IllegalArgumentException}.</li>
@@ -313,8 +351,8 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns the root of a tree of metadata contained within this object according
-     * to the conventions defined by the metadata format associated to this instance.
+     * Returns the root of a tree of metadata contained within this object according to the
+     * conventions defined by the metadata {@linkplain #format} associated to this instance.
      */
     final Node getAsTree() {
         if (root == null) {
@@ -364,7 +402,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
      * Alters the internal state of this metadata from a tree defined by the specified metadata.
      * The default implementation is equivalent to the code below (omitting exception handling)
-     * where {@code format} is the metadata format given at construction time:
+     * where {@link #format} is the metadata format given at construction time:
      *
      * {@preformat java
      *     String formatName = format.getRootName();

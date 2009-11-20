@@ -119,7 +119,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * name of the first axis is fetched.
  *
  * {@preformat java
- *     MetadataAccessor accessor = new MetadataAccessor(metadata,
+ *     IIOMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+ *     MetadataAccessor accessor = new MetadataAccessor(metadata, null,
  *             "RectifiedGridDomain/CRS/CoordinateSystem", "Axis");
  *
  *     accessor.selectParent();
@@ -220,9 +221,14 @@ public class MetadataAccessor {
     }
 
     /**
-     * Creates an accessor for the {@linkplain Element element} at the given path.
-     * The paths can contains many elements separated by the {@code '/'} character.
-     * See the <a href="#skip-navbar_top">class javadoc</a> for more details.
+     * Creates an accessor for the {@linkplain Element element} at the given path relative
+     * to the given parent. In the example below, the complete path to the child accessor
+     * is {@code "DiscoveryMetadata/Extent/GeographicElement"}:
+     *
+     * {@preformat java
+     *     MetadataAccessor parent = new MetadataAccessor(..., "DiscoveryMetadata/Extent", ...);
+     *     MetadataAccessor child  = new MetadataAccessor(parent, "GeographicElement", null);
+     * }
      *
      * {@section Auto-detection of children}
      * If the metadata node has no child, then {@code childPath} shall be {@code null}.
@@ -232,30 +238,109 @@ public class MetadataAccessor {
      * {@link IIOMetadataFormat}. It is preferable to specify explicitly the child
      * element name when this name is known.
      *
-     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                    sub-class is recommanded, but not mandatory.
-     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
-     *                    if the {@code metadata} root node is directly the node of interest.
-     * @param  childPath  The path (relative to {@code parentPath}) to the child
-     *                    {@linkplain Element elements}, or {@code null} if none.
-     */
-    public MetadataAccessor(final IIOMetadata metadata, final String parentPath, String childPath) {
-        this(null, metadata, parentPath, childPath);
-    }
-
-    /**
-     * Creates an accessor for the {@linkplain Element element} at the given path. This constructor
-     * is identical to the {@linkplain #MetadataAccessor(IIOMetadata, String, String) above one},
-     * except that the path is relative to the given accessor instead than the metadata root.
-     *
      * @param parent    The accessor for which the {@code path} is relative.
      * @param path      The path to the {@linkplain Node node} of interest.
-     * @param childPath The path to the child {@linkplain Element elements}, or {@code null} if none.
+     * @param childPath The path to the child {@linkplain Element elements}, or {@code null}
+     *                  if none, or {@code "#auto"} for auto-detection.
      *
      * @since 3.06
      */
-    public MetadataAccessor(final MetadataAccessor parent, final String path, String childPath) {
-        this(parent, parent.metadata, path, childPath);
+    public MetadataAccessor(final MetadataAccessor parent, final String path, final String childPath) {
+        this(parent, parent.metadata, null, null, path, childPath);
+    }
+
+    /**
+     * Creates an accessor for the {@linkplain Element element} accepting a user object of the
+     * given type. This method is convenient for fetching an object of some known type without
+     * regards to its location in the sub-tree.
+     *
+     * @param  parent      The accessor from which to start the search for an element accepting
+     *                     the given type.
+     * @param  objectClass The {@linkplain IIOMetadataFormat#getObjectClass(String) class of user
+     *                     object} to locate.
+     * @throws IllegalArgumentException If no element accepting the given type was found,
+     *         or if more than one element accepting that type was found.
+     *
+     * @see #listPaths(IIOMetadataFormat, Class)
+     *
+     * @since 3.06
+     */
+    public MetadataAccessor(final MetadataAccessor parent, final Class<?> objectClass)
+            throws IllegalArgumentException
+    {
+        this(parent, parent.metadata, null, objectClass, null, "#auto");
+    }
+
+    /**
+     * Creates an accessor for the {@linkplain Element element} at the given path relative to
+     * the {@link IIOMetadataFormat#getRootName() root}. The paths can contain many elements
+     * separated by the {@code '/'} character.
+     * See the <a href="#skip-navbar_top">class javadoc</a> for more details.
+     *
+     * {@section Auto-detection of children and format}
+     * The {@code childPath} argument can be {@code "#auto"}, which is processed as documented
+     * in the {@linkplain #MetadataAccessor(MetadataAccessor, String, String) above constructor}.
+     * <p>
+     * The {@code formatName} can be {@code null} or {@code "#auto"}, in which case a format
+     * is selected automatically:
+     * <p>
+     * <ul>
+     *   <li>If {@code metadata} is an instance of {@link SpatialMetadata}, then the format
+     *       given at {@code SpatialMetadata} construction time is used.</li>
+     *   <li>Otherwise the first format returned by {@link IIOMetadata#getMetadataFormatNames()}
+     *       is used. This is usually in preference order: the native formt, the standard format
+     *       or the first extra format.</li>
+     * </ul>
+     *
+     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                    sub-class is recommanded, but not mandatory.
+     * @param  formatName The name of the {@linkplain IIOMetadata#getMetadataFormat(String) format
+     *                    to use}, or {@code null} or {@code "#auto"} for an automatic selection.
+     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
+     *                    if the {@code metadata} root node is directly the node of interest.
+     * @param  childPath  The path (relative to {@code parentPath}) to the child
+     *                    {@linkplain Element elements}, or {@code null} if none,
+     *                    or {@code "#auto"} for auto-detection.
+     */
+    public MetadataAccessor(final IIOMetadata metadata, final String formatName,
+            final String parentPath, final String childPath)
+    {
+        this(null, metadata, formatName, null, parentPath, childPath);
+    }
+
+    /**
+     * Creates an accessor for the {@linkplain Element element} accepting a user object of the
+     * given type. This method is convenient for fetching an object of some known type without
+     * regards to its location in the tree. For example if the metadata format is
+     * {@link SpatialMetadataFormat#STREAM} then:
+     *
+     * {@preformat java
+     *     new MetadataAccessor(metadata, formatName, GeographicElement.class);
+     * }
+     *
+     * is equivalent to:
+     *
+     * {@preformat java
+     *     new MetadataAccessor(metadata, formatName, "DiscoveryMetadata/Extent/GeographicElement", "#auto);
+     * }
+     *
+     * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                     sub-class is recommanded, but not mandatory.
+     * @param  formatName  The name of the {@linkplain IIOMetadata#getMetadataFormat(String) format
+     *                     to use}, or {@code null} or {@code "#auto"} for an automatic selection.
+     * @param  objectClass The {@linkplain IIOMetadataFormat#getObjectClass(String) class of user
+     *                     object} to locate.
+     * @throws IllegalArgumentException If no element accepting the given type was found,
+     *         or if more than one element accepting that type was found.
+     *
+     * @see #listPaths(IIOMetadataFormat, Class)
+     *
+     * @since 3.06
+     */
+    public MetadataAccessor(final IIOMetadata metadata, final String formatName, final Class<?> objectClass)
+            throws IllegalArgumentException
+    {
+        this(null, metadata, formatName, objectClass, null, "#auto");
     }
 
     /**
@@ -264,26 +349,63 @@ public class MetadataAccessor {
      */
     @SuppressWarnings("fallthrough")
     private MetadataAccessor(final MetadataAccessor parentAccessor, final IIOMetadata metadata,
-            final String parentPath, String childPath)
+            String formatName, final Class<?> type, String parentPath, String childPath)
+            throws IllegalArgumentException
     {
         ensureNonNull("metadata", metadata);
         this.metadata = metadata;
+        /*
+         * Fetch IIOMetadataFormat to use and the root of the tree,
+         * or the root of the sub-tree is 'parentAccessor' is non-null.
+         */
         final Node root;
         if (parentAccessor != null) {
             format = parentAccessor.format;
             root   = parentAccessor.parent;
+        } else if (formatName != null && !formatName.equals("#auto")) {
+            format = metadata.getMetadataFormat(formatName);
+            root   = metadata.getAsTree(formatName);
         } else if (metadata instanceof SpatialMetadata) {
             final SpatialMetadata sp = (SpatialMetadata) metadata;
             format = sp.format;
-            root = sp.getAsTree();
+            root   = sp.getAsTree();
         } else {
             // In preference order: native, standard, extra formats.
-            final String name = metadata.getMetadataFormatNames()[0];
-            format = metadata.getMetadataFormat(name);
-            root = metadata.getAsTree(name);
+            formatName = metadata.getMetadataFormatNames()[0];
+            format = metadata.getMetadataFormat(formatName);
+            root   = metadata.getAsTree(formatName);
+        }
+        if (format == null) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNDEFINED_FORMAT_$1, formatName));
         }
         /*
-         * Fetches the parent node and ensure that we got a singleton. If there is more nodes than
+         * If the user asked for a metadata working on a node for user object of
+         * a specific type, get the path to that node. We expect a single path.
+         */
+        if (type != null) {
+            final List<String> paths = new ArrayList<String>(4);
+            listPaths(format, type, root.getNodeName(), new StringBuilder(), paths);
+            switch (paths.size()) {
+                case 0: {
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+                }
+                case 1: {
+                    parentPath = paths.get(0);
+                    break;
+                }
+                default: {
+                    final String lineSeparator = System.getProperty("line.separator", "\n");
+                    final StringBuilder buffer = new StringBuilder(Errors.format(
+                            Errors.Keys.AMBIGIOUS_VALUE_$1, type)).append(lineSeparator);
+                    for (final String path : paths) {
+                        buffer.append("  \u2022 ").append(path).append(lineSeparator);
+                    }
+                    throw new IllegalArgumentException(buffer.toString());
+                }
+            }
+        }
+        /*
+         * Fetch the parent node and ensure that we got a singleton. If there is more nodes than
          * expected, log a warning and pickup the first one. If there is no node, create a new one.
          */
         final List<Node> childs = new ArrayList<Node>(4);
@@ -401,6 +523,77 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         }
         final String name = path.substring(lower).trim().intern();
         return parent.appendChild(new IIONode(name));
+    }
+
+    /**
+     * Returns the paths to every {@linkplain Element elements} declared in the given format which
+     * accept a {@linkplain IIOMetadataNode#getUserObject() user object} of the given type. If no
+     * path is found, returns an empty list.
+     *
+     * {@section Collection handling}
+     * In the particular case where the element is the child of a node having having
+     * {@link IIOMetadataFormat#CHILD_POLICY_REPEAT CHILD_POLICY_REPEAT}, then the path to the
+     * parent node is returned. In other words, if the given type is the type of elements in a
+     * collection, then the path to the whole collection is returned instead than the path to a
+     * single element in that collection.
+     *
+     * @param  format The metadata format in which to search.
+     * @param  objectClass The {@linkplain IIOMetadataFormat#getObjectClass(String)
+     *         class of user object} to locate.
+     * @return The list of paths to elements that accept user objects of the given type.
+     *
+     * @see #MetadataAccessor(MetadataAccessor, Class)
+     * @see #MetadataAccessor(IIOMetadata, String, Class)
+     *
+     * @since 3.06
+     */
+    public static List<String> listPaths(final IIOMetadataFormat format, final Class<?> objectClass) {
+        ensureNonNull("type",   objectClass);
+        ensureNonNull("format", format);
+        final List<String> paths = new ArrayList<String>(4);
+        listPaths(format, objectClass, format.getRootName(), new StringBuilder(), paths);
+        return paths;
+    }
+
+    /**
+     * Adds to the given list the path to every elements of the given type.
+     * This method invokes itself recursively for scanning down the tree.
+     *
+     * @param format      The metadata format in which to search.
+     * @param objectClass The type of user object to locate.
+     * @param elementName The current element to be scaned.
+     * @param buffer      An initially empty buffer, for internal use by this method.
+     * @param paths       The list where to add the paths that we found.
+     */
+    private static void listPaths(final IIOMetadataFormat format, final Class<?> objectClass,
+            final String elementName, final StringBuilder buffer, final List<String> paths)
+    {
+        final int childPolicy = format.getChildPolicy(elementName);
+        if (childPolicy != IIOMetadataFormat.CHILD_POLICY_EMPTY) {
+            final String[] childs = format.getChildNames(elementName);
+            if (childs != null) {
+                final int base = buffer.length();
+                for (final String child : childs) {
+                    if (base != 0) {
+                        buffer.append('/');
+                    }
+                    buffer.append(child);
+                    if (format.getObjectValueType(child) != IIOMetadataFormat.VALUE_NONE) {
+                        final Class<?> candidate = format.getObjectClass(child);
+                        if (objectClass != null && objectClass.isAssignableFrom(candidate)) {
+                            /*
+                             * We found an element. If this element is to be repeated in a collection,
+                             * then use the path of the parent which describe the whole collection.
+                             */
+                            paths.add(childPolicy == IIOMetadataFormat.CHILD_POLICY_REPEAT ?
+                                    buffer.substring(0, base) : buffer.toString());
+                        }
+                    }
+                    listPaths(format, objectClass, child, buffer, paths);
+                    buffer.setLength(base);
+                }
+            }
+        }
     }
 
     /**
@@ -584,6 +777,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * @see #getUserObject()
      * @see #setUserObject(Object)
+     * @see SpatialMetadata#getInstanceForType(Class)
      */
     public <T> T getUserObject(final Class<? extends T> type) throws ClassCastException {
         ensureNonNull("type", type);
@@ -608,44 +802,101 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Sets the {@linkplain IIOMetadataNode#setUserObject user object} associated with the
-     * {@linkplain #selectChild selected element}. At the difference of every {@code setAttribute}
-     * methods defined in this class, this method does not delegate to
-     * {@link #setAttribute(String, String)}.
-     * <p>
-     * If the specified value is formattable (i.e. is a {@linkplain CharSequence character
-     * sequence}, a {@linkplain Number number} or an array of the above), then this method
-     * also {@linkplain IIOMetadataNode#setNodeValue sets the node value} as a string. This
-     * is mostly a convenience for formatting purpose since {@link IIOMetadataNode} don't
-     * use the node value. But it may help some libraries that are not designed to work with
-     * with user objects, since they are particular to Image I/O metadata.
+     * Returns a view of the {@linkplain Element element} as an implementation of the given
+     * interface. This method returns an instance of the given interface where each getter
+     * method is implemented like the following pseudo-code, where {@code <T>} is the type
+     * given in argument to this method, {@code <RT1>} is the return type of the first method
+     * and {@code <RT2>} is the return type of the second method:
      *
-     * @param  value The user object, or {@code null} if none.
-     * @throws UnsupportedImplementationException if the selected element is not an instance of
-     *         {@link IIOMetadataNode}.
+     * {@preformat java
+     *     class Proxy implements <T> {
+     *         public <RT1> getBanana() {
+     *             return Accessor.this.getAttributeAs<RT1>("banana");
+     *         }
      *
-     * @see #getUserObject()
+     *         public <RT2> getApple() {
+     *             return Accessor.this.getAttributeAs<RT2>("apple");
+     *         }
+     *
+     *         // etc. for every getter methods declared in the interface.
+     *     }
+     * }
+     *
+     * The {@code <T>} type is typically one of the types given to the
+     * {@link SpatialMetadataFormat#addTree(org.geotoolkit.metadata.MetadataStandard,
+     * Class, String, String, java.util.Map) SpatialMetadataFormat.addTree(...)} method,
+     * but this is not mandatory. However all getter methods declared in that type shall
+     * comply with the <cite>Java Beans</cite> conventions.
+     *
+     * {@section Example}
+     * Lets assume a metadata format conforms to the
+     * <a href="SpatialMetadataFormat.html#default-formats"><cite>Stream metadata</cite>
+     * format documented here</a>. There is an extract of that format:
+     *
+     * {@preformat text
+     *     DiscoveryMetadata
+     *     └───SpatialResolution
+     *         └───distance
+     * }
+     *
+     * In the following code, every call to the
+     * {@link org.opengis.metadata.identification.Resolution#getDistance()} method on the instance
+     * returned by this {@code newProxyInstance(type)} method while be implemented as a call to the
+     * <code>{@linkplain #getAttributeAsDouble(String) getAttributeAsDouble}("distance")</code>
+     * method on this {@code MetadataAccessor} instance:
+     *
+     * {@preformat java
+     *     IIOMetadata       metadata   = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+     *     MetadataAccessor  accessor   = new MetadataAccessor(metadata, "#auto", "DiscoveryMetadata/SpatialResolution", null);
+     *     SpatialResolution resolution = accessor.newProxyInstance(SpatialResolution.class);
+     *     Double            distance   = resolution.getDistance();
+     *     System.out.println("The resolution is " + distance);
+     * }
+     *
+     * Changes to the underlying {@code IIOMetadata} attributes are immediately reflected in the
+     * {@code Resolution} instance:
+     *
+     * {@preformat java
+     *     accessor.setAttribute("distance", 20);
+     *     distance = resolution.getDistance(); // Should now return 20.
+     * }
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface for which to create a proxy instance.
+     * @return An implementation of the given interface with getter methods that fetch
+     *         their return values from the attribute values.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @see SpatialMetadata#getInstanceForType(Class)
+     * @see java.lang.reflect.Proxy
+     *
+     * @since 3.06
      */
-    public void setUserObject(final Object value) throws UnsupportedImplementationException {
-        final Element element = currentElement();
-        String asText = null;
-        if (value != null) {
-            final Class<?> type = value.getClass();
-            if (Date.class.isAssignableFrom(type)) {
-                asText = XmlUtilities.printDateTime((Date) value);
-            } else if (isFormattable(type)) {
-                asText = value.toString();
-            } else if (isFormattable(type.getComponentType())) {
-                asText = formatSequence(value);
-            }
+    public <T> T newProxyInstance(final Class<T> type) throws IllegalArgumentException {
+        return MetadataProxy.newProxyInstance(type, this);
+    }
+
+    /**
+     * Returns a view of the child elements as a list of implementations of the given type.
+     * This method performs the same work than {@link #newProxyInstance(Class)} for every
+     * childs of the {@linkplain Element element} represented by this accessor.
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface for which to create proxy instances.
+     * @return A list of implementations of the given interface with getter methods
+     *         that fetch their return values from the attribute values.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @see SpatialMetadata#getListForType(Class)
+     *
+     * @since 3.06
+     */
+    public <T> List<T> newProxyList(final Class<T> type) throws IllegalArgumentException {
+        if (allowsChildren()) {
+            return MetadataProxyList.create(type, this);
+        } else {
+            return Collections.singletonList(MetadataProxy.newProxyInstance(type, this));
         }
-        if (element instanceof IIOMetadataNode) {
-            ((IIOMetadataNode) element).setUserObject(value);
-        } else if (value!=null && asText==null) {
-            throw new UnsupportedImplementationException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                    Classes.getClass(element), IIOMetadataNode.class));
-        }
-        element.setNodeValue(asText);
     }
 
     /**
@@ -687,7 +938,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * Returns an attribute as an array of strings for the {@linkplain #selectChild selected element},
      * or {@code null} if none. This method gets the attribute as a single string, then splits that
      * string on the ordinary space separator. If some items in the resulting strings contain the
-     * no-break space ({@code '\\u00A0'}), then those characters are replaced by ordinary spaces
+     * no-break space ({@code '\u00A0'}), then those characters are replaced by ordinary spaces
      * after the split.
      *
      * @param  attribute The attribute to fetch (e.g. {@code "keywords"}).
@@ -1029,6 +1280,47 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Sets the {@linkplain IIOMetadataNode#setUserObject user object} associated with the
+     * {@linkplain #selectChild selected element}. At the difference of every {@code setAttribute}
+     * methods defined in this class, this method does not delegate to
+     * {@link #setAttribute(String, String)}.
+     * <p>
+     * If the specified value is formattable (i.e. is a {@linkplain CharSequence character
+     * sequence}, a {@linkplain Number number} or an array of the above), then this method
+     * also {@linkplain IIOMetadataNode#setNodeValue sets the node value} as a string. This
+     * is mostly a convenience for formatting purpose since {@link IIOMetadataNode} don't
+     * use the node value. But it may help some libraries that are not designed to work with
+     * with user objects, since they are particular to Image I/O metadata.
+     *
+     * @param  value The user object, or {@code null} if none.
+     * @throws UnsupportedImplementationException if the selected element is not an instance of
+     *         {@link IIOMetadataNode}.
+     *
+     * @see #getUserObject()
+     */
+    public void setUserObject(final Object value) throws UnsupportedImplementationException {
+        final Element element = currentElement();
+        String asText = null;
+        if (value != null) {
+            final Class<?> type = value.getClass();
+            if (Date.class.isAssignableFrom(type)) {
+                asText = XmlUtilities.printDateTime((Date) value);
+            } else if (isFormattable(type)) {
+                asText = value.toString();
+            } else if (isFormattable(type.getComponentType())) {
+                asText = formatSequence(value);
+            }
+        }
+        if (element instanceof IIOMetadataNode) {
+            ((IIOMetadataNode) element).setUserObject(value);
+        } else if (value!=null && asText==null) {
+            throw new UnsupportedImplementationException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
+                    Classes.getClass(element), IIOMetadataNode.class));
+        }
+        element.setNodeValue(asText);
+    }
+
+    /**
      * Sets the attribute to the specified value, or remove the attribute if the value is null.
      * <p>
      * Every {@code setAttribute} methods in this class invoke this method last. Consequently,
@@ -1057,7 +1349,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * is {@code null}. The given items are formatted in a single string with an ordinary space
      * used as the item separator, as mandated by {@link IIOMetadataFormat#VALUE_LIST}. If some
      * of the given items contain spaces, then those spaces are replaced by a no-break space
-     * ({@code '\\u00A0'}) for avoiding confusion with the space separator.
+     * ({@code '\u00A0'}) for avoiding confusion with the space separator.
      *
      * @param attribute The attribute name.
      * @param values The attribute values, or {@code null} for removing the attribute.
@@ -1266,122 +1558,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     public void setAttribute(final String attribute, final Citation value) {
         setAttribute(attribute, Citations.getIdentifier(value));
-    }
-
-    /**
-     * Returns a view of the wrapped {@link IIOMetadata} as an implementation of the given
-     * interface. This method returns an implementation of the given interface in which each
-     * getter method fetches the value of the attribute named like the getter method, modified
-     * according <cite>Java Beans</cite> conventions.
-     * <p>
-     * <b>Example:</b> Suppose a metadata format conforms to the
-     * <a href="SpatialMetadataFormat.html#default-formats"><cite>Stream metadata</cite>
-     * format documented here</a>. Then in the code below, every call to the
-     * {@link org.opengis.metadata.identification.Resolution#getDistance()} method on the instance
-     * returned by this {@code newProxyInstance(...)} method while be converted into a call to the
-     * <code>{@linkplain #getAttributeAsDouble(String) getAttributeAsDouble}("distance")</code>
-     * method on this {@code MetadataAccessor} instance.
-     *
-     * {@preformat java
-     *     IIOMetadata       metadata   = ...;
-     *     MetadataAccessor  accessor   = new MetadataAccessor(metadata, "DiscoveryMetadata/SpatialResolution", null);
-     *     SpatialResolution resolution = accessor.asPojo(SpatialResolution.class);
-     *     Double            distance   = resolution.getDistance();
-     *     // Note that changes to the underlying IIOMetadata attributes
-     *     // are immediately reflected in the Resolution object.
-     *     accessor.setAttribute("distance", 20);
-     *     distance = resolution.getDistance(); // Should now return 20.
-     * }
-     *
-     * Note that the {@code type} argument given to this method is typically one of the types given
-     * to the {@link SpatialMetadataFormat#addTree(org.geotoolkit.metadata.MetadataStandard,
-     * Class, String, String, java.util.Map) SpatialMetadataFormat.addTree(...)} method, but
-     * this is not mandatory.
-     *
-     * @param  <T> The compile-time type specified as the {@code type} argument.
-     * @param  type The interface for which to create a proxy instance.
-     * @return An implementation of the given interface with getter methods that fetch
-     *         their return values from the attribute values.
-     * @throws IllegalArgumentException If the given type is not a valid interface.
-     *
-     * @see SpatialMetadata#getProxyInstance(Class)
-     * @see java.lang.reflect.Proxy
-     *
-     * @since 3.06
-     */
-    public <T> T newProxyInstance(final Class<T> type) throws IllegalArgumentException {
-        return MetadataProxy.newProxyInstance(type, this);
-    }
-
-    /**
-     * Returns a vie of the given {@code IIOMetadata} as an implementation of the given interface.
-     *
-     * @param  <T> The compile-time type specified as the {@code type} argument.
-     * @param  metadata The metadata for which to create the view.
-     * @param  formatName The name of the metadata format to use.
-     * @param  type The interface for which to create a proxy instance.
-     * @return An implementation of the given interface with getter methods that fetch
-     *         their return values from the attribute values.
-     * @throws IllegalArgumentException If the given type is not a valid interface.
-     *
-     * @see SpatialMetadata#getProxyInstance(Class)
-     * @see java.lang.reflect.Proxy
-     *
-     * @since 3.06
-     */
-    public static <T> T newProxyInstance(final IIOMetadata metadata, final String formatName, final Class<T> type)
-            throws IllegalArgumentException
-    {
-        final List<String> paths = new ArrayList<String>(4);
-        final IIOMetadataFormat format = metadata.getMetadataFormat(formatName);
-        path(type, format, format.getRootName(), new StringBuilder(), paths);
-        switch (paths.size()) {
-            case 0: {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
-            }
-            case 1: {
-                return new MetadataAccessor(metadata, paths.get(0), "#auto").newProxyInstance(type);
-            }
-            default: {
-                throw new IllegalArgumentException(); // TODO: format an error message.
-            }
-        }
-    }
-
-    /**
-     * Adds to the given list the path to every elements of the given type.
-     * This method invokes itself recursively for scanning down the tree.
-     *
-     * @param type        The type we are looking for.
-     * @param format      The metadata format.
-     * @param elementName The current element to be scaned.
-     * @param buffer      An initially empty buffer, for internal use by this method.
-     * @param paths       The list where to add the paths that we found.
-     */
-    private static void path(final Class<?> type, final IIOMetadataFormat format,
-            final String elementName, final StringBuilder buffer, final List<String> paths)
-    {
-        final String[] childs = format.getChildNames(elementName);
-        if (childs != null) {
-            final int base = buffer.length();
-            for (final String child : childs) {
-                buffer.append('/').append(child);
-                final int valueType = format.getObjectValueType(child);
-                if (valueType != IIOMetadataFormat.VALUE_NONE) {
-                    final Class<?> candidate = format.getObjectClass(child);
-                    if (type != null && type.isAssignableFrom(candidate)) {
-                        /*
-                         * We found an element. If this element is to be repeated in a collection,
-                         * the use the path of the parent which describe the whole collection.
-                         */
-                        paths.add(valueType == IIOMetadataFormat.CHILD_POLICY_REPEAT ?
-                                buffer.substring(0, base) : buffer.toString());
-                    }
-                }
-                path(type, format, child, buffer, paths);
-                buffer.setLength(base);
-            }
-        }
     }
 
     /**
