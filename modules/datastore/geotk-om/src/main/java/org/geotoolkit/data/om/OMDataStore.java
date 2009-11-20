@@ -224,6 +224,7 @@ public class OMDataStore extends AbstractDataStore {
     public void dispose() {
         super.dispose();
         try {
+            getAllSamplingPoint.close();
             connection.close();
         } catch (SQLException ex) {
             LOGGER.info("SQL Exception while closing O&M datastore");
