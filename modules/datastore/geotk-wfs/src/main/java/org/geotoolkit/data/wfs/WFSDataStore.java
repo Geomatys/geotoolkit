@@ -45,7 +45,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
-import org.geotoolkit.feature.xml.jaxp.JAXPEventFeatureReader;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
@@ -320,7 +320,7 @@ public class WFSDataStore extends AbstractDataStore{
 
         XmlFeatureReader reader = null;
         try {
-            reader = new JAXPEventFeatureReader(sft);
+            reader = new JAXPStreamFeatureReader(sft);
             final URL url = request.getURL();
             LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
