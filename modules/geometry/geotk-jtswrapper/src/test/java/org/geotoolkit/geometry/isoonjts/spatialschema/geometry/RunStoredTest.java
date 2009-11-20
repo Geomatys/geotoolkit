@@ -35,7 +35,7 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class RunStoredTest extends TestCase {
     private static final Logger LOG = Logging.getLogger(RunStoredTest.class);
-    private static String TEST_DIRECTORY = "src/main/resources/org/geotools/test-data/xml/geometry";
+    private static String TEST_DIRECTORY = "src/main/resources/org/geotoolkit/test-data/xml/geometry";
 
     private FilenameFilter xmlFilter = new FilenameFilter() {
         public boolean accept(File dir, String name) {

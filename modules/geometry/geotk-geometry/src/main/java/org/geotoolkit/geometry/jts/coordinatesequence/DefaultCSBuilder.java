@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - The Open Source Java GIS Toolkit
+ *    http://geotoolkit.org
  * 
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
  *    

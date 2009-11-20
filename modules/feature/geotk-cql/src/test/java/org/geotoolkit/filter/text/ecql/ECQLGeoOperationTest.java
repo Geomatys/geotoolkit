@@ -224,7 +224,7 @@ public final class ECQLGeoOperationTest extends CQLGeoOperationTest{
         //  TODO function on first arg BBOX( buffer( the_geom , 10), 10,20,30,40 )
         //  TODO function on second argument BBOX( buffer( the_geom , 10), buffer( POINT( 15,15), 10) )
         //  TODO Geometry on first and second arguments BBOX( POLYGON( .... ), POLYGON( .... ), 10) )
-        //  TODO Proposal in geotools wiki for this
+        //  TODO Proposal in geotoolkit wiki for this
     }
 
 

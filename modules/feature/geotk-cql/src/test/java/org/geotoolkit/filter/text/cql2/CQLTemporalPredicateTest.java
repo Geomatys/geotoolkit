@@ -474,7 +474,7 @@ public class CQLTemporalPredicateTest {
      *
      * http://jira.codehaus.org/browse/GEOT-2157?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel&focusedCommentId=154661#action_154661
      *
-     * Note: this test is ignored to avoid to add cycles in the geotools general build.
+     * Note: this test is ignored to avoid to add cycles in the geotoolkit general build.
      * @throws Exception
      */
     @Ignore

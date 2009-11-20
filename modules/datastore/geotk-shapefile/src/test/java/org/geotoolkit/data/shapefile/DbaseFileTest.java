@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -38,7 +38,7 @@ import org.geotoolkit.data.shapefile.dbf.DbaseFileWriter;
 public class DbaseFileTest extends AbstractTestCaseSupport {
 
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
+            .getLogger("org.geotoolkit.data.shapefile");
 
     static final String TEST_FILE = "shapes/statepop.dbf";
 

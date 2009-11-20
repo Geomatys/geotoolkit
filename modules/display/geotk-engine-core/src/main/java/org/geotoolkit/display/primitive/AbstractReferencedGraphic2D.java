@@ -98,7 +98,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
 
     /**
      * {@code true} if this canvas or graphic has
-     * {@value org.geotools.display.canvas.DisplayObject#DISPLAY_BOUNDS_PROPERTY} properties
+     * {@value org.geotoolkit.display.canvas.DisplayObject#DISPLAY_BOUNDS_PROPERTY} properties
      * listeners. Used in order to reduce the amount of {@link PropertyChangeEvent} objects created
      * in the common case where no listener have interest in this property. This optimisation may
      * be worth since a those change event may be sent every time a graphic is painted.
@@ -221,7 +221,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
      * Sets the <var>z</var> order hint value for this graphic. Graphics with highest
      * <var>z</var> order will be painted on top of graphics with lowest <var>z</var> order.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#Z_ORDER_HINT_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#Z_ORDER_HINT_PROPERTY}
      * property change event.
      */
     @Override
@@ -267,9 +267,9 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
      * encouraged.
      * <p>
      * Some canvas implementations will invoke this method automatically in their
-     * {@linkplain org.geotools.display.canvas.BufferedCanvas2D rendering method}.
+     * {@linkplain org.geotoolkit.display.canvas.BufferedCanvas2D rendering method}.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#DISPLAY_BOUNDS_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#DISPLAY_BOUNDS_PROPERTY}
      * property change event.
      */
     protected final void setDisplayBounds(Shape bounds) {

@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -55,7 +55,7 @@ public class RTreeTest extends TestCase {
         switch (type) {
         case FILE:
 
-            File file = File.createTempFile("geotools2", ".grx");
+            File file = File.createTempFile("geotoolkit2", ".grx");
             file.deleteOnExit();
             ps = new FileSystemPageStore(file, dd);
 

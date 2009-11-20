@@ -64,7 +64,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {
 
-    public static final Logger LOGGER = Logging.getLogger("org.geotools.data.shapefile");
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
     
     /**
      * Optional - uri of the FeatureType's namespace

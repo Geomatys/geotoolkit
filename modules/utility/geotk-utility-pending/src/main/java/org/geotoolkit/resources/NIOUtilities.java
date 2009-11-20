@@ -100,7 +100,7 @@ public final class NIOUtilities {
      * Really closes a {@code MappedByteBuffer} without the need to wait for garbage
      * collection. Any problems with closing a buffer on Windows (the problem child in this
      * case) will be logged as {@code SEVERE} to the logger of the package name. To
-     * force logging of errors, set the System property "org.geotools.io.debugBuffer" to "true".
+     * force logging of errors, set the System property "org.geotoolkit.io.debugBuffer" to "true".
      *
      * @param  buffer The buffer to close.
      * @return true if the operation was successful, false otherwise.
@@ -139,7 +139,7 @@ public final class NIOUtilities {
     private static synchronized boolean isLoggable() {
         try {
             return !warned && (
-                    Boolean.getBoolean("org.geotools.io.debugBuffer") ||
+                    Boolean.getBoolean("org.geotoolkit.io.debugBuffer") ||
                     System.getProperty("os.name").indexOf("Windows") >= 0 );
         } catch (SecurityException exception) {
             // The utilities may be running in an Applet, in which case we
@@ -156,7 +156,7 @@ public final class NIOUtilities {
         String message = "Error attempting to close a mapped byte buffer : " + buffer.getClass().getName()
                        + "\n JVM : " + System.getProperty("java.version")
                        + ' '         + System.getProperty("java.vendor");
-        Logging.getLogger("org.geotools.io").log(Level.SEVERE, message, e);
+        Logging.getLogger("org.geotoolkit.io").log(Level.SEVERE, message, e);
     }
 
     /**

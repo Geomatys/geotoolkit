@@ -89,12 +89,12 @@ public interface DataStoreFactory<T extends FeatureType, F extends Feature> {
      * This method ensures all the appropriate libraries to construct
      * the DataAccess are available.
      * <p>
-     * Most factories will simply return <code>true</code> as GeoTools will
+     * Most factories will simply return <code>true</code> as GeoToolkit will
      * distribute the appropriate libraries. Though it's not a bad idea for
      * DataStoreFactories to check to make sure that the  libraries are there.
      * <p>
      * OracleDataStoreFactory is an example of one that may generally return
-     * <code>false</code>, since GeoTools can not distribute the oracle jars.
+     * <code>false</code>, since GeoToolkit can not distribute the oracle jars.
      * (they must be added by the client.)
      * <p>
      * One may ask how this is different than canProcess, and basically available

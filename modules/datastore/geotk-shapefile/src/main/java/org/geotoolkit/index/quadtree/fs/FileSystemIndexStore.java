@@ -42,7 +42,7 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class FileSystemIndexStore implements IndexStore {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.index.quadtree");
+            .getLogger("org.geotoolkit.index.quadtree");
     private File file;
     private byte byteOrder;
 

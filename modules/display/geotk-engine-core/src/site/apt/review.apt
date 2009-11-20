@@ -14,31 +14,31 @@ EXTENTION GO
 
 
 
-* org.geotools.display.canvas
+* org.geotoolkit.display.canvas
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  Some of this code is included was included GeoTools 2.0, it is being repackaged 
+  Some of this code is included was included GeoToolKit 2.0, it is being repackaged
   as an implementation of the GO-1 standard. Currently experimental in status.
 
 
-* org.geotools.display.canvas.map
+* org.geotoolkit.display.canvas.map
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-* org.geotools.display.event
+* org.geotoolkit.display.event
   ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-* org.geotools.display.geom
+* org.geotoolkit.display.geom
   ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-* org.geotools.display.style
+* org.geotoolkit.display.style
   ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-* org.geotools.display.array
+* org.geotoolkit.display.array
   ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-* org.geotools.display.canvas (test)
+* org.geotoolkit.display.canvas (test)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -48,7 +48,7 @@ import org.opengis.observation.Process;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.Metadata;
 
-// geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.util.logging.Logging;

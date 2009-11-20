@@ -1,5 +1,5 @@
 #
-# The registry file for Geotools Grid Coverage implementation. This file should be automatically
+# The registry file for GeotoolKit Grid Coverage implementation. This file should be automatically
 # parsed by JAI under initialization. If it is not, then Registry.registerServices(...) can parse
 # it. This may happen if this file is unreachable from the JAI class loader.
 #

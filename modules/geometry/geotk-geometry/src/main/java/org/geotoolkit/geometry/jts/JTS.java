@@ -56,9 +56,9 @@ import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.geometry.GeneralEnvelope;
 
 /**
- * JTS Geometry utility methods, bringing Geotools to JTS.
+ * JTS Geometry utility methods, bringing GeotoolKit to JTS.
  * <p>
- * Offers geotools based services such as reprojection.
+ * Offers GeotoolKit based services such as reprojection.
  * <p>
  * Responsibilities:
  * <ul>

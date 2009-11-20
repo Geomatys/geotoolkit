@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -45,7 +45,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(Map)'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(Map)'
      */
     public void testCanProcessMap() throws Exception {
         Map map = new HashMap();
@@ -56,7 +56,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(Map)'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(Map)'
      */
     public void testCreateDataStoreMap() throws Exception {
         testCreateDataStore(true);
@@ -125,7 +125,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createNewDataStore(Map)'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createNewDataStore(Map)'
      */
     public void testCreateNewDataStore() throws Exception {
         ShapefileDataStore ds1 = testCreateDataStore(true, false);
@@ -136,7 +136,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.isAvailable()'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.isAvailable()'
      */
     public void testIsAvailable() {
         assertTrue(factory.availability().pass());
@@ -144,7 +144,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getParametersInfo()'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getParametersInfo()'
      */
     public void testGetParametersInfo() {
         //check that we have those two parameters descriptors.
@@ -154,7 +154,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getFileExtensions()'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getFileExtensions()'
      */
     public void testGetFileExtensions() {
         List ext = Arrays.asList(factory.getFileExtensions());
@@ -163,7 +163,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(URL)'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.canProcess(URL)'
      */
     public void testCanProcessURL() throws FileNotFoundException {
         factory.canProcess(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP));
@@ -171,7 +171,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(URL)'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.createDataStore(URL)'
      */
     public void testCreateDataStoreURL() throws IOException {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
@@ -182,7 +182,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
 
     /*
      * Test method for
-     * 'org.geotools.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getTypeName(URL)'
+     * 'org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStoreFactory.getTypeName(URL)'
      */
     public void testGetTypeName() throws IOException {
         factory.getTypeName(ShapeTestData.url(IndexedShapefileDataStoreTest.STATE_POP));

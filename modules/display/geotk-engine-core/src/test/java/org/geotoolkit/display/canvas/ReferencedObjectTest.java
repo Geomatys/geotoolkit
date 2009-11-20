@@ -35,7 +35,7 @@ import junit.framework.TestSuite;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
-// Geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;

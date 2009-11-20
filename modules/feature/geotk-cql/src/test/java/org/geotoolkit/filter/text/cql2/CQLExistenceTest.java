@@ -79,7 +79,7 @@ public class CQLExistenceTest {
 
         // -------------------------------------------------------------
         // <attribute_name> EXISTS
-        // TODO Exist function must be implemented in Geotools
+        // TODO Exist function must be implemented in GeotoolKit
         // -------------------------------------------------------------
         Filter resultFilter = CompilerUtil.parseFilter(this.language,FilterCQLSample.ATTRIBUTE_NAME_EXISTS);
 

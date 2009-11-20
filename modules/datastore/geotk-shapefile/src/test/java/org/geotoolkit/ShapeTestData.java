@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  * 
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -34,17 +34,17 @@ import java.nio.channels.ReadableByteChannel;
  * {@code sample-data} module. This directory is shared by test suites in other
  * modules.
  * <p>
- * This file has to live in the {@code org.geotools} root package in order to
- * get access to the {@code org/geotools/test-data} directory. If you don't
- * need this directory, then use the {@link org.geotools.test.TestData}
- * class provided in the {@code org.geotools.resources} directory.
+ * This file has to live in the {@code org.geotoolkit} root package in order to
+ * get access to the {@code org/geotoolkit/test-data} directory. If you don't
+ * need this directory, then use the {@link org.geotoolkit.test.TestData}
+ * class provided in the {@code org.geotoolkit.resources} directory.
  *
  * @module pending
  * @since 2.2
  * @version $Id$
  * @author Martin Desruisseaux
  *
- * @tutorial http://www.geotools.org/display/GEOT/5.8+Test+Data
+ * @tutorial http://www.geotoolkit.org/display/GEOT/5.8+Test+Data
  */
 public final class ShapeTestData extends org.geotoolkit.test.TestData {
     /**
@@ -75,7 +75,7 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
      * the resource is not found. This provides a more explicit explanation about the failure
      * reason than the infamous {@link NullPointerException}.
      *
-     * @param  name Path to file in {@code org/geotools/test-data}.
+     * @param  name Path to file in {@code org/geotoolkit/test-data}.
      * @return The URL to the {@code test-data} resource.
      * @throws FileNotFoundException if the resource is not found.
      */
@@ -91,7 +91,7 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
      * TestData.file(null);
      * </pre></blockquote>
      *
-     * @param  name Path to file in {@code org/geotools/test-data}.
+     * @param  name Path to file in {@code org/geotoolkit/test-data}.
      * @return The file to the {@code test-data} resource.
      * @throws FileNotFoundException if the file is not found.
      * @throws IOException if the resource can't be fetched for an other reason.
@@ -104,7 +104,7 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
      * Provides a non-null {@link InputStream} for named test data.
      * It is the caller responsability to close this stream after usage.
      *
-     * @param  name Path to file in {@code org/geotools/test-data}.
+     * @param  name Path to file in {@code org/geotoolkit/test-data}.
      * @return The input stream.
      * @throws FileNotFoundException if the resource is not found.
      * @throws IOException if an error occurs during an input operation.
@@ -118,7 +118,7 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
      * an {@link LineNumberReader} instance, which is useful for displaying line numbers where
      * error occur. It is the caller responsability to close this reader after usage.
      *
-     * @param  name Path to file in {@code org/geotools/test-data}.
+     * @param  name Path to file in {@code org/geotoolkit/test-data}.
      * @return The buffered reader.
      * @throws FileNotFoundException if the resource is not found.
      * @throws IOException if an error occurs during an input operation.
@@ -131,7 +131,7 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
      * Provides a channel for named test data. It is the caller responsability to close this
      * chanel after usage.
      *
-     * @param  name Path to file in {@code org/geotools/test-data}.
+     * @param  name Path to file in {@code org/geotoolkit/test-data}.
      * @return The chanel.
      * @throws FileNotFoundException if the resource is not found.
      * @throws IOException if an error occurs during an input operation.
@@ -143,9 +143,9 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
     /**
      * Copies the named resources from the {@code sample-data} module to the {@code test-data}
      * directory in an other module. For example if {@code TestData.copy(this, "foo.txt")} is
-     * invoked inside a test suite in the {@code org.geotools.foo} package, then this method
-     * copies {@code org/geotools/test-data/foo.txt} (from {@code sample-data} module) to
-     * {@code org/geotools/foo/test-data/foo.txt} (in the {@code foo} module).
+     * invoked inside a test suite in the {@code org.geotoolkit.foo} package, then this method
+     * copies {@code org/geotoolkit/test-data/foo.txt} (from {@code sample-data} module) to
+     * {@code org/geotoolkit/foo/test-data/foo.txt} (in the {@code foo} module).
      * <p>
      * This method is useful when a test case needs to access a resource through a {@link File},
      * for example because it want to open it using {@link java.io.RandomAccess}. Because the
@@ -163,8 +163,8 @@ public final class ShapeTestData extends org.geotoolkit.test.TestData {
      * cleaned by Maven on {@code mvn clean} execution.
      *
      * @param  caller Calling class or object used to locate the destination {@code test-data}.
-     * @param  name Path to file in {@code org/geotools/test-data}.
-     * @return The file to the <code>org/geotools/<strong>caller-package</strong>/test-data</code>
+     * @param  name Path to file in {@code org/geotoolkit/test-data}.
+     * @return The file to the <code>org/geotoolkit/<strong>caller-package</strong>/test-data</code>
      *         resource copy, returned for convenience.
      * @throws FileNotFoundException if the file is not found.
      * @throws IOException if the resource can't be fetched for an other reason.

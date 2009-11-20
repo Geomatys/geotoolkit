@@ -36,7 +36,7 @@ import org.geotoolkit.data.shapefile.shp.IndexFile;
  */
 public class FidIndexer {
     static Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
+            .getLogger("org.geotoolkit.data.shapefile");
 
     /**
      * Generates the FID index file for the shpFile

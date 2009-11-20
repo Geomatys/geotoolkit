@@ -411,7 +411,7 @@ public abstract class PointArray2D implements PointArray, Serializable {
 
     /**
      * Returns a string representation of this array. This method is mostly for debugging
-     * purpose and may change in any future Geotools version. Current implementation returns
+     * purpose and may change in any future GeotoolKit version. Current implementation returns
      * the class name, the number of points and the start and end coordinates.
      */
     @Override

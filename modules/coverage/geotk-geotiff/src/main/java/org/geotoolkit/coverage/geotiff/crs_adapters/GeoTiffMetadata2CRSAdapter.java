@@ -810,7 +810,7 @@ public final class GeoTiffMetadata2CRSAdapter {
 
     /**
      * Looks up the Geodetic Datum as specified in the GeoTIFFWritingUtilities
-     * file. The geotools definition of the geodetic datum includes both an
+     * file. The geotoolkit definition of the geodetic datum includes both an
      * ellipsoid and a prime meridian, but the code in the
      * GeoTIFFWritingUtilities file does NOT include the prime meridian, as it
      * is specified separately. This code currently does not support user

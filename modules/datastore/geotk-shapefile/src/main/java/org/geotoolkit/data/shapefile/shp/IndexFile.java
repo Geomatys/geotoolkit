@@ -45,8 +45,7 @@ import org.geotoolkit.resources.NIOUtilities;
  */
 public class IndexFile implements FileReader {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.data.shapefile");
-
+            .getLogger("org.geotoolkit.data.shapefile");
     private static final int RECS_IN_BUFFER = 2000;
 
     private boolean useMemoryMappedBuffer;

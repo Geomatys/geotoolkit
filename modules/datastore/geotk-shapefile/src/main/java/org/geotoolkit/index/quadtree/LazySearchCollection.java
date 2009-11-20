@@ -78,7 +78,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
                 tree.close(iter);
             } catch (StoreException e) {
                 org.geotoolkit.util.logging.Logging.getLogger(
-                        "org.geotools.index.quadtree").severe(
+                        "org.geotoolkit.index.quadtree").severe(
                         "Couldn't close iterator");
             }
         }
@@ -94,7 +94,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
                 tree.close(iter);
             } catch (StoreException e) {
                 org.geotoolkit.util.logging.Logging.getLogger(
-                        "org.geotools.index.quadtree").severe(
+                        "org.geotoolkit.index.quadtree").severe(
                         "Couldn't close iterator");
             }
         }

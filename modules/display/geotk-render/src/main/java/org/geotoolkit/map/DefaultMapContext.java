@@ -46,7 +46,7 @@ import org.opengis.style.Description;
 
 
 /**
- * The default implementation of the {@linkplain org.geotools.map.MapContext}
+ * The default implementation of the {@linkplain org.geotoolkit.map.MapContext}
  * interface
  *
  * @author Johann Sorel (Geomatys)

@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -95,7 +95,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     protected FeatureCollection<SimpleFeatureType, SimpleFeature> loadLocalFeaturesM2() throws IOException {
-        String target = "jar:file:/C:/Documents and Settings/jgarnett/.m2/repository/org/geotools/gt2-sample-data/2.4-SNAPSHOT/gt2-sample-data-2.4-SNAPSHOT.jar!/org/geotools/test-data/shapes/statepop.shp";
+        String target = "jar:file:/C:/Documents and Settings/jgarnett/.m2/repository/org/geotoolkit/gt2-sample-data/2.4-SNAPSHOT/gt2-sample-data-2.4-SNAPSHOT.jar!/org/geotoolkit/test-data/shapes/statepop.shp";
         URL url = new URL(target);
         ShapefileDataStore s = new ShapefileDataStore(url);
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = s.getFeatureSource(s.getTypeNames()[0]);
@@ -142,7 +142,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 // (as such it represents a bad configuration
                 //  rather than a test failure)
                 // we only wanted to ensure that if you have Chinese support
-                // available - GeoTools can use it
+                // available - GeotoolKit can use it
             }
         }
     

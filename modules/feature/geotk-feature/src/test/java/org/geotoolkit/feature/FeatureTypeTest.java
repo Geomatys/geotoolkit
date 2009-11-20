@@ -145,7 +145,7 @@ public class FeatureTypeTest extends DataTestCase {
      */
     @SuppressWarnings("serial")
     public void testAncestors() throws Exception {
-        URI uri = new URI("http://www.geotools.org/example");
+        URI uri = new URI("http://www.geotoolkit.org/example");
         SimpleFeatureTypeBuilder tb;
 
         tb = new SimpleFeatureTypeBuilder();

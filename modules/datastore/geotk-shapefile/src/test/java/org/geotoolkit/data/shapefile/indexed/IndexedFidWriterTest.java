@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -59,7 +59,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
     }
 
     /*
-     * Test method for 'org.geotools.index.fid.IndexedFidWriter.hasNext()'
+     * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.hasNext()'
      */
     public void testHasNext() throws MalformedURLException, IOException {
         FidIndexer.generate(backshp.toURL());
@@ -72,7 +72,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
     }
 
     /*
-     * Test method for 'org.geotools.index.fid.IndexedFidWriter.remove()'
+     * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.remove()'
      */
     public void testRemove() throws MalformedURLException, IOException {
         FidIndexer.generate(backshp.toURL());
@@ -148,7 +148,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
     }
 
     /*
-     * Test method for 'org.geotools.index.fid.IndexedFidWriter.write()'
+     * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.write()'
      */
     public void testWrite() throws IOException {
         initWriter();

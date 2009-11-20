@@ -181,7 +181,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      * Adds the given {@code Graphic} to this {@code Renderer}. 
      * <p>
      * Most {@code Canvas} do not draw anything as long as at least one graphic hasn't be added.
-     * In Geotools implementation, an {@link AbstractGraphic} can be added to only one
+     * In GeotoolKit implementation, an {@link AbstractGraphic} can be added to only one
      * {@link AbstractCanvas} object. If the specified graphic has already been added to
      * an other canvas, then this method {@linkplain AbstractGraphic#clone creates a clone}
      * before to add the graphic.
@@ -348,7 +348,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      * entirely within the indicated envelope.
      * <p>
      * This envelope is different from
-     * {@link org.geotools.display.canvas.map.DefaultMapState#getEnvelope}, since the later returns
+     * {@link org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope}, since the later returns
      * an envelope that encloses only the <em>visible</em> canvas area and is scale-dependent. This
      * {@code ReferencedCanvas.getEnvelope()} method is scale-independent. Both envelopes are equal
      * if the scale is choosen in such a way that all graphics fit exactly in the canvas visible
@@ -356,7 +356,7 @@ public abstract class AbstractContainer implements GraphicsContainer<Graphic>{
      *
      * @return The envelope for this canvas in terms of {@linkplain #getObjectiveCRS objective CRS}.
      *
-     * @see org.geotools.display.canvas.map.DefaultMapState#getEnvelope
+     * @see org.geotoolkit.display.canvas.map.DefaultMapState#getEnvelope
      * @see ReferencedCanvas2D#getEnvelope2D
      */
     @Override

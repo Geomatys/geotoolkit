@@ -720,7 +720,6 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * </code>
      * </p>
      * @param filter Filter used to determine sub collection.
-     * @since GeoTools 2.2, Filter 1.1
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(final Filter filter) {
@@ -741,7 +740,6 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * sorting through detecting order as a SortBy2 instance.
      * </p>
      *
-     * @since GeoTools 2.2, Filter 1.1
      * @param order Filter 1.1 SortBy Construction of a Sort
      *
      * @return FeatureList sorted according to provided order

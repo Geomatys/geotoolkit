@@ -51,7 +51,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
     /** Default Implementation abuses the naming convention.
      * <p>
      * Will return <code>Foo</code> for
-     * <code>org.geotools.data.foo.FooFactory</code>.
+     * <code>org.geotoolkit.data.foo.FooFactory</code>.
      * </p>
      * @return return display name based on class name
      */
