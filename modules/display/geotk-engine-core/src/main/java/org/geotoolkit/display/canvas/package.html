@@ -2,52 +2,52 @@
 
 <HTML>
   <HEAD>
-    <TITLE>package org.geotools.display.canvas</TITLE>
+    <TITLE>package org.geotoolkit.display.canvas</TITLE>
   </HEAD>
   <BODY>
-    Geotools implementation of GO-1 Canvas. An
+    GeotoolKit implementation of GO-1 Canvas. An
     explanation for this package is provided in the {@linkplain org.opengis.go.display.canvas OpenGIS&reg; javadoc}.
-    The remaining discussion on this page is specific to the Geotools implementation.
+    The remaining discussion on this page is specific to the GeotoolKit implementation.
 
-    <P ALIGN="justify">A {@linkplain org.geotools.display.canvas.AbstractCanvas canvas} contains one ore more
-    {@linkplain org.geotools.display.canvas.AbstractGraphic graphic primitives}. A graphic primitive may be
+    <P ALIGN="justify">A {@linkplain org.geotoolkit.display.canvas.AbstractCanvas canvas} contains one ore more
+    {@linkplain org.geotoolkit.display.canvas.AbstractGraphic graphic primitives}. A graphic primitive may be
     an image, a geometric shape, a collection of symbols, <cite>etc.</cite> Since this package can't cover all
     possible usages, most classes are designed with subclassing in mind. In the particular case of rendering
     targeting a <cite>Java2D</cite> output device, every kind of graphic primitive is handled by a specialized subclass
-    ({@link org.geotools.display.primitive.GraphicImage2D}, {@link org.geotools.display.primitive.GraphicPolygon2D},
-    <cite>etc.</cite>) extending {@link org.geotools.display.canvas.GraphicPrimitive2D}. The first concrete canvas
-    class capable to manage those graphic primitives is {@link org.geotools.display.canvas.BufferedCanvas2D}.</P>
+    ({@link org.geotoolkit.display.primitive.GraphicImage2D}, {@link org.geotoolkit.display.primitive.GraphicPolygon2D},
+    <cite>etc.</cite>) extending {@link org.geotoolkit.display.canvas.GraphicPrimitive2D}. The first concrete canvas
+    class capable to manage those graphic primitives is {@link org.geotoolkit.display.canvas.BufferedCanvas2D}.</P>
 
     <P>&nbsp;</P>
     <H2>Coordinate Reference Systems</H2>
-    <P ALIGN="justify">The base classes (up to {@link org.geotools.display.canvas.ReferencedCanvas} and its
-    {@link org.geotools.display.canvas.ReferencedGraphic} counterpart) do not assume a two-dimensional
+    <P ALIGN="justify">The base classes (up to {@link org.geotoolkit.display.canvas.ReferencedCanvas} and its
+    {@link org.geotoolkit.display.canvas.ReferencedGraphic} counterpart) do not assume a two-dimensional
     rendering. They should be usable for a 3D rendering engine as well. The first subclasses targeting
-    specifically a 2D rendering are {@link org.geotools.display.canvas.ReferencedCanvas2D} and its
-    {@link org.geotools.display.canvas.ReferencedGraphic2D} counterpart.</P>
+    specifically a 2D rendering are {@link org.geotoolkit.display.canvas.ReferencedCanvas2D} and its
+    {@link org.geotoolkit.display.canvas.ReferencedGraphic2D} counterpart.</P>
 
-    <P ALIGN="justify">In Geotools implementation, there is four
+    <P ALIGN="justify">In GeotoolKit implementation, there is four
     {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate reference systems}
-    involved in rendering. {@link org.geotools.display.canvas.AbstractCanvas} declares abstract methods
+    involved in rendering. {@link org.geotoolkit.display.canvas.AbstractCanvas} declares abstract methods
     for three of them, but the actual CRS management is performed in the
-    {@link org.geotools.display.canvas.ReferencedCanvas} subclass. The CRS are enumerated below
+    {@link org.geotoolkit.display.canvas.ReferencedCanvas} subclass. The CRS are enumerated below
     (arrows are {@linkplain org.opengis.referencing.operation.MathTransform transforms}):</P>
 
     <TABLE ALIGN="center" BORDER=1 cellpadding=4><TR><TD>
     data CRS
     &nbsp; <img src="doc-files/right.png">
-    &nbsp; {@linkplain org.geotools.display.canvas.AbstractCanvas#getObjectiveCRS objective CRS}
+    &nbsp; {@linkplain org.geotoolkit.display.canvas.AbstractCanvas#getObjectiveCRS objective CRS}
     &nbsp; <img src="doc-files/right.png">
-    &nbsp; {@linkplain org.geotools.display.canvas.AbstractCanvas#getDisplayCRS display CRS}
+    &nbsp; {@linkplain org.geotoolkit.display.canvas.AbstractCanvas#getDisplayCRS display CRS}
     &nbsp; <img src="doc-files/right.png">
-    &nbsp; {@linkplain org.geotools.display.canvas.AbstractCanvas#getDeviceCRS device CRS}
+    &nbsp; {@linkplain org.geotoolkit.display.canvas.AbstractCanvas#getDeviceCRS device CRS}
     </TD></TR></TABLE>
 
     <P>&nbsp;</P>
     <H2>Painting</H2>
-    <P ALIGN=justify>In the {@link org.geotools.display.canvas.BufferedCanvas2D} implementation, when a graphic
-    needs a refresh, the canvas invokes its {@link org.geotools.display.canvas.GraphicPrimitive2D#paint paint(...)}
-    method. The paint method receives indirectly (through {@link org.geotools.display.canvas.RenderingContext})
+    <P ALIGN=justify>In the {@link org.geotoolkit.display.canvas.BufferedCanvas2D} implementation, when a graphic
+    needs a refresh, the canvas invokes its {@link org.geotoolkit.display.canvas.GraphicPrimitive2D#paint paint(...)}
+    method. The paint method receives indirectly (through {@link org.geotoolkit.display.canvas.RenderingContext})
     a {@link java.awt.Graphics2D} object in the default <cite>Java2D</cite> state. This default state uses a
     coordinate reference system (named <strong>display CRS</strong> above) with properties as below:</P>
 
@@ -80,7 +80,7 @@
     <P ALIGN="justify">In some occasions, a graphic may wish to performs its rendering
     directly in "real world" coordinates. This is called <strong>objective CRS</strong>
     above. It can be set through a call to a
-    {@link org.geotools.display.canvas.RenderingContext#setGraphicsCRS setGraphicsCRS}
+    {@link org.geotoolkit.display.canvas.RenderingContext#setGraphicsCRS setGraphicsCRS}
     convenience method and usually has the following properties:</P>
 
     <TABLE BORDER=1 cellpadding=4>
@@ -147,7 +147,7 @@
     <P align=justify>But if there is a rotation (but no shear), then the {@code getScaleX()} and
     {@code getScaleY()} methods do not work anymore. We need to use the relationships on the left
     side. Note that those relationships do not work neither in the presence of shear. But because
-    the default Geotools {@code Canvas} implementation uses only scales, rotations and translations
+    the default GeotoolKit {@code Canvas} implementation uses only scales, rotations and translations
     (no shear), implementors are encouraged to use the relationships on the left side all the time
     instead of the ordinary {@code getScaleX()} and {@code getScaleY()} methods. This is especially
     important since may "real world" coordinate systems swap their axis order (e.g. use

@@ -61,7 +61,7 @@ import org.geotoolkit.ows.xml.v100.BoundingBoxType;
 import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
-// Geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.util.logging.Logging;

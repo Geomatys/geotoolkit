@@ -62,7 +62,7 @@ public interface ReferencedGraphic2D extends ReferencedGraphic {
      * Sets the <var>z</var> order hint value for this graphic. Graphics with highest
      * <var>z</var> order will be painted on top of graphics with lowest <var>z</var> order.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#Z_ORDER_HINT_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#Z_ORDER_HINT_PROPERTY}
      * property change event.
      */
     void setZOrderHint(final double zOrderHint);

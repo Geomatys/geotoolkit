@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -44,7 +44,7 @@ public class FileSystemPageStoreTest extends TestCase {
      * Test for void FileSystemPageStore(File)
      */
     public void testFileSystemPageStoreFile() throws Exception {
-        File file = File.createTempFile("geotools2e", ".grx");
+        File file = File.createTempFile("geotoolkit2e", ".grx");
         file.deleteOnExit();
 
         try {
@@ -60,7 +60,7 @@ public class FileSystemPageStoreTest extends TestCase {
      * Test for void FileSystemPageStore(File, DataDefinition)
      */
     public void testFileSystemPageStoreFileDataDefinition() throws Exception {
-        File file = File.createTempFile("geotoolsf2", ".grx");
+        File file = File.createTempFile("geotoolkitf2", ".grx");
         file.deleteOnExit();
         DataDefinition dd = new DataDefinition("US-ASCII");
 
@@ -82,7 +82,7 @@ public class FileSystemPageStoreTest extends TestCase {
      */
     public void testFileSystemPageStoreFileDataDefinitionintintshort()
             throws Exception {
-        File file = File.createTempFile("geotools2g", ".grx");
+        File file = File.createTempFile("geotoolkit2g", ".grx");
         file.deleteOnExit();
         DataDefinition dd = new DataDefinition("US-ASCII");
         dd.addField(Integer.class);

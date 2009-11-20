@@ -240,7 +240,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
             } catch (Exception e) {
                 e.printStackTrace();
                 LOGGER
-                        .severe("org.geotools.data.shapefile.indexed.IndexedShapeFileDataStore#finalize(): Error closing rtree. "
+                        .severe("org.geotoolkit.data.shapefile.indexed.IndexedShapeFileDataStore#finalize(): Error closing rtree. "
                                 + e.getLocalizedMessage());
             }
         }
@@ -792,7 +792,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
     // }
 
     /**
-     * @see org.geotools.data.DataStore#getFeatureSource(java.lang.String)
+     * @see org.geotoolkit.data.DataStore#getFeatureSource(java.lang.String)
      *
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
             throws IOException {

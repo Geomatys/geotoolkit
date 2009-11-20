@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.observation.CompositePhenomenon;
 
-// geotools dependencies
+// geotoolkit dependencies
 import org.geotoolkit.util.Utilities;
 
 /**

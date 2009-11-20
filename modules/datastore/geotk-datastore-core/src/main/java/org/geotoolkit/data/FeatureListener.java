@@ -26,7 +26,7 @@ package org.geotoolkit.data;
  *
  * @author Jody Garnett, Refractions Research, Inc.
  * @module pending
- * @since GeoTools 2.0
+ * @since GeotoolKit 2.0
  */
 public interface FeatureListener extends java.util.EventListener {
 

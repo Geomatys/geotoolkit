@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class FileSystemPageStore extends PageStore {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.index.rtree");
+            .getLogger("org.geotoolkit.index.rtree");
     protected static final byte B_SHORT = (byte) 1;
     protected static final byte B_INTEGER = (byte) 2;
     protected static final byte B_LONG = (byte) 3;

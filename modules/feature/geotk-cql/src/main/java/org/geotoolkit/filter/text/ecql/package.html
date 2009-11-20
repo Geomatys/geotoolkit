@@ -12,7 +12,7 @@
 		
 	<H3>ECQL Usage </H3>
     <P ALIGN="justify">
-	Below are presented some usage samples. You can find more samples and the <b>BNF<b> with the ECQL syntax in the user guide of Geotools.   
+	Below are presented some usage samples. You can find more samples and the <b>BNF<b> with the ECQL syntax in the user guide of GeotoolKit.
 	</P>
 
 	<P ALIGN="justify">
@@ -63,12 +63,12 @@
     <P ALIGN="justify">
     The parser was generated using <A HREF="https://javacc.dev.java.net/">javacc</A>. 
     In ECQLGrammar.jjt file you can see the input grammar for <b>javacc</b> that is required to parse the ECQL syntax rules. The generated
-    class are allocated in the <b>org.geotools.filter.text.generated.parsers</b> package, these classes are not
+    class are allocated in the <b>org.geotoolkit.filter.text.generated.parsers</b> package, these classes are not
     part of the module interface, then the client module shouldn't use them.
     </P>
     
     <P ALIGN="justify">
-    The <b>org.geotools.filter.text.commons</b> package encapsulate classes intended as commons utilities used
+    The <b>org.geotoolkit.filter.text.commons</b> package encapsulate classes intended as commons utilities used
     in the ECQL and CQL parsing process. They are not utilities for client modules, they are part of the cql module
     implementation, so client module shouldn't use them.   
     </P>

@@ -122,7 +122,7 @@ public class LockManager {
         }
 
         /**
-         * @see org.geotools.index.Lock#getType()
+         * @see org.geotoolkit.index.Lock#getType()
          */
         public short getType() {
             return this.type;

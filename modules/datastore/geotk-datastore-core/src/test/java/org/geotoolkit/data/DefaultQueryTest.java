@@ -49,7 +49,7 @@ public class DefaultQueryTest extends TestCase {
         assertNotNull(query);
     }
 
-    /** Test of getPropertyNames method, of class org.geotools.data.DefaultQuery. */
+    /** Test of getPropertyNames method, of class org.geotoolkit.data.DefaultQuery. */
     public void testPropertyNames() {
         System.out.println("testPropertyNames");
         DefaultQuery query = new DefaultQuery();
@@ -70,7 +70,7 @@ public class DefaultQueryTest extends TestCase {
         assertNotNull(query.getPropertyNames());
     }
 
-    /** Test of retrieveAllProperties method, of class org.geotools.data.DefaultQuery. */
+    /** Test of retrieveAllProperties method, of class org.geotoolkit.data.DefaultQuery. */
     public void testRetrieveAllProperties() {
         System.out.println("testRetrieveAllProperties");
 
@@ -88,7 +88,7 @@ public class DefaultQueryTest extends TestCase {
         assertTrue(query.retrieveAllProperties());
     }
 
-    /** Test of getMaxFeatures method, of class org.geotools.data.DefaultQuery. */
+    /** Test of getMaxFeatures method, of class org.geotoolkit.data.DefaultQuery. */
     public void testMaxFeatures() {
         System.out.println("testMaxFeatures");
         DefaultQuery query = new DefaultQuery();
@@ -98,7 +98,7 @@ public class DefaultQueryTest extends TestCase {
         assertEquals(5, query.getMaxFeatures());
     }
 
-    /** Test of getFilter method, of class org.geotools.data.DefaultQuery. */
+    /** Test of getFilter method, of class org.geotoolkit.data.DefaultQuery. */
     public void testFilter() {
         System.out.println("testGetFilter");
         DefaultQuery query = new DefaultQuery();
@@ -109,7 +109,7 @@ public class DefaultQueryTest extends TestCase {
         assertEquals(Filter.INCLUDE, query.getFilter());
     }
 
-    /** Test of getTypeName method, of class org.geotools.data.DefaultQuery. */
+    /** Test of getTypeName method, of class org.geotoolkit.data.DefaultQuery. */
     public void testTypeName() {
         DefaultQuery query = new DefaultQuery();
         assertNull(query.getTypeName());
@@ -121,7 +121,7 @@ public class DefaultQueryTest extends TestCase {
         assertEquals("mytype", query.getTypeName());
     }
 
-    /** Test of getHandle method, of class org.geotools.data.DefaultQuery. */
+    /** Test of getHandle method, of class org.geotoolkit.data.DefaultQuery. */
     public void testHandle() {
         System.out.println("testGetHandle");
         DefaultQuery query = new DefaultQuery();
@@ -130,14 +130,14 @@ public class DefaultQueryTest extends TestCase {
         assertEquals("myquery", query.getHandle());
     }
 
-    /** Test of getVersion method, of class org.geotools.data.DefaultQuery. */
+    /** Test of getVersion method, of class org.geotoolkit.data.DefaultQuery. */
     public void testVersion() {
         System.out.println("testGetVersion");
         DefaultQuery query = new DefaultQuery();
         assertNull(query.getVersion());
     }
 
-    /** Test of toString method, of class org.geotools.data.DefaultQuery. */
+    /** Test of toString method, of class org.geotoolkit.data.DefaultQuery. */
     public void testToString() {
         System.out.println("testToString");
         DefaultQuery query = new DefaultQuery();

@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  */
 public class NodeCache extends LinkedHashMap {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.index.rtree");
+            .getLogger("org.geotoolkit.index.rtree");
     private final int maxElements;
 
     /**

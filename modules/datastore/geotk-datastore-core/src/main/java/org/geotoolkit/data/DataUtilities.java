@@ -131,7 +131,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             return arrayStore.getFeatureSource(arrayStore.getTypeNames()[0]);
         } catch (IOException e) {
             throw new RuntimeException(
-                    "Something is wrong with the geotools code, " + "this exception should not happen", e);
+                    "Something is wrong with the geotoolkit code, " + "this exception should not happen", e);
         }
     }
 
@@ -146,7 +146,7 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             return store.getFeatureSource(store.getTypeNames()[0]);
         } catch (IOException e) {
             throw new RuntimeException(
-                    "Something is wrong with the geotools code, " + "this exception should not happen", e);
+                    "Something is wrong with the geotoolkit code, " + "this exception should not happen", e);
         }
     }
 

@@ -64,7 +64,7 @@ public class ArrayFeatureReaderTest extends TestCase {
     }
 
     /**
-     * Test method for 'org.geotools.data.ArrayFeatureReader.getFeatureType()'
+     * Test method for 'org.geotoolkit.data.ArrayFeatureReader.getFeatureType()'
      */
     public void testGetFeatureType() {
         assertEquals(type, arrayReader.getFeatureType());
@@ -73,7 +73,7 @@ public class ArrayFeatureReaderTest extends TestCase {
     }
 
     /**
-     * Test method for 'org.geotools.data.ArrayFeatureReader.next()'
+     * Test method for 'org.geotoolkit.data.ArrayFeatureReader.next()'
      *
      * @throws Exception
      */
@@ -101,7 +101,7 @@ public class ArrayFeatureReaderTest extends TestCase {
     }
 
     /**
-     * Test method for 'org.geotools.data.ArrayFeatureReader.hasNext()'
+     * Test method for 'org.geotoolkit.data.ArrayFeatureReader.hasNext()'
      *
      * @throws Exception DOCUMENT ME!
      */
@@ -129,7 +129,7 @@ public class ArrayFeatureReaderTest extends TestCase {
     }
 
     /**
-     * Test method for 'org.geotools.data.ArrayFeatureReader.close()'
+     * Test method for 'org.geotoolkit.data.ArrayFeatureReader.close()'
      *
      * @throws Exception DOCUMENT ME!
      */

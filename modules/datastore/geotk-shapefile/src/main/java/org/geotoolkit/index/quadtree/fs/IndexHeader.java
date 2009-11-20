@@ -40,7 +40,7 @@ public class IndexHeader {
     private static final byte VERSION = 1;
     private static final byte[] RESERVED = { 0, 0, 0 };
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotools.index.quadtree");
+            .getLogger("org.geotoolkit.index.quadtree");
     private byte byteOrder;
 
     public IndexHeader(byte byteOrder) {

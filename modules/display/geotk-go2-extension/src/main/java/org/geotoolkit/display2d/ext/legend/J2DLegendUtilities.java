@@ -63,7 +63,7 @@ public class J2DLegendUtilities {
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the legend must be painted
      * @param template  : north arrow template
-     * @throws org.geotools.display.exception.PortrayalException
+     * @throws org.geotoolkit.display.exception.PortrayalException
      */
     public static void paintLegend(final MapContext context,
                               Graphics2D g2d,
@@ -173,7 +173,7 @@ public class J2DLegendUtilities {
      * @param g2d : Graphics2D used to render
      * @param bounds : Rectangle where the legend must be painted
      * @param template  : north arrow template
-     * @throws org.geotools.display.exception.PortrayalException
+     * @throws org.geotoolkit.display.exception.PortrayalException
      */
     public static void paintLegend(final List<Rule> rules,
                               Graphics2D g2d,

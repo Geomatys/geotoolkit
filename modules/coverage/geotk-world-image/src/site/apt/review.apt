@@ -19,19 +19,19 @@ PLUGIN IMAGE
   	   * Pk50095.tif comes from Slovenia and it shouldn't be safe (ask to Blaz Repnik)
   	   * usa.tif comes from GIDB client. It is not safe
 
-  This module contains code based on the origional image rendering code in GeoTools 2.0, this code
+  This module contains code based on the origional image rendering code in GeoToolKit 2.0, this code
   was refactored in the face of a new CoordinateReferenceSystem interface to work with GeoAPI
-  GridCoverageExchange and GridCoverage interfaces for GeoTools 2.1.
+  GridCoverageExchange and GridCoverage interfaces for GeoToolKit 2.1.
 
 
-* org.geotools.gce.image
+* org.geotoolkit.gce.image
   ~~~~~~~~~~~~~~~~~~~~~~
-  Module started by Richard Gould to restore some ability to handle images for GeoTools 2.1,
+  Module started by Richard Gould to restore some ability to handle images for GeoToolKit 2.1,
   the GeoServer WCS project has be head of a grid coverage QA run which updated this module
-  for GeoTools 2.3.
+  for GeoToolKit 2.3.
 
 
 
-* org.geotools.gce.image (test)
+* org.geotoolkit.gce.image (test)
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   Many test cases date from Richard Gould's CRS changeover.

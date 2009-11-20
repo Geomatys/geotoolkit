@@ -132,7 +132,7 @@ public class MetadataException extends IIOException {
      * Example:
      *
      * <blockquote><pre>
-     * org.geotools.coverage.io.MissingMetadataException(key="YMaximum", alias="ULY"):
+     * org.geotoolkit.coverage.io.MissingMetadataException(key="YMaximum", alias="ULY"):
      * Aucune valeur n'est définie pour la propriété "ULY".
      * </pre></blockquote>
      */

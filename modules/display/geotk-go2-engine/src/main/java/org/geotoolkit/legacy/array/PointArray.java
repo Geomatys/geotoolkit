@@ -51,10 +51,10 @@ import org.geotoolkit.resources.Errors;
  * @see GenericArray
  * @see JTSArray
  * @see DefaultArray#getInstance
- * @see org.geotools.renderer.j2d.Renderer
- * @see org.geotools.gui.swing.MapPane
+ * @see org.geotoolkit.renderer.j2d.Renderer
+ * @see org.geotoolkit.gui.swing.MapPane
  *
- * @deprecated Replaced by {@link org.geotools.geometry.array.PointArray2D}
+ * @deprecated Replaced by {@link org.geotoolkit.geometry.array.PointArray2D}
  *             as part of the port of J2D-renderer to the new GO-1 based API. Note that it is not
  *             possible to mix J2D-renderer classes with GO-1 rendering engine. Migration from
  *             J2D-renderer to the GO-1 API will requires the replacement of all deprecated classes
@@ -370,7 +370,7 @@ public abstract class PointArray implements Serializable {
     /**
      * Returns this <code>PointArray</code> as a {@linkplain Shape shape}.  This shape is not
      * designed for map rendering. It is rather a debugging tool, as well as a convenient way
-     * to draw lines in some simple context (e.g. {@link org.geotools.gui.swing.Plot2D}).
+     * to draw lines in some simple context (e.g. {@link org.geotoolkit.gui.swing.Plot2D}).
      *
      * @param transform An optional transform to apply on coordinates, or <code>null</code> if none.
      * @return The lines in this <code>PointArray</code> as a Java2D {@linkplain Shape shape}.

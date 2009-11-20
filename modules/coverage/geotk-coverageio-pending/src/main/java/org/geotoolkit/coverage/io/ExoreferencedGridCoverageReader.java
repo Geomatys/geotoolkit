@@ -30,7 +30,7 @@ import org.opengis.coverage.grid.GridRange;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-// Geotools dependencies
+// Geotoolkit dependencies
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.text.TextMetadataParser;

@@ -31,8 +31,8 @@ import org.geotoolkit.display.canvas.RenderingContext;
 
 /**
  * A graphic implementation with default support for Coordinate Reference System (CRS) management.
- * This class provides some methods specific to the Geotools implementation of graphic primitive.
- * The {@link org.geotools.display.canvas.ReferencedCanvas} expects instances of this class.
+ * This class provides some methods specific to the GeotoolKit implementation of graphic primitive.
+ * The {@link org.geotoolkit.display.canvas.ReferencedCanvas} expects instances of this class.
  *
  * @module pending
  * @since 2.3

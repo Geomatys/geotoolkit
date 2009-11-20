@@ -21,7 +21,7 @@ package org.geotoolkit.geometry.array;
 import java.io.Serializable;
 import java.util.AbstractList;
 
-// Geotools dependencies
+// GeotoolKit dependencies
 import org.geotoolkit.geometry.DirectPosition2D;
 
 

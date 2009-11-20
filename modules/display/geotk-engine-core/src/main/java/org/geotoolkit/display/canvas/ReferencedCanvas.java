@@ -182,7 +182,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
 
     /**
      * {@code true} if this canvas has
-     * {@value org.geotools.display.canvas.DisplayObject#DISPLAY_CRS_PROPERTY} properties
+     * {@value org.geotoolkit.display.canvas.DisplayObject#DISPLAY_CRS_PROPERTY} properties
      * listeners. Used in order to reduce the amount of {@link PropertyChangeEvent} objects
      * created in the common case where no listener have interest in this property. May be
      * a significant optimisation, since this property change everytime the zoom change.
@@ -263,7 +263,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
     /**
      * Invoked when an unexpected exception occured. This method is a shortcut for
      * {@link AbstractCanvas#handleException} with {@code sourceClassName} set to
-     * {@code "org.geotools.display.canvas.ReferencedCanvas"}.
+     * {@code "org.geotoolkit.display.canvas.ReferencedCanvas"}.
      *
      * @param  sourceMethodName The caller's method name, for logging purpose.
      * @param  exception        The exception.
@@ -391,7 +391,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * from the value provided by {@link ReferencedGraphic#envelope} for all graphics.
      * <p>
      * <strong>NOTE:</strong> Callers are responsible for firing an event after the envelope change.
-     * This method doesn't fire an {@value org.geotools.display.canvas.DisplayObject#ENVELOPE_PROPERTY}
+     * This method doesn't fire an {@value org.geotoolkit.display.canvas.DisplayObject#ENVELOPE_PROPERTY}
      * change event itself because this step is often only an intermediate step (see for example
      * {@link #setObjectiveCRS}).
      *

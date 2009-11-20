@@ -372,7 +372,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
 
             case JJTROUTINEINVOCATION_GEOOP_RELATE_NODE:
                 throw new CQLException(
-                        "Unsupported geooperation RELATE (is not implemented by GeoTools)",
+                        "Unsupported geooperation RELATE (is not implemented by GeotoolKit)",
                         getTokenInPosition(0), this.source);
 
             // ----------------------------------------

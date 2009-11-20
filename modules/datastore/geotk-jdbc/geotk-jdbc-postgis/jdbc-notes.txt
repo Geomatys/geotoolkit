@@ -2,14 +2,14 @@ Create a new JDBC datastore notes:
 -------------------------------------------------
 
 0) Setup the pom?
-1) Create a org.geotools.data.<dbname>.<dbname>Dialect class
+1) Create a org.geotoolkit.data.<dbname>.<dbname>Dialect class
    (empty implementation, just make the compiler happy)
-2) Create a org.geotools.data.<dbname>.<dbname>DataStoreFactory
+2) Create a org.geotoolkit.data.<dbname>.<dbname>DataStoreFactory
    and populate the abstract methods with the necessary content
 3) Register the factory in SPI by creating a 
-   src\main\resources\META-INF\org.geotools.data.DataStoreFactorySpi
+   src\main\resources\META-INF\org.geotoolkit.data.DataStoreFactorySpi
    file and adding a single line looking like
-   org.geotools.data.oracle.<dbname>DataStoreFactory
+   org.geotoolkit.data.oracle.<dbname>DataStoreFactory
 4) Let's start by adding a read only test. We extend JDBCTestSetup
    by creating <dbname>TestSetup, override createSqlDialect and
    setUpData. For the latter we follow the javadoc instructions
@@ -20,14 +20,14 @@ Create a new JDBC datastore notes:
    Also, it's a good idea to override the setUpDataStore method
    and force a specific database schema into the datastore.
    Otherwise the tests will try to run into the default schema,
-   which is "geotools".
+   which is "geotoolkit".
 5) Once that is done, we extend JDCBFeatureSourceTest by 
    creating <dbname>FeatureSourceTest and we return the dialect
    created in the previous step in createTestSetup().
    This is all that needs doing, since the tests are designed
    to be reused as is, all differences are located in the test
    setup itself.
-6) We create the file src/test/resources/org/geotools/data/postgis/db.properties
+6) We create the file src/test/resources/org/geotoolkit/data/postgis/db.properties
    and fill it with the following information (the example is valid for postgis,
    so you'll have to adapt it). This information is required for the test
    to connect to an existing db and run the test

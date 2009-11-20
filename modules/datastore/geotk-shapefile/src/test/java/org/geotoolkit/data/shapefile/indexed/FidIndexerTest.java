@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -34,7 +34,7 @@ public class FidIndexerTest extends FIDTestCase {
     }
 
     /*
-     * Test method for 'org.geotools.index.fid.FidIndexer.generate(URL)'
+     * Test method for 'org.geotoolkit.index.fid.FidIndexer.generate(URL)'
      */
     public void testGenerate() throws Exception {
         ShpFiles shpFiles = new ShpFiles(backshp.toURL());

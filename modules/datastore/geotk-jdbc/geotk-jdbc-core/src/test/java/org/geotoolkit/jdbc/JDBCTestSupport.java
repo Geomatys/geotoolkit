@@ -61,11 +61,11 @@ public abstract class JDBCTestSupport extends TestCase {
 //        java.util.logging.ConsoleHandler handler = new java.util.logging.ConsoleHandler();
 //        handler.setLevel(java.util.logging.Level.FINE);
 //        
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotools.data.jdbc").setLevel(java.util.logging.Level.FINE);
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotools.data.jdbc").addHandler(handler);
+//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc").setLevel(java.util.logging.Level.FINE);
+//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data.jdbc").addHandler(handler);
 //        
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotools.jdbc").setLevel(java.util.logging.Level.FINE);
-//        org.geotoolkit.util.logging.Logging.getLogger("org.geotools.jdbc").addHandler(handler);
+//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.jdbc").setLevel(java.util.logging.Level.FINE);
+//        org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.jdbc").addHandler(handler);
     }
 
     protected JDBCTestSetup setup;
@@ -126,8 +126,8 @@ public abstract class JDBCTestSupport extends TestCase {
         //create the dataStore
         //TODO: replace this with call to datastore factory
         HashMap params = new HashMap();
-        params.put( JDBCDataStoreFactory.NAMESPACE.getName().toString(), "http://www.geotools.org/test" );
-        params.put( JDBCDataStoreFactory.SCHEMA.getName().toString(), "geotools" );
+        params.put( JDBCDataStoreFactory.NAMESPACE.getName().toString(), "http://www.geotoolkit.org/test" );
+        params.put( JDBCDataStoreFactory.SCHEMA.getName().toString(), "geotoolkit" );
         params.put( JDBCDataStoreFactory.DATASOURCE.getName().toString(), setup.getDataSource() );
         
         JDBCDataStoreFactory factory = setup.createDataStoreFactory();

@@ -30,7 +30,7 @@ import org.geotoolkit.feature.FeatureFlatTest;
  * @module pending
  */                                
 public class DefaultCoreSuite extends TestCase {
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotools.core");
+    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.core");
     public DefaultCoreSuite(java.lang.String testName) {
         super(testName);
     }        

@@ -46,8 +46,8 @@ import org.geotoolkit.util.logging.Logging;
 
 /**
  * A graphic implementation with default support for Coordinate Reference System (CRS) management.
- * This class provides some methods specific to the Geotools implementation of graphic primitive.
- * The {@link org.geotools.display.canvas.ReferencedCanvas} expects instances of this class.
+ * This class provides some methods specific to the GeotoolKit implementation of graphic primitive.
+ * The {@link org.geotoolkit.display.canvas.ReferencedCanvas} expects instances of this class.
  *
  * @module pending
  * @since 2.3
@@ -138,7 +138,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
      * subclass need to transform some additional internal data, it should override the
      * {@link #transform} method.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#OBJECTIVE_CRS_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#OBJECTIVE_CRS_PROPERTY}
      * property change event.
      *
      * @param  crs The new objective CRS.
@@ -264,7 +264,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
      * Set the envelope for this graphic. Subclasses should invokes this method as soon as they
      * known their envelope.
      * <p>
-     * This method fires a {@value org.geotools.display.canvas.DisplayObject#ENVELOPE_PROPERTY}
+     * This method fires a {@value org.geotoolkit.display.canvas.DisplayObject#ENVELOPE_PROPERTY}
      * property change event.
      *
      * @throws TransformException if the specified envelope can't be transformed to the

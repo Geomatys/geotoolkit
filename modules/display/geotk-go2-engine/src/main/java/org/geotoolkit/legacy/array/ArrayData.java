@@ -29,15 +29,15 @@ import org.geotoolkit.util.XArrays;
  * An object containing an uncompressed <strong>copy</strong> of points from a {@link PointArray}.
  * This object is used as an argument for {@link PointArray#toArray(ArrayData,float)} method.
  * Copying data is required because data will typically be transformed with
- * {@link org.geotools.ct.MathTransform}.
+ * {@link org.geotoolkit.ct.MathTransform}.
  *
- * This class (like the whole <code>org.geotools.renderer.array</code> package)
- * is for internal use by {@link org.geotools.renderer.geom.Polyline} only.
+ * This class (like the whole <code>org.geotoolkit.renderer.array</code> package)
+ * is for internal use by {@link org.geotoolkit.renderer.geom.Polyline} only.
  *
  * @version $Id: ArrayData.java 17672 2006-01-19 00:25:55Z desruisseaux $
  * @author Martin Desruisseaux
  *
- * @deprecated Replaced by {@link org.geotools.geometry.array.ArrayData}
+ * @deprecated Replaced by {@link org.geotoolkit.geometry.array.ArrayData}
  *             as part of the port of J2D-renderer to the new GO-1 based API. Note that it is not
  *             possible to mix J2D-renderer classes with GO-1 rendering engine. Migration from
  *             J2D-renderer to the GO-1 API will requires the replacement of all deprecated classes

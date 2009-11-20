@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    GeotoolKit - An Open source Java GIS Toolkit
+ *    http://geotoolkit.org
  * 
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
  *
@@ -34,7 +34,7 @@ import junit.framework.TestCase;
  * must define the id of the fixture is uses with {@link #getFixtureId()}.
  * </p>
  * <p>
- * Fixtures are stored under the users home directory, under the "{@code .geotools}"
+ * Fixtures are stored under the users home directory, under the "{@code .geotoolkit}"
  * directory. In the event that a fixture does not exist, the test case is
  * aborted.
  * </p>
@@ -98,7 +98,7 @@ public abstract class OnlineTestCase extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         // load the fixture
-        File base = new File(System.getProperty("user.home") + File.separator + ".geotools");
+        File base = new File(System.getProperty("user.home") + File.separator + ".geotoolkit");
         String fixtureId = getFixtureId();
         if (fixtureId == null) {
             fixture = null; // not available (turn test off)            
