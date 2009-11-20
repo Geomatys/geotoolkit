@@ -16,16 +16,24 @@ zip -d commons-beanutils-1.7.0.jar org/apache/commons/collections/*
 # Remove entries that duplicate batik-ext-1.7.jar and JDK 6.
 #
 zip -d xml-apis-1.3.04.jar org/w3c/dom/events/*
+zip -d jaxp-api-1.4.2.jar org/w3c/dom/events/*
 
 #
 # Remove entries that duplicate xalan-2.6.0.jar
 #
-zip -d xml-apis-1.3.04.jar org/w3c/dom/xpath/*
+zip -d xml-apis-1.3.04.jar org/w3c/dom/*
+zip -d jaxp-api-1.4.2.jar org/w3c/dom/xpath/*
+
+#
+# Remove entries that duplicate xercesImpl-2.7.1.jar
+#
+zip -d jaxp-api-1.4.2.jar org/w3c/dom/html/*
 
 #
 # Remove entries that duplicate jaxp-api.jar
 #
-zip -d xml-apis-1.3.04.jar javax.xml.*
+zip -d xml-apis-1.3.04.jar javax/xml/*
+zip -d xml-apis-1.3.04.jar org/xml/sax/*
 
 #
 # Remove entries that duplicate netcdf-2.2.20.jar.
