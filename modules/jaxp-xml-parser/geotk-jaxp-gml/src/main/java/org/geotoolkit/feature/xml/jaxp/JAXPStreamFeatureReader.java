@@ -180,7 +180,10 @@ public class JAXPStreamFeatureReader implements XmlFeatureReader {
                             event = streamReader.next();
                             if (event == XMLEvent.START_ELEMENT) break;
                          }
-                        String srsName = streamReader.getAttributeValue(0);//new QName("http://www.opengis.net/gml", "srsName"));
+                        String srsName = null;
+                        if (streamReader.getAttributeCount() > 0) {
+                            srsName = streamReader.getAttributeValue(0);
+                        }
                         JTSEnvelope2D bounds = readBounds(streamReader, srsName);
 
 

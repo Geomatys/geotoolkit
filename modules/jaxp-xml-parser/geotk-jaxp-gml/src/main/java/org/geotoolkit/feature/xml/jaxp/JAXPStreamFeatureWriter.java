@@ -86,7 +86,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             // the XML header
             streamWriter.writeStartDocument("UTF-8", "1.0");
 
-            write(sf, streamWriter, true);
+            writeFeature(sf, streamWriter, true);
 
             streamWriter.flush();
             streamWriter.close();
@@ -105,7 +105,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             // the XML header
             streamWriter.writeStartDocument("UTF-8", "1.0");
 
-            write(sf, streamWriter, true);
+            writeFeature(sf, streamWriter, true);
 
             streamWriter.flush();
             streamWriter.close();
@@ -125,7 +125,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             // the XML header
             streamWriter.writeStartDocument("UTF-8", "1.0");
 
-            write(feature, streamWriter, true);
+            writeFeature(feature, streamWriter, true);
             
             streamWriter.flush();
             streamWriter.close();
@@ -137,7 +137,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
         return null;
     }
 
-    private void write(SimpleFeature feature, XMLStreamWriter streamWriter, boolean root) {
+    private void writeFeature(SimpleFeature feature, XMLStreamWriter streamWriter, boolean root) {
         try {
 
             //the root element of the xml document (type of the feature)
@@ -149,7 +149,11 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                 streamWriter.writeStartElement(prefix, localPart, namespace);
                 streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", feature.getID());
                 if (root) {
-                    streamWriter.writeNamespace(prefix, namespace);
+                    streamWriter.writeNamespace("gml", "http://www.opengis.net/gml");
+                    if (!namespace.equals("http://www.opengis.net/gml")) {
+                        streamWriter.writeNamespace(prefix, namespace);
+
+                    }
                 }
             } else {
                 streamWriter.writeStartElement(localPart);
@@ -207,7 +211,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
             XMLStreamWriter streamWriter    = outputFactory.createXMLStreamWriter(writer);
 
-            write(fc, streamWriter);
+            writeFeatureCollection(fc, streamWriter);
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
@@ -220,7 +224,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
             XMLStreamWriter streamWriter    = outputFactory.createXMLStreamWriter(out);
 
-            write(fc, streamWriter);
+            writeFeatureCollection(fc, streamWriter);
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
@@ -234,7 +238,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             StringWriter sw                = new StringWriter();
             XMLStreamWriter streamWriter   = outputFactory.createXMLStreamWriter(sw);
 
-            write(featureCollection, streamWriter);
+            writeFeatureCollection(featureCollection, streamWriter);
             return sw.toString();
 
         } catch (XMLStreamException ex) {
@@ -243,7 +247,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
         return null;
     }
 
-    private void write(FeatureCollection featureCollection, XMLStreamWriter streamWriter) {
+    private void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter) {
         try {
             // the XML header
             streamWriter.writeStartDocument("UTF-8", "1.0");
@@ -253,6 +257,12 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", featureCollection.getID());
             streamWriter.writeNamespace("gml", "http://www.opengis.net/gml");
 
+            FeatureType type = featureCollection.getSchema();
+            String namespace = type.getName().getNamespaceURI();
+            if (!namespace.equals("http://www.opengis.net/gml")) {
+                String prefix    = Namespaces.getPreferredPrefix(namespace, null);
+                streamWriter.writeNamespace(prefix, namespace);
+            }
              /*
              * The boundedby part
              */
@@ -264,7 +274,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                 final SimpleFeature f = (SimpleFeature) iterator.next();
 
                 streamWriter.writeStartElement("gml", "featureMember", "http://www.opengis.net/gml");
-                write(f, streamWriter, false);
+                writeFeature(f, streamWriter, false);
                 streamWriter.writeEndElement();
             }
 

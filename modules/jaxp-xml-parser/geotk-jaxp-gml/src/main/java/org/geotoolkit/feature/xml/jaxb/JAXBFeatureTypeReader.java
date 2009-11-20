@@ -172,9 +172,13 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
             QName typeName           = element.getType();
-            builder.setName(new DefaultName(typeName.getNamespaceURI(), name));
-            TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-            return getFeatureTypeFromSchema(type);
+            if (typeName != null) {
+                builder.setName(new DefaultName(typeName.getNamespaceURI(), name));
+                TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
+                return getFeatureTypeFromSchema(type);
+            } else {
+                LOGGER.warning("the element:" + name + " has no type");
+            }
         }
         return null;
     }
