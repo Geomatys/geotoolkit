@@ -37,7 +37,7 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
+ * @author Guilhem Legal (Geomatys)
  * @module pending
  */
 public class OMDataStoreFactory extends AbstractDataStoreFactory {
