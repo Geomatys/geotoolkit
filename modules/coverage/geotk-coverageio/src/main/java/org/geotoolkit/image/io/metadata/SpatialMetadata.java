@@ -23,8 +23,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
@@ -36,6 +38,12 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.Node;
+
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
@@ -53,14 +61,41 @@ import org.geotoolkit.measure.RangeFormat;
 /**
  * Spatial (usually geographic) informations encoded in an image. This class converts the
  * {@link IIOMetadataNode} elements and attribute values to ISO 19115-2 metadata objects.
- * The tree is expected conform to the {@linkplain SpatialMetadataFormat spatial metadata
- * format} defined in this package. The conversions are performed by the following methods:
+ * The tree is expected conform to the <a href="SpatialMetadataFormat.html#default-formats">spatial
+ * metadata format</a> defined in this package, but this class is tolerant to other format.
+ * Metadata objects can be obtained by the following methods:
  *
- * <blockquote><table>
- *   <tr><th>Method</th><th>Node</th></tr>
+ * <blockquote><table border="1" cellspacing="0">
+ *   <tr bgcolor="lightblue"><th>Method</th><th>Format</th><th>Node</th></tr>
+ *   <tr>
+ *     <td>{@link #getDiscoveryMetadata()}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#STREAM STREAM}&nbsp;</td>
+ *     <td>&nbsp;{@code "DiscoveryMetadata"}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #getAcquisitionMetadata()}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#STREAM STREAM}&nbsp;</td>
+ *     <td>&nbsp;{@code "AcquisitionMetadata"}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #getGeographicExtent()}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#STREAM STREAM}&nbsp;</td>
+ *     <td>&nbsp;{@code "DiscoveryMetadata/Extent/GeographicElement"}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #getImageDescription()}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#IMAGE IMAGE}&nbsp;</td>
+ *     <td>&nbsp;{@code "ImageDescription"}</td>
+ *   </tr>
  *   <tr>
  *     <td>{@link #getSampleDimensions()}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#IMAGE IMAGE}&nbsp;</td>
  *     <td>&nbsp;{@code "ImageDescription/Dimensions"}</td>
+ *   </tr>
+ *   <tr>
+ *     <td>{@link #getRectifiedGridDomain()}&nbsp;</td>
+ *     <td>&nbsp;{@link SpatialMetadataFormat#IMAGE IMAGE}&nbsp;</td>
+ *     <td>&nbsp;{@code "RectifiedGridDomain"}</td>
  *   </tr>
  * </table></blockquote>
  *
@@ -105,6 +140,16 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * The root node to be returned by {@link #getAsTree}.
      */
     private Node root;
+
+    /**
+     * The values created by {@link #getInstanceForType(Class)}, cached for reuse.
+     */
+    private transient Map<Class<?>, Object> instances;
+
+    /**
+     * The values created by {@link #getListForType(Class)}, cached for reuse.
+     */
+    private transient Map<Class<?>, List<?>> lists;
 
     /**
      * The standard date format. Will be created only when first needed.
@@ -216,18 +261,122 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Returns the list of all {@code dimension} elements under the {@code "ImageDescription/Dimensions"}
-     * node. If this node does not exist or has no element, then this method returns an empty list
-     * (never {@code null}).
-     * <p>
-     * The returned list is writable: if an element of that list is modified or if a new element
-     * is added, the change will be reflected in the underlying {@link IIOMetadata}.
+     * Returns the <cite>Discovery Identification</cite> metadata.
      *
-     * @return The list of every {@code "Dimension"} elements.
+     * This element is typically defined under the {@code "DiscoveryMetadata"} node of
+     * {@link SpatialMetadataFormat#STREAM STREAM} metadata, but this is not mandatory.
+     * The underlying metadata format can be any format declaring exactly one element
+     * accepting a {@linkplain IIOMetadataFormat#getObjectClass(String) user object}
+     * {@linkplain Class#isAssignableFrom(Class) assignable} to {@link DataIdentification}.
+     *
+     * @return The discovery metadata.
+     * @throws IllegalArgumentException If the metadata format does not declare exactly one element
+     *         with user object assignable to {@code DataIdentification}. Should never occur if the
+     *         metadata format given at construction time is {@link SpatialMetadataFormat#STREAM}.
      *
      * @since 3.06
      */
-    public List<SampleDimension> getSampleDimensions() {
+    public DataIdentification getDiscoveryMetadata() {
+        return getInstanceForType(DataIdentification.class);
+    }
+
+    /**
+     * Returns the <cite>Acquisition Information</cite> metadata.
+     *
+     * This element is typically defined under the {@code "AcquisitionMetadata"} node of
+     * {@link SpatialMetadataFormat#STREAM STREAM} metadata, but this is not mandatory.
+     * The underlying metadata format can be any format declaring exactly one element
+     * accepting a {@linkplain IIOMetadataFormat#getObjectClass(String) user object}
+     * {@linkplain Class#isAssignableFrom(Class) assignable} to {@link AcquisitionInformation}.
+     *
+     * @return The acquisition metadata.
+     * @throws IllegalArgumentException If the metadata format does not declare exactly one element
+     *         with user object assignable to {@code AcquisitionInformation}. Should never occur if
+     *         the metadata format given at construction time is {@link SpatialMetadataFormat#STREAM}.
+     *
+     * @since 3.06
+     */
+    public AcquisitionInformation getAcquisitionMetadata() {
+        return getInstanceForType(AcquisitionInformation.class);
+    }
+
+    /**
+     * Returns the <cite>Geographic Bounding Box</cite> metadata.
+     *
+     * This element is typically defined under the {@code "DiscoveryMetadata/Extent/GeographicElement"}
+     * node of {@link SpatialMetadataFormat#STREAM STREAM} metadata, but this is not mandatory.
+     * The underlying metadata format can be any format declaring exactly one element
+     * accepting a {@linkplain IIOMetadataFormat#getObjectClass(String) user object}
+     * {@linkplain Class#isAssignableFrom(Class) assignable} to {@link GeographicBoundingBox}.
+     *
+     * @return The geographic bounding box.
+     * @throws IllegalArgumentException If the metadata format does not declare exactly one element
+     *         with user object assignable to {@code GeographicBoundingBox}. Should never occur if
+     *         the metadata format given at construction time is {@link SpatialMetadataFormat#STREAM}.
+     *
+     * @since 3.06
+     */
+    public GeographicBoundingBox getGeographicExtent() {
+        return getInstanceForType(GeographicBoundingBox.class);
+    }
+
+    /**
+     * Returns the <cite>Image Description</cite> metadata.
+     *
+     * This element is typically defined under the {@code "ImageDescription"} node of
+     * {@link SpatialMetadataFormat#IMAGE IMAGE} metadata, but this is not mandatory.
+     * The underlying metadata format can be any format declaring exactly one element
+     * accepting a {@linkplain IIOMetadataFormat#getObjectClass(String) user object}
+     * {@linkplain Class#isAssignableFrom(Class) assignable} to {@link ImageDescription}.
+     *
+     * @return The image description.
+     * @throws IllegalArgumentException If the metadata format does not declare exactly one element
+     *         with user object assignable to {@code ImageDescription}. Should never occur if the
+     *         metadata format given at construction time is {@link SpatialMetadataFormat#IMAGE}.
+     *
+     * @since 3.06
+     */
+    public ImageDescription getImageDescription() {
+        return getInstanceForType(ImageDescription.class);
+    }
+
+    /**
+     * Returns the <cite>Rectified Grid Domain</cite> metadata.
+     *
+     * This element is typically defined under the {@code "RectifiedGridDomain"} node of
+     * {@link SpatialMetadataFormat#IMAGE IMAGE} metadata, but this is not mandatory.
+     * The underlying metadata format can be any format declaring exactly one element
+     * accepting a {@linkplain IIOMetadataFormat#getObjectClass(String) user object}
+     * {@linkplain Class#isAssignableFrom(Class) assignable} to {@link RectifiedGrid}.
+     *
+     * @return The image description.
+     * @throws IllegalArgumentException If the metadata format does not declare exactly one element
+     *         with user object assignable to {@code RectifiedGrid}. Should never occur if the
+     *         metadata format given at construction time is {@link SpatialMetadataFormat#IMAGE}.
+     *
+     * @since 3.06
+     */
+    public RectifiedGrid getRectifiedGridDomain() {
+        return getInstanceForType(RectifiedGrid.class);
+    }
+
+    /**
+     * Returns the list <cite>Sample Dimensions</cite> metadata.
+     * <p>
+     * This list is typically defined under the {@code "ImageDescription/Dimensions"} node
+     * of {@link SpatialMetadataFormat#IMAGE IMAGE} metadata, but this is not mandatory.
+     * The underlying metadata format can be any format declaring exactly one element
+     * accepting a {@linkplain IIOMetadataFormat#getObjectClass(String) user object}
+     * {@linkplain Class#isAssignableFrom(Class) assignable} to {@link SampleDimension}.
+     *
+     * @return The list of every {@code "Dimension"} elements.
+     * @throws IllegalArgumentException If the metadata format does not declare exactly one element
+     *         with user object assignable to {@code SampleDimension}. Should never occur if the
+     *         metadata format given at construction time is {@link SpatialMetadataFormat#IMAGE}.
+     *
+     * @since 3.06
+     */
+    public List<SampleDimension> getSampleDimensions() throws IllegalArgumentException {
         return getListForType(SampleDimension.class);
     }
 
@@ -236,16 +385,16 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * This method performs the following steps:
      *
      * <ol>
-     *   <li><p><code>{@linkplain MetadataAccessor#listPaths MetadataAccessor.listPaths}({@linkplain #format}, type)</code>:</br>
+     *   <li><p><code>{@linkplain MetadataAccessor#listPaths MetadataAccessor.listPaths}({@linkplain #format}, type)</code>:<br>
      *       Search for an element declared in the format specified at construction time which
      *       accept a {@linkplain IIOMetadataNode#getUserObject() user object} of the given type.
      *       Exactly one element is expected, otherwise an {@link IllegalArgumentException} is
      *       thrown.</p></li>
      *
-     *   <li><p><code>{@linkplain MetadataAccessor#getUserObject(Class) MetadataAccessor.getUserObject}(type)</code>:</br>
+     *   <li><p><code>{@linkplain MetadataAccessor#getUserObject(Class) MetadataAccessor.getUserObject}(type)</code>:<br>
      *       If a user object was explicitly specified, return that object.</p></li>
      *
-     *   <li><p><code>{@linkplain MetadataAccessor#newProxyInstance(Class) MetadataAccessor.newProxyInstance}(type)</code>:</br>
+     *   <li><p><code>{@linkplain MetadataAccessor#newProxyInstance(Class) MetadataAccessor.newProxyInstance}(type)</code>:<br>
      *       If no explicit user object was found, create a proxy which will implement the getter
      *       methods by a code that fetch the value from the corresponding attribute.</p></li>
      * </ol>
@@ -261,10 +410,18 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @since 3.06
      */
     public <T> T getInstanceForType(final Class<T> type) throws IllegalArgumentException {
-        final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
-        T object = accessor.getUserObject(type);
-        if (type == null) {
-            object = accessor.newProxyInstance(type);
+        if (instances == null) {
+            instances = new HashMap<Class<?>, Object>();
+        }
+        @SuppressWarnings("unchecked")
+        T object = (T) instances.get(type);
+        if (object == null) {
+            final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
+            object = accessor.getUserObject(type);
+            if (object == null) {
+                object = accessor.newProxyInstance(type);
+            }
+            instances.put(type, object);
         }
         return object;
     }
@@ -285,8 +442,17 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @since 3.06
      */
     public <T> List<T> getListForType(final Class<T> type) throws IllegalArgumentException {
-        final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
-        return accessor.newProxyList(type);
+        if (lists == null) {
+            lists = new HashMap<Class<?>, List<?>>();
+        }
+        @SuppressWarnings("unchecked")
+        List<T> list = (List<T>) lists.get(type);
+        if (list == null) {
+            final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
+            list = accessor.newProxyList(type);
+            lists.put(type, list);
+        }
+        return list;
     }
 
     /**

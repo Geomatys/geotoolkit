@@ -285,10 +285,11 @@ public class MetadataAccessor {
      * is selected automatically:
      * <p>
      * <ul>
-     *   <li>If {@code metadata} is an instance of {@link SpatialMetadata}, then the format
-     *       given at {@code SpatialMetadata} construction time is used.</li>
+     *   <li>If {@code metadata} is an instance of {@link SpatialMetadata}, then the
+     *       {@linkplain SpatialMetadata#format format} given at {@code SpatialMetadata}
+     *       construction time is used.</li>
      *   <li>Otherwise the first format returned by {@link IIOMetadata#getMetadataFormatNames()}
-     *       is used. This is usually in preference order: the native formt, the standard format
+     *       is used. This is usually in preference order: the native format, the standard format
      *       or the first extra format.</li>
      * </ul>
      *
@@ -321,7 +322,7 @@ public class MetadataAccessor {
      * is equivalent to:
      *
      * {@preformat java
-     *     new MetadataAccessor(metadata, formatName, "DiscoveryMetadata/Extent/GeographicElement", "#auto);
+     *     new MetadataAccessor(metadata, formatName, "DiscoveryMetadata/Extent/GeographicElement", "#auto");
      * }
      *
      * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
@@ -938,7 +939,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * Returns an attribute as an array of strings for the {@linkplain #selectChild selected element},
      * or {@code null} if none. This method gets the attribute as a single string, then splits that
      * string on the ordinary space separator. If some items in the resulting strings contain the
-     * no-break space ({@code '\u00A0'}), then those characters are replaced by ordinary spaces
+     * no-break space (<code>'\\u00A0'</code>), then those characters are replaced by ordinary spaces
      * after the split.
      *
      * @param  attribute The attribute to fetch (e.g. {@code "keywords"}).
@@ -1349,7 +1350,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * is {@code null}. The given items are formatted in a single string with an ordinary space
      * used as the item separator, as mandated by {@link IIOMetadataFormat#VALUE_LIST}. If some
      * of the given items contain spaces, then those spaces are replaced by a no-break space
-     * ({@code '\u00A0'}) for avoiding confusion with the space separator.
+     * (<code>'\\u00A0'</code>) for avoiding confusion with the space separator.
      *
      * @param attribute The attribute name.
      * @param values The attribute values, or {@code null} for removing the attribute.
