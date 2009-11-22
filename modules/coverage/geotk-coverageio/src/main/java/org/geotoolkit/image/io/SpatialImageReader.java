@@ -533,7 +533,7 @@ public abstract class SpatialImageReader extends ImageReader {
         double          maximumFillValue = 0; // Only in the visible band, and must be positive.
         final SpatialMetadata metadata = getSpatialMetadata(imageIndex);
         if (metadata != null) {
-            final List<SampleDimension> bands = metadata.getSampleDimensions();
+            final List<SampleDimension> bands = metadata.getListForType(SampleDimension.class);
             if (bands != null) {
                 final int numMetadataBands = bands.size();
                 for (int i=0; i<numBands; i++) {

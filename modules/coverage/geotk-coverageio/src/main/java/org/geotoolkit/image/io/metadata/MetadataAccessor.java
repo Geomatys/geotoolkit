@@ -59,14 +59,25 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 /**
  * Convenience class for extracting attribute values from a {@link SpatialMetadata} object.
+ * This class is used by {@link SpatialMetadata} and usually don't need to be created explicitly.
+ * It is available in public API for users who need more flexibility than what
+ * {@code SpatialMetadata} provides.
+ * <p>
  * The metadata object is specified at construction time, together with a path to the
  * {@linkplain Element element} of interest. Examples of valid paths:
  * <p>
- * <ul>
- *   <li>{@code "RectifiedGridDomain/CRS/Datum"} in {@linkplain SpatialMetadataFormat#IMAGE image} metadata</li>
- *   <li>{@code "RectifiedGridDomain/CRS/CoordinateSystem"} in {@linkplain SpatialMetadataFormat#IMAGE image} metadata</li>
- *   <li>{@code "DiscoveryMetadata/Extent/GeographicElement"} in {@linkplain SpatialMetadataFormat#STREAM stream} metadata</li>
- * </ul>
+ * <table cellspacing="0" cellpadding="0">
+ * <tr>
+ *   <td><ul><li>{@code "RectifiedGridDomain/CRS/Datum"}</li></ul></td>
+ *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#IMAGE image} metadata format)</td>
+ * </tr><tr>
+ *   <td><ul><li>{@code "RectifiedGridDomain/CRS/CoordinateSystem"}</li></ul></td>
+ *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#IMAGE image} metadata format)</td>
+ * </tr><tr>
+ *   <td><ul><li>{@code "DiscoveryMetadata/Extent/GeographicElement"}</li></ul></td>
+ *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#STREAM stream} metadata format)</td>
+ * </tr>
+ * </table>
  * <p>
  * If no node exists for the given path, then the node will be created at {@code MetadataAccessor}
  * construction time. For example the last exemple in the above list will ensure that the metadata
@@ -99,8 +110,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * examples below:
  * <p>
  * <ul>
- *   <li>({@code "RectifiedGridDomain/CRS/CoordinateSystem"}, {@code "Axis"})</li>
- *   <li>({@code "ImageDescription/Dimensions"}, {@code "Dimension"})</li>
+ *   <li>{@code new MetadataAccessor(..., "RectifiedGridDomain/CRS/CoordinateSystem", "Axis")}</li>
+ *   <li>{@code new MetadataAccessor(..., "ImageDescription/Dimensions", "Dimension")}</li>
  * </ul>
  * <p>
  * The {@code get} and {@code set} methods defined in this class will operate on the
@@ -139,9 +150,20 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *     accessor.setAttribute("name", "The name of a new axis");
  * }
  *
+ * {@section Getting ISO 19115-2 instances}
+ * This class can provide implementations of the ISO 19115-2 interfaces. Each getter method in
+ * an interface is implemented as a call to a {@code getAttribute(String)} method, or as the
+ * creation of a nested ISO 19115-2 object. See {@link #newProxyInstance(Class)} for more details.
+ * <p>
+ * While this mechanism is primarily targeted at ISO 19115-2 interfaces, it can be used with
+ * other set of interfaces as well.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @version 3.06
+ *
+ * @see SpatialMetadata#getInstanceForType(Class)
+ * @see SpatialMetadata#getListForType(Class)
  *
  * @since 2.5
  * @module
@@ -803,9 +825,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Returns a view of the {@linkplain Element element} as an implementation of the given
-     * interface. This method returns an instance of the given interface where each getter
-     * method is implemented like the following pseudo-code, where {@code <T>} is the type
+     * Returns a view of the {@linkplain #selectParent() parent element} as an implementation of
+     * the given interface. This method returns an instance of the given interface where each
+     * getter method is implemented like the following pseudo-code, where {@code <T>} is the type
      * given in argument to this method, {@code <RT1>} is the return type of the first method
      * and {@code <RT2>} is the return type of the second method:
      *
@@ -826,8 +848,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * The {@code <T>} type is typically one of the types given to the
      * {@link SpatialMetadataFormat#addTree(org.geotoolkit.metadata.MetadataStandard,
      * Class, String, String, java.util.Map) SpatialMetadataFormat.addTree(...)} method,
-     * but this is not mandatory. However all getter methods declared in that type shall
-     * comply with the <cite>Java Beans</cite> conventions.
+     * but this is not mandatory. This {@code <T>} is usually an interface from the ISO
+     * 19115-2 standard, but this is not mandatory neither. However all getter methods
+     * declared in that type shall comply with the <cite>Java Beans</cite> conventions.
      *
      * {@section Example}
      * Lets assume a metadata format conforms to the
@@ -842,7 +865,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * In the following code, every call to the
      * {@link org.opengis.metadata.identification.Resolution#getDistance()} method on the instance
-     * returned by this {@code newProxyInstance(type)} method while be implemented as a call to the
+     * returned by this {@code newProxyInstance(type)} method will be implemented as a call to the
      * <code>{@linkplain #getAttributeAsDouble(String) getAttributeAsDouble}("distance")</code>
      * method on this {@code MetadataAccessor} instance:
      *
@@ -850,7 +873,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *     IIOMetadata       metadata   = new SpatialMetadata(SpatialMetadataFormat.STREAM);
      *     MetadataAccessor  accessor   = new MetadataAccessor(metadata, "#auto", "DiscoveryMetadata/SpatialResolution", null);
      *     SpatialResolution resolution = accessor.newProxyInstance(SpatialResolution.class);
-     *     Double            distance   = resolution.getDistance();
+     *
+     *     // From this point, we can forget that the metadata are stored in an IIOMetadata object.
+     *     // The following line delegates the work to accessor.getAttributeAsDouble("distance");
+     *     Double distance = resolution.getDistance();
      *     System.out.println("The resolution is " + distance);
      * }
      *
@@ -861,6 +887,15 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *     accessor.setAttribute("distance", 20);
      *     distance = resolution.getDistance(); // Should now return 20.
      * }
+     *
+     * {@section Nested proxies}
+     * If the return type of a getter method (the {@code <RT1>} and {@code <RT2>} types in the
+     * above example) is not assignable from {@link String}, {@link Double} or other types for
+     * which a {@code getAttribute} method is defined in this {@code MetadataAccessor} class
+     * (see <a href="package-summary.html#accessor-types">here</a> for a complete list), then
+     * that type is assumed to be an other metadata interface. In such case, a new
+     * {@code MetadataAccessor} is created for that element and a new proxy created by
+     * this {@code newProxyInstance} method is returned.
      *
      * @param  <T> The compile-time type specified as the {@code type} argument.
      * @param  type The interface for which to create a proxy instance.
@@ -878,9 +913,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Returns a view of the child elements as a list of implementations of the given type.
-     * This method performs the same work than {@link #newProxyInstance(Class)} for every
-     * childs of the {@linkplain Element element} represented by this accessor.
+     * Returns a view of the {@linkplain #selectChild(int) child elements} as a list
+     * of implementations of the given type. This method performs the same work than
+     * {@link #newProxyInstance(Class)} for every childs of the element represented
+     * by this accessor.
      *
      * @param  <T> The compile-time type specified as the {@code type} argument.
      * @param  type The interface for which to create proxy instances.

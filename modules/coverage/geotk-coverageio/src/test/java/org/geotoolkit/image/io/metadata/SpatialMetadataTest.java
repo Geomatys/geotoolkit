@@ -58,15 +58,15 @@ public final class SpatialMetadataTest {
         /*
          * Read the ImageDescription metadata.
          */
-        final ImageDescription description = metadata.getImageDescription();
+        final ImageDescription description = metadata.getInstanceForType(ImageDescription.class);
         assertEquals(ImagingCondition.CLOUD, description.getImagingCondition());
         assertEquals(Double.valueOf(20), description.getCloudCoverPercentage());
         assertNull(description.getCompressionGenerationQuantity());
-        assertSame("The metadata should be cached", description, metadata.getImageDescription());
+        assertSame("The metadata should be cached", description, metadata.getInstanceForType(ImageDescription.class));
         /*
          * Read the RectifiedGrid metadata.
          */
-        final RectifiedGrid grid = metadata.getRectifiedGridDomain();
+        final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
 //      final List<double[]> vectors = grid.getOffsetVectors();
 //      assertEquals(2, vectors.size());
     }

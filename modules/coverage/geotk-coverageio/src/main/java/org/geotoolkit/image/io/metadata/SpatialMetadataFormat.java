@@ -95,8 +95,9 @@ import org.geotoolkit.resources.Errors;
  *
  * <a name="default-formats">{@section Default formats}</a>
  * The default {@link #STREAM} and {@link #IMAGE} formats are inferred from a subset of the
- * {@link Metadata} and {@link ImageDescription} interfaces, respectively. Consequently those
- * instances can be considered as profiles of ISO 19115-2, with a few minor departures:
+ * GeoAPI metadata interfaces, especially {@link Metadata} and {@link ImageDescription}.
+ * Consequently those instances can be considered as profiles of ISO 19115-2, with a few
+ * minor departures:
  * <p>
  * <ul>
  *   <li>The {@link Band} interface defined by ISO 19115-2 is used only when the values are
@@ -106,7 +107,8 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  * <p>
  * The tree structures are show below. As a general rule, the name of <em>elements</em> start with
- * a upper case letter while the name of <em>attributes</em> start with a lower case letter.
+ * a upper case letter while the name of <em>attributes</em> start with a lower case letter. The
+ * valid types of attributes values are <a href="package-summary.html#accessor-types">listed here</a>.
  * For browsing these trees in an applet together with additional information, see the
  * <a href="http://www.geotoolkit.org/demos/geotk-simples/applet/IIOMetadataPanel.html">IIOMetadataPanel applet</a>.
  *
