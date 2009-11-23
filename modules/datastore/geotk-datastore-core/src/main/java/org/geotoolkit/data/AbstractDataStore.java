@@ -29,7 +29,6 @@ import org.geotoolkit.data.concurrent.LockingManager;
 import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.view.DefaultView;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
@@ -206,15 +205,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     @Override
     public void updateSchema(String typeName, SimpleFeatureType featureType) {
         throw new UnsupportedOperationException("Schema modification not supported");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getView(final Query query)
-            throws IOException, SchemaException {
-        return new DefaultView(this.getFeatureSource(query.getTypeName()), query);
     }
 
     /**

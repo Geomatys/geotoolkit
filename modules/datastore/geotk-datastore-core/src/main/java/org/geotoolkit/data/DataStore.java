@@ -261,35 +261,6 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
     T getSchema(Name name) throws IOException;
 
     /**
-     * Access a FeatureSource<SimpleFeatureType, SimpleFeature> for Query providing a high-level API.
-     * <p>
-     * The provided Query does not need to completely cover the existing
-     * schema for Query.getTypeName(). The result will mostly likely only be
-     * a FeatureSource<SimpleFeatureType, SimpleFeature> and probably wont' allow write access by the
-     * FeatureStore method.
-     * </p>
-     * <p>
-     * By using Query we allow support for reprojection, in addition
-     * to overriding the CoordinateSystem used by the native FeatureType.
-     * </p>
-     * <p>
-     * We may wish to limit this method to only support Queries using
-     * Filter.EXCLUDE.
-     * </p>
-     * <p>
-     * Update - GeoServer has an elegatent implementation of this functionality
-     * that we could steal. GeoServerFeatureSource, GeoServerFeatureStore and
-     * GeoServerFeatureLocking serve as a working prototype.
-     * </p>
-     * @param query Query.getTypeName() locates FeatureType being viewed
-     *
-     * @return FeatureSource<SimpleFeatureType, SimpleFeature> providing operations for featureType
-     * @throws IOException If FeatureSource<SimpleFeatureType, SimpleFeature> is not available
-     * @throws SchemaException If fetureType is not covered by existing schema
-     */
-    FeatureSource<T, F> getView(Query query) throws IOException,SchemaException;
-
-    /**
      * Access a FeatureSource<SimpleFeatureType, SimpleFeature> for typeName providing a high-level API.
      *
      * <p>

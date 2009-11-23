@@ -445,15 +445,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * {@inheritDoc }
      */
     @Override
-    public final ContentFeatureSource getView(final Query query) throws IOException, SchemaException {
-        final ContentFeatureSource origional = getFeatureSource( query.getTypeName() );
-        return origional.getView(query);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public final void updateSchema(final String typeName, final SimpleFeatureType featureType)
             throws IOException{
         throw new UnsupportedOperationException();
