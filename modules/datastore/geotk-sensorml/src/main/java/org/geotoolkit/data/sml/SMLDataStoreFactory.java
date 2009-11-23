@@ -50,7 +50,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     /**
      * Parameter identifying the OM datastore
      */
-    public static final GeneralParameterDescriptor DBTYPE = new DefaultParameterDescriptor("dbtype","DbType",String.class, "OM",true);
+    public static final GeneralParameterDescriptor DBTYPE = new DefaultParameterDescriptor("dbtype","DbType",String.class, "SML",true);
 
     /**
      * Parameter for database type (postgres, derby, ...)
@@ -70,7 +70,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     /**
      * Parameter for database name
      */
-    public static final GeneralParameterDescriptor DATABASE = new DefaultParameterDescriptor("database","Database", String.class, "observations",true);
+    public static final GeneralParameterDescriptor DATABASE = new DefaultParameterDescriptor("database","Database", String.class, null,true);
 
     /**
      * Parameter for database user name
@@ -89,7 +89,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OMParameters",
+            new DefaultParameterDescriptorGroup("SMLParameters",
                 new GeneralParameterDescriptor[]{DBTYPE,HOST,PORT,DATABASE,USER,PASSWD,NAMESPACE, SGBDTYPE, DERBYURL});
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.data.sml");
