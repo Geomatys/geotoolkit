@@ -33,7 +33,7 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -148,7 +148,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
         //TODO: apply wrappers
 
         //TODO: turn locking on / off
-        final LockingManager lockingManager = getDataStore().getLockingManager();
+        final LockManager lockingManager = getDataStore().getLockManager();
         return ((InProcessLockingManager) lockingManager).checkedWriter(writer, transaction);
 
     }
@@ -426,7 +426,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
             while (reader.hasNext()) {
                 SimpleFeature feature = reader.next();
                 try {
-                    getDataStore().getLockingManager().lockFeatureID(typeName, feature.getID(), transaction, lock);
+                    getDataStore().getLockManager().lockFeatureID(typeName, feature.getID(), transaction, lock);
 
                     logger.fine("Locked feature: " + feature.getID());
                     locked++;
@@ -479,7 +479,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
         try {
             while (reader.hasNext()) {
                 final SimpleFeature feature = reader.next();
-                getDataStore().getLockingManager().unLockFeatureID(typeName, feature.getID(), transaction, lock);
+                getDataStore().getLockManager().unLockFeatureID(typeName, feature.getID(), transaction, lock);
             }
         } finally {
             reader.close();

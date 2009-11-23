@@ -353,4 +353,9 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
+    @Override
+    protected int getCount(Query query) throws IOException {
+        return -1;
+    }
+
 }

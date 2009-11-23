@@ -1272,7 +1272,7 @@ public final class JDBCDataStore extends ContentDataStore {
 
             try {
                 final PrimaryKey key = getPrimaryKey(featureType);
-                final InProcessLockingManager lm = (InProcessLockingManager) getLockingManager();
+                final InProcessLockingManager lm = (InProcessLockingManager) getLockManager();
                 while (rs.next()) {
                     String fid = featureType.getTypeName() + "." + encodeFID(key, rs);
                     lm.assertAccess(featureType.getTypeName(), fid, tx);

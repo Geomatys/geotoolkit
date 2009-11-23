@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.data.collection.FeatureCollection;
@@ -124,6 +125,16 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
                     throws IOException {
                 return reader(featureArray);
+            }
+
+            @Override
+            protected JTSEnvelope2D getBounds(Query query) throws IOException {
+                return null;
+            }
+
+            @Override
+            protected int getCount(Query query) throws IOException {
+                return -1;
             }
         };
 

@@ -24,7 +24,7 @@ import java.util.Set;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.concurrent.FeatureLock;
 import org.geotoolkit.data.concurrent.FeatureLocking;
-import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -142,7 +142,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      */
     @Override
     public int lockFeatures(final Query query) throws IOException {
-        LockingManager lockingManager = getDataStore().getLockingManager();
+        LockManager lockingManager = getDataStore().getLockManager();
 
         if (lockingManager == null) {
             throw new UnsupportedOperationException(
@@ -212,7 +212,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      */
     @Override
     public void unLockFeatures(final Query query) throws IOException {
-        final LockingManager lockingManager = getDataStore().getLockingManager();
+        final LockManager lockingManager = getDataStore().getLockManager();
 
         if (lockingManager == null) {
             throw new UnsupportedOperationException(

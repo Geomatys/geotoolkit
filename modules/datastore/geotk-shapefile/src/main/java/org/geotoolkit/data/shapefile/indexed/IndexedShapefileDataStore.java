@@ -272,10 +272,10 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
             writer = state(transaction).writer(typeName, Filter.EXCLUDE);
         }
 
-        if (getLockingManager() != null) {
+        if (getLockManager() != null) {
             // subclass has not provided locking so we will
             // fake it with InProcess locks
-            writer = ((InProcessLockingManager) getLockingManager())
+            writer = ((InProcessLockingManager) getLockManager())
                     .checkedWriter(writer, transaction);
         }
 

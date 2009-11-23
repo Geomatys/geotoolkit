@@ -25,7 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.data.query.Query;
@@ -528,7 +528,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * @see org.geotoolkit.data.DataStore#getLockingManager()
      */
     @Override
-    public LockingManager getLockingManager() {
+    public LockManager getLockManager() {
         return lockingManager;
     }
 
@@ -545,9 +545,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * @throws SchemaNotFoundException
      * @throws IOException
      */
-    protected JTSEnvelope2D getBounds(Query query) throws IOException {
-        return null; // too expensive
-    }
+    protected abstract JTSEnvelope2D getBounds(Query query) throws IOException;
 
     /**
      * Gets the number of the features that would be returned by this query for
@@ -564,9 +562,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      *
      * @throws IOException if there are errors getting the count
      */
-    protected int getCount(Query query) throws IOException {
-        return -1; // too expensive
-    }
+    protected abstract int getCount(Query query) throws IOException;
 
     /**
      * If you are using the automated FeatureSource/Store/Locking creation, this method

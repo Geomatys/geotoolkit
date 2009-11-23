@@ -33,7 +33,7 @@ import java.io.IOException;
  * @author Jody Garnett, Refractions Research
  * @module pending
  */
-public interface LockingManager {
+public interface LockManager {
 
     /**
      * Check if any locks exist held by the authorization <code>lockID</code>.

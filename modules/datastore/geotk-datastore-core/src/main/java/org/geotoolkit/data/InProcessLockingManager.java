@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.concurrent.FeatureLock;
-import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.Transaction.State;
 
@@ -57,7 +57,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  *       less confusing.
  * @module pending
  */
-public class InProcessLockingManager implements LockingManager {
+public class InProcessLockingManager implements LockManager {
 
     /** lockTable access by typeName stores Transactions or MemoryLocks */
     protected final Map lockTables = new HashMap();

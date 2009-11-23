@@ -833,7 +833,7 @@ public class ShapefileDataStore extends AbstractDataStore {
         final SimpleFeatureType featureType = getSchema(typeName);
 
         if (isWriteable) {
-            if (getLockingManager() != null) {
+            if (getLockManager() != null) {
                 return new ShapefileFeatureLocking(this, HINTS, featureType);
             }
             else {
@@ -874,7 +874,7 @@ public class ShapefileDataStore extends AbstractDataStore {
 
         }
 
-        return super.getCount(query);
+        return -1;
     }
 
     /**

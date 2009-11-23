@@ -1096,7 +1096,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     }
 
     boolean isLocked(String typeName, String fid) {
-        InProcessLockingManager lockingManager = (InProcessLockingManager) dataStore.getLockingManager();
+        InProcessLockingManager lockingManager = (InProcessLockingManager) dataStore.getLockManager();
 
         return lockingManager.isLocked(typeName, fid);
     }

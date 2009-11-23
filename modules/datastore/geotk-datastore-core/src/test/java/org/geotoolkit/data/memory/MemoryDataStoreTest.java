@@ -1091,7 +1091,7 @@ public class MemoryDataStoreTest extends DataTestCase {
     }
 
     boolean isLocked(String typeName, String fid) {
-        InProcessLockingManager lockingManager = (InProcessLockingManager) data.getLockingManager();
+        InProcessLockingManager lockingManager = (InProcessLockingManager) data.getLockManager();
         return lockingManager.isLocked(typeName, fid);
     }
 

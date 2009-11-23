@@ -557,12 +557,12 @@ public class SMLDataStore extends AbstractDataStore {
 
     @Override
     protected JTSEnvelope2D getBounds(Query query) throws IOException {
-        return super.getBounds(query);
+        return null;
     }
 
     @Override
     protected int getCount(Query query) throws IOException {
-        return super.getCount(query);
+        return -1;
     }
 
     @Override

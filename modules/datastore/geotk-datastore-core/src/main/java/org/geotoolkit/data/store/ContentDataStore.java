@@ -28,7 +28,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.InProcessLockingManager;
-import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.DefaultName;
@@ -105,7 +105,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     /**
      * locking manager
      */
-    protected final LockingManager lockingManager = new InProcessLockingManager();
+    protected final LockManager lockingManager = new InProcessLockingManager();
 
     /**
      * logger
@@ -437,7 +437,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * {@inheritDoc }
      */
     @Override
-    public final LockingManager getLockingManager() {
+    public final LockManager getLockManager() {
         return lockingManager;
     }
 

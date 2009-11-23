@@ -27,9 +27,8 @@ import org.opengis.filter.Filter;
 
 import org.geotoolkit.data.concurrent.FeatureLocking;
 import org.geotoolkit.data.concurrent.Transaction;
-import org.geotoolkit.data.concurrent.LockingManager;
+import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.SchemaException;
 
 /**
  * Access to Feature content from a service or file.
@@ -137,7 +136,7 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * @return DataStores may return <code>null</code>, if the handling locking
      *         in another fashion.
      */
-    LockingManager getLockingManager();
+    LockManager getLockManager();
 
     /**
      * Disposes of this data store and releases any resource that it is using.
