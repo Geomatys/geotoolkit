@@ -77,12 +77,6 @@ public class QueryUtilities {
             throw new NullPointerException("got a null query argument");
         }
 
-        if (firstQuery.equals(Query.ALL)) {
-            return secondQuery;
-        } else if (secondQuery.equals(Query.ALL)) {
-            return firstQuery;
-        }
-
         if ((firstQuery.getTypeName() != null) && (secondQuery.getTypeName() != null)) {
             if (!firstQuery.getTypeName().equals(secondQuery.getTypeName())) {
                 String msg = "Type names do not match: " + firstQuery.getTypeName() + " != " + secondQuery.getTypeName();

@@ -65,6 +65,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiLineString;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 
 
 /**
@@ -110,7 +111,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         DataStore<SimpleFeatureType,SimpleFeature> memory = MemoryDataStore.create(type);
 
         FeatureSource source = memory.getFeatureSource("typename");
-        assertEquals(0, source.getCount(Query.ALL));
+        assertEquals(0, source.getCount(QueryBuilder.all(source.getName())));
 
     }
 
@@ -901,8 +902,8 @@ public class MemoryDataStoreTest extends DataTestCase {
 
         assertSame(roadType, road.getSchema());
         assertSame(data, road.getDataStore());
-        assertEquals(3, road.getCount(Query.ALL));
-        assertEquals(new JTSEnvelope2D(1, 5, 0, 4, null), road.getBounds(Query.ALL));
+        assertEquals(3, road.getCount(QueryBuilder.all(road.getName())));
+        assertEquals(new JTSEnvelope2D(1, 5, 0, 4, null), road.getBounds(QueryBuilder.all(road.getName())));
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> all = road.getFeatures();
         assertEquals(3, all.size());

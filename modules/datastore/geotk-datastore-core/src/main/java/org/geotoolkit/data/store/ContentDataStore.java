@@ -44,6 +44,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * Abstract base class for data stores.
@@ -343,7 +344,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
         if (typeName == null) {
             throw new IllegalArgumentException("Query does not specify type.");
         }
-        return getFeatureSource(typeName).getReader(Query.ALL);
+        return getFeatureSource(typeName).getReader(QueryBuilder.all(new DefaultName(typeName)));
     }
 
     /**

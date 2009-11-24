@@ -73,20 +73,6 @@ public interface Query {
     public static final int DEFAULT_MAX = Integer.MAX_VALUE;
 
     /**
-     * Implements a query that will fetch all features from a datasource. This
-     * query should retrieve all properties, with no maxFeatures, no
-     * filtering, and the default featureType.
-     */
-    public static final Query ALL = new ALLQuery();
-
-    /**
-     * Implements a query that will fetch all the FeatureIDs from a datasource.
-     * This query should retrive no properties, with no maxFeatures, no
-     * filtering, and the a featureType with no attribtues.
-     */
-    public static final Query FIDS = new FIDSQuery();
-
-    /**
      * Ask for no properties when used with setPropertyNames.
      *
      * <p>
@@ -324,4 +310,5 @@ public interface Query {
      *         (eventually empty but never null).
      */
     Hints getHints();
+    
 }

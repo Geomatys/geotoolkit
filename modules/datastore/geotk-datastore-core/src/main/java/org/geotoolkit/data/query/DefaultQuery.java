@@ -21,9 +21,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,6 +47,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class DefaultQuery implements Query {
 
     /**
+     * The typeName to get
+     */
+    private Name typeName;
+
+    /**
      * The properties to fetch
      */
     private String[] properties;
@@ -58,10 +64,6 @@ public class DefaultQuery implements Query {
      * The filter to constrain the request.
      */
     private Filter filter = Filter.INCLUDE;
-    /**
-     * The typeName to get
-     */
-    private String typeName;
     /**
      * The namespace to get
      */
@@ -93,7 +95,9 @@ public class DefaultQuery implements Query {
 
     /**
      * No argument constructor.
+     * @deprecated
      */
+    @Deprecated
     public DefaultQuery() {
         // no arg
     }
@@ -102,10 +106,42 @@ public class DefaultQuery implements Query {
      * Query with typeName.
      *
      * @param typeName the name of the featureType to retrieve
+     * @deprecated
      */
+    @Deprecated
     public DefaultQuery(final String typeName) {
         this(typeName, Filter.INCLUDE);
     }
+
+    /**
+     * Query with typeName.
+     *
+     * @param typeName the name of the featureType to retrieve
+     */
+    public DefaultQuery(final Name name) {
+        this(name,null);
+    }
+
+    /**
+     * Query with typeName.
+     *
+     * @param typeName the name of the featureType to retrieve
+     */
+    public DefaultQuery(final Name name, String[] attributs) {
+        this(name.getLocalPart(), Filter.INCLUDE,attributs);
+    }
+
+    public DefaultQuery(final Name name, Filter filter, String[] attributs,
+            SortBy[] sort, Integer startIndex, Integer MaxFeature,Hints hints){
+        this.typeName = name;
+        this.filter = filter;
+        this.properties = attributs;
+        this.sortBy = sort;
+        this.startIndex = startIndex;
+        this.maxFeatures = MaxFeature;
+        this.hints = hints;
+    }
+
 
     /**
      * Constructor with typeName and filter.  Note that current datasource
@@ -114,7 +150,9 @@ public class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve.
      * @param filter the OGC filter to constrain the request.
+     * @deprecated
      */
+    @Deprecated
     public DefaultQuery(final String typeName, final Filter filter) {
         this(typeName, filter, Query.ALL_NAMES);
     }
@@ -125,7 +163,9 @@ public class DefaultQuery implements Query {
      *
      * @param filter the OGC filter to constrain the request.
      * @param properties an array of the properties to fetch.
+     * @deprecated
      */
+    @Deprecated
     public DefaultQuery(final String typeName, final Filter filter, final String[] properties) {
         this(typeName, null, filter, Query.DEFAULT_MAX, properties, null);
     }
@@ -138,7 +178,9 @@ public class DefaultQuery implements Query {
      * @param maxFeatures the maximum number of features to be returned.
      * @param propNames an array of the properties to fetch.
      * @param handle the name to associate with the query.
+     * @deprecated
      */
+    @Deprecated
     public DefaultQuery(final String typeName, final Filter filter, final int maxFeatures,
             final String[] propNames, final String handle) {
         this(typeName, null, filter, maxFeatures, propNames, handle);
@@ -153,10 +195,12 @@ public class DefaultQuery implements Query {
      * @param maxFeatures the maximum number of features to be returned.
      * @param propNames an array of the properties to fetch.
      * @param handle the name to associate with the query.
+     * @deprecated
      */
+    @Deprecated
     public DefaultQuery(final String typeName, final URI namespace, final Filter filter,
             final int maxFeatures, final String[] propNames, final String handle) {
-        this.typeName = typeName;
+        this.typeName = new DefaultName(typeName);
         this.filter = filter;
         this.namespace = namespace;
         this.properties = propNames;
@@ -313,7 +357,7 @@ public class DefaultQuery implements Query {
      */
     @Override
     public String getTypeName() {
-        return this.typeName;
+        return this.typeName.getLocalPart();
     }
 
     /**
@@ -330,7 +374,7 @@ public class DefaultQuery implements Query {
      * @param typeName the name of the featureType to retrieve.
      */
     public void setTypeName(final String typeName) {
-        this.typeName = typeName;
+        this.typeName = new DefaultName(typeName);
     }
 
     /**

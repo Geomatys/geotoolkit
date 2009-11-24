@@ -41,14 +41,7 @@ public class QueryCapabilities {
     // GR: commenting out by now as its being an unexpected scope increase,
     // gonna add it back once I have the paging use case handled
     // FilterCapabilities getFilterCapabilities();
-    /**
-     * True if this feature source supports reprojection
-     */
-    // public boolean isReprojectionSupported();
-    /**
-     *
-     */
-    // public boolean isCRSForcingSupported();
+
     /**
      * Is offset supported. A value of true implies ability to have a consistent sort order. At
      * least {@link SortBy#NATURAL_ORDER} shall be supported, and be the default order if a Query

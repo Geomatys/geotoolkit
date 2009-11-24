@@ -37,6 +37,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * This is a starting point for providing your own FeatureSource<SimpleFeatureType, SimpleFeature> implementation.
@@ -243,7 +244,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     @Override
     public JTSEnvelope2D getBounds() throws IOException {
-        return getBounds(Query.ALL);
+        return getBounds(QueryBuilder.all(getSchema().getName()));
     }
 
     /**

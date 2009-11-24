@@ -34,7 +34,10 @@ import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
+import org.opengis.feature.type.Name;
 
 /**
  * Simple data store wrapper for feature collections. Allows to use feature collections in the user
@@ -200,8 +203,9 @@ public class CollectionDataStore extends AbstractDataStore {
 
         @Override
         public void collectionChanged(final CollectionEvent tce) {
-            final String typeName = featureType.getTypeName();
-            final JTSEnvelope2D bounds = getBoundsInternal(Query.ALL);
+            final Name name = featureType.getName();
+            final String typeName = name.getLocalPart();
+            final JTSEnvelope2D bounds = getBoundsInternal(QueryBuilder.all(name));
 
             switch (tce.getEventType()) {
                 case CollectionEvent.FEATURES_ADDED:

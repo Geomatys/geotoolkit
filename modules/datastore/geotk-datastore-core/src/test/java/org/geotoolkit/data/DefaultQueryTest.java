@@ -112,7 +112,6 @@ public class DefaultQueryTest extends TestCase {
     /** Test of getTypeName method, of class org.geotoolkit.data.DefaultQuery. */
     public void testTypeName() {
         DefaultQuery query = new DefaultQuery();
-        assertNull(query.getTypeName());
 
         query.setTypeName("foobar");
         assertEquals("foobar", query.getTypeName());

@@ -34,9 +34,11 @@ import org.geotoolkit.data.ReTypeFeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.PropertyNameResolvingVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -179,13 +181,6 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     }
 
     /**
-     * Indicates if this feature source is actually a view.
-     */
-    public final boolean isView() {
-        return query != null && query != Query.ALL;
-    }
-
-    /**
      * Returns the same name than the feature type (ie,
      * {@code getSchema().getName()} to honor the simple feature land common
      * practice of calling the same both the Features produces and their types
@@ -268,7 +263,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public final JTSEnvelope2D getBounds() throws IOException {
 
         //return all(entry.getState(transaction)).getBounds();
-        return getBounds(Query.ALL);
+        return getBounds(QueryBuilder.all(new DefaultName(entry.getTypeName())));
     }
 
     /**
@@ -390,7 +385,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     @Override
     public final ContentFeatureCollection getFeatures() throws IOException {
-        final Query query = joinQuery(Query.ALL);
+        final Query query = joinQuery(QueryBuilder.all(new DefaultName(entry.getTypeName())));
         return new ContentFeatureCollection(this, query);
         //return getFeatures(Query.ALL);
     }
@@ -402,7 +397,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      * </p>
      */
     public final FeatureReader<SimpleFeatureType, SimpleFeature> getReader() throws IOException {
-        return getReader(Query.ALL);
+        return getReader(QueryBuilder.all(new DefaultName(entry.getTypeName())));
     }
 
     /**
@@ -792,7 +787,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     protected Query joinQuery(final Query query) {
         // if the defining query is unset or ALL just return the query passed in
-        if (this.query == null || this.query == Query.ALL) {
+        if (this.query == null || this.query.equals(QueryBuilder.all(new DefaultName(entry.getTypeName())))) {
             return query;
         }
 

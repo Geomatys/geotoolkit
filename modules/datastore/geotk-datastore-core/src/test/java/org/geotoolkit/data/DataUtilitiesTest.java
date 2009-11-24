@@ -55,6 +55,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.resources.NIOUtilities;
 
@@ -424,9 +425,9 @@ public class DataUtilitiesTest extends DataTestCase {
 
     public void testSource() throws Exception {
         FeatureSource<SimpleFeatureType, SimpleFeature> s = DataUtilities.source(roadFeatures);
-        assertEquals(-1, s.getCount(Query.ALL));
+        assertEquals(-1, s.getCount(QueryBuilder.all(s.getName())));
         assertEquals(3, s.getFeatures().size());
-        assertEquals(3, s.getFeatures(Query.ALL).size());
+        assertEquals(3, s.getFeatures(QueryBuilder.all(s.getName())).size());
         assertEquals(3, s.getFeatures(Filter.INCLUDE).size());
         assertEquals(0, s.getFeatures(Filter.EXCLUDE).size());
         assertEquals(1, s.getFeatures(rd1Filter).size());

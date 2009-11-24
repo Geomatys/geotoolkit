@@ -40,6 +40,7 @@ import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * DOCUMENT ME!
@@ -414,8 +415,8 @@ public class CollectionDataStoreTest extends DataTestCase {
 
         assertSame(roadType, road.getSchema());
         assertSame(data, road.getDataStore());
-        assertEquals(3, road.getCount(Query.ALL));
-        assertEquals(new Envelope(1, 5, 0, 4), road.getBounds(Query.ALL));
+        assertEquals(3, road.getCount(QueryBuilder.all(road.getName())));
+        assertEquals(new Envelope(1, 5, 0, 4), road.getBounds(QueryBuilder.all(road.getName())));
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> all = road.getFeatures();
         assertEquals(3, all.size());
