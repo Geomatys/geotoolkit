@@ -39,6 +39,7 @@ import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.store.EmptyFeatureCollection;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -226,7 +227,7 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
-        return getFeatureReader(typeName, Query.ALL);
+        return getFeatureReader(typeName, QueryBuilder.all(new DefaultName(typeName)));
     }
 
     /**

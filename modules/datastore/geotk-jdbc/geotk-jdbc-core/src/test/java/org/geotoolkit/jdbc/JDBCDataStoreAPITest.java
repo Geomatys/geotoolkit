@@ -59,6 +59,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.filter.function.geometry.GeometryTypeFunction;
 
@@ -923,10 +924,10 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         assertFeatureTypesEqual(td.roadType, road.getSchema());
         assertSame(dataStore, road.getDataStore());
 
-        int count = road.getCount(Query.ALL);
+        int count = road.getCount(QueryBuilder.all(road.getName()));
         assertTrue((count == 3) || (count == -1));
 
-        JTSEnvelope2D bounds = road.getBounds(Query.ALL);
+        JTSEnvelope2D bounds = road.getBounds(QueryBuilder.all(road.getName()));
         assertTrue((bounds == null) || 
         		areReferencedEnvelopesEuqal(bounds,td.roadBounds));
 

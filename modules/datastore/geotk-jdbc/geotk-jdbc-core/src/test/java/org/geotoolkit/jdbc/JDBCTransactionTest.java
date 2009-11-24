@@ -25,6 +25,8 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -114,13 +116,13 @@ public abstract class JDBCTransactionTest extends JDBCTestSupport {
         st.addFeatures( features );
         tx1.commit();
         tx1.close();
-        assertEquals(4, dataStore.getFeatureSource("ft1").getCount(Query.ALL));
+        assertEquals(4, dataStore.getFeatureSource("ft1").getCount(QueryBuilder.all(new DefaultName("ft1"))));
         
         Transaction tx2 = new DefaultTransaction();
         st.setTransaction(tx2);
         st.addFeatures( features );
         tx2.commit();
         tx2.close();
-        assertEquals(5, dataStore.getFeatureSource("ft1").getCount(Query.ALL));
+        assertEquals(5, dataStore.getFeatureSource("ft1").getCount(QueryBuilder.all(new DefaultName("ft1"))));
     }
 }

@@ -34,7 +34,7 @@ import org.opengis.filter.Id;
  */
 public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implements FeatureMapLayer {
 
-    protected Query query = Query.ALL;
+    protected Query query = null;
     protected Id selectionFilter = null;
 
     protected AbstractFeatureMapLayer(MutableStyle style){
@@ -66,7 +66,7 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
      */
     @Override
     public Query getQuery() {
-        return (query == Query.ALL) ? query : new DefaultQuery(query);
+        return query;
     }
 
     /**

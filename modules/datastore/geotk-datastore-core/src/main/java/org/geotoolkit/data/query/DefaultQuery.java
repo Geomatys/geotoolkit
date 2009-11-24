@@ -357,7 +357,12 @@ public class DefaultQuery implements Query {
      */
     @Override
     public String getTypeName() {
-        return this.typeName.getLocalPart();
+        if(this.typeName == null){
+            return null;
+        }else{
+            return this.typeName.getLocalPart();
+        }
+        
     }
 
     /**

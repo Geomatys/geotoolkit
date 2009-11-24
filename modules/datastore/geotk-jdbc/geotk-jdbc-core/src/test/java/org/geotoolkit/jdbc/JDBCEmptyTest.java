@@ -17,9 +17,9 @@
 package org.geotoolkit.jdbc;
 
 import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 
@@ -36,7 +36,7 @@ public abstract class JDBCEmptyTest extends JDBCTestSupport {
         JTSEnvelope2D bounds = fs.getBounds();
         assertTrue( bounds.isNull() );
         
-        int count = fs.getCount( Query.ALL );
+        int count = fs.getCount( QueryBuilder.all(fs.getName()) );
         assertEquals( 0, count );
     }
     

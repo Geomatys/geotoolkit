@@ -59,7 +59,7 @@ public class FeatureSourceModel extends DefaultTableModel {
     private final ArrayList<Feature> features = new ArrayList<Feature>();
     private MapLayer layer;
     private JXTable tab;
-    private Query query = Query.ALL; 
+    private Query query = null;
 
     /** Creates a new instance of BasicTableModel
      * @param tab

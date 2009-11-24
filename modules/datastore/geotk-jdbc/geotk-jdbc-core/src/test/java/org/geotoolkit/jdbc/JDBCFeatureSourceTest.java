@@ -25,6 +25,7 @@ import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -88,7 +89,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
 
     public void testCount() throws Exception {
-        assertEquals(3, featureSource.getCount(Query.ALL));
+        assertEquals(3, featureSource.getCount(QueryBuilder.all(featureSource.getName())));
     }
 
     public void testCountWithFilter() throws Exception {
