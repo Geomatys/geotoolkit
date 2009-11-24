@@ -26,7 +26,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,9 +64,15 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class SMLDataStore extends AbstractDataStore {
 
-    private final Map<String,SimpleFeatureType> types = new HashMap<String,SimpleFeatureType>();
+    private final Map<Name,SimpleFeatureType> types = new HashMap<Name, SimpleFeatureType>();
 
     private final Connection connection;
+
+    private final static Name SYSTEM         = new DefaultName("http://www.opengis.net/sml/1.0", "System");
+    private final static Name COMPONENT      = new DefaultName("http://www.opengis.net/sml/1.0", "Component");
+    private final static Name PROCESSCHAIN   = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessChain");
+    private final static Name PROCESSMODEL   = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel");
+    private final static Name DATASOURCETYPE = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
@@ -81,12 +89,11 @@ public class SMLDataStore extends AbstractDataStore {
     private static final String pathCharacteristicsNam = "SensorML:SensorML:member:characteristics:field:field:name";
     private static final String pathCharacteristicsVal = "SensorML:SensorML:member:characteristics:field:field:value";
     private static final String pathLocation           = "SensorML:SensorML:member:location:pos";
+    private static final String pathCRS                = "SensorML:SensorML:member:location:pos:srsName";
 
     private PreparedStatement getAllFormId;
-
     private PreparedStatement getTextValue;
     private PreparedStatement getTextValue2;
-
     private PreparedStatement getSMLType;
 
     /*
@@ -243,7 +250,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
 
         SimpleFeatureType componentType = featureTypeBuilder.buildFeatureType();
-        types.put("Component", componentType);
+        types.put(COMPONENT, componentType);
 
         // sml:inputs
         propertyName = PRODUCER;
@@ -283,7 +290,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(10, attCom);
 
         SimpleFeatureType systemType = featureTypeBuilder.buildFeatureType();
-        types.put("System", systemType);
+        types.put(SYSTEM, systemType);
 
          /*
          * Feature type sml:ProcessChain
@@ -304,7 +311,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(10, attCom);
 
         SimpleFeatureType processChainType = featureTypeBuilder.buildFeatureType();
-        types.put("ProcessChain", processChainType);
+        types.put(PROCESSCHAIN, processChainType);
 
         // sml:method
         propertyName = METHOD;
@@ -333,7 +340,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attMet);
 
         SimpleFeatureType processModelType = featureTypeBuilder.buildFeatureType();
-        types.put("ProcessModel", processModelType);
+        types.put(PROCESSMODEL, processModelType);
 
         // sml:characteristics
         propertyName = CHARACTERISTICS;
@@ -362,7 +369,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attChar);
 
         SimpleFeatureType dataSourceType = featureTypeBuilder.buildFeatureType();
-        types.put("DataSourceType", dataSourceType);
+        types.put(DATASOURCETYPE, dataSourceType);
     }
 
     /**
@@ -370,8 +377,21 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     public String[] getTypeNames() throws IOException {
-        final Set<String> keys = types.keySet();
+        final Set<String> keys = new HashSet<String>();
+        for (Name n : types.keySet()) {
+            keys.add(n.getLocalPart());
+        }
         return keys.toArray(new String[keys.size()]);
+    }
+
+     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Name> getNames() throws IOException {
+        Set<Name> keys = types.keySet();
+        return Arrays.asList(keys.toArray(new Name[keys.size()]));
+
     }
 
     /**
@@ -379,19 +399,53 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     public SimpleFeatureType getSchema(String typeName) throws IOException {
-        final SimpleFeatureType sft = types.get(typeName);
+        for (Name n : types.keySet()) {
+            if (n.getLocalPart().equals(typeName)) {
+                return types.get(n);
+            }
+        }
+        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
+    }
+
+    @Override
+    public SimpleFeatureType getSchema(Name name) throws IOException {
+        final SimpleFeatureType sft = types.get(name);
         if (sft == null) {
-            throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
+            throw new IOException("Type name : "+ name +"is unknowned is this datastore");
         }
         return sft;
     }
+
+
 
     /**
      * {@inheritDoc }
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
-        final SimpleFeatureType sft = types.get(typeName);
+        SimpleFeatureType sft = null;
+        for (Name n : types.keySet()) {
+            if (n.getLocalPart().equals(typeName)) {
+                sft = types.get(n);
+            }
+        }
+        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, typeName);
+        return DataUtilities.wrapToReader(sft, collection.features());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name) throws IOException {
+        final SimpleFeatureType sft = types.get(name);
+        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
+        return DataUtilities.wrapToReader(sft, collection.features());
+    }
+
+
+    private FeatureCollection<SimpleFeatureType,SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
+
         final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = new DefaultFeatureCollection(typeName + "-collection", sft);
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
 
@@ -399,166 +453,196 @@ public class SMLDataStore extends AbstractDataStore {
 
             ResultSet result = getAllFormId.executeQuery();
 
-            boolean firstCRS = false;
+            boolean firstCRS = true;
             while (result.next()) {
                 int formID = result.getInt(1);
+                SimpleFeature feature = buildFeature(builder, formID, typeName);
+                if (feature != null) {
+                    collection.add(feature);
 
-                if (firstCRS) {
-                    String srsName = result.getString("point_srsname");
-                    CoordinateReferenceSystem crs;
-                    try {
-                        crs = CRS.decode(srsName);
-                        ((DefaultSimpleFeatureType)sft).setCoordinateReferenceSystem(crs);
-                        firstCRS = false;
-                    } catch (NoSuchAuthorityCodeException ex) {
-                        throw new IOException(ex);
-                    } catch (FactoryException ex) {
-                        throw new IOException(ex);
-                    }
-                    
-                }
+                    if (firstCRS) {
+                        getTextValue.setString(1, pathCRS);
+                        getTextValue.setInt(2, formID);
+                        ResultSet resultCRS = getTextValue.executeQuery();
+                        if (resultCRS.next()) {
+                            String srsName = resultCRS.getString(1);
 
-                builder.reset();
-                getTextValue.setString(1, pathDescription);
-                getTextValue.setInt(2, formID);
-                ResultSet result2 = getTextValue.executeQuery();
-                if (result2.next()) {
-                    builder.set(DESC, result.getString(1));
-                }
-                result2.close();
-
-                getTextValue.setString(1, pathName);
-                getTextValue.setInt(2, formID);
-                result2 = getTextValue.executeQuery();
-                if (result2.next()) {
-                    builder.set(NAME, result.getString(1));
-                }
-                result2.close();
-
-                getTextValue.setString(1, pathKeywords);
-                getTextValue.setInt(2, formID);
-                result2 = getTextValue.executeQuery();
-                List<String> keywords = new ArrayList<String>();
-                while (result2.next()) {
-                    keywords.add(result2.getString(1));
-                }
-                result2.close();
-                builder.set(KEYWORDS, keywords);
-
-                getTextValue.setString(1, pathPhenomenons);
-                getTextValue.setInt(2, formID);
-                result2 = getTextValue.executeQuery();
-                List<String> phenomenons = new ArrayList<String>();
-                while (result2.next()) {
-                    phenomenons.add(result2.getString(1));
-                }
-                result2.close();
-                builder.set(PHENOMENONS, phenomenons);
-
-                getSMLType.setInt(1, formID);
-                result2 = getSMLType.executeQuery();
-                if (result2.next()) {
-                    builder.set(SMLTYPE, result.getString(1));
-                }
-                result2.close();
-
-                // TODO smlRef
-
-
-                getTextValue.setString(1, pathInputsDef);
-                getTextValue.setInt(2, formID);
-                result2 = getTextValue.executeQuery();
-                getTextValue2.setString(1, pathInputsNam);
-                getTextValue2.setInt(2, formID);
-                ResultSet result3 = getTextValue2.executeQuery();
-                Map<String, String> inputs = new HashMap<String, String>();
-                while (result2.next() && result3.next()) {
-                    inputs.put(result3.getString(1), result2.getString(1));
-                }
-                result2.close();
-                result3.close();
-                builder.set(INPUTS, phenomenons);
-
-                getTextValue.setString(1, pathOutputsDef);
-                getTextValue.setInt(2, formID);
-                result2 = getTextValue.executeQuery();
-                getTextValue2.setString(1, pathOutputsNam);
-                getTextValue2.setInt(2, formID);
-                result3 = getTextValue2.executeQuery();
-                Map<String, String> outputs = new HashMap<String, String>();
-                while (result2.next()  && result3.next()) {
-                    outputs.put(result3.getString(1), result2.getString(1));
-                }
-                result2.close();
-                result3.close();
-                builder.set(OUTPUTS, phenomenons);
-
-                //location
-                getTextValue.setString(1, pathLocation);
-                getTextValue.setInt(2, formID);
-                result2 = getTextValue.executeQuery();
-                if (result2.next()) {
-                    String location  = result2.getString(1);
-                    try {
-                        double x         = Double.parseDouble(location.substring(0, location.indexOf(" ")));
-                        double y         = Double.parseDouble(location.substring(location.indexOf(" ") + 1));
-                        Coordinate coord = new Coordinate(x, y);
-                        builder.set(LOCATION, GF.createPoint(coord));
-                    } catch (NumberFormatException ex) {
-                        LOGGER.warning("unable to extract the point coordinate from the text value:" + location);
+                            if (srsName.startsWith("urn:ogc:crs:")) {
+                                srsName = "urn:ogc:def:crs:" + srsName.substring(12);
+                            }
+                            CoordinateReferenceSystem crs;
+                            try {
+                                crs = CRS.decode(srsName);
+                                ((DefaultSimpleFeatureType)sft).setCoordinateReferenceSystem(crs);
+                                firstCRS = false;
+                            } catch (NoSuchAuthorityCodeException ex) {
+                                throw new IOException(ex);
+                            } catch (FactoryException ex) {
+                                throw new IOException(ex);
+                            }
+                        }
                     }
                 }
-                result2.close();
 
-                if (typeName.equals("System") || typeName.equals("ProcessChain")) {
-
-                    // TODO producer
-
-                    
-                    getTextValue.setString(1, pathComponentsRef);
-                    getTextValue.setInt(2, formID);
-                    result2 = getTextValue.executeQuery();
-                    getTextValue2.setString(1, pathComponentsRef);
-                    getTextValue2.setInt(2, formID);
-                    result3 = getTextValue2.executeQuery();
-                    Map<String, String> components = new HashMap<String, String>();
-                    while (result2.next()  && result3.next()) {
-                        components.put(result3.getString(1), result2.getString(1));
-                    }
-                    result2.close();
-                    result3.close();
-                    builder.set(COMPONENTS, phenomenons);
-
-                } else if (typeName.equals("ProcessModel")) {
-                    // TODO method
-                } else if (typeName.equals("DataSourceType")) {
-
-                    getTextValue.setString(1, pathCharacteristicsVal);
-                    getTextValue.setInt(2, formID);
-                    result2 = getTextValue.executeQuery();
-                    getTextValue2.setString(1, pathCharacteristicsVal);
-                    getTextValue2.setInt(2, formID);
-                    result3 = getTextValue2.executeQuery();
-                    Map<String, String> characteristics = new HashMap<String, String>();
-                    while (result2.next() && result3.next()) {
-                        characteristics.put(result3.getString(1), result2.getString(1));
-                    }
-                    result2.close();
-                    result3.close();
-                    builder.set(CHARACTERISTICS, characteristics);
-                }
-
-                
-
-                collection.add(builder.buildFeature(formID + "")); // TODO id
             }
             result.close();
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "SQL exception while reading sensorMLValues table", ex);
         }
-        return DataUtilities.wrapToReader(sft, collection.features());
+        return collection;
     }
+
+
+    /**
+     * Build a simpleFeature
+     *
+     * @param builder
+     * @param formID
+     * @param typeName
+     * @return
+     * @throws SQLException
+     */
+    private SimpleFeature buildFeature(SimpleFeatureBuilder builder, int formID, String typeName) throws SQLException {
+        builder.reset();
+
+        // we filter on the type
+        getSMLType.setInt(1, formID);
+        ResultSet result2 = getSMLType.executeQuery();
+        String type = null;
+        if (result2.next()) {
+            type = result2.getString(1);
+            builder.set(SMLTYPE, type);
+        }
+        result2.close();
+        if (!type.equals(typeName)) {
+            return null;
+        }
+
+        getTextValue.setString(1, pathDescription);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        if (result2.next()) {
+            builder.set(DESC, result2.getString(1));
+        }
+        result2.close();
+
+        getTextValue.setString(1, pathName);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        if (result2.next()) {
+            builder.set(NAME, result2.getString(1));
+        }
+        result2.close();
+
+        getTextValue.setString(1, pathKeywords);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        List<String> keywords = new ArrayList<String>();
+        while (result2.next()) {
+            keywords.add(result2.getString(1));
+        }
+        result2.close();
+        builder.set(KEYWORDS, keywords);
+
+        getTextValue.setString(1, pathPhenomenons);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        List<String> phenomenons = new ArrayList<String>();
+        while (result2.next()) {
+            phenomenons.add(result2.getString(1));
+        }
+        result2.close();
+        builder.set(PHENOMENONS, phenomenons);
+
+        // TODO smlRef
+
+
+        getTextValue.setString(1, pathInputsDef);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        getTextValue2.setString(1, pathInputsNam);
+        getTextValue2.setInt(2, formID);
+        ResultSet result3 = getTextValue2.executeQuery();
+        Map<String, String> inputs = new HashMap<String, String>();
+        while (result2.next() && result3.next()) {
+            inputs.put(result3.getString(1), result2.getString(1));
+        }
+        result2.close();
+        result3.close();
+        builder.set(INPUTS, inputs);
+
+        getTextValue.setString(1, pathOutputsDef);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        getTextValue2.setString(1, pathOutputsNam);
+        getTextValue2.setInt(2, formID);
+        result3 = getTextValue2.executeQuery();
+        Map<String, String> outputs = new HashMap<String, String>();
+        while (result2.next() && result3.next()) {
+            outputs.put(result3.getString(1), result2.getString(1));
+        }
+        result2.close();
+        result3.close();
+        builder.set(OUTPUTS, outputs);
+
+        //location
+        getTextValue.setString(1, pathLocation);
+        getTextValue.setInt(2, formID);
+        result2 = getTextValue.executeQuery();
+        if (result2.next()) {
+            String location = result2.getString(1);
+            try {
+                double x = Double.parseDouble(location.substring(0, location.indexOf(" ")));
+                double y = Double.parseDouble(location.substring(location.indexOf(" ") + 1));
+                Coordinate coord = new Coordinate(x, y);
+                builder.set(LOCATION, GF.createPoint(coord));
+            } catch (NumberFormatException ex) {
+                LOGGER.warning("unable to extract the point coordinate from the text value:" + location);
+            }
+        }
+        result2.close();
+
+        if (typeName.equals("System") || typeName.equals("ProcessChain")) {
+
+            // TODO producer
+
+
+            getTextValue.setString(1, pathComponentsRef);
+            getTextValue.setInt(2, formID);
+            result2 = getTextValue.executeQuery();
+            getTextValue2.setString(1, pathComponentsNam);
+            getTextValue2.setInt(2, formID);
+            result3 = getTextValue2.executeQuery();
+            Map<String, String> components = new HashMap<String, String>();
+            while (result2.next() && result3.next()) {
+                components.put(result3.getString(1), result2.getString(1));
+            }
+            result2.close();
+            result3.close();
+            builder.set(COMPONENTS, components);
+
+        } else if (typeName.equals("ProcessModel")) {
+            // TODO method
+        } else if (typeName.equals("DataSourceType")) {
+
+            getTextValue.setString(1, pathCharacteristicsVal);
+            getTextValue.setInt(2, formID);
+            result2 = getTextValue.executeQuery();
+            getTextValue2.setString(1, pathCharacteristicsNam);
+            getTextValue2.setInt(2, formID);
+            result3 = getTextValue2.executeQuery();
+            Map<String, String> characteristics = new HashMap<String, String>();
+            while (result2.next() && result3.next()) {
+                characteristics.put(result3.getString(1), result2.getString(1));
+            }
+            result2.close();
+            result3.close();
+            builder.set(CHARACTERISTICS, characteristics);
+        }
+        return builder.buildFeature(formID + ""); // TODO id
+    }
+
 
     @Override
     public void dispose() {
@@ -566,7 +650,7 @@ public class SMLDataStore extends AbstractDataStore {
         try {
             connection.close();
         } catch (SQLException ex) {
-            LOGGER.info("SQL Exception while closing O&M datastore");
+            LOGGER.info("SQL Exception while closing SML datastore");
         }
 
     }
@@ -585,4 +669,8 @@ public class SMLDataStore extends AbstractDataStore {
     protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
         return super.getFeatureReader(typeName, query);
     }
+
+    
+
+
 }

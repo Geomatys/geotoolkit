@@ -404,6 +404,11 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         return getFeatureReader(typeName);
     }
 
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name)
+            throws IOException {
+        return getFeatureReader(name.getLocalPart());
+    }
+
     /**
      * GR: if a subclass supports filtering, it should override this method
      * to return the unsupported part of the passed filter, so a
