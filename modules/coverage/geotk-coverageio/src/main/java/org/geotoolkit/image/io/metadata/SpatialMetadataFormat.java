@@ -250,11 +250,24 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     public static final String FORMAT_NAME = "geotk-coverageio_3.06";
 
     /**
+     * The name of the single attribute to declare for node that contains array.
+     * This is used mostly for the following:
+     *
+     * {@preformat text
+     *     RectifiedGridDomain  : RectifiedGrid
+     *     └───OffsetVectors    : List<double[]>
+     *         └───OffsetVector : double[]
+     *             └───values
+     * }
+     */
+    static final String ARRAY_ATTRIBUTE_NAME = "values";
+
+    /**
      * The policy for the names of the nodes to be inferred from the ISO objects.
      * We use JavaBeans names instead of UML identifiers in order to get the plural
      * form for collections.
      */
-    static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
+    private static KeyNamePolicy NAME_POLICY = KeyNamePolicy.JAVABEANS_PROPERTY;
 
     /**
      * The default instance for <cite>stream</cite> metadata format. This is the metadata
@@ -291,6 +304,11 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * common standard is {@link MetadataStandard#ISO_19115 ISO_19115}.
      */
     private final Map<String,MetadataStandard> standards = new HashMap<String,MetadataStandard>();
+
+    /**
+     * The mapping from method names to attribute or child element names for a given element.
+     */
+    private final Map<String, Map<String,String>> namesMapping = new HashMap<String, Map<String,String>>();
 
     /**
      * The last value returned by {@link #getDescriptions}, cached on the assumption
@@ -473,6 +491,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         addTree(standard, GridEnvelope.class, "Limits", "RectifiedGridDomain", substitution);
         removeAttribute("Limits",              "dimension"); // Redundant with the one in RectifiedGridDomain.
         removeAttribute("RectifiedGridDomain", "dimension"); // Redundant with the one in SpatialRepresentation.
+        /*
+         * There is no public API for this functionality at this time...
+         */
+        mapName("RectifiedGridDomain", "getExtent", "Limits");
     }
 
     /**
@@ -597,13 +619,17 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param exclude      The attribute types to exclude. This set will be modified.
      * @param substitution The classes to substitute by other classes.
      *        This user-supplied map applies only on childs and is not modified.
+     * @return The {@code elementName}, or a modified version of it if that method
+     *         modified the case, or {@code null} if it has not been added.
      */
-    private void addTree(final MetadataStandard standard, final Class<?> type,
+    private String addTree(final MetadataStandard standard, final Class<?> type,
             String identifier, String elementName, String parentName,
             final int minOccurence, final int maxOccurence, final ValueRestriction restriction,
             final Set<Class<?>> exclude, final Map<Class<?>,Class<?>> substitution)
     {
-        if (maxOccurence == 0) return;
+        if (maxOccurence == 0) {
+            return null;
+        }
         final boolean mandatory = (minOccurence != 0);
          /*
          * CodeList    ⇒    Attribute VALUE_ENUMERATION
@@ -615,7 +641,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
             final Class<CodeList<?>> codeType = (Class<CodeList<?>>) type;
             final List<String> codes = Arrays.asList(CodeLists.identifiers(codeType));
             addAttribute(parentName, elementName, DATATYPE_STRING, mandatory, null, codes);
-            return;
+            return elementName;
         }
         /*
          * JSE type    ⇒    Attribute VALUE_ARBITRARY | VALUE_LIST | VALUE_ENUMERATION
@@ -625,6 +651,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * is handled as a String.
          */
         if (!standard.isMetadata(type)) {
+            String containerName = elementName;
             int dataType = typeOf(type);
             if (maxOccurence != 1) {
                 /*
@@ -634,10 +661,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                  * few cases we add a list of double[] arrays (e.g. "offsetVectors"), in
                  * which cases we need to insert a compound element in the tree.
                  */
-                final Class<?> component = type.getComponentType();
-                if (component != null) {
+                final Class<?> componentType = type.getComponentType();
+                if (componentType != null) {
                     // The container for the repeated elements (CHILD_POLICY_REPEAT)
-                    elementName = toElementName(elementName);
+                    containerName = elementName = toElementName(elementName);
                     addElement(elementName, parentName, minOccurence, maxOccurence);
                     standards.put(elementName, standard);
 
@@ -645,12 +672,13 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                     parentName  = elementName;
                     elementName = toComponentName(elementName, identifier, true);
                     addElement(elementName, parentName, CHILD_POLICY_EMPTY);
+                    addObjectValue(elementName, componentType, 0, Integer.MAX_VALUE);
                     standards.put(elementName, standard);
 
                     // The attribute of kind VALUE_LIST.
                     parentName  = elementName;
-                    elementName = "values";
-                    dataType    = typeOf(component);
+                    elementName = ARRAY_ATTRIBUTE_NAME;
+                    dataType    = typeOf(componentType);
                 }
                 addAttribute(parentName, elementName, dataType, mandatory, minOccurence, maxOccurence);
             } else if (dataType == IIOMetadataFormat.DATATYPE_BOOLEAN) {
@@ -676,7 +704,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                  */
                 addAttribute(parentName, elementName, dataType, mandatory, null);
             }
-            return;
+            return containerName;
         }
         /*
          * Collection of Metadata    ⇒    Element CHILD_POLICY_REPEAT
@@ -689,6 +717,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * 'elementName' except that it is in singular form.
          */
         elementName = toElementName(elementName);
+        final String containerName = elementName;
         if (maxOccurence != 1) {
             addElement(elementName, parentName, minOccurence, maxOccurence);
             standards.put(elementName, standard);
@@ -710,9 +739,10 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          */
         boolean hasChilds = false;
         Obligation obligation = Obligation.FORBIDDEN; // If there is no child.
-        final Map<String,String> identifiers;
+        final Map<String,String> methods, identifiers;
         final Map<String,ValueRestriction> restrictions;
         final Map<String,Class<?>> propertyTypes, elementTypes;
+        methods       = standard.asNameMap       (type, KeyNamePolicy.  METHOD_NAME,    NAME_POLICY);
         identifiers   = standard.asNameMap       (type, KeyNamePolicy.  UML_IDENTIFIER, NAME_POLICY);
         propertyTypes = standard.asTypeMap       (type, TypeValuePolicy.PROPERTY_TYPE,  NAME_POLICY);
         elementTypes  = standard.asTypeMap       (type, TypeValuePolicy.ELEMENT_TYPE,   NAME_POLICY);
@@ -816,12 +846,46 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
              * recursively for proceding to the addition, with guard against infinite recursivity.
              */
             if (exclude.add(childType)) {
-                addTree(standard, childType, identifiers.get(childName), childName, elementName,
-                        min, max, vr, exclude, substitution);
+                childName = addTree(standard, childType, identifiers.get(childName),
+                        childName, elementName, min, max, vr, exclude, substitution);
                 if (!exclude.remove(childType)) {
                     throw new AssertionError(childType);
                 }
+                if (childName != null) {
+                    mapName(elementName, methods.get(entry.getKey()), childName);
+                }
             }
+        }
+        return containerName;
+    }
+
+    /**
+     * Remembers the name of child element or attribute for the given method.
+     * This information is required by {@link MetadataProxy}.
+     *
+     * @param  parentName The name of the parent element.
+     * @param  The name of the method which is mapped to an element/attribute in the parent element.
+     * @param  elementName The name of the element/attribute which represents the method value.
+     * @throws IllegalArgumentException If the parent element doesn't exist, or if the given method
+     *         is already defined for the given parent.
+     */
+    private void mapName(final String parentName, final String methodName, final String elementName)
+            throws IllegalArgumentException
+    {
+        // Actually 'methodName' is the only parameter which has not been verified
+        // by the caller, but we nevertheless verify all parameters as a safety.
+        ensureNonNull("parentName",  parentName);
+        ensureNonNull("methodName",  methodName);
+        ensureNonNull("elementName", elementName);
+        Map<String, String> map = namesMapping.get(parentName);
+        if (map == null) {
+            map = new HashMap<String, String>();
+            namesMapping.put(parentName, map);
+        }
+        final String old = map.put(methodName, elementName);
+        if (old != null && !old.equals(elementName)) {
+            map.put(methodName, old); // Preserve the previous value.
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, methodName));
         }
     }
 
@@ -881,7 +945,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param  attribute   {@code true} if the {@code elementName} is actually for an attribute.
      * @return The name of an entry in the collection.
      */
-    static String toComponentName(final String elementName, final String identifier, final boolean attribute) {
+    private static String toComponentName(final String elementName, final String identifier,
+            final boolean attribute)
+    {
         if (identifier != null && !identifier.equalsIgnoreCase(elementName)) {
             return identifier;
         }
@@ -921,7 +987,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     @Override
     protected void removeElement(final String elementName) {
         super.removeElement(elementName);
-        standards.remove(elementName);
+        standards   .remove(elementName);
+        namesMapping.remove(elementName);
     }
 
     /**
@@ -1044,6 +1111,18 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     public MetadataStandard getElementStandard(final String elementName) {
         return standards.get(elementName);
+    }
+
+    /**
+     * Returns the mapping from method names to element/attribute names, or {@code null} if this
+     * mapping is unknown. Keys are method names, and values are the attribute name as determined
+     * by {@link SpatialMetadataFormat#NAME_POLICY}.
+     * <p>
+     * This method returns a direct reference to the internal map.
+     * <strong>Do not modify the map content!</strong>
+     */
+    final Map<String, String> getElementNames(final String elementName) {
+        return namesMapping.get(elementName);
     }
 
     /**

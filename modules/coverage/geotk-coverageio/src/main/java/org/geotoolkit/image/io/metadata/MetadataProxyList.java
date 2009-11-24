@@ -24,6 +24,8 @@ import java.util.RandomAccess;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.CheckedCollection;
 
+import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ARRAY_ATTRIBUTE_NAME;
+
 
 /**
  * A list of {@link MetadataProxy} instances. This list is <cite>live</cite>: changes to the
@@ -105,7 +107,39 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
         }
         T element = elements[index];
         if (element == null) {
-            element = parent.newProxyInstance(index);
+            /*
+             * If the object has not already been created, create it now. In usual situations,
+             * we just create a new proxy element. However in a few cases, the element type is
+             * not an other interface for which we can create a proxy. The main case we want to
+             * support is the OffsetVector node which are elements having a single attribute
+             * named "values":
+             *
+             * RectifiedGridDomain  : RectifiedGrid
+             * └───OffsetVectors    : List<double[]>
+             *     └───OffsetVector : double[]
+             *         └───values
+             *
+             * Note that this practice (element with a single attribute called "value") is used
+             * in the standard Image I/O metadata format. For now are interrested only in arrays
+             * of primitive ints, doubles or Strings, which is why "values" is plural.
+             */
+            final Class<T> type = parent.interfaceType;
+            final Class<?> componentType = type.getComponentType();
+            if (componentType == null) {
+                element = parent.newProxyInstance(index);
+            } else {
+                final MetadataAccessor accessor = parent.accessor;
+                accessor.selectChild(index);
+                final Object array;
+                if (componentType.equals(Double.TYPE)) {
+                    array = accessor.getAttributeAsDoubles(ARRAY_ATTRIBUTE_NAME, false);
+                } else if (componentType.equals(Integer.TYPE)) {
+                    array = accessor.getAttributeAsIntegers(ARRAY_ATTRIBUTE_NAME, false);
+                } else {
+                    array = accessor.getAttributeAsStrings(ARRAY_ATTRIBUTE_NAME, false);
+                }
+                element = type.cast(array);
+            }
             elements[index] = element;
         }
         return element;

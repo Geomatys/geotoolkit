@@ -83,13 +83,14 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * be modified after construction if this list is intented to be immutable.
      *
      * @param  <E> The type of elements in the list.
-     * @param  array The array to wrap.
-     * @return The given array wrapped in an unmodifiable list.
+     * @param  array The array to wrap, or {@code null} if none.
+     * @return The given array wrapped in an unmodifiable list, or {@code null} if the given
+     *         array was null.
      *
      * @since 2.5
      */
     public static <E> UnmodifiableArrayList<E> wrap(final E[] array) {
-        return new UnmodifiableArrayList<E>(array);
+        return (array != null) ? new UnmodifiableArrayList<E>(array) : null;
     }
 
     /**

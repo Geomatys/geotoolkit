@@ -18,7 +18,9 @@
 package org.geotoolkit.image.io.metadata;
 
 import java.util.List;
+import java.util.Arrays;
 
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
@@ -41,10 +43,11 @@ import static org.junit.Assert.*;
 @Depend(MetadataProxyTest.class)
 public final class SpatialMetadataTest {
     /**
-     * Tests the {@link SpatialMetadata#getInstanceForType} method on an image metadata object.
+     * Tests the {@link SpatialMetadata#getInstanceForType} method for an {@link ImageDescription}
+     * metadata.
      */
     @Test
-    public void testGetInstanceForType() {
+    public void testImageDescription() {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         /*
          * Write a few data using the accessor.
@@ -52,9 +55,6 @@ public final class SpatialMetadataTest {
         MetadataAccessor accessor = new MetadataAccessor(metadata, null, "ImageDescription", null);
         accessor.setAttribute("imagingCondition", "cloud");
         accessor.setAttribute("cloudCoverPercentage", 20.0);
-        accessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain/OffsetVectors", "OffsetVector");
-        accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", 2.0, 5.0, 8.0);
-        accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", 3.0, 1.0, 4.0);
         /*
          * Read the ImageDescription metadata.
          */
@@ -63,11 +63,38 @@ public final class SpatialMetadataTest {
         assertEquals(Double.valueOf(20), description.getCloudCoverPercentage());
         assertNull(description.getCompressionGenerationQuantity());
         assertSame("The metadata should be cached", description, metadata.getInstanceForType(ImageDescription.class));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadata#getInstanceForType} method for an {@link RectifiedGrid}
+     * metadata.
+     */
+    @Test
+    public void testRectifiedGrid() {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        /*
+         * Write a few data using the accessor.
+         */
+        final int[] limitsLow  = new int[] {4, 10, 16};
+        final int[] limitsHigh = new int[] {6,  2,  8};
+        final double[] vector0 = new double[] {2, 5, 8};
+        final double[] vector1 = new double[] {3, 1, 4};
+        MetadataAccessor accessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain/Limits", null);
+        accessor.setAttribute("low",  limitsLow);
+        accessor.setAttribute("high", limitsHigh);
+        accessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain/OffsetVectors", "OffsetVector");
+        accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", vector0);
+        accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", vector1);
         /*
          * Read the RectifiedGrid metadata.
          */
         final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
-//      final List<double[]> vectors = grid.getOffsetVectors();
-//      assertEquals(2, vectors.size());
+        final GridEnvelope ge = grid.getExtent();
+        assertArrayEquals(limitsLow,  ge.getLow ().getCoordinateValues());
+        assertArrayEquals(limitsHigh, ge.getHigh().getCoordinateValues());
+        final List<double[]> vectors = grid.getOffsetVectors();
+        assertEquals(2, vectors.size());
+        assertTrue(Arrays.equals(vector0, vectors.get(0)));
+        assertTrue(Arrays.equals(vector1, vectors.get(1)));
     }
 }

@@ -29,18 +29,16 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.opengis.util.CodeList;
-import org.opengis.annotation.UML;
-import org.opengis.metadata.content.Band;
+import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.metadata.KeyNamePolicy;
-import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.resources.Errors;
-import org.opengis.util.InternationalString;
 
 
 /**
@@ -136,26 +134,10 @@ final class MetadataProxy<T> implements InvocationHandler {
         this.index    = -1;
         final IIOMetadataFormat format = accessor.format;
         if (format instanceof SpatialMetadataFormat) {
-            final MetadataStandard standard = ((SpatialMetadataFormat) format).getElementStandard(accessor.name());
-            if (standard != null) {
-                Class<?> t = type;
-                if (SPECIAL_CASE) {
-                    /*
-                     * If the metadata standard is ISO 19115, then we must process SampleDimension
-                     * especially because this interface is not defined by ISO 19115. It is a Geotk
-                     * interface designed as a sub-set of the ISO Band interface, plus a few additions.
-                     */
-                    if (MetadataStandard.ISO_19115.equals(standard)) {
-                        if (SampleDimension.class.equals(type)) {
-                            t = Band.class;
-                        }
-                    }
-                }
-                namesMapping = standard.asNameMap(t, SpatialMetadataFormat.NAME_POLICY, KeyNamePolicy.METHOD_NAME);
-                return;
-            }
+            namesMapping = ((SpatialMetadataFormat) format).getElementNames(accessor.name());
+        } else {
+            namesMapping = null;
         }
-        namesMapping = null;
     }
 
     /**
@@ -241,8 +223,18 @@ final class MetadataProxy<T> implements InvocationHandler {
      * @throws IllegalArgumentException If the named element does not exist or does not define objects.
      */
     private Class<?> getElementClass(final String name, final Class<?> methodType) throws IllegalArgumentException {
-        final Class<?> declaredType = accessor.format.getObjectClass(name); // Not allowed to be null.
-        return (methodType == null || methodType.isAssignableFrom(declaredType)) ? declaredType : methodType;
+        final IIOMetadataFormat format = accessor.format;
+        final int valueType = format.getObjectValueType(name);
+        if (valueType != IIOMetadataFormat.VALUE_NONE) {
+            Class<?> declaredType = format.getObjectClass(name); // Not allowed to be null.
+            if (valueType == IIOMetadataFormat.VALUE_LIST) {
+                declaredType = Classes.changeArrayDimension(declaredType, 1);
+            }
+            if (methodType == null || methodType.isAssignableFrom(declaredType)) {
+                return declaredType;
+            }
+        }
+        return methodType;
     }
 
     /**
@@ -324,6 +316,21 @@ final class MetadataProxy<T> implements InvocationHandler {
         if (targetType.isAssignableFrom(InternationalString.class)) {
             return SimpleInternationalString.wrap(accessor.getAttribute(name));
         }
+        if (SPECIAL_CASE && Character.isLowerCase(name.charAt(0))) {
+            /*
+             * We have not yet defined a good public API for those cases. For the time being,
+             * we use the case of the node name in order to detect if we have an attribute
+             * instead than an element.
+             */
+            if (targetType.isAssignableFrom(GeneralDirectPosition.class)) {
+                final double[] ordinates = accessor.getAttributeAsDoubles(name, false);
+                return (ordinates != null) ? new GeneralDirectPosition(ordinates) : null;
+            }
+            if (targetType.isAssignableFrom(GeneralGridCoordinates.class)) {
+                final int[] ordinates = accessor.getAttributeAsIntegers(name, false);
+                return (ordinates != null) ? new GeneralGridCoordinates(ordinates) : null;
+            }
+        }
         if (targetType.isAssignableFrom(List.class)) {
             /*
              * The return type is a list or a collection. If the collection elements are some
@@ -350,34 +357,7 @@ final class MetadataProxy<T> implements InvocationHandler {
             List<?> list = (List<?>) childs.get(methodName);
             if (list == null) {
                 String elementName = SpatialMetadataFormat.toElementName(name);
-                MetadataAccessor acc;
-                try {
-                    acc = new MetadataAccessor(accessor, elementName, "#auto");
-                } catch (IllegalArgumentException e) {
-                    /*
-                     * This exception may happen if SpatialMetadata.addTree(...) replaced the
-                     * collection by a singleton in order to simplify the XML tree  (sometime
-                     * a singleton is considered suffisient). In such case the name should be
-                     * singular (the above code tried the plural form of the name).  The code
-                     * below looks for the singular form (using the UML annotation if possible)
-                     * and tries again. In case of failure, the original exception is retrown
-                     * since the exception we get here may be misleading: the name that we
-                     * tried to infer may have no sense.
-                     */
-                    final UML uml = method.getAnnotation(UML.class);
-                    final String singular = SpatialMetadataFormat.toElementName(
-                            SpatialMetadataFormat.toComponentName(elementName,
-                            (uml != null) ? uml.identifier() : null, false));
-                    if (elementName.equals(singular)) {
-                        throw e;
-                    }
-                    elementName = singular;
-                    try {
-                        acc = new MetadataAccessor(accessor, elementName, "#auto");
-                    } catch (IllegalArgumentException ignore) {
-                        throw e;
-                    }
-                }
+                MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
                 /*
                  * At this point we have a MetadataAccessor to a node which is known to exist.
                  * This node may have no children (this happen typically when the code in the
@@ -413,7 +393,7 @@ final class MetadataProxy<T> implements InvocationHandler {
         Object child = childs.get(methodName);
         if (child == null) {
             try {
-                // Each of the next 4 lines may throw, directly or indirectly, an IllegalArgumentException.
+                // Each of the last 3 lines may throw, directly or indirectly, an IllegalArgumentException.
                 final String   elementName = SpatialMetadataFormat.toElementName(name);
                 final Class<?> elementType = getElementClass(elementName, targetType);
                 final MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
