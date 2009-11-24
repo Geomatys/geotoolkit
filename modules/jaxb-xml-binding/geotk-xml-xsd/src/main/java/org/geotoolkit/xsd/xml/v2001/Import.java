@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -91,6 +92,42 @@ public class Import extends Annotated {
      */
     public void setSchemaLocation(String value) {
         this.schemaLocation = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Import && super.equals(object)) {
+            final Import that = (Import) object;
+            return Utilities.equals(this.namespace,      that.namespace)     &&
+                   Utilities.equals(this.schemaLocation, that.schemaLocation);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.namespace != null ? this.namespace.hashCode() : 0);
+        hash = 59 * hash + (this.schemaLocation != null ? this.schemaLocation.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (namespace != null) {
+            sb.append("namespace:").append(namespace).append('\n');
+        }
+        if (schemaLocation != null) {
+            sb.append("schemaLocation:").append(schemaLocation).append('\n');
+        }
+        return  sb.toString();
     }
 
 }

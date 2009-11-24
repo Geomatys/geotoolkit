@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 import org.w3c.dom.Element;
 
 
@@ -73,20 +74,6 @@ public class Appinfo {
     /**
      * Gets the value of the content property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the content property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getContent().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * {@link Object }
@@ -143,4 +130,50 @@ public class Appinfo {
         return otherAttributes;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Appinfo) {
+            final Appinfo that = (Appinfo) object;
+            return Utilities.equals(this.content,         that.content)         &&
+                   Utilities.equals(this.otherAttributes, that.otherAttributes) &&
+                   Utilities.equals(this.source,          that.source);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.content != null ? this.content.hashCode() : 0);
+        hash = 53 * hash + (this.source != null ? this.source.hashCode() : 0);
+        hash = 53 * hash + (this.otherAttributes != null ? this.otherAttributes.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder('[').append(getClass().getSimpleName()).append('\n');
+        if (source != null) {
+            sb.append("source:").append(source).append('\n');
+        }
+        if (content != null) {
+            sb.append("content:\n");
+            for (Object s : content) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (QName s : otherAttributes.keySet()) {
+                sb.append(s).append(otherAttributes.get(s)).append('\n');
+            }
+        }
+        return  sb.toString();
+    }
 }

@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -58,38 +59,22 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "appinfoOrDocumentation"
 })
 @XmlRootElement(name = "annotation")
-public class Annotation
-    extends OpenAttrs
-{
+public class Annotation extends OpenAttrs {
 
     @XmlElements({
         @XmlElement(name = "appinfo", type = Appinfo.class),
         @XmlElement(name = "documentation", type = Documentation.class)
     })
-    protected List<Object> appinfoOrDocumentation;
+    private List<Object> appinfoOrDocumentation;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     @XmlSchemaType(name = "ID")
-    protected String id;
+    private String id;
 
     /**
      * Gets the value of the appinfoOrDocumentation property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the appinfoOrDocumentation property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAppinfoOrDocumentation().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Appinfo }
      * {@link Documentation }
@@ -125,6 +110,46 @@ public class Annotation
      */
     public void setId(String value) {
         this.id = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Annotation && super.equals(object)) {
+            final Annotation that = (Annotation) object;
+            return Utilities.equals(this.appinfoOrDocumentation, that.appinfoOrDocumentation) &&
+                   Utilities.equals(this.id,                     that.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.appinfoOrDocumentation != null ? this.appinfoOrDocumentation.hashCode() : 0);
+        hash = 29 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append("\n");
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (appinfoOrDocumentation != null) {
+            sb.append("appinfoOrDocumentation:\n");
+            for (Object s : appinfoOrDocumentation) {
+                sb.append(s).append('\n');
+            }
+        }
+        return  sb.toString();
     }
 
 }

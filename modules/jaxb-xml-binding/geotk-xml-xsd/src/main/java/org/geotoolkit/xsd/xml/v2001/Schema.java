@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -418,4 +419,93 @@ public class Schema extends OpenAttrs {
         this.lang = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Schema && super.equals(object)) {
+            final Schema that = (Schema) object;
+            return Utilities.equals(this.attributeFormDefault,           that.attributeFormDefault)           &&
+                   Utilities.equals(this.blockDefault,                   that.blockDefault)                   &&
+                   Utilities.equals(this.elementFormDefault,             that.elementFormDefault)             &&
+                   Utilities.equals(this.finalDefault,                   that.finalDefault)                   &&
+                   Utilities.equals(this.id,                             that.id)                             &&
+                   Utilities.equals(this.includeOrImportOrRedefine,      that.includeOrImportOrRedefine)      &&
+                   Utilities.equals(this.lang,                           that.lang)                           &&
+                   Utilities.equals(this.simpleTypeOrComplexTypeOrGroup, that.simpleTypeOrComplexTypeOrGroup) &&
+                   Utilities.equals(this.targetNamespace,                that.targetNamespace)                &&
+                   Utilities.equals(this.version,                        that.version) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.includeOrImportOrRedefine != null ? this.includeOrImportOrRedefine.hashCode() : 0);
+        hash = 67 * hash + (this.simpleTypeOrComplexTypeOrGroup != null ? this.simpleTypeOrComplexTypeOrGroup.hashCode() : 0);
+        hash = 67 * hash + (this.targetNamespace != null ? this.targetNamespace.hashCode() : 0);
+        hash = 67 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 67 * hash + (this.finalDefault != null ? this.finalDefault.hashCode() : 0);
+        hash = 67 * hash + (this.blockDefault != null ? this.blockDefault.hashCode() : 0);
+        hash = 67 * hash + (this.attributeFormDefault != null ? this.attributeFormDefault.hashCode() : 0);
+        hash = 67 * hash + (this.elementFormDefault != null ? this.elementFormDefault.hashCode() : 0);
+        hash = 67 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 67 * hash + (this.lang != null ? this.lang.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (lang != null) {
+            sb.append("lang:").append(lang).append('\n');
+        }
+        if (version != null) {
+            sb.append("version:").append(version).append('\n');
+        }
+        if (targetNamespace != null) {
+            sb.append("targetNamespace:").append(targetNamespace).append('\n');
+        }
+        if (attributeFormDefault != null) {
+            sb.append("attributeFormDefault:").append(attributeFormDefault).append('\n');
+        }
+        if (elementFormDefault != null) {
+            sb.append("elementFormDefault:").append(elementFormDefault).append('\n');
+        }
+        if (blockDefault != null) {
+            sb.append("blockDefault:\n");
+            for (String s : blockDefault) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (finalDefault != null) {
+            sb.append("finalDefault:\n");
+            for (String s : finalDefault) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (includeOrImportOrRedefine != null) {
+            sb.append("includeOrImportOrRedefine:\n");
+            for (OpenAttrs s : includeOrImportOrRedefine) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (simpleTypeOrComplexTypeOrGroup != null) {
+            sb.append("simpleTypeOrComplexTypeOrGroup:\n");
+            for (OpenAttrs s : simpleTypeOrComplexTypeOrGroup) {
+                sb.append(s).append('\n');
+            }
+        }
+        return  sb.toString();
+    }
 }

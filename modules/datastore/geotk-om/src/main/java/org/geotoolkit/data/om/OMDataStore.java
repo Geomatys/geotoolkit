@@ -71,7 +71,6 @@ public class OMDataStore extends AbstractDataStore {
 
     private PreparedStatement getAllSamplingPoint;
 
-    //private static final Name ID       = new DefaultName("http://www.opengis.net/gml", "id");
     private static final Name DESC     = new DefaultName("http://www.opengis.net/gml", "description");
     private static final Name NAME     = new DefaultName("http://www.opengis.net/gml", "name");
     private static final Name SAMPLED  = new DefaultName("http://www.opengis.net/sampling/1.0", "sampledFeature");

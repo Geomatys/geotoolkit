@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -558,6 +559,58 @@ public abstract class Element extends Annotated {
      */
     public void setRef(QName value) {
         this.ref = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Element && super.equals(object)) {
+            final Element that = (Element) object;
+            return Utilities.equals(this._abstract,          that._abstract)          &&
+                   Utilities.equals(this._default,           that._default)           &&
+                   Utilities.equals(this._final,             that._final)             &&
+                   Utilities.equals(this.block,              that.block)              &&
+                   Utilities.equals(this.complexType,        that.complexType)        &&
+                   Utilities.equals(this.fixed,              that.fixed)              &&
+                   Utilities.equals(this.form,               that.form)               &&
+                   Utilities.equals(this.identityConstraint, that.identityConstraint) &&
+                   Utilities.equals(this.maxOccurs,          that.maxOccurs)          &&
+                   Utilities.equals(this.minOccurs,          that.minOccurs)          &&
+                   Utilities.equals(this.name,               that.name)               &&
+                   Utilities.equals(this.nillable,           that.nillable)           &&
+                   Utilities.equals(this.ref,                that.ref)                &&
+                   Utilities.equals(this.simpleType,         that.simpleType)         &&
+                   Utilities.equals(this.substitutionGroup,  that.substitutionGroup)  &&
+                   Utilities.equals(this.type,               that.type) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.simpleType != null ? this.simpleType.hashCode() : 0);
+        hash = 59 * hash + (this.complexType != null ? this.complexType.hashCode() : 0);
+        hash = 59 * hash + (this.identityConstraint != null ? this.identityConstraint.hashCode() : 0);
+        hash = 59 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 59 * hash + (this.substitutionGroup != null ? this.substitutionGroup.hashCode() : 0);
+        hash = 59 * hash + (this._default != null ? this._default.hashCode() : 0);
+        hash = 59 * hash + (this.fixed != null ? this.fixed.hashCode() : 0);
+        hash = 59 * hash + (this.nillable != null ? this.nillable.hashCode() : 0);
+        hash = 59 * hash + (this._abstract != null ? this._abstract.hashCode() : 0);
+        hash = 59 * hash + (this._final != null ? this._final.hashCode() : 0);
+        hash = 59 * hash + (this.block != null ? this.block.hashCode() : 0);
+        hash = 59 * hash + (this.form != null ? this.form.hashCode() : 0);
+        hash = 59 * hash + (this.minOccurs != null ? this.minOccurs.hashCode() : 0);
+        hash = 59 * hash + (this.maxOccurs != null ? this.maxOccurs.hashCode() : 0);
+        hash = 59 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 59 * hash + (this.ref != null ? this.ref.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -107,7 +107,7 @@ public class DefaultFeatureCollection implements FeatureCollection<SimpleFeature
      * @param memberType optional, may be null
      */
     public DefaultFeatureCollection(final String id, final SimpleFeatureType memberType) {
-        this.id = (id == null) ? "featureCollection" : id;
+        this.id = (id == null) ? "collection-1" : id;
         this.schema = memberType;
     }
 

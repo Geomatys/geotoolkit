@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -67,6 +68,40 @@ public class OpenAttrs {
      */
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OpenAttrs) {
+            final OpenAttrs that = (OpenAttrs) object;
+            return Utilities.equals(this.otherAttributes, that.otherAttributes);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + (this.otherAttributes != null ? this.otherAttributes.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(getClass().getSimpleName()).append("]\n");
+        if (otherAttributes != null && otherAttributes.size() > 0) {
+            sb.append("otherAttributes:\n");
+            for (QName s : otherAttributes.keySet()) {
+                sb.append(s).append(otherAttributes.get(s)).append('\n');
+            }
+        }
+        return  sb.toString();
     }
 
 }

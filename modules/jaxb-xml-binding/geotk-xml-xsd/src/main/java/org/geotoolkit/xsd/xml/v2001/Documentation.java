@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.w3c.dom.Element;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -138,4 +138,55 @@ public class Documentation {
         return otherAttributes;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Documentation) {
+            final Documentation that = (Documentation) object;
+            return Utilities.equals(this.content,         that.content)         &&
+                   Utilities.equals(this.lang,            that.lang)            &&
+                   Utilities.equals(this.otherAttributes, that.otherAttributes) &&
+                   Utilities.equals(this.source,          that.source);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + (this.content != null ? this.content.hashCode() : 0);
+        hash = 47 * hash + (this.source != null ? this.source.hashCode() : 0);
+        hash = 47 * hash + (this.lang != null ? this.lang.hashCode() : 0);
+        hash = 47 * hash + (this.otherAttributes != null ? this.otherAttributes.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder('[').append(getClass().getSimpleName()).append('\n');
+        if (source != null) {
+            sb.append("source:").append(source).append('\n');
+        }
+        if (lang != null) {
+            sb.append("lang:").append(lang).append('\n');
+        }
+        if (content != null) {
+            sb.append("content:\n");
+            for (Object s : content) {
+                sb.append(s).append('\n');
+            }
+        }
+        if (otherAttributes != null) {
+            sb.append("otherAttributes:\n");
+            for (QName s : otherAttributes.keySet()) {
+                sb.append(s).append(otherAttributes.get(s)).append('\n');
+            }
+        }
+        return  sb.toString();
+    }
 }
