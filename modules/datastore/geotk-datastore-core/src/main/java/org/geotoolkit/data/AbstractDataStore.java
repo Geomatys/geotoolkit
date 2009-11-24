@@ -315,7 +315,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query,
             final Transaction transaction) throws IOException {
         Filter filter = query.getFilter();
-        final String typeName = query.getTypeName();
+        final String typeName = query.getTypeName().getLocalPart();
         final String propertyNames[] = query.getPropertyNames();
 
         if (filter == null) {
@@ -331,15 +331,6 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         }
         SimpleFeatureType featureType = getSchema(query.getTypeName());
 
-        if (propertyNames != null || query.getCoordinateSystem() != null) {
-            try {
-                featureType = FeatureTypeUtilities.createSubType(featureType, propertyNames, query.getCoordinateSystem());
-            } catch (SchemaException e) {
-                LOGGER.log(Level.FINEST, e.getMessage(), e);
-                throw new DataSourceException("Could not create Feature Type for query", e);
-
-            }
-        }
         if (filter == Filter.EXCLUDE || filter.equals(Filter.EXCLUDE)) {
             return new EmptyFeatureReader<SimpleFeatureType, SimpleFeature>(featureType);
         }
@@ -382,7 +373,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
             reader = new ReTypeFeatureReader(reader, featureType, false);
         }
 
-        if (query.getMaxFeatures() != Query.DEFAULT_MAX) {
+        if (query.getMaxFeatures() != null) {
             reader = new MaxFeatureReader<SimpleFeatureType, SimpleFeature>(reader, query.getMaxFeatures());
         }
 

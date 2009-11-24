@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,7 @@ import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.crs.ReprojectFeatureReader;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.store.DataFeatureCollection;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.feature.SchemaException;
@@ -39,6 +39,7 @@ import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -94,35 +95,22 @@ public class DefaultFeatureResults extends DataFeatureCollection {
 
         final SimpleFeatureType origionalType = source.getSchema();
 
-        final String typeName = origionalType.getTypeName();
+        final Name typeName = origionalType.getName();
         if (typeName.equals(query.getTypeName())) {
             this.query = query;
         } else {
-            // jg: this should be an error, we are deliberatly gobbling a mistake
-            // option 1: remove Query.getTypeName
-            // option 2: throw a warning
-            // option 3: restore exception code
-            this.query = new DefaultQuery(query);
-            ((DefaultQuery) this.query).setTypeName(typeName);
-            //((DefaultQuery) this.query).setCoordinateSystem(query.getCoordinateSystem());
-            //((DefaultQuery) this.query).setCoordinateSystemReproject(query.getCoordinateSystemReproject());
+            throw new IllegalArgumentException("Query type name doesn't match this source name, query : "
+                    + query.getTypeName() +" but source is : " + typeName );
         }
 
         if (origionalType.getGeometryDescriptor() == null) {
             return; // no transform needed
         }
 
-        CoordinateReferenceSystem cs = null;
-        if (query.getCoordinateSystemReproject() != null) {
-            cs = query.getCoordinateSystemReproject();
-        } else if (query.getCoordinateSystem() != null) {
-            cs = query.getCoordinateSystem();
-        }
-        CoordinateReferenceSystem origionalCRS = origionalType.getGeometryDescriptor().getCoordinateReferenceSystem();
-        if (query.getCoordinateSystem() != null) {
-            origionalCRS = query.getCoordinateSystem();
-        }
-        if (cs != null && cs != origionalCRS) {
+        final CoordinateReferenceSystem cs = query.getCoordinateSystemReproject();
+        final CoordinateReferenceSystem origionalCRS = origionalType.getGeometryDescriptor().getCoordinateReferenceSystem();
+        
+        if (cs != null && CRS.equalsIgnoreMetadata(cs, origionalCRS)) {
             try {
                 transform = CRS.findMathTransform(origionalCRS, cs, true);
             } catch (FactoryException noTransform) {
@@ -136,12 +124,8 @@ public class DefaultFeatureResults extends DataFeatureCollection {
         final SimpleFeatureType origionalType = featureSource.getSchema();
         SimpleFeatureType schema = null;
 
-        CoordinateReferenceSystem cs = null;
-        if (query.getCoordinateSystemReproject() != null) {
-            cs = query.getCoordinateSystemReproject();
-        } else if (query.getCoordinateSystem() != null) {
-            cs = query.getCoordinateSystem();
-        }
+        CoordinateReferenceSystem cs = query.getCoordinateSystemReproject();
+
         try {
             if (cs == null) {
                 if (query.retrieveAllProperties()) { // we can use the origionalType as is
@@ -151,7 +135,8 @@ public class DefaultFeatureResults extends DataFeatureCollection {
                 }
             } else {
                 // we need to change the projection of the origional type
-                schema = FeatureTypeUtilities.createSubType(origionalType, query.getPropertyNames(), cs, query.getTypeName(), null);
+                schema = FeatureTypeUtilities.createSubType(origionalType, query.getPropertyNames(), 
+                        cs, query.getTypeName().getLocalPart(), null);
             }
         } catch (SchemaException e) {
             // we were unable to create the schema requested!
@@ -230,7 +215,7 @@ public class DefaultFeatureResults extends DataFeatureCollection {
      * Retrieve a  FeatureReader<SimpleFeatureType, SimpleFeature> for the geometry attributes only, designed for bounds computation
      */
     protected FeatureReader<SimpleFeatureType, SimpleFeature> boundsReader() throws IOException {
-        final List attributes = new ArrayList();
+        final List<String> attributes = new ArrayList<String>();
         final SimpleFeatureType schema = featureSource.getSchema();
         for (int i = 0; i < schema.getAttributeCount(); i++) {
             final AttributeDescriptor at = schema.getDescriptor(i);
@@ -239,8 +224,10 @@ public class DefaultFeatureResults extends DataFeatureCollection {
             }
         }
 
-        final DefaultQuery q = new DefaultQuery(query);
-        q.setPropertyNames(attributes);
+        final QueryBuilder builder = new QueryBuilder();
+        builder.copy(query);
+        builder.setProperties(attributes.toArray(new String[attributes.size()]));
+        final Query q = builder.buildQuery();
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader =
                 ((DataStore) featureSource.getDataStore()).getFeatureReader(q, getTransaction());
         final int maxFeatures = query.getMaxFeatures();

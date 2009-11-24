@@ -596,7 +596,7 @@ public final class MemoryDataStore extends AbstractDataStore {
     @Override
     protected JTSEnvelope2D getBounds(Query query)
             throws IOException {
-        final String typeName = query.getTypeName();
+        final String typeName = query.getTypeName().getLocalPart();
         final Map contents = features(typeName);
         final Iterator iterator = contents.values().iterator();
 
@@ -628,7 +628,7 @@ public final class MemoryDataStore extends AbstractDataStore {
     @Override
     protected int getCount(Query query)
             throws IOException {
-        final String typeName = query.getTypeName();
+        final String typeName = query.getTypeName().getLocalPart();
         final Map contents = features(typeName);
         final Iterator iterator = contents.values().iterator();
 

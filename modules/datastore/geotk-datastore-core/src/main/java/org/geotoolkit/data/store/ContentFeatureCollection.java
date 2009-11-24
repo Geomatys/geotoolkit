@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;
@@ -34,6 +34,7 @@ import org.geotoolkit.data.collection.CollectionListener;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -105,7 +106,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         featureSource.addFeatureListener(listener);
 
         //retype feature type if necessary
-        if (query.getPropertyNames() != Query.ALL_NAMES) {
+        if (query.retrieveAllProperties()) {
             this.featureType =
                     SimpleFeatureTypeBuilder.retype(featureSource.getSchema(), query.getPropertyNames());
         } else {
@@ -372,9 +373,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> sort(final org.opengis.filter.sort.SortBy sort) {
-        Query query = new DefaultQuery();
-        ((DefaultQuery) query).setSortBy(new org.opengis.filter.sort.SortBy[]{sort});
-
+        Query query = QueryBuilder.sorted(featureType.getName(), new org.opengis.filter.sort.SortBy[]{sort});
         query = QueryUtilities.mixQueries(this.query, query, null);
         return new ContentFeatureCollection(featureSource, query);
     }
@@ -384,9 +383,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> subCollection(final Filter filter) {
-        Query query = new DefaultQuery();
-        ((DefaultQuery) query).setFilter(filter);
-
+        Query query = QueryBuilder.filtered(featureType.getName(), filter);
         query = QueryUtilities.mixQueries(this.query, query, null);
         return new ContentFeatureCollection(featureSource, query);
     }

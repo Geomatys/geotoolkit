@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.concurrent.FeatureLock;
 import org.geotoolkit.data.FeatureLockException;
 import org.geotoolkit.data.concurrent.FeatureLocking;
@@ -36,6 +35,7 @@ import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
 
+import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -119,7 +119,7 @@ public abstract class ContentFeatureStore extends ContentFeatureSource implement
      */
     public final FeatureWriter<SimpleFeatureType, SimpleFeature> getWriter(final Filter filter,
             final int flags) throws IOException {
-        return getWriter(new DefaultQuery(getSchema().getTypeName(), filter), flags);
+        return getWriter(QueryBuilder.filtered(getSchema().getName(), filter), flags);
     }
 
     /**

@@ -22,6 +22,7 @@ import org.geotoolkit.factory.Hints;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Query builder, convinient utility class to build queries.
@@ -35,75 +36,136 @@ public class QueryBuilder {
     private Name typeName;
 
     private Filter filter = Filter.INCLUDE;
-    private String[] properties;
-    private SortBy[] sortBy;
+    private String[] properties = null;
+    private SortBy[] sortBy = null;
+
+    private CoordinateReferenceSystem crs = null;
 
     private Integer startIndex = null;
     private Integer maxFeatures = null;
 
-    private Hints hints;
+    private Hints hints = null;
+
+    private String handle = null;
 
     public QueryBuilder(){
+    }
+
+    public QueryBuilder copy(Query query){
+        this.crs = query.getCoordinateSystemReproject();
+        this.filter = query.getFilter();
+        this.hints = query.getHints();
+        this.maxFeatures = query.getMaxFeatures();
+        this.properties = query.getPropertyNames();
+        this.sortBy = query.getSortBy();
+        this.startIndex = query.getStartIndex();
+        this.typeName = query.getTypeName();
+        this.handle = query.getHandle();
+        return this;
     }
 
     public Name getTypeName() {
         return typeName;
     }
 
-    public void setTypeName(Name typeName) {
+    public QueryBuilder setTypeName(Name typeName) {
         this.typeName = typeName;
+        return this;
     }
 
     public Filter getFilter() {
         return filter;
     }
 
-    public void setFilter(Filter filter) {
+    public QueryBuilder setFilter(Filter filter) {
         this.filter = filter;
+        return this;
     }
 
     public String[] getProperties() {
         return properties;
     }
 
-    public void setProperties(String[] properties) {
+    public QueryBuilder setProperties(String[] properties) {
         this.properties = properties;
+        return this;
     }
 
     public SortBy[] getSortBy() {
         return sortBy;
     }
 
-    public void setSortBy(SortBy[] sortBy) {
+    public QueryBuilder setSortBy(SortBy[] sortBy) {
         this.sortBy = sortBy;
+        return this;
     }
 
     public Integer getStartIndex() {
         return startIndex;
     }
 
-    public void setStartIndex(Integer startIndex) {
+    public QueryBuilder setStartIndex(Integer startIndex) {
         this.startIndex = startIndex;
+        return this;
     }
 
     public Integer getMaxFeatures() {
         return maxFeatures;
     }
 
-    public void setMaxFeatures(Integer maxFeatures) {
+    public QueryBuilder setMaxFeatures(Integer maxFeatures) {
         this.maxFeatures = maxFeatures;
+        return this;
     }
 
     public Hints getHints() {
         return hints;
     }
 
-    public void setHints(Hints hints) {
+    public QueryBuilder setHints(Hints hints) {
         this.hints = hints;
+        return this;
+    }
+
+    public String getHandle() {
+        return handle;
+    }
+
+    public QueryBuilder setHandle(String handle) {
+        this.handle = handle;
+        return this;
     }
 
     public Query buildQuery(){
-        return new DefaultQuery(typeName, filter, properties, sortBy, startIndex, maxFeatures, hints);
+        return new DefaultQuery(typeName, filter, properties, sortBy, crs, startIndex, maxFeatures, hints, handle);
+    }
+
+    /**
+     * Create a simple query with only a filter parameter.
+     * 
+     * @param name
+     * @param filter
+     * @return Immutable query
+     */
+    public static Query filtered(Name name, Filter filter){
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(name);
+        builder.setFilter(filter);
+        return builder.buildQuery();
+    }
+
+    /**
+     * Create a simple query with only a sorted parameter.
+     *
+     * @param name
+     * @param filter
+     * @return Immutable query
+     */
+    public static Query sorted(Name name, SortBy[] sorts){
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(name);
+        builder.setSortBy(sorts);
+        return builder.buildQuery();
     }
 
     /**

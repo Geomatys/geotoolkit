@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -26,6 +25,7 @@ import org.geotoolkit.data.concurrent.FeatureLock;
 import org.geotoolkit.data.concurrent.FeatureLocking;
 import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -117,7 +117,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      */
     @Override
     public int lockFeatures(final Filter filter) throws IOException {
-        return lockFeatures(new DefaultQuery(getSchema().getTypeName(), filter));
+        return lockFeatures(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -152,7 +152,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
         // Could we reduce the Query to only return the FetureID here?
         //
         final FeatureIterator<SimpleFeature> reader = getFeatures(query).features();
-        final String typeName = query.getTypeName();
+        final String typeName = query.getTypeName().getLocalPart();
 
         int count = 0;
 
@@ -189,7 +189,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
      */
     @Override
     public void unLockFeatures(final Filter filter) throws IOException {
-        unLockFeatures(new DefaultQuery(getSchema().getTypeName(), filter));
+        unLockFeatures(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -222,7 +222,7 @@ public abstract class AbstractFeatureLocking extends AbstractFeatureStore
         // Could we reduce the Query to only return the FetureID here?
         //
         final FeatureIterator<SimpleFeature> reader = getFeatures(query).features();
-        final String typeName = query.getTypeName();
+        final String typeName = query.getTypeName().getLocalPart();
 
         try {
             while (reader.hasNext()) {

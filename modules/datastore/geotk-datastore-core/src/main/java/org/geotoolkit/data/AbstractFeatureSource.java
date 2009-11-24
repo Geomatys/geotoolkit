@@ -27,9 +27,9 @@ import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.data.query.QueryBuilder;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -37,7 +37,6 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * This is a starting point for providing your own FeatureSource<SimpleFeatureType, SimpleFeature> implementation.
@@ -156,14 +155,15 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     protected Query namedQuery(final Query query) {
         final String typeName = getSchema().getTypeName();
-        final String candidate = query.getTypeName();
+        final String candidate = query.getTypeName().getLocalPart();
         if (!typeName.equals(candidate)) {
-            return new DefaultQuery(
-                    typeName,
-                    query.getFilter(),
-                    query.getMaxFeatures(),
-                    query.getPropertyNames(),
-                    query.getHandle());
+            return new QueryBuilder()
+                    .setTypeName(getSchema().getName())
+                    .setFilter(query.getFilter())
+                    .setMaxFeatures(query.getMaxFeatures())
+                    .setProperties(query.getPropertyNames())
+                    .setHandle(query.getHandle())
+                    .buildQuery();
         }
         return query;
     }
@@ -191,7 +191,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(final Filter filter) throws IOException {
-        return getFeatures(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getFeatures(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -208,13 +208,11 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
     @Override
     public FeatureCollection<SimpleFeatureType, SimpleFeature> getFeatures(Query query) throws IOException {
         final SimpleFeatureType schema = getSchema();
-        final String typeName = schema.getTypeName();
+        final Name typeName = schema.getName();
 
         if (query.getTypeName() == null) {
             //typeName unspecified we will "any" use a default
-            final DefaultQuery defaultQuery = new DefaultQuery(query);
-            defaultQuery.setTypeName(typeName);
-            query = defaultQuery;
+            query = new QueryBuilder().copy(query).setTypeName(typeName).buildQuery();
         } else if (!typeName.equals(query.getTypeName())) {
             throw new IOException("Query type name : "+ query.getTypeName() +"doesn't match schema name : "+typeName);
         }
@@ -252,7 +250,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     @Override
     public JTSEnvelope2D getBounds(final Filter filter) throws IOException {
-        return getBounds(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getBounds(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -302,7 +300,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
      */
     @Override
     public int getCount(final Filter filter) throws IOException {
-        return getCount(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getCount(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -350,7 +348,7 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
                 //we cannot proceed; abort!
                 return -1;
             }
-            final Diff diff = ((AbstractDataStore) dataStore).state(t).diff(namedQuery(query).getTypeName());
+            final Diff diff = ((AbstractDataStore) dataStore).state(t).diff(namedQuery(query).getTypeName().getLocalPart());
             synchronized (diff) {
                 Iterator it = diff.added.values().iterator();
                 while (it.hasNext()) {

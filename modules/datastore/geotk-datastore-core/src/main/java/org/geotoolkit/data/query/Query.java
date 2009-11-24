@@ -16,14 +16,13 @@
  */
 package org.geotoolkit.data.query;
 
-import java.net.URI;
-
 import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.factory.Hints;
+
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.factory.Hints;
+import org.opengis.feature.type.Name;
 
 /**
  * Encapsulates a data request.
@@ -66,23 +65,24 @@ import org.geotoolkit.factory.Hints;
  */
 public interface Query {
 
-    /** TODO: should this be ANY_URI */
-    public static final URI NO_NAMESPACE = null;
-
-    /** So getMaxFeatures does not return null we use a very large number. */
-    public static final int DEFAULT_MAX = Integer.MAX_VALUE;
+    /**
+     * The typeName attribute is used to indicate the name of the feature type
+     * to be queried.  If no typename is specified, then the default typeName
+     * should be returned from the dataStore.  If the datasstore only supports
+     * one feature type then this part of the query may be ignored.
+     *
+     * @return the name of the feature type to be returned with this query.
+     */
+    Name getTypeName();
 
     /**
-     * Ask for no properties when used with setPropertyNames.
+     * The Filter can be used to define constraints on a query.  If no Filter
+     * is present then the query is unconstrained and all feature instances
+     * should be retrieved.
      *
-     * <p>
-     * Note the query will still return a result - limited to FeatureIDs.
-     * </p>
+     * @return The filter that defines constraints on the query.
      */
-    public static final String[] NO_NAMES = new String[0];
-
-    /** Ask for all properties when used with setPropertyNames. */
-    public static final String[] ALL_NAMES = null;
+    Filter getFilter();
 
     /**
      * The properties array is used to specify the attributes that should be
@@ -146,6 +146,8 @@ public interface Query {
      */
     boolean retrieveAllProperties();
 
+    Integer getStartIndex();
+
     /**
      * The optional maxFeatures can be used to limit the number of features
      * that a query request retrieves.  If no maxFeatures is specified then
@@ -160,37 +162,7 @@ public interface Query {
      *
      * @return the max features the getFeature call should return.
      */
-    int getMaxFeatures();
-
-    Integer getStartIndex();
-
-    /**
-     * The Filter can be used to define constraints on a query.  If no Filter
-     * is present then the query is unconstrained and all feature instances
-     * should be retrieved.
-     *
-     * @return The filter that defines constraints on the query.
-     */
-    Filter getFilter();
-
-    /**
-     * The typeName attribute is used to indicate the name of the feature type
-     * to be queried.  If no typename is specified, then the default typeName
-     * should be returned from the dataStore.  If the datasstore only supports
-     * one feature type then this part of the query may be ignored.
-     *
-     * @return the name of the feature type to be returned with this query.
-     */
-    String getTypeName();
-
-    /**
-     * The namespace attribute is used to indicate the namespace of the schema
-     * being represented.
-     *
-     * @return the gml namespace of the feature type to be returned with this
-     *         query
-     */
-    URI getNamespace();
+    Integer getMaxFeatures();
 
     /**
      * The handle attribute is included to allow a client to associate  a
@@ -200,44 +172,8 @@ public interface Query {
      *
      * @return the mnemonic name of the query request.
      */
+    @Deprecated
     String getHandle();
-
-    /**
-     * From WFS Spec:  The version attribute is included in order to
-     * accommodate systems that  support feature versioning. A value of ALL
-     * indicates that all versions of a feature should be fetched. Otherwise
-     * an integer, n, can be specified  to return the n th version of a
-     * feature. The version numbers start at '1'  which is the oldest version.
-     * If a version value larger than the largest version is specified then
-     * the latest version is return. The default action shall be for the query
-     * to return the latest version. Systems that do not support versioning
-     * can ignore the parameter and return the only version  that they have.
-     *
-     * @return the version of the feature to return, or null for latest.
-     */
-    String getVersion();
-
-    /**
-     * Specifies the coordinate system that the features being queried are in.
-     *
-     * <p>
-     * This denotes a request to Temporarily to override the coordinate system
-     * contained in the FeatureSource<SimpleFeatureType, SimpleFeature> being queried. The same coordinate
-     * values will be used, but the features created will appear in this
-     * Coordinate System.
-     * </p>
-     *
-     * <p>
-     * This change is not persistant at all, indeed it is only for the Features
-     * returned by this Query. If used in conjunction with {@link #getCoordinateSystemReproject()}
-     * the reprojection will occur from {@link #getCoordinateSystem()} to
-     * {@link #getCoordinateSystemReproject()}.
-     * </p>
-     *
-     * @return The coordinate system to be returned for Features from this
-     *         Query (override the set coordinate system).
-     */
-    CoordinateReferenceSystem getCoordinateSystem();
 
     /**
      * Request data reprojection.

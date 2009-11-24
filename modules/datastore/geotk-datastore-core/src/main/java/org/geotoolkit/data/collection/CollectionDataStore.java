@@ -35,7 +35,6 @@ import org.opengis.filter.Filter;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.opengis.feature.type.Name;
 
@@ -138,7 +137,7 @@ public class CollectionDataStore extends AbstractDataStore {
      */
     @Override
     protected JTSEnvelope2D getBounds(final Query query) throws SchemaException {
-        final String featureTypeName = query.getTypeName();
+        final String featureTypeName = query.getTypeName().getLocalPart();
         if (!featureType.getTypeName().equals(featureTypeName)) {
             throw SchemaException.notFound(featureTypeName);
         }
@@ -177,7 +176,7 @@ public class CollectionDataStore extends AbstractDataStore {
      */
     @Override
     protected int getCount(final Query query) throws IOException {
-        final String featureTypeName = query.getTypeName();
+        final String featureTypeName = query.getTypeName().getLocalPart();
         if (!featureType.getTypeName().equals(featureTypeName)) {
             throw SchemaException.notFound(featureTypeName);
         }

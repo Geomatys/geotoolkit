@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.data.diff.DiffFeatureWriter;
@@ -45,6 +44,8 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 
 /**
  * A Transaction.State that keeps a difference table for use with
@@ -333,7 +334,8 @@ public class TransactionStateDiff implements State {
             throws IOException {
         final Diff diff = diff(typeName);
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader =
-                new FilteringFeatureReader<SimpleFeatureType, SimpleFeature>(store.getFeatureReader(typeName, new DefaultQuery(typeName, filter)), filter);
+                new FilteringFeatureReader<SimpleFeatureType, SimpleFeature>(store.getFeatureReader(typeName, 
+                QueryBuilder.filtered(new DefaultName(typeName), filter)), filter);
 
         return new DiffFeatureWriter(reader, diff, filter) {
 

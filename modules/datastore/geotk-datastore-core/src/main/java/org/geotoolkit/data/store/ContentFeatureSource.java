@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
@@ -212,7 +211,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
         final SimpleFeatureType featureType = getAbsoluteSchema();
 
         //this may be a view
-        if (query != null && query.getPropertyNames() != Query.ALL_NAMES) {
+        if (query != null && !query.retrieveAllProperties()) {
             synchronized (this) {
                 if (schema == null) {
                     schema = SimpleFeatureTypeBuilder.retype(featureType, query.getPropertyNames());
@@ -271,7 +270,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     @Override
     public JTSEnvelope2D getBounds(final Filter filter) throws IOException {
-        return getBounds(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getBounds(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -332,7 +331,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     @Override
     public int getCount(final Filter filter) throws IOException {
-        return getCount(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getCount(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -426,9 +425,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
                         "so there is no way a stable paging (offset/limit) can be performed");
             }
 
-            final DefaultQuery dq = new DefaultQuery(query);
-            dq.setSortBy(new SortBy[]{SortBy.NATURAL_ORDER});
-            query = dq;
+            query = new QueryBuilder().copy(query).setSortBy(new SortBy[]{SortBy.NATURAL_ORDER}).buildQuery();
         }
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = getReaderInternal(query);
@@ -482,7 +479,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
 
         //retyping
         if (!canRetype()) {
-            if (query.getPropertyNames() != Query.ALL_NAMES) {
+            if (!query.retrieveAllProperties()) {
                 //rebuild the type and wrap the reader
                 final SimpleFeatureType target =
                         SimpleFeatureTypeBuilder.retype(getSchema(), query.getPropertyNames());
@@ -712,7 +709,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     @Override
     public final ContentFeatureCollection getFeatures(final Filter filter)
             throws IOException {
-        return getFeatures(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getFeatures(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -723,11 +720,11 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
      */
     public final FeatureReader<SimpleFeatureType, SimpleFeature> getReader(final Filter filter)
             throws IOException {
-        return getReader(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getReader(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     public final ContentFeatureSource getView(Filter filter) throws IOException {
-        return getView(new DefaultQuery(getSchema().getTypeName(), filter));
+        return getView(QueryBuilder.filtered(getSchema().getName(), filter));
     }
 
     /**
@@ -814,9 +811,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
             return query;
         }
 
-        DefaultQuery newQuery = new DefaultQuery(query);
-        newQuery.setFilter(resolved);
-        return newQuery;
+        return new QueryBuilder().copy(query).setFilter(resolved).buildQuery();
     }
 
     /**

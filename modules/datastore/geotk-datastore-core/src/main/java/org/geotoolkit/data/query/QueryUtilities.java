@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
@@ -25,10 +26,10 @@ public class QueryUtilities {
     public static boolean queryAll(Query query){
 
         return     query.retrieveAllProperties()
-                && query.getCoordinateSystem() == null
+                && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
                 && query.getFilter() == Filter.INCLUDE
-                && query.getMaxFeatures() == Query.DEFAULT_MAX
+                && query.getMaxFeatures() == null
                 && query.getSortBy() == null
                 && query.getStartIndex() == null;
     }
@@ -95,17 +96,6 @@ public class QueryUtilities {
             }
         }
 
-        // mix versions, if possible
-        final String version;
-        if (firstQuery.getVersion() != null) {
-            if (secondQuery.getVersion() != null && !secondQuery.getVersion().equals(firstQuery.getVersion())) {
-                throw new IllegalArgumentException("First and second query refer different versions");
-            }
-            version = firstQuery.getVersion();
-        } else {
-            version = secondQuery.getVersion();
-        }
-
 
         //none of the queries equals Query.ALL, mix them
         //use the more restrictive max features field
@@ -133,14 +123,20 @@ public class QueryUtilities {
             start += secondQuery.getStartIndex();
         }
         //build the mixed query
-        final String typeName = firstQuery.getTypeName() != null ? firstQuery.getTypeName() : secondQuery.getTypeName();
+        final Name typeName = firstQuery.getTypeName() != null ?
+            firstQuery.getTypeName() :
+            secondQuery.getTypeName();
 
-        final DefaultQuery mixed = new DefaultQuery(typeName, filter, maxFeatures, propNames, handle);
-        mixed.setVersion(version);
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(typeName);
+        builder.setFilter(filter);
+        builder.setMaxFeatures(maxFeatures);
+        builder.setProperties(propNames);
         if (start != 0) {
-            mixed.setStartIndex(start);
+            builder.setStartIndex(start);
         }
-        return mixed;
+        
+        return builder.buildQuery();
     }
 
     /**
