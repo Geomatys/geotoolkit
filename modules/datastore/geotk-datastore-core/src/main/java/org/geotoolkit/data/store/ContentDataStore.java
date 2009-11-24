@@ -338,6 +338,13 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     /**
      * {@inheritDoc }
      */
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name typeName) throws IOException {
+        return getFeatureReader(typeName.getLocalPart());
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException{
         if (typeName == null) {
