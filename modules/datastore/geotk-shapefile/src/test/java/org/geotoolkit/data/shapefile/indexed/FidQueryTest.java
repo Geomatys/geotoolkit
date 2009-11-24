@@ -43,6 +43,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
 
 public class FidQueryTest extends FIDTestCase {
     public  FidQueryTest(  ) throws IOException {
@@ -176,7 +177,7 @@ public class FidQueryTest extends FIDTestCase {
         featureStore.removeFeatures(createFidFilter);
         fids.remove(feature.getID());
 
-        assertEquals(fids.size(), featureStore.getCount(Query.ALL));
+        assertEquals(fids.size(), featureStore.getCount(QueryBuilder.all(featureStore.getName())));
 
         features = featureStore.getFeatures(createFidFilter).features();
         try {

@@ -33,6 +33,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * @version $Id: ShapefileRTreeReadWriteTest.java 27228 2007-09-29 20:24:08Z
@@ -110,7 +111,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         store.addFeatures(one);
 
         s = new IndexedShapefileDataStore(tmp.toURL());
-        assertEquals(one.size() * 2, store.getCount(Query.ALL));
+        assertEquals(one.size() * 2, store.getCount(QueryBuilder.all(store.getName())));
     }
 
     void test(String f) throws Exception {

@@ -22,6 +22,17 @@ public class QueryUtilities {
     
     private QueryUtilities(){}
 
+    public static boolean queryAll(Query query){
+
+        return     query.retrieveAllProperties()
+                && query.getCoordinateSystem() == null
+                && query.getCoordinateSystemReproject() == null
+                && query.getFilter() == Filter.INCLUDE
+                && query.getMaxFeatures() == Query.DEFAULT_MAX
+                && query.getSortBy() == null
+                && query.getStartIndex() == null;
+    }
+
     /**
      * Takes two {@link Query}objects and produce a new one by mixing the
      * restrictions of both of them.
@@ -131,7 +142,6 @@ public class QueryUtilities {
         }
         return mixed;
     }
-
 
     /**
      * Creates a set of attribute names from the two input lists of names,

@@ -75,6 +75,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
@@ -98,15 +100,17 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection<SimpleFeatureType, SimpleFeature> loadFeatures(String resource, Query q)
             throws Exception {
-        if (q == null) {
-            q = new DefaultQuery();
-        }
 
         URL url = ShapeTestData.url(resource);
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(url);
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = s.getFeatureSource(s.getTypeNames()[0]);
 
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = fs.getFeatures(q);
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> features;
+        if(q == null){
+            features = fs.getFeatures();
+        }else{
+            features = fs.getFeatures(q);
+        }
 
         s.dispose();
         
@@ -115,13 +119,19 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection<SimpleFeatureType, SimpleFeature> loadFeatures(String resource, Charset charset,
             Query q) throws Exception {
-        if (q == null)
-            q = new DefaultQuery();
+
         URL url = ShapeTestData.url(resource);
         ShapefileDataStore s = new IndexedShapefileDataStore(url, null, false,
                 true, IndexType.QIX, charset);
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = s.getFeatureSource(s.getTypeNames()[0]);
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = fs.getFeatures(q);
+        
+        final FeatureCollection<SimpleFeatureType, SimpleFeature> features;
+        if(q == null){
+            features = fs.getFeatures();
+        }else{
+            features = fs.getFeatures(q);
+        }
+
         s.dispose();
         return features;
     }
@@ -233,7 +243,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         IndexedShapefileDataStore ds2 = new IndexedShapefileDataStore(url,
                 null, false, false, IndexType.NONE);
 
-        Envelope newBounds = ds.getBounds(Query.ALL);
+        Envelope newBounds = ds.getBounds(QueryBuilder.all(ds2.getNames().get(0)));
         double dx = newBounds.getWidth() / 4;
         double dy = newBounds.getHeight() / 4;
         newBounds = new Envelope(newBounds.getMinX() + dx, newBounds.getMaxX()
@@ -530,7 +540,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testTestTransaction() throws Exception {
         IndexedShapefileDataStore sds = createDataStore();
 
-        int idx = sds.getCount(Query.ALL);
+        int idx = sds.getCount(QueryBuilder.all(sds.getNames().get(0)));
 
         FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore<SimpleFeatureType, SimpleFeature>) sds.getFeatureSource(sds
                 .getTypeNames()[0]);
@@ -554,7 +564,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         store.addFeatures(DataUtilities.collection(newFeatures2));
         transaction.commit();
         transaction.close();
-        assertEquals(idx + 3, sds.getCount(Query.ALL));
+        assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getNames().get(0))));
         sds.dispose();
 
     }
@@ -787,9 +797,9 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Filter modifiedFilter = ff.equals(ff.property("f"), ff.literal("modified"));
         assertEquals(2, count(ds, typeName, modifiedFilter));
         
-        final int initialCount = store.getCount(Query.ALL);
+        final int initialCount = store.getCount(QueryBuilder.all(store.getName()));
         store.removeFeatures(fidFilter);
-        final int afterCount = store.getCount(Query.ALL);
+        final int afterCount = store.getCount(QueryBuilder.all(store.getName()));
         assertEquals(initialCount - 2, afterCount);
     }
     
@@ -802,7 +812,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         Transaction t = new DefaultTransaction();
         store.setTransaction(t);
     	
-    	int initialCount = store.getCount(Query.ALL);
+    	int initialCount = store.getCount(QueryBuilder.all(store.getName()));
     	
     	FeatureIterator<SimpleFeature> features = store.getFeatures().features();
         String fid = features.next().getID();

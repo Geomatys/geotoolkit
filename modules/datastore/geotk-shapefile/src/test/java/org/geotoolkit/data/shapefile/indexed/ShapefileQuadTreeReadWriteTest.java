@@ -46,6 +46,7 @@ import org.opengis.filter.identity.FeatureId;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.shptest.test.UtilTestData;
 
 /**
@@ -129,7 +130,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         store.addFeatures(one);
 
         s = createDataStore(maker, tmp.toURL(), true);
-        assertEquals(one.size() * 2, store.getCount(Query.ALL));
+        assertEquals(one.size() * 2, store.getCount(QueryBuilder.all(store.getName())));
     }
 
     void test( String f ) throws Exception {

@@ -84,6 +84,7 @@ import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.resources.NIOUtilities;
 
@@ -728,7 +729,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
 
         Set records = new HashSet();
         Filter filter = query.getFilter();
-        if (filter == Filter.INCLUDE || query == Query.ALL) {
+        if (filter == Filter.INCLUDE || QueryUtilities.queryAll(query) ) {
             return getBounds();
         }
         // else if (this.useIndex) {

@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -44,7 +45,7 @@ public class FidIndexerTest extends FIDTestCase {
                 .toURL(), null, false, false, IndexType.NONE);
 
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = ds.getFeatureSource(ds.getTypeNames()[0]);
-        int features = fs.getCount(Query.ALL);
+        int features = fs.getCount(QueryBuilder.all(fs.getName()));
 
         IndexedFidReader reader = new IndexedFidReader(shpFiles);
 

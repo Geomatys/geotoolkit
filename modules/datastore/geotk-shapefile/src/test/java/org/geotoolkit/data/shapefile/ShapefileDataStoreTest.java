@@ -65,6 +65,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 
 /**
  * 
@@ -104,12 +106,17 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection<SimpleFeatureType, SimpleFeature> loadFeatures(String resource, Charset charset,
             Query q) throws Exception {
-        if (q == null)
-            q = new DefaultQuery();
+        
         URL url = ShapeTestData.url(resource);
         ShapefileDataStore s = new ShapefileDataStore(url, false, charset);
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = s.getFeatureSource(s.getTypeNames()[0]);
-        return fs.getFeatures(q);
+
+        if(q == null){
+            return fs.getFeatures();
+        }else{
+            return fs.getFeatures(q);
+        }
+        
     }
 
     protected FeatureCollection<SimpleFeatureType, SimpleFeature> loadFeatures(ShapefileDataStore s)
@@ -118,11 +125,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     public void testLoad() throws Exception {
-        loadFeatures(STATE_POP, Query.ALL);
+        loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
     }
 
     public void testLoadDanishChars() throws Exception {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> fc = loadFeatures(DANISH, Query.ALL);
+        FeatureCollection<SimpleFeatureType, SimpleFeature> fc = loadFeatures(DANISH, QueryBuilder.all(new DefaultName("danish_point")));
         SimpleFeature first = firstFeature(fc);
 
         // Charlotte (but with the o is stroked)
@@ -181,7 +188,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      * Test envelope versus old DataSource
      */
     public void testEnvelope() throws Exception {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, Query.ALL);
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
         ShapefileDataStore s = new ShapefileDataStore(ShapeTestData.url(STATE_POP));
         String typeName = s.getTypeNames()[0];
         FeatureCollection<SimpleFeatureType, SimpleFeature> all = s.getFeatureSource(typeName).getFeatures();
@@ -190,7 +197,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     public void testLoadAndVerify() throws Exception {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, Query.ALL);
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
         // FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeaturesM2();
         int count = features.size();
 
@@ -211,7 +218,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     public void testLoadAndCheckParentTypeIsPolygon() throws Exception {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, Query.ALL);
+        FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
         SimpleFeatureType schema = firstFeature(features).getFeatureType();
 
         assertTrue(FeatureTypeUtilities.isDecendedFrom(schema,
@@ -537,7 +544,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 count++;
                 reader.next();
             }
-            assertEquals(count, store.getCount(Query.ALL));
+            assertEquals(count, store.getCount(QueryBuilder.all(store.getNames().get(0))));
         } finally {
             reader.close();
         }

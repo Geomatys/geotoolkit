@@ -37,6 +37,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.Collections;
 import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
 /**
@@ -181,7 +182,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         FeatureSource<SimpleFeatureType, SimpleFeature> states = dataStore.getFeatureSource(dataStore.getTypeNames()[0]);
         SimpleFeatureType schema = states.getSchema();
         assertEquals(6, schema.getAttributeCount());
-        assertTrue(states.getCount(Query.ALL) > 0);
+        assertTrue(states.getCount(QueryBuilder.all(states.getName())) > 0);
     }
 
     public void testShapefileReaderRecord() throws Exception {
