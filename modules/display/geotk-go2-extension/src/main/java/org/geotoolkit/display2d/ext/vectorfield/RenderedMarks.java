@@ -456,14 +456,14 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                     if (transformedShape.getOriginalShape() != null) {
                         final double amplitude = iterator.amplitude();
                         if (Double.isNaN(amplitude) || amplitude==0) {
-                            transformedShape.setOriginalShape(null);
+                            transformedShape.setOriginalShape(new Rectangle2D.Double());
                         } else {
                             transformedShape.setTransform(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5]);
                             double sc = amplitude/typicalScale;
                             transformedShape.scale(sc, sc);
                             transformedShape.rotate(iterator.direction());
                             if (!transformedShape.intersects(zoomableBounds)) {
-                                transformedShape.setOriginalShape(null);
+                                transformedShape.setOriginalShape(new Rectangle2D.Double());
                             } else {
                                 final Rectangle bounds = transformedShape.getBounds();
                                 if (boundingBox == null) {

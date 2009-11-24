@@ -108,12 +108,12 @@ public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolize
 
     @Override
     public Rectangle2D glyphPreferredSize(CachedVectorFieldSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CachedVectorFieldSymbolizer symbol) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        
     }
 
 }
