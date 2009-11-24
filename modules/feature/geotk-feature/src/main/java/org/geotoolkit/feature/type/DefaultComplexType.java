@@ -69,7 +69,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             localPropertyMap = Collections.emptyMap();
         } else {
             this.descriptors = properties.toArray(new PropertyDescriptor[properties.size()]);
-            
+
             localPropertyMap = new HashMap<Name, PropertyDescriptor>();
             for (PropertyDescriptor pd : properties) {
                 if (pd == null) {
@@ -113,7 +113,13 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public PropertyDescriptor getDescriptor(final String name) {
-        return getDescriptor(new DefaultName(name));
+        // this method should be deprecated
+        for (Name propertyName: propertyMap.keySet()) {
+            if (propertyName.getLocalPart().equals(name)) {
+                return propertyMap.get(propertyName);
+            }
+        }
+        return null;
     }
 
     /**

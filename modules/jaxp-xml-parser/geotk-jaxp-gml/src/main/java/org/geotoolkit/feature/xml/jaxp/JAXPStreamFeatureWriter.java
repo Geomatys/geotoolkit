@@ -20,6 +20,7 @@ package org.geotoolkit.feature.xml.jaxp;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -165,7 +166,19 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             //the simple nodes (attributes of the feature)
             Name geometryName = null;
             for (Property a : feature.getProperties()) {
-                if (!(a.getType() instanceof GeometryType)) {
+                if (a.getValue() instanceof Collection && !(a.getType() instanceof GeometryType)) {
+                    String namespaceProperty = a.getName().getNamespaceURI();
+                    for (Object value : (Collection)a.getValue()) {
+                        if (namespaceProperty != null) {
+                            streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                        } else {
+                            streamWriter.writeStartElement(a.getName().getLocalPart());
+                        }
+                        streamWriter.writeCharacters(Utils.getStringValue(value));
+                        streamWriter.writeEndElement();
+                    }
+
+                } else if (!(a.getType() instanceof GeometryType)) {
                     String namespaceProperty = a.getName().getNamespaceURI();
                     if (namespaceProperty != null) {
                         streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
@@ -278,6 +291,8 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                 streamWriter.writeEndElement();
             }
 
+            streamWriter.writeEndElement();
+            streamWriter.writeEndDocument();
             // we close the stream
             iterator.close();
             streamWriter.flush();

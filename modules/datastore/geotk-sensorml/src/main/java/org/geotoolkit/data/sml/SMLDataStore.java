@@ -80,10 +80,12 @@ public class SMLDataStore extends AbstractDataStore {
     private static final String pathMethod             = "SensorML:SensorML:member:description";  // TODO
     private static final String pathCharacteristicsNam = "SensorML:SensorML:member:characteristics:field:field:name";
     private static final String pathCharacteristicsVal = "SensorML:SensorML:member:characteristics:field:field:value";
+    private static final String pathLocation           = "SensorML:SensorML:member:location:pos";
 
     private PreparedStatement getAllFormId;
 
     private PreparedStatement getTextValue;
+    private PreparedStatement getTextValue2;
 
     private PreparedStatement getSMLType;
 
@@ -128,9 +130,10 @@ public class SMLDataStore extends AbstractDataStore {
 
     private void initStatement() {
         try {
-            getTextValue = connection.prepareStatement("SELECT value FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
-            getSMLType   = connection.prepareStatement("SELECT type  FROM \"Storage\".\"Values\"     WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?");
-            getAllFormId = connection.prepareStatement("SELECT form  FROM \"Storage\".\"Forms\"      WHERE \"catalog\"='SMLC'");
+            getTextValue  = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
+            getTextValue2 = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
+            getSMLType    = connection.prepareStatement("SELECT \"type\"       FROM \"Storage\".\"Values\"     WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?");
+            getAllFormId  = connection.prepareStatement("SELECT \"identifier\" FROM \"Storage\".\"Forms\"      WHERE \"catalog\"='SMLC'");
 
         } catch (SQLException ex) {
            LOGGER.severe("SQL Exception while initializing the prepared statement for SensorML database:" + ex.getMessage());
@@ -396,7 +399,7 @@ public class SMLDataStore extends AbstractDataStore {
 
             ResultSet result = getAllFormId.executeQuery();
 
-            boolean firstCRS = true;
+            boolean firstCRS = false;
             while (result.next()) {
                 int formID = result.getInt(1);
 
@@ -465,11 +468,11 @@ public class SMLDataStore extends AbstractDataStore {
                 getTextValue.setString(1, pathInputsDef);
                 getTextValue.setInt(2, formID);
                 result2 = getTextValue.executeQuery();
-                getTextValue.setString(1, pathInputsNam);
-                getTextValue.setInt(2, formID);
-                ResultSet result3 = getTextValue.executeQuery();
+                getTextValue2.setString(1, pathInputsNam);
+                getTextValue2.setInt(2, formID);
+                ResultSet result3 = getTextValue2.executeQuery();
                 Map<String, String> inputs = new HashMap<String, String>();
-                while (result2.next()) {
+                while (result2.next() && result3.next()) {
                     inputs.put(result3.getString(1), result2.getString(1));
                 }
                 result2.close();
@@ -479,16 +482,33 @@ public class SMLDataStore extends AbstractDataStore {
                 getTextValue.setString(1, pathOutputsDef);
                 getTextValue.setInt(2, formID);
                 result2 = getTextValue.executeQuery();
-                getTextValue.setString(1, pathOutputsNam);
-                getTextValue.setInt(2, formID);
-                result3 = getTextValue.executeQuery();
+                getTextValue2.setString(1, pathOutputsNam);
+                getTextValue2.setInt(2, formID);
+                result3 = getTextValue2.executeQuery();
                 Map<String, String> outputs = new HashMap<String, String>();
-                while (result2.next()) {
+                while (result2.next()  && result3.next()) {
                     outputs.put(result3.getString(1), result2.getString(1));
                 }
                 result2.close();
                 result3.close();
                 builder.set(OUTPUTS, phenomenons);
+
+                //location
+                getTextValue.setString(1, pathLocation);
+                getTextValue.setInt(2, formID);
+                result2 = getTextValue.executeQuery();
+                if (result2.next()) {
+                    String location  = result2.getString(1);
+                    try {
+                        double x         = Double.parseDouble(location.substring(0, location.indexOf(" ")));
+                        double y         = Double.parseDouble(location.substring(location.indexOf(" ") + 1));
+                        Coordinate coord = new Coordinate(x, y);
+                        builder.set(LOCATION, GF.createPoint(coord));
+                    } catch (NumberFormatException ex) {
+                        LOGGER.warning("unable to extract the point coordinate from the text value:" + location);
+                    }
+                }
+                result2.close();
 
                 if (typeName.equals("System") || typeName.equals("ProcessChain")) {
 
@@ -498,11 +518,11 @@ public class SMLDataStore extends AbstractDataStore {
                     getTextValue.setString(1, pathComponentsRef);
                     getTextValue.setInt(2, formID);
                     result2 = getTextValue.executeQuery();
-                    getTextValue.setString(1, pathComponentsRef);
-                    getTextValue.setInt(2, formID);
-                    result3 = getTextValue.executeQuery();
+                    getTextValue2.setString(1, pathComponentsRef);
+                    getTextValue2.setInt(2, formID);
+                    result3 = getTextValue2.executeQuery();
                     Map<String, String> components = new HashMap<String, String>();
-                    while (result2.next()) {
+                    while (result2.next()  && result3.next()) {
                         components.put(result3.getString(1), result2.getString(1));
                     }
                     result2.close();
@@ -516,23 +536,19 @@ public class SMLDataStore extends AbstractDataStore {
                     getTextValue.setString(1, pathCharacteristicsVal);
                     getTextValue.setInt(2, formID);
                     result2 = getTextValue.executeQuery();
-                    getTextValue.setString(1, pathCharacteristicsVal);
-                    getTextValue.setInt(2, formID);
-                    result3 = getTextValue.executeQuery();
-                    Map<String, String> components = new HashMap<String, String>();
-                    while (result2.next()) {
-                        components.put(result3.getString(1), result2.getString(1));
+                    getTextValue2.setString(1, pathCharacteristicsVal);
+                    getTextValue2.setInt(2, formID);
+                    result3 = getTextValue2.executeQuery();
+                    Map<String, String> characteristics = new HashMap<String, String>();
+                    while (result2.next() && result3.next()) {
+                        characteristics.put(result3.getString(1), result2.getString(1));
                     }
                     result2.close();
                     result3.close();
-                    builder.set(CHARACTERISTICS, phenomenons);
+                    builder.set(CHARACTERISTICS, characteristics);
                 }
 
-                /* TODO location
-                double x         = result.getDouble("x_value");
-                double y         = result.getDouble("y_value");
-                Coordinate coord = new Coordinate(x, y);
-                builder.set(LOCATION, GF.createPoint(coord));*/
+                
 
                 collection.add(builder.buildFeature(formID + "")); // TODO id
             }
