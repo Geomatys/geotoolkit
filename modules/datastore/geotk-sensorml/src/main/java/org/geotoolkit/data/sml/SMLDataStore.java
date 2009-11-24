@@ -72,7 +72,7 @@ public class SMLDataStore extends AbstractDataStore {
     private final static Name COMPONENT      = new DefaultName("http://www.opengis.net/sml/1.0", "Component");
     private final static Name PROCESSCHAIN   = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessChain");
     private final static Name PROCESSMODEL   = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel");
-    private final static Name DATASOURCETYPE = new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel");
+    private final static Name DATASOURCETYPE = new DefaultName("http://www.opengis.net/sml/1.0", "DataSourceType");
 
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";

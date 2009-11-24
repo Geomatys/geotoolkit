@@ -25,7 +25,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,7 +63,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class OMDataStore extends AbstractDataStore {
 
-    private final Map<String,SimpleFeatureType> types = new HashMap<String,SimpleFeatureType>();
+    private final static Name SAMPLINGPOINT = new DefaultName("http://www.opengis.net/sampling/1.0", "SamplingPoint");
+
+    private final Map<Name, SimpleFeatureType> types = new HashMap<Name,SimpleFeatureType>();
 
     private final Connection connection;
 
@@ -94,18 +99,8 @@ public class OMDataStore extends AbstractDataStore {
         SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
         AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
 
-        featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sampling/1.0", "SamplingPoint"));
+        featureTypeBuilder.setName(SAMPLINGPOINT);
         
-        /* gml:id (attribute)
-        Name propertyName = ID;
-        attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(false);
-        AttributeType propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(0, attdesc);*/
-
         // gml:description
         Name propertyName = DESC;
         attributeTypeBuilder.setBinding(String.class);
@@ -150,7 +145,7 @@ public class OMDataStore extends AbstractDataStore {
         featureTypeBuilder.setDefaultGeometry(POSITION.getLocalPart());
 
         SimpleFeatureType samplingPointType = featureTypeBuilder.buildFeatureType();
-        types.put("SamplingPoint", samplingPointType);
+        types.put(SAMPLINGPOINT, samplingPointType);
     }
 
     /**
@@ -158,8 +153,21 @@ public class OMDataStore extends AbstractDataStore {
      */
     @Override
     public String[] getTypeNames() throws IOException {
-        final Set<String> keys = types.keySet();
+        final Set<String> keys = new HashSet<String>();
+        for (Name n : types.keySet()) {
+            keys.add(n.getLocalPart());
+        }
         return keys.toArray(new String[keys.size()]);
+    }
+
+     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Name> getNames() throws IOException {
+        Set<Name> keys = types.keySet();
+        return Arrays.asList(keys.toArray(new Name[keys.size()]));
+
     }
 
     /**
@@ -167,9 +175,19 @@ public class OMDataStore extends AbstractDataStore {
      */
     @Override
     public SimpleFeatureType getSchema(String typeName) throws IOException {
-        final SimpleFeatureType sft = types.get(typeName);
+        for (Name n : types.keySet()) {
+            if (n.getLocalPart().equals(typeName)) {
+                return types.get(n);
+            }
+        }
+        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
+    }
+
+    @Override
+    public SimpleFeatureType getSchema(Name name) throws IOException {
+        final SimpleFeatureType sft = types.get(name);
         if (sft == null) {
-            throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
+            throw new IOException("Type name : "+ name +"is unknowned is this datastore");
         }
         return sft;
     }
@@ -179,7 +197,28 @@ public class OMDataStore extends AbstractDataStore {
      */
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
-        final SimpleFeatureType sft = types.get(typeName);
+        SimpleFeatureType sft = null;
+        for (Name n : types.keySet()) {
+            if (n.getLocalPart().equals(typeName)) {
+                sft = types.get(n);
+            }
+        }
+        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, typeName);
+        return DataUtilities.wrapToReader(sft, collection.features());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name) throws IOException {
+        final SimpleFeatureType sft = types.get(name);
+        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
+        return DataUtilities.wrapToReader(sft, collection.features());
+    }
+    
+   private FeatureCollection<SimpleFeatureType,SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
+        
         final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = new DefaultFeatureCollection(typeName + "-collection", sft);
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
         try {
@@ -217,8 +256,9 @@ public class OMDataStore extends AbstractDataStore {
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "SQL exception while reading the record of samplingPoint table", ex);
         }
-        return DataUtilities.wrapToReader(sft, collection.features());
+        return collection;
     }
+   
 
     @Override
     public void dispose() {
