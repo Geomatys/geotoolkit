@@ -358,7 +358,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             QName env     = new QName("http://www.opengis.net/gml", "Envelope", "gml");
             eventWriter.add(new StartElementEvent(env));
             if (srsName != null) {
-                eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "srsName", srsName, null));
+                eventWriter.add(new AttributeImpl("srsName", srsName));
             }
 
             // lower corner

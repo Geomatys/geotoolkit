@@ -195,7 +195,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                 } else if (!(a.getType() instanceof GeometryType)) {
                     
                     String value = Utils.getStringValue(a.getValue());
-                    if (value != null && a.isNillable()) {
+                    if (value != null || a.isNillable()) {
                         String namespaceProperty = a.getName().getNamespaceURI();
                         if (namespaceProperty != null) {
                             streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
