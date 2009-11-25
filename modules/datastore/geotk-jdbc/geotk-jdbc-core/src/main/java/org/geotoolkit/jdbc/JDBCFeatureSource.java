@@ -409,7 +409,7 @@ public class JDBCFeatureSource extends ContentFeatureSource {
         final Filter preFilter = split[0];
         final Filter postFilter = split[1];
 
-        if ((postFilter != null) && (postFilter != Filter.INCLUDE) || (query.getMaxFeatures() < Integer.MAX_VALUE && !canLimit())
+        if ((postFilter != null) && (postFilter != Filter.INCLUDE) || (query.getMaxFeatures() != null && !canLimit())
                                      || (query.getStartIndex() != null && query.getStartIndex() > 0 && !canOffset()))
         {
             //calculate manually, don't use datastore optimization

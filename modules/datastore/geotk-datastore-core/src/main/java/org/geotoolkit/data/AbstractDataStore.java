@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.concurrent.Transaction;
@@ -29,6 +30,8 @@ import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -328,6 +331,15 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         }
         SimpleFeatureType featureType = getSchema(query.getTypeName());
 
+        if (propertyNames != null) {
+            try {
+                featureType = FeatureTypeUtilities.createSubType(featureType, propertyNames);
+            } catch (SchemaException e) {
+                LOGGER.log(Level.FINEST, e.getMessage(), e);
+                throw new DataSourceException("Could not create Feature Type for query", e);
+
+            }
+        }
         if (filter == Filter.EXCLUDE || filter.equals(Filter.EXCLUDE)) {
             return new EmptyFeatureReader<SimpleFeatureType, SimpleFeature>(featureType);
         }

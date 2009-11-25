@@ -3131,8 +3131,8 @@ public final class JDBCDataStore extends ContentDataStore {
 
         // the check the query has at least a non default value for limit/offset
         final Integer offset = query.getStartIndex();
-        final int limit = query.getMaxFeatures();
-        return limit != Integer.MAX_VALUE || (offset != null && offset > 0);
+        final Integer limit = query.getMaxFeatures();
+        return limit != null || (offset != null && offset > 0);
     }
 
     /**

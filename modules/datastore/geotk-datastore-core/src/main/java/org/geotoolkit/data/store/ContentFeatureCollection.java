@@ -106,7 +106,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
         featureSource.addFeatureListener(listener);
 
         //retype feature type if necessary
-        if (query.retrieveAllProperties()) {
+        if (!query.retrieveAllProperties()) {
             this.featureType =
                     SimpleFeatureTypeBuilder.retype(featureSource.getSchema(), query.getPropertyNames());
         } else {

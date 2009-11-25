@@ -96,7 +96,13 @@ class DefaultQuery implements Query {
         this.crs = crs;
         this.startIndex = startIndex;
         this.maxFeatures = MaxFeature;
-        this.hints = hints;
+
+        if(hints == null){
+            this.hints = new Hints();
+        }else{
+            this.hints = hints;
+        }
+        
         this.handle = handle;
     }
 
