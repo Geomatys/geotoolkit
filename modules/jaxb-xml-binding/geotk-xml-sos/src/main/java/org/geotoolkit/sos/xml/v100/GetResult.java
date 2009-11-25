@@ -130,10 +130,12 @@ public class GetResult extends RequestBaseType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("GetResult:");
-        s.append('\n').append("observation template id=").append(observationTemplateId).append('\n');
-        for (EventTime et:eventTime) {
-            s.append(et.toString()).append('\n');
+        StringBuilder s = new StringBuilder("[GetResult]").append('\n');
+        s.append("observation template id=").append(observationTemplateId).append('\n');
+        if (eventTime != null) {
+            for (EventTime et:eventTime) {
+                s.append(et.toString()).append('\n');
+            }
         }
         return  s.toString();
     }

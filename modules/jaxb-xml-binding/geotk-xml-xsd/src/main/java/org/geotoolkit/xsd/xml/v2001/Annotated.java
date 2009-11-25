@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -137,4 +138,39 @@ public class Annotated extends OpenAttrs {
         this.id = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Annotated && super.equals(object)) {
+            final Annotated that = (Annotated) object;
+            return Utilities.equals(this.annotation, that.annotation) &&
+                   Utilities.equals(this.id        , that.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 83 * hash + (this.annotation != null ? this.annotation.hashCode() : 0);
+        hash = 83 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (annotation != null) {
+            sb.append("annotation:").append(annotation).append('\n');
+        }
+        return  sb.toString();
+    }
 }

@@ -112,7 +112,8 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
 
     @Override
     public DataStore<SimpleFeatureType, SimpleFeature> createDataStore(ParameterValueGroup params) throws IOException {
-        DefaultDataSource ds  = new DefaultDataSource(getJDBCUrl(params));
+        String dburl = getJDBCUrl(params);
+        DefaultDataSource ds  = new DefaultDataSource(dburl);
         final String user     = (String) params.parameter(USER.getName().toString()).getValue();
         final String pass     = (String) params.parameter(PASSWD.getName().toString()).getValue();
         try {
@@ -120,7 +121,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
             OMDataStore datastore = new OMDataStore(connection);
             return datastore;
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL Exception while creating O&M datastore", ex);
+            LOGGER.log(Level.SEVERE, "SQL Exception while creating O&M datastore for url:" + dburl, ex);
         }
         return null;
     }

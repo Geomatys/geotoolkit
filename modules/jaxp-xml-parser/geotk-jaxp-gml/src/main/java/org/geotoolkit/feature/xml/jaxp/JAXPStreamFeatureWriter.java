@@ -178,6 +178,20 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                         streamWriter.writeEndElement();
                     }
 
+                } else if (a.getValue() instanceof Map && !(a.getType() instanceof GeometryType)) {
+                    String namespaceProperty = a.getName().getNamespaceURI();
+                    Map map = (Map)a.getValue();
+                    for (Object key : map.keySet()) {
+                        if (namespaceProperty != null) {
+                            streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                        } else {
+                            streamWriter.writeStartElement(a.getName().getLocalPart());
+                        }
+                        streamWriter.writeAttribute("name", (String)key);
+                        streamWriter.writeCharacters(Utils.getStringValue(map.get(key)));
+                        streamWriter.writeEndElement();
+                    }
+
                 } else if (!(a.getType() instanceof GeometryType)) {
                     String namespaceProperty = a.getName().getNamespaceURI();
                     if (namespaceProperty != null) {

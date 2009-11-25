@@ -53,7 +53,7 @@ public abstract class AbstractFeatureCollection implements FeatureCollection<Sim
     protected final Set open = new HashSet();
 
     protected AbstractFeatureCollection(final SimpleFeatureType memberType, String id) {
-        this.id = (id == null) ? "featureCollection" : id;
+        this.id = (id == null) ? "collection-1" : id;
         this.schema = memberType;
     }
 

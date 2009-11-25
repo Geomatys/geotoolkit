@@ -709,6 +709,13 @@
       <url>http://maven.geotoolkit.org/</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>geotoolkit</id>
+      <name>Builds from Geotoolkit</name>
+      <url>http://maven.geotoolkit.org</url>
+    </pluginRepository>
+  </pluginRepositories>
 
 
 

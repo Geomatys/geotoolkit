@@ -94,7 +94,7 @@ public abstract class DataFeatureCollection implements FeatureCollection<SimpleF
      * Subclass must think about what consitructors it needs.
      */
     protected DataFeatureCollection(final String id, final SimpleFeatureType memberType) {
-        this.id = (id == null) ? "featureCollection" : id;
+        this.id = (id == null) ? "collection-1" : id;
         this.schema = memberType;
     }
 

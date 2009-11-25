@@ -36,13 +36,17 @@ public class FeatureCollectionGroup extends AbstractFeatureCollection{
 
     private final FeatureCollection[] wrapped;
 
-    private FeatureCollectionGroup(FeatureCollection[] wrapped){
-        super( (SimpleFeatureType)wrapped[0].getSchema(), "featureCollection");
+    private FeatureCollectionGroup(String id, FeatureCollection[] wrapped){
+        super( (SimpleFeatureType)wrapped[0].getSchema(), id);
         this.wrapped = wrapped;
     }
 
     public static FeatureCollection sequence(FeatureCollection ... cols){
-        return new FeatureCollectionGroup(cols);
+        return new FeatureCollectionGroup("collection-1", cols);
+    }
+
+    public static FeatureCollection sequence(String id, FeatureCollection ... cols){
+        return new FeatureCollectionGroup(id, cols);
     }
 
     @Override
