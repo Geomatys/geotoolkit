@@ -58,12 +58,13 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.geometry.jts.JTS;
 
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -252,10 +253,12 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 final Expression geomData = FF.literal(dataPoly);
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
-                                final DefaultQuery query = new DefaultQuery();
-                                query.setFilter(f);
-                                query.setPropertyNames(new String[]{geoStr});
-
+                                final Query query = new QueryBuilder()
+                                    .setTypeName(fml.getFeatureSource().getSchema().getName())
+                                    .setFilter(f)
+                                    .setProperties(new String[]{geoStr})
+                                    .buildQuery();
+                                
                                 FeatureCollection fc = fl.getFeatureSource().getFeatures(query);
                                 FeatureIterator fi = fc.features();
                                 while(fi.hasNext()){

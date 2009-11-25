@@ -30,10 +30,9 @@ import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.collection.FeatureIterator;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.type.DefaultPropertyDescriptor;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
@@ -97,11 +96,10 @@ public class FeatureSourceModel extends DefaultTableModel {
     }
 
     public Query removeGeometryAttributs(Query query){
-        DefaultQuery simpleQuery = new DefaultQuery(query);
 
         FeatureType ft = ((FeatureMapLayer)layer).getFeatureSource().getSchema();
 
-        String[] propNames = simpleQuery.getPropertyNames();
+        String[] propNames = query.getPropertyNames();
 
         List<String> props = new ArrayList<String>();
         if(propNames != null){
@@ -121,8 +119,11 @@ public class FeatureSourceModel extends DefaultTableModel {
             }
         }
 
-        simpleQuery.setPropertyNames(props);
-        return simpleQuery;
+        query = new QueryBuilder()
+                .copy(query)
+                .setProperties(props.toArray(new String[props.size()]))
+                .buildQuery();
+        return query;
     }
 
     @Override

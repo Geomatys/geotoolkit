@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -58,6 +57,8 @@ import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -219,9 +220,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
-        final DefaultQuery query = new DefaultQuery();
-        query.setFilter(filter);
-        query.setPropertyNames(atts);
+        final Query query = new QueryBuilder()
+                .setTypeName(schema.getName())
+                .setFilter(filter)
+                .setProperties(atts)
+                .buildQuery();
 
         if(monitor.stopRequested()) return;
         
@@ -357,10 +360,12 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
-        final DefaultQuery query = new DefaultQuery();
-        query.setFilter(filter);
-        query.setPropertyNames(atts);
-
+        final Query query = new QueryBuilder()
+                .setTypeName(schema.getName())
+                .setFilter(filter)
+                .setProperties(atts)
+                .buildQuery();
+        
         final FeatureCollection<SimpleFeatureType,SimpleFeature> features;
         try{
             features = fs.getFeatures(query);

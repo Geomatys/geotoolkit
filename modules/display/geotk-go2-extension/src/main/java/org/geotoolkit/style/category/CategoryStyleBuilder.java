@@ -30,11 +30,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
@@ -255,8 +256,10 @@ public class CategoryStyleBuilder extends Factory {
         //search the different values
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
-        final DefaultQuery query = new DefaultQuery();
-        query.setPropertyNames(new String[]{property.getPropertyName()});
+        final Query query = new QueryBuilder()
+                .setTypeName(layer.getFeatureSource().getSchema().getName())
+                .setProperties(new String[]{property.getPropertyName()})
+                .buildQuery();
 
         FeatureIterator<SimpleFeature> features = null;
         try{

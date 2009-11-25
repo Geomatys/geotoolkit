@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.map;
 
-
-import org.geotoolkit.data.query.DefaultQuery;
-
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.style.MutableStyle;
 
@@ -93,7 +90,7 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
             if(oldQuery.equals(query)){
                 return;
             }
-            this.query = new DefaultQuery(query);
+            this.query = query;
         }
         firePropertyChange(QUERY_PROPERTY, oldQuery, this.query);
     }

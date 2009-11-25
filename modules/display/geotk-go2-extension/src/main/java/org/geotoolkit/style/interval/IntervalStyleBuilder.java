@@ -37,10 +37,10 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.data.query.DefaultQuery;
 
 import org.geotoolkit.data.collection.FeatureIterator;
 
+import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -368,23 +368,24 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the extreme values
-        final DefaultQuery query = new DefaultQuery();
+        final QueryBuilder query = new QueryBuilder()
+                .setTypeName(layer.getFeatureSource().getSchema().getName());
 
         if(classification == null || layer == null) return;
 
             if(!properties.contains(classification)) return;
 
         if(normalize == null || normalize.equals(noValue)){
-            query.setPropertyNames(new String[]{classification.getPropertyName()});
+            query.setProperties(new String[]{classification.getPropertyName()});
         }else{
             if(!properties.contains(normalize)) return;
-            query.setPropertyNames(new String[]{classification.getPropertyName(),
+            query.setProperties(new String[]{classification.getPropertyName(),
                                                 normalize.getPropertyName()});
         }
 
         FeatureIterator<SimpleFeature> features = null;
         try{
-            features = layer.getFeatureSource().getFeatures(query).features();
+            features = layer.getFeatureSource().getFeatures(query.buildQuery()).features();
             List<Double> values = new ArrayList<Double>();
 
             while(features.hasNext()){

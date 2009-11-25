@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.filterproperty;
 
-import org.geotoolkit.data.query.DefaultQuery;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.gui.swing.filter.JCQLFilterPanel;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -48,7 +48,7 @@ public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
     @Override
     public void apply() {  
         if(layer !=null){
-            layer.setQuery(new DefaultQuery("cqlfilter", getFilter()));
+            layer.setQuery(QueryBuilder.filtered(layer.getFeatureSource().getSchema().getName(), getFilter()));
         }
     }
 

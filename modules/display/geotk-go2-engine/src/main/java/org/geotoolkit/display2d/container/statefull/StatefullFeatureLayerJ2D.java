@@ -31,7 +31,8 @@ import java.util.logging.Level;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
-import org.geotoolkit.data.query.DefaultQuery;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -204,10 +205,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
-        final DefaultQuery query = new DefaultQuery();
-        query.setFilter(filter);
-        query.setPropertyNames(atts);
 
+        final Query query = new QueryBuilder()
+                .setTypeName(schema.getName())
+                .setFilter(filter)
+                .setProperties(atts)
+                .buildQuery();
+        
         if(copy.size() != cachedAttributs.size() || !cachedAttributs.containsAll(copy)){
             //the attributs needed for styling have changed, the cache is obsolete
             clearCache();
@@ -443,10 +447,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
-        final DefaultQuery query = new DefaultQuery();
-        query.setFilter(filter);
-        query.setPropertyNames(atts);
 
+        final Query query = new QueryBuilder()
+                .setTypeName(schema.getName())
+                .setFilter(filter)
+                .setProperties(atts)
+                .buildQuery();
+        
         if(copy.size() != cachedAttributs.size() || !cachedAttributs.containsAll(copy)){
             //the attributs needed for styling have changed, the cache is obsolete
             clearCache();
