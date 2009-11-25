@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.diff.DiffFeatureReader;
-import org.geotoolkit.data.diff.Diff;
-import org.geotoolkit.data.diff.DiffFeatureWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,6 +27,11 @@ import java.util.Map.Entry;
 
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.concurrent.Transaction.State;
+import org.geotoolkit.data.diff.DiffFeatureReader;
+import org.geotoolkit.data.diff.Diff;
+import org.geotoolkit.data.diff.DiffFeatureWriter;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.IllegalAttributeException;
@@ -44,8 +46,6 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.DefaultName;
 
 /**
  * A Transaction.State that keeps a difference table for use with
@@ -333,9 +333,10 @@ public class TransactionStateDiff implements State {
     public synchronized FeatureWriter<SimpleFeatureType, SimpleFeature> writer(final String typeName, final Filter filter)
             throws IOException {
         final Diff diff = diff(typeName);
+        final SimpleFeatureType sft = store.getSchema(typeName);
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader =
-                new FilteringFeatureReader<SimpleFeatureType, SimpleFeature>(store.getFeatureReader(typeName, 
-                QueryBuilder.filtered(new DefaultName(typeName), filter)), filter);
+                new FilteringFeatureReader<SimpleFeatureType, SimpleFeature>(store.getFeatureReader(
+                QueryBuilder.filtered(sft.getName(), filter)), filter);
 
         return new DiffFeatureWriter(reader, diff, filter) {
 

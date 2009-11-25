@@ -18,6 +18,7 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.query.Query;
@@ -34,8 +35,10 @@ import org.opengis.feature.type.FeatureType;
 
 import com.vividsolutions.jts.geom.Envelope;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import org.opengis.feature.IllegalAttributeException;
+import org.opengis.feature.type.Name;
 
 /**
  * Utility functions for use when implementing working with data classes.
@@ -107,27 +110,6 @@ public final class DataUtilities extends FeatureCollectionUtilities {
         final DataStore arrayStore = new AbstractDataStore() {
 
             @Override
-            public String[] getTypeNames() {
-                return new String[]{featureType.getTypeName()};
-            }
-
-            @Override
-            public SimpleFeatureType getSchema(final String typeName)
-                    throws IOException {
-                if ((typeName != null) && typeName.equals(featureType.getTypeName())) {
-                    return featureType;
-                }
-
-                throw new IOException(typeName + " not available");
-            }
-
-            @Override
-            public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
-                    throws IOException {
-                return reader(featureArray);
-            }
-
-            @Override
             protected JTSEnvelope2D getBounds(Query query) throws IOException {
                 return null;
             }
@@ -135,6 +117,26 @@ public final class DataUtilities extends FeatureCollectionUtilities {
             @Override
             protected int getCount(Query query) throws IOException {
                 return -1;
+            }
+
+            @Override
+            protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
+                return Collections.singletonMap(featureType.getName(), featureType);
+            }
+
+            @Override
+            protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+                return reader(featureArray);
+            }
+
+            @Override
+            public void createSchema(SimpleFeatureType featureType) throws IOException {
+                throw new IOException("Create schema not supported.");
+            }
+
+            @Override
+            public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+                throw new IOException("update schema not supported");
             }
         };
 

@@ -157,7 +157,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         DataStore store = MemoryDataStore.create(reader);
     }
 
-    public void testGetFeatureTypes() {
+    public void testGetFeatureTypes() throws IOException {
         String[] names = data.getTypeNames();
         assertEquals(2, names.length);
         assertTrue(contains(names, "road"));
@@ -633,7 +633,7 @@ public class MemoryDataStoreTest extends DataTestCase {
             }
         }
 
-        assertEquals(roadFeatures.length - 1, data.features("road").size());
+        assertEquals(roadFeatures.length - 1, data.features(data.getSchema("road").getName()).size());
     }
 
     public void testGetFeaturesWriterAdd() throws IOException, IllegalAttributeException {
@@ -649,7 +649,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         feature.setAttributes(newRoad.getAttributes());
         writer.write();
         assertFalse(writer.hasNext());
-        assertEquals(roadFeatures.length + 1, data.features("road").size());
+        assertEquals(roadFeatures.length + 1, data.features(data.getSchema("road").getName()).size());
     }
 
     public void testGetFeaturesWriterModify() throws IOException, IllegalAttributeException {
@@ -665,7 +665,7 @@ public class MemoryDataStoreTest extends DataTestCase {
             }
         }
 
-        feature = (SimpleFeature) data.features("road").get("road.rd1");
+        feature = (SimpleFeature) data.features(data.getSchema("road").getName()).get("road.rd1");
         assertEquals("changed", feature.getAttribute("name"));
     }
 

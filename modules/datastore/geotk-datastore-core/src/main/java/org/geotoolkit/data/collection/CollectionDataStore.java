@@ -19,6 +19,7 @@ package org.geotoolkit.data.collection;
 import java.io.IOException;
 import java.util.Iterator;
 
+import java.util.Map;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataSourceException;
 import org.geotoolkit.data.FeatureReader;
@@ -33,6 +34,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.Collections;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.SchemaException;
@@ -82,47 +84,6 @@ public class CollectionDataStore extends AbstractDataStore {
         }
 
         collection.addListener(new FeatureCollectionListener());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getTypeNames() {
-        return new String[]{featureType.getTypeName()};
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SimpleFeatureType getSchema(final String typeName) throws IOException {
-        if ((typeName != null) && typeName.equals(featureType.getTypeName())) {
-            return featureType;
-        }
-
-        throw new IOException(typeName + " not available");
-    }
-
-    /**
-     * Provides  FeatureReader<SimpleFeatureType, SimpleFeature> over the entire contents of <code>typeName</code>.
-     * 
-     * <p>
-     * Implements getFeatureReader contract for AbstractDataStore.
-     * </p>
-     *
-     * @param typeName
-     *
-     *
-     * @throws IOException If typeName could not be found
-     * @throws DataSourceException See IOException
-     *
-     * @see org.geotoolkit.data.AbstractDataStore#getFeatureSource(java.lang.String)
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
-            throws IOException {
-        return DataUtilities.wrapToReader(getSchema(typeName), collection.features());
     }
 
     /**
@@ -193,6 +154,50 @@ public class CollectionDataStore extends AbstractDataStore {
         }
 
         return count;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
+        return Collections.singletonMap(featureType.getName(), featureType);
+    }
+
+    /**
+     * Provides  FeatureReader<SimpleFeatureType, SimpleFeature> over the entire contents of <code>typeName</code>.
+     *
+     * <p>
+     * Implements getFeatureReader contract for AbstractDataStore.
+     * </p>
+     *
+     * @param typeName
+     *
+     *
+     * @throws IOException If typeName could not be found
+     * @throws DataSourceException See IOException
+     *
+     * @see org.geotoolkit.data.AbstractDataStore#getFeatureSource(java.lang.String)
+     */
+    @Override
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+        return DataUtilities.wrapToReader(getSchema(query.getTypeName()), collection.features());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createSchema(SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Create schema not supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Update schema not supported");
     }
 
     /**

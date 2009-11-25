@@ -18,6 +18,7 @@ package org.geotoolkit.data.memory;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,7 +32,6 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.data.DataStore;
@@ -43,6 +43,7 @@ import org.opengis.feature.FeatureVisitor;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -71,9 +72,10 @@ import com.vividsolutions.jts.geom.Geometry;
 public final class MemoryDataStore extends AbstractDataStore {
 
     /** Memory holds Map of Feature by fid by typeName. */
-    private final Map<String, Map<String, SimpleFeature>> memory = new HashMap<String, Map<String, SimpleFeature>>();
+    private final Map<Name, Map<String, SimpleFeature>> memory = new HashMap<Name, Map<String, SimpleFeature>>();
+
     /** Schema holds FeatureType by typeName */
-    private final Map<String, SimpleFeatureType> schema = new HashMap<String, SimpleFeatureType>();
+    private final Map<Name, SimpleFeatureType> schema = new HashMap<Name, SimpleFeatureType>();
 
     public MemoryDataStore() {
         super(true);
@@ -86,7 +88,7 @@ public final class MemoryDataStore extends AbstractDataStore {
     public static DataStore create(SimpleFeatureType featureType) {
         final MemoryDataStore store = new MemoryDataStore();
         final Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
-        final String typeName = featureType.getTypeName();
+        final Name typeName = featureType.getName();
         store.schema.put(typeName, featureType);
         store.memory.put(typeName, featureMap);
         return store;
@@ -131,7 +133,7 @@ public final class MemoryDataStore extends AbstractDataStore {
             // order as they were inserted. This is important for repeatable rendering
             // of overlapping features.
             final Map<String, SimpleFeature> featureMap = new LinkedHashMap<String, SimpleFeature>();
-            String typeName;
+            Name typeName;
             SimpleFeature feature;
 
             feature = reader.next();
@@ -141,7 +143,7 @@ public final class MemoryDataStore extends AbstractDataStore {
             }
 
             featureType = feature.getFeatureType();
-            typeName = featureType.getTypeName();
+            typeName = featureType.getName();
 
             featureMap.put(feature.getID(), feature);
 
@@ -171,7 +173,7 @@ public final class MemoryDataStore extends AbstractDataStore {
         try {
             SimpleFeatureType featureType;
             final Map<String, SimpleFeature> featureMap = new HashMap<String, SimpleFeature>();
-            String typeName;
+            Name typeName;
             SimpleFeature feature;
 
             feature = reader.next();
@@ -181,7 +183,7 @@ public final class MemoryDataStore extends AbstractDataStore {
             }
 
             featureType = feature.getFeatureType();
-            typeName = featureType.getTypeName();
+            typeName = featureType.getName();
 
             featureMap.put(feature.getID(), feature);
 
@@ -283,12 +285,8 @@ public final class MemoryDataStore extends AbstractDataStore {
             throw new IllegalArgumentException("Provided Feature is empty");
         }
 
-        SimpleFeatureType featureType;
-        featureType = feature.getFeatureType();
-
-        final String typeName = featureType.getTypeName();
-
-        Map featuresMap;
+        final SimpleFeatureType featureType = feature.getFeatureType();
+        final Name typeName = featureType.getName();
 
         if (!memory.containsKey(typeName)) {
             try {
@@ -300,7 +298,7 @@ public final class MemoryDataStore extends AbstractDataStore {
             }
         }
 
-        featuresMap = (Map) memory.get(typeName);
+        final Map featuresMap = memory.get(typeName);
         featuresMap.put(feature.getID(), feature);
     }
 
@@ -313,7 +311,7 @@ public final class MemoryDataStore extends AbstractDataStore {
      *
      * @throws IOException If typeName cannot be found
      */
-    protected Map features(String typeName) throws IOException {
+    protected Map features(Name typeName) throws IOException {
         synchronized (memory) {
             if (memory.containsKey(typeName)) {
                 return (Map) memory.get(typeName);
@@ -321,36 +319,6 @@ public final class MemoryDataStore extends AbstractDataStore {
         }
 
         throw new IOException("Type name " + typeName + " not found");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String[] getTypeNames() {
-        synchronized (memory) {
-            final String[] types = new String[schema.size()];
-            int index = 0;
-
-            for (final Iterator i = schema.keySet().iterator(); i.hasNext(); index++) {
-                types[index] = (String) i.next();
-            }
-
-            return types;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SimpleFeatureType getSchema(String typeName) throws IOException {
-        synchronized (memory) {
-            if (schema.containsKey(typeName)) {
-                return (SimpleFeatureType) schema.get(typeName);
-            }
-            throw SchemaException.notFound(typeName);
-        }
     }
 
     /**
@@ -369,7 +337,7 @@ public final class MemoryDataStore extends AbstractDataStore {
      */
     @Override
     public void createSchema(SimpleFeatureType featureType) throws IOException {
-        final String typeName = featureType.getTypeName();
+        final Name typeName = featureType.getName();
 
         if (memory.containsKey(typeName)) {
             // we have a conflict
@@ -379,66 +347,6 @@ public final class MemoryDataStore extends AbstractDataStore {
         final Map featuresMap = new LinkedHashMap();
         schema.put(typeName, featureType);
         memory.put(typeName, featuresMap);
-    }
-
-    /**
-     * Provides FeatureReader<SimpleFeatureType, SimpleFeature> over the entire contents of <code>typeName</code>.
-     * 
-     * <p>
-     * Implements getFeatureReader contract for AbstractDataStore.
-     * </p>
-     *
-     * @param typeName
-     *
-     *
-     * @throws IOException If typeName could not be found
-     * @throws DataSourceException See IOException
-     *
-     * @see org.geotoolkit.data.AbstractDataStore#getFeatureSource(java.lang.String)
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final String typeName)
-            throws IOException {
-        return new FeatureReader<SimpleFeatureType, SimpleFeature>() {
-
-            SimpleFeatureType featureType = getSchema(typeName);
-            Iterator iterator = features(typeName).values().iterator();
-
-            @Override
-            public SimpleFeatureType getFeatureType() {
-                return featureType;
-            }
-
-            @Override
-            public SimpleFeature next()
-                    throws IOException, IllegalAttributeException, NoSuchElementException {
-                if (iterator == null) {
-                    throw new IOException("Feature Reader has been closed");
-                }
-
-                try {
-                    return SimpleFeatureBuilder.copy((SimpleFeature) iterator.next());
-                } catch (NoSuchElementException end) {
-                    throw new DataSourceException("There are no more Features", end);
-                }
-            }
-
-            @Override
-            public boolean hasNext() {
-                return (iterator != null) && iterator.hasNext();
-            }
-
-            @Override
-            public void close() {
-                if (iterator != null) {
-                    iterator = null;
-                }
-
-                if (featureType != null) {
-                    featureType = null;
-                }
-            }
-        };
     }
 
     /**
@@ -463,7 +371,7 @@ public final class MemoryDataStore extends AbstractDataStore {
         return new FeatureWriter<SimpleFeatureType, SimpleFeature>() {
 
             SimpleFeatureType featureType = getSchema(typeName);
-            Map contents = features(typeName);
+            Map contents = features(featureType.getName());
             Iterator iterator = contents.values().iterator();
             SimpleFeature live = null;
             SimpleFeature current = null; // current Feature returned to user
@@ -596,7 +504,7 @@ public final class MemoryDataStore extends AbstractDataStore {
     @Override
     protected JTSEnvelope2D getBounds(Query query)
             throws IOException {
-        final String typeName = query.getTypeName().getLocalPart();
+        final Name typeName = query.getTypeName();
         final Map contents = features(typeName);
         final Iterator iterator = contents.values().iterator();
 
@@ -629,7 +537,7 @@ public final class MemoryDataStore extends AbstractDataStore {
     @Override
     protected int getCount(Query query)
             throws IOException {
-        final String typeName = query.getTypeName().getLocalPart();
+        final Name typeName = query.getTypeName();
         final Map contents = features(typeName);
         final Iterator iterator = contents.values().iterator();
 
@@ -646,4 +554,71 @@ public final class MemoryDataStore extends AbstractDataStore {
 
         return count;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
+        synchronized (memory) {
+            return Collections.unmodifiableMap(schema);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+        final Name typeName = query.getTypeName();
+        return new FeatureReader<SimpleFeatureType, SimpleFeature>() {
+
+            SimpleFeatureType featureType = getSchema(typeName);
+            Iterator iterator = features(typeName).values().iterator();
+
+            @Override
+            public SimpleFeatureType getFeatureType() {
+                return featureType;
+            }
+
+            @Override
+            public SimpleFeature next()
+                    throws IOException, IllegalAttributeException, NoSuchElementException {
+                if (iterator == null) {
+                    throw new IOException("Feature Reader has been closed");
+                }
+
+                try {
+                    return SimpleFeatureBuilder.copy((SimpleFeature) iterator.next());
+                } catch (NoSuchElementException end) {
+                    throw new DataSourceException("There are no more Features", end);
+                }
+            }
+
+            @Override
+            public boolean hasNext() {
+                return (iterator != null) && iterator.hasNext();
+            }
+
+            @Override
+            public void close() {
+                if (iterator != null) {
+                    iterator = null;
+                }
+
+                if (featureType != null) {
+                    featureType = null;
+                }
+            }
+        };
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Update schema not supported.");
+    }
+
 }

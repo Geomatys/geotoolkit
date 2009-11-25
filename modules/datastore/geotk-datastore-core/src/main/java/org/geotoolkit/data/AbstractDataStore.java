@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +30,7 @@ import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.diff.Diff;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -131,6 +132,44 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
+     * Computes the bounds of the features for the specified feature type that
+     * satisfy the query provided that there is a fast way to get that result.
+     * <p>
+     * Will return null if there is not fast way to compute the bounds. Since
+     * it's based on some kind of header/cached information, it's not guaranteed
+     * to be real bound of the features
+     * </p>
+     * @param query
+     * @return the bounds, or null if too expensive
+     * @throws SchemaNotFoundException
+     * @throws IOException
+     */
+    protected abstract JTSEnvelope2D getBounds(Query query) throws IOException;
+
+    /**
+     * Gets the number of the features that would be returned by this query for
+     * the specified feature type.
+     * <p>
+     * If getBounds(Query) returns <code>-1</code> due to expense consider
+     * using <code>getFeatures(Query).getCount()</code> as a an alternative.
+     * </p>
+     *
+     * @param query Contains the Filter and MaxFeatures to find the bounds for.
+     * @return The number of Features provided by the Query or <code>-1</code>
+     *         if count is too expensive to calculate or any errors or occur.
+     * @throws IOException
+     *
+     * @throws IOException if there are errors getting the count
+     */
+    protected abstract int getCount(Query query) throws IOException;
+
+    /**
+     * @return List of all types available in this datastore
+     *  never null but can be empty
+     */
+    protected abstract Map<Name,SimpleFeatureType> getTypes() throws IOException;
+
+    /**
      * Currently returns an InProcessLockingManager.
      *
      * <p>
@@ -164,73 +203,139 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
-     * Delegates to {@link #getSchema(java.lang.String)} with {@code name.getLocalPart()}
-     *
-     * @since 2.5
+     * GR: this method is called from inside getFeatureReader(Query ,Transaction )
+     * to allow subclasses return an optimized  FeatureReader<SimpleFeatureType, SimpleFeature> wich supports the
+     * filter and attributes truncation specified in <code>query</code>
+     * <p>
+     * A subclass that supports the creation of such an optimized FeatureReader
+     * shold override this method. Otherwise, it just returns
+     * <code>getFeatureReader(typeName)</code>
+     * <p>
      */
-    @Override
-    public SimpleFeatureType getSchema(Name name) throws IOException {
-        return getSchema(name.getLocalPart());
+    protected abstract FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException;
+
+    /**
+     * GR: if a subclass supports filtering, it should override this method
+     * to return the unsupported part of the passed filter, so a
+     * FilteringFeatureReader will be constructed upon it. Otherwise it will
+     * just return the same filter.
+     * <p>
+     * If the complete filter is supported, the subclass must return <code>Filter.INCLUDE</code>
+     * </p>
+     */
+    protected Filter getUnsupportedFilter(String typeName, Filter filter) {
+        return filter;
     }
 
     /**
-     * Subclass should implement to provide writing support.
-     *
-     * @param featureType Requested FeatureType
-     * @throws IOException
-     *
-     * @throws IOException Subclass may throw IOException
-     * @throws UnsupportedOperationException Subclass may implement
+     * Used to retrive the TransactionStateDiff for this transaction.
+     * If you subclass is doing its own thing (ArcSDE I am talking to
+     * you) then you should arrange for this method to return null.
+     * <p>
+     * By default a TransactionStateDiff will be created that holds
+     * any changes in memory.
+     * <p>
+     * @param transaction
+     * @return TransactionStateDiff or null if subclass is handling differences
      */
-    @Override
-    public void createSchema(SimpleFeatureType featureType) throws IOException {
-        throw new UnsupportedOperationException("Schema creation not supported");
+    protected TransactionStateDiff state(Transaction transaction) {
+        synchronized (transaction) {
+            TransactionStateDiff state = (TransactionStateDiff) transaction.getState(this);
+
+            if (state == null) {
+                state = new TransactionStateDiff(this);
+                transaction.putState(this, state);
+            }
+
+            return state;
+        }
     }
 
     /**
-     * Delegates to {@link #updateSchema(String, SimpleFeatureType)} with
-     * {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataStore#getFeatureSource(Name)
+     * If you are using the automated FeatureSource/Store/Locking creation, this method
+     * allows for the specification of the supported hints.
+     * @return Set of hints
+     */
+    protected Set getSupportedHints() {
+        return Collections.EMPTY_SET;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // methods that fall back on abstract methods //////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
-        updateSchema(typeName.getLocalPart(), featureType);
+    public final String[] getTypeNames() throws IOException {
+        final List<Name> names = getNames();
+        final int size = names.size();
+        final String[] typeNames = new String[size];
+
+        for(int i=0; i<size;i++){
+            typeNames[i] = names.get(i).getLocalPart();
+        }
+
+        return typeNames;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(String typeName, SimpleFeatureType featureType) {
-        throw new UnsupportedOperationException("Schema modification not supported");
+    public final List<Name> getNames() throws IOException {
+        return new ArrayList<Name>(getTypes().keySet());
     }
 
     /**
-     * Delegates to {@link #getFeatureSource(String)} with
-     * {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataStore#getFeatureSource(Name)
+     * {@inheritDoc }
+     */
+    @Override
+    public final SimpleFeatureType getSchema(String typeName) throws IOException {
+        for(final Name name : getTypes().keySet()){
+            if(name.getLocalPart().equals(typeName)){
+                return getSchema(name);
+            }
+        }
+        throw new IOException("Type name : " + typeName + "does not exist in this datastore.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final SimpleFeatureType getSchema(Name name) throws IOException {
+        return getTypes().get(name);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final void updateSchema(String typeName, SimpleFeatureType featureType) throws IOException{        
+        //will throw an error if the type doesn't exist
+        final SimpleFeatureType type = getSchema(typeName);
+        updateSchema(type.getName(), featureType);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
+            throws IOException {
+        //will throw an error if the type doesn't exist
+        final SimpleFeatureType featureType = getSchema(typeName);
+        return getFeatureSource(featureType.getName());
+    }
+
+    /**
+     * {@inheritDoc }
      */
     @Override
     public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName)
-            throws IOException {
-        return getFeatureSource(typeName.getLocalPart());
-    }
-
-    /**
-     * Default implementation based on getFeatureReader and getFeatureWriter.
-     *
-     * <p>
-     * We should be able to optimize this to only get the RowSet once
-     * </p>
-     *
-     * @see org.geotoolkit.data.DataStore#getFeatureSource(java.lang.String)
-     */
-    @Override
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
             throws IOException {
         final SimpleFeatureType featureType = getSchema(typeName);
 
@@ -312,7 +417,26 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query,
+    public final FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
+        //will throw an error if the type doesn't exist
+        final SimpleFeatureType sft = getSchema(typeName);
+        return getFeatureReader(sft.getName());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name)
+            throws IOException {
+        return getFeatureReader(QueryBuilder.all(name));
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public final FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query,
             final Transaction transaction) throws IOException {
         Filter filter = query.getFilter();
         final String typeName = query.getTypeName().getLocalPart();
@@ -367,7 +491,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         // This calls our subclass "simple" implementation
         // All other functionality will be built as a reader around
         // this class
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader = getFeatureReader(typeName, query);
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = getFeatureReader(query);
 
         if (diff != null) {
             reader = new DiffFeatureReader<SimpleFeatureType, SimpleFeature>(reader, diff, query.getFilter());
@@ -390,69 +514,31 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
-     * GR: this method is called from inside getFeatureReader(Query ,Transaction )
-     * to allow subclasses return an optimized  FeatureReader<SimpleFeatureType, SimpleFeature> wich supports the
-     * filter and attributes truncation specified in <code>query</code>
-     * <p>
-     * A subclass that supports the creation of such an optimized FeatureReader
-     * shold override this method. Otherwise, it just returns
-     * <code>getFeatureReader(typeName)</code>
-     * <p>
+     * {@inheritDoc }
      */
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
-            throws IOException {
-        return getFeatureReader(typeName);
-    }
-
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name)
-            throws IOException {
-        return getFeatureReader(name.getLocalPart());
-    }
+    public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName,
+            Transaction transaction) throws IOException {
 
-    /**
-     * GR: if a subclass supports filtering, it should override this method
-     * to return the unsupported part of the passed filter, so a
-     * FilteringFeatureReader will be constructed upon it. Otherwise it will
-     * just return the same filter.
-     * <p>
-     * If the complete filter is supported, the subclass must return <code>Filter.INCLUDE</code>
-     * </p>
-     */
-    protected Filter getUnsupportedFilter(String typeName, Filter filter) {
-        return filter;
-    }
-
-    /**
-     * Used to retrive the TransactionStateDiff for this transaction.
-     * If you subclass is doing its own thing (ArcSDE I am talking to
-     * you) then you should arrange for this method to return null.
-     * <p>
-     * By default a TransactionStateDiff will be created that holds
-     * any changes in memory.
-     * <p>
-     * @param transaction
-     * @return TransactionStateDiff or null if subclass is handling differences
-     */
-    protected TransactionStateDiff state(Transaction transaction) {
-        synchronized (transaction) {
-            TransactionStateDiff state = (TransactionStateDiff) transaction.getState(this);
-
-            if (state == null) {
-                state = new TransactionStateDiff(this);
-                transaction.putState(this, state);
-            }
-
-            return state;
-        }
+        return getFeatureWriter(typeName, Filter.INCLUDE, transaction);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName, Filter filter,
+    public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName, Filter filter,
             Transaction transaction) throws IOException {
+        final SimpleFeatureType sft = getSchema(typeName);
+        return getFeatureWriter(sft.getName(), filter, transaction);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Name typeName, Filter filter,
+            Transaction transaction) throws IOException{
         if (filter == null) {
             throw new NullPointerException("getFeatureReader requires Filter: " + "did you mean Filter.INCLUDE?");
         }
@@ -472,14 +558,14 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
 
         if (transaction == Transaction.AUTO_COMMIT) {
             try {
-                writer = createFeatureWriter(typeName, transaction);
+                writer = createFeatureWriter(typeName.getLocalPart(), transaction);
             } catch (UnsupportedOperationException e) {
                 throw e;
             }
         } else {
             TransactionStateDiff state = state(transaction);
             if (state != null) {
-                writer = state.writer(typeName, filter);
+                writer = state.writer(typeName.getLocalPart(), filter);
             } else {
                 throw new UnsupportedOperationException("Subclass sould implement");
             }
@@ -502,43 +588,26 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(String typeName,
+    public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(String typeName,
             Transaction transaction) throws IOException {
-
-        return getFeatureWriter(typeName, Filter.INCLUDE, transaction);
+        final SimpleFeatureType sft = getSchema(typeName);
+        return getFeatureWriterAppend(sft.getName(), transaction);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Name typeName, Filter filter,
+    public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
             Transaction transaction) throws IOException{
-        return getFeatureWriter(typeName.getLocalPart(), filter, transaction);
-    }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(String typeName,
-            Transaction transaction) throws IOException {
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getFeatureWriter(typeName, transaction);
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getFeatureWriter(typeName,Filter.INCLUDE, transaction);
 
         while (writer.hasNext()) {
-            writer.next(); // Hmmm this would be a use for skip() then?
+            writer.next(); // skip to the end to switch in append mode
         }
 
         return writer;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
-            Transaction transaction) throws IOException{
-        return getFeatureWriter(typeName.getLocalPart(), transaction);
     }
 
     /**
@@ -557,69 +626,12 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     }
 
     /**
-     * Computes the bounds of the features for the specified feature type that
-     * satisfy the query provided that there is a fast way to get that result.
-     * <p>
-     * Will return null if there is not fast way to compute the bounds. Since
-     * it's based on some kind of header/cached information, it's not guaranteed
-     * to be real bound of the features
-     * </p>
-     * @param query
-     * @return the bounds, or null if too expensive
-     * @throws SchemaNotFoundException
-     * @throws IOException
-     */
-    protected abstract JTSEnvelope2D getBounds(Query query) throws IOException;
-
-    /**
-     * Gets the number of the features that would be returned by this query for
-     * the specified feature type.
-     * <p>
-     * If getBounds(Query) returns <code>-1</code> due to expense consider
-     * using <code>getFeatures(Query).getCount()</code> as a an alternative.
-     * </p>
-     *
-     * @param query Contains the Filter and MaxFeatures to find the bounds for.
-     * @return The number of Features provided by the Query or <code>-1</code>
-     *         if count is too expensive to calculate or any errors or occur.
-     * @throws IOException
-     *
-     * @throws IOException if there are errors getting the count
-     */
-    protected abstract int getCount(Query query) throws IOException;
-
-    /**
-     * If you are using the automated FeatureSource/Store/Locking creation, this method
-     * allows for the specification of the supported hints.
-     * @return Set of hints
-     */
-    protected Set getSupportedHints() {
-        return Collections.EMPTY_SET;
-    }
-
-    /**
      * Dummy implementation, it's a no-op. Subclasses holding to system resources must
      * override this method and release them.
      */
     @Override
     public void dispose() {
         // nothing to do
-    }
-
-    /**
-     * Returns the same list of names than {@link #getTypeNames()} meaning the
-     * returned Names have no namespace set.
-     *
-     * @since 2.5
-     */
-    @Override
-    public List<Name> getNames() throws IOException {
-        final String[] typeNames = getTypeNames();
-        final List<Name> names = new ArrayList<Name>(typeNames.length);
-        for (final String typeName : typeNames) {
-            names.add(new DefaultName(typeName));
-        }
-        return names;
     }
 
 }

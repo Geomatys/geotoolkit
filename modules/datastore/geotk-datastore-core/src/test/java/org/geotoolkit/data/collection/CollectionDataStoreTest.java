@@ -75,7 +75,7 @@ public class CollectionDataStoreTest extends DataTestCase {
         data = null;
     }
 
-    public void testGetFeatureTypes() {
+    public void testGetFeatureTypes() throws IOException {
         String[] names = data.getTypeNames();
         assertEquals(1, names.length);
         assertTrue(contains(names, "road"));
