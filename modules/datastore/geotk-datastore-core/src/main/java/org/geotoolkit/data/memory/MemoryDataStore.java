@@ -609,7 +609,8 @@ public final class MemoryDataStore extends AbstractDataStore {
             final Envelope env = ((Geometry) first.getDefaultGeometry()).getEnvelopeInternal();
             envelope = new JTSEnvelope2D(env, first.getType().getCoordinateReferenceSystem());
 
-            while (iterator.hasNext() && (count < query.getMaxFeatures())) {
+            final Integer max = query.getMaxFeatures();
+            while (iterator.hasNext() && ( max == null || count < max)) {
                 final SimpleFeature feature = (SimpleFeature) iterator.next();
 
                 if (filter.evaluate(feature)) {
@@ -636,7 +637,8 @@ public final class MemoryDataStore extends AbstractDataStore {
 
         final Filter filter = query.getFilter();
 
-        while (iterator.hasNext() && (count < query.getMaxFeatures())) {
+        final Integer max = query.getMaxFeatures();
+        while (iterator.hasNext() && ( max == null || count < max)) {
             if (filter.evaluate((SimpleFeature) iterator.next())) {
                 count++;
             }

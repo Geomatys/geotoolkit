@@ -157,8 +157,8 @@ public class CollectionDataStore extends AbstractDataStore {
             final Filter filter = query.getFilter();
 
             int count = 1;
-            final int maxFeatures = query.getMaxFeatures();
-            while (iterator.hasNext() && (count < maxFeatures)) {
+            final Integer maxFeatures = query.getMaxFeatures();
+            while (iterator.hasNext() && (maxFeatures == null || count < maxFeatures)) {
                 final SimpleFeature feature = iterator.next();
 
                 if (filter.evaluate(feature)) {
@@ -185,8 +185,8 @@ public class CollectionDataStore extends AbstractDataStore {
         final Filter filter = query.getFilter();
 
         int count = 0;
-        final int maxFeatures = query.getMaxFeatures();
-        while (iterator.hasNext() && (count < maxFeatures)) {
+        final Integer maxFeatures = query.getMaxFeatures();
+        while (iterator.hasNext() && (maxFeatures == null || count < maxFeatures)) {
             if (filter.evaluate(iterator.next())) {
                 count++;
             }

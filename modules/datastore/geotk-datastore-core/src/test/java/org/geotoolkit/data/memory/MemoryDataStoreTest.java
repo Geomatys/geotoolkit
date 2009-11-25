@@ -27,7 +27,6 @@ import org.geotoolkit.data.DataTestCase;
 import org.geotoolkit.data.FeatureLockFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.diff.DiffFeatureReader;
 import org.geotoolkit.data.EmptyFeatureReader;
@@ -337,19 +336,19 @@ public class MemoryDataStoreTest extends DataTestCase {
         SimpleFeatureType type = data.getSchema("road");
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), Transaction.AUTO_COMMIT);
         assertFalse(reader instanceof FilteringFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(roadFeatures.length, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE),
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE),
                 Transaction.AUTO_COMMIT);
         assertTrue(reader instanceof EmptyFeatureReader);
 
         assertEquals(type, reader.getFeatureType());
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), Transaction.AUTO_COMMIT);
         assertTrue(reader instanceof FilteringFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(1, count(reader));
@@ -361,17 +360,17 @@ public class MemoryDataStoreTest extends DataTestCase {
         SimpleFeatureType type = data.getSchema("road");
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), t);
         assertTrue(reader instanceof EmptyFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), t);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), t);
         assertTrue(reader instanceof DiffFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(roadFeatures.length, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), t);
         // assertTrue(reader instanceof DiffFeatureReader);//Currently wrapped by a filtering
         // feature reader
         assertEquals(type, reader.getFeatureType());
@@ -389,23 +388,23 @@ public class MemoryDataStoreTest extends DataTestCase {
             }
         }
 
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), t);
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), t);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), t);
         assertEquals(roadFeatures.length - 1, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), t);
         assertEquals(0, count(reader));
 
         t.rollback();
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), t);
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), t);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), t);
         assertEquals(roadFeatures.length, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), t);
         assertEquals(1, count(reader));
     }
 
@@ -452,7 +451,7 @@ public class MemoryDataStoreTest extends DataTestCase {
     }
 
     private void assertReaderOrderSame(SimpleFeature[] features, DataStore store) throws IOException, IllegalAttributeException {
-        FeatureReader<SimpleFeatureType, SimpleFeature> r1 = store.getFeatureReader(new DefaultQuery(features[0].getFeatureType().getTypeName()), Transaction.AUTO_COMMIT);
+        FeatureReader<SimpleFeatureType, SimpleFeature> r1 = store.getFeatureReader(QueryBuilder.all(features[0].getFeatureType().getName()), Transaction.AUTO_COMMIT);
         FeatureReader<SimpleFeatureType, SimpleFeature> r2 = DataUtilities.reader(features);
 
         while (r1.hasNext() && r2.hasNext()) {
@@ -750,7 +749,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         FINAL[i] = newRoad;
 
         // start of with ORIGINAL
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(covers(reader, ORIGIONAL));
 
         // writer 1 removes road.rd1 on t1
@@ -763,9 +762,9 @@ public class MemoryDataStoreTest extends DataTestCase {
         }
 
         // still have ORIGIONAL and t1 has REMOVE
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(covers(reader, ORIGIONAL));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t1);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t1);
         assertTrue(covers(reader, REMOVE));
 
         // close writer1
@@ -774,9 +773,9 @@ public class MemoryDataStoreTest extends DataTestCase {
         writer1.close();
 
         // We still have ORIGIONAL and t1 has REMOVE
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(covers(reader, ORIGIONAL));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t1);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t1);
         assertTrue(covers(reader, REMOVE));
 
         // writer 2 adds road.rd4 on t2
@@ -787,9 +786,9 @@ public class MemoryDataStoreTest extends DataTestCase {
         writer2.write();
 
         // We still have ORIGIONAL and t2 has ADD
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(covers(reader, ORIGIONAL));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t2);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t2);
         assertTrue(coversLax(reader, ADD));
 
         // close writer2
@@ -798,9 +797,9 @@ public class MemoryDataStoreTest extends DataTestCase {
         writer2.close();
 
         // Still have ORIGIONAL and t2 has ADD
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(covers(reader, ORIGIONAL));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t2);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t2);
         assertTrue(coversLax(reader, ADD));
 
         // commit t1
@@ -811,11 +810,11 @@ public class MemoryDataStoreTest extends DataTestCase {
 
         // We now have REMOVE, as does t1 (which has not additional diffs)
         // t2 will have FINAL
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(covers(reader, REMOVE));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t1);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t1);
         assertTrue(covers(reader, REMOVE));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t2);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t2);
         assertTrue(coversLax(reader, FINAL));
 
         // commit t2
@@ -824,12 +823,12 @@ public class MemoryDataStoreTest extends DataTestCase {
         t2.commit();
 
         // We now have Number( remove one and add one)
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), Transaction.AUTO_COMMIT);
         assertTrue(coversLax(reader, FINAL));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t1);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t1);
         assertTrue(coversLax(reader, FINAL));
-        reader = data.getFeatureReader(new DefaultQuery("road"), t2);
+        reader = data.getFeatureReader(QueryBuilder.all(road.getName()), t2);
         assertTrue(coversLax(reader, FINAL));
     }
 
@@ -841,6 +840,7 @@ public class MemoryDataStoreTest extends DataTestCase {
 
         GeometryFactory fac = new GeometryFactory();
 
+        final SimpleFeatureType road = data.getSchema("road");
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer1 = data.getFeatureWriter("road", rd1Filter, t1);
         writer1.next().setDefaultGeometry(
                 fac.createLineString(new Coordinate[]{new Coordinate(0, 0), new Coordinate(0, 1)}));
@@ -848,7 +848,8 @@ public class MemoryDataStoreTest extends DataTestCase {
 
         writer1.close();
 
-        FeatureReader<SimpleFeatureType, SimpleFeature> reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t1);
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = data.getFeatureReader(
+                QueryBuilder.filtered(road.getName(), rd1Filter), t1);
         Geometry geom1 = (Geometry) reader.next().getDefaultGeometry();
         reader.close();
         assertEquals(new Coordinate(0, 0), geom1.getCoordinates()[0]);
@@ -861,7 +862,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         writer1.write();
         writer1.close();
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t1);
+        reader = data.getFeatureReader(QueryBuilder.filtered(road.getName(), rd1Filter), t1);
         geom1 = (Geometry) reader.next().getDefaultGeometry();
         reader.close();
         assertEquals(new Coordinate(10, 0), geom1.getCoordinates()[0]);
@@ -876,7 +877,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         FilterFactory filterFactory = FactoryFinder.getFilterFactory(null);
         Id filter = filterFactory.id(Collections.singleton(filterFactory.featureId(feature.getID())));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", filter), t1);
+        reader = data.getFeatureReader(QueryBuilder.filtered(road.getName(), filter), t1);
         geom1 = (Geometry) reader.next().getDefaultGeometry();
         reader.close();
         assertEquals(new Coordinate(20, 0), geom1.getCoordinates()[0]);
@@ -889,7 +890,7 @@ public class MemoryDataStoreTest extends DataTestCase {
         writer1.write();
         writer1.close();
 
-        reader = data.getFeatureReader(new DefaultQuery("road", filter), t1);
+        reader = data.getFeatureReader(QueryBuilder.filtered(road.getName(), filter), t1);
         geom1 = (Geometry) reader.next().getDefaultGeometry();
         reader.close();
         assertEquals(new Coordinate(30, 0), geom1.getCoordinates()[0]);
@@ -919,7 +920,11 @@ public class MemoryDataStoreTest extends DataTestCase {
         assertEquals(rd12Bounds, some.getBounds());
         assertEquals(some.getSchema(), road.getSchema());
 
-        DefaultQuery query = new DefaultQuery("road", rd12Filter, new String[]{"name",});
+        Query query = new QueryBuilder()
+                .setTypeName(road.getName())
+                .setFilter(rd12Filter)
+                .setProperties(new String[]{"name",})
+                .buildQuery();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> half = road.getFeatures(query);
         assertEquals(2, half.size());

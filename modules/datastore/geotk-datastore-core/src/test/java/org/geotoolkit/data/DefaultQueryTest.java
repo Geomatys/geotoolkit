@@ -18,14 +18,14 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.DefaultQuery;
-import java.util.Arrays;
-import java.util.List;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
+
 import org.opengis.filter.Filter;
 
 /**
@@ -45,28 +45,35 @@ public class DefaultQueryTest extends TestCase {
     }
 
     public void testFullConstructor() {
-        DefaultQuery query = new DefaultQuery("mytype", Filter.INCLUDE, 10, new String[]{"foo"}, "myquery");
+        Query query = new QueryBuilder()
+                .setTypeName(new DefaultName("mytype"))
+                .setFilter(Filter.INCLUDE)
+                .setMaxFeatures(10)
+                .setProperties(new String[]{"foo"})
+                .setHandle("myquery")
+                .buildQuery();
         assertNotNull(query);
     }
 
     /** Test of getPropertyNames method, of class org.geotoolkit.data.DefaultQuery. */
     public void testPropertyNames() {
         System.out.println("testPropertyNames");
-        DefaultQuery query = new DefaultQuery();
+        Query query = new QueryBuilder().setTypeName(new DefaultName("test")).buildQuery();
         assertNull(query.getPropertyNames());
-        query.setPropertyNames(new String[]{"foo", "bar"});
+        query = new QueryBuilder().copy(query).setProperties(new String[]{"foo","bar"}).buildQuery();
         String names[] = query.getPropertyNames();
         assertNotNull(names);
         assertEquals("foo", names[0]);
-        List list = Arrays.asList(names);
-        query.setPropertyNames(list);
-        names = query.getPropertyNames();
-
         assertEquals("bar", names[1]);
-        query.setPropertyNames((List) null);
+        
+        query = new QueryBuilder().copy(query).setProperties(null).buildQuery();
         assertNull(query.getPropertyNames());
 
-        query = new DefaultQuery("Test", Filter.INCLUDE, new String[]{"foo", "wibble"});
+        query = new QueryBuilder()
+                .setTypeName(new DefaultName("Test"))
+                .setFilter(Filter.INCLUDE)
+                .setProperties(new String[]{"foo","wibble"})
+                .buildQuery();
         assertNotNull(query.getPropertyNames());
     }
 
@@ -74,81 +81,100 @@ public class DefaultQueryTest extends TestCase {
     public void testRetrieveAllProperties() {
         System.out.println("testRetrieveAllProperties");
 
-        DefaultQuery query = new DefaultQuery();
+        Query query = new QueryBuilder().setTypeName(new DefaultName("test")).buildQuery();
         assertTrue(query.retrieveAllProperties());
 
-        query.setPropertyNames(new String[]{"foo", "bar"});
+        query = new QueryBuilder().copy(query).setProperties(new String[]{"foo", "bar"}).buildQuery();
         assertFalse(query.retrieveAllProperties());
 
-        query.setPropertyNames((String[]) null);
+        query = new QueryBuilder().copy(query).setProperties(null).buildQuery();
         assertTrue(query.retrieveAllProperties());
 
-        query.setPropertyNames(new String[]{"foo", "bar"});
-        query.setPropertyNames((List) null);
+        query = new QueryBuilder().copy(query).setProperties(new String[]{"foo", "bar"}).buildQuery();
+        query = new QueryBuilder().copy(query).setProperties(null).buildQuery();
         assertTrue(query.retrieveAllProperties());
     }
 
     /** Test of getMaxFeatures method, of class org.geotoolkit.data.DefaultQuery. */
     public void testMaxFeatures() {
         System.out.println("testMaxFeatures");
-        DefaultQuery query = new DefaultQuery();
-        assertEquals(Query.DEFAULT_MAX, query.getMaxFeatures());
+        Query query = new QueryBuilder().setTypeName(new DefaultName("test")).buildQuery();
+        assertEquals(null, query.getMaxFeatures());
 
-        query.setMaxFeatures(5);
-        assertEquals(5, query.getMaxFeatures());
+        query = new QueryBuilder().copy(query).setMaxFeatures(5).buildQuery();
+        assertEquals(new Integer(5), query.getMaxFeatures());
     }
 
     /** Test of getFilter method, of class org.geotoolkit.data.DefaultQuery. */
     public void testFilter() {
         System.out.println("testGetFilter");
-        DefaultQuery query = new DefaultQuery();
-        query.setFilter(Filter.EXCLUDE);
+        Query query = new QueryBuilder()
+                .setTypeName(new DefaultName("test"))
+                .setFilter(Filter.EXCLUDE)
+                .buildQuery();
         assertEquals(Filter.EXCLUDE, query.getFilter());
 
-        query = new DefaultQuery("test", Filter.INCLUDE);
+        query = new QueryBuilder()
+                .setTypeName(new DefaultName("test"))
+                .setFilter(Filter.INCLUDE)
+                .buildQuery();
         assertEquals(Filter.INCLUDE, query.getFilter());
     }
 
     /** Test of getTypeName method, of class org.geotoolkit.data.DefaultQuery. */
     public void testTypeName() {
-        DefaultQuery query = new DefaultQuery();
+        Query query = new QueryBuilder()
+                .setTypeName(new DefaultName("foobar"))
+                .buildQuery();
 
-        query.setTypeName("foobar");
-        assertEquals("foobar", query.getTypeName());
+        assertEquals("foobar", query.getTypeName().getLocalPart());
 
-        query = new DefaultQuery("mytype", Filter.EXCLUDE);
-        assertEquals("mytype", query.getTypeName());
+        query = new QueryBuilder()
+                .setTypeName(new DefaultName("mytype"))
+                .buildQuery();
+        assertEquals("mytype", query.getTypeName().getLocalPart());
     }
 
     /** Test of getHandle method, of class org.geotoolkit.data.DefaultQuery. */
     public void testHandle() {
         System.out.println("testGetHandle");
-        DefaultQuery query = new DefaultQuery();
+        Query query = new QueryBuilder()
+                .setTypeName(new DefaultName("test"))
+                .buildQuery();
         assertNull(query.getHandle());
-        query.setHandle("myquery");
+
+        query = new QueryBuilder()
+                .copy(query)
+                .setHandle("myquery")
+                .buildQuery();
         assertEquals("myquery", query.getHandle());
     }
 
-    /** Test of getVersion method, of class org.geotoolkit.data.DefaultQuery. */
-    public void testVersion() {
-        System.out.println("testGetVersion");
-        DefaultQuery query = new DefaultQuery();
-        assertNull(query.getVersion());
-    }
 
     /** Test of toString method, of class org.geotoolkit.data.DefaultQuery. */
     public void testToString() {
         System.out.println("testToString");
-        DefaultQuery query = new DefaultQuery();
+        Query query = new QueryBuilder()
+                .setTypeName(new DefaultName("test"))
+                .buildQuery();
         assertNotNull(query.toString());
 
-        query.setHandle("myquery");
+        query = new QueryBuilder()
+                .copy(query)
+                .setHandle("myquery")
+                .buildQuery();
         assertNotNull(query.toString());
 
-        query.setFilter(Filter.EXCLUDE);
+        query = new QueryBuilder()
+                .copy(query)
+                .setFilter(Filter.EXCLUDE)
+                .buildQuery();
         assertNotNull(query.toString());
 
-        query.setPropertyNames(new String[]{"foo", "bar"});
+        query = new QueryBuilder()
+                .copy(query)
+                .setProperties(new String[]{"foo", "bar"})
+                .buildQuery();
         assertNotNull(query.toString());
 
     }

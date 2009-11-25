@@ -201,8 +201,8 @@ public class DefaultFeatureResults extends DataFeatureCollection {
                 ((DataStore) featureSource.getDataStore()).getFeatureReader(query,
                 getTransaction());
 
-        final int maxFeatures = query.getMaxFeatures();
-        if (maxFeatures != Integer.MAX_VALUE) {
+        final Integer maxFeatures = query.getMaxFeatures();
+        if (maxFeatures != null) {
             reader = new MaxFeatureReader<SimpleFeatureType, SimpleFeature>(reader, maxFeatures);
         }
         if (transform != null) {
@@ -230,9 +230,9 @@ public class DefaultFeatureResults extends DataFeatureCollection {
         final Query q = builder.buildQuery();
         final FeatureReader<SimpleFeatureType, SimpleFeature> reader =
                 ((DataStore) featureSource.getDataStore()).getFeatureReader(q, getTransaction());
-        final int maxFeatures = query.getMaxFeatures();
+        final Integer maxFeatures = query.getMaxFeatures();
 
-        if (maxFeatures == Integer.MAX_VALUE) {
+        if (maxFeatures == null) {
             return reader;
         } else {
             return new MaxFeatureReader<SimpleFeatureType, SimpleFeature>(reader, maxFeatures);
@@ -303,8 +303,12 @@ public class DefaultFeatureResults extends DataFeatureCollection {
         if (count != -1) {
             // optimization worked, return maxFeatures if count is
             // greater.
-            final int maxFeatures = query.getMaxFeatures();
-            return (count < maxFeatures) ? count : maxFeatures;
+            final Integer maxFeatures = query.getMaxFeatures();
+            if(maxFeatures != null){
+                return (count < maxFeatures) ? count : maxFeatures;
+            }else{
+                return count;
+            }
         }
 
         // Okay lets count the FeatureReader

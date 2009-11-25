@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,6 +33,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.resources.NIOUtilities;
 
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
@@ -54,10 +56,7 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.feature.DefaultName;
 
 /**
  * Tests cases for DataUtilities.
@@ -439,19 +438,31 @@ public class DataUtilitiesTest extends DataTestCase {
      * @throws Exception
      */
     public void testMixQueries() throws Exception {
-        DefaultQuery firstQuery;
-        DefaultQuery secondQuery;
+        Query firstQuery;
+        Query secondQuery;
 
-        firstQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 100, new String[]{"att1", "att2", "att3"}, "handle");
-        secondQuery = new DefaultQuery("typeName", Filter.EXCLUDE, 20, new String[]{"att1", "att2", "att4"}, "handle2");
-        secondQuery.setStartIndex(4);
-
+        firstQuery = new QueryBuilder()
+                .setTypeName(new DefaultName("typeName"))
+                .setFilter(Filter.EXCLUDE)
+                .setMaxFeatures(100)
+                .setProperties(new String[]{"att1", "att2", "att3"})
+                .setHandle("handle")
+                .buildQuery();
+        secondQuery = new QueryBuilder()
+                .setTypeName(new DefaultName("typeName"))
+                .setFilter(Filter.EXCLUDE)
+                .setMaxFeatures(20)
+                .setProperties(new String[]{"att1", "att2", "att4"})
+                .setHandle("handle2")
+                .setStartIndex(4)
+                .buildQuery();
+        
         Query mixed = QueryUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 
         //the passed handle
         assertEquals("newhandle", mixed.getHandle());
         //the lower of both
-        assertEquals(20, mixed.getMaxFeatures());
+        assertEquals(new Integer(20), mixed.getMaxFeatures());
         //att1, 2, 3 and 4
         assertEquals(4, mixed.getPropertyNames().length);
         assertEquals(4, (int) mixed.getStartIndex());
@@ -468,15 +479,27 @@ public class DataUtilitiesTest extends DataTestCase {
         filter1 = ffac.equals(ffac.property("att1"), ffac.literal("val1"));
         filter2 = ffac.equals(ffac.property("att2"), ffac.literal("val2"));
 
-        firstQuery = new DefaultQuery("typeName", filter1, 100, null, "handle");
-        secondQuery = new DefaultQuery("typeName", filter2, 20, new String[]{"att1", "att2", "att4"}, "handle2");
-
+        firstQuery = new QueryBuilder()
+                .setTypeName(new DefaultName("typeName"))
+                .setFilter(filter1)
+                .setMaxFeatures(100)
+                .setProperties(null)
+                .setHandle("handle")
+                .buildQuery();
+        secondQuery = new QueryBuilder()
+                .setTypeName(new DefaultName("typeName"))
+                .setFilter(filter2)
+                .setMaxFeatures(20)
+                .setProperties(new String[]{"att1", "att2", "att4"})
+                .setHandle("handle2")
+                .buildQuery();
+        
         mixed = QueryUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 
         //the passed handle
         assertEquals("newhandle", mixed.getHandle());
         //the lower of both
-        assertEquals(20, mixed.getMaxFeatures());
+        assertEquals(new Integer(20), mixed.getMaxFeatures());
         //att1, 2 and 4
         assertEquals(3, mixed.getPropertyNames().length);
 

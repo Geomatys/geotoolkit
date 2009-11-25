@@ -132,6 +132,7 @@ public class QueryUtilities {
         builder.setFilter(filter);
         builder.setMaxFeatures(maxFeatures);
         builder.setProperties(propNames);
+        builder.setHandle(handle);
         if (start != 0) {
             builder.setStartIndex(start);
         }

@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.DataTestCase;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.EmptyFeatureReader;
 import org.geotoolkit.data.FeatureReader;
@@ -245,18 +244,18 @@ public class CollectionDataStoreTest extends DataTestCase {
         SimpleFeatureType type = data.getSchema("road");
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), Transaction.AUTO_COMMIT);
         assertFalse(reader instanceof FilteringFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(roadFeatures.length, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), Transaction.AUTO_COMMIT);
         assertTrue(reader instanceof EmptyFeatureReader);
 
         assertEquals(type, reader.getFeatureType());
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), Transaction.AUTO_COMMIT);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), Transaction.AUTO_COMMIT);
         assertTrue(reader instanceof FilteringFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(1, count(reader));
@@ -268,17 +267,17 @@ public class CollectionDataStoreTest extends DataTestCase {
         SimpleFeatureType type = data.getSchema("road");
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
 
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), t);
         assertTrue(reader instanceof EmptyFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), t);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), t);
         assertTrue(reader instanceof DiffFeatureReader);
         assertEquals(type, reader.getFeatureType());
         assertEquals(roadFeatures.length, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), t);
         //assertTrue(reader instanceof DiffFeatureReader);  //currently it is being wraped by a FilteringFeatureReader
         assertEquals(type, reader.getFeatureType());
         assertEquals(1, count(reader));
@@ -295,23 +294,23 @@ public class CollectionDataStoreTest extends DataTestCase {
             }
         }
 
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), t);
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), t);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), t);
         assertEquals(roadFeatures.length - 1, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), t);
         assertEquals(0, count(reader));
 
         t.rollback();
-        reader = data.getFeatureReader(new DefaultQuery("road", Filter.EXCLUDE), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), Filter.EXCLUDE), t);
         assertEquals(0, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road"), t);
+        reader = data.getFeatureReader(QueryBuilder.all(type.getName()), t);
         assertEquals(roadFeatures.length, count(reader));
 
-        reader = data.getFeatureReader(new DefaultQuery("road", rd1Filter), t);
+        reader = data.getFeatureReader(QueryBuilder.filtered(type.getName(), rd1Filter), t);
         assertEquals(1, count(reader));
     }
 
@@ -415,7 +414,7 @@ public class CollectionDataStoreTest extends DataTestCase {
 
         assertSame(roadType, road.getSchema());
         assertSame(data, road.getDataStore());
-        assertEquals(3, road.getCount(QueryBuilder.all(road.getName())));
+        assertEquals(3, road.getCount(QueryBuilder.all(road.getSchema().getName())));
         assertEquals(new Envelope(1, 5, 0, 4), road.getBounds(QueryBuilder.all(road.getName())));
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> all = road.getFeatures();
@@ -432,7 +431,11 @@ public class CollectionDataStoreTest extends DataTestCase {
         assertEquals(rd12Bounds, some.getBounds());
         assertEquals(some.getSchema(), road.getSchema());
 
-        DefaultQuery query = new DefaultQuery(road.getSchema().getTypeName(), rd12Filter, new String[]{"name"});
+        Query query = new QueryBuilder()
+                .setTypeName(road.getSchema().getName())
+                .setFilter(rd12Filter)
+                .setProperties(new String[]{"name"})
+                .buildQuery();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> half = road.getFeatures(query);
         assertEquals(2, half.size());

@@ -465,7 +465,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
 
         // max feature limit
         if (!canLimit()) {
-            if (query.getMaxFeatures() != -1 && query.getMaxFeatures() < Integer.MAX_VALUE) {
+            if (query.getMaxFeatures() != null) {
                 reader = new MaxFeatureReader<SimpleFeatureType, SimpleFeature>(reader, query.getMaxFeatures());
             }
         }
