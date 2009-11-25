@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * 
- *             A list of feature types available from  this server.
+ * A list of feature types available from  this server.
  *          
  * 
  * <p>Java class for FeatureTypeListType complex type.

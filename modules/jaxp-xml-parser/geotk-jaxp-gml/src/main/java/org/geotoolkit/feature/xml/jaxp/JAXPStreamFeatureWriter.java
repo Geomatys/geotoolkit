@@ -193,14 +193,20 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                     }
 
                 } else if (!(a.getType() instanceof GeometryType)) {
-                    String namespaceProperty = a.getName().getNamespaceURI();
-                    if (namespaceProperty != null) {
-                        streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
-                    } else {
-                        streamWriter.writeStartElement(a.getName().getLocalPart());
+                    
+                    String value = Utils.getStringValue(a.getValue());
+                    if (value != null && a.isNillable()) {
+                        String namespaceProperty = a.getName().getNamespaceURI();
+                        if (namespaceProperty != null) {
+                            streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                        } else {
+                            streamWriter.writeStartElement(a.getName().getLocalPart());
+                        }
+                        if (value != null) {
+                            streamWriter.writeCharacters(value);
+                        }
+                        streamWriter.writeEndElement();
                     }
-                    streamWriter.writeCharacters(Utils.getStringValue(a.getValue()));
-                    streamWriter.writeEndElement();
                 } else {
                     geometryName = a.getName();
                 }
@@ -286,7 +292,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();
-            if (!namespace.equals("http://www.opengis.net/gml")) {
+            if (namespace != null && !namespace.equals("http://www.opengis.net/gml")) {
                 String prefix    = Namespaces.getPreferredPrefix(namespace, null);
                 streamWriter.writeNamespace(prefix, namespace);
             }
@@ -330,7 +336,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             streamWriter.writeStartElement("gml", "boundedBy", "http://www.opengis.net/gml");
             streamWriter.writeStartElement("gml", "Envelope", "http://www.opengis.net/gml");
             if (srsName != null) {
-                streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "srsName", srsName);
+                streamWriter.writeAttribute("srsName", srsName);
             }
 
             // lower corner
