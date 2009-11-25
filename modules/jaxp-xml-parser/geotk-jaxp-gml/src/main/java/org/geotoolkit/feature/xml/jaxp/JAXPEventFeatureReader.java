@@ -23,10 +23,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -40,14 +38,11 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
-import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.internal.jaxb.ObjectFactory;
+
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
@@ -58,30 +53,10 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @module pending
  * @author Guilhem Legal (Geomatys)
  */
-public class JAXPEventFeatureReader implements XmlFeatureReader {
-
-    private static final Logger LOGGER = Logger.getLogger("jaxp");
-
-    private static MarshallerPool marshallpool;
-    static {
-        try {
-            marshallpool = new MarshallerPool(ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
-
-    private FeatureType featureType ;
-
-    private SimpleFeatureBuilder builder;
-
-    private final Unmarshaller unmarshaller;
+public class JAXPEventFeatureReader extends JAXPFeatureReader {
 
     public JAXPEventFeatureReader(FeatureType featureType) throws JAXBException {
-         this.builder      = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-         this.featureType  = featureType;
-         this.unmarshaller = marshallpool.acquireUnmarshaller();
-
+         super(featureType);
     }
 
     /**
@@ -315,17 +290,5 @@ public class JAXPEventFeatureReader implements XmlFeatureReader {
 
        }
         return bounds;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    public void setFeatureType(FeatureType featureType) {
-        this.featureType = featureType;
-        this.builder     = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-    }
-
-    public void dispose() {
-        marshallpool.release(unmarshaller);
     }
 }

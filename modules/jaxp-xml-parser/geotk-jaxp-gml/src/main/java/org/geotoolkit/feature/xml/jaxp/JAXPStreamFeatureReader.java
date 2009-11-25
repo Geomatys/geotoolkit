@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,10 +24,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -35,14 +33,10 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
-import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.xml.MarshallerPool;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
@@ -53,29 +47,10 @@ import org.opengis.feature.type.PropertyDescriptor;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JAXPStreamFeatureReader implements XmlFeatureReader {
-
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-    
-    private static MarshallerPool pool;
-    static {
-        try {
-            pool = new MarshallerPool(ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
-
-    private FeatureType featureType;
-
-     private SimpleFeatureBuilder builder;
-
-    private final Unmarshaller unmarshaller;
+public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
     public JAXPStreamFeatureReader(FeatureType featureType) throws JAXBException {
-         this.builder      = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-         this.featureType  = featureType;
-         this.unmarshaller = pool.acquireUnmarshaller();
+        super(featureType);
     }
 
     @Override
@@ -203,7 +178,7 @@ public class JAXPStreamFeatureReader implements XmlFeatureReader {
         return null;
     }
 
-    public SimpleFeature readFeature(XMLStreamReader streamReader, String id) {
+    private SimpleFeature readFeature(XMLStreamReader streamReader, String id) {
         builder.reset();
         String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
@@ -292,14 +267,5 @@ public class JAXPStreamFeatureReader implements XmlFeatureReader {
 
        }
         return bounds;
-    }
-
-    public void setFeatureType(FeatureType featureType) {
-        this.featureType = featureType;
-        this.builder     = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-    }
-
-    public void dispose() {
-        pool.release(unmarshaller);
     }
 }
