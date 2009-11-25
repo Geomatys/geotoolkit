@@ -259,10 +259,10 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     protected JTSEnvelope2D getBounds(Query query) throws IOException {
-        final String typeName = query.getTypeName();
+        final Name typeName = query.getTypeName();
 
         for(Name n : typeNames){
-            if(n.getLocalPart().equals(typeName)){
+            if(n.equals(typeName)){
                 return new JTSEnvelope2D(bounds.get(n));
             }
         }
@@ -304,8 +304,8 @@ public class WFSDataStore extends AbstractDataStore{
                 request.setFilter(filter);
             }
 
-            final int max = query.getMaxFeatures();
-            if(max != Query.DEFAULT_MAX){
+            final Integer max = query.getMaxFeatures();
+            if(max != null){
                 request.setMaxFeatures(max);
             }
 

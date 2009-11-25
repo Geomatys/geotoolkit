@@ -18,7 +18,6 @@ package org.geotoolkit.jdbc;
 
 import java.util.Iterator;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.store.ContentFeatureSource;
@@ -26,6 +25,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -76,8 +76,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         FilterFactory ff = dataStore.getFilterFactory();
         PropertyIsEqualTo filter = ff.equals(ff.property(aname("stringProperty")), ff.literal("one"));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setFilter(filter);
+        Query query = QueryBuilder.filtered(featureSource.getSchema().getName(), filter);
 
         JTSEnvelope2D bounds = featureSource.getBounds(query);
         assertEquals(1l, Math.round(bounds.getMinX()));
@@ -96,8 +95,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         FilterFactory ff = dataStore.getFilterFactory();
         PropertyIsEqualTo filter = ff.equals(ff.property(aname("stringProperty")), ff.literal("one"));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setFilter(filter);
+        Query query = QueryBuilder.filtered(featureSource.getSchema().getName(), filter);
         assertEquals(1, featureSource.getCount(query));
     }
 
@@ -160,17 +158,18 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         FilterFactory ff = dataStore.getFilterFactory();
         PropertyIsEqualTo sensitive = ff.equal(ff.property(aname("stringProperty")), ff.literal("OnE"), true);
         PropertyIsEqualTo insensitive = ff.equal(ff.property(aname("stringProperty")), ff.literal("OnE"), false);
-        assertEquals(0, featureSource.getCount(new DefaultQuery(null, sensitive)));
-        assertEquals(1, featureSource.getCount(new DefaultQuery(null, insensitive)));
+        assertEquals(0, featureSource.getCount(QueryBuilder.filtered(featureSource.getSchema().getName(), sensitive)));
+        assertEquals(1, featureSource.getCount(QueryBuilder.filtered(featureSource.getSchema().getName(), insensitive)));
     }
 
     public void testGetFeaturesWithQuery() throws Exception {
         FilterFactory ff = dataStore.getFilterFactory();
         PropertyIsEqualTo filter = ff.equals(ff.property(aname("stringProperty")), ff.literal("one"));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setPropertyNames(new String[] { aname("doubleProperty"), aname("intProperty") });
-        query.setFilter(filter);
+        Query query = new QueryBuilder()
+                .setProperties(new String[] { aname("doubleProperty"), aname("intProperty") })
+                .setFilter(filter)
+                .buildQuery();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureSource.getFeatures(query);
         assertEquals(1, features.size());
@@ -192,7 +191,8 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
 
         // make sure a complaint related to the invalid filter is thrown here
         try { 
-            FeatureIterator<SimpleFeature> fi = featureSource.getFeatures(new DefaultQuery("ft1", f)).features();
+            FeatureIterator<SimpleFeature> fi = featureSource.getFeatures(
+                    QueryBuilder.filtered(new DefaultName("ft1"), f)).features();
             fi.close();
             fail("This query should have failed, it contains an invalid filter");
         } catch(Exception e) {
@@ -204,8 +204,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     public void testGetFeaturesWithSort() throws Exception {
         FilterFactory ff = dataStore.getFilterFactory();
         SortBy sort = ff.sort(aname("stringProperty"), SortOrder.ASCENDING);
-        DefaultQuery query = new DefaultQuery();
-        query.setSortBy(new SortBy[] { sort });
+        Query query = QueryBuilder.sorted(featureSource.getSchema().getName(), new SortBy[] { sort });
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureSource.getFeatures(query);
         assertEquals(3, features.size());
@@ -227,7 +226,10 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
         features.close(iterator);
 
         sort = ff.sort(aname("stringProperty"), SortOrder.DESCENDING);
-        query.setSortBy(new SortBy[] { sort });
+        query = new QueryBuilder()
+                .copy(query)
+                .setSortBy(new SortBy[] { sort })
+                .buildQuery();
         features = featureSource.getFeatures(query);
 
         iterator = features.iterator();
@@ -247,8 +249,10 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testGetFeaturesWithMax() throws Exception {
-        DefaultQuery q = new DefaultQuery(featureSource.getSchema().getTypeName());
-        q.setMaxFeatures(2);
+        Query q = new QueryBuilder()
+                .setTypeName(featureSource.getSchema().getName())
+                .setMaxFeatures(2)
+                .buildQuery();
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureSource.getFeatures(q);
         
         // check size
@@ -271,9 +275,11 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testGetFeaturesWithOffset() throws Exception {
-        DefaultQuery q = new DefaultQuery(featureSource.getSchema().getTypeName());
-        q.setSortBy(new SortBy[] {dataStore.getFilterFactory().sort(aname("intProperty"), SortOrder.ASCENDING)});
-        q.setStartIndex(2);
+        Query q = new QueryBuilder()
+                .setTypeName(featureSource.getSchema().getName())
+                .setSortBy(new SortBy[] {dataStore.getFilterFactory().sort(aname("intProperty"), SortOrder.ASCENDING)})
+                .setStartIndex(2)
+                .buildQuery();
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureSource.getFeatures(q);
         
         // check size
@@ -292,10 +298,12 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testGetFeaturesWithOffsetLimit() throws Exception {
-        DefaultQuery q = new DefaultQuery(featureSource.getSchema().getTypeName());
+        Query q = new QueryBuilder()
+                .setTypeName(featureSource.getSchema().getName())
+                .setStartIndex(1)
+                .setMaxFeatures(1)
+                .buildQuery();
         // no sorting, let's see if the database can use native one
-        q.setStartIndex(1);
-        q.setMaxFeatures(1);
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = featureSource.getFeatures(q);
         
         // check size
@@ -318,7 +326,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
      * @throws Exception
      */
     public void testRendererBehaviour() throws Exception {
-        DefaultQuery query = new DefaultQuery(featureSource.getSchema().getTypeName());
+        Query query = QueryBuilder.all(featureSource.getSchema().getName());
 //        query.setHints(new Hints(HintsPending.JTS_COORDINATE_SEQUENCE_FACTORY, new LiteCoordinateSequenceFactory()));
         FeatureCollection fc = featureSource.getFeatures(query);
         FeatureIterator fi = fc.features();
@@ -348,8 +356,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testNaturalSortingAsc() throws Exception {
-        DefaultQuery q = new DefaultQuery(featureSource.getSchema().getTypeName());
-        q.setSortBy(new SortBy[] {SortBy.NATURAL_ORDER});
+        Query q = QueryBuilder.sorted(featureSource.getSchema().getName(),new SortBy[] {SortBy.NATURAL_ORDER});
         FeatureIterator<SimpleFeature> features = featureSource.getFeatures(q).features();
         String prevId = null;
         while(features.hasNext()) {
@@ -362,8 +369,7 @@ public abstract class JDBCFeatureSourceTest extends JDBCTestSupport {
     }
     
     public void testNaturalSortingdesc() throws Exception {
-        DefaultQuery q = new DefaultQuery(featureSource.getSchema().getTypeName());
-        q.setSortBy(new SortBy[] {SortBy.REVERSE_ORDER});
+        Query q = QueryBuilder.sorted(featureSource.getSchema().getName(),new SortBy[] {SortBy.REVERSE_ORDER});
         FeatureIterator<SimpleFeature> features = featureSource.getFeatures(q).features();
         String prevId = null;
         while(features.hasNext()) {

@@ -25,13 +25,13 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -43,6 +43,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 
 
 public abstract class JDBCDataStoreTest extends JDBCTestSupport {
@@ -202,8 +204,8 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     public void testGetFeatureReader() throws Exception {
         GeometryFactory gf = dataStore.getGeometryFactory();
 
-        DefaultQuery query = new DefaultQuery(tname("ft1"));
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
+        Query query = QueryBuilder.all(dataStore.getSchema(tname("ft1")).getName());
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
 
         for (int i = 0; i < 3; i++) {
             assertTrue(reader.hasNext());
@@ -222,7 +224,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         assertFalse(reader.hasNext());
         reader.close();
 
-        query.setPropertyNames(new String[] { aname("intProperty") });
+        query = new QueryBuilder().copy(query).setProperties(new String[] { aname("intProperty") }).buildQuery();
         reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
 
         for (int i = 0; i < 3; i++) {
@@ -237,7 +239,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         FilterFactory ff = dataStore.getFilterFactory();
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
-        query.setFilter(f);
+        query = new QueryBuilder().copy(query).setFilter(f).buildQuery();
 
         reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
 
@@ -262,8 +264,8 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         writer.close();
 
-        DefaultQuery query = new DefaultQuery(tname("ft1"));
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
+        Query query = QueryBuilder.all(dataStore.getSchema(tname("ft1")).getName());
+        FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
         assertTrue(reader.hasNext());
 
         while (reader.hasNext()) {

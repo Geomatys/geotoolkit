@@ -41,7 +41,6 @@ import java.util.logging.Level;
 import javax.sql.DataSource;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
@@ -79,6 +78,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.data.query.QueryBuilder;
 
 
 /**
@@ -1255,7 +1255,11 @@ public final class JDBCDataStore extends ContentDataStore {
             final Transaction tx, final Connection cx) throws IOException, SQLException
     {
 
-        final Query query = new DefaultQuery(featureType.getTypeName(), filter, Query.NO_NAMES);
+        final Query query = new QueryBuilder()
+                .setTypeName(featureType.getName())
+                .setFilter(filter)
+                .setProperties(null)
+                .buildQuery();
 
         Statement st = null;
         try {

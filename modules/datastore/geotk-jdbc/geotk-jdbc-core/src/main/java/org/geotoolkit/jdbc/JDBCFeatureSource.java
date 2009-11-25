@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.query.Query;
@@ -38,13 +37,15 @@ import org.geotoolkit.data.ReTypeFeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureSource;
-import static org.geotoolkit.factory.Hints.Key;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
+import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
+import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.Association;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -52,8 +53,9 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.filter.visitor.CapabilitiesFilterSplitter;
-import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
+
+import org.geotoolkit.data.query.QueryBuilder;
+import static org.geotoolkit.factory.Hints.Key;
 
 
 public class JDBCFeatureSource extends ContentFeatureSource {
@@ -371,8 +373,10 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                     throw new IOException(ex);
                 }
                 try {
-                    final DefaultQuery q = new DefaultQuery(query);
-                    q.setFilter(preFilter);
+                    final Query q = new QueryBuilder()
+                            .copy(query)
+                            .setFilter(preFilter)
+                            .buildQuery();
                     int count = dataStore.getCount(getSchema(), q, cx);
                     // if native support for limit and offset is not implemented, we have to ajust the result
                     if (!dataStore.getSQLDialect().isLimitOffsetSupported()) {
@@ -416,8 +420,10 @@ public class JDBCFeatureSource extends ContentFeatureSource {
             final JTSEnvelope2D bounds = new JTSEnvelope2D(flatCRS);
 
             // grab a reader
-            final DefaultQuery q = new DefaultQuery(query);
-            q.setFilter(postFilter);
+            final Query q = new QueryBuilder()
+                            .copy(query)
+                            .setFilter(postFilter)
+                            .buildQuery();
             final FeatureReader<SimpleFeatureType, SimpleFeature> i = getReader(q);
             try {
                 if (i.hasNext()) {
@@ -444,8 +450,10 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                 throw new IOException(ex);
             }
             try {
-                final DefaultQuery q = new DefaultQuery(query);
-                q.setFilter(preFilter);
+                final Query q = new QueryBuilder()
+                            .copy(query)
+                            .setFilter(preFilter)
+                            .buildQuery();
                 return dataStore.getBounds(getSchema(), q, cx);
             } finally {
                 getDataStore().releaseConnection(cx, getState());
@@ -486,14 +494,16 @@ public class JDBCFeatureSource extends ContentFeatureSource {
         Filter postFilter = split[1];
         
         // rebuild a new query with the same params, but just the pre-filter
-        DefaultQuery preQuery = new DefaultQuery(query);
-        preQuery.setFilter(preFilter);
+        Query preQuery = new QueryBuilder()
+                            .copy(query)
+                            .setFilter(preFilter)
+                            .buildQuery();
         
         // Build the feature type returned by this query. Also build an eventual extra feature type
         // containing the attributes we might need in order to evaluate the post filter
         SimpleFeatureType querySchema;
         SimpleFeatureType returnedSchema;
-        if(query.getPropertyNames() == Query.ALL_NAMES) {
+        if(query.retrieveAllProperties()) {
             returnedSchema = querySchema = getSchema();
         } else {
             returnedSchema = SimpleFeatureTypeBuilder.retype(getSchema(), query.getPropertyNames());

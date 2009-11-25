@@ -33,7 +33,6 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.factory.Hints;
@@ -71,6 +70,9 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 
 
 /**
@@ -584,9 +586,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
                                 if (resolve) {
                                     // use the value as an the identifier in a query against
-                                    // the
-                                    // referenced type
-                                    final DefaultQuery query = new DefaultQuery(rtable);
+                                    // the referenced type
 
                                     final Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH,
                                             new Integer(depth.intValue() - 1));
@@ -595,7 +595,9 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                                     final FilterFactory ff = dataStore.getFilterFactory();
                                     final Id filter = ff.id(Collections.singleton(ff.featureId(
                                                     value.toString())));
-                                    query.setFilter(filter);
+
+
+                                    final Query query = QueryBuilder.filtered(new DefaultName(rtable), filter);
 
                                     // grab a reader and get the feature, there should
                                     // only

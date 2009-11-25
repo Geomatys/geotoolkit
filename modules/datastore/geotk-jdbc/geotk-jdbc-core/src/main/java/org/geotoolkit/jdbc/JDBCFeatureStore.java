@@ -24,13 +24,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FilteringFeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureStore;
 import org.geotoolkit.factory.Hints;
@@ -212,8 +212,10 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
             cx = getDataStore().getConnection(getState());
             //check for insert only
             if ( (flags | WRITER_ADD) == WRITER_ADD ) {
-                DefaultQuery queryNone = new DefaultQuery(query);
-                queryNone.setFilter(Filter.EXCLUDE);
+                Query queryNone = new QueryBuilder()
+                        .copy(query)
+                        .setFilter(Filter.EXCLUDE)
+                        .buildQuery();
                 if ( getDataStore().getSQLDialect() instanceof PreparedStatementSQLDialect ) {
                     PreparedStatement ps = getDataStore().selectSQLPS(getSchema(), queryNone, cx);
                     return new JDBCInsertFeatureWriter( ps, cx, delegate, query.getHints() );
@@ -234,8 +236,10 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
             postFilter = split[1];
 
             // build up a statement for the content
-            DefaultQuery preQuery = new DefaultQuery(query);
-            preQuery.setFilter(preFilter);
+            Query preQuery = new QueryBuilder()
+                        .copy(query)
+                        .setFilter(preFilter)
+                        .buildQuery();
             if(getDataStore().getSQLDialect() instanceof PreparedStatementSQLDialect) {
                 PreparedStatement ps = getDataStore().selectSQLPS(getSchema(), preQuery, cx);
                 if ( (flags | WRITER_UPDATE) == WRITER_UPDATE ) {

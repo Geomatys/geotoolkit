@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
@@ -24,12 +23,13 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.query.QueryBuilder;
 
 
 public abstract class JDBCFeatureReaderTest extends JDBCTestSupport {
 
     public void testNext() throws Exception {
-        Query query = new DefaultQuery( tname("ft1") );
+        Query query = QueryBuilder.all(dataStore.getSchema("ft1").getName());
         FeatureReader reader = dataStore.getFeatureReader( query, Transaction.AUTO_COMMIT );
         
         assertTrue( reader.hasNext() );

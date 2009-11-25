@@ -118,6 +118,15 @@ public class QueryBuilder {
         return this;
     }
 
+    public QueryBuilder setCRS(CoordinateReferenceSystem crs) {
+        this.crs = crs;
+        return this;
+    }
+
+    public CoordinateReferenceSystem getCRS() {
+        return crs;
+    }
+
     public Hints getHints() {
         return hints;
     }

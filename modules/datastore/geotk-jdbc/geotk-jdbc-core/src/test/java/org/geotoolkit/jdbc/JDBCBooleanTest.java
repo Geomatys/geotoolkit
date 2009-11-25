@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -33,7 +34,8 @@ public abstract class JDBCBooleanTest extends JDBCTestSupport {
     }
     
     public void testGetFeatures() throws Exception {
-        FeatureReader r = dataStore.getFeatureReader( new DefaultQuery( tname("b") ), Transaction.AUTO_COMMIT );
+        Query query = QueryBuilder.all(dataStore.getSchema("b").getName());
+        FeatureReader r = dataStore.getFeatureReader( query, Transaction.AUTO_COMMIT );
         r.hasNext();
         
         SimpleFeature f = (SimpleFeature) r.next();

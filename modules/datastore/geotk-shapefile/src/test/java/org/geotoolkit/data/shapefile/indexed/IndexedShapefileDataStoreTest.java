@@ -37,7 +37,6 @@ import java.util.TreeSet;
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
@@ -822,12 +821,12 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     	String typeName = store.getSchema().getTypeName();
 		Id id = ff.id(Collections.singleton(ff.featureId(fid)));
 		
-		assertEquals(-1, store.getCount(new DefaultQuery(typeName, id)));
+		assertEquals(-1, store.getCount(QueryBuilder.filtered(store.getSchema().getName(), id)));
 		assertEquals(1, count(ds, typeName, id, t));
 		
 		store.removeFeatures(id);
 		
-		assertEquals(-1, store.getCount(new DefaultQuery(store.getSchema().getTypeName(), id)));
+		assertEquals(-1, store.getCount(QueryBuilder.filtered(store.getSchema().getName(), id)));
 		assertEquals(initialCount - 1, count(ds, typeName, Filter.INCLUDE, t));
 		assertEquals(0, count(ds, typeName, id, t));
     }
@@ -838,7 +837,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     
     private int count(DataStore ds, String typeName, Filter filter, Transaction t) throws Exception {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-        reader = ds.getFeatureReader(new DefaultQuery(typeName, filter), t);
+        reader = ds.getFeatureReader(QueryBuilder.filtered(new DefaultName(typeName), filter), t);
         int count = 0;
         try {
             while (reader.hasNext()) {

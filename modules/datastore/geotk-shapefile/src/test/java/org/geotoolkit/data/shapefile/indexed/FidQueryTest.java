@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.FactoryFinder;
@@ -109,12 +108,17 @@ public class FidQueryTest extends FIDTestCase {
         assertEquals(1, newFids.size());
         // this.assertFidsMatch();
 
-        DefaultQuery query = new DefaultQuery(schema.getTypeName());        
+         
         FeatureId id = newFids.iterator().next();
-        String fid = id.getID();
-        
+        String fid = id.getID();        
         Filter filter = fac.id(Collections.singleton(id));
-        query.setFilter(filter);
+
+        Query query = new QueryBuilder()
+                .setTypeName(schema.getName())
+                .setFilter(filter)
+                .buildQuery();
+
+
         FeatureIterator<SimpleFeature> features = featureStore.getFeatures(query).features();
         try {
             feature = features.next();
@@ -232,8 +236,7 @@ public class FidQueryTest extends FIDTestCase {
 
     private void assertFidsMatch() throws IOException {
         // long start = System.currentTimeMillis();
-        DefaultQuery query = new DefaultQuery(featureStore.getSchema()
-                .getTypeName());
+        Query query = QueryBuilder.all(featureStore.getSchema().getName());
 
         int i = 0;
 
@@ -243,7 +246,7 @@ public class FidQueryTest extends FIDTestCase {
             String fid = (String) entry.getKey();
             FeatureId id = fac.featureId(fid);
             Filter filter = fac.id(Collections.singleton(id));
-            query.setFilter(filter);
+            query = new QueryBuilder().copy(query).setFilter(filter).buildQuery();
             FeatureIterator<SimpleFeature> features = featureStore.getFeatures(query)
                     .features();
             try {

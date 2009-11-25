@@ -18,10 +18,11 @@ package org.geotoolkit.jdbc;
 
 import java.util.Map;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -29,7 +30,8 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 
 
 public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport {
@@ -43,8 +45,7 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
     public void testGetFeatureNoAssociation() throws Exception {
         Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setTypeName("ga");
+        Query query = QueryBuilder.all(dataStore.getSchema("ga").getName());
   //      query.setHints(hints);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
@@ -67,8 +68,7 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
     public void testGetFeatureWithAssociation() throws Exception {
         Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setTypeName("ga");
+        Query query = QueryBuilder.all(dataStore.getSchema("ga").getName());
  //       query.setHints(hints);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
@@ -117,8 +117,7 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
     public void testMultiGeometryAssociation() throws Exception {
         Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setTypeName("ga");
+        Query query = QueryBuilder.all(dataStore.getSchema("ga").getName());
   //      query.setHints(hints);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);

@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.FeatureWriter;
@@ -47,6 +46,8 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 
@@ -184,7 +185,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
         // read id back and compare
         FeatureReader<SimpleFeatureType, SimpleFeature> fr = dataStore.getFeatureReader(
-                new DefaultQuery(tname(POLY3D)), Transaction.AUTO_COMMIT);
+                QueryBuilder.all(dataStore.getSchema(tname(POLY3D)).getName()), Transaction.AUTO_COMMIT);
         assertTrue(fr.hasNext());
         f = fr.next();
         assertTrue(poly.equals((Geometry) f.getDefaultGeometry()));
@@ -213,8 +214,10 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
         assertTrue(fs.getSupportedHints().contains(HintsPending.JTS_COORDINATE_SEQUENCE_FACTORY));
 
         // setup a query that mimicks the streaming renderer behaviour
-        DefaultQuery q = new DefaultQuery(tname(LINE3D));
-        q.setCoordinateSystemReproject(horizontal);
+        Query q = new QueryBuilder()
+                .setTypeName(dataStore.getSchema(tname(LINE3D)).getName())
+                .setCRS(horizontal)
+                .buildQuery();
 
         // check the srs you get is the flat one 
         // this does not work now due to http://jira.codehaus.org/browse/GEOT-2026

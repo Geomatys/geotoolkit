@@ -16,9 +16,10 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.opengis.feature.Association;
@@ -50,8 +51,7 @@ public abstract class JDBCForeignKeyTest extends JDBCTestSupport {
     public void testGetFeatures() throws Exception {
         Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setTypeName("fk");
+        Query query = QueryBuilder.all(dataStore.getSchema("fk").getName());
  //       query.setHints(hints);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
@@ -75,8 +75,7 @@ public abstract class JDBCForeignKeyTest extends JDBCTestSupport {
     public void testGetFeaturesWithZeroDepth() throws Exception {
         Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(0));
 
-        DefaultQuery query = new DefaultQuery();
-        query.setTypeName("fk");
+        Query query = QueryBuilder.all(dataStore.getSchema("fk").getName());
   //      query.setHints(hints);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);

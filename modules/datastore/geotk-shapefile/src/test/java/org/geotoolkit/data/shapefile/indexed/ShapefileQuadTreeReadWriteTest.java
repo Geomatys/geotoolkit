@@ -28,7 +28,6 @@ import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.query.DefaultQuery;
 import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
@@ -38,6 +37,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.data.query.QueryBuilder;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory2;
@@ -46,8 +47,6 @@ import org.opengis.filter.identity.FeatureId;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.shptest.test.UtilTestData;
 
 /**
  * @version $Id$
@@ -243,7 +242,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         FeatureId id = featureId;
         filter = ff.id(Collections.singleton(id));
 
-        Query query = new DefaultQuery(ds.getTypeNames()[0], filter);
+        Query query = QueryBuilder.filtered(ds.getNames().get(0), filter);
 
         Envelope result = ds.getFeatureSource(ds.getTypeNames()[0]).getBounds(query);
 

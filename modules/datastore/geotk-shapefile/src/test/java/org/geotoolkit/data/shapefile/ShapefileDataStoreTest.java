@@ -32,7 +32,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.ShapeTestData;
-import org.geotoolkit.data.query.DefaultQuery;
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.data.DefaultTransaction;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureSource;
@@ -48,6 +51,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -63,10 +67,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureCollectionUtilities;
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.DefaultName;
 
 /**
  * 
@@ -93,6 +93,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL url = ShapeTestData.url(resource);
         ShapefileDataStore s = new ShapefileDataStore(url);
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = s.getFeatureSource(s.getTypeNames()[0]);
+
+        query = new QueryBuilder()
+                .copy(query)
+                .setTypeName(fs.getSchema().getName())
+                .buildQuery();
+
         return fs.getFeatures(query);
     }
 
@@ -561,8 +567,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore s = new ShapefileDataStore(url);
 
         // attributes other than geometry can be ignored here
-        Query query = new DefaultQuery(s.getSchema(s.getTypeNames()[0]).getTypeName(),
-                Filter.INCLUDE, new String[] { "the_geom" });
+        Query query = new QueryBuilder()
+                .setTypeName(s.getNames().get(0))
+                .setFilter(Filter.INCLUDE)
+                .setProperties(new String[]{"the_geom"})
+                .buildQuery();
+
          FeatureReader<SimpleFeatureType, SimpleFeature> reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(),
                 query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
@@ -581,9 +591,12 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .getEnvelopeInternal(), null);
         Filter gf = ff.bbox(ff.property("the_geom"), bounds);
 
-        query = new DefaultQuery(s.getSchema(s.getTypeNames()[0]).getTypeName(), gf,
-                new String[] { "the_geom" });
-
+        query = new QueryBuilder()
+                .setTypeName(s.getNames().get(0))
+                .setFilter(gf)
+                .setProperties(new String[]{"the_geom"})
+                .buildQuery();
+        
         reader.close();
         reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(), query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
@@ -596,8 +609,13 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // file please
         Filter cf = ff
                 .equals(ff.property("STATE_NAME"), ff.literal("Illinois"));
-        query = new DefaultQuery(s.getSchema(s.getTypeNames()[0]).getTypeName(), cf,
-                new String[] { "the_geom" });
+
+        query = new QueryBuilder()
+                .setTypeName(s.getNames().get(0))
+                .setFilter(cf)
+                .setProperties(new String[]{"the_geom"})
+                .buildQuery();
+        
         reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(), query);
         assertEquals(s.getSchema(s.getTypeNames()[0]), reader.getFeatureType());
         reader.close();
