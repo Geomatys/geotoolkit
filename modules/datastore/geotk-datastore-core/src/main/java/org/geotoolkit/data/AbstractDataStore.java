@@ -404,6 +404,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         return getFeatureReader(typeName);
     }
 
+    @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name)
             throws IOException {
         return getFeatureReader(name.getLocalPart());
@@ -511,6 +512,15 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * {@inheritDoc }
      */
     @Override
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Name typeName, Filter filter,
+            Transaction transaction) throws IOException{
+        return getFeatureWriter(typeName.getLocalPart(), filter, transaction);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(String typeName,
             Transaction transaction) throws IOException {
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getFeatureWriter(typeName, transaction);
@@ -520,6 +530,15 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
         }
 
         return writer;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
+            Transaction transaction) throws IOException{
+        return getFeatureWriter(typeName.getLocalPart(), transaction);
     }
 
     /**

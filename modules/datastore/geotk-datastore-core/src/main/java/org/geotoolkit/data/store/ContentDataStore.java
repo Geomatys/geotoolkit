@@ -425,6 +425,15 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Name typeName, Filter filter,
+            Transaction transaction) throws IOException{
+        return getFeatureWriter(typeName.getLocalPart(), filter, transaction);
+    }
+
+    /**
      * Returns an appending feature writer for the specified type name and
      * transaction.
      * <p>
@@ -439,6 +448,15 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
 
         final ContentFeatureStore featureStore = ensureFeatureStore(typeName,tx);
         return featureStore.getWriter(Filter.INCLUDE , WRITER_ADD);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
+            Transaction transaction) throws IOException{
+        return getFeatureWriter(typeName.getLocalPart(), transaction);
     }
 
     /**

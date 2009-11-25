@@ -174,7 +174,9 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * </p>
      *
      * @return typeNames for available FeatureTypes.
+     * @deprecated
      */
+    @Deprecated
     String[] getTypeNames() throws IOException;
 
     /**
@@ -217,7 +219,9 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * </ul>
      * @param typeName
      * @throws IOException
+     * @deprecated
      */
+    @Deprecated
     void updateSchema(String typeName, T featureType) throws IOException;
 
     /**
@@ -244,7 +248,9 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * @return FeatureType for the provided typeName
      *
      * @throws IOException If typeName cannot be found
+     * @deprecated 
      */
+    @Deprecated
     T getSchema(String typeName) throws IOException;
 
     /**
@@ -281,7 +287,9 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * @param typeName
      *
      * @return FeatureSource<SimpleFeatureType, SimpleFeature> (or subclass) providing operations for typeName
+     * @deprecated
      */
+    @Deprecated
     FeatureSource<T, F> getFeatureSource(String typeName) throws IOException;
 
     /**
@@ -305,7 +313,9 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
 
     /**
      * Obtain a simple reader.
+     * @deprecated 
      */
+    @Deprecated
     FeatureReader<T,F> getFeatureReader(String typeName) throws IOException;
 
     /**
@@ -443,7 +453,9 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * @param transaction Transaction to operates against
      *
      * @return FeatureReader Allows Sequential Processing of featureType
+     * @deprecated
      */
+    @Deprecated
     FeatureWriter<T, F> getFeatureWriter(String typeName, Transaction transaction) throws IOException;
 
     /**
@@ -499,8 +511,87 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      * @param transaction Transaction this query operates against
      *
      * @return FeatureWriter Allows Sequential Modification of featureType
+     * @deprecated
      */
+    @Deprecated
     FeatureWriter<T, F> getFeatureWriter(String typeName, Filter filter, Transaction transaction) throws IOException;
+
+    /**
+     * Access FeatureWriter for modification of existing DataStore contents.
+     *
+     * <p>
+     * To limit FeatureWriter to the FeatureTypes defined by this DataStore,
+     * typeName is used to indicate FeatureType. The resulting
+     * feature writer will allow modifications against the
+     * same FeatureType provided by getSchema( typeName )
+     * </p>
+     *
+     * <p>
+     * The FeatureWriter will provide access to the existing contents of the
+     * FeatureType referenced by typeName. The provided filter will be used
+     * to skip over Features as required.
+     * </p>
+     *
+     * <b>Notes For Implementing DataStore</b>
+     * </p>
+     *
+     * <p>
+     * The returned FeatureWriter <b>does not</b> support the addition of new
+     * Features to FeatureType (it would need to police your modifications to
+     * agree with <code>filer</code>).  As such it will return
+     * <code>false</code> for getNext() when it reaches the end of the Query
+     * and NoSuchElementException when next() is called.
+     * </p>
+     *
+     * <p>
+     * Helper classes for implementing a FeatureWriter (in order):
+     * </p>
+     * <li>
+     * InProcessLockingManager.checkedWriter( writer )
+     * - provides a check against locks before allowing modification
+     *
+     * <li>
+     * FilteringFeatureWriter
+     * - filtering support for FeatureWriter (does not allow new content)
+     * </li>
+     * <li>
+     * DiffFeatureWriter
+     * - In-Process Transaction Support (see TransactionStateDiff)
+     * </li>
+     * <li>
+     * EmptyFeatureWriter
+     * - provides no content for Filter.EXCLUDE optimizations
+     * </li>
+     * </ul>
+     *
+     * @param typeName Indicates featureType to be modified
+     * @param filter constraints used to limit the modification
+     * @param transaction Transaction this query operates against
+     *
+     * @return FeatureWriter Allows Sequential Modification of featureType
+     *
+     */
+    FeatureWriter<T, F> getFeatureWriter(Name typeName, Filter filter, Transaction transaction) throws IOException;
+
+    /**
+     * Aquire a FeatureWriter for adding new content to a FeatureType.
+     *
+     * <p>
+     * This FeatureWriter will return <code>false</code> for hasNext(), however
+     * next() may be used to aquire new Features that may be writen out to add
+     * new content.
+     * </p>
+     *
+     * @param typeName Indicates featureType to be modified
+     * @param transaction Transaction to operates against
+     *
+     * @return FeatureWriter that may only be used to append new content
+     *
+     * @throws IOException
+     * @deprecated
+     */
+    @Deprecated
+    FeatureWriter<T, F> getFeatureWriterAppend(String typeName, Transaction transaction) throws IOException;
 
     /**
      * Aquire a FeatureWriter for adding new content to a FeatureType.
@@ -518,6 +609,6 @@ public interface DataStore<T extends FeatureType, F extends Feature> {
      *
      * @throws IOException
      */
-    FeatureWriter<T, F> getFeatureWriterAppend(String typeName, Transaction transaction) throws IOException;
+    FeatureWriter<T, F> getFeatureWriterAppend(Name typeName, Transaction transaction) throws IOException;
     
 }
