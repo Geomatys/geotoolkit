@@ -17,7 +17,6 @@
 package org.geotoolkit.data.store;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +31,8 @@ import org.geotoolkit.data.concurrent.LockManager;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.data.query.QueryBuilder;
 
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.simple.SimpleFeature;
@@ -44,7 +43,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * Abstract base class for data stores.
@@ -136,9 +134,14 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     /**
      * namespace uri of the datastore itself, or default namespace
      */
-    protected String namespaceURI;
+    protected final String namespaceURI;
 
     public ContentDataStore() {
+        this(null);
+    }
+
+    public ContentDataStore(String namespace) {
+        this.namespaceURI = namespace;
     }
 
     //
@@ -187,7 +190,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
         this.filterFactory = filterFactory;
     }
 
-
     /**
      * The factory used to create geometries.
      */
@@ -213,17 +215,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     }
 
     /**
-     * Sets the namespace uri of the datastore.
-     * <p>
-     * This will be used to qualify the entries or types of the datastore.
-     * </p>
-     * @param namespaceURI The namespace uri, may be <code>null</code>.
-     */
-    public void setNamespaceURI(final String namespaceURI) {
-        this.namespaceURI = namespaceURI;
-    }
-
-    /**
      * The logger for the datastore.
      */
     public Logger getLogger() {
@@ -233,6 +224,13 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     //
     // DataStore API
     //
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public abstract List<Name> getNames() throws IOException;
 
     /**
      * Returns the names of all entries or types provided by the datastore.
@@ -245,15 +243,40 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      */
     @Override
     public final String[] getTypeNames() throws IOException {
-        final List<Name> typeNames = createTypeNames();
-        final String[] names = new String[typeNames.size()];
+        final List<Name> typeNames = getNames();
+        final int size = typeNames.size();
+        final String[] names = new String[size];
 
-        for (int i = 0; i < typeNames.size(); i++) {
+        for (int i=0; i<size; i++) {
             Name typeName = typeNames.get(i);
             names[i] = typeName.getLocalPart();
         }
 
         return names;
+    }
+
+    /**
+     * Returns the feature type or schema matching the specified name.
+     * <p>
+     * This method calls through to <code>getFeatureSource(typeName).getSchema()</code>
+     * </p>
+     *
+     * @see DataStore#getSchema(String)
+     */
+    @Override
+    public final SimpleFeatureType getSchema(final String typeName) throws IOException {
+        return getSchema(name(typeName));
+    }
+
+    /**
+     * Delegates to {@link #getSchema(String)} with {@code name.getLocalPart()}
+     *
+     * @since 2.5
+     * @see DataStore#getSchema(org.opengis.feature.type.Name)
+     */
+    @Override
+    public SimpleFeatureType getSchema(final Name name) throws IOException {
+        return getFeatureSource(name).getSchema();
     }
 
     /**
@@ -271,18 +294,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns the feature type or schema matching the specified name.
-     * <p>
-     * This method calls through to <code>getFeatureSource(typeName).getSchema()</code>
-     * </p>
-     *
-     * @see DataStore#getSchema(String)
-     */
-    @Override
-    public final SimpleFeatureType getSchema(final String typeName) throws IOException {
-        return getFeatureSource(typeName).getSchema();
-    }
 
     /**
      * Returns the feature source matching the specified name.
@@ -339,6 +350,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     /**
      * {@inheritDoc }
      */
+    @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name typeName) throws IOException {
         return getFeatureReader(typeName.getLocalPart());
     }
@@ -542,7 +554,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
         //do we already know about the entry
         if (!entries.containsKey(name)) {
             //is this type available?
-            final List<Name> typeNames = createTypeNames();
+            final List<Name> typeNames = getNames();
 
             if (typeNames.contains(name)) {
                 //yes, create an entry for it
@@ -581,19 +593,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
         return entry;
     }
 
-    /**
-     * Creates a set of qualified names corresponding to the types that the
-     * datastore provides.
-     * <p>
-     * Namespaces may be left <code>null</code> for data stores which do not
-     * support namespace qualified type names.
-     * </p>
-     *
-     * @return A list of {@link Name}.
-     *
-     * @throws IOException Any errors occuring connecting to data.
-     */
-    protected abstract List<Name> createTypeNames() throws IOException;
 
     /**
      * Instantiates new feature source for the entry.
@@ -622,34 +621,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     }
 
     /**
-     * Returns the same list of names than {@link #getTypeNames()} meaning the
-     * returned Names have no namespace set.
-     *
-     * @since 2.5
-     * @see DataStore#getNames()
-     */
-    @Override
-    public List<Name> getNames() throws IOException {
-        final String[] typeNames = getTypeNames();
-        final List<Name> names = new ArrayList<Name>(typeNames.length);
-        for (String typeName : typeNames) {
-            names.add(new DefaultName(typeName));
-        }
-        return names;
-    }
-
-    /**
-     * Delegates to {@link #getSchema(String)} with {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataStore#getSchema(org.opengis.feature.type.Name)
-     */
-    @Override
-    public SimpleFeatureType getSchema(final Name name) throws IOException {
-        return getSchema(name.getLocalPart());
-    }
-
-    /**
      * Delegates to {@link #updateSchema(String, SimpleFeatureType)} with
      * {@code name.getLocalPart()}
      *
@@ -660,4 +631,5 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     public void updateSchema(final Name typeName, final SimpleFeatureType featureType) throws IOException {
         updateSchema(typeName.getLocalPart(), featureType);
     }
+
 }

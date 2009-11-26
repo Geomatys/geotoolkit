@@ -98,7 +98,7 @@ public abstract class JDBCTestSetup {
             run( input );
         }
         catch( Exception ignore ) {
-            // ignore.printStackTrace(System.out);
+            ignore.printStackTrace();
         }
     }
 
@@ -113,7 +113,7 @@ public abstract class JDBCTestSetup {
 
         //connect
         Connection conn = getDataSource().getConnection();
-        createDataStoreFactory().createSQLDialect(new JDBCDataStore()).initializeConnection(conn);
+        createDataStoreFactory().createSQLDialect(new JDBCDataStore("http://www.geotoolkit.org/test")).initializeConnection(conn);
         
         try {
             Statement st = conn.createStatement();

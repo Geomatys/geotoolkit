@@ -77,10 +77,6 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     public static final GeneralParameterDescriptor PASSWD =
             new DefaultParameterDescriptor("passwd","password used to login",String.class,null,true);
 
-    /** parameter for namespace of the datastore */
-    public static final GeneralParameterDescriptor NAMESPACE =
-            new DefaultParameterDescriptor("namespace","Namespace prefix",String.class,null,false);
-
     /** parameter for data source */
     public static final GeneralParameterDescriptor DATASOURCE =
             new DefaultParameterDescriptor("Data Source","Data Source",DataSource.class,null,false);
@@ -127,7 +123,10 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
     @Override
     public final JDBCDataStore createDataStore(final ParameterValueGroup params) throws IOException {
-        final JDBCDataStore dataStore = new JDBCDataStore();
+        // namespace
+        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
+
+        final JDBCDataStore dataStore = new JDBCDataStore(namespace);
 
         // dialect
         final SQLDialect dialect = createSQLDialect(dataStore);
@@ -142,13 +141,6 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         Integer fetchSize = (Integer) params.parameter(FETCHSIZE.getName().toString()).getValue();
         if (fetchSize != null && fetchSize > 0) {
             dataStore.setFetchSize(fetchSize);
-        }
-
-        // namespace
-        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
-
-        if (namespace != null) {
-            dataStore.setNamespaceURI(namespace);
         }
 
         //database schema

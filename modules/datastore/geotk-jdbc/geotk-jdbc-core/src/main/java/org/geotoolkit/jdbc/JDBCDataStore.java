@@ -79,6 +79,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.opengis.feature.type.Name;
 
 
 /**
@@ -193,6 +194,10 @@ public final class JDBCDataStore extends ContentDataStore {
      * cache
      */
     List typeNameCache = null;
+
+    public JDBCDataStore(String namespace){
+        super(namespace);
+    }
 
     /**
      * The current fetch size. The fetch size influences how many records are read from the
@@ -505,7 +510,7 @@ public final class JDBCDataStore extends ContentDataStore {
      * </p>
      */
     @Override
-    protected List createTypeNames() throws IOException {
+    public List<Name> getNames() throws IOException {
         if (typeNameCache != null) {
             return typeNameCache;
         }
@@ -529,7 +534,7 @@ public final class JDBCDataStore extends ContentDataStore {
          *                  SELF_REFERENCING_COL_NAME are created. Values are
          *                  "SYSTEM", "USER", "DERIVED". (may be <code>null</code>)
          */
-        final List typeNames = new ArrayList();
+        final List<Name> typeNames = new ArrayList<Name>();
 
         try {
             cx = createConnection();
@@ -547,7 +552,7 @@ public final class JDBCDataStore extends ContentDataStore {
                         continue;
                     }
 
-                    typeNames.add(new DefaultName(namespaceURI, tableName));
+                    typeNames.add(new DefaultName(getNamespaceURI(), tableName));
                 }
             } finally {
                 closeSafe(tables);

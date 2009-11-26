@@ -23,10 +23,12 @@ import java.util.Map.Entry;
 
 import org.geotoolkit.factory.Factory;
 
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
@@ -47,6 +49,11 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory<SimpleFeatureType,SimpleFeature> {
+
+    /** parameter for namespace of the datastore */
+    public static final GeneralParameterDescriptor NAMESPACE =
+            new DefaultParameterDescriptor("namespace","Namespace prefix",String.class,null,false);
+
 
     /** Default Implementation abuses the naming convention.
      * <p>
