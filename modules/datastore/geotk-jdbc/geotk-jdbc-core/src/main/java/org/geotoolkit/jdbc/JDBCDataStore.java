@@ -1260,11 +1260,10 @@ public final class JDBCDataStore extends ContentDataStore {
             final Transaction tx, final Connection cx) throws IOException, SQLException
     {
 
-        final Query query = new QueryBuilder()
-                .setTypeName(featureType.getName())
-                .setFilter(filter)
-                .setProperties(null)
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(featureType.getName());
+        builder.setFilter(filter);
+        final Query query = builder.buildQuery();
 
         Statement st = null;
         try {

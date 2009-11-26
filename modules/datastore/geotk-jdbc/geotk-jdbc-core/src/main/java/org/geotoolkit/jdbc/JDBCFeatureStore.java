@@ -212,10 +212,9 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
             cx = getDataStore().getConnection(getState());
             //check for insert only
             if ( (flags | WRITER_ADD) == WRITER_ADD ) {
-                Query queryNone = new QueryBuilder()
-                        .copy(query)
-                        .setFilter(Filter.EXCLUDE)
-                        .buildQuery();
+                final QueryBuilder builder = new QueryBuilder(query);
+                builder.setFilter(Filter.EXCLUDE);
+                Query queryNone = builder.buildQuery();
                 if ( getDataStore().getSQLDialect() instanceof PreparedStatementSQLDialect ) {
                     PreparedStatement ps = getDataStore().selectSQLPS(getSchema(), queryNone, cx);
                     return new JDBCInsertFeatureWriter( ps, cx, delegate, query.getHints() );
@@ -236,10 +235,10 @@ public final class JDBCFeatureStore extends ContentFeatureStore {
             postFilter = split[1];
 
             // build up a statement for the content
-            Query preQuery = new QueryBuilder()
-                        .copy(query)
-                        .setFilter(preFilter)
-                        .buildQuery();
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setFilter(preFilter);
+            final Query preQuery = builder.buildQuery();
+            
             if(getDataStore().getSQLDialect() instanceof PreparedStatementSQLDialect) {
                 PreparedStatement ps = getDataStore().selectSQLPS(getSchema(), preQuery, cx);
                 if ( (flags | WRITER_UPDATE) == WRITER_UPDATE ) {

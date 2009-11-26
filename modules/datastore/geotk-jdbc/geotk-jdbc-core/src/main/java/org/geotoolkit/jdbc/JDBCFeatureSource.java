@@ -380,10 +380,9 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                     throw new IOException(ex);
                 }
                 try {
-                    final Query q = new QueryBuilder()
-                            .copy(query)
-                            .setFilter(preFilter)
-                            .buildQuery();
+                    final QueryBuilder builder = new QueryBuilder(query);
+                    builder.setFilter(preFilter);
+                    final Query q = builder.buildQuery();
                     int count = dataStore.getCount(getSchema(), q, cx);
                     // if native support for limit and offset is not implemented, we have to ajust the result
                     if (!dataStore.getSQLDialect().isLimitOffsetSupported()) {
@@ -427,10 +426,9 @@ public class JDBCFeatureSource extends ContentFeatureSource {
             final JTSEnvelope2D bounds = new JTSEnvelope2D(flatCRS);
 
             // grab a reader
-            final Query q = new QueryBuilder()
-                            .copy(query)
-                            .setFilter(postFilter)
-                            .buildQuery();
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setFilter(postFilter);
+            final Query q = builder.buildQuery();
             final FeatureReader<SimpleFeatureType, SimpleFeature> i = getReader(q);
             try {
                 if (i.hasNext()) {
@@ -457,10 +455,9 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                 throw new IOException(ex);
             }
             try {
-                final Query q = new QueryBuilder()
-                            .copy(query)
-                            .setFilter(preFilter)
-                            .buildQuery();
+                final QueryBuilder builder = new QueryBuilder(query);
+                builder.setFilter(preFilter);
+                final Query q = builder.buildQuery();
                 return dataStore.getBounds(getSchema(), q, cx);
             } finally {
                 getDataStore().releaseConnection(cx, getState());
@@ -501,10 +498,9 @@ public class JDBCFeatureSource extends ContentFeatureSource {
         Filter postFilter = split[1];
         
         // rebuild a new query with the same params, but just the pre-filter
-        Query preQuery = new QueryBuilder()
-                            .copy(query)
-                            .setFilter(preFilter)
-                            .buildQuery();
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setFilter(preFilter);
+        final Query preQuery = builder.buildQuery();
         
         // Build the feature type returned by this query. Also build an eventual extra feature type
         // containing the attributes we might need in order to evaluate the post filter

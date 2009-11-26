@@ -220,11 +220,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
-        final Query query = new QueryBuilder()
-                .setTypeName(schema.getName())
-                .setFilter(filter)
-                .setProperties(atts)
-                .buildQuery();
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(schema.getName());
+        qb.setFilter(filter);
+        qb.setProperties(atts);
+        final Query query = qb.buildQuery();
 
         if(monitor.stopRequested()) return;
         
@@ -360,11 +360,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Set<String> copy = new HashSet<String>(attributs);
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
-        final Query query = new QueryBuilder()
-                .setTypeName(schema.getName())
-                .setFilter(filter)
-                .setProperties(atts)
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(schema.getName());
+        builder.setFilter(filter);
+        builder.setProperties(atts);
+        final Query query = builder.buildQuery();
         
         final FeatureCollection<SimpleFeatureType,SimpleFeature> features;
         try{

@@ -253,11 +253,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 final Expression geomData = FF.literal(dataPoly);
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
-                                final Query query = new QueryBuilder()
-                                    .setTypeName(fml.getFeatureSource().getSchema().getName())
-                                    .setFilter(f)
-                                    .setProperties(new String[]{geoStr})
-                                    .buildQuery();
+                                final QueryBuilder builder = new QueryBuilder();
+                                builder.setTypeName(fml.getFeatureSource().getSchema().getName());
+                                builder.setFilter(f);
+                                builder.setProperties(new String[]{geoStr});
+                                final Query query = builder.buildQuery();
                                 
                                 FeatureCollection fc = fl.getFeatureSource().getFeatures(query);
                                 FeatureIterator fi = fc.features();

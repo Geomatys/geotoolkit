@@ -45,136 +45,146 @@ public class DefaultQueryTest extends TestCase {
     }
 
     public void testFullConstructor() {
-        Query query = new QueryBuilder()
-                .setTypeName(new DefaultName("mytype"))
-                .setFilter(Filter.INCLUDE)
-                .setMaxFeatures(10)
-                .setProperties(new String[]{"foo"})
-                .setHandle("myquery")
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(new DefaultName("mytype"));
+        builder.setFilter(Filter.INCLUDE);
+        builder.setMaxFeatures(10);
+        builder.setProperties(new String[]{"foo"});
+        builder.setHandle("myquery");
+        Query query = builder.buildQuery();
+
         assertNotNull(query);
     }
 
     /** Test of getPropertyNames method, of class org.geotoolkit.data.DefaultQuery. */
     public void testPropertyNames() {
+        final QueryBuilder builder = new QueryBuilder();
+
         System.out.println("testPropertyNames");
-        Query query = new QueryBuilder().setTypeName(new DefaultName("test")).buildQuery();
+        builder.setTypeName(new DefaultName("test"));
+        Query query = builder.buildQuery();
         assertNull(query.getPropertyNames());
-        query = new QueryBuilder().copy(query).setProperties(new String[]{"foo","bar"}).buildQuery();
+
+        builder.reset();
+        builder.copy(query);
+        builder.setProperties(new String[]{"foo","bar"});
+        query = builder.buildQuery();
         String names[] = query.getPropertyNames();
         assertNotNull(names);
         assertEquals("foo", names[0]);
         assertEquals("bar", names[1]);
-        
-        query = new QueryBuilder().copy(query).setProperties(null).buildQuery();
+
+        builder.reset();
+        builder.copy(query);
+        builder.setProperties(null);
+        query = builder.buildQuery();
         assertNull(query.getPropertyNames());
 
-        query = new QueryBuilder()
-                .setTypeName(new DefaultName("Test"))
-                .setFilter(Filter.INCLUDE)
-                .setProperties(new String[]{"foo","wibble"})
-                .buildQuery();
+        builder.reset();
+        builder.setTypeName(new DefaultName("Test"));
+        builder.setFilter(Filter.INCLUDE);
+        builder.setProperties(new String[]{"foo","wibble"});
+        query = builder.buildQuery();
         assertNotNull(query.getPropertyNames());
     }
 
     /** Test of retrieveAllProperties method, of class org.geotoolkit.data.DefaultQuery. */
     public void testRetrieveAllProperties() {
+        final QueryBuilder builder = new QueryBuilder();
+
         System.out.println("testRetrieveAllProperties");
 
-        Query query = new QueryBuilder().setTypeName(new DefaultName("test")).buildQuery();
+        builder.setTypeName(new DefaultName("test"));
+        Query query = builder.buildQuery();
         assertTrue(query.retrieveAllProperties());
 
-        query = new QueryBuilder().copy(query).setProperties(new String[]{"foo", "bar"}).buildQuery();
+        builder.setProperties(new String[]{"foo", "bar"});
+        query = builder.buildQuery();
         assertFalse(query.retrieveAllProperties());
 
-        query = new QueryBuilder().copy(query).setProperties(null).buildQuery();
+        builder.setProperties(null);
+        query = builder.buildQuery();
         assertTrue(query.retrieveAllProperties());
 
-        query = new QueryBuilder().copy(query).setProperties(new String[]{"foo", "bar"}).buildQuery();
-        query = new QueryBuilder().copy(query).setProperties(null).buildQuery();
-        assertTrue(query.retrieveAllProperties());
     }
 
     /** Test of getMaxFeatures method, of class org.geotoolkit.data.DefaultQuery. */
     public void testMaxFeatures() {
+        final QueryBuilder builder = new QueryBuilder();
+
         System.out.println("testMaxFeatures");
-        Query query = new QueryBuilder().setTypeName(new DefaultName("test")).buildQuery();
+        builder.setTypeName(new DefaultName("test"));
+        Query query = builder.buildQuery();
         assertEquals(null, query.getMaxFeatures());
 
-        query = new QueryBuilder().copy(query).setMaxFeatures(5).buildQuery();
+        builder.setMaxFeatures(5);
+        query = builder.buildQuery();
         assertEquals(new Integer(5), query.getMaxFeatures());
     }
 
     /** Test of getFilter method, of class org.geotoolkit.data.DefaultQuery. */
     public void testFilter() {
+        final QueryBuilder builder = new QueryBuilder();
+
         System.out.println("testGetFilter");
-        Query query = new QueryBuilder()
-                .setTypeName(new DefaultName("test"))
-                .setFilter(Filter.EXCLUDE)
-                .buildQuery();
+        builder.setTypeName(new DefaultName("test"));
+        builder.setFilter(Filter.EXCLUDE);
+        Query query = builder.buildQuery();
         assertEquals(Filter.EXCLUDE, query.getFilter());
 
-        query = new QueryBuilder()
-                .setTypeName(new DefaultName("test"))
-                .setFilter(Filter.INCLUDE)
-                .buildQuery();
+        builder.setFilter(Filter.INCLUDE);
+        query = builder.buildQuery();
         assertEquals(Filter.INCLUDE, query.getFilter());
     }
 
     /** Test of getTypeName method, of class org.geotoolkit.data.DefaultQuery. */
     public void testTypeName() {
-        Query query = new QueryBuilder()
-                .setTypeName(new DefaultName("foobar"))
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
 
+        builder.setTypeName(new DefaultName("foobar"));
+
+        Query query = builder.buildQuery();
         assertEquals("foobar", query.getTypeName().getLocalPart());
 
-        query = new QueryBuilder()
-                .setTypeName(new DefaultName("mytype"))
-                .buildQuery();
+        builder.setTypeName(new DefaultName("mytype"));
+        query = builder.buildQuery();
         assertEquals("mytype", query.getTypeName().getLocalPart());
     }
 
     /** Test of getHandle method, of class org.geotoolkit.data.DefaultQuery. */
     public void testHandle() {
+        final QueryBuilder builder = new QueryBuilder();
+
         System.out.println("testGetHandle");
-        Query query = new QueryBuilder()
-                .setTypeName(new DefaultName("test"))
-                .buildQuery();
+        builder.setTypeName(new DefaultName("test"));
+        Query query = builder.buildQuery();
         assertNull(query.getHandle());
 
-        query = new QueryBuilder()
-                .copy(query)
-                .setHandle("myquery")
-                .buildQuery();
+        builder.setHandle("myquery");
+        query = builder.buildQuery();
         assertEquals("myquery", query.getHandle());
     }
 
 
     /** Test of toString method, of class org.geotoolkit.data.DefaultQuery. */
     public void testToString() {
+        final QueryBuilder builder = new QueryBuilder();
+
         System.out.println("testToString");
-        Query query = new QueryBuilder()
-                .setTypeName(new DefaultName("test"))
-                .buildQuery();
+        builder.setTypeName(new DefaultName("test"));
+        Query query = builder.buildQuery();
         assertNotNull(query.toString());
 
-        query = new QueryBuilder()
-                .copy(query)
-                .setHandle("myquery")
-                .buildQuery();
+        builder.setHandle("myquery");
+        query = builder.buildQuery();
         assertNotNull(query.toString());
 
-        query = new QueryBuilder()
-                .copy(query)
-                .setFilter(Filter.EXCLUDE)
-                .buildQuery();
+        builder.setFilter(Filter.EXCLUDE);
+        query = builder.buildQuery();
         assertNotNull(query.toString());
 
-        query = new QueryBuilder()
-                .copy(query)
-                .setProperties(new String[]{"foo", "bar"})
-                .buildQuery();
+        builder.setProperties(new String[]{"foo", "bar"});
+        query = builder.buildQuery();
         assertNotNull(query.toString());
 
     }

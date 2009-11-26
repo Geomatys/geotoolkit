@@ -113,10 +113,10 @@ public class FidQueryTest extends FIDTestCase {
         String fid = id.getID();        
         Filter filter = fac.id(Collections.singleton(id));
 
-        Query query = new QueryBuilder()
-                .setTypeName(schema.getName())
-                .setFilter(filter)
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(schema.getName());
+        builder.setFilter(filter);
+        Query query = builder.buildQuery();
 
 
         FeatureIterator<SimpleFeature> features = featureStore.getFeatures(query).features();
@@ -246,7 +246,9 @@ public class FidQueryTest extends FIDTestCase {
             String fid = (String) entry.getKey();
             FeatureId id = fac.featureId(fid);
             Filter filter = fac.id(Collections.singleton(id));
-            query = new QueryBuilder().copy(query).setFilter(filter).buildQuery();
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setFilter(filter);
+            query = builder.buildQuery();
             FeatureIterator<SimpleFeature> features = featureStore.getFeatures(query)
                     .features();
             try {

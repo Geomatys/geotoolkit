@@ -431,11 +431,11 @@ public class CollectionDataStoreTest extends DataTestCase {
         assertEquals(rd12Bounds, some.getBounds());
         assertEquals(some.getSchema(), road.getSchema());
 
-        Query query = new QueryBuilder()
-                .setTypeName(road.getSchema().getName())
-                .setFilter(rd12Filter)
-                .setProperties(new String[]{"name"})
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(road.getSchema().getName());
+        builder.setFilter(rd12Filter);
+        builder.setProperties(new String[]{"name"});
+        Query query = builder.buildQuery();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> half = road.getFeatures(query);
         assertEquals(2, half.size());

@@ -260,12 +260,11 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         PropertyIsEqualTo filter = factory.equals(geomTypeExpr, factory.literal("Polygon"));
 
-
-        Query query = new QueryBuilder()
-                .setTypeName(dataStore.getSchema(tname("road")).getName())
-                .setFilter(filter)
-                .setProperties(new String[]{aname("id")})
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(dataStore.getSchema(tname("road")).getName());
+        builder.setFilter(filter);
+        builder.setProperties(new String[]{aname("id")});
+        Query query = builder.buildQuery();
 
          FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query, t);
         // if the above statement didn't throw an exception, we're content
@@ -273,7 +272,8 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         reader.close();
 
         filter = factory.equals(geomTypeExpr, factory.literal("LineString"));
-        query = new QueryBuilder().copy(query).setFilter(filter).buildQuery();
+        builder.setFilter(filter);
+        query = builder.buildQuery();
         reader = dataStore.getFeatureReader(query, t);
         assertTrue(reader.hasNext());
         reader.close();
@@ -292,11 +292,11 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property(aname("flow")), ff.literal(4.5));
 
-        Query q = new QueryBuilder()
-                .setTypeName(dataStore.getSchema(tname("river")).getName())
-                .setFilter(f)
-                .setProperties(new String[]{aname("geom")})
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(dataStore.getSchema(tname("river")).getName());
+        builder.setFilter(f);
+        builder.setProperties(new String[]{aname("geom")});
+        Query q = builder.buildQuery();
 
         // with GEOT-1069 an exception is thrown here
         reader = dataStore.getFeatureReader(q, t);
@@ -321,11 +321,11 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         PropertyIsEqualTo f = ff.equals(ceil, ff.literal(5));
 
-        Query q = new QueryBuilder()
-                .setTypeName(dataStore.getSchema(tname("river")).getName())
-                .setFilter(f)
-                .setProperties(new String[]{aname("geom")})
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(dataStore.getSchema(tname("river")).getName());
+        builder.setFilter(f);
+        builder.setProperties(new String[]{aname("geom")});
+        Query q = builder.buildQuery();
         
         // with GEOT-1069 an exception is thrown here
         reader = dataStore.getFeatureReader(q, t);
@@ -343,11 +343,11 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
 
-        Query q = new QueryBuilder()
-                .setTypeName(dataStore.getSchema(tname("river")).getName())
-                .setFilter(f)
-                .setProperties(new String[]{aname("geom")})
-                .buildQuery();
+        QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(dataStore.getSchema(tname("river")).getName());
+        builder.setFilter(f);
+        builder.setProperties(new String[]{aname("geom")});
+        Query q = builder.buildQuery();
         
         // make sure a complaint related to the invalid filter is thrown here
         try { 
@@ -965,11 +965,11 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         assertEquals(some.getSchema(), road.getSchema());
 
-        Query query = new QueryBuilder()
-                .setTypeName(road.getSchema().getName())
-                .setFilter(td.rd12Filter)
-                .setProperties(new String[] { aname("name") })
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(road.getSchema().getName());
+        builder.setFilter(td.rd12Filter);
+        builder.setProperties(new String[] { aname("name") });
+        Query query = builder.buildQuery();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> half = road.getFeatures(query);
         assertEquals(2, half.size());

@@ -119,10 +119,9 @@ public class FeatureSourceModel extends DefaultTableModel {
             }
         }
 
-        query = new QueryBuilder()
-                .copy(query)
-                .setProperties(props.toArray(new String[props.size()]))
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setProperties(props.toArray(new String[props.size()]));
+        query = builder.buildQuery();
         return query;
     }
 

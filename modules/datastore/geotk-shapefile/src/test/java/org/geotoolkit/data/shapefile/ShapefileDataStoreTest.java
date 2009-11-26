@@ -94,10 +94,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore s = new ShapefileDataStore(url);
         FeatureSource<SimpleFeatureType, SimpleFeature> fs = s.getFeatureSource(s.getTypeNames()[0]);
 
-        query = new QueryBuilder()
-                .copy(query)
-                .setTypeName(fs.getSchema().getName())
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setTypeName(fs.getSchema().getName());
+        query = builder.buildQuery();
 
         return fs.getFeatures(query);
     }
@@ -567,11 +566,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore s = new ShapefileDataStore(url);
 
         // attributes other than geometry can be ignored here
-        Query query = new QueryBuilder()
-                .setTypeName(s.getNames().get(0))
-                .setFilter(Filter.INCLUDE)
-                .setProperties(new String[]{"the_geom"})
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(s.getNames().get(0));
+        builder.setFilter(Filter.INCLUDE);
+        builder.setProperties(new String[]{"the_geom"});
+        Query query = builder.buildQuery();
 
          FeatureReader<SimpleFeatureType, SimpleFeature> reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
@@ -590,11 +589,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .getEnvelopeInternal(), null);
         Filter gf = ff.bbox(ff.property("the_geom"), bounds);
 
-        query = new QueryBuilder()
-                .setTypeName(s.getNames().get(0))
-                .setFilter(gf)
-                .setProperties(new String[]{"the_geom"})
-                .buildQuery();
+        builder.reset();
+        builder.setTypeName(s.getNames().get(0));
+        builder.setFilter(gf);
+        builder.setProperties(new String[]{"the_geom"});
+        query = builder.buildQuery();
         
         reader.close();
         reader = s.getFeatureReader(query);
@@ -609,11 +608,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         Filter cf = ff
                 .equals(ff.property("STATE_NAME"), ff.literal("Illinois"));
 
-        query = new QueryBuilder()
-                .setTypeName(s.getNames().get(0))
-                .setFilter(cf)
-                .setProperties(new String[]{"the_geom"})
-                .buildQuery();
+        builder.reset();
+        builder.setTypeName(s.getNames().get(0));
+        builder.setFilter(cf);
+        builder.setProperties(new String[]{"the_geom"});
+        query = builder.buildQuery();
         
         reader = s.getFeatureReader(query);
         assertEquals(s.getSchema(s.getTypeNames()[0]), reader.getFeatureType());

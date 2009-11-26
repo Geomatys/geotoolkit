@@ -515,6 +515,18 @@ public class AttributeTypeBuilder {
         return buildDescriptor(new DefaultName(namespaceURI,name), type);
     }
 
+    public AttributeDescriptor buildDescriptor(final Name name, final AttributeType type) {
+
+        //build the descriptor
+        final AttributeDescriptor descriptor = factory.createAttributeDescriptor(
+                type, name, minOccurs(), maxOccurs(), isNillable, defaultValue());
+
+        //set the user data
+        descriptor.getUserData().putAll(userData);
+        resetDescriptorState();
+        return descriptor;
+    }
+
     /**
      * Builds a geometry descriptor specifying its attribute type.
      * <p>
@@ -526,18 +538,6 @@ public class AttributeTypeBuilder {
      */
     public GeometryDescriptor buildDescriptor(final String name, final GeometryType type) {
         return buildDescriptor(new DefaultName(namespaceURI,name), type);
-    }
-
-    public AttributeDescriptor buildDescriptor(final Name name, final AttributeType type) {
-
-        //build the descriptor
-        final AttributeDescriptor descriptor = factory.createAttributeDescriptor(
-                type, name, minOccurs(), maxOccurs(), isNillable, defaultValue());
-
-        //set the user data
-        descriptor.getUserData().putAll(userData);
-        resetDescriptorState();
-        return descriptor;
     }
 
     public GeometryDescriptor buildDescriptor(final Name name, final GeometryType type) {

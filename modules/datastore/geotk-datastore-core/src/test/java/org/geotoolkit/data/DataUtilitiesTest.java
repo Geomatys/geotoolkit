@@ -441,21 +441,24 @@ public class DataUtilitiesTest extends DataTestCase {
         Query firstQuery;
         Query secondQuery;
 
-        firstQuery = new QueryBuilder()
-                .setTypeName(new DefaultName("typeName"))
-                .setFilter(Filter.EXCLUDE)
-                .setMaxFeatures(100)
-                .setProperties(new String[]{"att1", "att2", "att3"})
-                .setHandle("handle")
-                .buildQuery();
-        secondQuery = new QueryBuilder()
-                .setTypeName(new DefaultName("typeName"))
-                .setFilter(Filter.EXCLUDE)
-                .setMaxFeatures(20)
-                .setProperties(new String[]{"att1", "att2", "att4"})
-                .setHandle("handle2")
-                .setStartIndex(4)
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(new DefaultName("typeName"));
+        builder.setFilter(Filter.EXCLUDE);
+        builder.setMaxFeatures(100);
+        builder.setProperties(new String[]{"att1", "att2", "att3"});
+        builder.setHandle("handle");
+
+        firstQuery = builder.buildQuery();
+
+        builder.reset();
+        builder.setTypeName(new DefaultName("typeName"));
+        builder.setFilter(Filter.EXCLUDE);
+        builder.setMaxFeatures(20);
+        builder.setProperties(new String[]{"att1", "att2", "att4"});
+        builder.setHandle("handle2");
+        builder.setStartIndex(4);
+        
+        secondQuery = builder.buildQuery();
         
         Query mixed = QueryUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 
@@ -479,20 +482,23 @@ public class DataUtilitiesTest extends DataTestCase {
         filter1 = ffac.equals(ffac.property("att1"), ffac.literal("val1"));
         filter2 = ffac.equals(ffac.property("att2"), ffac.literal("val2"));
 
-        firstQuery = new QueryBuilder()
-                .setTypeName(new DefaultName("typeName"))
-                .setFilter(filter1)
-                .setMaxFeatures(100)
-                .setProperties(null)
-                .setHandle("handle")
-                .buildQuery();
-        secondQuery = new QueryBuilder()
-                .setTypeName(new DefaultName("typeName"))
-                .setFilter(filter2)
-                .setMaxFeatures(20)
-                .setProperties(new String[]{"att1", "att2", "att4"})
-                .setHandle("handle2")
-                .buildQuery();
+        builder.reset();
+        builder.setTypeName(new DefaultName("typeName"));
+        builder.setFilter(filter1);
+        builder.setMaxFeatures(100);
+        builder.setProperties(null);
+        builder.setHandle("handle");
+
+        firstQuery = builder.buildQuery();
+
+        builder.reset();
+        builder.setTypeName(new DefaultName("typeName"));
+        builder.setFilter(filter2);
+        builder.setMaxFeatures(20);
+        builder.setProperties(new String[]{"att1", "att2", "att4"});
+        builder.setHandle("handle2");
+
+        secondQuery = builder.buildQuery();
         
         mixed = QueryUtilities.mixQueries(firstQuery, secondQuery, "newhandle");
 

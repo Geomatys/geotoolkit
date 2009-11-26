@@ -224,7 +224,9 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         assertFalse(reader.hasNext());
         reader.close();
 
-        query = new QueryBuilder().copy(query).setProperties(new String[] { aname("intProperty") }).buildQuery();
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setProperties(new String[] { aname("intProperty") });
+        query = builder.buildQuery();
         reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
 
         for (int i = 0; i < 3; i++) {
@@ -239,7 +241,8 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         FilterFactory ff = dataStore.getFilterFactory();
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
-        query = new QueryBuilder().copy(query).setFilter(f).buildQuery();
+        builder.setFilter(f);
+        query = builder.buildQuery();
 
         reader = dataStore.getFeatureReader(query, Transaction.AUTO_COMMIT);
 

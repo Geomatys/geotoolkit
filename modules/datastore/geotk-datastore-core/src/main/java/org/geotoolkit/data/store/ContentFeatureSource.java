@@ -425,7 +425,9 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
                         "so there is no way a stable paging (offset/limit) can be performed");
             }
 
-            query = new QueryBuilder().copy(query).setSortBy(new SortBy[]{SortBy.NATURAL_ORDER}).buildQuery();
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setSortBy(new SortBy[]{SortBy.NATURAL_ORDER});
+            query = builder.buildQuery();
         }
 
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = getReaderInternal(query);
@@ -811,7 +813,9 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
             return query;
         }
 
-        return new QueryBuilder().copy(query).setFilter(resolved).buildQuery();
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setFilter(resolved);
+        return builder.buildQuery();
     }
 
     /**

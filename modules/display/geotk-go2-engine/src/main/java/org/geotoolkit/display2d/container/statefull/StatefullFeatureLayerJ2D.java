@@ -206,11 +206,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
 
-        final Query query = new QueryBuilder()
-                .setTypeName(schema.getName())
-                .setFilter(filter)
-                .setProperties(atts)
-                .buildQuery();
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(schema.getName());
+        qb.setFilter(filter);
+        qb.setProperties(atts);
+        final Query query = qb.buildQuery();
         
         if(copy.size() != cachedAttributs.size() || !cachedAttributs.containsAll(copy)){
             //the attributs needed for styling have changed, the cache is obsolete
@@ -448,11 +448,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         copy.add(geomAttName);
         final String[] atts = copy.toArray(new String[copy.size()]);
 
-        final Query query = new QueryBuilder()
-                .setTypeName(schema.getName())
-                .setFilter(filter)
-                .setProperties(atts)
-                .buildQuery();
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(schema.getName());
+        qb.setFilter(filter);
+         qb.setProperties(atts);
+        final Query query = qb.buildQuery();
         
         if(copy.size() != cachedAttributs.size() || !cachedAttributs.containsAll(copy)){
             //the attributs needed for styling have changed, the cache is obsolete

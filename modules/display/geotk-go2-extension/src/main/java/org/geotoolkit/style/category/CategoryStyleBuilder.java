@@ -256,10 +256,10 @@ public class CategoryStyleBuilder extends Factory {
         //search the different values
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
-        final Query query = new QueryBuilder()
-                .setTypeName(layer.getFeatureSource().getSchema().getName())
-                .setProperties(new String[]{property.getPropertyName()})
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(layer.getFeatureSource().getSchema().getName());
+        builder.setProperties(new String[]{property.getPropertyName()});
+        final Query query = builder.buildQuery();
 
         FeatureIterator<SimpleFeature> features = null;
         try{

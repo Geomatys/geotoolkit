@@ -33,25 +33,41 @@ public class QueryBuilder {
 
     private static final String[] NO_PROPERTIES = new String[0];
     
-    private Name typeName;
+    private Name typeName = null;
 
     private Filter filter = Filter.INCLUDE;
     private String[] properties = null;
     private SortBy[] sortBy = null;
-
     private CoordinateReferenceSystem crs = null;
-
     private Integer startIndex = null;
     private Integer maxFeatures = null;
-
     private Hints hints = null;
-
     private String handle = null;
 
     public QueryBuilder(){
     }
 
-    public QueryBuilder copy(Query query){
+    public QueryBuilder(Query query){
+        copy(query);
+    }
+
+    public QueryBuilder(Name name){
+        setTypeName(name);
+    }
+
+    public void reset(){
+        typeName = null;
+        filter = Filter.INCLUDE;
+        properties = null;
+        sortBy = null;
+        crs = null;
+        startIndex = null;
+        maxFeatures = null;
+        hints = null;
+        handle = null;
+    }
+
+    public void copy(Query query){
         this.crs = query.getCoordinateSystemReproject();
         this.filter = query.getFilter();
         this.hints = query.getHints();
@@ -61,88 +77,78 @@ public class QueryBuilder {
         this.startIndex = query.getStartIndex();
         this.typeName = query.getTypeName();
         this.handle = query.getHandle();
-        return this;
     }
 
     public Name getTypeName() {
         return typeName;
     }
 
-    public QueryBuilder setTypeName(Name typeName) {
+    public void setTypeName(Name typeName) {
         this.typeName = typeName;
-        return this;
     }
 
     public Filter getFilter() {
         return filter;
     }
 
-    public QueryBuilder setFilter(Filter filter) {
+    public void setFilter(Filter filter) {
         this.filter = filter;
-        return this;
     }
 
     public String[] getProperties() {
         return properties;
     }
 
-    public QueryBuilder setProperties(String[] properties) {
+    public void setProperties(String[] properties) {
         this.properties = properties;
-        return this;
     }
 
     public SortBy[] getSortBy() {
         return sortBy;
     }
 
-    public QueryBuilder setSortBy(SortBy[] sortBy) {
+    public void setSortBy(SortBy[] sortBy) {
         this.sortBy = sortBy;
-        return this;
     }
 
     public Integer getStartIndex() {
         return startIndex;
     }
 
-    public QueryBuilder setStartIndex(Integer startIndex) {
+    public void setStartIndex(Integer startIndex) {
         this.startIndex = startIndex;
-        return this;
     }
 
     public Integer getMaxFeatures() {
         return maxFeatures;
     }
 
-    public QueryBuilder setMaxFeatures(Integer maxFeatures) {
+    public void setMaxFeatures(Integer maxFeatures) {
         this.maxFeatures = maxFeatures;
-        return this;
-    }
-
-    public QueryBuilder setCRS(CoordinateReferenceSystem crs) {
-        this.crs = crs;
-        return this;
     }
 
     public CoordinateReferenceSystem getCRS() {
         return crs;
     }
 
+    public void setCRS(CoordinateReferenceSystem crs) {
+        this.crs = crs;
+    }
+
     public Hints getHints() {
         return hints;
     }
 
-    public QueryBuilder setHints(Hints hints) {
+    public void setHints(Hints hints) {
         this.hints = hints;
-        return this;
     }
 
     public String getHandle() {
         return handle;
     }
 
-    public QueryBuilder setHandle(String handle) {
+    public void setHandle(String handle) {
         this.handle = handle;
-        return this;
     }
 
     public Query buildQuery(){

@@ -368,8 +368,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the extreme values
-        final QueryBuilder query = new QueryBuilder()
-                .setTypeName(layer.getFeatureSource().getSchema().getName());
+        final QueryBuilder query = new QueryBuilder(layer.getFeatureSource().getSchema().getName());
 
         if(classification == null || layer == null) return;
 

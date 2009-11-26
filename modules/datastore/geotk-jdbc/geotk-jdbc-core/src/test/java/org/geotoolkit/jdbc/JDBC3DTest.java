@@ -141,7 +141,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
         // insert it
         FeatureStore<SimpleFeatureType, SimpleFeature> fs = (FeatureStore) dataStore
-                .getFeatureSource(tname(LINE3D), Transaction.AUTO_COMMIT);
+                .getFeatureSource( dataStore.getSchema(tname(LINE3D)).getName(), Transaction.AUTO_COMMIT);
         List<FeatureId> fids = fs.addFeatures(DataUtilities.collection(newFeature));
 
         // retrieve it back
@@ -214,10 +214,10 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
         assertTrue(fs.getSupportedHints().contains(HintsPending.JTS_COORDINATE_SEQUENCE_FACTORY));
 
         // setup a query that mimicks the streaming renderer behaviour
-        Query q = new QueryBuilder()
-                .setTypeName(dataStore.getSchema(tname(LINE3D)).getName())
-                .setCRS(horizontal)
-                .buildQuery();
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(dataStore.getSchema(tname(LINE3D)).getName());
+        builder.setCRS(horizontal);
+        Query q = builder.buildQuery();
 
         // check the srs you get is the flat one 
         // this does not work now due to http://jira.codehaus.org/browse/GEOT-2026

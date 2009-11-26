@@ -157,13 +157,13 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
         final String typeName = getSchema().getTypeName();
         final String candidate = query.getTypeName().getLocalPart();
         if (!typeName.equals(candidate)) {
-            return new QueryBuilder()
-                    .setTypeName(getSchema().getName())
-                    .setFilter(query.getFilter())
-                    .setMaxFeatures(query.getMaxFeatures())
-                    .setProperties(query.getPropertyNames())
-                    .setHandle(query.getHandle())
-                    .buildQuery();
+            final QueryBuilder builder = new QueryBuilder();
+            builder.setTypeName(getSchema().getName());
+            builder.setFilter(query.getFilter());
+            builder.setMaxFeatures(query.getMaxFeatures());
+            builder.setProperties(query.getPropertyNames());
+            builder.setHandle(query.getHandle());
+            return builder.buildQuery();
         }
         return query;
     }
@@ -212,7 +212,9 @@ public abstract class AbstractFeatureSource implements FeatureSource<SimpleFeatu
 
         if (query.getTypeName() == null) {
             //typeName unspecified we will "any" use a default
-            query = new QueryBuilder().copy(query).setTypeName(typeName).buildQuery();
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setTypeName(typeName);
+            query = builder.buildQuery();
         } else if (!typeName.equals(query.getTypeName())) {
             throw new IOException("Query type name : "+ query.getTypeName() +"doesn't match schema name : "+typeName);
         }
