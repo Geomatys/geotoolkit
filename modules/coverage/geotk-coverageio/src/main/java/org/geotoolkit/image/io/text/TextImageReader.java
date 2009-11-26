@@ -116,11 +116,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * @throws IOException If reading from the input stream failed.
      *
      * @see Spi#padValue
-     *
-     * @deprecated Should be specified in metadata instead, and implementations should use
-     *             {@code SampleConverter}.
      */
-    @Deprecated
     protected double getPadValue(final int imageIndex) throws IOException {
         return (originatingProvider instanceof Spi) ? ((Spi) originatingProvider).padValue : Double.NaN;
     }
@@ -340,9 +336,9 @@ public abstract class TextImageReader extends StreamImageReader {
         };
 
         /**
-         * Default list of file extensions. This list is shared with {@link TextImageWriter}.
+         * Default list of file suffixes. This list is shared with {@link TextImageWriter}.
          */
-        static final String[] EXTENSIONS = new String[] {
+        static final String[] SUFFIXES = new String[] {
             "txt", "TXT", "asc", "ASC", "dat", "DAT"
         };
 
@@ -394,7 +390,7 @@ public abstract class TextImageReader extends StreamImageReader {
          */
         public Spi() {
             inputTypes = INPUT_TYPES;
-            suffixes   = EXTENSIONS;
+            suffixes   = SUFFIXES;
             padValue   = Double.NaN;
         }
 

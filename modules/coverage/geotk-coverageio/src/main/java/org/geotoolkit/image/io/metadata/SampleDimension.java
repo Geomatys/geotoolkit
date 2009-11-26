@@ -39,16 +39,11 @@ import org.geotoolkit.util.NumberRange;
  *   <li>{@link #getValidSampleValues()}</li>
  *   <li>{@link #getFillSampleValues()}</li>
  * </ul>
- * <p>
- * If image bands are known to be a measurement of wavelengths in the electromagnetic spectrum,
- * then the instances returned by {@link SpatialMetadata#getSampleDimensions()} shall implement
- * both the {@code SampleDimension} and the {@code Band} interfaces.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
  *
  * @see org.opengis.metadata.content.Band
- * @see SpatialMetadata#getSampleDimensions()
  *
  * @since 3.06
  * @module

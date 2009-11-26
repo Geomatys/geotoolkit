@@ -377,7 +377,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
          */
         public Spi() {
             outputTypes = OUTPUT_TYPES;
-            suffixes    = TextImageReader.Spi.EXTENSIONS;
+            suffixes    = TextImageReader.Spi.SUFFIXES;
         }
     }
 }

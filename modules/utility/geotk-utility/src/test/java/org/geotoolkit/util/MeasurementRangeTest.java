@@ -35,7 +35,7 @@ import org.geotoolkit.test.Depend;
  *
  * @since 2.4
  */
-@Depend(RangeTest.class)
+@Depend(NumberRangeTest.class)
 public final class MeasurementRangeTest {
     /**
      * Tests unit conversions.
@@ -46,81 +46,6 @@ public final class MeasurementRangeTest {
         assertSame(range, range.convertTo(SI.METRE));
         final Unit<Length> KILOMETRE = SI.KILO(SI.METRE);
         assertEquals(MeasurementRange.create(1f, 2f, KILOMETRE), range.convertTo(KILOMETRE));
-    }
-
-    /**
-     * Tests the bounds values of a range of integers.
-     */
-    @Test
-    public void testIntegerBounds() {
-        final NumberRange<Integer> range = NumberRange.create(10, 20);
-        assertEquals(10, range.getMinimum(     ), 0);
-        assertEquals(10, range.getMinimum(true ), 0);
-        assertEquals( 9, range.getMinimum(false), 0);
-        assertEquals(20, range.getMaximum(     ), 0);
-        assertEquals(20, range.getMaximum(true ), 0);
-        assertEquals(21, range.getMaximum(false), 0);
-    }
-
-    /**
-     * Tests union and intersection without units and type change.
-     */
-    @Test
-    public void testIntegerIntersect() {
-        NumberRange<Integer> r1 = NumberRange.create(10, 20);
-        NumberRange<Integer> r2 = NumberRange.create(15, 30);
-        assertTrue (r1.equals(r1));
-        assertTrue (r2.equals(r2));
-        assertFalse(r1.equals(r2));
-        assertEquals(Integer.class, r1.getElementClass());
-        assertEquals(Integer.class, r2.getElementClass());
-        assertEquals(NumberRange.create(10, 30), r1.union(r2));
-        assertEquals(NumberRange.create(15, 20), r1.intersect(r2));
-    }
-
-    /**
-     * Tests union and intersection with type change.
-     */
-    @Test
-    public void testDoubleIntersect() {
-        NumberRange<Double> r1 = NumberRange.create(10.0, 20.0);
-        NumberRange<Double> r2 = NumberRange.create(15.0, 30.0);
-        assertEquals(Double.class, r1.getElementClass());
-        assertEquals(Double.class, r2.getElementClass());
-        assertEquals(NumberRange.create(10.0, 30.0), r1.union(r2));
-        assertEquals(NumberRange.create(15.0, 20.0), r1.intersect(r2));
-    }
-
-    /**
-     * Tests union and intersection with type change.
-     */
-    @Test
-    public void testIntegerDoubleIntersect() {
-        NumberRange<Integer> r1 = NumberRange.create(10, 20);
-        NumberRange<Double>  r2 = NumberRange.create(15.0, 30.0);
-        assertEquals(Integer.class, r1.getElementClass());
-        assertEquals(Double .class, r2.getElementClass());
-        assertEquals(NumberRange.create(10.0, 30.0), r1.union(r2));
-        assertEquals(NumberRange.create(15, 20), r1.intersect(r2));
-
-        r2 = NumberRange.create(15.5, 30.0);
-        assertEquals(NumberRange.create(15.5f, 20.0f), r1.intersect(r2));
-    }
-
-    /**
-     * Tests union and intersection with type change.
-     */
-    @Test
-    public void testDoubleIntegerIntersect() {
-        NumberRange<Double>  r1 = NumberRange.create(10.0, 20.0);
-        NumberRange<Integer> r2 = NumberRange.create(15, 30);
-        assertEquals(Double .class, r1.getElementClass());
-        assertEquals(Integer.class, r2.getElementClass());
-        assertEquals(NumberRange.create(10.0, 30.0), r1.union(r2));
-        assertEquals(NumberRange.create(15, 20), r1.intersect(r2));
-
-        r1 = NumberRange.create(10.0, 20.5);
-        assertEquals(NumberRange.create(15.0f, 20.5f), r1.intersect(r2));
     }
 
     /**

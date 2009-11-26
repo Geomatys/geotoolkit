@@ -42,7 +42,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
-public abstract class StreamImageReader extends GeographicImageReader {
+public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * The stream to {@linkplain #close close} on {@link #setInput(Object,boolean,boolean)
      * setInput(...)}, {@link #reset} or {@link #dispose} method invocation. This stream is

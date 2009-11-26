@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io;
 
 import java.util.Locale;
+import java.awt.Rectangle;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 
@@ -30,7 +31,7 @@ import org.geotoolkit.util.converter.Classes;
  * Default parameters for {@link SpatialImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @since 3.05 (derived from 2.4)
  * @module
@@ -39,10 +40,10 @@ public class SpatialImageReadParam extends ImageReadParam {
     /**
      * The name of the default color palette to apply when none was explicitly specified.
      *
-     * @see #getPaletteName
-     * @see #setPaletteName
+     * @see #getPaletteName()
+     * @see #setPaletteName(String)
      */
-    public static final String DEFAULT_PALETTE_NAME = "rainbow";
+    public static final String DEFAULT_PALETTE_NAME = "grayscale";
 
     /**
      * The name of the color palette.
@@ -124,6 +125,9 @@ public class SpatialImageReadParam extends ImageReadParam {
      * Returns the name of the color palette to apply when creating an
      * {@linkplain java.awt.image.IndexColorModel index color model}.
      * This is the name specified by the last call to {@link #setPaletteName(String)}.
+     * <p>
+     * For a table of available palette names in the default Geotk installation,
+     * see the {@link PaletteFactory} class javadoc.
      *
      * @return The name of the color palette to apply.
      */
@@ -137,6 +141,9 @@ public class SpatialImageReadParam extends ImageReadParam {
      * name will be given by the {@link SpatialImageReader} default implementation to the
      * {@linkplain PaletteFactory#getDefault default palette factory} for creating a
      * {@linkplain javax.imageio.ImageTypeSpecifier image type specifier}.
+     * <p>
+     * For a table of available palette names in the default Geotk installation,
+     * see the {@link PaletteFactory} class javadoc.
      *
      * @param palette The name of the color palette to apply.
      *
@@ -151,6 +158,10 @@ public class SpatialImageReadParam extends ImageReadParam {
      */
     @Override
     public String toString() {
+        final int[]     sourceBands  = this.sourceBands;
+        final Rectangle sourceRegion = this.sourceRegion;
+        final int sourceXSubsampling = this.sourceXSubsampling;
+        final int sourceYSubsampling = this.sourceYSubsampling;
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
         buffer.append('[');
         if (sourceRegion != null) {

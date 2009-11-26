@@ -29,14 +29,14 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link GeographicImageReader}.
+ * Tests {@link SpatialImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.06
  *
- * @since 2.5
+ * @since 3.06 (derived from 2.5)
  */
-public final class GeographicImageReaderTest {
+public final class SpatialImageReaderTest {
     /**
      * Tests {@link DataBuffer#TYPE_FLOAT}. The converter should be the identity one
      * except for pad values which should be replaced by NaN.
@@ -49,8 +49,8 @@ public final class GeographicImageReaderTest {
         final float maximum  =  4000;
         final float padValue = -9999;
         final SampleConverter[] converters = new SampleConverter[1];
-        final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_FLOAT, minimum, maximum, padValue);
-        final ImageTypeSpecifier specifier = reader.getRawImageType(0, null, converters);
+        final SpatialImageReader reader = new NullImageReader(DataBuffer.TYPE_FLOAT, minimum, maximum, padValue);
+        final ImageTypeSpecifier specifier = reader.getImageType(0, null, converters);
         final SampleConverter    converter = converters[0];
 
         // Tests the converter
@@ -82,10 +82,10 @@ public final class GeographicImageReaderTest {
         final int maximum  =  4000;
         final int padValue = -9999;
         final SampleConverter[] converters = new SampleConverter[1];
-        final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_SHORT, minimum, maximum, padValue);
-        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
+        final SpatialImageReader reader = new NullImageReader(DataBuffer.TYPE_SHORT, minimum, maximum, padValue);
+        final SpatialImageReadParam param = reader.getDefaultReadParam();
         param.setPaletteName("grayscale"); // Easier to test than "rainbow".
-        final ImageTypeSpecifier specifier = reader.getRawImageType(0, param, converters);
+        final ImageTypeSpecifier specifier = reader.getImageType(0, param, converters);
         final SampleConverter    converter = converters[0];
 
         // Tests the converter
@@ -127,10 +127,10 @@ public final class GeographicImageReaderTest {
         final int maximum  =  4000;
         final int padValue = -9999;
         final SampleConverter[] converters = new SampleConverter[1];
-        final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_USHORT, minimum, maximum, padValue);
-        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
+        final SpatialImageReader reader = new NullImageReader(DataBuffer.TYPE_USHORT, minimum, maximum, padValue);
+        final SpatialImageReadParam param = reader.getDefaultReadParam();
         param.setPaletteName("grayscale"); // Easier to test than "rainbow".
-        final ImageTypeSpecifier specifier = reader.getRawImageType(0, param, converters);
+        final ImageTypeSpecifier specifier = reader.getImageType(0, param, converters);
         final SampleConverter    converter = converters[0];
 
         // Tests the converter
@@ -167,10 +167,10 @@ public final class GeographicImageReaderTest {
         final int maximum  = 200;
         final int padValue = 255;
         final SampleConverter[] converters = new SampleConverter[1];
-        final GeographicImageReader reader = new NullImageReader(DataBuffer.TYPE_BYTE, minimum, maximum, padValue);
-        final SpatialImageReadParam param = (SpatialImageReadParam) reader.getDefaultReadParam();
+        final SpatialImageReader reader = new NullImageReader(DataBuffer.TYPE_BYTE, minimum, maximum, padValue);
+        final SpatialImageReadParam param = reader.getDefaultReadParam();
         param.setPaletteName("grayscale"); // Easier to test than "rainbow".
-        final ImageTypeSpecifier specifier = reader.getRawImageType(0, param, converters);
+        final ImageTypeSpecifier specifier = reader.getImageType(0, param, converters);
         final SampleConverter    converter = converters[0];
 
         // Tests the converter

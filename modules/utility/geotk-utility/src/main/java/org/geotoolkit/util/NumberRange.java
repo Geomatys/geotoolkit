@@ -36,7 +36,7 @@ import static org.geotoolkit.util.converter.Classes.widestClass;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.04
+ * @version 3.06
  *
  * @see org.geotoolkit.measure.RangeFormat
  *
@@ -246,6 +246,43 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
         return new NumberRange<Double>(Double.class,
                 Double.valueOf(minimum), isMinIncluded,
                 Double.valueOf(maximum), isMaxIncluded);
+    }
+
+    /**
+     * Constructs a range using the smallest type of {@link Number} that can hold the
+     * given values. The given numbers don't need to be of the same type since they will
+     * be {@linkplain Classes#cast(Number, Class) casted} as needed. More specifically:
+     * <p>
+     * <ul>
+     *   <li>If the values are between {@value java.lang.Byte#MIN_VALUE} and
+     *       {@value java.lang.Byte#MAX_VALUE} inclusive, then the given values are converted
+     *       to {@link Byte} objects and a {@code NumberRange} is created from them.</li>
+     *   <li>Otherwise if the values are between {@value java.lang.Short#MIN_VALUE} and
+     *       {@value java.lang.Short#MAX_VALUE} inclusive, then the given values are converted
+     *       to {@link Short} objects and a {@code NumberRange} is created from them.</li>
+     *   <li>Otherwise the {@link Integer} type is tested in the same way, then the
+     *       {@link Long} type, and finally the {@link Float} type.</li>
+     *   <li>If none of the above types is suitable, then the {@link Double} type is used.</li>
+     * </ul>
+     *
+     * @param  minimum        The minimum value, or {@code null} for negative infinity.
+     * @param  isMinIncluded  Defines whether the minimum value is included in the range.
+     * @param  maximum        The maximum value, or {@code null} for positive infinity.
+     * @param  isMaxIncluded  Defines whether the maximum value is included in the range.
+     * @return The new range, or {@code null} if both {@code minimum} and {@code maximum}
+     *         are {@code null}.
+     *
+     * @since 3.06
+     */
+    @SuppressWarnings({"rawtypes","unchecked"})
+    public static NumberRange<?> createBestFit(final Number minimum, final boolean isMinIncluded,
+                                               final Number maximum, final boolean isMaxIncluded)
+    {
+        final Class<? extends Number> type = Classes.widestClass(
+                Classes.finestClass(minimum), Classes.finestClass(maximum));
+        return (type == null) ? null :
+            new NumberRange(type, Classes.cast(minimum, type), isMinIncluded,
+                                  Classes.cast(maximum, type), isMaxIncluded);
     }
 
     /**

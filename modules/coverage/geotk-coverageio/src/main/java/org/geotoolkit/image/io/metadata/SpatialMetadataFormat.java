@@ -1131,7 +1131,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * <p>
      * The default implementation first queries the
      * {@linkplain MetadataStandard#asDescriptionMap description map} associated with the
-     * {@linkplain #standard metadata standard}. If no description is found, then the
+     * {@linkplain #getElementStandard metadata standard}. If no description is found, then the
      * {@linkplain IIOMetadataFormatImpl#getElementDescription super-class implementation}
      * is used.
      *
@@ -1152,12 +1152,12 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Returns a description of the named attribute, or {@code null}. The desciption will be
+     * Returns a description of the named attribute, or {@code null}. The description will be
      * localized for the supplied locale if possible.
      * <p>
      * The default implementation first queries the
      * {@linkplain MetadataStandard#asDescriptionMap description map} associated with the
-     * {@linkplain #standard metadata standard}. If no description is found, then the
+     * {@linkplain #getElementStandard metadata standard}. If no description is found, then the
      * {@linkplain IIOMetadataFormatImpl#getAttributeDescription super-class implementation}
      * is used.
      *

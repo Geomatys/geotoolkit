@@ -37,7 +37,7 @@
  *
  *   <li>{@link org.geotoolkit.image.io.metadata}:&nbsp;
  *       Metadata managed by this package (it doesn't need to be a Geotk implementation) viewed
- *       as a XML tree of {@link javax.image.io.metadata.IIOMetadataNode}s. This is used for
+ *       as a XML tree of {@link javax.imageio.metadata.IIOMetadataNode}s. This is used for
  *       Image I/O operations.</li>
  * </ul>
  *

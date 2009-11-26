@@ -20,24 +20,28 @@ package org.geotoolkit.image.io;
 import java.util.Locale;
 import java.io.IOException;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.metadata.IIOMetadata;
 
-import org.geotoolkit.image.io.metadata.Band;
-import org.geotoolkit.image.io.metadata.GeographicMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.util.NumberRange;
+
+import static org.junit.Assert.*;
 
 
 /**
- * A null implementation of {@link GeographicImageReader} for testing purpose.
+ * A null implementation of {@link SpatialImageReader} for testing purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.06
  *
  * @since 2.5
  */
-public class NullImageReader extends GeographicImageReader {
+public class NullImageReader extends SpatialImageReader {
     /**
      * The data type to be returned by {@link #getRawDataType}.
      */
@@ -46,7 +50,7 @@ public class NullImageReader extends GeographicImageReader {
     /**
      * The metadata to be returned by {@link #getImageMetadata}.
      */
-    private final double minimum, maximum, padValue;
+    private final double minimum, maximum, padValue, scale, offset;
 
     /**
      * Creates a reader with a dummy provider.
@@ -57,11 +61,29 @@ public class NullImageReader extends GeographicImageReader {
      * @param padValue The value for missing data.
      */
     public NullImageReader(final int dataType, final double minimum, final double maximum, final double padValue) {
+        this(dataType, minimum, maximum, padValue, 1, 0);
+    }
+
+    /**
+     * Creates a reader with a dummy provider with the given transfert function.
+     *
+     * @param dataType The data type as one of {@link java.awt.image.DataBuffer} constants.
+     * @param minimum  The minimum sample value.
+     * @param maximum  The maximum sample value.
+     * @param padValue The value for missing data.
+     * @param scale    The scale factory for conversion to geophysics value.
+     * @param offset   The offset for conversion to geophysics value.
+     */
+    public NullImageReader(final int dataType, final double minimum, final double maximum,
+            final double padValue, final double scale, final double offset)
+    {
         super(new Spi());
         this.dataType = dataType;
         this.minimum  = minimum;
         this.maximum  = maximum;
         this.padValue = padValue;
+        this.scale    = scale;
+        this.offset   = offset;
         setInput("Dummy");
     }
 
@@ -96,11 +118,13 @@ public class NullImageReader extends GeographicImageReader {
      * @throws IOException Never thrown in default implementation.
      */
     @Override
-    public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
-        final GeographicMetadata metadata = new GeographicMetadata(this);
-        final Band band = metadata.addBand("Dummy");
-        band.setValidRange(minimum, maximum);
-        band.setNoDataValues(new double[] {padValue});
+    public SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+        final DimensionAccessor accessor = new DimensionAccessor(metadata);
+        accessor.selectChild(accessor.appendChild());
+        accessor.setValueRange(minimum * scale + offset, maximum * scale + offset);
+        accessor.setValidSampleValue(NumberRange.create(minimum, maximum));
+        accessor.setFillSampleValues(padValue);
         return metadata;
     }
 
@@ -113,7 +137,8 @@ public class NullImageReader extends GeographicImageReader {
      */
     @Override
     protected int getRawDataType(final int imageIndex) throws IOException {
-        super.getRawDataType(imageIndex);
+        // super.getRawDataType(int) basically just invoke checkImageIndex(int).
+        assertEquals(DataBuffer.TYPE_FLOAT, super.getRawDataType(imageIndex));
         return dataType;
     }
 
@@ -137,7 +162,7 @@ public class NullImageReader extends GeographicImageReader {
      */
     private static final class Spi extends ImageReaderSpi {
         public Spi() {
-            inputTypes = new Class[] {String.class};
+            inputTypes = new Class<?>[] {String.class};
         }
 
         @Override

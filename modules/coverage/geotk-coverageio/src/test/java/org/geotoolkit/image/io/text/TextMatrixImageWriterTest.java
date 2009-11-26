@@ -18,19 +18,15 @@
 package org.geotoolkit.image.io.text;
 
 import java.util.Locale;
+import java.util.Iterator;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.NumberFormat;
-import java.text.FieldPosition;
-import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.nio.charset.Charset;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOImage;
-
-import org.geotoolkit.image.io.PaletteFactory;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -40,74 +36,21 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 /**
  * Tests {@link TextMatrixImageWriter}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.06
  *
  * @since 2.4
  */
-public final class TextMatrixImageWriterTest {
+public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
     /**
-     * The image to test.
+     * Creates a writer using the {@link Locale#CANADA}.
      */
-    private static IIOImage image;
-
-    /**
-     * The writer to test.
-     */
-    private static TextMatrixImageWriter writer;
-
-    /**
-     * Creates the image to test.
-     *
-     * @throws IOException Should never happen.
-     */
-    @Before
-    public void createImage() throws IOException {
-        final int width  = 8;
-        final int height = 10;
-        final ColorModel cm = PaletteFactory.getDefault().getContinuousPalette(
-                "grayscale", 0f, 1f, DataBuffer.TYPE_FLOAT, 1, 0).getColorModel();
-        final WritableRaster raster = cm.createCompatibleWritableRaster(width, height);
-        for (int y=0; y<height; y++) {
-            for (int x=0; x<width; x++) {
-                double value = (10*y + x) / 100.0;
-                if (y >= 5) {
-                    value += 88;
-                }
-                raster.setSample(x, y, 0, value);
-            }
-        }
-        image = new IIOImage(new BufferedImage(cm, raster, false, null), null, null);
-    }
-
-    /**
-     * Creates the writer to test.
-     */
-    @Before
-    public void createWriter() {
+    @Override
+    protected TextMatrixImageWriter createImageWriter() {
         TextMatrixImageWriter.Spi spi = new TextMatrixImageWriter.Spi();
-        spi.locale = Locale.CANADA;
-        writer = new TextMatrixImageWriter(spi);
-    }
-
-    /**
-     * Tests the number format.
-     */
-    @Test
-    public void testCreateNumberFormat() {
-        assertEquals(Locale.CANADA, writer.getDataLocale(null));
-
-        final NumberFormat format = writer.createNumberFormat(image, null);
-        assertEquals(2, format.getMinimumFractionDigits());
-        assertEquals(2, format.getMaximumFractionDigits());
-        assertEquals(1, format.getMinimumIntegerDigits());
-        assertEquals( "0.12", format.format( 0.1216));
-        assertEquals("-0.30", format.format(-0.2978));
-
-        final FieldPosition pos = writer.getExpectedFractionPosition(format);
-        assertEquals("Field type", NumberFormat.FRACTION_FIELD, pos.getField());
-        assertEquals("Fraction width", 2, pos.getEndIndex() - pos.getBeginIndex());
-        assertEquals("Total width (including sign)", 6, pos.getEndIndex());
+        spi.locale  = Locale.CANADA;
+        spi.charset = Charset.forName("UTF-8");
+        return new TextMatrixImageWriter(spi);
     }
 
     /**
@@ -117,6 +60,8 @@ public final class TextMatrixImageWriterTest {
      */
     @Test
     public void testWrite() throws IOException {
+        final IIOImage image = createImage();
+        final TextMatrixImageWriter writer = createImageWriter();
         final StringWriter out = new StringWriter();
         writer.setOutput(out);
         writer.write(image);
@@ -152,5 +97,31 @@ public final class TextMatrixImageWriterTest {
         assertMultilinesEquals(
             "   0.22  0.24\n", out.toString());
         out.close();
+    }
+
+    /**
+     * Tests the registration of the image writer in the Image I/O framework.
+     */
+    @Test
+    public void testRegistrationByFormatName() {
+        Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("matrix");
+        assertTrue("Expected a writer.", it.hasNext());
+        assertTrue(it.next() instanceof TextMatrixImageWriter);
+        assertFalse("Expected no more writer.", it.hasNext());
+    }
+
+    /**
+     * Tests the registration by MIME type.
+     * Note that more than one writer may be registered.
+     */
+    @Test
+    public void testRegistrationByMIMEType() {
+        Iterator<ImageWriter> it = ImageIO.getImageWritersByMIMEType("text/plain");
+        while (it.hasNext()) {
+            if (it.next() instanceof TextMatrixImageWriter) {
+                return;
+            }
+        }
+        fail("Writer not found.");
     }
 }

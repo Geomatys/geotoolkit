@@ -182,9 +182,12 @@ public class MetadataAccessor {
     private static final char NBSP = '\u00A0';
 
     /**
-     * The owner of this accessor.
+     * The Image I/O metadata for which this accessor is a wrapper. An instance
+     * of the {@link SpatialMetadata} subclass is recommanded, but not mandatory.
+     *
+     * @since 3.06
      */
-    final IIOMetadata metadata;
+    protected final IIOMetadata metadata;
 
     /**
      * The metadata format used by this accessor.
@@ -291,6 +294,23 @@ public class MetadataAccessor {
             throws IllegalArgumentException
     {
         this(parent, parent.metadata, null, objectClass, null, "#auto");
+    }
+
+    /**
+     * Creates an accessor for the {@linkplain Element element} at the given path relative to
+     * the {@link IIOMetadataFormat#getRootName() root}. This is a convenience method for the
+     * {@linkplain #MetadataAccessor(IIOMetadata, String, String, String) constructor below}
+     * with {@code formatName} and {@code childPath} argument set to {@code "#auto"} value.
+     *
+     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                    sub-class is recommanded, but not mandatory.
+     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
+     *                    if the {@code metadata} root node is directly the node of interest.
+     *
+     * @since 3.06
+     */
+    public MetadataAccessor(final IIOMetadata metadata, final String parentPath) {
+        this(metadata, "#auto", parentPath, "#auto");
     }
 
     /**
@@ -958,6 +978,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute value (never an empty string), or {@code null} if none.
      *
      * @see #setAttribute(String, String)
+     * @see IIOMetadataFormat#DATATYPE_STRING
      */
     public String getAttribute(final String attribute) {
         ensureNonNull("attribute", attribute);
@@ -1023,6 +1044,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute value, or {@code null} if none or unparseable.
      *
      * @see #setAttribute(String, boolean)
+     * @see IIOMetadataFormat#DATATYPE_BOOLEAN
      *
      * @since 3.06
      */
@@ -1055,6 +1077,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute value, or {@code null} if none or unparseable.
      *
      * @see #setAttribute(String, int)
+     * @see IIOMetadataFormat#DATATYPE_INTEGER
      */
     public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttribute(attribute);
@@ -1094,6 +1117,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute value, or {@code null} if none or unparseable.
      *
      * @see #setAttribute(String, float)
+     * @see IIOMetadataFormat#DATATYPE_FLOAT
      *
      * @since 3.06
      */
@@ -1134,6 +1158,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @return The attribute value, or {@code null} if none or unparseable.
      *
      * @see #setAttribute(String, double)
+     * @see IIOMetadataFormat#DATATYPE_DOUBLE
      */
     public Double getAttributeAsDouble(final String attribute) {
         final String value = getAttribute(attribute);
@@ -1368,6 +1393,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value The attribute value, or {@code null} for removing the attribute.
      *
      * @see #getAttribute(String)
+     * @see IIOMetadataFormat#DATATYPE_STRING
      */
     public void setAttribute(final String attribute, String value) {
         ensureNonNull("attribute", attribute);
@@ -1442,6 +1468,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value The attribute value.
      *
      * @see #getAttributeAsBoolean(String)
+     * @see IIOMetadataFormat#DATATYPE_BOOLEAN
      *
      * @since 3.06
      */
@@ -1456,6 +1483,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value The attribute value.
      *
      * @see #getAttributeAsInteger(String)
+     * @see IIOMetadataFormat#DATATYPE_INTEGER
      */
     public void setAttribute(final String attribute, final int value) {
         setAttribute(attribute, Integer.toString(value));
@@ -1482,6 +1510,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value The attribute value.
      *
      * @see #getAttributeAsFloat(String)
+     * @see IIOMetadataFormat#DATATYPE_FLOAT
      *
      * @since 3.06
      */
@@ -1516,6 +1545,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param value The attribute values.
      *
      * @see #getAttributeAsDouble(String)
+     * @see IIOMetadataFormat#DATATYPE_DOUBLE
      */
     public void setAttribute(final String attribute, final double value) {
         String text = null;
@@ -1565,7 +1595,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param attribute The attribute name.
      * @param value The attribute value, or {@code null} for removing the attribute.
      *
-     * @see #getAttributeAsNumberRange(String)
+     * @see #getAttributeAsRange(String)
      *
      * @since 3.06
      */

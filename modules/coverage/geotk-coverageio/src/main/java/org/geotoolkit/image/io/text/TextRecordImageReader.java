@@ -29,15 +29,16 @@ import java.util.Locale;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.image.io.metadata.ImageGeometry;
-import org.geotoolkit.image.io.metadata.GeographicMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 
 /**
@@ -80,7 +81,7 @@ import org.geotoolkit.image.io.metadata.GeographicMetadata;
  * {@code TextRecordImageReader}, unless you want more control on the decoding process.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.06
  *
  * @since 1.2
  * @module
@@ -279,13 +280,12 @@ public class TextRecordImageReader extends TextImageReader {
      * @throws IOException If an error occurs reading the data information from the input source.
      */
     @Override
-    public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
-        if (ignoreMetadata) {
+    protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+        if (imageIndex < 0) {
+            // Stream metadata.
             return null;
         }
-        final GeographicMetadata metadata = new GeographicMetadata(this);
-        final ImageGeometry geometry = metadata.getGeometry();
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
         /*
          * Computes the smallest bounding box containing the full image in user coordinates.
          * This implementation searches for minimum and maximum values in x and y columns as
@@ -302,18 +302,17 @@ public class TextRecordImageReader extends TextImageReader {
         final double ymin        = records.getMinimum(yColumn);
         final double xmax        = records.getMaximum(xColumn);
         final double ymax        = records.getMaximum(yColumn);
-        geometry.setOrdinateRange(0, xmin, xmax);
-        geometry.setGridRange(0, 0, width-1);
-        geometry.setOrdinateRange(1, ymin, ymax);
-        geometry.setGridRange(1, 0, height-1);
-        geometry.setPixelOrientation("center");
+        final GridDomainAccessor domain = new GridDomainAccessor(metadata);
+        domain.setAll(xmin, ymin, xmax, ymax, width, height, true, null);
         /*
          * Now adds the valid range of sample values for each band.
          */
+        final DimensionAccessor dimensions = new DimensionAccessor(metadata);
         final int numBands = records.getColumnCount() - (xColumn == yColumn ? 1 : 2);
         for (int band=0; band<numBands; band++) {
             final int column = getColumn(imageIndex, band);
-            metadata.getBand(band).setValidRange(records.getMinimum(column), records.getMaximum(column));
+            dimensions.selectChild(dimensions.appendChild());
+            dimensions.setValueRange(records.getMinimum(column), records.getMaximum(column));
         }
         return metadata;
     }
@@ -387,7 +386,6 @@ public class TextRecordImageReader extends TextImageReader {
                 final boolean    keep       = (nextImageIndex == imageIndex) || !seekForwardOnly;
                 final int        xColumn    = getCheckedColumnX(nextImageIndex);
                 final int        yColumn    = getCheckedColumnY(nextImageIndex);
-                @SuppressWarnings("deprecation")
                 final double     padValue   = getPadValue      (nextImageIndex);
                 final LineFormat lineFormat = getLineFormat    (nextImageIndex);
                 try {
@@ -652,7 +650,7 @@ public class TextRecordImageReader extends TextImageReader {
      * and {@code Spi}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @version 3.06
      *
      * @since 2.1
      * @module
@@ -666,7 +664,7 @@ public class TextRecordImageReader extends TextImageReader {
         /**
          * The mime types for the default {@link TextRecordImageReader} configuration.
          */
-        private static final String[] MIME_TYPES = {"text/x-records"};
+        private static final String[] MIME_TYPES = {"text/plain"};
 
         /**
          * 0-based column number for <var>x</var> values. The default value is 0.
@@ -702,7 +700,7 @@ public class TextRecordImageReader extends TextImageReader {
          * <p>
          * <ul>
          *   <li>{@link #names}           = {@code "records"}</li>
-         *   <li>{@link #MIMETypes}       = {@code "text/x-records"}</li>
+         *   <li>{@link #MIMETypes}       = {@code "text/plain"}</li>
          *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextRecordImageReader"}</li>
          *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
          *   <li>{@link #xColumn}         = {@code 0}</li>

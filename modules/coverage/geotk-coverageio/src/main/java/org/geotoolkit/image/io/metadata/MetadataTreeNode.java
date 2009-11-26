@@ -58,7 +58,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * By default the value returned by {@link #getAllowsChildren() getAllowsChildren()} is:
  * <p>
  * <ul>
- *   <li>{@code true) if the node is an element.</li>
+ *   <li>{@code true} if the node is an element.</li>
  *   <li>{@code false} if the node is an attribute.</li>
  * </ul>
  *

@@ -38,7 +38,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.event.IIOReadWarningListener;
 
 import org.geotoolkit.util.NumberRange;
@@ -48,7 +47,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.MetadataHelper;
 
 
 /**
@@ -101,9 +100,11 @@ public abstract class SpatialImageReader extends ImageReader {
     static final Logger LOGGER = Logging.getLogger(SpatialImageReader.class);
 
     /**
-     * Metadata for each images, or {@code null} if not yet created.
+     * Stream and image metadata for each images, or {@code null} if not yet created.
+     * The element at index 0 is the stream metadata, and next elements are image metadata
+     * for the image at {@code index}-1.
      */
-    private transient SpatialMetadata[] metadata;
+    private SpatialMetadata[] metadata;
 
     /**
      * Constructs a new image reader.
@@ -233,82 +234,105 @@ public abstract class SpatialImageReader extends ImageReader {
     }
 
     /**
-     * Returns metadata associated with the input source as a whole. Since many raw images
-     * can't store metadata, the default implementation returns {@code null}.
+     * Returns metadata associated with the input source as a whole.
+     * The default implementation performs the following choice:
+     * <p>
+     * <ul>
+     *   <li>If the metadata from a previous call were cached, return those metadata.</li>
+     *   <li>Otherwise if {@link #isIgnoringMetadata()} is {@code true}, return {@code null}.</li>
+     *   <li>Otherwise invoke <code>{@linkplain #createMetadata(int) createMetadata}(-1)</code>
+     *       and cache the result.</li>
+     * </ul>
      *
+     * @return The metadata, or {@code null} if none.
      * @throws IOException if an error occurs during reading.
      */
     @Override
-    public IIOMetadata getStreamMetadata() throws IOException {
-        return null;
+    public SpatialMetadata getStreamMetadata() throws IOException {
+        return getSpatialMetadata(-1);
     }
 
     /**
-     * Returns metadata associated with the given image. Since many raw images
-     * can't store metadata, the default implementation returns {@code null}.
+     * Returns metadata associated with the given image.
+     * The default implementation performs the following choice:
+     * <p>
+     * <ul>
+     *   <li>Invoke <code>{@linkplain #checkImageIndex(int) checkImageIndex}(imageIndex)</code>.</li>
+     *   <li>If the metadata from a previous call were cached for the given index, return those metadata.</li>
+     *   <li>Otherwise if {@link #isIgnoringMetadata()} is {@code true}, return {@code null}.</li>
+     *   <li>Otherwise invoke <code>{@linkplain #createMetadata(int) createMetadata}(imageIndex)</code>
+     *       and cache the result.</li>
+     * </ul>
      *
      * @param  imageIndex The image index.
      * @return The metadata, or {@code null} if none.
      * @throws IOException if an error occurs during reading.
      */
     @Override
-    public IIOMetadata getImageMetadata(int imageIndex) throws IOException {
+    public SpatialMetadata getImageMetadata(int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
-        return null;
+        return getSpatialMetadata(imageIndex);
     }
 
     /**
-     * Returns spatial metadata associated with the given image. This implementation invokes
-     * <code>{@linkplain #getImageMetadata getImageMetadata}(imageIndex)</code>, wraps the
-     * result in a {@link SpatialMetadata} object if non-null and caches the result.
+     * Returns spatial metadata associated with the given image.
+     * This method performs the following choice:
      * <p>
-     * Note that this method forces {@link #ignoreMetadata} to {@code false} for the time of
-     * <code>{@linkplain #getImageMetadata getImageMetadata}(imageIndex)</code> execution,
-     * because some image reader implementations need spatial metadata in order to infer
-     * a valid {@linkplain ColorModel color model}.
+     * <ul>
+     *   <li>If the metadata from a previous call were cached for the given index, return those metadata.</li>
+     *   <li>Otherwise if {@link #isIgnoringMetadata()} is {@code true}, return {@code null}.</li>
+     *   <li>Otherwise invoke <code>{@linkplain #createMetadata(int) createMetadata}(imageIndex)</code>
+     *       and cache the result.</li>
+     * </ul>
      *
-     * @param  imageIndex The image index.
+     * @param  imageIndex The image index, or -1 for stream metadata.
      * @return The spatial metadata, or {@code null} if none.
      * @throws IOException if an error occurs during reading.
      */
     private SpatialMetadata getSpatialMetadata(final int imageIndex) throws IOException {
-        // Checks if a cached instance is available.
-        if (metadata != null && imageIndex >= 0 && imageIndex < metadata.length) {
-            final SpatialMetadata parser = metadata[imageIndex];
-            if (parser != null) {
-                return parser;
+        /*
+         * Checks if a cached instance is available.
+         */
+        final int cacheIndex = imageIndex + 1;
+        if (metadata != null && cacheIndex >= 0 && cacheIndex < metadata.length) {
+            final SpatialMetadata candidate = metadata[cacheIndex];
+            if (candidate != null) {
+                return (candidate != SpatialMetadata.EMPTY) ? candidate : null;
             }
         }
-        // Checks if metadata are availables. If the user set 'ignoreMetadata' to 'true',
-        // we override his setting since we really need metadata for creating a ColorModel.
-        final IIOMetadata candidate;
-        final boolean oldIgnore = ignoreMetadata;
-        try {
-            ignoreMetadata = false;
-            candidate = getImageMetadata(imageIndex);
-        } finally {
-            ignoreMetadata = oldIgnore;
-        }
-        if (candidate == null) {
+        if (isIgnoringMetadata()) {
             return null;
         }
-        // Wraps the IIOMetadata into a SpatialMetadata object,
-        // if it was not already of the appropriate type.
-        final SpatialMetadata parser;
-        if (candidate instanceof SpatialMetadata) {
-            parser = (SpatialMetadata) candidate;
-        } else {
-            parser = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
-            parser.mergeTree(candidate);
+        /*
+         * Creates a new instance and cache it.
+         */
+        final SpatialMetadata candidate = createMetadata(imageIndex);
+        if (candidate != null) {
+            if (metadata == null) {
+                metadata = new SpatialMetadata[Math.max(cacheIndex+1, 4)];
+            }
+            if (cacheIndex >= metadata.length) {
+                metadata = Arrays.copyOf(metadata, Math.max(cacheIndex+1, metadata.length*2));
+            }
+            metadata[cacheIndex] = (candidate != null) ? candidate : SpatialMetadata.EMPTY;
         }
-        if (metadata == null) {
-            metadata = new SpatialMetadata[Math.max(imageIndex+1, 4)];
-        }
-        if (imageIndex >= metadata.length) {
-            metadata = Arrays.copyOf(metadata, Math.max(imageIndex+1, metadata.length*2));
-        }
-        metadata[imageIndex] = parser;
-        return parser;
+        return candidate;
+    }
+
+    /**
+     * Creates a new stream or image metadata. This method is invoked by the default implementation
+     * of {@link #getStreamMetadata()} and {@link #getImageMetadata(int)} when the requested metadata
+     * were not cached by a previous call, and {@link #isIgnoringMetadata()} returns {@code false}.
+     * <p>
+     * The default implementation returns {@code null} if every cases. Subclasses should override
+     * this method if they can provide metadata.
+     *
+     * @param  imageIndex -1 for stream metadata, or the image index for image metadata.
+     * @return The requested metadata, or {@code null} if none.
+     * @throws IOException If an error occured while reading metadata.
+     */
+    protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+        return null;
     }
 
     /**
@@ -331,7 +355,7 @@ public abstract class SpatialImageReader extends ImageReader {
      * implementation delegates to the following:
      *
      * {@preformat java
-     *     getRawImageType(imageIndex, getDefaultReadParam(), null);
+     *     return getImageType(imageIndex, getDefaultReadParam(), null);
      * }
      *
      * If this method needs to be overriden, consider overriding the later instead.
@@ -340,18 +364,17 @@ public abstract class SpatialImageReader extends ImageReader {
      * @return The image type (never {@code null}).
      * @throws IOException If an error occurs reading the format information from the input source.
      *
-     * @see #getRawImageType(int,ImageReadParam,SampleConverter[])
+     * @see #getImageType(int, ImageReadParam, SampleConverter[])
      * @see #getDefaultReadParam()
      */
     @Override
     public ImageTypeSpecifier getRawImageType(final int imageIndex) throws IOException {
-        return getRawImageType(imageIndex, getDefaultReadParam(), null);
+        return getImageType(imageIndex, getDefaultReadParam(), null);
     }
 
     /**
      * Returns an image type specifier indicating the {@link SampleModel} and {@link ColorModel}
-     * which most closely represents the "raw" internal format of the image. The default
-     * implementation applies the following steps:
+     * to use for reading the image. The default implementation applies the following steps:
      *
      * <ol>
      *   <li><p>The {@linkplain SampleDimension#getValidSampleValues() range of expected values}
@@ -410,7 +433,7 @@ public abstract class SpatialImageReader extends ImageReader {
      *       supported by the {@linkplain IndexColorModel index color model}.</p></li>
      * </ol>
      *
-     * <h3>Overriding this method</h3>
+     * {@section Overriding this method}
      * Subclasses may override this method when a constant color {@linkplain Palette palette} is
      * wanted for all images in a series, for example for all <cite>Sea Surface Temperature</cite>
      * (SST) from the same provider. A constant color palette facilitates the visual comparison
@@ -427,31 +450,32 @@ public abstract class SpatialImageReader extends ImageReader {
      * }
      *
      * @param imageIndex
-     *              The index of the image to be queried.
+     *          The index of the image to be queried.
      * @param parameters
-     *              The user-supplied parameters, or {@code null}. Note: we recommand to supply
-     *              {@link #getDefaultReadParam} instead of {@code null} since subclasses may
-     *              override the later with default values suitable to a particular format.
+     *          The user-supplied parameters, or {@code null}. Note: we recommand to supply
+     *          {@link #getDefaultReadParam} instead of {@code null} since subclasses may
+     *          override the later with default values suitable to a particular format.
      * @param converters
-     *              If non-null, an array where to store the converters created by this method.
-     *              Those converters should be used by <code>{@linkplain #read(int,ImageReadParam)
-     *              read}(imageIndex, parameters)</code> implementations for converting the values
-     *              read in the datafile to values acceptable for the underling {@linkplain
-     *              ColorModel color model}.
+     *          If non-null, an array where to store the converters created by this method. The length
+     *          of this array shall be equals to the number of target bands. The converters stored
+     *          by this method in this array shall be used by {@link #read(int,ImageReadParam) read}
+     *          method implementations for converting the values read in the datafile to values
+     *          acceptable for the underling {@linkplain ColorModel color model}.
      * @return
-     *              The image type (never {@code null}).
+     *          The image type (never {@code null}).
      * @throws IOException
-     *              If an error occurs while reading the format information from the input source.
+     *          If an error occurs while reading the format information from the input source.
      *
      * @see #getRawDataType
      * @see #collapseNoDataValues
      * @see #getDestination(int, ImageReadParam, int, int, SampleConverter[])
      */
-    protected ImageTypeSpecifier getRawImageType(final int               imageIndex,
-                                                 final ImageReadParam    parameters,
-                                                 final SampleConverter[] converters)
+    protected ImageTypeSpecifier getImageType(final int               imageIndex,
+                                              final ImageReadParam    parameters,
+                                              final SampleConverter[] converters)
             throws IOException
     {
+        ImageTypeSpecifier type = (parameters != null) ? parameters.getDestinationType() : null;
         /*
          * Gets the minimal and maximal values allowed for the target image type.
          * Note that this is meanless for floating point types, so the values in
@@ -462,7 +486,7 @@ public abstract class SpatialImageReader extends ImageReader {
          */
         final boolean isFloat;
         final long floor, ceil;
-        final int dataType = getRawDataType(imageIndex);
+        final int dataType = (type != null) ? type.getSampleModel().getDataType() : getRawDataType(imageIndex);
         switch (dataType) {
             case DataBuffer.TYPE_UNDEFINED: // Actually we don't really know what to do for this case...
             case DataBuffer.TYPE_DOUBLE:    // Fall through since we can treat this case as float.
@@ -513,9 +537,11 @@ public abstract class SpatialImageReader extends ImageReader {
             paletteName = SpatialImageReadParam.DEFAULT_PALETTE_NAME;
             visibleBand = 0;
         }
+        // Note: the number of bands in the target image (as requested by the caller)
+        // may be different than the number of bands in the source image (on disk).
         final int numBands;
         if (sourceBands != null) {
-            numBands = sourceBands.length;
+            numBands = sourceBands.length; // == targetBands.length (assuming valid ImageReadParam).
         } else if (targetBands != null) {
             numBands = targetBands.length;
         } else {
@@ -531,34 +557,26 @@ public abstract class SpatialImageReader extends ImageReader {
         NumberRange<?>  visibleRange     = null;
         SampleConverter visibleConverter = SampleConverter.IDENTITY;
         double          maximumFillValue = 0; // Only in the visible band, and must be positive.
-        final SpatialMetadata metadata = getSpatialMetadata(imageIndex);
+        final SpatialMetadata metadata;
+        final boolean oldIgnore = ignoreMetadata;
+        try {
+            ignoreMetadata = false;
+            metadata = getImageMetadata(imageIndex);
+        } finally {
+            ignoreMetadata = oldIgnore;
+        }
         if (metadata != null) {
             final List<SampleDimension> bands = metadata.getListForType(SampleDimension.class);
             if (bands != null) {
                 final int numMetadataBands = bands.size();
-                for (int i=0; i<numBands; i++) {
+                if (numMetadataBands != 0) for (int i=0; i<numBands; i++) {
                     final int sourceBand = (sourceBands != null) ? sourceBands[i] : i;
                     if (sourceBand < 0 || sourceBand >= numMetadataBands) {
-                        if (numMetadataBands != 1) {
-                            /*
-                             * If the metadata declares exactly one band, we assume that it is aimed
-                             * to applied for all ImageReader bands. We need to apply this patch for
-                             * now because of an inconsistency between Metadata and ImageReader in
-                             * NetCDF files: the former associates NetCDF variables to bands, while
-                             * the later associates NetCDF variables to image index.
-                             *
-                             * TODO: We need to fix this inconcistency after we reviewed
-                             * SpatialMetadata.
-                             */
-                            warningOccurred("getRawImageType", indexOutOfBounds(sourceBand, 0, numMetadataBands));
-                        }
-                        if (numMetadataBands == 0) {
-                            break; // We are sure that next bands will not be better.
-                        }
+                        warningOccurred("getRawImageType", indexOutOfBounds(sourceBand, 0, numMetadataBands));
                     }
                     final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
                     final double[] nodataValues = band.getFillSampleValues();
-                    final NumberRange<?> range = band.getValidSampleValues();
+                    final NumberRange<?> range = MetadataHelper.getValidSampleValues(band, nodataValues);
                     double minimum, maximum;
                     if (range != null) {
                         minimum = range.getMinimum();
@@ -677,6 +695,21 @@ public abstract class SpatialImageReader extends ImageReader {
             }
         }
         /*
+         * Ensure that all converters are defined. We typically have no converter if there
+         * is no "ImageDescription/Dimensions" metadata. If the user specified explicitly
+         * the image type, then we are done.
+         */
+        if (converters != null) {
+            for (int i=Math.min(converters.length, numBands); --i>=0;) {
+                if (converters[i] == null) {
+                    converters[i] = visibleConverter;
+                }
+            }
+        }
+        if (type != null) {
+            return type;
+        }
+        /*
          * Creates a color palette suitable for the range of values in the visible band.
          * The case for floating points is the simpliest: we should not have any offset,
          * at most a replacement of no-data values. In the case of integer values, we
@@ -771,7 +804,7 @@ public abstract class SpatialImageReader extends ImageReader {
      * @return The data type ({@link DataBuffer#TYPE_FLOAT} by default).
      * @throws IOException If an error occurs reading the format information from the input source.
      *
-     * @see #getRawImageType(int, ImageReadParam, SampleConverter[])
+     * @see #getImageType(int, ImageReadParam, SampleConverter[])
      */
     protected int getRawDataType(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
@@ -780,10 +813,10 @@ public abstract class SpatialImageReader extends ImageReader {
 
     /**
      * Returns {@code true} if the no-data values should be collapsed to 0 in order to save memory.
-     * This method is invoked automatically by the {@link #getRawImageType(int, ImageReadParam,
-     * SampleConverter[]) getRawImageType} method when it detected some unused space between the
-     * {@linkplain Band#getValidSampleValues range of valid values} and at least one
-     * {@linkplain Band#getNoDataValues no-data value}.
+     * This method is invoked automatically by the {@link #getImageType(int, ImageReadParam,
+     * SampleConverter[]) getImageType} method when it detected some unused space between the
+     * {@linkplain SampleDimension#getValidSampleValues range of valid values} and at least one
+     * {@linkplain SampleDimension#getFillSampleValues no-data value}.
      * <p>
      * The default implementation returns {@code false} in all cases, thus avoiding arbitrary
      * choice. Subclasses can override this method with some arbitrary threashold, as in the
@@ -796,11 +829,11 @@ public abstract class SpatialImageReader extends ImageReader {
      * @param isZeroValid
      *          {@code true} if 0 is a valid value. If this method returns {@code true} while
      *          {@code isZeroValid} is {@code true}, then the {@linkplain SampleConverter sample
-     *          converter} to be returned by {@link #getRawImageType(int, ImageReadParam,
-     *          SampleConverter[]) getRawImageType} will offset all valid values by 1.
+     *          converter} to be returned by {@link #getImageType(int, ImageReadParam,
+     *          SampleConverter[]) getImageType} will offset all valid values by 1.
      * @param nodataValues
      *          The {@linkplain Arrays#sort(double[]) sorted}
-     *          {@linkplain Band#getNoDataValues no-data values} (never null and never empty).
+     *          {@linkplain SampleDimension#getFillSampleValues no-data values} (never null and never empty).
      * @param unusedSpace
      *          The largest amount of unused space outside the range of valid values.
      * @return {@code true} if the no-data values should be collapsed to 0 in order to save memory.
@@ -813,9 +846,6 @@ public abstract class SpatialImageReader extends ImageReader {
      * Returns the buffered image to which decoded pixel data should be written. The image
      * is determined by inspecting the supplied parameters if it is non-null, as described
      * in the {@linkplain #getDestination(ImageReadParam,Iterator,int,int) super-class method}.
-     * In the default implementation, the {@linkplain ImageTypeSpecifier image type specifier}
-     * set is a singleton containing only the {@linkplain #getRawImageType(int,ImageReadParam,
-     * SampleConverter[]) raw image type}.
      * <p>
      * Implementations of the {@link #read(int,ImageReadParam)} method should invoke this
      * method instead of {@link #getDestination(ImageReadParam,Iterator,int,int)}.
@@ -827,16 +857,15 @@ public abstract class SpatialImageReader extends ImageReader {
      * @param  converters If non-null, an array where to store the converters required
      *                    for converting decoded pixel data into stored pixel data.
      * @return The buffered image to which decoded pixel data should be written.
-     *
      * @throws IOException If an error occurs reading the format information from the input source.
      *
-     * @see #getRawImageType(int, ImageReadParam, SampleConverter[])
+     * @see #getImageType(int, ImageReadParam, SampleConverter[])
      */
     protected BufferedImage getDestination(final int imageIndex, final ImageReadParam parameters,
                             final int width, final int height, final SampleConverter[] converters)
             throws IOException
     {
-        final ImageTypeSpecifier type = getRawImageType(imageIndex, parameters, converters);
+        final ImageTypeSpecifier type = getImageType(imageIndex, parameters, converters);
         final Set<ImageTypeSpecifier> spi = Collections.singleton(type);
         return getDestination(parameters, spi.iterator(), width, height);
     }

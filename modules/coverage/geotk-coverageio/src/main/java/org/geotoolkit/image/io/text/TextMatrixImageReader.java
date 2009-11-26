@@ -27,6 +27,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferFloat;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Collections;
 import java.text.ParseException;
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -35,13 +36,15 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.metadata.IIOMetadata;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Descriptions;
-import org.geotoolkit.image.io.metadata.GeographicMetadata;
+import org.geotoolkit.image.io.SampleConverter;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 
 
 /**
@@ -49,8 +52,8 @@ import org.geotoolkit.image.io.metadata.GeographicMetadata;
  * rasters of {@link DataBuffer#TYPE_FLOAT}. An easy way to change this type is to overwrite
  * the {@link #getRawDataType} method.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.06
  *
  * @since 1.2
  * @module
@@ -94,7 +97,7 @@ public class TextMatrixImageReader extends TextImageReader {
     }
 
     /**
-     * Loads data. No subsampling is performed.
+     * Loads data. No subsampling is performed, and the pad value is not replaced by NaN.
      *
      * @param  imageIndex the index of the image to be read.
      * @param  all {@code true} to read all data, or {@code false} to read only the first line.
@@ -107,12 +110,9 @@ public class TextMatrixImageReader extends TextImageReader {
             processImageStarted(imageIndex);
         }
         float[] values = (data != null) ? new float[width] : null;
-        int     offset = width*height;
-
+        int     offset = width * height;
         final BufferedReader input = getReader();
         final LineFormat    format = getLineFormat(imageIndex);
-        @SuppressWarnings("deprecation")
-        final float padValue = (float) getPadValue(imageIndex);
         String line; while ((line = input.readLine()) != null) {
             if (isComment(line)) {
                 continue;
@@ -120,11 +120,6 @@ public class TextMatrixImageReader extends TextImageReader {
             try {
                 format.setLine(line);
                 values = format.getValues(values);
-                for (int i=values.length; --i>=0;) {
-                    if (values[i] == padValue) {
-                        values[i] = Float.NaN;
-                    }
-                }
             } catch (ParseException exception) {
                 throw new IIOException(getPositionString(exception.getLocalizedMessage()), exception);
             }
@@ -213,26 +208,33 @@ public class TextMatrixImageReader extends TextImageReader {
      * @throws IOException If an error occurs reading the data information from the input source.
      */
     @Override
-    public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
-        if (!ignoreMetadata) {
+    protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+        if (imageIndex >= 0) {
             if (data == null || !completed) {
                 load(imageIndex, true);
             }
+            final float padValue = (float) getPadValue(imageIndex);
             float minimum = Float.POSITIVE_INFINITY;
             float maximum = Float.NEGATIVE_INFINITY;
             for (int i=0; i<data.length; i++) {
                 final float value = data[i];
-                if (value < minimum) minimum = value;
-                if (value > maximum) maximum = value;
+                if (value != padValue) {
+                    if (value < minimum) minimum = value;
+                    if (value > maximum) maximum = value;
+                }
             }
+            final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+            final DimensionAccessor accessor = new DimensionAccessor(metadata);
+            accessor.selectChild(accessor.appendChild());
             if (minimum < maximum) {
-                final GeographicMetadata metadata = new GeographicMetadata(this);
-                metadata.getBand(0).setValidRange(minimum, maximum);
-                return metadata;
+                accessor.setValueRange(minimum, maximum);
             }
+            if (!Float.isNaN(padValue)) {
+                accessor.setFillSampleValues(padValue);
+            }
+            return metadata;
         }
-        return null;
+        return super.createMetadata(imageIndex);
     }
 
     /**
@@ -283,8 +285,9 @@ public class TextMatrixImageReader extends TextImageReader {
             destinationXOffset = 0;
             destinationYOffset = 0;
         }
+        final int numBands = 1; // To be modified in a future version if we support multi-bands.
         final int dstBand;
-        if (destinationBands == null || destinationBands.length == 0) {
+        if (destinationBands == null) {
             dstBand = 0;
         } else {
             dstBand = destinationBands[0];
@@ -293,11 +296,12 @@ public class TextMatrixImageReader extends TextImageReader {
          * Compute source region and check for possible optimization.
          */
         final Rectangle srcRegion = getSourceRegion(param, width, height);
-        final boolean isDirect = sourceXSubsampling==1 && sourceYSubsampling==1    &&
-        subsamplingXOffset==0 && subsamplingYOffset==0    &&
-        destinationXOffset==0 && destinationYOffset==0    &&
-        srcRegion.x       ==0 && srcRegion.width ==width  &&
-        srcRegion.y       ==0 && srcRegion.height==height;
+        final boolean isDirect =
+                sourceXSubsampling == 1 && sourceYSubsampling == 1   &&
+                subsamplingXOffset == 0 && subsamplingYOffset == 0   &&
+                destinationXOffset == 0 && destinationYOffset == 0   &&
+                srcRegion.x        == 0 && srcRegion.width  == width &&
+                srcRegion.y        == 0 && srcRegion.height == height;
         /*
          * Read data if it was not already done.
          */
@@ -306,20 +310,36 @@ public class TextMatrixImageReader extends TextImageReader {
                 return null;
             }
         }
+        final float[] data   = this.data;
+        final int     width  = this.width;
+        final int     height = this.height;
+        /*
+         * Get the converter of sample values. In most cases, it will
+         * just replace pad value (e.g. -9999) by NaN value.
+         */
+        final SampleConverter[] converters = new SampleConverter[numBands];
+        final ImageTypeSpecifier type = getImageType(imageIndex, param, converters);
+        final SampleConverter converter = converters[0];
         /*
          * If a direct mapping is possible, perform it.
          */
-        if (isDirect && (param==null || param.getDestination()==null)) {
-            final ImageTypeSpecifier type = getRawImageType(imageIndex, param, null); // TODO: use SampleConverter
-            final SampleModel       model = type.getSampleModel().createCompatibleSampleModel(width,height);
-            final DataBuffer       buffer = new DataBufferFloat(data, data.length);
-            final WritableRaster   raster = Raster.createWritableRaster(model, buffer, null);
+        if (isDirect && (param == null || param.getDestination() == null) &&
+                type.getSampleModel().getDataType() == DataBuffer.TYPE_FLOAT)
+        {
+            if (!SampleConverter.IDENTITY.equals(converter)) {
+                for (int i=0; i<data.length; i++) {
+                    data[i] = converter.convert(data[i]);
+                }
+            }
+            final SampleModel    model  = type.getSampleModel(width, height);
+            final DataBuffer     buffer = new DataBufferFloat(data, data.length);
+            final WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
             return new BufferedImage(type.getColorModel(), raster, false, null);
         }
         /*
          * Copy data into a new image.
          */
-        final BufferedImage      image = getDestination(imageIndex, param, width, height, null); // TODO
+        final BufferedImage  image = getDestination(param, Collections.singleton(type).iterator(), width, height);
         final WritableRaster dstRaster = image.getRaster();
         final Rectangle      dstRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, dstRegion);
@@ -330,11 +350,12 @@ public class TextMatrixImageReader extends TextImageReader {
 
         int srcY = srcRegion.y;
         for (int y=dstYMin; y<dstYMax; y++) {
-            assert(srcY < srcRegion.y+srcRegion.height);
+            assert srcY < srcRegion.y + srcRegion.height;
+            final int offset = srcY * width;
             int srcX = srcRegion.x;
             for (int x=dstXMin; x<dstXMax; x++) {
-                assert(srcX < srcRegion.x+srcRegion.width);
-                final float value = data[srcY*width+srcX];
+                assert srcX < srcRegion.x + srcRegion.width;
+                final float value = converter.convert(data[offset + srcX]);
                 dstRaster.setSample(x, y, dstBand, value);
                 srcX += sourceXSubsampling;
             }
@@ -349,7 +370,7 @@ public class TextMatrixImageReader extends TextImageReader {
      * @throws IOException If an error occured while closing the reader.
      */
     @Override
-    public void close() throws IOException {
+    protected void close() throws IOException {
         completed      = false;
         data           = null;
         width          = 0;
@@ -411,7 +432,7 @@ public class TextMatrixImageReader extends TextImageReader {
          *
          * <ul>
          *   <li>{@link #names}           = {@code "matrix"}</li>
-         *   <li>{@link #MIMETypes}       = {@code "text/x-matrix"}</li>
+         *   <li>{@link #MIMETypes}       = {@code "text/plain"}</li>
          *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextMatrixImageReader"}</li>
          *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
          * </ul>

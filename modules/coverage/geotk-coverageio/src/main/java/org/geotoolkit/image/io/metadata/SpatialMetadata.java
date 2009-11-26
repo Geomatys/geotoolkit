@@ -136,6 +136,14 @@ import org.geotoolkit.measure.RangeFormat;
  */
 public class SpatialMetadata extends IIOMetadata implements Localized {
     /**
+     * An empty {@code SpatialMetadata} with no data and no format. This constant is
+     * an alternative to {@code null} for meaning that no metadata are available.
+     *
+     * @since 3.06
+     */
+    public static final SpatialMetadata EMPTY = new SpatialMetadata();
+
+    /**
      * The metadata format given at construction time. This is typically
      * {@link SpatialMetadataFormat#IMAGE} or {@link SpatialMetadataFormat#STREAM}.
      */
@@ -182,6 +190,16 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @see #rangeFormat()
      */
     private transient LoggedFormat<NumberRange<?>> rangeFormat;
+
+    /**
+     * Creates a metadata with no format. This constructor
+     * is for the {@link #EMPTY} constant only.
+     */
+    private SpatialMetadata() {
+        format   = null;
+        owner    = null;
+        fallback = null;
+    }
 
     /**
      * Creates an initially empty metadata instance for the given format.
@@ -384,7 +402,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * time, {@code false} if we should use the fallback, or thrown an exception otherwise.
      */
     private boolean isValidName(final String formatName) throws IllegalArgumentException {
-        if (formatName == null) {
+        if (formatName == null || format == null) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "formatName"));
         }
         if (format.getRootName().equalsIgnoreCase(formatName)) {
@@ -427,6 +445,9 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * conventions defined by the metadata {@linkplain #format} associated to this instance.
      */
     final Node getAsTree() {
+        if (format == null) {
+            throw new UnsupportedOperationException();
+        }
         if (root == null) {
             root = new IIONode(format.getRootName());
         }
@@ -485,6 +506,9 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @throws IIOInvalidTreeException If the metadata can not be merged.
      */
     public void mergeTree(final IIOMetadata metadata) throws IIOInvalidTreeException {
+        if (format == null) {
+            throw new UnsupportedOperationException();
+        }
         final String formatName = format.getRootName();
         final Node tree;
         try {
@@ -768,6 +792,9 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      */
     @Override
     public String toString() {
+        if (format == null) {
+            return "EMPTY";
+        }
         return Trees.toString(Trees.xmlToSwing(getAsTree(format.getRootName())));
     }
 }

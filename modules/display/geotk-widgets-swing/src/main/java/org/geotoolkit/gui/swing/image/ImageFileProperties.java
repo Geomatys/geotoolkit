@@ -47,8 +47,8 @@ import org.geotoolkit.util.XArrays;
  * The panel contains the following tabs:
  * <p>
  * <ul>
- *   <li>A summary with informations about the {@linkplain ColorModel color model},
- *       {@linkplain SampleModel sample model}, image size, tile size, <i>etc.</i></li>
+ *   <li>A summary with informations about the {@linkplain java.awt.image.ColorModel color model},
+ *       {@linkplain java.awt.image.SampleModel sample model}, image size, tile size, <i>etc.</i></li>
  *   <li>The image metadata, as provided by {@link IIOMetadataPanel}.</li>
  *   <li>An overview of the image, as provided by {@link ImagePane}.</li>
  * </ul>

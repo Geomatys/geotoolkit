@@ -271,7 +271,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * from {@link #table}.
      */
     private synchronized void removeEntry(final Entry toRemove) {
-        assert valid() : count;
+        assert valid();
         final int i = toRemove.index;
         // Index 'i' may not be valid if the reference 'toRemove'
         // has been already removed in a previous rehash.
@@ -287,7 +287,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                         table[i] = e.next;
                     }
                     count--;
-                    assert valid() : toRemove.key;
+                    assert valid();
 
                     // If the number of elements has dimunished
                     // significatively, rehash the table.
@@ -302,7 +302,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                 e = e.next;
             }
         }
-        assert valid() : toRemove.key;
+        assert valid();
         /*
          * If we reach this point, its mean that reference 'toRemove' has not
          * been found. This situation may occurs if 'toRemove' has already been
@@ -321,7 +321,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     private Entry[] rehash(final boolean augmentation) {
         assert Thread.holdsLock(this);
-        assert valid() : count;
+        assert valid();
         final Entry[] oldTable = this.table;
         final long currentTime = System.currentTimeMillis();
         final int capacity = Math.max(Math.round(count/(LOAD_FACTOR/2)), count+MIN_CAPACITY);
@@ -358,7 +358,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
             record.setLoggerName(logger.getName());
             logger.log(record);
         }
-        assert valid() : augmentation;
+        assert valid();
         return table;
     }
 
@@ -381,9 +381,10 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
                 n++;
             }
         }
+        final int count = this.count;
         if (n != count) {
-            count = n;
-            return false;
+            this.count = n;
+            throw new AssertionError("Expected " + count + " entries but found " + n);
         } else {
             return true;
         }
@@ -394,7 +395,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     @Override
     public synchronized int size() {
-        assert valid() : count;
+        assert valid();
         return count;
     }
 
@@ -432,7 +433,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     @Override
     public synchronized V get(final Object key) {
         assert WeakCollectionCleaner.DEFAULT.isAlive();
-        assert valid() : count;
+        assert valid();
         final Entry[] table = this.table;
         final int index = (key.hashCode() & 0x7FFFFFFF) % table.length;
         for (Entry e=table[index]; e!=null; e=e.next) {
@@ -448,7 +449,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      */
     private synchronized V intern(final K key, final V value) {
         assert WeakCollectionCleaner.DEFAULT.isAlive();
-        assert valid() : count;
+        assert valid();
         /*
          * Check if {@code obj} is already contained in this
          * {@code WeakValueHashMap}. If yes, clear it.
@@ -471,7 +472,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
             table[index] = new Entry(key, value, table[index], index);
             count++;
         }
-        assert valid() : key;
+        assert valid();
         return oldValue;
     }
 

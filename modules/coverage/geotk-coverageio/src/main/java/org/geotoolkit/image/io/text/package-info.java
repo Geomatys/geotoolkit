@@ -20,23 +20,19 @@
  * Extensions to {@link javax.imageio.ImageReader} for ASCII files. The <code>geotk-coverageio.jar</code>
  * file declares a service provider for the following image readers:
  * <p>
- * <table align="center" border="3" cellpadding="6" bgcolor="F4F8FF">
- *   <tr bgcolor="#B9DCFF">
+ * <table align="center" border="3" cellpadding="6">
+ *   <tr bgcolor="lightblue">
  *     <th>{@link javax.imageio.ImageReader} subclass</th>
  *     <th>Name</th>
  *     <th>MIME type</th>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.RawBinaryImageReader}</td>
- *     <td>raw</td>
- *     <td>image/raw</td>
- *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.text.TextMatrixImageReader}</td>
- *     <td>matrix</td>
- *     <td>text/matrix</td>
+ *     <td>{@code "matrix"}</td>
+ *     <td>text/plain</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.text.TextRecordImageReader}</td>
- *     <td>gridded records</td>
- *     <td>text/x-grid</td>
+ *     <td>{@code "records"}</td>
+ *     <td>text/plain</td>
  *   </tr>
  * </table>
  * <p>
@@ -46,7 +42,8 @@
  * the grayscale palette) and produce the image below:
  * <p>
  * <table align="center" cellpadding='24'>
- * <tr><td><pre>Longitude Latitude Altitude
+ * <tr valign="top"><td><pre>
+ * Longitude Latitude Altitude
  * 59.9000   -30.0000   -3022
  * 59.9333   -30.0000   -3194
  * 59.9667   -30.0000   -3888
@@ -61,13 +58,12 @@
  * 45.2333   -29.9667   -2692
  * 45.2667   -29.9667   -2606
  * 45.3000   -29.9667   -2606
- * 45.3333   -29.9667   -2528
- * </pre>etc...</td>
+ * 45.3333   -29.9667   -2528</pre>etc...</td>
  * <td><img src="doc-files/Sandwell.jpeg"></td>
  * </tr></table>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.06
  *
  * @since 1.2
  * @module

@@ -79,7 +79,7 @@ public final class RangeTest {
      * Tests internal utility methods to make sure the class is ticking over as expected.
      */
     @Test
-    public void testInternals(){
+    public void testInternals() {
         assertEquals(  0, UNIT.compareMinTo( -1,  0));
         assertEquals( -1, UNIT.compareMinTo( -1, +1));
         assertEquals(  0, UNIT.compareMaxTo(  1,  0));
@@ -90,7 +90,7 @@ public final class RangeTest {
      * Tests ranges that are expected to be empty.
      */
     @Test
-    public void testIsEmpty(){
+    public void testIsEmpty() {
         // easy
         assertTrue (new Range<Integer>(Integer.class, 0, -1  ).isEmpty());
         assertFalse(new Range<Integer>(Integer.class, 0, 0   ).isEmpty());
@@ -119,7 +119,7 @@ public final class RangeTest {
      * Tests string representations.
      */
     @Test
-    public void testToString(){
+    public void testToString() {
         assertEquals("[-1 … 1]", UNIT    .toString());
         assertEquals("0",        ZERO    .toString());
         assertEquals("[A … B)",  A       .toString());
@@ -132,7 +132,7 @@ public final class RangeTest {
      * Tests the comparison of ranges for equality.
      */
     @Test
-    public void testEquals(){
+    public void testEquals() {
         assertEquals(EMPTY, new Range<Integer>(Integer.class, 2, -2));
         assertEquals(UNIT,  new Range<Integer>(Integer.class, -1, 1));
     }
@@ -141,7 +141,7 @@ public final class RangeTest {
      * Tests {@link Range#contains}.
      */
     @Test
-    public void testContains(){
+    public void testContains() {
         assertTrue (UNIT.contains( 0));
         assertTrue (UNIT.contains( 1));
         assertTrue (UNIT.contains(-1));
@@ -170,32 +170,9 @@ public final class RangeTest {
      * Tests {@link Range#union}.
      */
     @Test
-    public void testUnion(){
-        assertEquals(new Range<Integer>(Integer.class, -1, null), UNIT.union(POSITIVE));
-    }
-
-    /**
-     * Tests {@link Range#intersect}.
-     */
-    @Test
-    public void testIntersects(){
-        assertEquals("(0,1]",  new Range<Integer>(Integer.class, 0, false, 1, true ), UNIT.intersect(POSITIVE));
-        assertEquals("[-1,0)", new Range<Integer>(Integer.class,-1, true,  0, false), UNIT.intersect(NEGATIVE));
-        assertEquals(EMPTY, POSITIVE.intersect(NEGATIVE));
-
-        assertEquals("0+", ZERO, ZERO.intersect(NON_NEGATIVE));
-        assertEquals("0-", ZERO, ZERO.intersect(NON_POSITIVE));
-        assertTrue("positive does not include NEGATIVE so result is empty", POSITIVE.intersect(NEGATIVE).isEmpty());
-        assertTrue("positive does not include ZERO so result is empty",     ZERO    .intersect(POSITIVE).isEmpty());
-        assertTrue("negative does not include ZERO so result is empty",     ZERO    .intersect(NEGATIVE).isEmpty());
-    }
-
-    /**
-     * Tests {@link Range#union}.
-     */
-    @Test
-    public void testUnionN(){
-        Range<?> range;
+    public void testUnion() {
+        Range<?> range = UNIT.union(POSITIVE);
+        assertEquals(new Range<Integer>(Integer.class, -1, null), range);
 
         range = new Range<Integer>(Integer.class, 0);
         assertEquals(new Range<Integer>(Integer.class, 0), range);
@@ -208,6 +185,22 @@ public final class RangeTest {
 
         range = range.union(new Range<Integer>(Integer.class, 100, true, 120, false));
         assertEquals(new Range<Integer>(Integer.class, 0, true, 120, false), range);
+    }
+
+    /**
+     * Tests {@link Range#intersect}.
+     */
+    @Test
+    public void testIntersects() {
+        assertEquals("(0,1]",  new Range<Integer>(Integer.class, 0, false, 1, true ), UNIT.intersect(POSITIVE));
+        assertEquals("[-1,0)", new Range<Integer>(Integer.class,-1, true,  0, false), UNIT.intersect(NEGATIVE));
+        assertEquals(EMPTY, POSITIVE.intersect(NEGATIVE));
+
+        assertEquals("0+", ZERO, ZERO.intersect(NON_NEGATIVE));
+        assertEquals("0-", ZERO, ZERO.intersect(NON_POSITIVE));
+        assertTrue("positive does not include NEGATIVE so result is empty", POSITIVE.intersect(NEGATIVE).isEmpty());
+        assertTrue("positive does not include ZERO so result is empty",     ZERO    .intersect(POSITIVE).isEmpty());
+        assertTrue("negative does not include ZERO so result is empty",     ZERO    .intersect(NEGATIVE).isEmpty());
     }
 
     /**
