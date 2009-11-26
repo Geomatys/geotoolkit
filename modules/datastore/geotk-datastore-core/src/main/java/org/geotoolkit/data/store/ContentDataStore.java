@@ -280,50 +280,27 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     }
 
     /**
-     * Creates a new schema in the datastore.
-     * <p>
-     * This implementation throws a{@link UnsupportedOperationException}. Subclasses
-     * should override to support schema creation.
-     * </p>
+     * Delegates to {@link #getFeatureSource(Name)}.
      *
-     *
-     * @see DataStore#createSchema(FeatureType)
+     * @since 2.5
+     * @see DataStore#getFeatureSource(org.opengis.feature.type.Name)
      */
     @Override
-    public void createSchema(final SimpleFeatureType featureType) throws IOException {
-        throw new UnsupportedOperationException();
-    }
-
-
-    /**
-     * Returns the feature source matching the specified name.
-     * <p>
-     * Subclasses should not implement this method. However overriding in order
-     * to perform a type narrowing to a subclasses of {@link ContentFeatureSource}
-     * is acceptable.
-     * </p>
-     *
-     * @see DataStore#getFeatureSource(String)
-     */
-    @Override
-    public ContentFeatureSource getFeatureSource(final String typeName) throws IOException {
-        return getFeatureSource(new DefaultName(namespaceURI,typeName), Transaction.AUTO_COMMIT);
+    public final ContentFeatureSource getFeatureSource(final String typeName) throws IOException {
+        return getFeatureSource(new DefaultName(namespaceURI,typeName));
     }
 
     /**
-     * Returns the feature source matching the specified name and explicitly
-     * specifies a transaction.
-     * <p>
-     * Subclasses should not implement this method. However overriding in order
-     * to perform a type narrowing to a subclasses of {@link ContentFeatureSource}
-     * is acceptable.
-     * </p>
+     * Delegates to {@link #getFeatureSource(String)} with
+     * {@code name.getLocalPart()}
      *
-     * @see DataStore#getFeatureSource(String)
+     * @since 2.5
+     * @see DataStore#getFeatureSource(org.opengis.feature.type.Name)
      */
-    public ContentFeatureSource getFeatureSource(final String typeName, final Transaction tx)
-                                                 throws IOException{
-        return getFeatureSource(name(typeName), tx);
+    @Override
+    public final ContentFeatureSource getFeatureSource(Name typeName)
+            throws IOException {
+        return getFeatureSource(typeName, Transaction.AUTO_COMMIT);
     }
 
     /**
@@ -340,10 +317,8 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     public ContentFeatureSource getFeatureSource(final Name typeName, final Transaction tx)
                                                  throws IOException{
         final ContentEntry entry = ensureEntry(typeName);
-
         final ContentFeatureSource featureSource = createFeatureSource(entry);
         featureSource.setTransaction(tx);
-
         return featureSource;
     }
 
@@ -377,7 +352,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query,
             final Transaction tx) throws IOException{
-        final String typeName = query.getTypeName().getLocalPart();
+        final Name typeName = query.getTypeName();
         if (typeName == null) {
             throw new IllegalArgumentException("Query does not specify type.");
         }
@@ -415,7 +390,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     protected final ContentFeatureStore ensureFeatureStore(final String typeName, final Transaction tx)
                                                            throws IOException{
 
-        final ContentFeatureSource featureSource = getFeatureSource(typeName,tx);
+        final ContentFeatureSource featureSource = getFeatureSource(name(typeName),tx);
         if (!(featureSource instanceof ContentFeatureStore)) {
             throw new IOException(typeName + " is read only" );
         }
@@ -605,20 +580,6 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
      * @return An new instance of {@link ContentFeatureSource} for the entry.
      */
     protected abstract ContentFeatureSource createFeatureSource(final ContentEntry entry) throws IOException;
-
-    /**
-     * Delegates to {@link #getFeatureSource(String)} with
-     * {@code name.getLocalPart()}
-     *
-     * @since 2.5
-     * @see DataStore#getFeatureSource(org.opengis.feature.type.Name)
-     */
-    @Override
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName)
-            throws IOException
-    {
-        return getFeatureSource(typeName.getLocalPart());
-    }
 
     /**
      * Delegates to {@link #updateSchema(String, SimpleFeatureType)} with

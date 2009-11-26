@@ -55,6 +55,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
+import org.opengis.feature.type.Name;
 import static org.geotoolkit.factory.Hints.Key;
 
 
@@ -126,12 +128,17 @@ public class JDBCFeatureSource extends ContentFeatureSource {
         tb.setName(tableName);
 
         //set the namespace, if not null
+        final String namespace;
         if (entry.getName().getNamespaceURI() != null) {
-            tb.setNamespaceURI(entry.getName().getNamespaceURI());
+            namespace = entry.getName().getNamespaceURI();
         } else {
             //use the data store
-            tb.setNamespaceURI(getDataStore().getNamespaceURI());
+            namespace = getDataStore().getNamespaceURI();
         }
+
+        tb.setNamespaceURI(namespace);
+        ab.setNamespaceURI(namespace);
+
 
         //grab the schema
         final String databaseSchema = getDataStore().getDatabaseSchema();
@@ -286,12 +293,12 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                         ab.setCRS(crs);
                         if(srid != null)
                             ab.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
-                        tb.add(ab.buildDescriptor(name, ab.buildGeometryType()));
+                        tb.add(ab.buildDescriptor(new DefaultName(namespace, name), ab.buildGeometryType()));
                     } else {
                         //add the attribute
                         ab.setName(name);
                         ab.setBinding(binding);
-                        tb.add(ab.buildDescriptor(name, ab.buildType()));
+                        tb.add(ab.buildDescriptor(new DefaultName(namespace, name), ab.buildType()));
                     }
                 }
 

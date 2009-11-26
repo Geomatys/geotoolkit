@@ -798,7 +798,7 @@ public class SimpleFeatureTypeBuilder {
         if (this.defaultGeometry != null) {
             final List<AttributeDescriptor> atts = attributes();
             for (int i = 0; i < atts.size(); i++) {
-                AttributeDescriptor att = (AttributeDescriptor) atts.get(i);
+                AttributeDescriptor att = atts.get(i);
                 if (this.defaultGeometry.equals(att.getName().getLocalPart())) {
                     //ensure the attribute is a geometry attribute
                     if (!(att instanceof GeometryDescriptor)) {

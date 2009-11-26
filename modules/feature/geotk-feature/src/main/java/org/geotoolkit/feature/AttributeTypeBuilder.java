@@ -512,7 +512,7 @@ public class AttributeTypeBuilder {
      *
      */
     public AttributeDescriptor buildDescriptor(final String name, final AttributeType type) {
-        return buildDescriptor(new DefaultName(name), type);
+        return buildDescriptor(new DefaultName(namespaceURI,name), type);
     }
 
     /**
@@ -525,7 +525,7 @@ public class AttributeTypeBuilder {
      *
      */
     public GeometryDescriptor buildDescriptor(final String name, final GeometryType type) {
-        return buildDescriptor(new DefaultName(name), type);
+        return buildDescriptor(new DefaultName(namespaceURI,name), type);
     }
 
     public AttributeDescriptor buildDescriptor(final Name name, final AttributeType type) {
