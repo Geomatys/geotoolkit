@@ -72,8 +72,8 @@ import org.geotoolkit.resources.Errors;
  * @param <K> The class of key elements.
  * @param <V> The class of value elements.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.05
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.06
  *
  * @see java.util.WeakHashMap
  * @see WeakHashSet
@@ -334,12 +334,12 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         final Entry[] table = newEntryTable(capacity);
         threshold = Math.round(capacity*LOAD_FACTOR);
         for (int i=0; i<oldTable.length; i++) {
-            for (Entry old=oldTable[i]; old!=null;) {
-                final Entry e=old;
+            for (Entry old = oldTable[i]; old != null;) {
+                final Entry e = old;
                 old = old.next; // Retains 'next' now because its value will change.
                 final Object key = e.key;
                 if (key != null) {
-                    final int index=(key.hashCode() & 0x7FFFFFFF) % table.length;
+                    final int index = hashCode(key) % table.length;
                     e.index = index;
                     e.next  = table[index];
                     table[index] = e;
@@ -363,6 +363,13 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
     }
 
     /**
+     * Returns the hash code value for the given key as a positive number.
+     */
+    private static int hashCode(final Object key) {
+        return (key != null) ? key.hashCode() & 0x7FFFFFFF : 0;
+    }
+
+    /**
      * Checks if this {@code WeakValueHashMap} is valid. This method counts the
      * number of elements and compare it to {@link #count}. If the check fails,
      * the number of elements is corrected (if we didn't, an {@link AssertionError}
@@ -374,17 +381,20 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         if (!Thread.holdsLock(this)) {
             throw new AssertionError();
         }
-        int n=0;
+        int n = 0;
         final Entry[] table = this.table;
         for (int i=0; i<table.length; i++) {
-            for (Entry e=table[i]; e!=null; e=e.next) {
+            for (Entry e = table[i]; e != null; e = e.next) {
+                if (hashCode(e.key) % table.length != e.index) {
+                    throw new AssertionError();
+                }
                 n++;
             }
         }
         final int count = this.count;
         if (n != count) {
             this.count = n;
-            throw new AssertionError("Expected " + count + " entries but found " + n);
+            throw new AssertionError(count - n);
         } else {
             return true;
         }
@@ -435,8 +445,8 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
         assert WeakCollectionCleaner.DEFAULT.isAlive();
         assert valid();
         final Entry[] table = this.table;
-        final int index = (key.hashCode() & 0x7FFFFFFF) % table.length;
-        for (Entry e=table[index]; e!=null; e=e.next) {
+        final int index = hashCode(key) % table.length;
+        for (Entry e = table[index]; e != null; e = e.next) {
             if (key.equals(e.key)) {
                 return e.get();
             }
@@ -455,13 +465,15 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
          * {@code WeakValueHashMap}. If yes, clear it.
          */
         V oldValue = null;
-        final int hash = key.hashCode() & 0x7FFFFFFF;
         Entry[] table = this.table;
+        final int hash = hashCode(key);
         int index = hash % table.length;
-        for (Entry e=table[index]; e!=null; e=e.next) {
+        for (Entry e = table[index]; e != null; e = e.next) {
             if (key.equals(e.key)) {
                 oldValue = e.get();
                 e.dispose();
+                table = this.table; // May have changed.
+                index = hash % table.length;
             }
         }
         if (value != null) {
