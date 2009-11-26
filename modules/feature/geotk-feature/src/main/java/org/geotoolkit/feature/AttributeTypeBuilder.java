@@ -340,90 +340,17 @@ public class AttributeTypeBuilder {
         this.isNillable = isNillable;
     }
 
-    public void setMaxOccurs(final int maxOccurs) {
-        this.maxOccurs = maxOccurs;
-    }
-
     public void setMinOccurs(final int minOccurs) {
         this.minOccurs = minOccurs;
+    }
+
+    public void setMaxOccurs(final int maxOccurs) {
+        this.maxOccurs = maxOccurs;
     }
 
     public void setDefaultValue(final Object defaultValue) {
         this.defaultValue = defaultValue;
         isDefaultValueSet = true;
-    }
-
-    public AttributeTypeBuilder binding(final Class binding) {
-        setBinding(binding);
-        return this;
-    }
-
-    public AttributeTypeBuilder name(final String name) {
-        setName(name);
-        return this;
-    }
-
-    public AttributeTypeBuilder namespaceURI(final String namespaceURI) {
-        setNamespaceURI(namespaceURI);
-        return this;
-
-    }
-
-    public AttributeTypeBuilder crs(final CoordinateReferenceSystem crs) {
-        setCRS(crs);
-        return this;
-    }
-
-    public AttributeTypeBuilder description(final String description) {
-        setDescription(description);
-        return this;
-    }
-
-    public AttributeTypeBuilder abstrct(final boolean isAbstract) {
-        setAbstract(isAbstract);
-        return this;
-    }
-
-    public AttributeTypeBuilder identifiable(final boolean isIdentifiable) {
-        setIdentifiable(isIdentifiable);
-        return this;
-    }
-
-    public AttributeTypeBuilder length(final int length) {
-        setLength(length);
-        return this;
-    }
-
-    public AttributeTypeBuilder restriction(final Filter restriction) {
-        addRestriction(restriction);
-        return this;
-    }
-
-    // Descriptor methods
-    //
-    public AttributeTypeBuilder nillable(final boolean isNillable) {
-        setNillable(isNillable);
-        return this;
-    }
-
-    public AttributeTypeBuilder maxOccurs(final int maxOccurs) {
-        setMaxOccurs(maxOccurs);
-        return this;
-    }
-
-    public AttributeTypeBuilder minOccurs(final int minOccurs) {
-        setMinOccurs(minOccurs);
-        return this;
-    }
-
-    public AttributeTypeBuilder defaultValue(final Object defaultValue) {
-        setDefaultValue(defaultValue);
-        return this;
-    }
-
-    public AttributeTypeBuilder userData(final Object key, final Object value) {
-        addUserData(key, value);
-        return this;
     }
 
     // construction methods

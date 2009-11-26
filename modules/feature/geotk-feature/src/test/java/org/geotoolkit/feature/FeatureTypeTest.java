@@ -201,8 +201,8 @@ public class FeatureTypeTest extends DataTestCase {
         Double d = new Double( 3.14159 );
         
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
-        
-        AttributeDescriptor testType = ab.binding(Object.class).buildDescriptor( "test" );
+        ab.setBinding(Object.class);
+        AttributeDescriptor testType = ab.buildDescriptor( "test" );
         
         assertSame( "String", str, FeatureUtilities.duplicate( str ) );
         assertSame( "Integer", i, FeatureUtilities.duplicate( i ) );

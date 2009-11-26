@@ -184,7 +184,7 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
         // make up a fake attribute with the same name, something that might happen
         // in chains of retyping where attributes are rebuilt
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
-        ab.binding(Point.class);
+        ab.setBinding(Point.class);
         AttributeDescriptor madeUp = ab.buildDescriptor(aname("geometry"));
         
         featureStore.updateFeatures(new AttributeDescriptor[] { madeUp },

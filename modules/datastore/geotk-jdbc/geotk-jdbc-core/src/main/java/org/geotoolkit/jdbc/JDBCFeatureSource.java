@@ -268,8 +268,8 @@ public class JDBCFeatureSource extends ContentFeatureSource {
 
                     //nullability
                     if ( "NO".equalsIgnoreCase( columns.getString( "IS_NULLABLE" ) ) ) {
-                        ab.nillable(false);
-                        ab.minOccurs(1);
+                        ab.setNillable(false);
+                        ab.setMinOccurs(1);
                     }
                     
                     //determine if this attribute is a geometry or not
