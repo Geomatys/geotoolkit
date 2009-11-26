@@ -145,8 +145,8 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
 
             //the simple nodes (attributes of the feature)
-            Name geometryName = null;
             for (Property a : feature.getProperties()) {
+
                 if (a.getValue() instanceof Collection && !(a.getType() instanceof GeometryType)) {
                     String namespaceProperty = a.getName().getNamespaceURI();
                     for (Object value : (Collection)a.getValue()) {
@@ -194,27 +194,31 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                         }
                         streamWriter.writeEndElement();
                     }
+
+                // we add the geometry
                 } else {
-                    geometryName = a.getName();
+                    
+                    Name geometryName        = a.getName();
+                    String namespaceProperty = geometryName.getNamespaceURI();
+                    if (namespaceProperty != null) {
+                        streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                    } else {
+                        streamWriter.writeStartElement(geometryName.getLocalPart());
+                    }
+                    Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());
+                    try {
+                        marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
+                    } catch (JAXBException ex) {
+                        LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
+                    }
+                    streamWriter.writeEndElement();
                 }
             }
 
-            // we add the geometry
+            
             if (feature.getDefaultGeometry() != null) {
 
-                String namespaceProperty = geometryName.getNamespaceURI();
-                if (namespaceProperty != null) {
-                    streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
-                } else {
-                    streamWriter.writeStartElement(geometryName.getLocalPart());
-                }
-                Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
-                try {
-                    marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
-                } catch (JAXBException ex) {
-                    LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
-                }
-                streamWriter.writeEndElement();
+                
             }
 
             streamWriter.writeEndElement();
