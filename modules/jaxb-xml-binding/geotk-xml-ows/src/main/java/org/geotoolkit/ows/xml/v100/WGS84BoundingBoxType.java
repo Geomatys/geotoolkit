@@ -66,4 +66,12 @@ public class WGS84BoundingBoxType extends BoundingBoxType {
         super(null, minx, miny, maxx, maxy);
     }
 
+    /**
+     * Build a 2 dimension boundingBox.
+     *
+     */
+    public WGS84BoundingBoxType(String crs, double minx, double miny, double maxx, double maxy){
+        super(crs, minx, miny, maxx, maxy);
+    }
+
 }

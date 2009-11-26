@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -210,6 +211,9 @@ public class Utils {
     public static String getStringValue(Object obj) {
         if (obj instanceof String) {
             return (String) obj;
+        } else if (obj instanceof Timestamp) {
+            String tValue  =((Timestamp) obj).toString();
+            return tValue.replace(" ", "T");
         } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double) {
             return obj + "";
 

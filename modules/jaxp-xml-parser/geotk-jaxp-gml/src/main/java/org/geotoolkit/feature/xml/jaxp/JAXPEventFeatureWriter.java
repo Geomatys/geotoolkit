@@ -26,12 +26,8 @@ import com.sun.xml.internal.stream.events.StartElementEvent;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -39,12 +35,9 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
-import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -60,30 +53,11 @@ import org.opengis.referencing.FactoryException;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JAXPEventFeatureWriter implements XmlFeatureWriter {
+public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-
-    private static MarshallerPool pool;
-    static {
-        try {
-            Map<String, String> properties = new HashMap<String, String>();
-            properties.put(Marshaller.JAXB_FRAGMENT, "true");
-            properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, "false");
-            pool = new MarshallerPool(properties, ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
-
-    private static ObjectFactory factory = new ObjectFactory();
-
-    private final Marshaller marshaller;
     
     public JAXPEventFeatureWriter() throws JAXBException {
-         marshaller = pool.acquireMarshaller();
-         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+         super();
     }
 
     /**
@@ -299,20 +273,22 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
 
             
             // the root Element
-            QName root = new QName("http://www.opengis.net/gml", "FeatureCollection", "gml");
+            QName root = new QName("http://www.opengis.net/gml", "FeatureCollection", "wfs");
             StartElementEvent ste = new StartElementEvent(root);
             eventWriter.add(ste);
             eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "id", featureCollection.getID(), null));
 
             NamespaceImpl namespaceEvent = new NamespaceImpl("gml", "http://www.opengis.net/gml");
             eventWriter.add(namespaceEvent);
+            NamespaceImpl namespaceEvent2 = new NamespaceImpl("wfs", "http://www.opengis.net/wfs");
+            eventWriter.add(namespaceEvent2);
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();
             if (!namespace.equals("http://www.opengis.net/gml")) {
                 String prefix    = Namespaces.getPreferredPrefix(namespace, null);
-                NamespaceImpl namespaceEvent2 = new NamespaceImpl(prefix, namespace);
-                eventWriter.add(namespaceEvent2);
+                NamespaceImpl namespaceEvent3 = new NamespaceImpl(prefix, namespace);
+                eventWriter.add(namespaceEvent3);
 
             }
 
@@ -358,7 +334,7 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             QName env     = new QName("http://www.opengis.net/gml", "Envelope", "gml");
             eventWriter.add(new StartElementEvent(env));
             if (srsName != null) {
-                eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "srsName", srsName, null));
+                eventWriter.add(new AttributeImpl("srsName", srsName));
             }
 
             // lower corner
@@ -379,9 +355,4 @@ public class JAXPEventFeatureWriter implements XmlFeatureWriter {
             eventWriter.add(new EndElementEvent(bounded));
         }
     }
-
-    public void dispose() {
-        pool.release(marshaller);
-    }
-
 }

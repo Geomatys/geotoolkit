@@ -21,24 +21,18 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
-import org.geotoolkit.feature.xml.XmlFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -52,30 +46,10 @@ import org.opengis.referencing.FactoryException;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
-
-    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-    
-    private static MarshallerPool pool;
-    static {
-        try {
-            Map<String, String> properties = new HashMap<String, String>();
-            properties.put(Marshaller.JAXB_FRAGMENT, "true");
-            properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, "false");
-            pool = new MarshallerPool(properties, ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
-
-    private static ObjectFactory factory = new ObjectFactory();
-
-    private final Marshaller marshaller;
+public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
     public JAXPStreamFeatureWriter() throws JAXBException {
-        marshaller = pool.acquireMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+        super();
     }
 
      @Override
@@ -193,14 +167,20 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
                     }
 
                 } else if (!(a.getType() instanceof GeometryType)) {
-                    String namespaceProperty = a.getName().getNamespaceURI();
-                    if (namespaceProperty != null) {
-                        streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
-                    } else {
-                        streamWriter.writeStartElement(a.getName().getLocalPart());
+                    
+                    String value = Utils.getStringValue(a.getValue());
+                    if (value != null || a.isNillable()) {
+                        String namespaceProperty = a.getName().getNamespaceURI();
+                        if (namespaceProperty != null) {
+                            streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                        } else {
+                            streamWriter.writeStartElement(a.getName().getLocalPart());
+                        }
+                        if (value != null) {
+                            streamWriter.writeCharacters(value);
+                        }
+                        streamWriter.writeEndElement();
                     }
-                    streamWriter.writeCharacters(Utils.getStringValue(a.getValue()));
-                    streamWriter.writeEndElement();
                 } else {
                     geometryName = a.getName();
                 }
@@ -280,13 +260,14 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             streamWriter.writeStartDocument("UTF-8", "1.0");
 
             // the root Element
-            streamWriter.writeStartElement("gml", "FeatureCollection", "http://www.opengis.net/gml");
+            streamWriter.writeStartElement("wfs", "FeatureCollection", "http://www.opengis.net/wfs");
             streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", featureCollection.getID());
             streamWriter.writeNamespace("gml", "http://www.opengis.net/gml");
+            streamWriter.writeNamespace("wfs", "http://www.opengis.net/wfs");
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();
-            if (!namespace.equals("http://www.opengis.net/gml")) {
+            if (namespace != null && !namespace.equals("http://www.opengis.net/gml")) {
                 String prefix    = Namespaces.getPreferredPrefix(namespace, null);
                 streamWriter.writeNamespace(prefix, namespace);
             }
@@ -330,7 +311,7 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             streamWriter.writeStartElement("gml", "boundedBy", "http://www.opengis.net/gml");
             streamWriter.writeStartElement("gml", "Envelope", "http://www.opengis.net/gml");
             if (srsName != null) {
-                streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "srsName", srsName);
+                streamWriter.writeAttribute("srsName", srsName);
             }
 
             // lower corner
@@ -348,9 +329,5 @@ public class JAXPStreamFeatureWriter implements XmlFeatureWriter {
             streamWriter.writeEndElement();
             streamWriter.writeEndElement();
         }
-    }
-
-    public void dispose() {
-        pool.release(marshaller);
     }
 }
