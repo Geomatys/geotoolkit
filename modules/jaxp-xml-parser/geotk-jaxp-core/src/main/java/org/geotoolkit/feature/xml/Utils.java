@@ -214,7 +214,7 @@ public class Utils {
         } else if (obj instanceof Timestamp) {
             String tValue  =((Timestamp) obj).toString();
             return tValue.replace(" ", "T");
-        } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double) {
+        } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double || obj instanceof Boolean) {
             return obj + "";
 
         } else if (obj != null) {

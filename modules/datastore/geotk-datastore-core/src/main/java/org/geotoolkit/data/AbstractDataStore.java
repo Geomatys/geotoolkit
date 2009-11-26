@@ -299,7 +299,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
                 return getSchema(name);
             }
         }
-        throw new IOException("Type name : " + typeName + "does not exist in this datastore.");
+        throw new IOException("Type name : " + typeName + " does not exist in this datastore.");
     }
 
     /**

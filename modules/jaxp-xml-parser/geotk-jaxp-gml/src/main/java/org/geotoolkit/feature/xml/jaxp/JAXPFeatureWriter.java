@@ -52,6 +52,8 @@ public abstract class JAXPFeatureWriter implements XmlFeatureWriter {
 
     protected final Marshaller marshaller;
 
+    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+    
     public JAXPFeatureWriter() throws JAXBException {
          marshaller = pool.acquireMarshaller();
          marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
