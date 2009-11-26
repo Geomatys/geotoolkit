@@ -28,7 +28,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -274,20 +273,22 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
             
             // the root Element
-            QName root = new QName("http://www.opengis.net/gml", "FeatureCollection", "gml");
+            QName root = new QName("http://www.opengis.net/gml", "FeatureCollection", "wfs");
             StartElementEvent ste = new StartElementEvent(root);
             eventWriter.add(ste);
             eventWriter.add(new AttributeImpl("gml", "http://www.opengis.net/gml", "id", featureCollection.getID(), null));
 
             NamespaceImpl namespaceEvent = new NamespaceImpl("gml", "http://www.opengis.net/gml");
             eventWriter.add(namespaceEvent);
+            NamespaceImpl namespaceEvent2 = new NamespaceImpl("wfs", "http://www.opengis.net/wfs");
+            eventWriter.add(namespaceEvent2);
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();
             if (!namespace.equals("http://www.opengis.net/gml")) {
                 String prefix    = Namespaces.getPreferredPrefix(namespace, null);
-                NamespaceImpl namespaceEvent2 = new NamespaceImpl(prefix, namespace);
-                eventWriter.add(namespaceEvent2);
+                NamespaceImpl namespaceEvent3 = new NamespaceImpl(prefix, namespace);
+                eventWriter.add(namespaceEvent3);
 
             }
 

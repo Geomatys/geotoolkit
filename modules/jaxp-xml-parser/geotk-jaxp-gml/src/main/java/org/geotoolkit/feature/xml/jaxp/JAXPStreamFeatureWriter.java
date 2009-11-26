@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -261,9 +260,10 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             streamWriter.writeStartDocument("UTF-8", "1.0");
 
             // the root Element
-            streamWriter.writeStartElement("gml", "FeatureCollection", "http://www.opengis.net/gml");
+            streamWriter.writeStartElement("wfs", "FeatureCollection", "http://www.opengis.net/wfs");
             streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", featureCollection.getID());
             streamWriter.writeNamespace("gml", "http://www.opengis.net/gml");
+            streamWriter.writeNamespace("wfs", "http://www.opengis.net/wfs");
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();
