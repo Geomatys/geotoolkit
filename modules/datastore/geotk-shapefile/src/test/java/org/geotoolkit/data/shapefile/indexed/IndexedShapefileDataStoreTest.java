@@ -837,7 +837,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     
     private int count(DataStore ds, String typeName, Filter filter, Transaction t) throws Exception {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-        reader = ds.getFeatureReader(QueryBuilder.filtered(new DefaultName(typeName), filter), t);
+        reader = ds.getFeatureReader(QueryBuilder.filtered(ds.getSchema(typeName).getName(), filter), t);
         int count = 0;
         try {
             while (reader.hasNext()) {

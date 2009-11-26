@@ -573,8 +573,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .setProperties(new String[]{"the_geom"})
                 .buildQuery();
 
-         FeatureReader<SimpleFeatureType, SimpleFeature> reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(),
-                query);
+         FeatureReader<SimpleFeatureType, SimpleFeature> reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
         assertEquals("the_geom", reader.getFeatureType().getDescriptor(0)
                 .getLocalName());
@@ -598,7 +597,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .buildQuery();
         
         reader.close();
-        reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(), query);
+        reader = s.getFeatureReader(query);
         assertEquals(1, reader.getFeatureType().getAttributeCount());
         assertEquals("the_geom", reader.getFeatureType().getDescriptor(0)
                 .getLocalName());
@@ -616,7 +615,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
                 .setProperties(new String[]{"the_geom"})
                 .buildQuery();
         
-        reader = s.getFeatureReader(s.getSchema(s.getTypeNames()[0]).getTypeName(), query);
+        reader = s.getFeatureReader(query);
         assertEquals(s.getSchema(s.getTypeNames()[0]), reader.getFeatureType());
         reader.close();
     }

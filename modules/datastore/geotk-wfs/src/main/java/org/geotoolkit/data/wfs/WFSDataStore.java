@@ -175,83 +175,27 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public String[] getTypeNames() throws IOException {
-        final String[] locals = new String[typeNames.size()];
+    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
+        return Collections.unmodifiableMap(types);
+    }
 
-        for(int i=0,n=typeNames.size(); i<n;i++){
-            final Name name = typeNames.get(i);
-            locals[i] = name.getLocalPart();
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+        final Name name = query.getTypeName();
+        //will raise an error if typename in unknowned
+        final SimpleFeatureType sft = getSchema(name);
+
+        final QName q = new QName(name.getNamespaceURI(), name.getLocalPart(), prefixes.get(name.getNamespaceURI()));
+        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
+
+        if(collection == null){
+            return DataUtilities.wrapToReader(sft, new EmptyFeatureCollection(sft).features());
+        }else{
+            return DataUtilities.wrapToReader(sft, collection.features());
         }
-
-        return locals;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<Name> getNames() throws IOException {
-        return Collections.unmodifiableList(typeNames);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SimpleFeatureType getSchema(String typeName) throws IOException {
-        for(Name n : typeNames){
-            if(n.getLocalPart().equals(typeName)){
-                return getSchema(n);
-            }
-        }
-
-        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SimpleFeatureType getSchema(Name name) throws IOException {
-        final SimpleFeatureType sft = types.get(name);
-
-        if(sft == null){
-            throw new IOException("Type name : "+ name +"is unknowned is this datastore");
-        }
-
-        return sft;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
-        return getFeatureReader(typeName, QueryBuilder.all(new DefaultName(typeName)));
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
-
-        for(Name n : typeNames){
-            if(n.getLocalPart().equals(typeName)){
-                final SimpleFeatureType sft = types.get(n);
-                final QName q = new QName(n.getNamespaceURI(), n.getLocalPart(), prefixes.get(n.getNamespaceURI()));
-                FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
-
-                if(collection == null){
-                    return DataUtilities.wrapToReader(sft, new EmptyFeatureCollection(sft).features());
-                }else{
-                    return DataUtilities.wrapToReader(sft, collection.features());
-                }
-
-            }
-        }
-
-        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
     }
 
     /**
@@ -354,9 +298,28 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected int getCount(Query query) throws IOException {
         return -1;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createSchema(SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Schema creation not supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Schema update not supported.");
     }
 
 }

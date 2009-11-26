@@ -41,7 +41,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DataSourceException;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.EmptyFeatureReader;
 import org.geotoolkit.data.FIDReader;
 import org.geotoolkit.data.FeatureReader;
@@ -74,19 +73,20 @@ import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
+import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.resources.NIOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.Envelope;
-import org.geotoolkit.data.AbstractDataStore;
-import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -256,8 +256,11 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         return filter;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(String typeName,
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
             Transaction transaction) throws IOException {
         if (transaction == null) {
             throw new NullPointerException(
@@ -270,7 +273,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         if (transaction == Transaction.AUTO_COMMIT) {
             return super.getFeatureWriterAppend(typeName, transaction);
         } else {
-            writer = state(transaction).writer(typeName, Filter.EXCLUDE);
+            writer = state(transaction).writer(typeName.getLocalPart(), Filter.EXCLUDE);
         }
 
         if (getLockManager() != null) {
@@ -284,7 +287,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
             writer.next();
         return writer;
     }
-
+    
     /**
      * This method is identical to the super class WHY?
      */
@@ -311,8 +314,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
      * @see AbstractDataStore#getFeatureReader(java.lang.String, org.geotoolkit.data.query.Query)
      */
     @Override
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
+    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query)
             throws IOException {
+        final String typeName = query.getTypeName().getLocalPart();
         if (query.getFilter() == Filter.EXCLUDE)
             return new EmptyFeatureReader<SimpleFeatureType, SimpleFeature>(getSchema(typeName));
 
@@ -768,151 +772,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         }
     }
 
-    // private JTSEnvelope2D getBoundsRTree(Query query) throws IOException
-    // {
-    // JTSEnvelope2D ret = null;
-    //
-    // RTree rtree = this.openRTree();
-    //
-    // if (rtree != null) {
-    // try {
-    // Envelope envelopeFromIndex = rtree.getBounds(query.getFilter());
-    // ret = new JTSEnvelope2D(envelopeFromIndex, schema.getCRS());
-    // } catch (TreeException e) {
-    // LOGGER.log(Level.SEVERE, e.getMessage(), e);
-    // } catch (UnsupportedFilterException e) {
-    // // Ignoring...
-    // } finally {
-    // try {
-    // rtree.close();
-    // } catch (Exception ee) {
-    // }
-    // }
-    // }
-    // return ret;
-    // }
-
-    /**
-     * @see org.geotoolkit.data.DataStore#getFeatureSource(java.lang.String)
-     *
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
-            throws IOException {
-        final SimpleFeatureType featureType = getSchema(typeName);
-
-        if (isWriteable) {
-            if (getLockingManager() != null) {
-                return new AbstractFeatureLocking() {
-                    public DataStore getDataStore() {
-                        return IndexedShapefileDataStore.this;
-                    }
-
-                    public void addFeatureListener(FeatureListener listener) {
-                        listenerManager.addFeatureListener(this, listener);
-                    }
-
-                    public void removeFeatureListener(FeatureListener listener) {
-                        listenerManager.removeFeatureListener(this, listener);
-                    }
-
-                    public SimpleFeatureType getSchema() {
-                        return featureType;
-                    }
-
-                    public JTSEnvelope2D getBounds(Query query)
-                            throws IOException {
-                        return IndexedShapefileDataStore.this.getBounds(query);
-                    }
-                };
-            } else {
-                return new AbstractFeatureStore() {
-                    public DataStore getDataStore() {
-                        return IndexedShapefileDataStore.this;
-                    }
-
-                    public void addFeatureListener(FeatureListener listener) {
-                        listenerManager.addFeatureListener(this, listener);
-                    }
-
-                    public void removeFeatureListener(FeatureListener listener) {
-                        listenerManager.removeFeatureListener(this, listener);
-                    }
-
-                    public SimpleFeatureType getSchema() {
-                        return featureType;
-                    }
-
-                    public JTSEnvelope2D getBounds(Query query)
-                            throws IOException {
-                        return IndexedShapefileDataStore.this.getBounds(query);
-                    }
-                };
-            }
-        } else {
-            return new AbstractFeatureSource() {
-                public DataStore getDataStore() {
-                    return IndexedShapefileDataStore.this;
-                }
-
-                public void addFeatureListener(FeatureListener listener) {
-                    listenerManager.addFeatureListener(this, listener);
-                }
-
-                public void removeFeatureListener(FeatureListener listener) {
-                    listenerManager.removeFeatureListener(this, listener);
-                }
-
-                public SimpleFeatureType getSchema() {
-                    return featureType;
-                }
-
-                public JTSEnvelope2D getBounds(Query query)
-                        throws IOException {
-                    return IndexedShapefileDataStore.this.getBounds(query);
-                }
-            };
-        }
-    }
-    */
-
-    //
-    // /**
-    // * Builds the RTree index
-    // *
-    // * @throws TreeException
-    // * DOCUMENT ME!
-    // */
-    // void buildRTree() throws TreeException {
-    // if (isLocal()) {
-    // LOGGER.fine("Creating spatial index for " + shpFiles.get(SHP));
-    //
-    // synchronized (this) {
-    // if (rtree != null) {
-    // rtree.close();
-    // }
-    //
-    // rtree = null;
-    // }
-    //
-    // ShapeFileIndexer indexer = new ShapeFileIndexer();
-    // indexer.setIdxType(IndexType.GRX);
-    // indexer.setShapeFileName(shpFiles);
-    //
-    // try {
-    // indexer.index(false, new NullProgressListener());
-    // } catch (MalformedURLException e) {
-    // throw new TreeException(e);
-    // } catch (LockTimeoutException e) {
-    // throw new TreeException(e);
-    // } catch (Exception e) {
-    // if (e instanceof TreeException) {
-    // throw (TreeException) e;
-    // } else {
-    // throw new TreeException(e);
-    // }
-    // }
-    // }
-    // }
-
     /**
      * Builds the QuadTree index. Usually not necessary since reading features
      * will index when required
@@ -950,6 +809,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         return useMemoryMappedBuffer;
     }
 
+    @Override
     public String id() {
         return getClass().getName() + ": " + getCurrentTypeName();
     }

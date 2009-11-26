@@ -307,7 +307,13 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      */
     @Override
     public final SimpleFeatureType getSchema(Name name) throws IOException {
-        return getTypes().get(name);
+        final SimpleFeatureType sft = getTypes().get(name);
+        if(sft == null && getTypes().containsKey(name)){
+            throw new IOException("Error in datastore implementation, Name "+name+" is registered but no feature type is associated.");
+        }else if(sft == null){
+            throw new IOException("Type name : " + name + "does not exist in this datastore.");
+        }
+        return sft;
     }
 
     /**
@@ -598,7 +604,7 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
      * {@inheritDoc }
      */
     @Override
-    public final FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriterAppend(Name typeName,
             Transaction transaction) throws IOException{
 
         final FeatureWriter<SimpleFeatureType, SimpleFeature> writer = getFeatureWriter(typeName,Filter.INCLUDE, transaction);

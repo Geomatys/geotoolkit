@@ -20,20 +20,19 @@ package org.geotoolkit.data.sml;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import java.util.logging.Level;
+
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
@@ -45,9 +44,9 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
-
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -376,81 +375,27 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public String[] getTypeNames() throws IOException {
-        final Set<String> keys = new HashSet<String>();
-        for (Name n : types.keySet()) {
-            keys.add(n.getLocalPart());
-        }
-        return keys.toArray(new String[keys.size()]);
-    }
-
-     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<Name> getNames() throws IOException {
-        Set<Name> keys = types.keySet();
-        return Arrays.asList(keys.toArray(new Name[keys.size()]));
-
+    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
+        return Collections.unmodifiableMap(types);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeatureType getSchema(String typeName) throws IOException {
-        for (Name n : types.keySet()) {
-            if (n.getLocalPart().equals(typeName)) {
-                return types.get(n);
-            }
-        }
-        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
-    }
-
-    @Override
-    public SimpleFeatureType getSchema(Name name) throws IOException {
-        final SimpleFeatureType sft = types.get(name);
-        if (sft == null) {
-            throw new IOException("Type name : "+ name +"is unknowned is this datastore");
-        }
-        return sft;
-    }
-
-
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
-        SimpleFeatureType sft = null;
-        for (Name n : types.keySet()) {
-            if (n.getLocalPart().equals(typeName)) {
-                sft = types.get(n);
-            }
-        }
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, typeName);
-        return DataUtilities.wrapToReader(sft, collection.features());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Name name) throws IOException {
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+        final Name name = query.getTypeName();
         final SimpleFeatureType sft = types.get(name);
         final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
         return DataUtilities.wrapToReader(sft, collection.features());
     }
-
-
+    
     private FeatureCollection<SimpleFeatureType,SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
 
         final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = new DefaultFeatureCollection(typeName + "-collection", sft);
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
 
         try {
-
             ResultSet result = getAllFormId.executeQuery();
 
             boolean firstCRS = true;
@@ -644,6 +589,9 @@ public class SMLDataStore extends AbstractDataStore {
     }
 
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void dispose() {
         super.dispose();
@@ -655,22 +603,36 @@ public class SMLDataStore extends AbstractDataStore {
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected JTSEnvelope2D getBounds(Query query) throws IOException {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected int getCount(Query query) throws IOException {
         return -1;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query) throws IOException {
-        return super.getFeatureReader(typeName, query);
+    public void createSchema(SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Schema creation not supported.");
     }
 
-    
-
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Schema update not supported.");
+    }
 
 }

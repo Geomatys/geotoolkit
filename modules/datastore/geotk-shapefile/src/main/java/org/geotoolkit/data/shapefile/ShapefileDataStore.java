@@ -24,6 +24,7 @@ import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
@@ -80,6 +81,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -91,7 +93,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.io.InputStream;
 
 
 /**
@@ -262,28 +263,6 @@ public class ShapefileDataStore extends AbstractDataStore {
     }
 
     /**
-     * Create a  FeatureReader<SimpleFeatureType, SimpleFeature> for the provided type name.
-     * 
-     * @param typeName
-     *                The name of the FeatureType to create a reader for.
-     * 
-     * @return A new FeatureReader.
-     * 
-     * @throws IOException
-     *                 If an error occurs during creation
-     */
-    @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName) throws IOException {
-        typeCheck(typeName);
-
-        try {
-            return createFeatureReader(typeName,getAttributesReader(true), schema);
-        } catch (SchemaException se) {
-            throw new DataSourceException("Error creating schema", se);
-        }
-    }
-
-    /**
      * Just like the basic version, but adds a small optimization: if no
      * attributes are going to be read, don't uselessly open and read the dbf
      * file. Makes sure to consider also attributes in the query.
@@ -291,17 +270,18 @@ public class ShapefileDataStore extends AbstractDataStore {
      * @see AbstractDataStore#getFeatureReader(java.lang.String, org.geotoolkit.data.query.Query)
      */
     @Override
-    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(String typeName, Query query)
+    protected  FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query)
             throws IOException {
-        String[] propertyNames = query.getPropertyNames();
-        String defaultGeomName = schema.getGeometryDescriptor().getLocalName();
+        final String typeName = query.getTypeName().getLocalPart();
+        final String[] propertyNames = query.getPropertyNames();
+        final String defaultGeomName = schema.getGeometryDescriptor().getLocalName();
 
         // gather attributes needed by the query tool, they will be used by the
         // query filter
-        FilterAttributeExtractor extractor = new FilterAttributeExtractor();
-        Filter filter = query.getFilter();
+        final FilterAttributeExtractor extractor = new FilterAttributeExtractor();
+        final Filter filter = query.getFilter();
         filter.accept(extractor, null);
-        String[] filterAttnames = extractor.getAttributeNames();
+        final String[] filterAttnames = extractor.getAttributeNames();
 
         // check if the geometry is the one and only attribute needed
         // to return attribute _and_ to run the query filter
@@ -311,7 +291,7 @@ public class ShapefileDataStore extends AbstractDataStore {
                 && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0]
                         .equals(defaultGeomName)))) {
             try {
-                SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
+                final SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
 
                 return createFeatureReader(typeName,
@@ -321,7 +301,11 @@ public class ShapefileDataStore extends AbstractDataStore {
             }
         }
 
-        return super.getFeatureReader(typeName, query);
+        try {
+            return createFeatureReader(typeName,getAttributesReader(true), schema);
+        } catch (SchemaException se) {
+            throw new DataSourceException("Error creating schema", se);
+        }
     }
 
     protected FIDFeatureReader createFeatureReader(String typeName,
@@ -423,17 +407,6 @@ public class ShapefileDataStore extends AbstractDataStore {
     }
 
     /**
-     * Get an array of type names this DataStore holds.<BR/>ShapefileDataStore
-     * will always return a single name.
-     * 
-     * @return An array of length one containing the single type held.
-     */
-    @Override
-    public String[] getTypeNames() {
-        return new String[] { getCurrentTypeName() };
-    }
-
-    /**
      * Create the type name of the single FeatureType this DataStore represents.<BR/>
      * For example, if the urls path is file:///home/billy/mytheme.shp, the type
      * name will be mytheme.
@@ -511,8 +484,7 @@ public class ShapefileDataStore extends AbstractDataStore {
      * @throws IOException
      *                 If a type by the requested name is not present.
      */
-    @Override
-    public SimpleFeatureType getSchema(String typeName) throws IOException {
+    private SimpleFeatureType buildSchema(String typeName) throws IOException {
         typeCheck(typeName);
 
         if (schema == null) {
@@ -828,8 +800,7 @@ public class ShapefileDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(final String typeName)
-            throws IOException {
+    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(Name typeName) throws IOException {
         final SimpleFeatureType featureType = getSchema(typeName);
 
         if (isWriteable) {
@@ -948,6 +919,32 @@ public class ShapefileDataStore extends AbstractDataStore {
     public void dispose() {
         super.dispose();
         shpFiles.dispose();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
+        final SimpleFeatureType sft = getType();
+        return Collections.singletonMap(sft.getName(), sft);
+    }
+
+    private SimpleFeatureType getType() throws IOException{
+        
+        if(schema == null){
+            final String localName = getCurrentTypeName();
+            schema = buildSchema(localName);
+        }
+        
+        return schema;
+    }
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
+        throw new IOException("Update schema not supported.");
     }
     
 }
