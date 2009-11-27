@@ -23,6 +23,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -106,29 +107,52 @@ public class SampleFeatureFixtures {
 
     public static AttributeDescriptor[] createType1Choices() {
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         AttributeDescriptor[] choices = new AttributeDescriptor[3];
-        
+
+        ab.reset();
         ab.setBinding(Byte.class);
-        choices[0] = ab.buildDescriptor( "testByte" );
+        adb.reset();
+        adb.setName(new DefaultName("testByte"));
+        adb.setType(ab.buildType());
         
+        choices[0] = adb.buildDescriptor();
+
+        ab.reset();
         ab.setBinding(Double.class);
-        choices[1] = ab.buildDescriptor( "testDouble");
-        
+        adb.reset();
+        adb.setName(new DefaultName("testDouble"));
+        adb.setType(ab.buildType());
+        choices[1] = adb.buildDescriptor();
+
+        ab.reset();
         ab.setBinding(String.class);
-        choices[2] = ab.buildDescriptor( "testString");
+        adb.reset();
+        adb.setName(new DefaultName("testString"));
+        adb.setType(ab.buildType());
+        choices[2] = adb.buildDescriptor();
         
         return choices;
     }
 
     public static AttributeDescriptor getChoiceAttrType2() {
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         AttributeDescriptor[] choices = new AttributeDescriptor[2];
-        
+
+        ab.reset();
         ab.setBinding(String.class);
-        choices[0] = ab.buildDescriptor( "testString" );
-        
+        adb.reset();
+        adb.setName(new DefaultName("testString"));
+        adb.setType(ab.buildType());
+        choices[0] = adb.buildDescriptor();
+
+        ab.reset();
         ab.setBinding(Integer.class);
-        choices[1] = ab.buildDescriptor( "testInt" );
+        adb.reset();
+        adb.setName(new DefaultName("testInt"));
+        adb.setType(ab.buildType());
+        choices[1] = adb.buildDescriptor();
         
         return createChoiceAttrType("choiceTest2", choices);
     }
@@ -180,18 +204,18 @@ public class SampleFeatureFixtures {
      */
     public static SimpleFeatureType createTestType() throws SchemaException {
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-        tb.setName("test");
+        tb.setName(new DefaultName("test"));
         
-        tb.add("testGeometry", Point.class);
-        tb.add("testBoolean", Boolean.class);
-        tb.add("testCharacter", Character.class);
-        tb.add("testByte", Byte.class);
-        tb.add("testShort", Short.class);
-        tb.add("testInteger", Integer.class);
-        tb.add("testLong", Long.class);
-        tb.add("testFloat", Float.class);
-        tb.add("testDouble", Double.class);
-        tb.add("testString", String.class);
+        tb.add(new DefaultName("testGeometry"), Point.class, DefaultGeographicCRS.WGS84);
+        tb.add(new DefaultName("testBoolean"), Boolean.class);
+        tb.add(new DefaultName("testCharacter"), Character.class);
+        tb.add(new DefaultName("testByte"), Byte.class);
+        tb.add(new DefaultName("testShort"), Short.class);
+        tb.add(new DefaultName("testInteger"), Integer.class);
+        tb.add(new DefaultName("testLong"), Long.class);
+        tb.add(new DefaultName("testFloat"), Float.class);
+        tb.add(new DefaultName("testDouble"), Double.class);
+        tb.add(new DefaultName("testString"), String.class);
         
         tb.setDefaultGeometry("testGeometry");
         return tb.buildFeatureType();

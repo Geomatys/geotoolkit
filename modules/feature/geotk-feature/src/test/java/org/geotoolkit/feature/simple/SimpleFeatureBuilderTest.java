@@ -28,6 +28,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.Ignore;
 
 public class SimpleFeatureBuilderTest extends TestCase {
@@ -37,7 +40,7 @@ public class SimpleFeatureBuilderTest extends TestCase {
     protected void setUp() throws Exception {
         SimpleFeatureTypeBuilder typeBuilder = new SimpleFeatureTypeBuilder();
         typeBuilder.setName("test");
-        typeBuilder.add("point", Point.class);
+        typeBuilder.add("point", Point.class, DefaultGeographicCRS.WGS84);
         typeBuilder.add("integer", Integer.class);
         typeBuilder.add("float", Float.class);
 
@@ -136,10 +139,19 @@ public class SimpleFeatureBuilderTest extends TestCase {
 
     public void testCreateFeatureWithLength() throws Exception {
 
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.setName("test");
-        builder.length(5).add("name", String.class);
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
 
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setName("name");
+        atb.setBinding(String.class);
+        atb.setLength(5);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName("name");
+        adb.setType(atb.buildType());
+
+        builder.setName("test");
+        builder.add(adb.buildDescriptor());
+        
         SimpleFeatureType featureType = builder.buildFeatureType();
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Val"}, "ID");
 
@@ -160,9 +172,18 @@ public class SimpleFeatureBuilderTest extends TestCase {
         String attributeName = "string";
         PropertyIsEqualTo filter = fac.equals(fac.property("string"), fac.literal("Value"));
 
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder(); //$NON-NLS-1$
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+
+        AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setBinding(String.class);
+        atb.addRestriction(filter);
+        AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(attributeName);
+        adb.setType(atb.buildType());
+
         builder.setName("test");
-        builder.restriction(filter).add(attributeName, String.class);
+        builder.add(adb.buildDescriptor());
+        
 
         SimpleFeatureType featureType = builder.buildFeatureType();
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"}, "ID");

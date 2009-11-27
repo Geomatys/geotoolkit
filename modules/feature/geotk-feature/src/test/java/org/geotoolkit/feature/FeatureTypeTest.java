@@ -69,14 +69,13 @@ public class FeatureTypeTest extends DataTestCase {
   public void testAbstractType() throws Exception {
     
     SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-    tb.setName("AbstractThing");
+    tb.setName("http://www.nowhereinparticular.net", "AbstractThing");
     tb.setAbstract(true);
-    tb.setNamespaceURI( new URI("http://www.nowhereinparticular.net"));
     
     SimpleFeatureType abstractType = tb.buildFeatureType();
-    tb.setName( "AbstractType2" );
+    tb.setName("http://www.nowhereinparticular.net","AbstractType2");
     tb.setSuperType(abstractType);
-    tb.add( "X", String.class );
+    tb.add( new DefaultName("X"), String.class );
     SimpleFeatureType abstractType2 = tb.buildFeatureType();
     
     assertTrue(abstractType.isAbstract());
@@ -105,24 +104,22 @@ public class FeatureTypeTest extends DataTestCase {
   
   public void testEquals() throws Exception {
       SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-      tb.setName("Thing");
-      tb.setNamespaceURI("http://www.nowhereinparticular.net");
-      tb.add( "X", String.class );
+      tb.setName(new DefaultName("http://www.nowhereinparticular.net", "Thing"));
+      tb.add( new DefaultName("X"), String.class );
       final SimpleFeatureType ft = tb.buildFeatureType();
       
       tb = new SimpleFeatureTypeBuilder();
-      tb.setName( "Thing" );
-      tb.setNamespaceURI("http://www.nowhereinparticular.net");
-      tb.add( "X", String.class );
+      tb.setName(new DefaultName("http://www.nowhereinparticular.net", "Thing") );
+      tb.add( new DefaultName("X"), String.class );
       
       SimpleFeatureType ft2 = tb.buildFeatureType();
       assertEquals(ft,ft2);
       
-      tb.setName("Thingee");
+      tb.setName(new DefaultName("Thingee"));
       assertTrue(! ft.equals(tb.buildFeatureType()));
       
-      tb.init(ft);
-      tb.setNamespaceURI("http://www.somewhereelse.net");
+      tb.copy(ft);
+      tb.setName(new DefaultName("http://www.somewhereelse.net",tb.getName().getLocalPart()));
       
       assertTrue(! ft.equals(tb.buildFeatureType()));
       assertTrue(! ft.equals(null));
@@ -145,26 +142,23 @@ public class FeatureTypeTest extends DataTestCase {
      */
     @SuppressWarnings("serial")
     public void testAncestors() throws Exception {
-        URI uri = new URI("http://www.geotoolkit.org/example");
+        String uri = "http://www.geotoolkit.org/example";
         SimpleFeatureTypeBuilder tb;
 
         tb = new SimpleFeatureTypeBuilder();
-        tb.setName("A");
-        tb.setNamespaceURI(uri);
+        tb.setName(new DefaultName(uri, "A"));
         final SimpleFeatureType typeA = tb.buildFeatureType();
 
         tb = new SimpleFeatureTypeBuilder();
-        tb.setName("B");
-        tb.setNamespaceURI(uri);
+        tb.setName(new DefaultName(uri, "B"));
         tb.setSuperType(typeA);
-        tb.add("b", String.class);
+        tb.add(new DefaultName("b"), String.class);
         final SimpleFeatureType typeB = tb.buildFeatureType();
 
         tb = new SimpleFeatureTypeBuilder();
-        tb.setName("C");
-        tb.setNamespaceURI(uri);
+        tb.setName(new DefaultName(uri, "C"));
         tb.setSuperType(typeB);
-        tb.add("c", Integer.class);
+        tb.add(new DefaultName("c"), Integer.class);
         final SimpleFeatureType typeC = tb.buildFeatureType();
 
         // base type should have no ancestors
@@ -201,8 +195,11 @@ public class FeatureTypeTest extends DataTestCase {
         Double d = new Double( 3.14159 );
         
         AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         ab.setBinding(Object.class);
-        AttributeDescriptor testType = ab.buildDescriptor( "test" );
+        adb.setName(new DefaultName("test"));
+        adb.setType(ab.buildType());
+        AttributeDescriptor testType = adb.buildDescriptor();
         
         assertSame( "String", str, FeatureUtilities.duplicate( str ) );
         assertSame( "Integer", i, FeatureUtilities.duplicate( i ) );

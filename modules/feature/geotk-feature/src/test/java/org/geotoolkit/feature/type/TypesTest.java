@@ -19,6 +19,8 @@ package org.geotoolkit.feature.type;
 import junit.framework.TestCase;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
@@ -33,7 +35,7 @@ public class TypesTest extends TestCase {
         FilterFactory fac = FactoryFinder.getFilterFactory(null);
 
         String attributeName = "string";
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder(); //$NON-NLS-1$
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName("test");
         builder.add(attributeName, String.class);
         SimpleFeatureType featureType = builder.buildFeatureType();
@@ -53,9 +55,18 @@ public class TypesTest extends TestCase {
         PropertyIsEqualTo filter = fac.equals(fac.property("string"), fac
                 .literal("Value"));
 
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder(); //$NON-NLS-1$
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        atb.setBinding(String.class);
+        atb.addRestriction(filter);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        adb.setName(attributeName);
+        adb.setType(atb.buildType());
+
         builder.setName("test");
-        builder.restriction(filter).add(attributeName, String.class);
+        builder.add(adb.buildDescriptor());
+        
         SimpleFeatureType featureType = builder.buildFeatureType();
         
         SimpleFeature feature = SimpleFeatureBuilder.build(featureType, new Object[]{"Value"},
@@ -67,20 +78,25 @@ public class TypesTest extends TestCase {
     
     public void testAssertNamedAssignable(){
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+
+        builder.reset();
         builder.setName("Test");
         builder.add("name", String.class );
         builder.add("age", Double.class );
         SimpleFeatureType test = builder.buildFeatureType();
-        
+
+        builder.reset();
         builder.setName("Test");
         builder.add("age", Double.class );
         builder.add("name",String.class);
         SimpleFeatureType test2 = builder.buildFeatureType();
-        
+
+        builder.reset();
         builder.setName("Test");
         builder.add("name",String.class);
         SimpleFeatureType test3 = builder.buildFeatureType();
-     
+
+        builder.reset();
         builder.setName("Test");
         builder.add("name",String.class);
         builder.add("distance", Double.class );

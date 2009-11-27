@@ -204,6 +204,18 @@ public class AttributeTypeBuilder {
         this.name = name;
     }
 
+    public void setName(String localPart){
+        this.name = new DefaultName(localPart);
+    }
+
+    public void setName(String namespace, String localPart){
+        this.name = new DefaultName(namespace,localPart);
+    }
+
+    public void setName(String namespace, String separator, String localPart){
+        this.name = new DefaultName(namespace,separator,localPart);
+    }
+
     public Name getName() {
         return name;
     }
@@ -259,6 +271,14 @@ public class AttributeTypeBuilder {
      * </p>
      */
     public AttributeType buildType() {
+        final Name name;
+        if(this.name == null){
+            name = new DefaultName(binding.getSimpleName());
+        }else{
+            name = this.name;
+        }
+
+
         if (length != null) {
             final Filter lengthRestriction = lengthRestriction(length);
             restrictions().add(lengthRestriction);
@@ -279,6 +299,13 @@ public class AttributeTypeBuilder {
      * </p>
      */
     public GeometryType buildGeometryType() {
+        final Name name;
+        if(this.name == null){
+            name = new DefaultName(binding.getSimpleName());
+        }else{
+            name = this.name;
+        }
+
         final GeometryType type = factory.createGeometryType(
                 name, binding, crs, isIdentifiable, isAbstract,
                 restrictions(), superType, description());

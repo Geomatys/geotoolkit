@@ -33,6 +33,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.feature.IllegalAttributeException;
 
 public class FeatureFlatTest extends TestCase {
@@ -93,10 +94,26 @@ public class FeatureFlatTest extends TestCase {
     }
 
     public void testBogusCreation() throws Exception {
-        SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
         tb.setName( "test1" );
-        tb.nillable(false).add( "billy", String.class );
-        tb.nillable(false).add( "jimmy", String.class );
+
+        atb.reset();
+        atb.setBinding(String.class);
+        adb.reset();
+        adb.setNillable(false);
+        adb.setName("billy");
+        adb.setType(atb.buildType());
+        tb.add(adb.buildDescriptor());
+
+        atb.reset();
+        atb.setBinding(String.class);
+        adb.reset();
+        adb.setNillable(false);
+        adb.setName("jimmy");
+        adb.setType(atb.buildType());
+        tb.add(adb.buildDescriptor());
         
         SimpleFeatureType test = tb.buildFeatureType();
 //        try {
@@ -125,10 +142,10 @@ public class FeatureFlatTest extends TestCase {
         SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
         tb.setName( "bounds" );
         
-        tb.add("p1", Point.class);
-        tb.add("p2", Point.class);
-        tb.add("p3", Point.class);
-        tb.add("p4", Point.class);
+        tb.add("p1", Point.class, DefaultGeographicCRS.WGS84);
+        tb.add("p2", Point.class, DefaultGeographicCRS.WGS84);
+        tb.add("p3", Point.class, DefaultGeographicCRS.WGS84);
+        tb.add("p4", Point.class, DefaultGeographicCRS.WGS84);
         SimpleFeatureType t = tb.buildFeatureType();
         
         SimpleFeature f = SimpleFeatureBuilder.build(t, g, null);
@@ -159,22 +176,29 @@ public class FeatureFlatTest extends TestCase {
     }
 
     public void testToStringWontThrow() throws IllegalAttributeException {
-        SimpleFeature f = (SimpleFeature)SampleFeatureFixtures.createFeature();
+        final SimpleFeature f = (SimpleFeature)SampleFeatureFixtures.createFeature();
         f.setAttributes(new Object[f.getAttributeCount()]);
         String s = f.toString();
     }
 
     static AttributeDescriptor newAtt(String name, Class c) {
-        AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder ab = new AttributeTypeBuilder();
         ab.setBinding(c);
-        return ab.buildDescriptor( name );
+        adb.setType(ab.buildType());
+        adb.setName(name);
+        return adb.buildDescriptor();
     }
 
     static AttributeDescriptor newAtt(String name, Class c, boolean nillable) {
-        AttributeTypeBuilder ab = new AttributeTypeBuilder();
-        ab.setNillable(nillable);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder ab = new AttributeTypeBuilder();
         ab.setBinding( c );
-        return ab.buildDescriptor(name);
+
+        adb.setNillable(nillable);
+        adb.setType(ab.buildType());
+        adb.setName(name);
+        return adb.buildDescriptor();
     }
 
     public void testModify() throws IllegalAttributeException {

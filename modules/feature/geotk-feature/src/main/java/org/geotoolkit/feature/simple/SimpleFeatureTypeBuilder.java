@@ -43,6 +43,7 @@ import org.opengis.util.InternationalString;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.HashMap;
+import org.geotoolkit.feature.DefaultName;
 
 
 /**
@@ -217,6 +218,18 @@ public class SimpleFeatureTypeBuilder {
         this.name = name;
     }
 
+    public void setName(String localPart){
+        this.name = new DefaultName(localPart);
+    }
+
+    public void setName(String namespace, String localPart){
+        this.name = new DefaultName(namespace,localPart);
+    }
+
+    public void setName(String namespace, String separator, String localPart){
+        this.name = new DefaultName(namespace,separator,localPart);
+    }
+
     /**
      * The name of the built type.
      */
@@ -347,6 +360,10 @@ public class SimpleFeatureTypeBuilder {
         return (AttributeType) bindings.get(binding);
     }
 
+    public void add(final String name, final Class binding){
+        add(new DefaultName(name),binding);
+    }
+
     /**
      * Adds a new attribute w/ provided name and class.
      *
@@ -444,6 +461,9 @@ public class SimpleFeatureTypeBuilder {
         }
     }
 
+    public void add(final String name, final Class binding, final CoordinateReferenceSystem crs){
+        add(new DefaultName(name),binding,crs);
+    }
 
     /**
      * Adds a new geometric attribute w/ provided name, class, and spatial
@@ -484,7 +504,6 @@ public class SimpleFeatureTypeBuilder {
 
         add(descriptor);
     }
-
 
     /**
      * Adds a new geometric attribute w/ provided name, class, and spatial

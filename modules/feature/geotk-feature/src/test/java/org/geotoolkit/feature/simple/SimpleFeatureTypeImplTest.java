@@ -28,6 +28,7 @@ import org.opengis.feature.type.PropertyDescriptor;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**
  * Tests for {@link SimpleFeatureImpl}.
@@ -80,8 +81,8 @@ public class SimpleFeatureTypeImplTest extends TestCase {
      */
     private SimpleFeatureType buildLocationCountType() {
         SimpleFeatureTypeBuilder builder = buildPartialBuilder();
-        builder.add("location", Point.class);
-        builder.add("count", Integer.class);
+        builder.add(new DefaultName("location"), Point.class, DefaultGeographicCRS.WGS84);
+        builder.add(new DefaultName("count"), Integer.class, DefaultGeographicCRS.WGS84);
         return builder.buildFeatureType();
     }
 
@@ -90,8 +91,8 @@ public class SimpleFeatureTypeImplTest extends TestCase {
      */
     private SimpleFeatureType buildCountLocationType() {
         SimpleFeatureTypeBuilder builder = buildPartialBuilder();
-        builder.add("count", Integer.class);
-        builder.add("location", Point.class);
+        builder.add(new DefaultName("count"), Integer.class);
+        builder.add(new DefaultName("location"), Point.class, DefaultGeographicCRS.WGS84);
         return builder.buildFeatureType();
     }
 
@@ -109,9 +110,8 @@ public class SimpleFeatureTypeImplTest extends TestCase {
                 Point.class, null, false, false, Collections.EMPTY_LIST, null, null));
         builder.addBinding(typeFactory.createAttributeType(new DefaultName(uri, "count"),
                 Integer.class, false, false, Collections.EMPTY_LIST, null, null));
-        builder.setName("ThingsType");
-        builder.setNamespaceURI(uri);
-        builder.add("description", String.class);
+        builder.setName(new DefaultName(uri,"ThingsType"));
+        builder.add(new DefaultName("description"), String.class);
         return builder;
     }
 

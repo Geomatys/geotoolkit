@@ -144,6 +144,18 @@ public class AttributeDescriptorBuilder {
         this.name = name;
     }
 
+    public void setName(String localPart){
+        this.name = new DefaultName(localPart);
+    }
+
+    public void setName(String namespace, String localPart){
+        this.name = new DefaultName(namespace,localPart);
+    }
+
+    public void setName(String namespace, String separator, String localPart){
+        this.name = new DefaultName(namespace,separator,localPart);
+    }
+
     public Name getName() {
         return name;
     }
