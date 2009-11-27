@@ -77,12 +77,15 @@ public class SMLDataStore extends AbstractDataStore {
     private static final String pathDescription        = "SensorML:SensorML:member:description";
     private static final String pathName               = "SensorML:SensorML:member:name";
     private static final String pathKeywords           = "SensorML:SensorML:member:keywords:keyword";
-    private static final String pathPhenomenons        = "SensorML:SensorML:member:description"; // TODO
+    private static final String pathPhenomenonsSystem  = "SensorML:SensorML:member:outputs:output:field:name";
+    private static final String pathPhenomenonsCompo   = "SensorML:SensorML:member:outputs:output:definition";
     private static final String pathInputsDef          = "SensorML:SensorML:member:inputs:input:definition";
     private static final String pathInputsNam          = "SensorML:SensorML:member:inputs:input:name";
     private static final String pathOutputsDef         = "SensorML:SensorML:member:outputs:output:field:definition";
     private static final String pathOutputsNam         = "SensorML:SensorML:member:outputs:output:field:name";
-    private static final String pathProducer           = "SensorML:SensorML:member:description";  // TODO
+    private static final String pathContactType        = "SensorML:SensorML:member:contact:role";
+    private static final String pathProducerOrg        = "SensorML:SensorML:member:contact:organizationName";
+    private static final String pathProducerInd        = "SensorML:SensorML:member:contact:individualName";
     private static final String pathComponentsNam      = "SensorML:SensorML:member:components:component:name";
     private static final String pathComponentsRef      = "SensorML:SensorML:member:components:component:href";
     private static final String pathMethod             = "SensorML:SensorML:member:description";  // TODO
@@ -90,6 +93,7 @@ public class SMLDataStore extends AbstractDataStore {
     private static final String pathCharacteristicsVal = "SensorML:SensorML:member:characteristics:field:field:value";
     private static final String pathLocation           = "SensorML:SensorML:member:location:pos";
     private static final String pathCRS                = "SensorML:SensorML:member:location:pos:srsName";
+    private static final String pathSmlRef             = "SensorML:SensorML:member:documentation:onlineResource:href";
 
     private PreparedStatement getAllFormId;
     private PreparedStatement getTextValue;
@@ -272,7 +276,7 @@ public class SMLDataStore extends AbstractDataStore {
         final SimpleFeatureType componentType = featureTypeBuilder.buildFeatureType();
         types.put(COMPONENT, componentType);
 
-        // sml:inputs
+        // sml:producer
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
@@ -283,7 +287,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeDescBuilder.setType(attributeTypeBuilder.buildType());
         final AttributeDescriptor attProd = attributeDescBuilder.buildDescriptor();
 
-        // sml:outputs
+        // sml:component
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
         attributeDescBuilder.reset();
@@ -316,7 +320,7 @@ public class SMLDataStore extends AbstractDataStore {
         final SimpleFeatureType systemType = featureTypeBuilder.buildFeatureType();
         types.put(SYSTEM, systemType);
 
-         /*
+        /*
          * Feature type sml:ProcessChain
          */
         featureTypeBuilder.reset();
@@ -480,7 +484,10 @@ public class SMLDataStore extends AbstractDataStore {
     private SimpleFeature buildFeature(SimpleFeatureBuilder builder, int formID, String typeName) throws SQLException {
         builder.reset();
 
-        // we filter on the type
+        /*
+         * we filter on the type
+         *
+         */
         getSMLType.setInt(1, formID);
         ResultSet result2 = getSMLType.executeQuery();
         String type = null;
@@ -493,6 +500,9 @@ public class SMLDataStore extends AbstractDataStore {
             return null;
         }
 
+        /*
+         * GML : DESCRIPTION
+         */
         getTextValue.setString(1, pathDescription);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
@@ -501,6 +511,9 @@ public class SMLDataStore extends AbstractDataStore {
         }
         result2.close();
 
+        /*
+         * GML : NAME
+         */
         getTextValue.setString(1, pathName);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
@@ -509,6 +522,9 @@ public class SMLDataStore extends AbstractDataStore {
         }
         result2.close();
 
+        /*
+         * SML : KEYWORDS (multiple)
+         */
         getTextValue.setString(1, pathKeywords);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
@@ -519,19 +535,21 @@ public class SMLDataStore extends AbstractDataStore {
         result2.close();
         builder.set(KEYWORDS, keywords);
 
-        getTextValue.setString(1, pathPhenomenons);
+        /*
+         *  SML : REF
+         */
+        getTextValue.setString(1, pathSmlRef);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
-        List<String> phenomenons = new ArrayList<String>();
-        while (result2.next()) {
-            phenomenons.add(result2.getString(1));
+        if (result2.next()) {
+            builder.set(SMLREF, result2.getString(1));
         }
         result2.close();
-        builder.set(PHENOMENONS, phenomenons);
-
-        // TODO smlRef
 
 
+        /*
+         * SML : INPUTS (multiple map)
+         */
         getTextValue.setString(1, pathInputsDef);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
@@ -546,6 +564,9 @@ public class SMLDataStore extends AbstractDataStore {
         result3.close();
         builder.set(INPUTS, inputs);
 
+        /*
+         * SML : OUTPUTS (multiple map)
+         */
         getTextValue.setString(1, pathOutputsDef);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
@@ -560,7 +581,9 @@ public class SMLDataStore extends AbstractDataStore {
         result3.close();
         builder.set(OUTPUTS, outputs);
 
-        //location
+        /*
+         * SML : LOCATION (geometric)
+         */
         getTextValue.setString(1, pathLocation);
         getTextValue.setInt(2, formID);
         result2 = getTextValue.executeQuery();
@@ -577,11 +600,46 @@ public class SMLDataStore extends AbstractDataStore {
         }
         result2.close();
 
-        if (typeName.equals("System") || typeName.equals("ProcessChain")) {
+        if (typeName.equals("Component")) {
 
-            // TODO producer
+            /*
+             * SML : PHENOMENONS
+             */
+            getTextValue.setString(1, pathPhenomenonsCompo);
+            getTextValue.setInt(2, formID);
+            result2 = getTextValue.executeQuery();
+            List<String> phenomenons = new ArrayList<String>();
+            if (result2.next()) {
+                phenomenons.add(result2.getString(1));
+            }
+            result2.close();
+            builder.set(PHENOMENONS, phenomenons);
+
+        } else if (typeName.equals("System") || typeName.equals("ProcessChain")) {
+
+            /*
+             * SML : PHENOMENONS (multiple)
+             */
+            getTextValue.setString(1, pathPhenomenonsSystem);
+            getTextValue.setInt(2, formID);
+            result2 = getTextValue.executeQuery();
+            List<String> phenomenons = new ArrayList<String>();
+            while (result2.next()) {
+                phenomenons.add(result2.getString(1));
+            }
+            result2.close();
+            builder.set(PHENOMENONS, phenomenons);
+
+            
+            /*
+             * TODO SML : PRODUCER
+             *
+             */
 
 
+            /*
+             * SML : COMPONENT (multiple map)
+             */
             getTextValue.setString(1, pathComponentsRef);
             getTextValue.setInt(2, formID);
             result2 = getTextValue.executeQuery();
@@ -594,12 +652,18 @@ public class SMLDataStore extends AbstractDataStore {
             }
             result2.close();
             result3.close();
+            if (components.size() == 0) {
+                components = null;
+            }
             builder.set(COMPONENTS, components);
 
         } else if (typeName.equals("ProcessModel")) {
             // TODO method
         } else if (typeName.equals("DataSourceType")) {
 
+            /*
+             * SML : CHARACTERISTIC (multiple map)
+             */
             getTextValue.setString(1, pathCharacteristicsVal);
             getTextValue.setInt(2, formID);
             result2 = getTextValue.executeQuery();
@@ -625,6 +689,10 @@ public class SMLDataStore extends AbstractDataStore {
     public void dispose() {
         super.dispose();
         try {
+            getAllFormId.close();
+            getTextValue.close();
+            getTextValue2.close();
+            getSMLType.close();
             connection.close();
         } catch (SQLException ex) {
             LOGGER.info("SQL Exception while closing SML datastore");

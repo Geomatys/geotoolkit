@@ -22,7 +22,11 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -182,8 +186,9 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
         builder.reset();
         String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
-            int nbAttribute         = 0;
-            List<Object> values     = new ArrayList<Object>();
+            int nbAttribute            = 0;
+            Map<QName, Object> values  = new HashMap<QName, Object>();
+
 
             while (streamReader.hasNext()) {
                 int event = streamReader.next();
@@ -192,15 +197,47 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                     nbAttribute++;
                     QName q                 = streamReader.getName();
 
+                    String nameAttribute = streamReader.getAttributeValue(null, "name");
+                    /*
+                     * Read a property
+                     */
                     if (!q.getLocalPart().equals(geometryName)) {
-                        int contentEvent = streamReader.next();
-                        if (contentEvent == XMLEvent.CHARACTERS) {
-                            String content =streamReader.getText();
-                            
+
+                        if (streamReader.next() == XMLEvent.CHARACTERS) {
+
+                            String content           = streamReader.getText();
                             PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q));
                             if (pdesc != null) {
-                                Class propertyType       = pdesc.getType().getBinding();
-                                builder.set(q.getLocalPart(), Converters.convert(content, propertyType));
+                                
+                                Class propertyType = pdesc.getType().getBinding();
+                                Object previous    = values.get(q);
+
+                                if (previous == null && nameAttribute != null) {
+                                    Map<String, Object> map = new HashMap<String, Object>();
+                                    map.put(nameAttribute, Converters.convert(content, propertyType));
+                                    values.put(q, map);
+
+                                } else if (previous == null) {
+                                    values.put(q, Converters.convert(content, propertyType));
+                                
+                                } else if (previous instanceof Map && nameAttribute != null) {
+                                    ((Map) previous).put(nameAttribute, Converters.convert(content, propertyType));
+
+                                } else if (previous instanceof Map && nameAttribute == null) {
+                                    LOGGER.severe("unable to reader a composite attribute no name has been found");
+
+                                } else if (previous instanceof Collection) {
+                                    ((Collection) previous).add(Converters.convert(content, propertyType));
+
+                                } else {
+                                    List multipleValue = new ArrayList();
+                                    multipleValue.add(previous);
+                                    multipleValue.add(Converters.convert(content, propertyType));
+                                    values.put(q, multipleValue);
+                                }
+                                
+                            
+                            // Unknow property launch an exception
                             } else {
                                 StringBuilder exp = new StringBuilder("expected ones are:").append('\n');
                                 for (PropertyDescriptor pd : featureType.getDescriptors()) {
@@ -212,6 +249,9 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                             LOGGER.severe("unexpected event");
                         }
 
+                    /*
+                     * Reading Geometry property with JAXB
+                     */
                     } else {
                         event = streamReader.next();
                         while (event != XMLEvent.START_ELEMENT) {
@@ -227,6 +267,12 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                             ex.printStackTrace();
                         }
                     }
+
+                    // we fill  the builder with the properties
+                    for (Entry<QName, Object> entry : values.entrySet()) {
+                        builder.set(entry.getKey().getLocalPart(), entry.getValue());
+                    }
+                    
 
                 } else if (event == XMLEvent.END_ELEMENT) {
                     QName q             = streamReader.getName();

@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
@@ -48,6 +49,10 @@ import org.opengis.referencing.FactoryException;
  */
 public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
+    private int lastUnknowPrefix = 0;
+
+    private Map<String, String> UnknowNamespaces = new HashMap<String, String>();
+    
     public JAXPStreamFeatureWriter() throws JAXBException {
         super();
     }
@@ -120,26 +125,28 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             String namespace = type.getName().getNamespaceURI();
             String localPart = type.getName().getLocalPart();
             if (namespace != null) {
-                String prefix = Namespaces.getPreferredPrefix(namespace, null);
-                streamWriter.writeStartElement(prefix, localPart, namespace);
-                streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", feature.getID());
+                Prefix prefix = getPrefix(namespace);
+                streamWriter.writeStartElement(prefix.prefix, localPart, namespace);
+                streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", feature.getID());
+                if (prefix.unknow && !root) {
+                    streamWriter.writeNamespace(prefix.prefix, namespace);
+                }
                 if (root) {
-                    streamWriter.writeNamespace("gml", "http://www.opengis.net/gml");
-                    if (!namespace.equals("http://www.opengis.net/gml")) {
-                        streamWriter.writeNamespace(prefix, namespace);
-
+                    streamWriter.writeNamespace("gml", GML_NAMESPACE);
+                    if (!namespace.equals(GML_NAMESPACE)) {
+                        streamWriter.writeNamespace(prefix.prefix, namespace);
                     }
                 }
             } else {
                 streamWriter.writeStartElement(localPart);
-                streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", feature.getID());
+                streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", feature.getID());
             }
             
 
 
             //the simple nodes (attributes of the feature)
-            Name geometryName = null;
             for (Property a : feature.getProperties()) {
+
                 if (a.getValue() instanceof Collection && !(a.getType() instanceof GeometryType)) {
                     String namespaceProperty = a.getName().getNamespaceURI();
                     for (Object value : (Collection)a.getValue()) {
@@ -169,39 +176,49 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 } else if (!(a.getType() instanceof GeometryType)) {
                     
                     String value = Utils.getStringValue(a.getValue());
-                    if (value != null || a.isNillable()) {
+                    if (value != null || (value == null && !a.isNillable())) {
+                        
                         String namespaceProperty = a.getName().getNamespaceURI();
+                        String nameProperty      = a.getName().getLocalPart();
+                        if ((nameProperty.equals("name") || nameProperty.equals("description")) && !GML_NAMESPACE.equals(namespaceProperty)) {
+                            namespaceProperty = GML_NAMESPACE;
+                            LOGGER.warning("the property name and description of a feature must have the GML namespace");
+                        }
                         if (namespaceProperty != null) {
-                            streamWriter.writeStartElement(namespaceProperty, a.getName().getLocalPart());
+                            streamWriter.writeStartElement(namespaceProperty, nameProperty);
                         } else {
-                            streamWriter.writeStartElement(a.getName().getLocalPart());
+                            streamWriter.writeStartElement(nameProperty);
                         }
                         if (value != null) {
                             streamWriter.writeCharacters(value);
                         }
                         streamWriter.writeEndElement();
                     }
+
+                // we add the geometry
                 } else {
-                    geometryName = a.getName();
+                    
+                    Name geometryName        = a.getName();
+                    String namespaceProperty = geometryName.getNamespaceURI();
+                    if (namespaceProperty != null) {
+                        streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                    } else {
+                        streamWriter.writeStartElement(geometryName.getLocalPart());
+                    }
+                    Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());
+                    try {
+                        marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
+                    } catch (JAXBException ex) {
+                        LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
+                    }
+                    streamWriter.writeEndElement();
                 }
             }
 
-            // we add the geometry
+            
             if (feature.getDefaultGeometry() != null) {
 
-                String namespaceProperty = geometryName.getNamespaceURI();
-                if (namespaceProperty != null) {
-                    streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
-                } else {
-                    streamWriter.writeStartElement(geometryName.getLocalPart());
-                }
-                Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
-                try {
-                    marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
-                } catch (JAXBException ex) {
-                    LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
-                }
-                streamWriter.writeEndElement();
+                
             }
 
             streamWriter.writeEndElement();
@@ -261,15 +278,15 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
             // the root Element
             streamWriter.writeStartElement("wfs", "FeatureCollection", "http://www.opengis.net/wfs");
-            streamWriter.writeAttribute("gml", "http://www.opengis.net/gml", "id", featureCollection.getID());
-            streamWriter.writeNamespace("gml", "http://www.opengis.net/gml");
+            streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", featureCollection.getID());
+            streamWriter.writeNamespace("gml", GML_NAMESPACE);
             streamWriter.writeNamespace("wfs", "http://www.opengis.net/wfs");
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !namespace.equals("http://www.opengis.net/gml")) {
-                String prefix    = Namespaces.getPreferredPrefix(namespace, null);
-                streamWriter.writeNamespace(prefix, namespace);
+            if (namespace != null && !namespace.equals(GML_NAMESPACE)) {
+                Prefix prefix    = getPrefix(namespace);
+                streamWriter.writeNamespace(prefix.prefix, namespace);
             }
              /*
              * The boundedby part
@@ -281,7 +298,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             while (iterator.hasNext()) {
                 final SimpleFeature f = (SimpleFeature) iterator.next();
 
-                streamWriter.writeStartElement("gml", "featureMember", "http://www.opengis.net/gml");
+                streamWriter.writeStartElement("gml", "featureMember", GML_NAMESPACE);
                 writeFeature(f, streamWriter, false);
                 streamWriter.writeEndElement();
             }
@@ -308,26 +325,51 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
             }
-            streamWriter.writeStartElement("gml", "boundedBy", "http://www.opengis.net/gml");
-            streamWriter.writeStartElement("gml", "Envelope", "http://www.opengis.net/gml");
+            streamWriter.writeStartElement("gml", "boundedBy", GML_NAMESPACE);
+            streamWriter.writeStartElement("gml", "Envelope", GML_NAMESPACE);
             if (srsName != null) {
                 streamWriter.writeAttribute("srsName", srsName);
             }
 
             // lower corner
-            streamWriter.writeStartElement("gml", "lowerCorner", "http://www.opengis.net/gml");
+            streamWriter.writeStartElement("gml", "lowerCorner", GML_NAMESPACE);
             String lowValue = bounds.getLowerCorner().getOrdinate(0) + " " + bounds.getLowerCorner().getOrdinate(1);
             streamWriter.writeCharacters(lowValue);
             streamWriter.writeEndElement();
 
             // upper corner
-            streamWriter.writeStartElement("gml", "upperCorner", "http://www.opengis.net/gml");
+            streamWriter.writeStartElement("gml", "upperCorner", GML_NAMESPACE);
             String uppValue = bounds.getUpperCorner().getOrdinate(0) + " " + bounds.getUpperCorner().getOrdinate(1);
             streamWriter.writeCharacters(uppValue);
             streamWriter.writeEndElement();
 
             streamWriter.writeEndElement();
             streamWriter.writeEndElement();
+        }
+    }
+
+    private Prefix getPrefix(String namespace) {
+        String prefix = Namespaces.getPreferredPrefix(namespace, null);
+        boolean unknow = false;
+        if (prefix == null) {
+            prefix = UnknowNamespaces.get(namespace);
+            if (prefix == null) {
+                prefix = "ns" + lastUnknowPrefix;
+                lastUnknowPrefix++;
+                unknow = true;
+                UnknowNamespaces.put(namespace, prefix);
+            }
+        }
+        return new Prefix(unknow, prefix);
+    }
+
+    private class Prefix {
+        public boolean unknow;
+        public String prefix;
+
+        public Prefix(boolean unknow, String prefix) {
+            this.prefix = prefix;
+            this.unknow = unknow;
         }
     }
 }

@@ -45,12 +45,12 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     /**
      * Parameter for database port
      */
-    public static final GeneralParameterDescriptor PORT = new DefaultParameterDescriptor("port","Port",Integer.class,5432,true);
+    public static final GeneralParameterDescriptor PORT = new DefaultParameterDescriptor("port","Port",Integer.class,5432, false);
 
     /**
      * Parameter identifying the OM datastore
      */
-    public static final GeneralParameterDescriptor DBTYPE = new DefaultParameterDescriptor("dbtype","DbType",String.class, "OM",true);
+    public static final GeneralParameterDescriptor DBTYPE = new DefaultParameterDescriptor("dbtype","DbType",String.class, null, true);
 
     /**
      * Parameter for database type (postgres, derby, ...)
@@ -60,33 +60,27 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     /**
      * Parameter for database url for derby database
      */
-    public static final GeneralParameterDescriptor DERBYURL = new DefaultParameterDescriptor("derbyurl","DerbyURL",String.class, null,true);
+    public static final GeneralParameterDescriptor DERBYURL = new DefaultParameterDescriptor("derbyurl","DerbyURL",String.class, null,false);
 
     /**
      * Parameter for database host
      */
-    public static final GeneralParameterDescriptor HOST = new DefaultParameterDescriptor("host","Host", String.class, "localhost",true);
+    public static final GeneralParameterDescriptor HOST = new DefaultParameterDescriptor("host","Host", String.class, "localhost",false);
 
     /**
      * Parameter for database name
      */
-    public static final GeneralParameterDescriptor DATABASE = new DefaultParameterDescriptor("database","Database", String.class, "observations",true);
+    public static final GeneralParameterDescriptor DATABASE = new DefaultParameterDescriptor("database","Database", String.class, null, false);
 
     /**
      * Parameter for database user name
      */
-    public static final GeneralParameterDescriptor USER = new DefaultParameterDescriptor("user","User", String.class, "boby",true);
+    public static final GeneralParameterDescriptor USER = new DefaultParameterDescriptor("user","User", String.class, null,false);
 
     /**
      * Parameter for database user password
      */
-    public static final GeneralParameterDescriptor PASSWD = new DefaultParameterDescriptor("password","Password", String.class, "secret",true);
-
-    /**
-     * Parameter for feature type namespace
-     */
-    public static final GeneralParameterDescriptor NAMESPACE = new DefaultParameterDescriptor("namespace","Namespace", String.class, "http://www.geotoolkit.org",true);
-
+    public static final GeneralParameterDescriptor PASSWD = new DefaultParameterDescriptor("password","Password", String.class, null, false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("OMParameters",
@@ -108,6 +102,21 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     @Override
     public ParameterDescriptorGroup getParametersDescriptor() {
         return PARAMETERS_DESCRIPTOR;
+    }
+
+    @Override
+    public boolean canProcess(ParameterValueGroup params) {
+        boolean valid = super.canProcess(params);
+        if(valid){
+            Object value = params.parameter(DBTYPE.getName().toString()).getValue();
+            if(value != null && value instanceof String){
+                return value.toString().equals("OM");
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
     }
 
     @Override

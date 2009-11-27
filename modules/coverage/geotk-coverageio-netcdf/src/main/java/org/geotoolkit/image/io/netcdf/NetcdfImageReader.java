@@ -52,7 +52,7 @@ import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 
-import org.geotoolkit.image.io.FileImageReader;
+import org.geotoolkit.image.io.GeoFileImageReader;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.GeographicMetadata;
 import org.geotoolkit.math.Statistics;
@@ -100,7 +100,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.4
  * @module
  */
-public class NetcdfImageReader extends FileImageReader implements CancelTask {
+public class NetcdfImageReader extends GeoFileImageReader implements CancelTask {
     /**
      * The URL protocol for connections to a DODS server. Any URL with this protocol will be
      * open using {@link DODSNetcdfFile} instead of the ordinary {@link NetcdfDataset}. The
@@ -946,7 +946,7 @@ scan:       while (it.hasNext()) {
      * @author Antoine Hnawia
      * @author Martin Desruisseaux
      */
-    public static class Spi extends FileImageReader.Spi {
+    public static class Spi extends GeoFileImageReader.Spi {
         /**
          * List of legal names for NetCDF readers.
          */

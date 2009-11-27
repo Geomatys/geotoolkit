@@ -164,7 +164,6 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             }
 
             //the simple nodes (attributes of the feature)
-            Name geometryName = null;
             for (Property a : feature.getProperties()) {
                 if (!(a.getType() instanceof GeometryType)) {
                     if (a.getName() != null)  {
@@ -181,28 +180,26 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
                     } else {
                         LOGGER.severe("the propertyName is null for property:" + a);
                     }
+                    
+                // we add the geometry
                 } else {
-                    geometryName = a.getName();
+                    Name geometryName = a.getName();
+                    QName geomQname;
+                    if (geometryName.getNamespaceURI() != null) {
+                        prefix = Namespaces.getPreferredPrefix(geometryName.getNamespaceURI(), "");
+                        geomQname = new QName(geometryName.getNamespaceURI(), geometryName.getLocalPart(), prefix);
+                    } else {
+                        geomQname = new QName(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                    }
+                    eventWriter.add(new StartElementEvent(geomQname));
+                    Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());
+                    try {
+                        marshaller.marshal(factory.buildAnyGeometry(isoGeometry), eventWriter);
+                    } catch (JAXBException ex) {
+                        LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
+                    }
+                    eventWriter.add(new EndElementEvent(geomQname));
                 }
-            }
-
-            // we add the geometry
-            if (feature.getDefaultGeometry() != null) {
-                QName geomQname;
-                if (geometryName.getNamespaceURI() != null) {
-                    prefix    = Namespaces.getPreferredPrefix(geometryName.getNamespaceURI(), "");
-                    geomQname = new QName(geometryName.getNamespaceURI(), geometryName.getLocalPart(), prefix);
-                } else {
-                    geomQname = new QName(geometryName.getNamespaceURI(), geometryName.getLocalPart());
-                }
-                eventWriter.add(new StartElementEvent(geomQname));
-                Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) feature.getDefaultGeometry(), feature.getFeatureType().getCoordinateReferenceSystem());
-                try {
-                    marshaller.marshal(factory.buildAnyGeometry(isoGeometry), eventWriter);
-                } catch (JAXBException ex) {
-                    LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
-                } 
-                eventWriter.add(new EndElementEvent(geomQname));
             }
 
             eventWriter.add(new EndElementEvent(rootName));

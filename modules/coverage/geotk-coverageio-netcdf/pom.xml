@@ -76,8 +76,8 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-coverageio</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-coverageio-pending</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
