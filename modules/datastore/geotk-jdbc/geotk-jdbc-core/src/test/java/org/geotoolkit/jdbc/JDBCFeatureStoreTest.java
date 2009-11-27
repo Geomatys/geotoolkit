@@ -43,6 +43,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
 public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
@@ -183,9 +185,13 @@ public abstract class JDBCFeatureStoreTest extends JDBCTestSupport {
         
         // make up a fake attribute with the same name, something that might happen
         // in chains of retyping where attributes are rebuilt
-        AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder ab = new AttributeTypeBuilder();
         ab.setBinding(Point.class);
-        AttributeDescriptor madeUp = ab.buildDescriptor(aname("geometry"));
+        ab.setCRS(DefaultGeographicCRS.WGS84);
+        adb.setType(ab.buildGeometryType());
+        adb.setName(aname("geometry"));
+        AttributeDescriptor madeUp = adb.buildDescriptor();
         
         featureStore.updateFeatures(new AttributeDescriptor[] { madeUp },
             new Object[] { point }, Filter.INCLUDE);

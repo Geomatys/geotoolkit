@@ -93,6 +93,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 
 
 /**
@@ -506,11 +507,11 @@ public class ShapefileDataStore extends AbstractDataStore {
             final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
             builder.setDefaultGeometry(geomDescriptor.getLocalName());
             builder.addAll(types);
-            builder.setName(createFeatureTypeName());
+            
             if (namespace != null) {
-                builder.setNamespaceURI(namespace);
+                builder.setName(namespace.toString(),createFeatureTypeName());
             } else {
-                builder.setNamespaceURI(BasicFeatureTypes.DEFAULT_NAMESPACE);
+                builder.setName(BasicFeatureTypes.DEFAULT_NAMESPACE,createFeatureTypeName());
             }
             builder.setAbstract(false);
             if (parent != null) {
@@ -542,18 +543,21 @@ public class ShapefileDataStore extends AbstractDataStore {
         }
         
 
-        final AttributeTypeBuilder build = new AttributeTypeBuilder();
+        final AttributeTypeBuilder buildAtt = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder buildDesc = new AttributeDescriptorBuilder();
         final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>();
         
         try {
             final Class<?> geometryClass = shp.getHeader().getShapeType().bestJTSClass();
-            build.setName(Classes.getShortName(geometryClass));
-            build.setNillable(true);
-            build.setCRS(crs);
-            build.setBinding(geometryClass);
+            buildAtt.setName(Classes.getShortName(geometryClass));
+            buildAtt.setCRS(crs);
+            buildAtt.setBinding(geometryClass);
 
-            final GeometryType geometryType = build.buildGeometryType();
-            attributes.add(build.buildDescriptor(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME, geometryType));
+            buildDesc.setNillable(true);
+            buildDesc.setName(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+            buildDesc.setType(buildAtt.buildGeometryType());
+
+            attributes.add(buildDesc.buildDescriptor());
 
             // record names in case of duplicates
             final Set<String> usedNames = new HashSet<String>();
@@ -578,10 +582,17 @@ public class ShapefileDataStore extends AbstractDataStore {
                     }
                     usedNames.add(name);
 
-                    build.setNillable(true);
-                    build.setLength(length);
-                    build.setBinding(attributeClass);
-                    attributes.add(build.buildDescriptor(name));
+                    buildAtt.reset();
+                    buildAtt.setName(name);
+                    buildAtt.setBinding(attributeClass);
+                    buildAtt.setLength(length);
+                    
+                    buildDesc.reset();
+                    buildDesc.setName(name);
+                    buildDesc.setNillable(true);
+                    buildDesc.setType(buildAtt.buildType());
+
+                    attributes.add(buildDesc.buildDescriptor());
                 }
             }
             return attributes;

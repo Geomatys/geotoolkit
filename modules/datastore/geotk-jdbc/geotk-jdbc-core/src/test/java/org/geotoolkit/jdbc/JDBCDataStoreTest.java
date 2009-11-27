@@ -45,6 +45,9 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
 public abstract class JDBCDataStoreTest extends JDBCTestSupport {
@@ -71,8 +74,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
     public void testCreateSchema() throws Exception {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.setName(tname("ft2"));
-        builder.setNamespaceURI(dataStore.getNamespaceURI());
+        builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
         builder.add(aname("geometry"), Geometry.class);
         builder.add(aname("intProperty"), Integer.class);
         builder.add(aname("dateProperty"), Date.class);
@@ -115,13 +117,31 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
     
     public void testCreateSchemaWithConstraints() throws Exception {
-        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.setName(tname("ft2"));
-        builder.setNamespaceURI(dataStore.getNamespaceURI());
-        builder.add(aname("geometry"), Geometry.class);
-        builder.nillable(false).add(aname("intProperty"), Integer.class);
-        
-        builder.length(5).add(aname("stringProperty"), String.class);
+
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
+        builder.add(aname("geometry"), Geometry.class, DefaultGeographicCRS.WGS84);
+
+        atb.reset();
+        atb.setBinding(Integer.class);
+        adb.reset();
+        adb.setName(aname("intProperty"));
+        adb.setType(atb.buildType());
+        adb.setNillable(false);
+        builder.add(adb.buildDescriptor());
+
+        atb.reset();
+        adb.setName(aname("stringProperty"));
+        atb.setBinding(String.class);
+        atb.setLength(5);
+        adb.reset();
+        adb.setName(aname("stringProperty"));
+        adb.setType(atb.buildType());
+        builder.add(adb.buildDescriptor());
+
         
         SimpleFeatureType featureType = builder.buildFeatureType();
         dataStore.createSchema(featureType);

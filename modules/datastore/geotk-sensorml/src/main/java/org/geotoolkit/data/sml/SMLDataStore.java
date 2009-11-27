@@ -39,6 +39,7 @@ import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
@@ -147,95 +148,115 @@ public class SMLDataStore extends AbstractDataStore {
     }
 
     private void initTypes() {
-        AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
+        final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        final AttributeDescriptorBuilder attributeDescBuilder = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder attributeTypeBuilder = new AttributeTypeBuilder();
 
         // gml:description
-        Name propertyName = DESC;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        AttributeType propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attDescription = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(DESC);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attDescription = attributeDescBuilder.buildDescriptor();
         
 
         // gml:name
-        propertyName = NAME;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(false);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attName = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(NAME);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(false);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attName = attributeDescBuilder.buildDescriptor();
         
         // sml:keywords
-        propertyName = KEYWORDS;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attkey = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(KEYWORDS);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attkey = attributeDescBuilder.buildDescriptor();
 
         // sml:location
-        propertyName = LOCATION;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Point.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(false);
-        propertyType = attributeTypeBuilder.buildGeometryType();
-        AttributeDescriptor attLocation = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(LOCATION);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(false);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attLocation = attributeDescBuilder.buildDescriptor();
 
         // sml:phenomenons
-        propertyName = PHENOMENONS;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attPhen = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(PHENOMENONS);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attPhen = attributeDescBuilder.buildDescriptor();
 
         // sml:smltype
-        propertyName = SMLTYPE;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attSmt = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(SMLTYPE);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attSmt = attributeDescBuilder.buildDescriptor();
 
         // sml:smlref
-        propertyName = SMLREF;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attSmr = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(SMLREF);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attSmr = attributeDescBuilder.buildDescriptor();
 
         // sml:inputs
-        propertyName = INPUTS;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attInp = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(INPUTS);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attInp = attributeDescBuilder.buildDescriptor();
 
         // sml:outputs
-        propertyName = OUTPUTS;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attOut = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(OUTPUTS);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attOut = attributeDescBuilder.buildDescriptor();
 
 
         /*
          * Feature type sml:Component
          */
-        SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        featureTypeBuilder.reset();
         featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "Component"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
@@ -248,32 +269,36 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(7, attInp);
         featureTypeBuilder.add(8, attOut);
 
-        SimpleFeatureType componentType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType componentType = featureTypeBuilder.buildFeatureType();
         types.put(COMPONENT, componentType);
 
         // sml:inputs
-        propertyName = PRODUCER;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attProd = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(PRODUCER);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attProd = attributeDescBuilder.buildDescriptor();
 
         // sml:outputs
-        propertyName = COMPONENTS;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attCom = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(COMPONENTS);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attCom = attributeDescBuilder.buildDescriptor();
 
 
         /*
          * Feature type sml:System
          */
-        featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        featureTypeBuilder.reset();
         featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "System"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
@@ -288,13 +313,13 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attProd);
         featureTypeBuilder.add(10, attCom);
 
-        SimpleFeatureType systemType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType systemType = featureTypeBuilder.buildFeatureType();
         types.put(SYSTEM, systemType);
 
          /*
          * Feature type sml:ProcessChain
          */
-        featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        featureTypeBuilder.reset();
         featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "ProcessChain"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
@@ -309,22 +334,24 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(9, attProd);
         featureTypeBuilder.add(10, attCom);
 
-        SimpleFeatureType processChainType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType processChainType = featureTypeBuilder.buildFeatureType();
         types.put(PROCESSCHAIN, processChainType);
 
         // sml:method
-        propertyName = METHOD;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attMet = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(METHOD);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attMet = attributeDescBuilder.buildDescriptor();
 
          /*
          * Feature type sml:ProcessModel
          */
-        featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        featureTypeBuilder.reset();
         featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "ProcessModel"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
@@ -338,22 +365,24 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
         featureTypeBuilder.add(9, attMet);
 
-        SimpleFeatureType processModelType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType processModelType = featureTypeBuilder.buildFeatureType();
         types.put(PROCESSMODEL, processModelType);
 
         // sml:characteristics
-        propertyName = CHARACTERISTICS;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attChar = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(CHARACTERISTICS);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        final AttributeDescriptor attChar = attributeDescBuilder.buildDescriptor();
 
          /*
          * Feature type sml:DataSourceType
          */
-        featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        featureTypeBuilder.reset();
         featureTypeBuilder.setName(new DefaultName("http://www.opengis.net/sml/1.0", "DataSourceType"));
         featureTypeBuilder.add(0, attDescription);
         featureTypeBuilder.add(1, attName);
@@ -367,7 +396,7 @@ public class SMLDataStore extends AbstractDataStore {
         featureTypeBuilder.add(8, attOut);
         featureTypeBuilder.add(9, attChar);
 
-        SimpleFeatureType dataSourceType = featureTypeBuilder.buildFeatureType();
+        final SimpleFeatureType dataSourceType = featureTypeBuilder.buildFeatureType();
         types.put(DATASOURCETYPE, dataSourceType);
     }
 

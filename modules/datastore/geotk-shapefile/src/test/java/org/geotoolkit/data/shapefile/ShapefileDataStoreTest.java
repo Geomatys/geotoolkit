@@ -67,6 +67,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**
  * 
@@ -226,12 +227,8 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
         SimpleFeatureType schema = firstFeature(features).getFeatureType();
 
-        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema,
-                BasicFeatureTypes.POLYGON));
-        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema,
-                BasicFeatureTypes.POLYGON));
-        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema,
-                FeatureTypeUtilities.DEFAULT_NAMESPACE, "polygonFeature"));
+        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, BasicFeatureTypes.POLYGON));
+        assertTrue(FeatureTypeUtilities.isDecendedFrom(schema, FeatureTypeUtilities.DEFAULT_NAMESPACE, "polygonFeature"));
     }
 
     public void testCreateSchemaWithEmptyCRS() throws Exception {
@@ -688,7 +685,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     private SimpleFeatureType createExampleSchema() {
         SimpleFeatureTypeBuilder build = new SimpleFeatureTypeBuilder();
         build.setName("junk");
-        build.add("a", Point.class);
+        build.add("a", Point.class, DefaultGeographicCRS.WGS84);
         build.add("b", Byte.class);
         build.add("c", Short.class);
         build.add("d", Double.class);
@@ -732,7 +729,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
         ftb.setName("Junk");
-        ftb.add("a", geom.getClass());
+        ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
         SimpleFeatureType type = ftb.buildFeatureType();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollectionUtilities.createCollection();

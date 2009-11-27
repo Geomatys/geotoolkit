@@ -37,6 +37,7 @@ import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
@@ -93,56 +94,61 @@ public class OMDataStore extends AbstractDataStore {
     }
 
     private void initTypes() {
-        SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
-        AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
+        final SimpleFeatureTypeBuilder featureTypeBuilder = new SimpleFeatureTypeBuilder();
+        final AttributeDescriptorBuilder attributeDescBuilder   = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder attributeTypeBuilder   = new AttributeTypeBuilder();
 
         featureTypeBuilder.setName(SAMPLINGPOINT);
         
         // gml:description
-        Name propertyName = DESC;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(0);
-        attributeTypeBuilder.setNillable(true);
-        AttributeType propertyType = attributeTypeBuilder.buildType();
-        AttributeDescriptor attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(0, attdesc);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(DESC);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(0);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
 
         // gml:name
-        propertyName = NAME;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(false);
-        propertyType = attributeTypeBuilder.buildType();
-        attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(1, attdesc);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(NAME);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(false);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
 
         // To see BoundedBy
 
         // sa:sampledFeature href?
-        propertyName = SAMPLED;
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(String.class);
-        attributeTypeBuilder.setMaxOccurs(Integer.MAX_VALUE);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(true);
-        propertyType = attributeTypeBuilder.buildType();
-        attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(2, attdesc);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(SAMPLED);
+        attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(true);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
 
-        // sa:Position 
-        propertyName = POSITION;
+        // sa:Position
+        attributeTypeBuilder.reset();
         attributeTypeBuilder.setBinding(Point.class);
-        attributeTypeBuilder.setMaxOccurs(1);
-        attributeTypeBuilder.setMinOccurs(1);
-        attributeTypeBuilder.setNillable(false);
-        propertyType = attributeTypeBuilder.buildGeometryType();
-        attdesc = attributeTypeBuilder.buildDescriptor(propertyName, propertyType);
-        featureTypeBuilder.add(3, attdesc);
+        attributeDescBuilder.reset();
+        attributeDescBuilder.setName(POSITION);
+        attributeDescBuilder.setMaxOccurs(1);
+        attributeDescBuilder.setMinOccurs(1);
+        attributeDescBuilder.setNillable(false);
+        attributeDescBuilder.setType(attributeTypeBuilder.buildGeometryType());
+        featureTypeBuilder.add(attributeDescBuilder.buildDescriptor());
+
         featureTypeBuilder.setDefaultGeometry(POSITION.getLocalPart());
 
-        SimpleFeatureType samplingPointType = featureTypeBuilder.buildFeatureType();
-        types.put(SAMPLINGPOINT, samplingPointType);
+        types.put(SAMPLINGPOINT, featureTypeBuilder.buildFeatureType());
     }
 
     /**

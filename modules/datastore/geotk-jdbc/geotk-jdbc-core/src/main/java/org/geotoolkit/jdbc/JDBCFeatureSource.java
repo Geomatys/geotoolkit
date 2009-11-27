@@ -55,7 +55,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import static org.geotoolkit.factory.Hints.Key;
 
@@ -121,11 +123,11 @@ public class JDBCFeatureSource extends ContentFeatureSource {
     @Override
     protected SimpleFeatureType buildFeatureType() throws IOException {
         final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-        final AttributeTypeBuilder ab = new AttributeTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
 
         //set up the name
         final String tableName = entry.getName().getLocalPart();
-        tb.setName(tableName);
 
         //set the namespace, if not null
         final String namespace;
@@ -136,8 +138,8 @@ public class JDBCFeatureSource extends ContentFeatureSource {
             namespace = getDataStore().getNamespaceURI();
         }
 
-        tb.setNamespaceURI(namespace);
-        ab.setNamespaceURI(namespace);
+        tb.setName(namespace,tableName);
+
 
 
         //grab the schema
@@ -179,6 +181,9 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                 final SQLDialect dialect = getDataStore().getSQLDialect();
 
                 while (columns.next()) {
+                    adb.reset();
+                    atb.reset();
+
                     String name = columns.getString("COLUMN_NAME");
 
                     //do not include primary key in the type
@@ -268,8 +273,8 @@ public class JDBCFeatureSource extends ContentFeatureSource {
 
                     //nullability
                     if ( "NO".equalsIgnoreCase( columns.getString( "IS_NULLABLE" ) ) ) {
-                        ab.setNillable(false);
-                        ab.setMinOccurs(1);
+                        adb.setNillable(false);
+                        adb.setMinOccurs(1);
                     }
                     
                     //determine if this attribute is a geometry or not
@@ -288,17 +293,20 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                             getDataStore().getLogger().log(Level.WARNING, msg, e);
                         }
 
-                        ab.setBinding(binding);
-                        ab.setName(name);
-                        ab.setCRS(crs);
-                        if(srid != null)
-                            ab.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
-                        tb.add(ab.buildDescriptor(new DefaultName(namespace, name), ab.buildGeometryType()));
+                        atb.setBinding(binding);
+                        atb.setName(namespace,name);
+                        atb.setCRS(crs);
+                        if(srid != null) adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
+                        adb.setName(namespace,name);
+                        adb.setType(atb.buildGeometryType());
+                        tb.add(adb.buildDescriptor());
                     } else {
                         //add the attribute
-                        ab.setName(name);
-                        ab.setBinding(binding);
-                        tb.add(ab.buildDescriptor(new DefaultName(namespace, name), ab.buildType()));
+                        atb.setName(namespace,name);
+                        atb.setBinding(binding);
+                        adb.setName(namespace,name);
+                        adb.setType(atb.buildGeometryType());
+                        tb.add(adb.buildDescriptor());
                     }
                 }
 

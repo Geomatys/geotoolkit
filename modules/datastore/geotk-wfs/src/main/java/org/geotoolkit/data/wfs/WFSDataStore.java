@@ -39,8 +39,8 @@ import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.store.EmptyFeatureCollection;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
@@ -125,16 +125,17 @@ public class WFSDataStore extends AbstractDataStore{
             }
 
             final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-            sftb.setCRS(crs);
             sftb.setName(sft.getName());
+
             for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
                 if(desc instanceof GeometryDescriptor){
-                    GeometryDescriptor gd = (GeometryDescriptor) desc;
+                    final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
                     final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-                    atb.init(gd);
+                    atb.copy(desc.getType());
                     atb.setCRS(crs);
-                    gd = atb.buildDescriptor(gd.getLocalName(), atb.buildGeometryType());
-                    sftb.add(gd);
+                    adb.copy(desc);
+                    adb.setType(atb.buildGeometryType());
+                    sftb.add(adb.buildDescriptor());
                 }else{
                     sftb.add(desc);
                 }

@@ -41,6 +41,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.PrecisionModel;
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**
  *
@@ -119,7 +120,7 @@ public class FeatureCollectionTest extends TestCase {
     
     SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
     tb.setName("bounds");
-    tb.add( "p1", Point.class );
+    tb.add( "p1", Point.class, DefaultGeographicCRS.WGS84 );
     
     SimpleFeatureType t = tb.buildFeatureType();
     

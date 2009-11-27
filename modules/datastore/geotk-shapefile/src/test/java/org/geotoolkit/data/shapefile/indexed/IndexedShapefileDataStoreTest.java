@@ -77,6 +77,7 @@ import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**
  * 
@@ -571,7 +572,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     private SimpleFeatureType createExampleSchema() {
         SimpleFeatureTypeBuilder build = new SimpleFeatureTypeBuilder();
         build.setName("junk");
-        build.add("a", Point.class);
+        build.add("a", Point.class, DefaultGeographicCRS.WGS84);
         build.add("b", Byte.class);
         build.add("c", Short.class);
         build.add("d", Double.class);
@@ -676,7 +677,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         // make features
         SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
         ftb.setName("Junk");
-        ftb.add("a", geom.getClass());
+        ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
         SimpleFeatureType type = ftb.buildFeatureType();
 
         FeatureCollection<SimpleFeatureType, SimpleFeature> features = FeatureCollectionUtilities.createCollection();

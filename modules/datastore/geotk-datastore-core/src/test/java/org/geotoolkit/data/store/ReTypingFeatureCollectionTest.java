@@ -27,7 +27,7 @@ public class ReTypingFeatureCollectionTest extends FeatureCollectionWrapperTestS
         SimpleFeatureType original = delegate.getSchema();
         String newName = original.getTypeName() + "xxx";
         SimpleFeatureTypeBuilder stb = new SimpleFeatureTypeBuilder();
-        stb.init(original);
+        stb.copy(original);
         stb.setName(newName);
         SimpleFeatureType renamed = stb.buildFeatureType();
 

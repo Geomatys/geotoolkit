@@ -54,8 +54,7 @@ public class ForceCoordinateSystemFeatureReaderTest extends TestCase {
 
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(FEATURE_TYPE_NAME);
-        builder.setCRS(crs);
-        builder.add("geom", Point.class);
+        builder.add("geom", Point.class,crs);
 
         SimpleFeatureType ft = builder.buildFeatureType();
 

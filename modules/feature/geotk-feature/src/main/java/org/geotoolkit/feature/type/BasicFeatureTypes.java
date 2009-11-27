@@ -94,13 +94,13 @@ public class BasicFeatureTypes {
 
             //AttributeDescriptor[] types =  new AttributeDescriptor[] {};
 
-            build.setName(new DefaultName("pointFeature"));
+            build.setName(DEFAULT_NAMESPACE,"pointFeature");
             tmpPoint = build.buildFeatureType();
 
-            build.setName(new DefaultName("lineFeature"));
+            build.setName(DEFAULT_NAMESPACE,"lineFeature");
             tmpLine = build.buildFeatureType();
 
-            build.setName(new DefaultName("polygonFeature"));
+            build.setName(DEFAULT_NAMESPACE,"polygonFeature");
             tmpPolygon = build.buildFeatureType();
         } catch (Exception ex) {
             org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.feature.type.BasicFeatureTypes").log(

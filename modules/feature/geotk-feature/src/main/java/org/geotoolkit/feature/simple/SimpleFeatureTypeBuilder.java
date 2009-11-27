@@ -17,7 +17,8 @@
 package org.geotoolkit.feature.simple;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -41,9 +43,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.ArrayList;
-import java.util.HashMap;
-import org.geotoolkit.feature.DefaultName;
 
 
 /**
@@ -139,10 +138,6 @@ public class SimpleFeatureTypeBuilder {
      */
     private String defaultGeometry;
     /**
-     * coordinate reference system of the type
-     */
-    private CoordinateReferenceSystem crs;
-    /**
      * flag controlling if the type is abstract.
      */
     private boolean isAbstract = false;
@@ -206,7 +201,6 @@ public class SimpleFeatureTypeBuilder {
         description = null;
         restrictions.clear();
         attributes.clear();
-        crs = null;
         isAbstract = false;
         superType = BasicFeatureTypes.FEATURE;
     }
@@ -263,20 +257,6 @@ public class SimpleFeatureTypeBuilder {
      */
     public String getDefaultGeometry() {
         return defaultGeometry;
-    }
-
-    /**
-     * Sets the coordinate reference system of the built type.
-     */
-    public void setCRS(final CoordinateReferenceSystem crs) {
-        this.crs = crs;
-    }
-
-    /**
-     * The coordinate reference system of the built type.
-     */
-    public CoordinateReferenceSystem getCRS() {
-        return crs;
     }
 
     /**
@@ -382,7 +362,7 @@ public class SimpleFeatureTypeBuilder {
         
         if(Geometry.class.isAssignableFrom(binding) ||
                 org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
-            throw new IllegalArgumentException("Please use add(Name,Class,CRS) method to add geometry fields.");
+            throw new IllegalArgumentException("Use add(Name,Class,CRS) method to add geometric fields.");
         }
 
         attributeTypeBuilder.reset();

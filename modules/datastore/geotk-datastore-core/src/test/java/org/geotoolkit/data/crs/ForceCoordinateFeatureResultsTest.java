@@ -50,8 +50,7 @@ public class ForceCoordinateFeatureResultsTest extends TestCase {
 
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(FEATURE_TYPE_NAME);
-        builder.setCRS(wgs84);
-        builder.add("geom", Point.class);
+        builder.add("geom", Point.class, wgs84);
 
         SimpleFeatureType ft = builder.buildFeatureType();
 
