@@ -262,7 +262,7 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
     public final JTSEnvelope2D getBounds() throws IOException {
 
         //return all(entry.getState(transaction)).getBounds();
-        return getBounds(QueryBuilder.all(new DefaultName(entry.getTypeName())));
+        return getBounds(QueryBuilder.all(entry.getName()));
     }
 
     /**

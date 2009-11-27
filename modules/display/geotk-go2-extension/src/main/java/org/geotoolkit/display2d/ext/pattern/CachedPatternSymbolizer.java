@@ -121,8 +121,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         final SimpleFeatureTypeBuilder sftBuilder = new SimpleFeatureTypeBuilder();
         final String geometryField = "geometry";
         sftBuilder.setName("DynamicFeature");
-        sftBuilder.setCRS(coverage.getCoordinateReferenceSystem());
-        sftBuilder.add(geometryField, Geometry.class);
+        sftBuilder.add(geometryField, Geometry.class, coverage.getCoordinateReferenceSystem());
         sftBuilder.setDefaultGeometry(geometryField);
         final SimpleFeatureType sft = sftBuilder.buildFeatureType();
 

@@ -305,7 +305,7 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                         atb.setName(namespace,name);
                         atb.setBinding(binding);
                         adb.setName(namespace,name);
-                        adb.setType(atb.buildGeometryType());
+                        adb.setType(atb.buildType());
                         tb.add(adb.buildDescriptor());
                     }
                 }
