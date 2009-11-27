@@ -32,12 +32,14 @@ import java.util.logging.Level;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FilteringFeatureReader;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.ReTypeFeatureReader;
 import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.store.ContentEntry;
 import org.geotoolkit.data.store.ContentFeatureSource;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.visitor.SimplifyingFilterVisitor;
@@ -54,10 +56,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
+
+import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.feature.DefaultName;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import static org.geotoolkit.factory.Hints.Key;
 
@@ -294,17 +295,17 @@ public class JDBCFeatureSource extends ContentFeatureSource {
                         }
 
                         atb.setBinding(binding);
-                        atb.setName(namespace,name);
+                        atb.setName(ensureGMLNS(namespace,name));
                         atb.setCRS(crs);
                         if(srid != null) adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
-                        adb.setName(namespace,name);
+                        adb.setName(ensureGMLNS(namespace,name));
                         adb.setType(atb.buildGeometryType());
                         tb.add(adb.buildDescriptor());
                     } else {
                         //add the attribute
-                        atb.setName(namespace,name);
+                        atb.setName(ensureGMLNS(namespace, name));
                         atb.setBinding(binding);
-                        adb.setName(namespace,name);
+                        adb.setName(ensureGMLNS(namespace,name));
                         adb.setType(atb.buildType());
                         tb.add(adb.buildDescriptor());
                     }
@@ -320,6 +321,16 @@ public class JDBCFeatureSource extends ContentFeatureSource {
         }
         finally {
             getDataStore().releaseConnection( cx, getState() );
+        }
+    }
+
+    private static Name ensureGMLNS(String namespace, String local){
+        if(local.equals(AbstractDataStore.GML_NAME)){
+            return new DefaultName(AbstractDataStore.GML_NAMESPACE, AbstractDataStore.GML_NAME);
+        }else if(local.equals(AbstractDataStore.GML_DESCRIPTION)){
+            return new DefaultName(AbstractDataStore.GML_NAMESPACE, AbstractDataStore.GML_DESCRIPTION);
+        }else{
+            return new DefaultName(namespace, local);
         }
     }
 

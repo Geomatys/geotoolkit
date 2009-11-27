@@ -91,9 +91,16 @@ import org.opengis.filter.Filter;
 public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,SimpleFeature> {
 
     /**
+     * Static variables refering to GML model.
+     */
+    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_NAME = "name";
+    public static final String GML_DESCRIPTION = "description";
+
+    /**
      * The logger for the filter module.
      */
-    protected static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
+    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.data");
     /**
      * Manages listener lists for FeatureSource<SimpleFeatureType, SimpleFeature> implementation
      */
@@ -129,6 +136,10 @@ public abstract class AbstractDataStore implements DataStore<SimpleFeatureType,S
     public AbstractDataStore(boolean isWriteable) {
         this.isWriteable = isWriteable;
         lockingManager = createLockingManager();
+    }
+
+    protected Logger getLogger(){
+        return LOGGER;
     }
 
     /**

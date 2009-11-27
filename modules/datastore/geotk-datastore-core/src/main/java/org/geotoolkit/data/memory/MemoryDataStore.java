@@ -236,7 +236,7 @@ public final class MemoryDataStore extends AbstractDataStore {
                     }
                 }, null);
             } catch (IOException ignore) {
-                LOGGER.log(Level.FINE, "Unable to add all features", ignore);
+                getLogger().log(Level.FINE, "Unable to add all features", ignore);
             }
         }
     }
