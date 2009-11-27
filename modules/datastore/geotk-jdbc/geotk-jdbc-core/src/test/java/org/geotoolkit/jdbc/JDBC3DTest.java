@@ -141,7 +141,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
         // insert it
         FeatureStore<SimpleFeatureType, SimpleFeature> fs = (FeatureStore) dataStore
-                .getFeatureSource(tname(LINE3D), Transaction.AUTO_COMMIT);
+                .getFeatureSource(dataStore.getSchema(tname(LINE3D)).getName(), Transaction.AUTO_COMMIT);
         List<FeatureId> fids = fs.addFeatures(DataUtilities.collection(newFeature));
 
         // retrieve it back
