@@ -216,8 +216,7 @@ public class FeatureTypeUtilities {
 
     public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
             String[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
-            throws SchemaException
-    {
+            throws SchemaException {
 
         if ((properties == null) && (override == null)) {
             return featureType;
@@ -253,10 +252,16 @@ public class FeatureTypeUtilities {
             types[i] = featureType.getDescriptor(properties[i]);
 
             if ((override != null) && types[i] instanceof GeometryDescriptor) {
+
                 final AttributeTypeBuilder ab = new AttributeTypeBuilder();
-                ab.init(types[i]);
+                ab.copy(types[i].getType());
                 ab.setCRS(override);
-                types[i] = ab.buildDescriptor(types[i].getLocalName());
+
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                adb.copy(types[i]);
+                adb.setType(ab.buildGeometryType());
+
+                types[i] = adb.buildDescriptor();
             }
         }
 
@@ -274,8 +279,7 @@ public class FeatureTypeUtilities {
 
 
         final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-        tb.setName(typeName);
-        tb.setNamespaceURI(namespace);
+        tb.setName(new DefaultName(namespaceURI, typeName));
         tb.addAll(types);
 
         return tb.buildFeatureType();
@@ -392,8 +396,7 @@ public class FeatureTypeUtilities {
             final String typeSpec) throws SchemaException
     {
         final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-        tb.setName(typeName);
-        tb.setNamespaceURI(namespace);
+        tb.setName(new DefaultName(namespace, typeName));
 
         final String[] types = typeSpec.split(",");
 
@@ -670,33 +673,38 @@ public class FeatureTypeUtilities {
      */
     public static SimpleFeatureType transform(final SimpleFeatureType schema, final CoordinateReferenceSystem crs,
             boolean forceOnlyMissing) throws SchemaException{
-        final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-        tb.setName(schema.getTypeName());
-        tb.setNamespaceURI(schema.getName().getNamespaceURI());
-        tb.setAbstract(schema.isAbstract());
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName(schema.getName());
+        sftb.setAbstract(schema.isAbstract());
 
         for (int i=0,n= schema.getAttributeCount(); i<n; i++) {
             final AttributeDescriptor attributeType = schema.getDescriptor(i);
             if (attributeType instanceof GeometryDescriptor) {
                 final GeometryDescriptor geometryType = (GeometryDescriptor) attributeType;
 
-                tb.descriptor(geometryType);
+                final AttributeTypeBuilder tb = new AttributeTypeBuilder();
+                tb.copy(geometryType.getType());
+
                 if (!forceOnlyMissing || geometryType.getCoordinateReferenceSystem() == null) {
-                    tb.crs(crs);
+                    tb.setCRS(crs);
                 }
 
-                tb.add(geometryType.getLocalName(), geometryType.getType().getBinding());
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+                adb.copy(geometryType);
+                adb.setType(tb.buildGeometryType());
+
+                sftb.add(adb.buildDescriptor());
             } else {
-                tb.add(attributeType);
+                sftb.add(attributeType);
             }
         }
         if (schema.getGeometryDescriptor() != null) {
-            tb.setDefaultGeometry(schema.getGeometryDescriptor().getLocalName());
+            sftb.setDefaultGeometry(schema.getGeometryDescriptor().getLocalName());
         }
 
-        tb.setSuperType((SimpleFeatureType) schema.getSuper());
+        sftb.setSuperType((SimpleFeatureType) schema.getSuper());
 
-        return tb.buildFeatureType();
+        return sftb.buildFeatureType();
     }
 
     /**
@@ -761,9 +769,7 @@ public class FeatureTypeUtilities {
             final AttributeDescriptor defaultGeometry) throws FactoryRegistryException, SchemaException{
 
         final SimpleFeatureTypeBuilder tb = new SimpleFeatureTypeBuilder();
-
-        tb.setName(name);
-        tb.setNamespaceURI(ns);
+        tb.setName(new DefaultName(ns.toString(), name));
         tb.setAbstract(isAbstract);
         tb.addAll(types);
 

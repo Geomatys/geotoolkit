@@ -173,7 +173,7 @@ public class AttributeTypeBuilder {
     /**
      * Initializes builder state from another attribute type.
      */
-    public AttributeTypeBuilder init(final AttributeType type) {
+    public AttributeTypeBuilder copy(final AttributeType type) {
         name = type.getName();
         isAbstract = type.isAbstract();
 

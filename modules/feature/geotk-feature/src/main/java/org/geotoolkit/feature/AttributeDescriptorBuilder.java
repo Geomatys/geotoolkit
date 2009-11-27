@@ -184,6 +184,14 @@ public class AttributeDescriptorBuilder {
         return defaultValue;
     }
 
+    public void setType(AttributeType type) {
+        this.type = type;
+    }
+
+    public AttributeType getType() {
+        return type;
+    }
+
     /**
      * Try to find a default value that matches the type binding class.
      */
