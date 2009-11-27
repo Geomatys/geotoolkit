@@ -48,8 +48,6 @@ import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -89,7 +87,7 @@ public class OMDataStore extends AbstractDataStore {
         try {
             getAllSamplingPoint = connection.prepareStatement("SELECT * FROM \"observation\".\"sampling_points\"");
         } catch (SQLException ex) {
-           LOGGER.severe("SQL Exception while requesting the O&M database:" + ex.getMessage());
+           getLogger().severe("SQL Exception while requesting the O&M database:" + ex.getMessage());
         }
     }
 
@@ -207,7 +205,7 @@ public class OMDataStore extends AbstractDataStore {
             result.close();
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL exception while reading the record of samplingPoint table", ex);
+            getLogger().log(Level.SEVERE, "SQL exception while reading the record of samplingPoint table", ex);
         }
         return collection;
     }
@@ -222,7 +220,7 @@ public class OMDataStore extends AbstractDataStore {
             getAllSamplingPoint.close();
             connection.close();
         } catch (SQLException ex) {
-            LOGGER.info("SQL Exception while closing O&M datastore");
+            getLogger().info("SQL Exception while closing O&M datastore");
         }
 
     }

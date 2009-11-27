@@ -51,7 +51,6 @@ import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -147,7 +146,7 @@ public class SMLDataStore extends AbstractDataStore {
             getAllFormId  = connection.prepareStatement("SELECT \"identifier\" FROM \"Storage\".\"Forms\"      WHERE \"catalog\"='SMLC'");
 
         } catch (SQLException ex) {
-           LOGGER.severe("SQL Exception while initializing the prepared statement for SensorML database:" + ex.getMessage());
+           getLogger().severe("SQL Exception while initializing the prepared statement for SensorML database:" + ex.getMessage());
         }
     }
 
@@ -466,7 +465,7 @@ public class SMLDataStore extends AbstractDataStore {
             result.close();
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "SQL exception while reading sensorMLValues table", ex);
+            getLogger().log(Level.SEVERE, "SQL exception while reading sensorMLValues table", ex);
         }
         return collection;
     }
@@ -595,7 +594,7 @@ public class SMLDataStore extends AbstractDataStore {
                 Coordinate coord = new Coordinate(x, y);
                 builder.set(LOCATION, GF.createPoint(coord));
             } catch (NumberFormatException ex) {
-                LOGGER.warning("unable to extract the point coordinate from the text value:" + location);
+                getLogger().warning("unable to extract the point coordinate from the text value:" + location);
             }
         }
         result2.close();
@@ -695,7 +694,7 @@ public class SMLDataStore extends AbstractDataStore {
             getSMLType.close();
             connection.close();
         } catch (SQLException ex) {
-            LOGGER.info("SQL Exception while closing SML datastore");
+            getLogger().info("SQL Exception while closing SML datastore");
         }
 
     }

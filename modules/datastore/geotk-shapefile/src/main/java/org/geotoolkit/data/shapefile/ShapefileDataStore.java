@@ -80,7 +80,6 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -247,7 +246,7 @@ public class ShapefileDataStore extends AbstractDataStore {
 
             return map;
         } catch (Throwable t) {
-            LOGGER.warning("Could not parse " + urlString + ":"
+            getLogger().warning("Could not parse " + urlString + ":"
                     + t.getLocalizedMessage());
 
             return Collections.EMPTY_MAP;
@@ -331,7 +330,7 @@ public class ShapefileDataStore extends AbstractDataStore {
             throws IOException {
 
         if (!readDbf) {
-            LOGGER.fine("The DBF file won't be opened since no attributes will be read from it");
+            getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
             final AttributeDescriptor[] desc = new AttributeDescriptor[]{schema.getGeometryDescriptor()};
             return new ShapefileAttributeReader(desc, openShapeReader(), null);
         }
@@ -693,8 +692,8 @@ public class ShapefileDataStore extends AbstractDataStore {
                     try {
                         transformedBounds = env.transform(crs, true);
                     } catch (Throwable t) {
-                        if (LOGGER.isLoggable(Level.WARNING)) {
-                            LOGGER.log(Level.WARNING, t.getLocalizedMessage(), t);
+                        if (getLogger().isLoggable(Level.WARNING)) {
+                            getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
                         }
                         transformedBounds = env;
                         crs = null;
@@ -733,7 +732,7 @@ public class ShapefileDataStore extends AbstractDataStore {
                 prjWriter.close();
             }
         } else {
-            LOGGER.warning("PRJ file not generated for null CoordinateReferenceSystem");
+            getLogger().warning("PRJ file not generated for null CoordinateReferenceSystem");
         }
         
         StorageFile.replaceOriginals(shpStoragefile, shxStoragefile, dbfStoragefile, prjStoragefile);

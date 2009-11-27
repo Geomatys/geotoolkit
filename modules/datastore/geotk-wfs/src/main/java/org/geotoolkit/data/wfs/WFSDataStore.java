@@ -117,10 +117,10 @@ public class WFSDataStore extends AbstractDataStore{
                 crs = CRS.decode(ftt.getDefaultSRS(),true);
                 sft = requestType(typeName);                
             } catch (IOException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                getLogger().log(Level.SEVERE, null, ex);
                 continue;
             } catch (FactoryException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                getLogger().log(Level.SEVERE, null, ex);
                 continue;
             }
 
@@ -165,7 +165,7 @@ public class WFSDataStore extends AbstractDataStore{
                 }
                 bounds.put(name, env);
             } catch (FactoryException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
+                getLogger().log(Level.SEVERE, null, ex);
             }
 
         }
@@ -221,7 +221,7 @@ public class WFSDataStore extends AbstractDataStore{
 
         try {
             final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
-            LOGGER.log(Level.INFO, "[WFS Client] request type : " + request.getURL());
+            getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
             final List<FeatureType> types = reader.read(request.getURL().openStream());
             return (SimpleFeatureType) types.get(0);
 
@@ -268,7 +268,7 @@ public class WFSDataStore extends AbstractDataStore{
         try {
             reader = new JAXPStreamFeatureReader(sft);
             final URL url = request.getURL();
-            LOGGER.log(Level.INFO, "[WFS Client] request feature : " + url);
+            getLogger().log(Level.INFO, "[WFS Client] request feature : " + url);
             final Object result = reader.read(url.openStream());
 
             lastRequest = request;

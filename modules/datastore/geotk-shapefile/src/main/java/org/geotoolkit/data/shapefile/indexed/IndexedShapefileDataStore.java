@@ -240,7 +240,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
                 rtree.close();
             } catch (Exception e) {
                 e.printStackTrace();
-                LOGGER
+                getLogger()
                         .severe("org.geotoolkit.data.shapefile.indexed.IndexedShapeFileDataStore#finalize(): Error closing rtree. "
                                 + e.getLocalizedMessage());
             }
@@ -437,7 +437,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
         IndexedDbaseFileReader dbfR = null;
 
         if (!readDbf) {
-            LOGGER.fine("The DBF file won't be opened since no attributes "
+            getLogger().fine("The DBF file won't be opened since no attributes "
                     + "will be read from it");
             atts = new ArrayList<AttributeDescriptor>(1);
             atts.add(schema.getGeometryDescriptor());
@@ -483,8 +483,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
                     String fid = identifier.toString();
                     long recno = reader.findFid(fid);
                     if (recno == -1){
-                        if(LOGGER.isLoggable(Level.FINEST)){
-                            LOGGER.finest("fid " + fid+ " not found in index, continuing with next queried fid...");
+                        if(getLogger().isLoggable(Level.FINEST)){
+                            getLogger().finest("fid " + fid+ " not found in index, continuing with next queried fid...");
                         }
                         continue;
                     }
@@ -493,8 +493,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
                         data.addValue(new Integer((int) recno + 1));
                         data.addValue(new Long(shx
                                 .getOffsetInBytes((int) recno)));
-                        if(LOGGER.isLoggable(Level.FINEST)){
-                            LOGGER.finest("fid " + fid+ " found for record #"
+                        if(getLogger().isLoggable(Level.FINEST)){
+                            getLogger().finest("fid " + fid+ " found for record #"
                                     + data.getValue(0) + " at index file offset "
                                     + data.getValue(1));
                         }
@@ -782,7 +782,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore implements Fil
      */
     public void buildQuadTree(int maxDepth) throws TreeException {
         if (isLocal()) {
-            LOGGER.fine("Creating spatial index for " + shpFiles.get(SHP));
+            getLogger().fine("Creating spatial index for " + shpFiles.get(SHP));
 
             ShapeFileIndexer indexer = new ShapeFileIndexer();
             indexer.setIdxType(IndexType.QIX);
