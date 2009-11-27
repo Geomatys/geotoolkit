@@ -21,7 +21,6 @@ import java.util.Arrays;
 import javax.imageio.IIOException;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -37,221 +36,193 @@ import org.geotoolkit.resources.Vocabulary;
  *   <li>Pixel's values for each band.</li>
  * </li>
  * <p>
- * Those information can appear in arbitrary columns, providing that the column order
- * stay the same for every record in a particular {@code RecordList} instance.
- * Records can appear in arbitrary order.
+ * Those information can appear in arbitrary columns, providing that the column order stay
+ * the same for every record in a particular {@code RecordList} instance. Records can appear
+ * in arbitrary order.
  * <p>
- * Data can be floating point value ({@code float} type). Current implementation
- * expects pixels distributed on a regular grid. The grid interval will be automatically
- * computed when needed. The interval computation should be accurate even if there is
- * missing and/or duplicated records.
+ * Data are floating point value ({@code float} type). Current implementation expects pixels
+ * distributed on a regular grid. The grid interval will be automatically computed when needed.
+ * The interval computation should be accurate even if there is missing and/or duplicated records.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.06
  *
  * @since 1.2
  * @module
  */
 final class RecordList {
     /**
-     * Valeurs minimales des colonnes, ou {@code null} si ces valeurs ne sont pas encore connues.
-     * La longueur de ce tableau est égale à {@link #dataColumnCount}.
+     * The minimal values found in every columns.
      */
-    private double[] min;
+    private final double[] min;
 
     /**
-     * Valeurs maximales des colonnes, ou {@code null} si ces valeurs ne sont pas encore connues.
-     * La longueur de ce tableau est égale à {@link #dataColumnCount}.
+     * The maximal values found in every columns.
      */
-    private double[] max;
+    private final double[] max;
 
     /**
-     * Intervals entre les données, ou {@code null} si ces valeurs n'ont pas encore été calculées.
-     * La valeur 0 signifie que l'interval pour une colonne en particulier n'a pas encore été
-     * calculée.
+     * The number of points in the axis represented by the given column. The sentinal value 0
+     * means that the number of points for an individual column has not yet been computed.
+     * This information is typically computed only for {@link #xColumn} and {@link #yColumn}.
      */
-    private float[] interval;
+    private final int[] pointCount;
 
     /**
-     * Tableau des valeurs lues, ou {@code null} si les valeurs n'ont pas encore été lues.
-     * Ce tableau contient une suite de lignes qui ont chacun un nombre de colonnes égal à
-     * {@link #dataColumnCount}.
+     * A flat array of every records read so far, or {@code null} if the read process has
+     * not yet been started. Each row in this matrix has a length of {@link #columnCount}.
      */
     private float[] data;
 
     /**
-     * Nombre de colonnes retenues lors de la lecture, ou -1 si ce nombre n'est pas encore connu.
-     * Ce nombre de colonnes peut être égal ou inférieur à {@code min.length} et {@code max.length}.
+     * The column of <var>x</var> or <var>y</var> values.
      */
-    private int columnCount = -1;
+    final int xColumn, yColumn;
 
     /**
-     * Index suivant celui du dernier élément valide de {@link #data}.
-     * Ce champ sera augmenté à chaque ajout d'une nouvelle ligne. Sa
-     * valeur doit être un multiple entier de {@link #dataColumnCount}.
+     * Number of columns in each record.
+     */
+    final int columnCount;
+
+    /**
+     * Index of the first element to write in the {@code #data} array. This is always a multiple
+     * of {@link #columnCount} and is incremented after each call to {@link #add(double[])}.
      */
     private int upper;
 
     /**
-     * Nombre de lignes attendues. Cette information n'est qu'à titre
-     * indicative, mais accelerera la lecture si elle est exacte.
+     * Tolerance factor when determining if the interval is constant between
+     * values in consecutive records.
      */
-    private int expectedLineCount = 1024;
+    private final float gridTolerance;
 
     /**
-     * Construit un {@code ImageData} initiallement vide. La première ligne de données lue
-     * déterminera le nombre de colonnes qui seront retenus pour toutes les lignes suivantes.
-     */
-    public RecordList() {
-    }
-
-    /**
-     * Construit un {@code RecordList} initiallement vide. Pour chaque ligne lue,
-     * seules les {@code columnCount} premières colonnes seront retenus.
+     * Creates a new {@code RecordList} initialized to the given line.
      *
-     * @param columnCount Nombre de colonnes à retenir lors de la lecture.
-     * @param expectedLineCount Nombre de lignes attendues. Cette information
-     *        n'est qu'à titre indicative, mais accelerera la lecture si elle
-     *        est exacte.
+     * @param firstLine The first line having been read.
+     * @param expectedLineCount Number of expected lines. This information is approximative,
+     *        but array allocations will be reduced if an exact value is provided.
      */
-    public RecordList(final int columnCount, final int expectedLineCount) {
-        this.columnCount       = columnCount;
-        this.expectedLineCount = expectedLineCount;
+    public RecordList(final double[] firstLine, final int expectedLineCount,
+            final int xColumn, final int yColumn, final float gridTolerance)
+    {
+        min = firstLine.clone();
+        max = firstLine.clone();
+        this.xColumn = xColumn;
+        this.yColumn = yColumn;
+        columnCount = firstLine.length;
+        for (int i=0; i<firstLine.length; i++) {
+            if (Double.isNaN(firstLine[i])) {
+                min[i] = Double.POSITIVE_INFINITY;
+                max[i] = Double.NEGATIVE_INFINITY;
+            }
+        }
+        data = new float [columnCount * expectedLineCount];
+        pointCount = new int[firstLine.length];
+        this.gridTolerance = gridTolerance;
     }
 
     /**
-     * Ajoute une ligne de données.  Si la ligne est plus courte que la longueur
-     * attendues, les colonnes manquantes seront considérées comme contenant des
-     * {@code NaN}.   Si elle est plus longue que la longueur attendue, les
-     * colonnes en trop seront ignorées.
+     * Adds the given line. If the given line is shorter than expected, then the missing values
+     * are assumed to be NaN. If the given line is longer than the expected length, then the
+     * extra values are ignored.
      */
     public void add(final double[] line) {
-        if (data == null) {
-            if (columnCount < 0) columnCount = line.length;
-            min  = new double[columnCount]; Arrays.fill(min, Double.POSITIVE_INFINITY);
-            max  = new double[columnCount]; Arrays.fill(max, Double.NEGATIVE_INFINITY);
-            data = new float [columnCount * expectedLineCount];
-        }
         final int limit = Math.min(columnCount, line.length);
-        final int nextUpper = upper+columnCount;
+        final int nextUpper = upper + columnCount;
         if (nextUpper >= data.length) {
-            data = Arrays.copyOf(data, Math.max(nextUpper, data.length+Math.min(data.length, 65536)));
+            data = Arrays.copyOf(data, nextUpper * 2);
         }
         for (int i=0; i<limit; i++) {
             final double value = line[i];
             if (value < min[i]) min[i] = value;
             if (value > max[i]) max[i] = value;
-            data[upper+i] = (float)value;
+            data[upper + i] = (float) value;
         }
-        Arrays.fill(data, upper+limit, nextUpper, Float.NaN);
+        Arrays.fill(data, upper + limit, nextUpper, Float.NaN);
         upper = nextUpper;
     }
 
     /**
-     * Libère la mémoire réservée en trop. Cette méthode peut être appelée
-     * lorsqu'on a terminé de lire les données et qu'on veut les conserver
-     * en mémoire pendant encore quelque temps.
+     * Trims the internal array to the minimal size needed for holding all data. This method
+     * should be invoked only when reading is finished and the array will be kept for a while
+     * because {@link TextRecordImageReader#seekForwardOnly} is {@code false}.
      */
     public void trimToSize() {
-        if (data != null) {
-            data = XArrays.resize(data, upper);
-        }
+        data = XArrays.resize(data, upper);
     }
 
     /**
-     * Retourne une référence directe vers les données mémorisées par cet objet.
-     * NE PAS MODIFIER CES DONNEES! Les index valides vont de 0 inclusivement
-     * jusqu'à {@link #getDataCount} exclusivement.
+     * Returns a direct reference to internal data. <strong>Do not modify the values</strong>.
+     * Valid index range from 0 inclusive to {@link #getDataCount} exclusive.
      */
     final float[] getData() {
         return data;
     }
 
     /**
-     * Retourne le nombre de données qui ont été mémorisées.
+     * Returns the length of valid element in the array returned by {@link #getData()}.
      */
     final int getDataCount() {
         return upper;
     }
 
     /**
-     * Retourne le nombre de lignes qui ont été mémorisées.
+     * Returns the number of line read so far.
      */
     public int getLineCount() {
-        if (columnCount <= 0) {
-            return 0;
-        }
         assert (upper % columnCount) == 0;
         return upper / columnCount;
     }
 
     /**
-     * Retourne le nombre de colonnes, ou -1 si ce nombre n'est pas connu.
-     */
-    public int getColumnCount() {
-        return columnCount;
-    }
-
-    /**
-     * Retourne la valeur minimale de la colonne spécifiée,
-     * ou {@link Double#NaN} si cette valeur n'est pas connue.
+     * Returns the minimal value in the given column.
      */
     public double getMinimum(final int column) {
-        return (min != null && min[column] <= max[column]) ? min[column] : Double.NaN;
+        final double value = min[column];
+        return value <= max[column] ? value : Double.NaN;
     }
 
     /**
-     * Retourne la valeur maximale de la colonne spécifiée,
-     * ou {@link Double#NaN} si cette valeur n'est pas connue.
+     * Returns the maximal value in the given column.
      */
     public double getMaximum(final int column) {
-        return (max != null && max[column] >= min[column]) ? max[column] : Double.NaN;
+        final double value = max[column];
+        return min[column] <= value ? value : Double.NaN;
     }
 
     /**
-     * Retourne l'interval entre les points de la colonne spécifiée, en supposant que les
-     * points se trouvent à un interval régulier. Si ce n'est pas le cas, une exception
-     * sera lancée.
+     * Returns the interval between the values in the given column. This method checks if
+     * the interval is constant, with a tolerance factor given by the {@link #gridTolerance}
+     * value.
      *
-     * @param  column Colonne dont on veut l'interval entre les points.
-     * @param  eps Petit facteur de tolérance (par exemple 1E-6).
-     * @throws IIOException si les points de la colonne spécifiée
-     *         ne sont pas distribués à un interval régulier.
+     * @param  column Column for which the interval is desired.
+     * @throws IIOException  If the interval is not constant in the given column.
      */
-    private float getInterval(final int column, final float eps) throws IIOException {
-        if (interval == null) {
-            if (columnCount <= 0) {
-                return Float.NaN;
-            }
-            interval = new float[columnCount];
-        }
-        if (interval[column] != 0) {
-            return interval[column];
-        }
+    private float getInterval(final int column) throws IIOException {
         /*
-         * Obtient toutes les valeurs de la colonne
-         * spécifiée en ordre croissant.
+         * Copies the values of the given column in a temporary array and sort them.
          */
         int count = 0;
         final float[] array = new float[getLineCount()];
-        for (int i=column; i<upper; i+=columnCount) {
+        for (int i=column; i<upper; i += columnCount) {
             array[count++] = data[i];
         }
         assert count == array.length;
         Arrays.sort(array);
         /*
-         * Elimine les doublons. Lorsque des doublons seront trouvés, ils iront de
-         * {@code lower} à {@code upper} <strong>inclusivement</strong>.
+         * Removes duplicates values. When duplicates are found, they range
+         * from 'lower' to 'upper' inclusive ('upper' is inclusive too!).
          */
         int upper = count-1;
         int lower = count;
-        while (--lower>=1) {
+        while (--lower >= 1) {
             if (array[upper] != array[lower-1]) {
                 if (upper != lower) {
                     System.arraycopy(array, upper, array, lower, count-upper);
                     final int oldCount = count;
                     count -= (upper-lower);
-                    Arrays.fill(array, count, oldCount, Float.NaN); // Par prudence.
+                    Arrays.fill(array, count, oldCount, Float.NaN); // For safety.
                 }
                 upper = lower-1;
             }
@@ -260,12 +231,12 @@ final class RecordList {
             System.arraycopy(array, upper, array, lower, count-upper);
             final int oldCount = count;
             count -= (upper-lower);
-            Arrays.fill(array, count, oldCount, Float.NaN); // Par prudence.
+            Arrays.fill(array, count, oldCount, Float.NaN); // For safety.
         }
         /*
-         * Recherche le plus petit interval entre deux points. Vérifie ensuite que
-         * l'interval entre tous les points est un multiple entier de cet interval
-         * minimal (on tient compte ainsi des éventuels données manquantes).
+         * Searchs the smallest interval between two records. Next, checks if the interval
+         * between every consecutive records is a multiple of that value. This algorithm
+         * allow the check to be tolerant to missing records.
          */
         float delta = Float.POSITIVE_INFINITY;
         for (int i=1; i<count; i++) {
@@ -276,63 +247,60 @@ final class RecordList {
             }
         }
         for (int i=1; i<count; i++) {
-            float e = (array[i] - array[i-1]) / delta;
-            if (Math.abs(e-Math.rint(e)) > eps) {
+            final float  e = (array[i] - array[i-1]) / delta;
+            final float re = (float) Math.rint(e);
+            if (Math.abs(e - re) > re*gridTolerance) {
                 throw new IIOException(Errors.format(Errors.Keys.NOT_A_GRID));
             }
         }
-        return interval[column] = Float.isInfinite(delta) ? Float.NaN : delta;
+        return delta;
     }
 
     /**
-     * Retourne le nombre de points distincts dans la colonne spécifiée. Cette méthode
-     * élimine d'abord tous les doublons avant d'effectuer le comptage. Elle vérifie
-     * aussi que les points restants sont espacés à un interval régulier, et lancera
-     * une exception si ce n'est pas le cas. S'il y a des trous dans les données, il
-     * seront pris en compte comme si un point s'y était trouvé.
+     * Returns the number of distinct values in the given columns, as if no records were missing.
+     * This method assumes that the interval between values in the given column is constant.
+     * <p>
+     * This method can be invoked only when the image reading is finished, because it caches
+     * the value for future reuse (this method is typically invoked more than once for the
+     * same column).
      *
-     * @param  column Colonne dont on veut le nombre de points distincts.
-     * @param  eps Petit facteur de tolérance (par exemple 1E-6).
-     * @throws IIOException si les points de la colonne spécifiée
-     *         ne sont pas distribués à un interval régulier.
+     * @param  column Column for which the number of points is desired.
+     * @throws IIOException  If the interval is not constant in the given column.
      */
-    public int getPointCount(final int column, final float eps) throws IIOException {
-        return (int) Math.round((getMaximum(column) - getMinimum(column)) / getInterval(column, eps)) +1;
+    public int getPointCount(final int column) throws IIOException {
+        int n = pointCount[column];
+        if (n == 0) {
+            n = (int) Math.round((getMaximum(column) - getMinimum(column)) / getInterval(column)) +1;
+            pointCount[column] = n;
+        }
+        return n;
     }
 
     /**
-     * Retourne un résumé des informations que contient cet objet. Le résumé contiendra
-     * notamment les valeurs minimales et maximales de chaque colonnes.
-     *
-     * @param  xColumn Colonne des <var>x</var>, ou -1 s'il n'est pas connu.
-     * @param  yColumn Colonne des <var>y</var>, ou -1 s'il n'est pas connu.
-     * @param  eps Petit facteur de tolérance (par exemple 1E-6).
-     * @return Chaîne de caractères résumant l'état des données.
-     */
-    public String toString(final int xColumn, final int yColumn, final float eps) {
-        float xCount = Float.NaN;
-        float yCount = Float.NaN;
-        if (xColumn >= 0) try {
-            xCount = getPointCount(xColumn, eps);
-        } catch (IIOException exception) {
-            // Ignore.
-        }
-        if (yColumn >= 0) try {
-            yCount = getPointCount(yColumn, eps);
-        } catch (IIOException exception) {
-            // Ignore.
-        }
-        return Vocabulary.format(Vocabulary.Keys.POINT_COUNT_IN_GRID_$3, upper, xCount, yCount);
-    }
-
-    /**
-     * Retourne une chaîne de caractères représentant cet objet.
-     * Cette chaîne indiquera le nombre de lignes et de colonnes
-     * mémorisées.
+     * Returns a string representation of this {@code RecordList} for debugging purpose.
      */
     @Override
     public String toString() {
-        return Classes.getShortClassName(this) +
-                '[' + getLineCount() + "\u00A0\u00D7\u00A0" + getColumnCount() + ']';
+        final int oldX = pointCount[xColumn];
+        final int oldY = pointCount[yColumn];
+        Object xCount, yCount;
+        try {
+            xCount = getPointCount(xColumn);
+        } catch (IIOException exception) {
+            xCount = exception.getLocalizedMessage();
+        }
+        try {
+            yCount = getPointCount(yColumn);
+        } catch (IIOException exception) {
+            yCount = exception.getLocalizedMessage();
+        }
+        /*
+         * Resets the counts to the old value, because this method may be invoked in the debugger
+         * while the reading is still under progress. In such case we want to reset the 0 value for
+         * forcing getPointCount(...) to compute the new value when it will be requested so.
+         */
+        pointCount[xColumn] = oldX;
+        pointCount[yColumn] = oldY;
+        return Vocabulary.format(Vocabulary.Keys.POINT_COUNT_IN_GRID_$3, upper, xCount, yCount);
     }
 }

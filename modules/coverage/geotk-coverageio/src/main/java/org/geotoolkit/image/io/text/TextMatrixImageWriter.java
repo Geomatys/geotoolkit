@@ -47,6 +47,8 @@ import org.geotoolkit.resources.Descriptions;
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
+ * @see TextMatrixImageReader
+ *
  * @since 1.2
  * @module
  */

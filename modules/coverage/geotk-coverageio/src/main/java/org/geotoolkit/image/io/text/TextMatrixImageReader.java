@@ -55,6 +55,8 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.06
  *
+ * @see TextMatrixImageWriter
+ *
  * @since 1.2
  * @module
  */
@@ -65,12 +67,15 @@ public class TextMatrixImageReader extends TextImageReader {
     private float[] data;
 
     /**
-     * The image width. This number is valid only if {@link #data} is non-null.
+     * The image width. This number is valid only if {@link #data} is non-null
+     * or {@link #completed} is {@code true}.
      */
     private int width;
 
     /**
-     * The image height. This number is valid only if {@link #completed} is true.
+     * The image height. If only a part of the image has been read (typically only the first line
+     * in order to determine the value of {@link #width}), then this is the number of lines read
+     * so far. This field is the actual image height only when {@link #completed} is true.
      */
     private int height;
 
@@ -81,9 +86,10 @@ public class TextMatrixImageReader extends TextImageReader {
     private int expectedHeight;
 
     /**
-     * {@code true} if {@link #data} contains all data, or {@code false}
-     * if {@link #data} contains only the first line. This field has no
-     * signification if {@link #data} is null.
+     * {@code true} if {@link #data} contains all data, or {@code false} if {@link #data}
+     * contains only the first line. Note that this field may be {@code true} while the
+     * {@link #data} are {@code null} if the {@link #width} and {@link #height} fields
+     * are still valids.
      */
     private boolean completed;
 
@@ -98,9 +104,15 @@ public class TextMatrixImageReader extends TextImageReader {
 
     /**
      * Loads data. No subsampling is performed, and the pad value is not replaced by NaN.
+     * This method set the {@link #width} fields (or ensure that every row have a length
+     * equals to {@code width} if at least one row was already read) and increment the
+     * {@link #height} field by the amount of row read.
+     * <p>
+     * Once this method complete, the {@link #completed} field is set to the value of
+     * {@code all} parameter.
      *
      * @param  imageIndex the index of the image to be read.
-     * @param  all {@code true} to read all data, or {@code false} to read only the first line.
+     * @param  all {@code true} to read all data, or {@code false} to read only one line.
      * @return {@code true} if reading has been aborted.
      * @throws IOException If an error occurs reading the width information from the input source.
      */
@@ -109,10 +121,13 @@ public class TextMatrixImageReader extends TextImageReader {
         if (all) {
             processImageStarted(imageIndex);
         }
+        // If some rows were already read, a non-null array
+        // will force the next rows to have the same length.
         float[] values = (data != null) ? new float[width] : null;
-        int     offset = width * height;
+        // If some data was already read, the offset where to continue. Otherwise 0.
+        int offset = width * height;
         final BufferedReader input = getReader();
-        final LineFormat    format = getLineFormat(imageIndex);
+        final LineFormat format = getLineFormat(imageIndex);
         String line; while ((line = input.readLine()) != null) {
             if (isComment(line)) {
                 continue;
@@ -123,41 +138,42 @@ public class TextMatrixImageReader extends TextImageReader {
             } catch (ParseException exception) {
                 throw new IIOException(getPositionString(exception.getLocalizedMessage()), exception);
             }
-            if (data == null) {
-                data = new float[1024];
-            }
             final int newOffset = offset + (width = values.length);
-            if (newOffset > data.length) {
-                data = Arrays.copyOf(data, newOffset + Math.min(newOffset, 65536));
+            /*
+             * Try to guess the expected height after the first line, then try to allocate
+             * the right amout of memory. If the guess is not accurate, the amount of memory
+             * will be adjusted as needed.
+             */
+            if (data == null) {
+                final long streamLength = getStreamLength(imageIndex, imageIndex+1);
+                if (streamLength >= 0) {
+                    final int length = line.length() + 1; // Add 1 for the EOL character.
+                    expectedHeight = (int) ((streamLength + length/2) / length);
+                }
+                data = new float[Math.max(1024, width * expectedHeight)];
+            } else if (newOffset > data.length) {
+                data = Arrays.copyOf(data, newOffset * 2);
             }
             System.arraycopy(values, 0, data, offset, width);
             offset = newOffset;
             height++;
-            /*
-             * If only one line was requested, try to guess the expected height.
-             */
             if (!all) {
-                final long streamLength = getStreamLength(imageIndex, imageIndex+1);
-                if (streamLength >= 0) {
-                    expectedHeight = (int) (streamLength / (line.length() + 1));
-                }
-                break;
+                return false;
             }
             /*
              * Update progress.
              */
             if (height <= expectedHeight) {
                 processImageProgress(height * 100f / expectedHeight);
-                if (abortRequested()) {
-                    processReadAborted();
-                    return true;
-                }
+            }
+            if (abortRequested()) {
+                processReadAborted();
+                return true;
             }
         }
-        if ((completed = all) == true) {
-            data = XArrays.resize(data, offset);
-            expectedHeight = height;
-        }
+        data = XArrays.resize(data, offset);
+        expectedHeight = height;
+        completed = true;
         if (all) {
             processImageComplete();
         }
@@ -175,7 +191,12 @@ public class TextMatrixImageReader extends TextImageReader {
     @Override
     public int getWidth(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
-        if (data == null) {
+        /*
+         * The line below use && instead of || because we don't need the complete
+         * set of data. The first line is enough, which is indicated by a non-null
+         * data array with 'completed' set to false.
+         */
+        if (data == null && !completed) {
             load(imageIndex, false);
         }
         return width;
@@ -193,7 +214,7 @@ public class TextMatrixImageReader extends TextImageReader {
     @Override
     public int getHeight(final int imageIndex) throws IOException {
         checkImageIndex(imageIndex);
-        if (data == null || !completed) {
+        if (!completed) {
             load(imageIndex, true);
         }
         return height;
@@ -211,7 +232,9 @@ public class TextMatrixImageReader extends TextImageReader {
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
         if (imageIndex >= 0) {
             if (data == null || !completed) {
-                load(imageIndex, true);
+                if (load(imageIndex, true)) {
+                    return null;
+                }
             }
             final float padValue = (float) getPadValue(imageIndex);
             float minimum = Float.POSITIVE_INFINITY;
@@ -321,7 +344,10 @@ public class TextMatrixImageReader extends TextImageReader {
         final ImageTypeSpecifier type = getImageType(imageIndex, param, converters);
         final SampleConverter converter = converters[0];
         /*
-         * If a direct mapping is possible, perform it.
+         * If a direct mapping is possible, perform it. If a direct mapping is performed,
+         * we will need to set the data array to null (and consequently force a new data
+         * loading if the image is requested again) because the user could have modified
+         * the sample values.
          */
         if (isDirect && (param == null || param.getDestination() == null) &&
                 type.getSampleModel().getDataType() == DataBuffer.TYPE_FLOAT)
@@ -334,6 +360,7 @@ public class TextMatrixImageReader extends TextImageReader {
             final SampleModel    model  = type.getSampleModel(width, height);
             final DataBuffer     buffer = new DataBufferFloat(data, data.length);
             final WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
+            this.data = null; // See the above block comment.
             return new BufferedImage(type.getColorModel(), raster, false, null);
         }
         /*

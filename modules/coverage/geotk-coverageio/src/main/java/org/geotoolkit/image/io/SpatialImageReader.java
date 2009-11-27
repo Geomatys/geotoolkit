@@ -663,12 +663,12 @@ public abstract class SpatialImageReader extends ImageReader {
                         }
                         if (minimum < floor || maximum > ceil) {
                             // The range of valid values is outside the range allowed by raw data type.
-                            converter = SampleConverter.createOffset(1 - minimum, nodataValues);
+                            converter = SampleConverter.createOffset(Math.ceil(1 - minimum), nodataValues);
                         } else if (collapsePadValues) {
                             if (isZeroValid) {
                                 // We need to collapse the no-data values to 0, but it causes a clash
                                 // with the range of valid values. So we also shift the later.
-                                converter = SampleConverter.createOffset(1 - minimum, nodataValues);
+                                converter = SampleConverter.createOffset(Math.ceil(1 - minimum), nodataValues);
                             } else {
                                 // We need to collapse the no-data values and there is no clash.
                                 converter = SampleConverter.createPadValuesMask(nodataValues);

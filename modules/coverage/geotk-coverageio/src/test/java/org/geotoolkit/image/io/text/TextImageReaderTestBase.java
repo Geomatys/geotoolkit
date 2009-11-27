@@ -113,7 +113,6 @@ public abstract class TextImageReaderTestBase {
      * @throws IOException if an error occured while reading the file.
      */
     @Test
-    @Ignore // Need debug
     public void testByteType() throws IOException {
         final TextImageReader reader = createImageReader();
         final SpatialImageReadParam param = reader.getDefaultReadParam();
@@ -144,5 +143,14 @@ public abstract class TextImageReaderTestBase {
                 assertEquals(String.valueOf(floatValue), Float.isNaN(floatValue), byteValue == 0);
             }
         }
+        /*
+         * Test the same pixel values than 'testReadFile()'.
+         * We have an offset of 3, rounded toward zero.
+         */
+        assertEquals(1, byteRaster.getSample( 0,  0, 0));
+        assertEquals(3, byteRaster.getSample( 2,  3, 0));
+        assertEquals(0, byteRaster.getSample( 3,  4, 0));
+        assertEquals(1, byteRaster.getSample( 0, 41, 0));
+        assertEquals(0, byteRaster.getSample(19,  4, 0));
     }
 }
