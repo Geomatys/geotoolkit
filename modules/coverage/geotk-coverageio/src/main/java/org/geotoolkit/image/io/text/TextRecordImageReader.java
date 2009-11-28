@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.text;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -35,6 +34,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Descriptions;
+import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
@@ -262,7 +262,9 @@ public class TextRecordImageReader extends TextImageReader {
         final double ymax     = records.getMaximum(yColumn);
         final double padValue = getPadValue(imageIndex);
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
-        domain.setAll(xmin, ymin, xmax, ymax, width, height, true, null);
+        // Note: the swapping of ymax and ymin below is intentional,
+        // since values on the y axis are increasing downward.
+        domain.setAll(xmin, ymax, xmax, ymin, width, height, true, null);
         /*
          * Now adds the valid range of sample values for each band.
          */
@@ -473,18 +475,13 @@ public class TextRecordImageReader extends TextImageReader {
         final int sourceYSubsampling;
         final int subsamplingXOffset;
         final int subsamplingYOffset;
-        final int destinationXOffset;
-        final int destinationYOffset;
         if (param != null) {
             srcBands           = param.getSourceBands();
             dstBands           = param.getDestinationBands();
-            final Point offset = param.getDestinationOffset();
             sourceXSubsampling = param.getSourceXSubsampling();
             sourceYSubsampling = param.getSourceYSubsampling();
             subsamplingXOffset = param.getSubsamplingXOffset();
             subsamplingYOffset = param.getSubsamplingYOffset();
-            destinationXOffset = offset.x;
-            destinationYOffset = offset.y;
         } else {
             srcBands    = null;
             dstBands    = null;
@@ -492,28 +489,27 @@ public class TextRecordImageReader extends TextImageReader {
             sourceYSubsampling = 1;
             subsamplingXOffset = 0;
             subsamplingYOffset = 0;
-            destinationXOffset = 0;
-            destinationYOffset = 0;
         }
         /*
          * Initializes...
          */
-        final int numDstBands = (dstBands!=null) ? dstBands.length :
-                                (srcBands!=null) ? srcBands.length : numSrcBands;
-        final BufferedImage image = getDestination(imageIndex, param, width, height, null); // TODO
-        checkReadParamBandSettings(param, numSrcBands, image.getSampleModel().getNumBands());
+        final int numDstBands = (dstBands != null) ? dstBands.length :
+                                (srcBands != null) ? srcBands.length : numSrcBands;
+        checkReadParamBandSettings(param, numSrcBands, numDstBands);
+        final SampleConverter[] converters = new SampleConverter[numDstBands];
+        final BufferedImage image = getDestination(imageIndex, param, width, height, converters);
 
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, dstRegion);
-        final int sourceXMin = srcRegion.x;
-        final int sourceYMin = srcRegion.y;
-        final int sourceXMax = srcRegion.width  + sourceXMin;
-        final int sourceYMax = srcRegion.height + sourceYMin;
+        final int sourceXMin   = srcRegion.x;
+        final int sourceYMin   = srcRegion.y;
+        final int sourceWidth  = srcRegion.width;
+        final int sourceHeight = srcRegion.height;
+        final int destinationXOffset = dstRegion.x;
+        final int destinationYOffset = dstRegion.y;
 
         final WritableRaster raster = image.getRaster();
-        final int rasterWidth  = raster.getWidth();
-        final int rasterHeigth = raster.getHeight();
         final int columnCount  = records.columnCount;
         final int dataCount    = records.getDataCount();
         final float[] data     = records.getData();
@@ -527,14 +523,12 @@ public class TextRecordImageReader extends TextImageReader {
          * Clears the image area. All values are set to NaN.
          */
         if (CLEAR) {
-            final int minX = dstRegion.x;
-            final int minY = dstRegion.y;
-            final int maxX = dstRegion.width  + minX;
-            final int maxY = dstRegion.height + minY;
+            final int maxX = dstRegion.width  + destinationXOffset;
+            final int maxY = dstRegion.height + destinationYOffset;
             for (int b = (dstBands != null) ? dstBands.length : numDstBands; --b>=0;) {
                 final int band = (dstBands != null) ? dstBands[b] : b;
-                for (int y=minY; y<maxY; y++) {
-                    for (int x=minX; x<maxX; x++) {
+                for (int y=destinationYOffset; y<maxY; y++) {
+                    for (int x=destinationXOffset; x<maxX; x++) {
                         raster.setSample(x, y, band, Float.NaN);
                     }
                 }
@@ -550,23 +544,20 @@ public class TextRecordImageReader extends TextImageReader {
         }
         for (int i=0; i<dataCount; i+=columnCount) {
             /*
-             * Converts the (x,y) geodetic coordinate into pixel coordinate into the source
-             * image. Then convert that pixel coordinate from source image to destination image.
+             * Converts the (x,y) geodetic coordinate into pixel coordinate into the source image.
+             * Then convert the result from a pixel coordinate in the source image to a coordinate
+             * in the destination image. Note that the conversion from geodetic to pixel coordinates
+             * assume that the y axis is increasing downward, as often with images.
              */
-            final double fx = (data[i+xColumn] - xmin) * scaleX; // (fx,fy) may be NaN: Use
-            final double fy = (ymax - data[i+yColumn]) * scaleY; // "!(abs(...)<=tolerance)".
-            int x = (int) Math.round(fx); // This conversion is not the same than ...
-            int y = (int) Math.round(fy); // ... getTransform(), but it should be ok.
-            if (x >= sourceXMin && x < sourceXMax && y >= sourceYMin && y < sourceYMax) {
-                x -= subsamplingXOffset;
-                y -= subsamplingYOffset;
-                if ((x % sourceXSubsampling) == 0 && (y % sourceYSubsampling) == 0) {
-                    x = x/sourceXSubsampling + (destinationXOffset - sourceXMin);
-                    y = y/sourceYSubsampling + (destinationYOffset - sourceYMin);
-                    if (x<rasterWidth && y<rasterHeigth) {
-                        for (int j=0; j<columns.length; j++) {
-                            raster.setSample(x, y, (dstBands!=null ? dstBands[j] : j), data[i+columns[j]]);
-                        }
+            int x = (int) Math.round((data[i+xColumn] - xmin) * scaleX) - sourceXMin;
+            if (x >= 0 && x < sourceWidth && (x % sourceXSubsampling) == 0) {
+                int y = (int) Math.round((ymax - data[i+yColumn]) * scaleY) - sourceYMin;
+                if (y >= 0 && y < sourceHeight && (y % sourceYSubsampling) == 0) {
+                    x = x / sourceXSubsampling + destinationXOffset;
+                    y = y / sourceYSubsampling + destinationYOffset;
+                    for (int j=0; j<columns.length; j++) {
+                        final int db = (dstBands != null ? dstBands[j] : j);
+                        raster.setSample(x, y, db, converters[db].convert(data[i+columns[j]]));
                     }
                 }
             }

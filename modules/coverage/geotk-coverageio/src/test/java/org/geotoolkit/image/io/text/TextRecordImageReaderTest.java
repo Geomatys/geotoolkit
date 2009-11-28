@@ -87,18 +87,6 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
         }
     }
 
-    /** TODO */
-    @Test @Ignore @Override
-    public void testReadFile() {}
-
-    /** TODO */
-    @Test @Ignore @Override
-    public void testSubRegion() {}
-
-    /** TODO */
-    @Test @Ignore @Override
-    public void testByteType() {}
-
     /**
      * Tests the metadata of the {@link "records.txt"} file.
      *
@@ -116,17 +104,17 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───OffsetVectors\n" +
-            "│   │   ├───origin=“-20000.0 -13000.0”\n" +
+            "│   │   ├───origin=“-19000.0 12690.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“2000.0 0.0”\n" +
             "│   │   └───OffsetVector\n" +
-            "│   │       └───values=“0.0 619.0243902439024”\n" +
+            "│   │       └───values=“0.0 -619.0243902439024”\n" +
             "│   └───Limits\n" +
             "│       ├───low=“0 0”\n" +
             "│       └───high=“19 41”\n" +
             "├───SpatialRepresentation\n" +
             "│   ├───numberOfDimensions=“2”\n" +
-            "│   ├───centerPoint=“-1000.0 -310.0”\n" +
+            "│   ├───centerPoint=“0.0 0.0”\n" +
             "│   └───pointInPixel=“center”\n" +
             "└───ImageDescription\n" +
             "    └───Dimensions\n" +
