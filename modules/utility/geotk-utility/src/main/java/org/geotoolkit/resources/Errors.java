@@ -150,6 +150,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int BURSA_WOLF_PARAMETERS_REQUIRED = 18;
 
         /**
+         * The operation has been canceled.
+         */
+        public static final int CANCELED_OPERATION = 224;
+
+        /**
          * Can't compute derivative.
          */
         public static final int CANT_COMPUTE_DERIVATIVE = 19;

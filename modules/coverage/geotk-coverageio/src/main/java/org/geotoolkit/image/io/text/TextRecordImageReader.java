@@ -66,7 +66,7 @@ import org.geotoolkit.internal.image.io.GridDomainAccessor;
  *     (...etc...)
  * }
  *
- * From this decoder point of view, the two first columns (longitude and latitude)
+ * From this decoder point of view, the two first columns (<var>longitude</var> and <var>latitude</var>)
  * are pixel's logical coordinate (<var>x</var>,<var>y</var>), while the three last
  * columns are three image's bands. The whole file contains only one image, unless
  * {@link #getNumImages} has been overridden. All (<var>x</var>,<var>y</var>)
@@ -120,13 +120,6 @@ public class TextRecordImageReader extends TextImageReader {
     private int nextImageIndex;
 
     /**
-     * Average number of characters (including EOL) for a record. This is used for estimating
-     * the percentage of progress done so far. This will be updated after each image read. The
-     * value 0 means that it has not yet been computed.
-     */
-    private float averageLineLength;
-
-    /**
      * Constructs a new image reader.
      *
      * @param provider the provider that is invoking this constructor, or {@code null} if none.
@@ -144,71 +137,42 @@ public class TextRecordImageReader extends TextImageReader {
 
     /**
      * Returns the column number for <var>x</var> values. The default implementation returns
-     * {@link TextRecordImageReader.Spi#xColumn}. Subclasses should override this method if
-     * this information should be obtained in an other way.
+     * {@link TextRecordImageReader.Spi#xColumn}, or 0 if no service prodiver were specified
+     * to the constructor. Subclasses should override this method if this information should
+     * be obtained in an other way.
      *
      * @param  imageIndex The index of the image to be queried.
      * @return The column number for <var>x</var> values.
-     * @throws IOException If an error occurs reading the from the input source.
+     * @throws IOException If an error occurs while reading the from the input source.
      */
     protected int getColumnX(final int imageIndex) throws IOException {
         return (originatingProvider instanceof Spi) ? ((Spi) originatingProvider).xColumn : 0;
     }
 
     /**
-     * Invokes {@link #getColumnX} and checks the result.
-     */
-    private int getCheckedColumnX(final int imageIndex) throws IOException {
-        final int xColumn = getColumnX(imageIndex);
-        if (xColumn < 0) {
-            throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NEGATIVE_COLUMN_$2, "x", xColumn));
-        }
-        return xColumn;
-    }
-
-    /**
      * Returns the column number for <var>y</var> values. The default implementation returns
-     * {@link TextRecordImageReader.Spi#yColumn}. Subclasses should override this method if
-     * this information should be obtained in an other way.
+     * {@link TextRecordImageReader.Spi#yColumn}, or 1 if no service prodiver were specified
+     * to the constructor. Subclasses should override this method if this information should
+     * be obtained in an other way.
      *
      * @param  imageIndex The index of the image to be queried.
      * @return The column number for <var>y</var> values.
-     * @throws IOException If an error occurs reading the from the input source.
+     * @throws IOException If an error occurs while reading the from the input source.
      */
     protected int getColumnY(final int imageIndex) throws IOException {
         return (originatingProvider instanceof Spi) ? ((Spi) originatingProvider).yColumn : 1;
     }
 
     /**
-     * Invokes {@link #getColumnY} and checks the result.
+     * Ensures that the given value is positive. This is used for checking the values returned
+     * by {@link #getColumnX(int)} and {@link #getColumnY(int)}. In case of negative number, we
+     * throw an {@link IIOException} instead of {@link IllegalArgumentException} because this
+     * is not a method argument provided by the user.
      */
-    private int getCheckedColumnY(final int imageIndex) throws IOException {
-        final int yColumn = getColumnY(imageIndex);
-        if (yColumn < 0) {
-            throw new IllegalStateException(Errors.format(
-                    Errors.Keys.NEGATIVE_COLUMN_$2, "y", yColumn));
+    private static void ensurePositive(final String name, final int column) throws IIOException {
+        if (column < 0) {
+            throw new IIOException(Errors.format(Errors.Keys.NEGATIVE_COLUMN_$2, name, column));
         }
-        return yColumn;
-    }
-
-    /**
-     * Returns the column number where to get the data for the given band. In most typical
-     * cases, this method just add 2 to the given value in order to skip the longitude and
-     * latitude columns. However this method is robust to the cases where the longitude and
-     * latitude columns are not in their usual place.
-     *
-     * @param  imageIndex Index of the image to read.
-     * @param  band Index of the band to read.
-     * @return Index of the column in a record to read.
-     * @throws IOException If an I/O operation was required and failed.
-     */
-    private int getColumnForBand(final int imageIndex, int band) throws IOException {
-        final int xColumn = getCheckedColumnX(imageIndex);
-        final int yColumn = getCheckedColumnY(imageIndex);
-        if (band >= Math.min(xColumn, yColumn)) band++;
-        if (band >= Math.max(xColumn, yColumn)) band++;
-        return band;
     }
 
     /**
@@ -218,10 +182,7 @@ public class TextRecordImageReader extends TextImageReader {
      * {@link javax.imageio.stream.ImageInputStream}.
      */
     @Override
-    public void setInput(final Object  input,
-                         final boolean seekForwardOnly,
-                         final boolean ignoreMetadata)
-    {
+    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
         clear();
         super.setInput(input, seekForwardOnly, ignoreMetadata);
     }
@@ -229,15 +190,14 @@ public class TextRecordImageReader extends TextImageReader {
     /**
      * Returns the number of bands available for the specified image. The default
      * implementation reads the image immediately and counts the number of columns
-     * after the longitude and latitude columns.
+     * after the geodetic coordinate columns.
      *
      * @param  imageIndex  The image index.
-     * @throws IOException if an error occurs reading the information from the input source.
+     * @throws IOException if an error occurs while reading the information from the input source.
      */
     @Override
     public int getNumBands(final int imageIndex) throws IOException {
-        return getRecords(imageIndex).columnCount -
-                (getCheckedColumnX(imageIndex) == getCheckedColumnY(imageIndex) ? 1 : 2);
+        return getRecords(imageIndex, false).getNumBands();
     }
 
     /**
@@ -246,11 +206,12 @@ public class TextRecordImageReader extends TextImageReader {
      *
      * @param  imageIndex the index of the image to be queried.
      * @return Image width.
-     * @throws IOException If an error occurs reading the width information from the input source.
+     * @throws IOException If an error occurs while reading the width information
+     *         from the input source.
      */
     @Override
     public int getWidth(final int imageIndex) throws IOException {
-        final RecordList records = getRecords(imageIndex);
+        final RecordList records = getRecords(imageIndex, false);
         return records.getPointCount(records.xColumn);
     }
 
@@ -260,11 +221,12 @@ public class TextRecordImageReader extends TextImageReader {
      *
      * @param  imageIndex the index of the image to be queried.
      * @return Image height.
-     * @throws IOException If an error occurs reading the height information from the input source.
+     * @throws IOException If an error occurs while reading the height information
+     *         from the input source.
      */
     @Override
     public int getHeight(final int imageIndex) throws IOException {
-        final RecordList records = getRecords(imageIndex);
+        final RecordList records = getRecords(imageIndex, false);
         return records.getPointCount(records.yColumn);
     }
 
@@ -289,25 +251,25 @@ public class TextRecordImageReader extends TextImageReader {
          * returned by getColumnX() and getColumnY(). Reminder: xmax and ymax are INCLUSIVE
          * in the code below, as well as (width-1) and (height-1).
          */
-        final RecordList records = getRecords(imageIndex);
-        final int xColumn        = getCheckedColumnX(imageIndex);
-        final int yColumn        = getCheckedColumnY(imageIndex);
-        final int width          = records.getPointCount(xColumn);
-        final int height         = records.getPointCount(yColumn);
-        final double xmin        = records.getMinimum(xColumn);
-        final double ymin        = records.getMinimum(yColumn);
-        final double xmax        = records.getMaximum(xColumn);
-        final double ymax        = records.getMaximum(yColumn);
-        final double padValue    = getPadValue(imageIndex);
+        final RecordList records = getRecords(imageIndex, false);
+        final int    xColumn  = records.xColumn;
+        final int    yColumn  = records.yColumn;
+        final int    width    = records.getPointCount(xColumn);
+        final int    height   = records.getPointCount(yColumn);
+        final double xmin     = records.getMinimum(xColumn);
+        final double ymin     = records.getMinimum(yColumn);
+        final double xmax     = records.getMaximum(xColumn);
+        final double ymax     = records.getMaximum(yColumn);
+        final double padValue = getPadValue(imageIndex);
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
         domain.setAll(xmin, ymin, xmax, ymax, width, height, true, null);
         /*
          * Now adds the valid range of sample values for each band.
          */
         final DimensionAccessor dimensions = new DimensionAccessor(metadata);
-        final int numBands = records.columnCount - (xColumn == yColumn ? 1 : 2);
+        final int numBands = records.getNumBands();
         for (int band=0; band<numBands; band++) {
-            final int column = getColumnForBand(imageIndex, band);
+            final int column = records.getColumnForBand(band);
             dimensions.selectChild(dimensions.appendChild());
             dimensions.setValueRange(records.getMinimum(column), records.getMaximum(column));
             dimensions.setFillSampleValues(padValue);
@@ -345,32 +307,35 @@ public class TextRecordImageReader extends TextImageReader {
     }
 
     /**
-     * Retourne les données de l'image à l'index spécifié. Si cette image avait déjà été lue, ses
-     * données seront retournées immédiatement.  Sinon, cette image sera lue ainsi que toutes les
-     * images qui précèdent {@code imageIndex} et qui n'avaient pas encore été lues. Que ces
-     * images précédentes soient mémorisées ou oubliées dépend de {@link #seekForwardOnly}.
+     * Returns the records for the image at the given index. If this image has already been read
+     * in a previous call to this method, then the cached {@code RecordList} will be returned
+     * immediately. Otherwise the records will be read from the input source. This will force
+     * the loading of every images before the given {@code imageIndex} that has not yet been
+     * read. Those previous images will be discarted immediately if {@link #seekForwardOnly}
+     * is {@code true}.
      *
-     * @param  imageIndex Index de l'image à lire.
-     * @return Les données de l'image. Cette méthode ne retourne jamais {@code null}.
-     * @throws IOException si une erreur est survenue lors de la lecture du flot,
-     *         ou si des nombres n'étaient pas correctement formatés dans le flot.
-     * @throws IndexOutOfBoundsException si l'index spécifié est en dehors des
-     *         limites permises ou si aucune image n'a été conservée à cet index.
+     * @param  imageIndex The image index.
+     * @param  allowCancel {@code false} if cancelation should throw an exception.
+     * @return The list of records for the requested image (never {@code null}).
+     * @throws IOException if an error occured while reading, including badly formatted numbers.
+     * @throws IndexOutOfBoundsException If the given image index is outside the range of index
+     *         that this method can process.
      */
-    private RecordList getRecords(final int imageIndex) throws IOException {
+    private RecordList getRecords(final int imageIndex, final boolean allowCancel) throws IOException {
         clearAbortRequest();
         checkImageIndex(imageIndex);
         if (imageIndex >= nextImageIndex) {
             processImageStarted(imageIndex);
             final BufferedReader reader = getReader();
-            final long          origine = getStreamPosition(reader);
-            final long           length = getStreamLength(nextImageIndex, imageIndex+1);
-            long   nextProgressPosition = (origine>=0 && length>0) ? 0 : Long.MAX_VALUE;
+            final long streamOrigin = getStreamPosition(reader);
+            final long streamLength = getStreamLength(nextImageIndex, imageIndex+1);
             for (; nextImageIndex <= imageIndex; nextImageIndex++) {
                 /*
-                 * Réduit la consommation de mémoire des images précédentes. On ne réduit
-                 * pas celle de l'image courante,  puisque la plupart du temps le tableau
-                 * sera bientôt détruit de toute façon.
+                 * If there is some image before this one, trim their internal array in order to
+                 * reduce memory usage. Note that the image to be read below will not be trimmed
+                 * at the end of this method because in typical usage, it will not be keept (i.e.
+                 * we usually load only one image, or if we want many images we typically set
+                 * seekForwardOnly to true).
                  */
                 if (seekForwardOnly) {
                     minIndex = nextImageIndex;
@@ -386,59 +351,72 @@ public class TextRecordImageReader extends TextImageReader {
                     }
                 }
                 /*
-                 * Procède à la lecture de chacune des lignes de données. Que ces lignes
-                 * soient mémorisées ou pas dépend de l'image que l'on est en train de
-                 * décoder ainsi que de la valeur de {@link #seekForwardOnly}.
+                 * Parse the line read from the input source. Those lines will be immediately
+                 * discarted if seekForwardOnly is true and the current image index is lower
+                 * than the requested one (because we need to parse previous images before to
+                 * reach the requested one).
                  */
-                double[]    values = null;
+                int   linePosition = 0;
+                int   nextProgress = 1;
+                double[]   values  = null;
                 RecordList records = null;
-                final boolean    keep       = (nextImageIndex == imageIndex) || !seekForwardOnly;
-                final int        xColumn    = getCheckedColumnX(nextImageIndex);
-                final int        yColumn    = getCheckedColumnY(nextImageIndex);
-                final double     padValue   = getPadValue      (nextImageIndex);
-                final LineFormat lineFormat = getLineFormat    (nextImageIndex);
-                try {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (isComment(line) || lineFormat.setLine(line) == 0) {
+                final boolean    memorize   = (nextImageIndex == imageIndex) || !seekForwardOnly;
+                final int        xColumn    = getColumnX   (nextImageIndex); ensurePositive("x", xColumn);
+                final int        yColumn    = getColumnY   (nextImageIndex); ensurePositive("y", yColumn);
+                final double     padValue   = getPadValue  (nextImageIndex);
+                final LineFormat lineFormat = getLineFormat(nextImageIndex);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (abortRequested()) {
+                        processReadAborted();
+                        if (!allowCancel || records == null) {
+                            throw new IIOException(Errors.format(Errors.Keys.CANCELED_OPERATION));
+                        }
+                        return records;
+                    }
+                    linePosition++;
+                    if (isComment(line)) {
+                        continue;
+                    }
+                    try {
+                        if (lineFormat.setLine(line) == 0) {
                             continue;
                         }
                         values = lineFormat.getValues(values);
-                        for (int i=0; i<values.length; i++) {
-                            if (i != xColumn && i != yColumn && values[i] == padValue) {
-                                values[i] = Double.NaN;
-                            }
-                        }
-                        round(values);
-                        if (keep) {
-                            if (records == null) {
-                                if (averageLineLength == 0) {
-                                    averageLineLength = 10.4f; // Empirical measurement.
-                                }
-                                final int expectedLineCount = Math.max(8, Math.min(65536,
-                                        Math.round(length / (averageLineLength * values.length))));
-                                records = new RecordList(values, expectedLineCount,
-                                        xColumn, yColumn, getGridTolerance());
-                            }
-                            records.add(values);
-                        }
-                        final long position = getStreamPosition(reader) - origine;
-                        if (position >= nextProgressPosition) {
-                            processImageProgress(position * (100f / length));
-                            nextProgressPosition = position + PROGRESS_INTERVAL;
-                            if (abortRequested()) {
-                                processReadAborted();
-                                return records;
-                            }
+                    } catch (ParseException exception) {
+                        throw new IIOException(getPositionString(exception.getLocalizedMessage()), exception);
+                    }
+                    /*
+                     * Modify (if needed) the values of the record we just read, replacing pad
+                     * values by NaN and fixing the geodetic coordinates for rounding errors
+                     * (if the user overrided the 'round' method).
+                     */
+                    for (int i=0; i<values.length; i++) {
+                        if (i != xColumn && i != yColumn && values[i] == padValue) {
+                            values[i] = Double.NaN;
                         }
                     }
-                } catch (ParseException exception) {
-                    throw new IIOException(getPositionString(exception.getLocalizedMessage()), exception);
+                    round(values);
+                    if (memorize) {
+                        if (records == null) {
+                            records = new RecordList(values,
+                                    Math.max(8, (int) (streamLength / (line.length() + 1)) + 1),
+                                    xColumn, yColumn, getGridTolerance());
+                        }
+                        records.add(values);
+                    }
+                    /*
+                     * Report progress.
+                     */
+                    if (linePosition >= nextProgress) {
+                        final long position = getStreamPosition(reader) - streamOrigin;
+                        processImageProgress(position * (100f / streamLength));
+                        nextProgress += (int) ((long) PROGRESS_INTERVAL * linePosition / position);
+                    }
                 }
                 /*
-                 * Après la lecture d'une image, vérifie s'il y avait un nombre suffisant de lignes.
-                 * Une exception sera lancée si l'image ne contenait pas au moins deux lignes. On
-                 * ajustera ensuite le nombre moyen de caractères par données.
+                 * At this point, we have finished reading the image.
+                 * Ensure that we have enough data (2 records is a minimum).
                  */
                 if (records != null) {
                     final int lineCount = records.getLineCount();
@@ -449,21 +427,17 @@ public class TextRecordImageReader extends TextImageReader {
                     if (data == null) {
                         data = new RecordList[imageIndex+1];
                     } else if (data.length <= imageIndex) {
-                        data = Arrays.copyOf(data, imageIndex+1);
+                        data = Arrays.copyOf(data, imageIndex*2);
                     }
                     data[nextImageIndex] = records;
-                    final float meanDatumLength = (getStreamPosition(reader) - origine) / (float) records.getDataCount();
-                    if (meanDatumLength > 0) {
-                        averageLineLength = meanDatumLength;
-                    }
                 }
             }
             processImageComplete();
         }
         /*
-         * Une fois les lectures terminées, retourne les données de l'image
-         * demandée. Une exception sera lancée si ces données n'ont pas été
-         * conservées.
+         * Following should never be null if checkImageIndex(int) did its work properly.
+         * We check nevertheless as a safety (user could have overriden checkImageIndex(int)
+         * for instance).
          */
         if (data != null && imageIndex < data.length) {
             final RecordList records = data[imageIndex];
@@ -475,21 +449,21 @@ public class TextRecordImageReader extends TextImageReader {
     }
 
     /**
-     * Reads the image indexed by {@code imageIndex} and returns it as a complete buffered image.
+     * Reads the image indexed by {@code imageIndex} and returns it as a buffered image.
      *
-     * @param  imageIndex the index of the image to be retrieved.
+     * @param  imageIndex The index of the image to be retrieved.
      * @param  param Parameters used to control the reading process, or {@code null}.
-     * @return the desired portion of the image.
-     * @throws IOException if an error occurs during reading.
+     * @return The desired portion of the image.
+     * @throws IOException If an error occurs during reading.
      */
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
-        final int        xColumn = getCheckedColumnX(imageIndex);
-        final int        yColumn = getCheckedColumnY(imageIndex);
-        final RecordList records = getRecords(imageIndex);
-        final int          width = records.getPointCount(xColumn);
-        final int         height = records.getPointCount(yColumn);
-        final int    numSrcBands = records.columnCount - (xColumn==yColumn ? 1 : 2);
+        final RecordList records = getRecords(imageIndex, true);
+        final int xColumn     = records.xColumn;
+        final int yColumn     = records.yColumn;
+        final int width       = records.getPointCount(xColumn);
+        final int height      = records.getPointCount(yColumn);
+        final int numSrcBands = records.getNumBands();
         /*
          * Extracts user's parameters
          */
@@ -529,26 +503,26 @@ public class TextRecordImageReader extends TextImageReader {
         final BufferedImage image = getDestination(imageIndex, param, width, height, null); // TODO
         checkReadParamBandSettings(param, numSrcBands, image.getSampleModel().getNumBands());
 
-        final Rectangle    srcRegion = new Rectangle();
-        final Rectangle    dstRegion = new Rectangle();
+        final Rectangle srcRegion = new Rectangle();
+        final Rectangle dstRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, dstRegion);
-        final int         sourceXMin = srcRegion.x;
-        final int         sourceYMin = srcRegion.y;
-        final int         sourceXMax = srcRegion.width  + sourceXMin;
-        final int         sourceYMax = srcRegion.height + sourceYMin;
+        final int sourceXMin = srcRegion.x;
+        final int sourceYMin = srcRegion.y;
+        final int sourceXMax = srcRegion.width  + sourceXMin;
+        final int sourceYMax = srcRegion.height + sourceYMin;
 
-        final WritableRaster  raster = image.getRaster();
-        final int        rasterWidth = raster.getWidth();
-        final int       rasterHeigth = raster.getHeight();
-        final int        columnCount = records.columnCount;
-        final int          dataCount = records.getDataCount();
-        final float[]           data = records.getData();
-        final double            xmin = records.getMinimum(xColumn);
-        final double            ymin = records.getMinimum(yColumn);
-        final double            xmax = records.getMaximum(xColumn);
-        final double            ymax = records.getMaximum(yColumn);
-        final double          scaleX = (width -1)/(xmax-xmin);
-        final double          scaleY = (height-1)/(ymax-ymin);
+        final WritableRaster raster = image.getRaster();
+        final int rasterWidth  = raster.getWidth();
+        final int rasterHeigth = raster.getHeight();
+        final int columnCount  = records.columnCount;
+        final int dataCount    = records.getDataCount();
+        final float[] data     = records.getData();
+        final double  xmin     = records.getMinimum(xColumn);
+        final double  ymin     = records.getMinimum(yColumn);
+        final double  xmax     = records.getMaximum(xColumn);
+        final double  ymax     = records.getMaximum(yColumn);
+        final double  scaleX   = (width -1) / (xmax - xmin);
+        final double  scaleY   = (height-1) / (ymax - ymin);
         /*
          * Clears the image area. All values are set to NaN.
          */
@@ -557,8 +531,8 @@ public class TextRecordImageReader extends TextImageReader {
             final int minY = dstRegion.y;
             final int maxX = dstRegion.width  + minX;
             final int maxY = dstRegion.height + minY;
-            for (int b=(dstBands!=null) ? dstBands.length : numDstBands; --b>=0;) {
-                final int band = (dstBands!=null) ? dstBands[b] : b;
+            for (int b = (dstBands != null) ? dstBands.length : numDstBands; --b>=0;) {
+                final int band = (dstBands != null) ? dstBands[b] : b;
                 for (int y=minY; y<maxY; y++) {
                     for (int x=minX; x<maxX; x++) {
                         raster.setSample(x, y, band, Float.NaN);
@@ -572,19 +546,17 @@ public class TextRecordImageReader extends TextImageReader {
          */
         final int[] columns = new int[(srcBands!=null) ? srcBands.length : numDstBands];
         for (int i=0; i<columns.length; i++) {
-            columns[i] = getColumnForBand(imageIndex, srcBands!=null ? srcBands[i] : i);
+            columns[i] = records.getColumnForBand(srcBands != null ? srcBands[i] : i);
         }
         for (int i=0; i<dataCount; i+=columnCount) {
             /*
-             * On convertit maintenant la coordonnée (x,y) logique en coordonnée pixel. Cette
-             * coordonnée pixel se réfère à l'image "source";  elle ne se réfère pas encore à
-             * l'image destination. Elle doit obligatoirement être entière. Plus loin, nous
-             * tiendrons compte du "subsampling".
+             * Converts the (x,y) geodetic coordinate into pixel coordinate into the source
+             * image. Then convert that pixel coordinate from source image to destination image.
              */
             final double fx = (data[i+xColumn] - xmin) * scaleX; // (fx,fy) may be NaN: Use
             final double fy = (ymax - data[i+yColumn]) * scaleY; // "!(abs(...)<=tolerance)".
-            int           x = (int) Math.round(fx); // This conversion is not the same than
-            int           y = (int) Math.round(fy); // getTransform(), but it should be ok.
+            int x = (int) Math.round(fx); // This conversion is not the same than ...
+            int y = (int) Math.round(fy); // ... getTransform(), but it should be ok.
             if (x >= sourceXMin && x < sourceXMax && y >= sourceYMin && y < sourceYMax) {
                 x -= subsamplingXOffset;
                 y -= subsamplingYOffset;
@@ -603,13 +575,11 @@ public class TextRecordImageReader extends TextImageReader {
     }
 
     /**
-     * Supprime les données de toutes les images
-     * qui avait été conservées en mémoire.
+     * Clears all data.
      */
     private void clear() {
-        data              = null;
-        nextImageIndex    = 0;
-        averageLineLength = 0;
+        data = null;
+        nextImageIndex = 0;
     }
 
     /**
@@ -699,14 +669,14 @@ public class TextRecordImageReader extends TextImageReader {
          * provides the following defaults in addition to the defaults defined in the
          * super-class constructor:
          * <p>
-         * <ul>
-         *   <li>{@link #names}           = {@code "records"}</li>
-         *   <li>{@link #MIMETypes}       = {@code "text/plain"}</li>
-         *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextRecordImageReader"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
-         *   <li>{@link #xColumn}         = {@code 0}</li>
-         *   <li>{@link #yColumn}         = {@code 1}</li>
-         * </ul>
+         * <table><tr>
+         *   <td>{@link #names}           </td><td>=</td><td> {@code "records"}</td>
+         *   <td>{@link #MIMETypes}       </td><td>=</td><td> {@code "text/plain"}</td>
+         *   <td>{@link #pluginClassName} </td><td>=</td><td> {@code "org.geotoolkit.image.io.text.TextRecordImageReader"}</td>
+         *   <td>{@link #vendorName}      </td><td>=</td><td> {@code "Geotoolkit.org"}</td>
+         *   <td>{@link #xColumn}         </td><td>=</td><td> {@code 0}</td>
+         *   <td>{@link #yColumn}         </td><td>=</td><td> {@code 1}</td>
+         * </tr></table>
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.

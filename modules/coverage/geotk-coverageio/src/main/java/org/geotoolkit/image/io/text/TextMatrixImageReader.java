@@ -456,14 +456,14 @@ public class TextMatrixImageReader extends TextImageReader {
          * Constructs a default {@code TextMatrixImageReader.Spi}. This constructor
          * provides the following defaults in addition to the defaults defined in the
          * super-class constructor:
-         *
-         * <ul>
-         *   <li>{@link #names}           = {@code "matrix"}</li>
-         *   <li>{@link #MIMETypes}       = {@code "text/plain"}</li>
-         *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextMatrixImageReader"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
-         * </ul>
-         *
+         * <p>
+         * <table><tr>
+         *   <td>{@link #names}           </td><td>=</td><td> {@code "matrix"}</td>
+         *   <td>{@link #MIMETypes}       </td><td>=</td><td> {@code "text/plain"}</td>
+         *   <td>{@link #pluginClassName} </td><td>=</td><td> {@code "org.geotoolkit.image.io.text.TextMatrixImageReader"}</td>
+         *   <td>{@link #vendorName}      </td><td>=</td><td> {@code "Geotoolkit.org"}</td>
+         * </tr></table>
+         * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.
          */

@@ -176,6 +176,29 @@ final class RecordList {
     }
 
     /**
+     * Returns the number of bands. This is the number of columns not
+     * counting the longitude or latitude columns.
+     */
+    public int getNumBands() {
+        return columnCount - (xColumn == yColumn ? 1 : 2);
+    }
+
+    /**
+     * Returns the column number where to get the data for the given band. In most typical
+     * cases, this method just add 2 to the given value in order to skip the longitude and
+     * latitude columns. However this method is robust to the cases where the longitude and
+     * latitude columns are not in their usual place.
+     *
+     * @param  band Index of the band to read.
+     * @return Index of the column in a record to read.
+     */
+    public int getColumnForBand(int band) {
+        if (band >= xColumn) band++;
+        if (band >= yColumn) band++;
+        return band;
+    }
+
+    /**
      * Returns the minimal value in the given column.
      */
     public double getMinimum(final int column) {
