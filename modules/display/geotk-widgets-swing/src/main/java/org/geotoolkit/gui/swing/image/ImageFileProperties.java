@@ -20,24 +20,30 @@ package org.geotoolkit.gui.swing.image;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.event.IIOReadWarningListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
 import java.awt.Dimension;
+import javax.swing.JList;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.SwingWorker;
+import javax.swing.DefaultListModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.SwingWorker;
 import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.XArrays;
 
 
@@ -78,7 +84,7 @@ import org.geotoolkit.util.XArrays;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.06
  *
  * @see ImageProperties
  * @see ImageFileChooser
@@ -99,10 +105,21 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     private final IIOMetadataPanel metadata;
 
     /**
+     * The warnings
+     */
+    private final DefaultListModel warnings;
+
+    /**
+     * The index of the warning tab. Used in order to change the enabled
+     * or disabled status of that tab.
+     */
+    private final int warningsTab;
+
+    /**
      * If a worker is currently running, that worker. This is used for
      * cancelling a running action before to start a new one.
      */
-    private transient SwingWorker<Object,Object> worker;
+    private transient volatile Worker worker;
 
     /**
      * Creates a new instance of {@code ImageFileProperties} with no image.
@@ -131,6 +148,31 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     private ImageFileProperties(final IIOMetadataPanel metadata) {
         super(metadata);
         this.metadata = metadata;
+        warningsTab = tabs.getTabCount();
+        warnings = new DefaultListModel();
+        final Vocabulary resources = Vocabulary.getResources(getLocale());
+        tabs.addTab(resources.getString(Vocabulary.Keys.WARNING), new JList(warnings));
+        tabs.setEnabledAt(warningsTab, false);
+    }
+
+    /**
+     * Adds the given lines to the warnings tab.
+     */
+    final void addWarnings(final List<String> chunks) {
+        tabs.setEnabledAt(warningsTab, true);
+        for (final String warning : chunks) {
+            warnings.addElement(warning);
+        }
+    }
+
+    /**
+     * Clears the panels except the warnings one. We do not clear the warnings panel because
+     * it is the result of the reading process we just finished and we want to show them.
+     */
+    @Override
+    final void clear() {
+        super.clear();
+        metadata.clear();
     }
 
     /**
@@ -142,11 +184,16 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      */
     private void setImage(final IIOMetadata streamMetadata, final Info[] images) {
         assert EventQueue.isDispatchThread();
-        metadata.clear();
         if (images.length == 0) {
             super.setImage((RenderedImage) null);
             return;
         }
+        /*
+         * Clear the metadata because we are going to define new values.
+         * But do not clear the warnings, because they are the result of
+         * the reading process we just finished and we want to show them.
+         */
+        metadata.clear();
         images[0].show(this);
         /*
          * Add non-null metadata.
@@ -186,45 +233,57 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * @throws IOException If an error occured while reading the metadata or the thumbnails.
      */
     public void setImage(final ImageReader reader) throws IOException {
-        final IIOMetadata metadata = reader.getStreamMetadata();
-        final int numImages = reader.getNumImages(false);
-        Info[] infos;
-        if (numImages >= 0) {
-            infos = new Info[numImages];
-            for (int i=0; i<numImages; i++) {
-                infos[i] = new Info(reader, i, preferredThumbnailSize);
-            }
-        } else {
-            /*
-             * numImages is -1 if this information is too costly to fetch. This occurs for example
-             * in animated GIF files. In such case the image I/O documentation recommands to fetch
-             * the images sequentially until an IndexOutOfBoundsException is thrown.
-             */
-            final ArrayList<Info> list = new ArrayList<Info>();
-            while (true) {
-                final Info info;
-                final int index = list.size();
-                try {
-                    info = new Info(reader, index, preferredThumbnailSize);
-                } catch (IndexOutOfBoundsException e) {
-                    // This is the expected exception, but log anyway.
-                    Logging.recoverableException(ImageFileProperties.class, "setImage", e);
-                    break;
-                }
-                list.add(info);
-            }
-            infos = list.toArray(new Info[list.size()]);
+        warnings.clear();
+        tabs.setEnabledAt(warningsTab, false);
+        final IIOReadWarningListener listener = worker;
+        if (listener != null) {
+            reader.addIIOReadWarningListener(listener);
         }
-        /*
-         * At this point we have all informations we want.
-         * Now declare those informations to the widget.
-         */
-        final Info[] images = infos;
-        EventQueue.invokeLater(new Runnable() {
-            @Override public void run() {
-                setImage(metadata, images);
+        try {
+            final IIOMetadata metadata = reader.getStreamMetadata();
+            final int numImages = reader.getNumImages(false);
+            Info[] infos;
+            if (numImages >= 0) {
+                infos = new Info[numImages];
+                for (int i=0; i<numImages; i++) {
+                    infos[i] = new Info(reader, i, preferredThumbnailSize);
+                }
+            } else {
+                /*
+                 * numImages is -1 if this information is too costly to fetch. This occurs for example
+                 * in animated GIF files. In such case the image I/O documentation recommands to fetch
+                 * the images sequentially until an IndexOutOfBoundsException is thrown.
+                 */
+                final ArrayList<Info> list = new ArrayList<Info>();
+                while (true) {
+                    final Info info;
+                    final int index = list.size();
+                    try {
+                        info = new Info(reader, index, preferredThumbnailSize);
+                    } catch (IndexOutOfBoundsException e) {
+                        // This is the expected exception, but log anyway.
+                        Logging.recoverableException(ImageFileProperties.class, "setImage", e);
+                        break;
+                    }
+                    list.add(info);
+                }
+                infos = list.toArray(new Info[list.size()]);
             }
-        });
+            /*
+             * At this point we have all informations we want.
+             * Now declare those informations to the widget.
+             */
+            final Info[] images = infos;
+            EventQueue.invokeLater(new Runnable() {
+                @Override public void run() {
+                    setImage(metadata, images);
+                }
+            });
+        } finally {
+            if (listener != null) {
+                reader.removeIIOReadWarningListener(listener);
+            }
+        }
     }
 
     /**
@@ -309,14 +368,19 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     @Override
     public void propertyChange(final PropertyChangeEvent event) {
         if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(event.getPropertyName())) {
-            if (worker != null) {
-                worker.cancel(false);
-                worker = null;
-            }
             final Object input = event.getNewValue();
             if (input instanceof File) {
-                worker = new Worker((File) input);
-                worker.execute();
+                final File file = (File) input;
+                if (file.isFile()) {
+                    Worker w = this.worker;
+                    if (w != null) {
+                        worker = null;
+                        w.cancel(false);
+                    }
+                    w = new Worker(file);
+                    worker = w; // Must be before execute.
+                    w.execute();
+                }
             }
         }
     }
@@ -331,7 +395,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * @since 3.05
      * @module
      */
-    private final class Worker extends SwingWorker<Object,Object> {
+    private final class Worker extends SwingWorker<Object,String> implements IIOReadWarningListener {
         /**
          * The file to read.
          */
@@ -355,6 +419,22 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         }
 
         /**
+         * Invoked when a warning occured while reading an image.
+         */
+        @Override
+        public void warningOccurred(final ImageReader source, final String warning) {
+            publish(warning);
+        }
+
+        /**
+         * Invoked from the Swing thread for processing the warnings.
+         */
+        @Override
+        protected void process(final List<String> chunks) {
+            addWarnings(chunks);
+        }
+
+        /**
          * Invoked in the Swing thread when the task is completed for
          * cleaning the {@link ImageFileProperties#worker} reference.
          */
@@ -362,6 +442,12 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         protected void done() {
             if (worker == this) {
                 worker = null;
+            }
+            try {
+                get();
+            } catch (Exception e) {
+                setImage((RenderedImage) null);
+                addWarnings(Collections.singletonList(e.getLocalizedMessage()));
             }
         }
     }

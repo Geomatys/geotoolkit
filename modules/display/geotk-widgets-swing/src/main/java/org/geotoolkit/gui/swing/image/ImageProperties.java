@@ -157,6 +157,11 @@ public class ImageProperties extends JPanel implements Dialog {
     protected final ImagePane viewer;
 
     /**
+     * The panel which contains the tabs.
+     */
+    final JTabbedPane tabs;
+
+    /**
      * Creates a new instance of {@code ImageProperties} with no image.
      * One of {@link #setImage(RenderedImage) setImage(...)} methods must
      * be invoked in order to set the properties source.
@@ -179,8 +184,8 @@ public class ImageProperties extends JPanel implements Dialog {
         colorModel  = new JLabel();
         colorSpace  = new JLabel();
         colorRamp   = new ColorRamp();
+        tabs        = new JTabbedPane();
         final Vocabulary resources = Vocabulary.getResources(getLocale());
-        final JTabbedPane     tabs = new JTabbedPane();
         final GridBagConstraints c = new GridBagConstraints();
         colorRampLabel = getLabel(Vocabulary.Keys.COLORS, resources);
         /*
@@ -351,7 +356,7 @@ public class ImageProperties extends JPanel implements Dialog {
      * Set all text fields to {@code null}. This method do not set the {@link #properties}
      * table; this is left to the caller.
      */
-    private void clear() {
+    void clear() {
         imageSize  .setText(null);
         tileSize   .setText(null);
         dataType   .setText(null);

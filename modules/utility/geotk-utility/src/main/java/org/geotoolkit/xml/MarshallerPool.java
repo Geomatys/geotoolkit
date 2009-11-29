@@ -182,9 +182,9 @@ public class MarshallerPool {
     /**
      * Creates a new factory for the given packages.
      *
-     * @param  rootNamespace    The root namespace, for example {@code "http://www.isotc211.org/2005/gmd"}.
-     * @param  context          The JAXB context.
-     * @throws JAXBException    If the OGC namespace prefix mapper can not be created.
+     * @param  properties    The set of properties to be given to the pool.
+     * @param  context       The JAXB context.
+     * @throws JAXBException If the OGC namespace prefix mapper can not be created.
      */
     private MarshallerPool(final Map<String,String> properties, final JAXBContext context) throws JAXBException {
         this.context = context;

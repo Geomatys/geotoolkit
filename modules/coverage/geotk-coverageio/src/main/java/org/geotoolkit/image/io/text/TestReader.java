@@ -33,7 +33,7 @@ import org.geotoolkit.io.LineFormat;
  * loading the real image reader implementation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.06
  *
  * @since 2.4
  * @module
@@ -135,10 +135,10 @@ final class TestReader extends TextImageReader {
         int rowCount = 0;
         int lower = 0;
 scan:   while (lower < readAheadLimit) {
-            // Skip line feeds at the begining of the line.
-            // They may be a rest from the previous line.
+            // Skip line feeds at the begining of the line. They may be
+            // trailing characters from the previous iteration of the loop.
             char c = buffer[lower];
-            if (c == '\r' || c == 'n') {
+            if (c == '\r' || c == '\n') {
                 lower++;
                 continue;
             }

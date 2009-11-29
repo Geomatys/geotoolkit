@@ -58,6 +58,26 @@ public abstract class TextImageReaderTestBase {
     protected abstract TextImageReader createImageReader() throws IOException;
 
     /**
+     * Tests the {@link TextImageReader.Spi#canDecodeInput(Object)}.
+     *
+     * @throws IOException if an error occured while reading the file.
+     */
+    @Test
+    public void testCanRead() throws IOException {
+        final TextImageReader reader = createImageReader();
+        assertTrue(reader.getOriginatingProvider().canDecodeInput(reader.getInput()));
+        /*
+         * Ensure that the above check did not caused the lost of data.
+         */
+        final BufferedImage image = reader.read(0);
+        reader.dispose();
+        assertEquals(20, image.getWidth());
+        assertEquals(42, image.getHeight());
+        final Raster raster = image.getRaster();
+        assertEquals(-1.123f, raster.getSampleFloat(0, 0, 0), EPS);
+    }
+
+    /**
      * Tests the reading of the {@link "matrix.txt"} file.
      *
      * @throws IOException if an error occured while reading the file.
