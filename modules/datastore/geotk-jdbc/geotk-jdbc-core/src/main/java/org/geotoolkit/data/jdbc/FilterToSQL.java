@@ -507,7 +507,17 @@ public class FilterToSQL implements FilterVisitor, ExpressionVisitor {
      */
     @Override
     public Object visit(Not filter, Object extraData) {
-        return visit((BinaryLogicOperator)filter, "NOT");
+        LOGGER.finer("exporting not Filter");
+
+        try {
+            out.write("NOT (");
+            filter.getFilter().accept(this, extraData);
+            out.write(")");
+        } catch (java.io.IOException ioe) {
+            throw new RuntimeException(IO_ERROR, ioe);
+        }
+
+        return extraData;
     }
 
     /**
