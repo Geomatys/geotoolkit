@@ -20,12 +20,15 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -35,6 +38,8 @@ import org.opengis.geometry.Precision;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -236,7 +241,15 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            return CRS.decode(getSrsName());
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
     }
 
     @Override
@@ -281,7 +294,12 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
 
     @Override
     public int getCoordinateDimension() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        BigInteger bi = getSrsDimension();
+        if(bi == null){
+            return 2;
+        }else{
+            return bi.intValue();
+        }
     }
 
     @Override

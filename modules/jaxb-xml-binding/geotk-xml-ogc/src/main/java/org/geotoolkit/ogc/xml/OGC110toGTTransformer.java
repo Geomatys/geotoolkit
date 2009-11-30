@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.filter.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
@@ -358,7 +359,7 @@ public class OGC110toGTTransformer {
     }
 
     public Expression visit(JAXBElement<? extends AbstractGeometryType> ele){
-        throw new UnsupportedOperationException("not supported yet, need GML");
+        return filterFactory.literal(GeometrytoJTS.toJTS(ele.getValue()));
     }
 
     public PropertyName visitPropertyName(PropertyNameType pnt){

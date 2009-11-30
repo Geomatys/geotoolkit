@@ -36,10 +36,12 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.LogicOpsType;
+import org.geotoolkit.ogc.xml.v110.OverlapsType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
+import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.sld.DefaultSLDFactory;
@@ -65,6 +67,8 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
+import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.Overlaps;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -137,6 +141,7 @@ public class OGCforSLD110Test extends TestCase{
     private static File FILE_FIL_SPA_EQUALS = null;
     private static File FILE_FIL_SPA_INTERSECTS = null;
     private static File FILE_FIL_SPA_OVERLAPS = null;
+    private static File FILE_FIL_SPA_OVERLAPS2 = null;
     private static File FILE_FIL_SPA_TOUCHES = null;
     private static File FILE_FIL_SPA_WITHIN = null;
     
@@ -161,6 +166,7 @@ public class OGCforSLD110Test extends TestCase{
     private static File TEST_FILE_FIL_SPA_EQUALS = null;
     private static File TEST_FILE_FIL_SPA_INTERSECTS = null;
     private static File TEST_FILE_FIL_SPA_OVERLAPS = null;
+    private static File TEST_FILE_FIL_SPA_OVERLAPS2 = null;
     private static File TEST_FILE_FIL_SPA_TOUCHES = null;
     private static File TEST_FILE_FIL_SPA_WITHIN = null;
     
@@ -212,6 +218,7 @@ public class OGCforSLD110Test extends TestCase{
             FILE_FIL_SPA_EQUALS = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Equals.xml").toURI() );
             FILE_FIL_SPA_INTERSECTS = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Intersects.xml").toURI() );
             FILE_FIL_SPA_OVERLAPS = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Overlaps.xml").toURI() );
+            FILE_FIL_SPA_OVERLAPS2 = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Overlaps2.xml").toURI() );
             FILE_FIL_SPA_TOUCHES = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Touches.xml").toURI() );
             FILE_FIL_SPA_WITHIN = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Within.xml").toURI() );
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
@@ -245,6 +252,7 @@ public class OGCforSLD110Test extends TestCase{
         assertNotNull(FILE_FIL_SPA_EQUALS);
         assertNotNull(FILE_FIL_SPA_INTERSECTS);
         assertNotNull(FILE_FIL_SPA_OVERLAPS);
+        assertNotNull(FILE_FIL_SPA_OVERLAPS2);
         assertNotNull(FILE_FIL_SPA_TOUCHES);
         assertNotNull(FILE_FIL_SPA_WITHIN);
         
@@ -278,6 +286,7 @@ public class OGCforSLD110Test extends TestCase{
             TEST_FILE_FIL_SPA_EQUALS = File.createTempFile("test_fil_spa_equals_v110", ".xml");
             TEST_FILE_FIL_SPA_INTERSECTS = File.createTempFile("test_fil_spa_intersects_v110", ".xml");
             TEST_FILE_FIL_SPA_OVERLAPS = File.createTempFile("test_fil_spa_overlaps_v110", ".xml");
+            TEST_FILE_FIL_SPA_OVERLAPS = File.createTempFile("test_fil_spa_overlaps2_v110", ".xml");
             TEST_FILE_FIL_SPA_TOUCHES = File.createTempFile("test_fil_spa_touches_v110", ".xml");
             TEST_FILE_FIL_SPA_WITHIN = File.createTempFile("test_fil_spa_within_v110", ".xml");
         }catch(IOException ex){
@@ -1066,7 +1075,44 @@ public class OGCforSLD110Test extends TestCase{
 
     @Test
     public void testFilterSpatialOverlaps() throws JAXBException{
-        
+
+        //Read test
+        Object obj = unMarshall(FILE_FIL_SPA_OVERLAPS2);
+        assertNotNull(obj);
+
+        JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
+        assertNotNull(jaxfilter);
+        Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
+        assertNotNull(filter);
+
+        Overlaps prop = (Overlaps) filter;
+        BinarySpatialOperator subfilter =  (BinarySpatialOperator) prop;
+
+        PropertyName left = (PropertyName) subfilter.getExpression1();
+        Literal right = (Literal) subfilter.getExpression2();
+        assertEquals( left.getPropertyName() , valueStr);
+        assertEquals( right.evaluate(null).toString().trim() , "LINESTRING (46.652 10.466, 47.114 11.021, 46.114 12.114, 45.725 12.523)");
+
+
+
+        //write test - not yet
+//        FilterType ft = TRANSFORMER_OGC.visit(filter);
+//        assertNotNull(ft.getSpatialOps());
+//
+//        SpatialOpsType cot = ft.getSpatialOps().getValue();
+//        assertEquals( ft.getLogicOps().getName().getLocalPart(), SEJAXBStatics.FILTER_SPATIAL_OVERLAPS);
+//        OverlapsType pibt = (OverlapsType) cot;
+//
+//        BinarySpatialOperator leftoptype = (BinarySpatialOperator) pibt.getComparisonOps().getValue();
+//
+//        PropertyNameType lf = (PropertyNameType) leftoptype.getExpression().get(0).getValue();
+//        LiteralType rg = (LiteralType) leftoptype.getExpression().get(1).getValue();
+//
+//        assertEquals(lf.getContent(), valueStr);
+//        assertEquals(rg.getContent().get(0).toString().trim(), valueFStr );
+//
+//        MARSHALLER.marshal(ft.getLogicOps(), TEST_FILE_FIL_SPA_OVERLAPS2);
+
     }
 
     @Test
