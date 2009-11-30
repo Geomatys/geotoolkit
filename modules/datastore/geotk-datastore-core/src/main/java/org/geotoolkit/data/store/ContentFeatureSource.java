@@ -45,6 +45,7 @@ import org.geotoolkit.util.NullProgressListener;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -445,13 +446,18 @@ public abstract class ContentFeatureSource implements FeatureSource<SimpleFeatur
         // reprojection
         if (!canReproject()) {
             if (query.getCoordinateSystemReproject() != null) {
-                try {
-                    reader = new ReprojectFeatureReader(reader, query.getCoordinateSystemReproject());
-                } catch (Exception e) {
-                    if (e instanceof IOException) {
-                        throw (IOException) e;
-                    } else {
-                        throw (IOException) new IOException("Error occurred trying to reproject data").initCause(e);
+                final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
+
+                //no need to ask for a reproject reader if there is no geometry
+                if(desc != null){
+                    try {
+                        reader = new ReprojectFeatureReader(reader, query.getCoordinateSystemReproject());
+                    } catch (Exception e) {
+                        if (e instanceof IOException) {
+                            throw (IOException) e;
+                        } else {
+                            throw (IOException) new IOException("Error occurred trying to reproject data").initCause(e);
+                        }
                     }
                 }
             }

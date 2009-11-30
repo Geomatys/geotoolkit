@@ -23,8 +23,10 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Creates a property accessor for simple features.
@@ -48,6 +50,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static final PropertyAccessor ATTRIBUTE_ACCESS = new SimpleFeaturePropertyAccessor();
     private static final PropertyAccessor DEFAULT_GEOMETRY_ACCESS = new DefaultGeometrySimpleFeaturePropertyAccessor();
     private static final PropertyAccessor FID_ACCESS = new FidSimpleFeaturePropertyAccessor();
+    private static final PropertyAccessor XNUM_ACCESS = new XNumPropertyAccessor();
     private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
     private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(\\w+)");
     private static final Cache<String,PropertyAccessor> CACHE = new Cache<String, PropertyAccessor>();
@@ -67,14 +70,13 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
 
-
-        //try to find the accessor in the cache
+        //try to find the accessor in the cache---------------------------------
         PropertyAccessor accessor = CACHE.peek(xpath);
         if(accessor != null){
             return accessor;
         }
 
-        //if ("".equals(xpath) && target == Geometry.class)
+        //if ("".equals(xpath) && target == Geometry.class)---------------------
         if (xpath.isEmpty()) {
             final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
             accessor = handler.peek();
@@ -85,7 +87,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             return DEFAULT_GEOMETRY_ACCESS;
         }
 
-        //check for fid access
+        //check for fid access--------------------------------------------------
         if (ID_PATTERN.matcher(xpath).matches()) {
             final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
             accessor = handler.peek();
@@ -96,7 +98,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             return FID_ACCESS;
         }
 
-        //check for simple property acess
+        //check for simple property acess---------------------------------------
         if (PROPERTY_PATTERN.matcher(xpath).matches()) {
             final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
             accessor = handler.peek();
@@ -105,6 +107,28 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             }
             handler.putAndUnlock(accessor);
             return ATTRIBUTE_ACCESS;
+        }
+
+        //check xpath form *[number]--------------------------------------------
+        if(xpath.startsWith("*[") && xpath.endsWith("]")){
+            String num = xpath.substring(2, xpath.length()-1);
+
+            if(num.startsWith("position()=")){
+                num = num.substring(11);
+            }
+
+            try{
+                Integer.valueOf(num);
+                final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+                accessor = handler.peek();
+                if (accessor == null) {
+                    accessor = XNUM_ACCESS;
+                }
+                handler.putAndUnlock(accessor);
+                return XNUM_ACCESS;
+
+            }catch(NumberFormatException ex){
+            }
         }
 
         return null;
@@ -257,4 +281,93 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         }
     }
+
+    static class XNumPropertyAccessor implements PropertyAccessor {
+
+        private int toIndex(String xpath){
+            String num = xpath.substring(2, xpath.length()-1);
+
+            if(num.startsWith("position()=")){
+                num = num.substring(11);
+            }
+
+            return Integer.valueOf(num);
+        }
+
+        @Override
+        public boolean canHandle(Object object, String xpath, Class target) {
+
+            if (object instanceof Feature) {
+                return ((Feature) object).getProperty(xpath) != null;
+            }
+
+            if (object instanceof FeatureType) {
+                return ((FeatureType) object).getDescriptor(xpath) != null;
+            }
+
+            return false;
+        }
+
+        @Override
+        public Object get(Object object, String xpath, Class target) {
+            final int index = toIndex(xpath);
+
+            if(object instanceof SimpleFeature){
+                ((SimpleFeature) object).getAttribute(index);
+            }
+
+            if (object instanceof Feature) {
+                final Feature feature = (Feature)object;
+                int i = 0;
+                for(Property prop : feature.getProperties()){
+                    if(i == index){
+                        return feature.getProperty(prop.getName()).getValue();
+                    }
+                    i++;
+                }
+            }
+
+            if (object instanceof FeatureType) {
+                final FeatureType ft = (FeatureType)object;
+                int i = 0;
+                for(PropertyDescriptor prop : ft.getDescriptors()){
+                    if(i == index){
+                        return prop;
+                    }
+                    i++;
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        public void set(Object object, String xpath, Object value, Class target)
+                throws IllegalArgumentException {
+            final int index = toIndex(xpath);
+
+            if(object instanceof SimpleFeature){
+                ((SimpleFeature) object).setAttribute(index, value);
+            }
+
+            if (object instanceof Feature) {
+                final Feature feature = (Feature)object;
+                int i = 0;
+                for(Property prop : feature.getProperties()){
+                    if(i == index){
+                        feature.getProperty(prop.getName()).setValue(value);
+                        return;
+                    }
+                    i++;
+                }
+            }
+
+            if (object instanceof FeatureType) {
+                throw new IllegalArgumentException("Feature type is immutable");
+            }
+
+        }
+    }
+
+
 }
