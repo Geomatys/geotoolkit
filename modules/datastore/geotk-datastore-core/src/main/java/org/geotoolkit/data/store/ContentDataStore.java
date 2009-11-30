@@ -109,7 +109,7 @@ public abstract class ContentDataStore implements DataStore<SimpleFeatureType,Si
     /**
      * logger
      */
-    protected final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
+    private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     /**
      * Factory used to create feature types

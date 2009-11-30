@@ -150,7 +150,7 @@ public final class ContentEntry {
                     listener.changed(notification);
                 } catch (Throwable t) {
                     // problem issuing notification to an interested party
-                    dataStore.Logger.log(Level.WARNING, "Problem issuing feature event " + notification, t);
+                    dataStore.getLogger().log(Level.WARNING, "Problem issuing feature event " + notification, t);
                 }
             }
         }

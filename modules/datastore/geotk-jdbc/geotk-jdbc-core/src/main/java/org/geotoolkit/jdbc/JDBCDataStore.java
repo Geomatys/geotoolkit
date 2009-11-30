@@ -426,7 +426,7 @@ public final class JDBCDataStore extends ContentDataStore {
 
         if (mapping == null) {
             mapping = Types.OTHER;
-            Logger.warning("No mapping for " + clazz.getName());
+            getLogger().warning("No mapping for " + clazz.getName());
         }
 
         return mapping;
@@ -457,7 +457,7 @@ public final class JDBCDataStore extends ContentDataStore {
         try {
             cx = createConnection();
             final String sql = createTableSQL(featureType, cx);
-            Logger.log(Level.FINE, "Create schema: {0}", sql);
+            getLogger().log(Level.FINE, "Create schema: {0}", sql);
 
             final Statement st = cx.createStatement();
 
@@ -609,7 +609,7 @@ public final class JDBCDataStore extends ContentDataStore {
                                 Class columnType = getMapping(binding);
 
                                 if (columnType == null) {
-                                    Logger.warning("No class for sql type " + binding);
+                                    getLogger().warning("No class for sql type " + binding);
                                     columnType = Object.class;
                                 }
 
@@ -631,7 +631,7 @@ public final class JDBCDataStore extends ContentDataStore {
 
                                     sql.append(" WHERE 0=1");
 
-                                    Logger.log(Level.FINE, "Grabbing table pk metadata: {0}", sql);
+                                    getLogger().log(Level.FINE, "Grabbing table pk metadata: {0}", sql);
 
                                     ResultSet rs = null;
                                     try {
@@ -666,7 +666,7 @@ public final class JDBCDataStore extends ContentDataStore {
 
                             final PrimaryKey pkey;
                             if (cols.isEmpty()) {
-                                Logger.warning("No primary key found for " + tableName + ".");
+                                getLogger().warning("No primary key found for " + tableName + ".");
 
                                 pkey = new NullPrimaryKey(tableName);
                             } else {
@@ -721,7 +721,7 @@ public final class JDBCDataStore extends ContentDataStore {
                 rs = ((PreparedStatement) st).executeQuery();
             } else {
                 final String sql = selectBoundsSQL(featureType, query);
-                Logger.log(Level.FINE, "Retriving bounding box: {0}", sql);
+                getLogger().log(Level.FINE, "Retriving bounding box: {0}", sql);
 
                 st = cx.createStatement();
                 rs = st.executeQuery(sql);
@@ -788,7 +788,7 @@ public final class JDBCDataStore extends ContentDataStore {
                 rs = ((PreparedStatement) st).executeQuery();
             } else {
                 String sql = selectCountSQL(featureType, query);
-                Logger.log(Level.FINE, "Counting features: {0}", sql);
+                getLogger().log(Level.FINE, "Counting features: {0}", sql);
 
                 st = cx.createStatement();
                 rs = st.executeQuery(sql);
@@ -848,7 +848,7 @@ public final class JDBCDataStore extends ContentDataStore {
                         }
                     } else {
                         String sql = insertSQL(featureType, feature, nextKeyValues, cx);
-                        Logger.log(Level.FINE, "Inserting new feature: {0}", sql);
+                        getLogger().log(Level.FINE, "Inserting new feature: {0}", sql);
 
                         //TODO: execute in batch to improve performance?
                         st.execute(sql);
@@ -885,7 +885,7 @@ public final class JDBCDataStore extends ContentDataStore {
             final Object[] values, final Filter filter, final Connection cx) throws IOException
     {
         if ((attributes == null) || (attributes.length == 0)) {
-            Logger.warning("Update called with no attributes, doing nothing.");
+            getLogger().warning("Update called with no attributes, doing nothing.");
 
             return;
         }
@@ -906,7 +906,7 @@ public final class JDBCDataStore extends ContentDataStore {
         } else {
             try {
                 final String sql = updateSQL(featureType, attributes, values, filter);
-                Logger.log(Level.FINE, "Updating feature: {0}", sql);
+                getLogger().log(Level.FINE, "Updating feature: {0}", sql);
 
                 final Statement st = cx.createStatement();
 
@@ -944,7 +944,7 @@ public final class JDBCDataStore extends ContentDataStore {
                 ((PreparedStatement) st).execute();
             } else {
                 final String sql = deleteSQL(featureType, filter);
-                Logger.log(Level.FINE, "Removing feature(s): {0}", sql);
+                getLogger().log(Level.FINE, "Removing feature(s): {0}", sql);
 
                 st = cx.createStatement();
                 st.execute(sql);
@@ -1004,7 +1004,7 @@ public final class JDBCDataStore extends ContentDataStore {
      *
      */
     protected final Connection createConnection() throws SQLException {
-        Logger.fine("CREATE CONNECTION");
+        getLogger().fine("CREATE CONNECTION");
         final Connection cx = getDataSource().getConnection();
         // isolation level is not set in the datastore, see
         // http://jira.codehaus.org/browse/GEOT-2021
@@ -1158,7 +1158,7 @@ public final class JDBCDataStore extends ContentDataStore {
                     sql.append(") + 1 FROM ");
                     encodeTableName(pkey.getTableName(), sql);
 
-                    Logger.log(Level.FINE, "Getting next FID: {0}", sql);
+                    getLogger().log(Level.FINE, "Getting next FID: {0}", sql);
 
                     final Statement st = cx.createStatement();
                     try {
@@ -1273,7 +1273,7 @@ public final class JDBCDataStore extends ContentDataStore {
                 rs = ((PreparedStatement) st).executeQuery();
             } else {
                 final String sql = selectSQL(featureType, query);
-                Logger.fine(sql);
+                getLogger().fine(sql);
                 st = cx.createStatement();
                 rs = st.executeQuery(sql);
             }
@@ -1323,7 +1323,7 @@ public final class JDBCDataStore extends ContentDataStore {
         try {
             if (!tables.next()) {
                 // does not exist, create it
-                Logger.log(Level.FINE, "Creating geometry association table: {0}", sql);
+                getLogger().log(Level.FINE, "Creating geometry association table: {0}", sql);
 
                 final Statement st = cx.createStatement();
 
@@ -1484,7 +1484,7 @@ public final class JDBCDataStore extends ContentDataStore {
             sql.append(" = ? ");
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
         if (table != null) {
             ps.setString(1, table);
@@ -1563,7 +1563,7 @@ public final class JDBCDataStore extends ContentDataStore {
 
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
         if (fid != null) {
             ps.setString(1, fid);
@@ -1643,7 +1643,7 @@ public final class JDBCDataStore extends ContentDataStore {
             sql.append(" = ?");
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
         if (gid != null) {
             ps.setString(1, gid);
@@ -1715,7 +1715,7 @@ public final class JDBCDataStore extends ContentDataStore {
             sql.append(" = ?");
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
         if (gid != null) {
             ps.setString(1, gid);
@@ -1853,7 +1853,7 @@ public final class JDBCDataStore extends ContentDataStore {
             sql.append(" = ?");
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
         if (fid != null) {
             ps.setString(1, fid);
@@ -1981,7 +1981,7 @@ public final class JDBCDataStore extends ContentDataStore {
             Integer sqlType = getMapping(clazz);
 
             if (sqlType == null) {
-                Logger.warning("No sql type mapping for: " + clazz);
+                getLogger().warning("No sql type mapping for: " + clazz);
                 sqlType = Types.OTHER;
             }
 
@@ -2262,7 +2262,7 @@ public final class JDBCDataStore extends ContentDataStore {
         // finally encode limit/offset, if necessary
         applyLimitOffset(sql, query);
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString(), ResultSet.TYPE_FORWARD_ONLY,
                                                                          ResultSet.CONCUR_READ_ONLY);
         ps.setFetchSize(fetchSize);
@@ -2296,8 +2296,8 @@ public final class JDBCDataStore extends ContentDataStore {
             } else {
                 dialect.setValue(value, binding, ps, offset + i + 1, cx);
             }
-            if (Logger.isLoggable(Level.FINE)) {
-                Logger.fine((i + 1) + " = " + value);
+            if (getLogger().isLoggable(Level.FINE)) {
+                getLogger().fine((i + 1) + " = " + value);
             }
         }
     }
@@ -2425,7 +2425,7 @@ public final class JDBCDataStore extends ContentDataStore {
         }
 
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
 
         if (toSQL != null) {
@@ -2527,7 +2527,7 @@ public final class JDBCDataStore extends ContentDataStore {
             dialect.encodeTableAlias("GT_COUNT_", sql);
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
 
         if (toSQL != null) {
@@ -2581,7 +2581,7 @@ public final class JDBCDataStore extends ContentDataStore {
             }
         }
 
-        Logger.fine(sql.toString());
+        getLogger().fine(sql.toString());
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
 
         if (toSQL != null) {
@@ -2721,7 +2721,7 @@ public final class JDBCDataStore extends ContentDataStore {
 
         sql.setLength(sql.length() - 1);
         sql.append(")");
-        Logger.log(Level.FINE, "Inserting new feature with ps: {0}", sql);
+        getLogger().log(Level.FINE, "Inserting new feature with ps: {0}", sql);
 
         //create the prepared statement
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
@@ -2745,8 +2745,8 @@ public final class JDBCDataStore extends ContentDataStore {
             } else {
                 dialect.setValue(value, binding, ps, i + 1, cx);
             }
-            if (Logger.isLoggable(Level.FINE)) {
-                Logger.fine((i + 1) + " = " + value);
+            if (getLogger().isLoggable(Level.FINE)) {
+                getLogger().fine((i + 1) + " = " + value);
             }
         }
 
@@ -2761,8 +2761,8 @@ public final class JDBCDataStore extends ContentDataStore {
                 final Object value = keyValues.get(j);
                 dialect.setValue(value, col.getType(), ps, i + 1, cx);
                 i++;
-                if (Logger.isLoggable(Level.FINE)) {
-                    Logger.fine((i) + " = " + value);
+                if (getLogger().isLoggable(Level.FINE)) {
+                    getLogger().fine((i) + " = " + value);
                 }
             }
         }
@@ -2912,7 +2912,7 @@ public final class JDBCDataStore extends ContentDataStore {
         }
 
         final PreparedStatement ps = cx.prepareStatement(sql.toString());
-        Logger.log(Level.FINE, "Updating features with prepared statement: {0}", sql);
+        getLogger().log(Level.FINE, "Updating features with prepared statement: {0}", sql);
 
         int i = 0;
         for (; i < attributes.length; i++) {
@@ -2924,8 +2924,8 @@ public final class JDBCDataStore extends ContentDataStore {
             } else {
                 dialect.setValue(values[i], binding, ps, i + 1, cx);
             }
-            if (Logger.isLoggable(Level.FINE)) {
-                Logger.fine((i + 1) + " = " + values[i]);
+            if (getLogger().isLoggable(Level.FINE)) {
+                getLogger().fine((i + 1) + " = " + values[i]);
             }
         }
 
@@ -2936,8 +2936,8 @@ public final class JDBCDataStore extends ContentDataStore {
         //    Class binding = toSQL.getLiteralTypes().get( j );
         //
         //    dialect.setValue( value, binding, ps, i+1, cx );
-        //    if ( LOGGER.isLoggable( Level.FINE ) ) {
-        //        LOGGER.fine( (i+1) + " = " + value );
+        //    if ( getLogger().isLoggable( Level.FINE ) ) {
+        //        getLogger().fine( (i+1) + " = " + value );
         //}
         }
 
@@ -3156,10 +3156,10 @@ public final class JDBCDataStore extends ContentDataStore {
             rs.close();
         } catch (SQLException e) {
             String msg = "Error occurred closing result set";
-            Logger.warning(msg);
+            getLogger().warning(msg);
 
-            if (Logger.isLoggable(Level.FINER)) {
-                Logger.log(Level.FINER, msg, e);
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
             }
         }
     }
@@ -3181,10 +3181,10 @@ public final class JDBCDataStore extends ContentDataStore {
             st.close();
         } catch (SQLException e) {
             String msg = "Error occurred closing statement";
-            Logger.warning(msg);
+            getLogger().warning(msg);
 
-            if (Logger.isLoggable(Level.FINER)) {
-                Logger.log(Level.FINER, msg, e);
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
             }
         }
     }
@@ -3205,13 +3205,13 @@ public final class JDBCDataStore extends ContentDataStore {
         try {
 //            System.out.println("Closing connection " + System.identityHashCode(cx));
             cx.close();
-            Logger.fine("CLOSE CONNECTION");
+            getLogger().fine("CLOSE CONNECTION");
         } catch (SQLException e) {
             String msg = "Error occurred closing connection";
-            Logger.warning(msg);
+            getLogger().warning(msg);
 
-            if (Logger.isLoggable(Level.FINER)) {
-                Logger.log(Level.FINER, msg, e);
+            if (getLogger().isLoggable(Level.FINER)) {
+                getLogger().log(Level.FINER, msg, e);
             }
         }
     }
@@ -3219,7 +3219,7 @@ public final class JDBCDataStore extends ContentDataStore {
     @Override
     protected void finalize() throws Throwable {
         if (dataSource != null) {
-            Logger.severe("There's code using JDBC based datastore and " +
+            getLogger().severe("There's code using JDBC based datastore and " +
                     "not disposing them. This may lead to temporary loss of database connections. " +
                     "Please make sure all data access code calls DataStore.dispose() " +
                     "before freeing all references to it");
@@ -3237,7 +3237,7 @@ public final class JDBCDataStore extends ContentDataStore {
                 mds.close();
             } catch (SQLException e) {
                 // it's ok, we did our best..
-                Logger.log(Level.FINE, "Could not close dataSource", e);
+                getLogger().log(Level.FINE, "Could not close dataSource", e);
             }
         }
     }
