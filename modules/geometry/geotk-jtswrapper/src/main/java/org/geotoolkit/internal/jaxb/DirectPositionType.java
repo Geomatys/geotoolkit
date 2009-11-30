@@ -18,7 +18,6 @@
 
 package org.geotoolkit.internal.jaxb;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,23 +150,14 @@ public class DirectPositionType implements DirectPosition {
             for (double d : position.getDirectPosition().getCoordinate()) {
                 value.add(d);
             }
-            CoordinateReferenceSystem crs = position.getDirectPosition().getCoordinateReferenceSystem();
-            if ( crs != null) {
-                try {
-                    srsName  = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
-                    if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
-                        srsName = CRS.toSRS(crs);
-                        if (srsName == null) {
-                            srsName = CRS.lookupIdentifier(crs, false);
-                        }
-                        CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
-
-                    }
-                } catch (FactoryException ex) {
-                    Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
-                }
-            }
+            /*
+             *  For simplified feature GML profile we don't fill the srsName and dimension attribute
+             *
+             CoordinateReferenceSystem crs = position.getDirectPosition().getCoordinateReferenceSystem();
+            srsName = CoordinateReferenceSystemAdapter.getSrsName(crs);
             this.srsDimension = position.getDirectPosition().getDimension();
+             
+             */
         }
     }
 
@@ -254,18 +244,20 @@ public class DirectPositionType implements DirectPosition {
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         CoordinateReferenceSystem crs = null;
-        try {
-            if (cachedCRS.containsKey(srsName)) {
-                return cachedCRS.get(srsName);
-            } else {
-                crs =  CRS.decode(srsName);
+        if (srsName != null) {
+            try {
+                if (cachedCRS.containsKey(srsName)) {
+                    return cachedCRS.get(srsName);
+                } else {
+                    crs =  CRS.decode(srsName);
+                }
+            } catch (NoSuchAuthorityCodeException ex) {
+                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, ex.getMessage());
+            } catch (FactoryException ex) {
+                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
             }
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, ex.getMessage());
-        } catch (FactoryException ex) {
-            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+            cachedCRS.put(srsName, crs);
         }
-        cachedCRS.put(srsName, crs);
         return crs;
     }
 
@@ -277,7 +269,7 @@ public class DirectPositionType implements DirectPosition {
     @Override
     public double[] getCoordinate() {
         double[] coords = new double[value.size()];
-        for(int i=0,n=value.size(); i<n; i++){
+        for(int i = 0, n = value.size(); i < n; i++){
             coords[i] = value.get(i);
         }
         return coords;

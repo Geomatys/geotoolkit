@@ -9,8 +9,10 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.opengis.geometry.coordinate.GenericCurve;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
@@ -21,51 +23,12 @@ import org.opengis.geometry.coordinate.GenericCurve;
  * @version $Revision $
  * @module pending
  */
-public abstract class AbstractJTSGenericCurve implements GenericCurve, JTSGeometry {
+public abstract class AbstractJTSGenericCurve extends AbstractJTSGeometry implements GenericCurve, JTSGeometry {
+    public AbstractJTSGenericCurve() {
 
-    private com.vividsolutions.jts.geom.Geometry jtsPeer;
-
-    protected JTSGeometry parent;
-
-    public final void setParent(JTSGeometry parent) {
-        this.parent = parent;
     }
 
-    /**
-     * Subclasses must override this method to compute the JTS equivalent of
-     * this geometry.
-     */
-    protected abstract com.vividsolutions.jts.geom.Geometry computeJTSPeer();
-
-    /**
-     * This method must be called by subclasses whenever the user makes a change
-     * to the geometry so that the cached JTS object can be recreated.
-     */
-    @Override
-    public final void invalidateCachedJTSPeer() {
-        jtsPeer = null;
-        if (parent != null) parent.invalidateCachedJTSPeer();
-    }
-
-    /**
-     * This method is meant to be invoked by the JTSUtils utility class when it
-     * creates a Geometry from a JTS geometry.  This prevents the Geometry from
-     * having to recompute the JTS peer the first time.
-     */
-    protected final void setJTSPeer(com.vividsolutions.jts.geom.Geometry g) {
-        jtsPeer = g;
-    }
-
-    /**
-     * Returns the JTS version of this geometry.  If the geometry has not
-     * changed since the last time this method was called, it will return the
-     * exact same object.
-     */
-    @Override
-    public final com.vividsolutions.jts.geom.Geometry getJTSGeometry() {
-        if (jtsPeer == null) {
-            jtsPeer = computeJTSPeer();
-        }
-        return jtsPeer;
+    public AbstractJTSGenericCurve(CoordinateReferenceSystem crs) {
+        super(crs);
     }
 }

@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.wfs.xml.RequestBase;
 
 
 /**
@@ -56,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     GetGmlObjectType.class,
     DescribeFeatureTypeType.class
 })
-public abstract class BaseRequestType {
+public abstract class BaseRequestType implements RequestBase {
 
     @XmlAttribute
     private String service;
@@ -111,12 +113,11 @@ public abstract class BaseRequestType {
      *     {@link String }
      *     
      */
-    public String getVersion() {
-        if (version == null) {
-            return "1.1.0";
-        } else {
-            return version;
-        }
+    public Version getVersion() {
+        if (version != null) {
+            return new Version(version);
+        } 
+        return null;
     }
 
     /**

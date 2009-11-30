@@ -44,7 +44,6 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
     @XmlElement(name = "PolygonPatch", namespace = "http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(SurfaceBoundaryAdapter.class)
     private SurfaceBoundary boundary;
-    private com.vividsolutions.jts.geom.Geometry jtsPeer;
 
     public JTSSurfacePatch() {
         this(null, null);
@@ -140,30 +139,6 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
         return jtsGeom.getArea();
     }
 
-    /**
-     * Retrieves the equivalent JTS geometry for this object.  Note that this
-     * operation may be expensive if the geometry must be computed.
-     */
-    @Override
-    public Geometry getJTSGeometry() {
-        if (jtsPeer == null) {
-            jtsPeer = calculateJTSPeer();
-        }
-        return jtsPeer;
-    }
-
-    /**
-     * This method is invoked to cause the JTS object to be recalculated the
-     * next time it is requested.  This method will be called by the
-     * underlying guts of the code when something has changed.
-     */
-    @Override
-    public void invalidateCachedJTSPeer() {
-        jtsPeer = null;
-    }
-
-    public abstract com.vividsolutions.jts.geom.Geometry calculateJTSPeer();
-
     @Override
     public boolean equals(Object object) {
         if (object == this)
@@ -195,9 +170,6 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
         }
         if (interpolation != null) {
             sb.append("interpolation:").append(interpolation).append('\n');
-        }
-        if (jtsPeer != null) {
-            sb.append("jtsPeer:").append(jtsPeer).append('\n');
         }
         if (surface != null) {
             sb.append("surface:").append(surface).append('\n');

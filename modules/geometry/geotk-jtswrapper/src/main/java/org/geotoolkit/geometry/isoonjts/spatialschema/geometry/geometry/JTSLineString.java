@@ -32,6 +32,7 @@ import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveBoundary;
 import org.opengis.geometry.primitive.CurveInterpolation;
 import org.opengis.geometry.primitive.CurveSegment;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * The {@code LineStringImpl} class implements the {@link LineString}
@@ -58,6 +59,15 @@ public class JTSLineString extends AbstractJTSGenericCurve
      * Creates a new {@code LineStringImpl}.
      */
     public JTSLineString() {
+        controlPoints = new JTSPointArray();
+        ((JTSPointArray)controlPoints).setJTSParent(this);
+    }
+
+    /**
+     * Creates a new {@code LineStringImpl}.
+     */
+    public JTSLineString(CoordinateReferenceSystem crs) {
+        super(crs);
         controlPoints = new JTSPointArray();
         ((JTSPointArray)controlPoints).setJTSParent(this);
     }
@@ -95,9 +105,10 @@ public class JTSLineString extends AbstractJTSGenericCurve
      */
     @Override
     public Curve getCurve() {
-        if (parent instanceof Curve)
+
+        /*if (parent instanceof Curve)
             return (Curve) parent;
-        else
+        else*/
             return null;
     }
 
@@ -326,10 +337,9 @@ public class JTSLineString extends AbstractJTSGenericCurve
         if (this == object)
             return true;
 
-        if (object instanceof JTSLineString) {
+        if (object instanceof JTSLineString & super.equals(object)) {
             JTSLineString that = (JTSLineString) object;
-            return Utilities.equals(this.controlPoints, that.controlPoints) &&
-                   Utilities.equals(this.parent, that.parent);
+            return Utilities.equals(this.controlPoints, that.controlPoints);
         }
         return false;
     }

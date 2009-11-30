@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v100.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v100.AcceptVersionsType;
 import org.geotoolkit.ows.xml.v100.SectionsType;
+import org.geotoolkit.wfs.xml.RequestBase;
 
 
 /**
@@ -55,7 +56,7 @@ import org.geotoolkit.ows.xml.v100.SectionsType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
 @XmlRootElement(name = "GetCapabilities")
-public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType {
+public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType implements RequestBase {
 
     @XmlAttribute
     private String service;
@@ -101,11 +102,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      *     
      */
     public String getService() {
-        if (service == null) {
-            return "WFS";
-        } else {
-            return service;
-        }
+        return service;
     }
 
     /**
@@ -119,5 +116,4 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
     public void setService(String value) {
         this.service = value;
     }
-
 }

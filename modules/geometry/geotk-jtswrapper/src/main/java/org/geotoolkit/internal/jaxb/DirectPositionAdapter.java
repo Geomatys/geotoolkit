@@ -20,7 +20,6 @@ package org.geotoolkit.internal.jaxb;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.Position;
 
 /**

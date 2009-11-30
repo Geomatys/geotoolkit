@@ -1,14 +1,23 @@
 
 package org.geotoolkit.internal.jaxb;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSRing;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
+import org.opengis.geometry.coordinate.PointArray;
+import org.opengis.geometry.coordinate.Position;
+import org.opengis.geometry.primitive.CurveSegment;
+import org.opengis.geometry.primitive.Primitive;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -94,6 +103,53 @@ public class PolygonType {
     }
 
     public JTSPolygon getJTSPolygon() {
+        ((JTSRing)exterior).setCoordinateReferenceSystem(coordinateReferenceSystem);
+            for (Primitive p : exterior.getElements()) {
+                if (p instanceof JTSCurve) {
+                    JTSCurve curve = (JTSCurve) p;
+                    curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
+                    for (CurveSegment cv :curve.getSegments()) {
+                        if (cv instanceof JTSLineString) {
+                            JTSLineString line = (JTSLineString) cv;
+                            PointArray pa = line.getControlPoints();
+                            List<Position> newPositions = new ArrayList<Position>();
+                            for (Position pos : pa.positions()) {
+                                if (pos instanceof GeneralDirectPosition) {
+                                    ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
+                                    newPositions.add(pos);
+                                }
+                            }
+                            line.getControlPoints().clear();
+                            line.getControlPoints().addAll(newPositions);
+                        }
+                    }
+                }
+            }
+
+            for (Ring ring : interior) {
+                ((JTSRing)ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
+                for (Primitive p : ring.getElements()) {
+                    if (p instanceof JTSCurve) {
+                        JTSCurve curve = (JTSCurve) p;
+                        curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
+                        for (CurveSegment cv :curve.getSegments()) {
+                            if (cv instanceof JTSLineString) {
+                                JTSLineString line = (JTSLineString) cv;
+                                PointArray pa = line.getControlPoints();
+                                List<Position> newPositions = new ArrayList<Position>();
+                                for (Position pos : pa.positions()) {
+                                    if (pos instanceof GeneralDirectPosition) {
+                                        ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
+                                        newPositions.add(pos);
+                                    }
+                                }
+                                line.getControlPoints().clear();
+                                line.getControlPoints().addAll(newPositions);
+                            }
+                        }
+                    }
+                }
+            }
         return new JTSPolygon(new JTSSurfaceBoundary(coordinateReferenceSystem, exterior, interior));
     }
 }

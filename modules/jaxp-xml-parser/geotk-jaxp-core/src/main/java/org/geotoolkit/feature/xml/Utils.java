@@ -28,6 +28,8 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -43,7 +45,9 @@ import org.opengis.feature.type.Name;
 public class Utils {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml");
-    
+
+    private static DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+
     private Utils() {}
 
     /**
@@ -92,6 +96,10 @@ public class Utils {
                 return Integer.class;
             } else if ("string".equals(name.getLocalPart())) {
                 return String.class;
+            } else if ("boolean".equals(name.getLocalPart())) {
+                return Boolean.class;
+            } else if ("dateTime".equals(name.getLocalPart())) {
+                return Timestamp.class;
             } else if ("date".equals(name.getLocalPart())) {
                 return Date.class;
             } else if ("double".equals(name.getLocalPart())) {
@@ -142,6 +150,13 @@ public class Utils {
                 return new QName("http://www.w3.org/2001/XMLSchema", "double");
             } else if (Date.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "date");
+            } else if (java.sql.Date.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "date");
+            } else if (Timestamp.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "dateTime");
+            } else if (Boolean.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "boolean");
+
 
             } else if (Geometry.class.isAssignableFrom(binding)) {
 
@@ -214,6 +229,15 @@ public class Utils {
         } else if (obj instanceof Timestamp) {
             String tValue  =((Timestamp) obj).toString();
             return tValue.replace(" ", "T");
+
+        } else if (obj instanceof java.sql.Date) {
+            String dValue  = dateFormatter.format((java.sql.Date) obj);
+            return dValue;
+
+        } else if (obj instanceof java.util.Date) {
+            String dValue  = dateFormatter.format((java.util.Date) obj);
+            return dValue;
+
         } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double || obj instanceof Boolean) {
             return obj + "";
 

@@ -139,7 +139,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      */
     @Override
     public LineString createLineString(final List/*<Position>*/ points) {
-        LineString result = new JTSLineString();
+        LineString result = new JTSLineString(crs);
         PointArray pa = result.getControlPoints();
         List list = pa;
         Iterator it = points.iterator();

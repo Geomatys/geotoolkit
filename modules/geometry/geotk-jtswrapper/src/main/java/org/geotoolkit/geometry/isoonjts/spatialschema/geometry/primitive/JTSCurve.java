@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
@@ -303,7 +304,15 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     public void setCurveArray(CurveArrayType array) {
         curveSegments = new NotifyingArrayList<CurveSegment>(this);
         for (CurveSegment c : array.getCurveSegments())  {
-            curveSegments.add(c);
+            JTSLineString line = (JTSLineString) c;
+            JTSLineString newLine = new JTSLineString(getCoordinateReferenceSystem());
+            for (Position p : line.getPositions()) {
+                if (p instanceof GeneralDirectPosition) {
+                    ((GeneralDirectPosition) p).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
+                    newLine.getPositions().add(p);
+                }
+            }
+            curveSegments.add(newLine);
         }
     }
 

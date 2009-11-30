@@ -20,6 +20,7 @@ import org.junit.Test;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.primitive.Curve;
+import org.opengis.geometry.primitive.CurveSegment;
 import org.opengis.geometry.primitive.Surface;
 
 /**
@@ -83,8 +84,8 @@ public class IntersectionTest extends AbstractGeometryTest {
         assertEquals(1.0 + 1.0 + Math.sqrt(2.0), sB.getPerimeter(), 0.0);
 
         TransfiniteSet result = sA.intersection(sB);
-        assertTrue(result instanceof Curve);
-        Curve curveResult = (Curve)result;
+        assertTrue("result was a " + result.getClass().getSimpleName(), result instanceof CurveSegment);
+        CurveSegment curveResult = (CurveSegment)result;
         assertEquals(0.0, curveResult.getStartParam(), 1.0e-8);
         //TODO
 //        assertEquals(Math.sqrt(2.0), curveResult.getEndParam(), 1.0e-8);

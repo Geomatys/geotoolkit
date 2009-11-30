@@ -5,7 +5,6 @@ package org.geotoolkit.internal.jaxb;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
@@ -29,7 +28,8 @@ import org.opengis.geometry.Geometry;
 public class ObjectFactory {
 
     private static final QName POINT_QNAME              = new QName("http://www.opengis.net/gml", "Point");
-    private static final QName RING_QNAME               = new QName("http://www.opengis.net/gml", "Ring");
+    private static final QName LINE_STRING_QNAME        = new QName("http://www.opengis.net/gml", "LineString");
+    private static final QName RING_QNAME               = new QName("http://www.opengis.net/gml", "LinearRing");
     private static final QName CURVE_QNAME              = new QName("http://www.opengis.net/gml", "Curve");
     private static final QName ENVELOPE_QNAME           = new QName("http://www.opengis.net/gml", "Envelope");
     private static final QName MULTI_POINT_QNAME        = new QName("http://www.opengis.net/gml", "MultiPoint");
@@ -74,12 +74,21 @@ public class ObjectFactory {
         return new JTSSurfaceBoundary();
     }
 
+    public LineStringPosListType createLineStringPosListType() {
+        return new LineStringPosListType();
+    }
+
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Point")
     public JAXBElement<JTSPoint> createJTSPoint(JTSPoint value) {
         return new JAXBElement<JTSPoint>(POINT_QNAME, JTSPoint.class, null, value);
     }
 
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Ring")
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineString")
+    public JAXBElement<LineStringPosListType> createLineStringPosListType(LineStringPosListType value) {
+        return new JAXBElement<LineStringPosListType>(LINE_STRING_QNAME, LineStringPosListType.class, null, value);
+    }
+
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LinearRing")
     public JAXBElement<JTSRing> createJTSRing(JTSRing value) {
         return new JAXBElement<JTSRing>(RING_QNAME, JTSRing.class, null, value);
     }
@@ -133,6 +142,9 @@ public class ObjectFactory {
 
         } else if (value instanceof JTSCurve) {
             return createJTSCurve((JTSCurve) value);
+
+        } else if (value instanceof JTSLineString) {
+            return createLineStringPosListType(new LineStringPosListType((JTSLineString) value));
 
         } else if (value instanceof JTSEnvelope) {
             return createJTSEnvelope((JTSEnvelope) value);

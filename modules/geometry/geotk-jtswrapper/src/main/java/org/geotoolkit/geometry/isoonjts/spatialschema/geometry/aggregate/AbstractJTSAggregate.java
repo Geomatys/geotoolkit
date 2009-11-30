@@ -33,7 +33,7 @@ import org.opengis.geometry.aggregate.Aggregate;
  */
 public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJTSGeometry implements Aggregate {
 
-    private final Set<T> elements = new LinkedHashSet();
+    private Set<T> elements = new LinkedHashSet();
 
     public AbstractJTSAggregate() {
         super();
@@ -79,6 +79,10 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
     @Override
     public Set<T> getElements() {
         return elements;
+    }
+
+    public void setElements(Set<T> elements) {
+        this.elements = elements;
     }
 
     @Override

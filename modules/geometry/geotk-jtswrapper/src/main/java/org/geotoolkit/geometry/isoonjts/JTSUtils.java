@@ -26,6 +26,8 @@ import java.util.Set;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -80,7 +82,7 @@ public final class JTSUtils {
 
         //TODO use factory finder when primitive factory and geometry factory are ready.
         final PrimitiveFactory pf = new JTSPrimitiveFactory(crs);//FactoryFinder.getPrimitiveFactory(hints);
-        final GeometryFactory gf = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
+        final GeometryFactory gf  = new JTSGeometryFactory(crs); //FactoryFinder.getGeometryFactory(hints);
 
         if (jtsGeom instanceof com.vividsolutions.jts.geom.Point) {
             com.vividsolutions.jts.geom.Point candidate = (com.vividsolutions.jts.geom.Point) jtsGeom;
@@ -94,10 +96,8 @@ public final class JTSUtils {
             for (int i = 0, n = candidate.getNumPoints(); i < n; i++) {
                 pointList.add(coordinateToDirectPosition(candidate.getCoordinateN(i), crs));
             }
-            ArrayList<CurveSegment> segments = new ArrayList<CurveSegment>();
-            segments.add(ls);
-            return pf.createCurve(segments);
-
+            return (JTSLineString)ls;
+           
         } else if (jtsGeom instanceof com.vividsolutions.jts.geom.LinearRing) {
             return linearRingToRing((com.vividsolutions.jts.geom.LinearRing) jtsGeom, crs);
 
@@ -114,10 +114,12 @@ public final class JTSUtils {
             }
             SurfaceBoundary boundary = pf.createSurfaceBoundary(externalRing, internalRings);
             Polygon polygon = gf.createPolygon(boundary);
-            ArrayList<Polygon> patches = new ArrayList<Polygon>();
+            return (JTSPolygon) polygon;
+            
+            /*ArrayList<Polygon> patches = new ArrayList<Polygon>();
             patches.add(polygon);
             PolyhedralSurface result = gf.createPolyhedralSurface(patches);
-            return result;
+            return result;*/
 
         } else if (jtsGeom instanceof GeometryCollection) {
             com.vividsolutions.jts.geom.GeometryCollection jtsCollection = (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom;

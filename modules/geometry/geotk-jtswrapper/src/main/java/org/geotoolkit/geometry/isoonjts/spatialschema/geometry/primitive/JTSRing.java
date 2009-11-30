@@ -11,6 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 
 import com.vividsolutions.jts.geom.LineString;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 
@@ -46,6 +47,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @see Shell
  * @module pending
  */
+@XmlRootElement(name = "Ring", namespace="http://www.opengis.net/gml")
 public class JTSRing extends JTSCompositeCurve implements Ring {
 
     /**

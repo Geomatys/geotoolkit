@@ -70,7 +70,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
      * {@inheritDoc }
      */
     @Override
-    public com.vividsolutions.jts.geom.Geometry calculateJTSPeer() {
+    public com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
         SurfaceBoundary boundary = getBoundary();
         Ring exterior = boundary.getExterior();
         List interiors = boundary.getInteriors();

@@ -15,10 +15,15 @@ import org.opengis.geometry.primitive.Primitive;
  */
 public class JTSMultiPrimitive extends AbstractJTSAggregate<Primitive> implements MultiPrimitive {
 
-    @XmlElement(name="geometryMember", namespace = "http://www.opengis.net/gml")
-    @XmlJavaTypeAdapter(GeometryAdapter.class)
     @Override
     public Set<Primitive> getElements() {
         return super.getElements();
+    }
+
+    @XmlElement(name="geometryMember", namespace = "http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(GeometryAdapter.class)
+    @Override
+    public void setElements(Set<Primitive> element) {
+        super.setElements(element);
     }
 }

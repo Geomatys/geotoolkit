@@ -13,21 +13,22 @@ import org.opengis.geometry.primitive.Ring;
  */
 public class RingAdapter extends XmlAdapter<RingAdapter, Ring> {
 
-    @XmlElement(name = "Ring", namespace = "http://www.opengis.net/gml")
-    private JTSRing ring;
+    @XmlElement(name = "LinearRing", namespace = "http://www.opengis.net/gml")
+    private LinearRingPosListType ring;
     
     public RingAdapter() {
         
     }
     
     public RingAdapter(JTSRing ring) {
-        this.ring = ring;
+        this.ring = new LinearRingPosListType(ring);
     }
 
     @Override
     public Ring unmarshal(RingAdapter v) throws Exception {
-        if (v != null)
-            return v.ring;
+        if (v != null && v.ring != null) {
+            return v.ring.getJTSRing();
+        }
         return null;
     }
 

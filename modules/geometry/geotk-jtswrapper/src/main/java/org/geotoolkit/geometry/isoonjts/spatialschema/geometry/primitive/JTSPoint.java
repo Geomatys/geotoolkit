@@ -53,11 +53,8 @@ import org.opengis.geometry.complex.Composite;
  * @version $Revision $
  * @module pending
  */
-@XmlAccessorType(XmlAccessType.FIELD)
 public class JTSPoint extends AbstractJTSGeometry implements Point {
 
-    @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
-    @XmlJavaTypeAdapter(DirectPositionAdapter.class)
     private DirectPosition position;
 
     /**
@@ -100,25 +97,22 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Deprecated
-    @Override
-    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
-        setDirectPosition(position);
-    }
-
-    /**
      * Makes a copy of the given point and keeps that copy around.  If the given
      * point is not in the same coordinate reference system as this primitive,
      * then we attempt to convert it.
      */
     @Override
+    @XmlElement(name="pos", namespace="http://www.opengis.net/gml")
+    @XmlJavaTypeAdapter(DirectPositionAdapter.class)
     public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         if (isMutable()) {
-            CoordinateReferenceSystem myCRS = getCoordinateReferenceSystem();
+            CoordinateReferenceSystem myCRS    = getCoordinateReferenceSystem();
             CoordinateReferenceSystem pointCRS = position.getCoordinateReferenceSystem();
-            DirectPosition copy = new GeneralDirectPosition(position);
+            if (pointCRS == null && position instanceof GeneralDirectPosition) {
+                ((GeneralDirectPosition) position).setCoordinateReferenceSystem(myCRS);
+                pointCRS = myCRS;
+            }
+            DirectPosition copy                = new GeneralDirectPosition(position);
             if ((myCRS != null) && (pointCRS != null) && (!myCRS.equals(pointCRS))) {
                 // Do the conversion.
                 try {
@@ -147,6 +141,15 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Deprecated
+    @Override
+    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
+        setDirectPosition(position);
+    }
+    
     /**
      * {@inheritDoc }
      */

@@ -9,6 +9,7 @@
  *************************************************************************************************/
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.coordinate.GenericSurface;
 
@@ -28,7 +29,7 @@ import org.opengis.geometry.coordinate.GenericSurface;
  *          belong to that package?
  * @module pending
  */
-public abstract class AbstractJTSGenericSurface implements GenericSurface {
+public abstract class AbstractJTSGenericSurface extends AbstractJTSGeometry implements GenericSurface {
     
     
     /**

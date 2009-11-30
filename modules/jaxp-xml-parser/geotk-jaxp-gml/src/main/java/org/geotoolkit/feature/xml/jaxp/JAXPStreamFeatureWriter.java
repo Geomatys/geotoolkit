@@ -198,20 +198,24 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 // we add the geometry
                 } else {
                     
-                    Name geometryName        = a.getName();
-                    String namespaceProperty = geometryName.getNamespaceURI();
-                    if (namespaceProperty != null) {
-                        streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
-                    } else {
-                        streamWriter.writeStartElement(geometryName.getLocalPart());
+                    if (a.getValue() != null) {
+                        Name geometryName        = a.getName();
+                        String namespaceProperty = geometryName.getNamespaceURI();
+                    
+                        if (namespaceProperty != null) {
+                            streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
+                        } else {
+                            System.out.println("geometric namespace property nulllllll");
+                            streamWriter.writeStartElement(geometryName.getLocalPart());
+                        }
+                        Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());
+                        try {
+                            marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
+                        } catch (JAXBException ex) {
+                            LOGGER.log(Level.SEVERE, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
+                        }
+                        streamWriter.writeEndElement();
                     }
-                    Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());
-                    try {
-                        marshaller.marshal(factory.buildAnyGeometry(isoGeometry), streamWriter);
-                    } catch (JAXBException ex) {
-                        LOGGER.severe("JAXB Exception while marshalling the iso geometry: " + ex.getMessage());
-                    }
-                    streamWriter.writeEndElement();
                 }
             }
 
