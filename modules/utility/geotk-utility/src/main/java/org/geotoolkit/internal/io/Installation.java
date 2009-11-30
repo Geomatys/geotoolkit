@@ -134,17 +134,17 @@ public enum Installation {
             final String directory = System.getProperty("user.home");
             if (directory != null) {
                 File file = new File(directory);
-                String name = ".geotoolkit";
+                String name = ".geotoolkit.org";
                 final OS system = OS.current();
                 switch (system) {
                     case WINDOWS: {
                         file = new File(file, "Application Data");
-                        name = "Geotoolkit";
+                        name = "Geotoolkit.org";
                         break;
                     }
                     case MAC_OS: {
                         file = new File(file, "Library");
-                        name = "Geotoolkit";
+                        name = "Geotoolkit.org";
                         break;
                     }
                     // For Linux and unknown OS, keep the directory selected above.
@@ -156,7 +156,7 @@ public enum Installation {
         } catch (SecurityException e) {
             Logging.getLogger("org.geotoolkit").warning(e.toString());
         }
-        return new File(System.getProperty("java.io.tmpdir"), "Geotoolkit");
+        return new File(System.getProperty("java.io.tmpdir"), "Geotoolkit.org");
     }
 
     /**
