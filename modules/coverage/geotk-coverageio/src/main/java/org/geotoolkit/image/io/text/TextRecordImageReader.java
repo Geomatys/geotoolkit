@@ -29,6 +29,7 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.io.LineFormat;
@@ -611,7 +612,7 @@ public class TextRecordImageReader extends TextImageReader {
      * can gain more control by creating subclasses of {@link TextRecordImageReader}
      * and {@code Spi}.
      *
-     * @author Martin Desruisseaux (IRD)
+     * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.06
      *
      * @since 2.1
@@ -710,6 +711,34 @@ public class TextRecordImageReader extends TextImageReader {
         }
 
         /**
+         * Returns {@code true} if the content of the first few rows seems valid, or {@code false}
+         * otherwise. The default implementation performs the same check than the
+         * {@linkplain TextImageReader.Spi#isValidContent(double[][]) super-class},
+         * and additionaly checks if the (<var>x</var>, <var>y</var>) values seem
+         * distributed on a regular grid.
+         *
+         * @param rows The first few rows.
+         * @return {@code true} if the given rows seem to have a valid content.
+         */
+        @Override
+        protected boolean isValidContent(final double[][] rows) {
+            if (!super.isValidContent(rows)) {
+                return false;
+            }
+            final RecordList records = new RecordList(rows[0], rows.length, xColumn, yColumn, gridTolerance);
+            for (int i=1; i<rows.length; i++) {
+                records.add(rows[i]);
+            }
+            try {
+                records.getPointCount(xColumn);
+                records.getPointCount(yColumn);
+            } catch (IIOException e) {
+                return false;
+            }
+            return true;
+        }
+
+        /**
          * Returns {@code true} if the specified row length is valid. The default implementation
          * returns {@code true} if the row seems "short", where "short" is arbitrary fixed to 10
          * columns. This is an arbitrary choice, which is why this method is not public. It may
@@ -718,6 +747,27 @@ public class TextRecordImageReader extends TextImageReader {
         @Override
         boolean isValidColumnCount(final int count) {
             return count >= (xColumn == yColumn ? 2 : 3) && count <= 10;
+        }
+
+        /**
+         * Invoked when this Service Provider is registered. This method
+         * {@linkplain ServiceRegistry#setOrdering(Class,.Object, Object) set the ordering}
+         * of this {@code TextRecordImageReader} before {@link TextMatrixImageReader}, because
+         * the later is generic enough for claiming to be able to read records file.
+         *
+         * @param registry The registry where is service is registered.
+         * @param category The category for which this service is registered.
+         */
+        @Override
+        public void onRegistration(final ServiceRegistry registry, final Class<?> category) {
+            super.onRegistration(registry, category);
+            if (category.equals(ImageReaderSpi.class)) {
+                final TextMatrixImageReader.Spi matrixProvider =
+                        registry.getServiceProviderByClass(TextMatrixImageReader.Spi.class);
+                if (matrixProvider != null) {
+                    registry.setOrdering(ImageReaderSpi.class, this, matrixProvider);
+                }
+            }
         }
     }
 }
