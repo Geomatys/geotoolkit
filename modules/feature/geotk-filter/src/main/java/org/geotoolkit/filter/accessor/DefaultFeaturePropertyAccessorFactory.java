@@ -87,6 +87,10 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             return DEFAULT_GEOMETRY_ACCESS;
         }
 
+        if(xpath.startsWith("//")){
+            xpath = xpath.substring(2, xpath.length());
+        }
+
         //check for fid access--------------------------------------------------
         if (ID_PATTERN.matcher(xpath).matches()) {
             final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
@@ -146,6 +150,10 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
      * @return xpath with any XML prefixes removed
      */
     private static String stripPrefix(String xpath) {
+        if(xpath.startsWith("//")){
+            xpath = xpath.substring(2, xpath.length());
+        }
+
         final int split = xpath.indexOf(':');
         if (split != -1) {
             return xpath.substring(split + 1);

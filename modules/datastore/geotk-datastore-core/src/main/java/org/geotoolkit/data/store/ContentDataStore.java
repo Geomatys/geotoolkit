@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.InProcessLockingManager;
 import org.geotoolkit.data.concurrent.LockManager;
