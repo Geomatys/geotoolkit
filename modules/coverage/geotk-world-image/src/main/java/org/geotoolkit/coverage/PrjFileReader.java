@@ -31,7 +31,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by {@link org.geotoolkit.io.wkt.PrjFiles}
  */
+@Deprecated
 public class PrjFileReader {
 
     private PrjFileReader(){
