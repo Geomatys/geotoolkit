@@ -36,6 +36,8 @@ public abstract class JAXPFeatureWriter implements XmlFeatureWriter {
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
 
+    protected String schemaLocation;
+
     private static MarshallerPool pool;
     static {
         try {
@@ -58,6 +60,19 @@ public abstract class JAXPFeatureWriter implements XmlFeatureWriter {
          marshaller = pool.acquireMarshaller();
          marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
          marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+    }
+
+    public JAXPFeatureWriter(Map<String, String> schemaLocations) throws JAXBException {
+         marshaller = pool.acquireMarshaller();
+         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+         if (schemaLocations != null && schemaLocations.size() > 0) {
+             schemaLocation = "";
+             for (String s : schemaLocations.keySet()) {
+                 schemaLocation = schemaLocation + s + " " + schemaLocations.get(s) + " ";
+             }
+             schemaLocation = schemaLocation.substring(0, schemaLocation.length() - 1);
+         }
     }
     
     @Override

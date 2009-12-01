@@ -52,9 +52,14 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
     private int lastUnknowPrefix = 0;
 
     private Map<String, String> UnknowNamespaces = new HashMap<String, String>();
-    
+
+
     public JAXPStreamFeatureWriter() throws JAXBException {
         super();
+    }
+
+    public JAXPStreamFeatureWriter(Map<String, String> schemaLocations) throws JAXBException {
+        super(schemaLocations);
     }
 
      @Override
@@ -285,6 +290,10 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", featureCollection.getID());
             streamWriter.writeNamespace("gml", GML_NAMESPACE);
             streamWriter.writeNamespace("wfs", "http://www.opengis.net/wfs");
+            if (schemaLocation != null && !schemaLocation.equals("")) {
+                streamWriter.writeNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                streamWriter.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
+            }
 
             FeatureType type = featureCollection.getSchema();
             String namespace = type.getName().getNamespaceURI();

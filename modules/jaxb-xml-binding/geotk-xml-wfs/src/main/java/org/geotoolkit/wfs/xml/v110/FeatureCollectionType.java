@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -63,7 +62,16 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType {
     private XMLGregorianCalendar timeStamp;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger numberOfFeatures;
+    private Integer numberOfFeatures;
+
+    public FeatureCollectionType() {
+
+    }
+
+    public FeatureCollectionType(Integer numberOfFeatures, XMLGregorianCalendar timeStamp) {
+        this.numberOfFeatures = numberOfFeatures;
+        this.timeStamp        = timeStamp;
+    }
 
     /**
      * Gets the value of the lockId property.
@@ -118,10 +126,10 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getNumberOfFeatures() {
+    public Integer getNumberOfFeatures() {
         return numberOfFeatures;
     }
 
@@ -130,10 +138,10 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setNumberOfFeatures(BigInteger value) {
+    public void setNumberOfFeatures(Integer value) {
         this.numberOfFeatures = value;
     }
 
