@@ -296,10 +296,12 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             }
 
             FeatureType type = featureCollection.getSchema();
-            String namespace = type.getName().getNamespaceURI();
-            if (namespace != null && !namespace.equals(GML_NAMESPACE)) {
-                Prefix prefix    = getPrefix(namespace);
-                streamWriter.writeNamespace(prefix.prefix, namespace);
+            if (type != null && type.getName() != null) {
+                String namespace = type.getName().getNamespaceURI();
+                if (namespace != null && !namespace.equals(GML_NAMESPACE)) {
+                    Prefix prefix    = getPrefix(namespace);
+                    streamWriter.writeNamespace(prefix.prefix, namespace);
+                }
             }
              /*
              * The boundedby part

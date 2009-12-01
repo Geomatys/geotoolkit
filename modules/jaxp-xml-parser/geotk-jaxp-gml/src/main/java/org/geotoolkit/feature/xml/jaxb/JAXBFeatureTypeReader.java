@@ -41,6 +41,7 @@ import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -162,7 +163,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             QName typeName           = element.getType();
             builder.setName(new DefaultName(typeName.getNamespaceURI(), element.getName()));
             TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-            result.add(getFeatureTypeFromSchema(type));
+            result.add(getFeatureTypeFromSchema(type, typeName.getNamespaceURI()));
         }
         return result;
     }
@@ -175,7 +176,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             if (typeName != null) {
                 builder.setName(new DefaultName(typeName.getNamespaceURI(), name));
                 TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
-                return getFeatureTypeFromSchema(type);
+                return getFeatureTypeFromSchema(type, typeName.getNamespaceURI());
             } else {
                 LOGGER.warning("the element:" + name + " has no type");
             }
@@ -183,7 +184,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
     
-    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type) {        
+    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type, String namespace) {
         if (type != null) {
             ComplexContent content = type.getComplexContent();
             if (content != null) {
@@ -197,7 +198,8 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
                             QName elementType  = attributeElement.getType();
                             String elementName = attributeElement.getName();
                             //System.out.println("adding:" + elementName + " type:" + Utils.getTypeFromQName(elementType));
-                            builder.add(elementName, Utils.getTypeFromQName(elementType));
+                            CoordinateReferenceSystem crs = null;
+                            builder.add(new DefaultName(namespace, elementName), Utils.getTypeFromQName(elementType), crs);
                         }
                     }
                 }

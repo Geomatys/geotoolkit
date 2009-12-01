@@ -197,7 +197,7 @@ public class SMLDataStore extends AbstractDataStore {
         attributeDescBuilder.setMaxOccurs(1);
         attributeDescBuilder.setMinOccurs(1);
         attributeDescBuilder.setNillable(false);
-        attributeDescBuilder.setType(attributeTypeBuilder.buildType());
+        attributeDescBuilder.setType(attributeTypeBuilder.buildGeometryType());
         final AttributeDescriptor attLocation = attributeDescBuilder.buildDescriptor();
 
         // sml:phenomenons
