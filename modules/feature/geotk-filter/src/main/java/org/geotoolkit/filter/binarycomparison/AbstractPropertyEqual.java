@@ -77,9 +77,15 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
         return false;
     }
 
-    private static boolean equalOrNumberEqual(Object value1, Object value2){
+    private boolean equalOrNumberEqual(Object value1, Object value2){
 
         //test general equal case
+        if(!match && value1 instanceof String && value2 instanceof String){
+            if( ((String)value1).equalsIgnoreCase((String)value2)){
+                return true;
+            }
+        }
+
         if(value1.equals(value2)){
             return true;
         }

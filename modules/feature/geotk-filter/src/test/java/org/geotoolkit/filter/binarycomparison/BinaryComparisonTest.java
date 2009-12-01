@@ -697,4 +697,20 @@ public class BinaryComparisonTest {
 
     }
 
+    @Test
+    public void testMatchCase() {
+
+        PropertyIsEqualTo filter;
+        PropertyName property;
+
+        Literal rightliteral = FF.literal("test STRING data");
+
+        property = FF.property("testString");
+        filter = FF.equal(property, rightliteral, false);
+        assertTrue(filter.evaluate(FEATURE_1));
+        filter = FF.equal(property, rightliteral, true);
+        assertFalse(filter.evaluate(FEATURE_1));
+
+    }
+
 }
