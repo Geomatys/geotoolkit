@@ -18,19 +18,24 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
 import java.util.List;
 
+import java.util.Set;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
 
 import org.geotoolkit.util.Utilities;
+import org.opengis.geometry.complex.Complex;
+import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.coordinate.Polygon;
+import org.opengis.geometry.primitive.OrientablePrimitive;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.primitive.SurfaceInterpolation;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
+import org.opengis.geometry.primitive.Primitive;
 
 
-public class JTSPolygon extends JTSSurfacePatch implements Polygon {
+public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     
     //*************************************************************************
     //  Fields
@@ -142,5 +147,25 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon {
             }
         }
         return sb.toString();
+    }
+
+    public Set<Primitive> getContainedPrimitives() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<Primitive> getContainingPrimitives() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<Complex> getComplexes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Composite getComposite() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public OrientablePrimitive[] getProxy() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

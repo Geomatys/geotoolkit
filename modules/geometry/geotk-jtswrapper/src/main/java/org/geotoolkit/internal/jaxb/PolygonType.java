@@ -111,6 +111,7 @@ public class PolygonType {
                     for (CurveSegment cv :curve.getSegments()) {
                         if (cv instanceof JTSLineString) {
                             JTSLineString line = (JTSLineString) cv;
+                            line.setCoordinateReferenceSystem(coordinateReferenceSystem);
                             PointArray pa = line.getControlPoints();
                             List<Position> newPositions = new ArrayList<Position>();
                             for (Position pos : pa.positions()) {
@@ -125,7 +126,7 @@ public class PolygonType {
                     }
                 }
             }
-
+         if (interior != null) {
             for (Ring ring : interior) {
                 ((JTSRing)ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
                 for (Primitive p : ring.getElements()) {
@@ -135,6 +136,7 @@ public class PolygonType {
                         for (CurveSegment cv :curve.getSegments()) {
                             if (cv instanceof JTSLineString) {
                                 JTSLineString line = (JTSLineString) cv;
+                                line.setCoordinateReferenceSystem(coordinateReferenceSystem);
                                 PointArray pa = line.getControlPoints();
                                 List<Position> newPositions = new ArrayList<Position>();
                                 for (Position pos : pa.positions()) {
@@ -150,6 +152,9 @@ public class PolygonType {
                     }
                 }
             }
+        } else {
+            interior = new ArrayList<Ring>();
+        }
         return new JTSPolygon(new JTSSurfaceBoundary(coordinateReferenceSystem, exterior, interior));
     }
 }

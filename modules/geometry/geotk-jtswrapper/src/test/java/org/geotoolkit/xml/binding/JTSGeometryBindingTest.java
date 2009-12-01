@@ -179,7 +179,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void PointMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
@@ -211,7 +211,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void PointUnMarshalingTest() throws Exception {
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"    + '\n' +
@@ -241,7 +241,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void CurveMarshalingTest() throws Exception {
     
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -310,7 +310,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void CurveUnmarshalingTest() throws Exception {
 
         String xml =
@@ -380,7 +380,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void EnvelopeMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -454,7 +454,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void MultiPointMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -502,7 +502,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void MultiPointUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -551,7 +551,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void CompositeCurveMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -652,7 +652,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void CompositeCurveUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -755,7 +755,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void PolyHedralSurfaceMarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
         assertTrue(crs != null);
@@ -935,7 +935,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void PolyHedralSurfaceUnmarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
         assertTrue(crs != null);
@@ -1134,7 +1134,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void RingMarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
         assertTrue(crs != null);
@@ -1205,7 +1205,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void RingUnmarshalingTest() throws Exception {
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
         assertTrue(crs != null);
@@ -1276,7 +1276,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void PolygonMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -1372,7 +1372,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void PolygonUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -1382,7 +1382,7 @@ public class JTSGeometryBindingTest {
         JTSRing exterior1    = new JTSRing(crs);
 
         JTSCurve c1 = new JTSCurve(crs);
-        JTSLineString c1l1 = new JTSLineString();
+        JTSLineString c1l1 = new JTSLineString(crs);
         DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
         c1l1p1.setOrdinate(0, 401500);
         c1l1p1.setOrdinate(1, 3334500);
@@ -1419,7 +1419,7 @@ public class JTSGeometryBindingTest {
         JTSRing interior1 = new JTSRing(crs);
 
         JTSCurve c2 = new JTSCurve(crs);
-        JTSLineString c2l1 = new JTSLineString();
+        JTSLineString c2l1 = new JTSLineString(crs);
         DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
         c2l1p1.setOrdinate(0, 401500);
         c2l1p1.setOrdinate(1, 3334500);
@@ -1470,7 +1470,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void MultiPrimitiveMarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -1629,6 +1629,75 @@ public class JTSGeometryBindingTest {
         "</gml:MultiGeometry>"                                                                               + '\n';
 
         assertEquals(expResult, result);
+
+        
+        crs = CRS.decode("epsg:4326");
+
+         // EXTERIOR
+        exterior1    = new JTSRing(crs);
+
+        cu1 = new JTSCurve(crs);
+        c1l1 = new JTSLineString();
+
+        dp1 = new GeneralDirectPosition(crs);
+        dp1.setOrdinate(0, -1.0);
+        dp1.setOrdinate(1, 0.0);
+
+        dp2 = new GeneralDirectPosition(crs);
+        dp2.setOrdinate(0, 0.0);
+        dp2.setOrdinate(1, 1.0);
+
+        GeneralDirectPosition dp3 = new GeneralDirectPosition(crs);
+        dp3.setOrdinate(0, 1.0);
+        dp3.setOrdinate(1, 0.0);
+
+        GeneralDirectPosition dp4 = new GeneralDirectPosition(crs);
+        dp4.setOrdinate(0, 0.0);
+        dp4.setOrdinate(1, -1.0);
+
+        GeneralDirectPosition dp5 = new GeneralDirectPosition(crs);
+        dp5.setOrdinate(0, -1.0);
+        dp5.setOrdinate(1, 0.0);
+
+        c1l1.getControlPoints().add(dp1);
+        c1l1.getControlPoints().add(dp2);
+        c1l1.getControlPoints().add(dp3);
+        c1l1.getControlPoints().add(dp4);
+        c1l1.getControlPoints().add(dp5);
+
+
+        cu1.getSegments().add(c1l1);
+        exterior1.getElements().add(cu1);
+
+        // INTERIOR
+        interiors1 = new Ring[0];
+
+
+        bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
+        poly1 = new JTSPolygon(bound1);
+
+        multip = new JTSMultiPrimitive();
+        multip.getElements().add(poly1);
+
+        sw = new StringWriter();
+        m.marshal(factory.createJTSMultiGeometry(multip), sw);
+        result = sw.toString();
+
+        expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                                                        + '\n' +
+        "    <gml:geometryMember>"                                                                   + '\n' +
+        "        <gml:Polygon srsName=\"EPSG:4326\">"                                                + '\n' +
+        "            <gml:exterior>"                                                                 + '\n' +
+        "                <gml:LinearRing>"                                                           + '\n' +
+        "                    <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
+        "                </gml:LinearRing>"                                                          + '\n' +
+        "            </gml:exterior>"                                                               + '\n' +
+        "        </gml:Polygon>"                                                                     + '\n' +
+        "    </gml:geometryMember>"                                                                  + '\n' +
+        "</gml:MultiGeometry>"                                                                       + '\n';
+
+        assertEquals(expResult, result);
     }
 
      /**
@@ -1636,7 +1705,7 @@ public class JTSGeometryBindingTest {
      *
      * @throws java.lang.Exception
      */
-    @Test
+   @Test
     public void MultiPrimitiveUnmarshalingTest() throws Exception {
 
         CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
@@ -1811,6 +1880,94 @@ public class JTSGeometryBindingTest {
         assertEquals(expPoly.getPatches().get(0), resPoly.getPatches().get(0));
         assertEquals(expPoly.getPatches(), resPoly.getPatches());
         assertEquals(expPoly, resPoly);
+        assertEquals(expResult.getElements(), result.getElements());
+        assertEquals(expResult, result);
+
+
+        xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
+        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                                                        + '\n' +
+        "    <gml:geometryMember>"                                                                   + '\n' +
+        "        <gml:Polygon srsName=\"EPSG:4326\">"                                                + '\n' +
+        "            <gml:exterior>"                                                                 + '\n' +
+        "                <gml:LinearRing>"                                                           + '\n' +
+        "                    <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
+        "                </gml:LinearRing>"                                                          + '\n' +
+        "            </gml:exterior>"                                                               + '\n' +
+        "        </gml:Polygon>"                                                                     + '\n' +
+        "    </gml:geometryMember>"                                                                  + '\n' +
+        "</gml:MultiGeometry>"                                                                       + '\n';
+
+        result = (JTSMultiPrimitive) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
+
+
+       
+        crs = CRS.decode("epsg:4326");
+
+         // EXTERIOR
+        exterior1    = new JTSRing(crs);
+
+        cu1 = new JTSCurve(crs);
+        c1l1 = new JTSLineString(crs);
+
+        dp1 = new GeneralDirectPosition(crs);
+        dp1.setOrdinate(0, -1.0);
+        dp1.setOrdinate(1, 0.0);
+
+        dp2 = new GeneralDirectPosition(crs);
+        dp2.setOrdinate(0, 0.0);
+        dp2.setOrdinate(1, 1.0);
+
+        GeneralDirectPosition dp3 = new GeneralDirectPosition(crs);
+        dp3.setOrdinate(0, 1.0);
+        dp3.setOrdinate(1, 0.0);
+
+        GeneralDirectPosition dp4 = new GeneralDirectPosition(crs);
+        dp4.setOrdinate(0, 0.0);
+        dp4.setOrdinate(1, -1.0);
+
+        GeneralDirectPosition dp5 = new GeneralDirectPosition(crs);
+        dp5.setOrdinate(0, -1.0);
+        dp5.setOrdinate(1, 0.0);
+
+        c1l1.getControlPoints().add(dp1);
+        c1l1.getControlPoints().add(dp2);
+        c1l1.getControlPoints().add(dp3);
+        c1l1.getControlPoints().add(dp4);
+        c1l1.getControlPoints().add(dp5);
+
+
+        cu1.getSegments().add(c1l1);
+        exterior1.getElements().add(cu1);
+
+        // INTERIOR
+        interiors1 = new Ring[0];
+
+
+        bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
+        poly1 = new JTSPolygon(bound1);
+
+        expResult = new JTSMultiPrimitive();
+        expResult.getElements().add(poly1);
+
+        assertEquals(expResult.getElements().size(), result.getElements().size());
+        JTSPolygon expPolygon = (JTSPolygon) expResult.getElements().iterator().next();
+        JTSPolygon resPolygon = (JTSPolygon) result.getElements().iterator().next();
+        assertEquals(expPolygon.getCoordinateReferenceSystem(), resPolygon.getCoordinateReferenceSystem());
+        assertEquals(expPolygon.getBoundary().getCoordinateReferenceSystem(), resPolygon.getBoundary().getCoordinateReferenceSystem());
+        JTSCurve expCurve = (JTSCurve) expPolygon.getBoundary().getExterior().getElements().iterator().next();
+        JTSCurve resCurve = (JTSCurve) resPolygon.getBoundary().getExterior().getElements().iterator().next();
+        JTSLineString expLine = (JTSLineString) expCurve.getSegments().get(0);
+        JTSLineString resLine = (JTSLineString) resCurve.getSegments().get(0);
+        assertEquals(expLine.getCoordinateReferenceSystem(), resLine.getCoordinateReferenceSystem());
+        assertEquals(expLine, resLine);
+        assertEquals(expCurve.getSegments().get(0), resCurve.getSegments().get(0));
+        assertEquals(expCurve.getSegments(), resCurve.getSegments());
+        assertEquals(expCurve, resCurve);
+        assertEquals(expPolygon.getBoundary().getExterior(), resPolygon.getBoundary().getExterior());
+        assertEquals(expPolygon.getBoundary().getInteriors(), resPolygon.getBoundary().getInteriors());
+        assertEquals(expPolygon.getBoundary(), resPolygon.getBoundary());
+        assertEquals(expPolygon, resPolygon);
         assertEquals(expResult.getElements(), result.getElements());
         assertEquals(expResult, result);
     }

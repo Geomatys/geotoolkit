@@ -6,6 +6,7 @@ import org.opengis.geometry.Geometry;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
@@ -107,7 +108,13 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
             return (Geometry) v.envelope.getValue();
 
         } else if (v != null && v.polygon != null) {
-            return (Geometry) v.polygon.getValue();
+            Geometry result;
+            if (v.polygon.getValue() instanceof PolygonType) {
+                result = ((PolygonType) v.polygon.getValue()).getJTSPolygon();
+            } else {
+                result = (Geometry) v.polygon.getValue();
+            }
+            return result;
 
         } else if (v != null && v.polyhedralSurface != null) {
             PolyhedralSurfaceType poly = (PolyhedralSurfaceType) v.polyhedralSurface.getValue();
