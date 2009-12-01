@@ -17,13 +17,10 @@
  */
 package org.geotoolkit.image.io.text;
 
-import java.util.Locale;
 import java.util.Iterator;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
-import javax.imageio.IIOException;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -35,80 +32,28 @@ import static org.geotoolkit.test.Commons.*;
 
 
 /**
- * Tests {@link TextRecordImageReader}.
+ * Tests {@link AsciiGridReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
  *
- * @since 3.06
+ * @since 3.07
  */
-public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
+public final class AsciiGridReaderTest extends TextImageReaderTestBase {
     /**
-     * Creates a reader using the {@link Locale#CANADA}.
+     * Creates a reader.
      */
     @Override
-    protected TextRecordImageReader createImageReader() throws IOException {
-        return createImageReader(true);
-    }
-
-    /**
-     * Creates a reader using the {@link Locale#CANADA}. If {@code lenient} is {@code true},
-     * uses a relaxed threshold value for determining if the grid is regular.
-     */
-    private TextRecordImageReader createImageReader(final boolean lenient) throws IOException {
-        final TextRecordImageReader reader = new TextRecordImageReader(createImageReaderSpi(lenient));
-        reader.setInput(TestData.file(this, "records.txt"));
+    protected AsciiGridReader createImageReader() throws IOException {
+        AsciiGridReader.Spi spi = new AsciiGridReader.Spi();
+        final AsciiGridReader reader = new AsciiGridReader(spi);
+        reader.setInput(TestData.file(this, "grid.asc"));
+//      reader.setInput("/Users/desruisseaux/Documents/Données/BRGM/geol_1m_asc.asc");
         return reader;
     }
 
     /**
-     * Creates a provider using the {@link Locale#CANADA}. If {@code lenient} is {@code true},
-     * uses a relaxed threshold value for determining if the grid is regular.
-     */
-    private TextRecordImageReader.Spi createImageReaderSpi(final boolean lenient) throws IOException {
-        TextRecordImageReader.Spi spi = new TextRecordImageReader.Spi();
-        spi.padValue = -9999;
-        spi.locale   = Locale.CANADA;
-        spi.charset  = Charset.forName("UTF-8");
-        if (lenient) {
-            spi.gridTolerance = 0.002f;
-        }
-        return spi;
-    }
-
-    /**
-     * Ensures that {@link TextImageReader.Spi#canDecodeInput(Object)}
-     * correctly detect that it can not parse the {@code "matrix.txt"} file.
-     *
-     * @throws IOException if an error occured while reading the file.
-     */
-    @Test
-    public void testCanNotRead() throws IOException {
-        final TextRecordImageReader.Spi spi = createImageReaderSpi(true);
-        assertFalse(spi.canDecodeInput(TestData.file(this, "matrix.txt")));
-    }
-
-    /**
-     * Ensure that the image reader can detect that the grid is not regular.
-     * We rely on the fact that the interval between latitude values in the
-     * {@code "records"} file is not supposed to be an integer, while the
-     * values are formatted as integers.
-     *
-     * @throws IOException if an error occured while reading the file.
-     */
-    @Test
-    public void testGridRegularity() throws IOException {
-        final TextImageReader reader = createImageReader(false);
-        try {
-            assertNotNull(reader.read(0));
-            fail("The grid should have been considered irregular.");
-        } catch (IIOException e) {
-            // This is the expected exception.
-        }
-    }
-
-    /**
-     * Tests the metadata of the {@link "records.txt"} file.
+     * Tests the metadata of the {@link "matrix.txt"} file.
      *
      * @throws IOException if an error occured while reading the file.
      */
@@ -124,11 +69,11 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───OffsetVectors\n" +
-            "│   │   ├───origin=“-19000.0 12690.0”\n" +
+            "│   │   ├───origin=“-9500.0 20500.0”\n" +
             "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“2000.0 0.0”\n" +
+            "│   │   │   └───values=“1000.0 0.0”\n" +
             "│   │   └───OffsetVector\n" +
-            "│   │       └───values=“0.0 -619.0243902439024”\n" +
+            "│   │       └───values=“0.0 -1000.0”\n" +
             "│   └───Limits\n" +
             "│       ├───low=“0 0”\n" +
             "│       └───high=“19 41”\n" +
@@ -145,13 +90,23 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
     }
 
     /**
+     * Disables this test, since attempts to read the image as byte values when
+     * the data are actually float throw an {@link IIOException}.
+     */
+    @Test
+    @Ignore
+    @Override
+    public void testByteType() throws IOException {
+    }
+
+    /**
      * Tests the registration of the image reader in the Image I/O framework.
      */
     @Test
     public void testRegistrationByFormatName() {
-        Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("records");
+        Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("ascii-grid");
         assertTrue("Expected a reader.", it.hasNext());
-        assertTrue(it.next() instanceof TextRecordImageReader);
+        assertTrue(it.next() instanceof AsciiGridReader);
         assertFalse("Expected no more reader.", it.hasNext());
     }
 
@@ -163,7 +118,7 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
     public void testRegistrationByMIMEType() {
         Iterator<ImageReader> it = ImageIO.getImageReadersByMIMEType("text/plain");
         while (it.hasNext()) {
-            if (it.next() instanceof TextRecordImageReader) {
+            if (it.next() instanceof AsciiGridReader) {
                 return;
             }
         }

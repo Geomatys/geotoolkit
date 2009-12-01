@@ -1,3 +1,4 @@
+org.geotoolkit.image.io.text.AsciiGridReader$Spi
 org.geotoolkit.image.io.text.TextMatrixImageReader$Spi
 org.geotoolkit.image.io.text.TextRecordImageReader$Spi
 # Note: TextRecordImageReader must be after TextMatrixImageReader

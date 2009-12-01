@@ -273,14 +273,14 @@ public class TextMatrixImageReader extends TextImageReader {
         /*
          * Parameters check.
          */
-        final int numSrcBands = 1;
+        final int numSrcBands = 1; // To be modified in a future version if we support multi-bands.
         final int numDstBands = 1;
         checkImageIndex(imageIndex);
         checkReadParamBandSettings(param, numSrcBands, numDstBands);
         /*
          * Extract user's parameters.
          */
-        final int[]      sourceBands;
+        final int[]      sourceBands; // To be used in a future version if we support multi-bands.
         final int[] destinationBands;
         final int sourceXSubsampling;
         final int sourceYSubsampling;
@@ -308,7 +308,6 @@ public class TextMatrixImageReader extends TextImageReader {
             destinationXOffset = 0;
             destinationYOffset = 0;
         }
-        final int numBands = 1; // To be modified in a future version if we support multi-bands.
         final int dstBand;
         if (destinationBands == null) {
             dstBand = 0;
@@ -340,9 +339,9 @@ public class TextMatrixImageReader extends TextImageReader {
          * Get the converter of sample values. In most cases, it will
          * just replace pad value (e.g. -9999) by NaN value.
          */
-        final SampleConverter[] converters = new SampleConverter[numBands];
+        final SampleConverter[] converters = new SampleConverter[numDstBands];
         final ImageTypeSpecifier type = getImageType(imageIndex, param, converters);
-        final SampleConverter converter = converters[0];
+        final SampleConverter converter = converters[dstBand];
         /*
          * If a direct mapping is possible, perform it. If a direct mapping is performed,
          * we will need to set the data array to null (and consequently force a new data

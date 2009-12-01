@@ -20,13 +20,17 @@ package org.geotoolkit.image.io;
 import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URL;
 import java.net.URLConnection;
+import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
 
 /**
@@ -35,8 +39,8 @@ import org.geotoolkit.util.converter.Classes;
  * Different kinds of output like {@linkplain File} or {@linkplain URL} are automatically
  * handled.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  * @module
@@ -74,6 +78,29 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      */
     protected StreamImageWriter(final ImageWriterSpi provider) {
         super(provider);
+    }
+
+    /**
+     * Returns the {@linkplain SpatialMetadataFormat#IMAGE image metadata} for the given image,
+     * or {@code null} if none. This is a convenience method for the implementations of the
+     * {@link #write write} method in subclasses.
+     *
+     * @param  image The image from which to get the metadata.
+     * @return The image metadata, or {@code null} if none.
+     *
+     * @since 3.07
+     */
+    protected SpatialMetadata getImageMetadata(final IIOImage image) {
+        if (image != null) {
+            final IIOMetadata metadata = image.getMetadata();
+            if (metadata != null) {
+                if (metadata instanceof SpatialMetadata) {
+                    return (SpatialMetadata) metadata;
+                }
+                return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, metadata);
+            }
+        }
+        return null;
     }
 
     /**

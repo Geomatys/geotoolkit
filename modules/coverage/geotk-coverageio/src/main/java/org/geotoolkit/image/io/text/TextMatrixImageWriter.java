@@ -98,9 +98,13 @@ public class TextMatrixImageWriter extends TextImageWriter {
             }
             if (!iterator.finishedLines()) do {
                 if (numSampleValues >= nextProgress) {
-                    // Informs about progress only every 32 lines.
+                    // Informs about progress only every 2000 numbers.
                     processImageProgress(progressScale * numSampleValues);
-                    nextProgress = numSampleValues + 2000; // Reports after every 2000 numbers.
+                    nextProgress = numSampleValues + 2000;
+                }
+                if (abortRequested()) {
+                    processWriteAborted();
+                    return;
                 }
                 if (!iterator.finishedPixels()) do {
                     buffer.setLength(0);

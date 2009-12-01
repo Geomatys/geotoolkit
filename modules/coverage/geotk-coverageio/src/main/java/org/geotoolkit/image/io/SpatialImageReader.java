@@ -182,7 +182,8 @@ public abstract class SpatialImageReader extends ImageReader {
      * @param upper The upper legal value, exclusive.
      */
     private String indexOutOfBounds(final int index, final int lower, final int upper) {
-        return getErrorResources().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, index, lower, upper-1);
+        return getErrorResources().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
+                index, (lower < upper) ? lower : "EOF", upper-1);
     }
 
     /**

@@ -33,6 +33,7 @@ import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.iterator.RectIter;
 
 import org.geotoolkit.image.io.StreamImageWriter;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -301,6 +302,15 @@ public abstract class TextImageWriter extends StreamImageWriter {
         super.close();
     }
 
+    /**
+     * Returns the error message from the given resource key and arguments.
+     * The key shall be one of the {@link Errors.Key} constants. This is used
+     * for formatting the message in {@link IIOException}.
+     */
+    final String error(final int key, final Object... arguments) {
+        return Errors.getResources(getLocale()).getString(key, arguments);
+    }
+
 
 
 
@@ -339,7 +349,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
          * {@code null}. A value shall be set by subclasses if the files to be encoded
          * use some specific character encoding.
          *
-         * @see TextImageWriter#getCharset
+         * @see TextImageWriter#getCharset(ImageWriteParam)
          */
         protected Charset charset;
 
@@ -348,14 +358,14 @@ public abstract class TextImageWriter extends StreamImageWriter {
          * numbers are expected to use dot as decimal separator. This field is initially
          * {@code null}, which means that default locale should be used.
          *
-         * @see TextImageWriter#getDataLocale
+         * @see TextImageWriter#getDataLocale(ImageWriteParam)
          */
         protected Locale locale;
 
         /**
          * The line separator to use, or {@code null} for the system default.
          *
-         * @see TextImageWriter#getLineSeparator
+         * @see TextImageWriter#getLineSeparator(ImageWriteParam)
          */
         protected String lineSeparator;
 

@@ -22,6 +22,8 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
@@ -32,12 +34,19 @@ import org.geotoolkit.util.converter.Classes;
 
 /**
  * Base class for simple image decoders. This class provides a {@link #getInputStream} method,
- * which returns the {@linkplain #input input} as an {@link InputStream} for convenience.
- * Different kinds of input like {@linkplain File} or {@linkplain URL} are automatically
- * handled.
+ * which returns the {@linkplain #input input} as an {@link InputStream} for convenience. The
+ * default implementation handles all the following types:
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * <blockquote>
+ * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+ * {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}.
+ * </blockquote>
+ *
+ * Note the {@link org.geotoolkit.image.io.text.TextImageReader} subclass can go one step
+ * further by wrapping the {@code InputStream} into a {@link java.io.BufferedReader}.
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  * @module
@@ -59,6 +68,11 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @see #close
      */
     protected Closeable closeOnReset;
+
+    /**
+     * The channel returned by {@link #getChannel()}, or {@code null} if none.
+     */
+    private ReadableByteChannel channel;
 
     /**
      * {@link #input} as an input stream, or {@code null} if none.
@@ -147,22 +161,23 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * Returns the {@linkplain #input input} as an {@linkplain InputStream input stream} object.
      * If the input is already an input stream, it is returned unchanged. Otherwise this method
      * creates a new {@linkplain InputStream input stream} (usually <strong>not</strong>
-     * {@linkplain BufferedInputStream buffered}) from {@link File}, {@link URL},
-     * {@link URLConnection} or {@link ImageInputStream} inputs.
+     * {@linkplain BufferedInputStream buffered}) from {@link File}, {@link URI}, {@link URL},
+     * {@link URLConnection}, {@link ImageInputStream} or {@link ReadableByteChannel} inputs.
      * <p>
      * This method creates a new {@linkplain InputStream input stream} only when first invoked.
-     * All subsequent calls will returns the same instance. Consequently, the returned stream
+     * All subsequent calls will return the same instance. Consequently, the returned stream
      * should never be closed by the caller. It may be {@linkplain #close closed} automatically
      * when {@link #setInput setInput(...)}, {@link #reset()} or {@link #dispose()} methods are
      * invoked.
      *
-     * @return {@link #getInput} as an {@link InputStream}. This input stream is usually
+     * @return {@link #getInput()} as an {@link InputStream}. This input stream is usually
      *         not {@linkplain BufferedInputStream buffered}.
      * @throws IllegalStateException if the {@linkplain #input input} is not set.
      * @throws IOException If the input stream can't be created for an other reason.
      *
-     * @see #getInput
-     * @see org.geotoolkit.image.io.text.TextImageReader#getReader
+     * @see #getInput()
+     * @see #getChannel()
+     * @see org.geotoolkit.image.io.text.TextImageReader#getReader()
      */
     protected InputStream getInputStream() throws IllegalStateException, IOException {
         if (stream == null) {
@@ -191,12 +206,51 @@ public abstract class StreamImageReader extends SpatialImageReader {
             } else if (input instanceof URLConnection) {
                 stream = ((URLConnection) input).getInputStream();
                 closeOnReset = stream;
+            } else if (input instanceof ReadableByteChannel) {
+                stream = Channels.newInputStream((ReadableByteChannel) input);
+                // Do not define closeOnReset since we don't want to close user-provided input.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
                         Errors.Keys.ILLEGAL_CLASS_$2, Classes.getClass(input), InputStream.class));
             }
         }
         return stream;
+    }
+
+    /**
+     * Returns the {@linkplain #input input} as an {@linkplain ReadableByteChannel readable byte
+     * channel}. If the input is already such channel, it is returned unchanged. Otherwise this
+     * method creates a new channel from the value returned by {@link getInputStream()}.
+     * <p>
+     * This method creates a new channel only when first invoked. All subsequent calls will return
+     * the same instance. Consequently, the returned channel should never be closed by the caller.
+     * It may be {@linkplain #close closed} automatically when {@link #setInput setInput(...)},
+     * {@link #reset()} or {@link #dispose()} methods are invoked.
+     *
+     * @return {@link #getInput()} as a {@link ReadableByteChannel}.
+     * @throws IllegalStateException if the {@linkplain #input input} is not set.
+     * @throws IOException If the input stream can't be created for an other reason.
+     *
+     * @see #getInput()
+     * @see #getInputStream()
+     *
+     * @since 3.06
+     */
+    protected ReadableByteChannel getChannel() throws IOException {
+        if (channel == null) {
+            final Object input = getInput();
+            if (input instanceof ReadableByteChannel) {
+                channel = (ReadableByteChannel) input;
+            } else {
+                final InputStream stream = getInputStream();
+                if (stream instanceof FileInputStream) {
+                    channel = ((FileInputStream) stream).getChannel();
+                } else {
+                    channel = Channels.newChannel(stream);
+                }
+            }
+        }
+        return channel;
     }
 
     /**
@@ -216,8 +270,13 @@ public abstract class StreamImageReader extends SpatialImageReader {
     @Override
     protected void close() throws IOException {
         if (closeOnReset != null) {
+            // Close the channel only if it was not supplied explicitly by the user.
+            if (channel != null) {
+                channel.close();
+            }
             closeOnReset.close();
         }
+        channel      = null;
         closeOnReset = null;
         stream       = null;
         super.close();
@@ -271,10 +330,20 @@ public abstract class StreamImageReader extends SpatialImageReader {
 
 
     /**
-     * Service provider interface (SPI) for {@link StreamImageReader}s.
+     * Service provider interface (SPI) for {@link StreamImageReader}s. The constructor of
+     * this class initializes the {@link #inputTypes} field to the value documented in the
+     * {@code StreamImageReader} javadoc, which are:
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * <blockquote>
+     * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+     * {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}.
+     * </blockquote>
+     *
+     * It is up to subclass constructors to initialize all other instance variables
+     * in order to provide working versions of every methods.
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.07
      *
      * @since 2.4
      * @module
@@ -290,23 +359,20 @@ public abstract class StreamImageReader extends SpatialImageReader {
             URLConnection.class,
             InputStream.class,
             ImageInputStream.class,
+            ReadableByteChannel.class,
             String.class // To be interpreted as file path.
         };
 
         /**
-         * Constructs a quasi-blank {@code StreamImageReader.Spi}. It is up to the subclass to
-         * initialize instance variables in order to provide working versions of all methods.
-         * This constructor provides the following defaults:
+         * Constructs a quasi-blank {@code StreamImageReader.Spi}. The {@link #inputTypes} field
+         * is initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is
+         * up to the subclass to initialize all other instance variables in order to provide working
+         * versions of all methods.
          * <p>
-         * <ul>
-         *   <li>{@link #inputTypes} = {{@link File}, {@link URL}, {@link URLConnection},
-         *       {@link InputStream}, {@link ImageInputStream}, {@link String}}</li>
-         * </ul>
-         * <p>
-         * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
-         * can assign new arrays, but should not modify the default array content.
+         * For efficienty reasons, the {@code inputTypes} field is initialized to a shared array.
+         * Subclasses can assign new arrays, but should not modify the default array content.
          */
-        public Spi() {
+        protected Spi() {
             inputTypes = INPUT_TYPES;
         }
     }

@@ -474,22 +474,16 @@ public class TextRecordImageReader extends TextImageReader {
         final int[]         dstBands;
         final int sourceXSubsampling;
         final int sourceYSubsampling;
-        final int subsamplingXOffset;
-        final int subsamplingYOffset;
         if (param != null) {
             srcBands           = param.getSourceBands();
             dstBands           = param.getDestinationBands();
             sourceXSubsampling = param.getSourceXSubsampling();
             sourceYSubsampling = param.getSourceYSubsampling();
-            subsamplingXOffset = param.getSubsamplingXOffset();
-            subsamplingYOffset = param.getSubsamplingYOffset();
         } else {
-            srcBands    = null;
-            dstBands    = null;
+            srcBands = null;
+            dstBands = null;
             sourceXSubsampling = 1;
             sourceYSubsampling = 1;
-            subsamplingXOffset = 0;
-            subsamplingYOffset = 0;
         }
         /*
          * Initializes...
@@ -511,15 +505,15 @@ public class TextRecordImageReader extends TextImageReader {
         final int destinationYOffset = dstRegion.y;
 
         final WritableRaster raster = image.getRaster();
-        final int columnCount  = records.columnCount;
-        final int dataCount    = records.getDataCount();
-        final float[] data     = records.getData();
-        final double  xmin     = records.getMinimum(xColumn);
-        final double  ymin     = records.getMinimum(yColumn);
-        final double  xmax     = records.getMaximum(xColumn);
-        final double  ymax     = records.getMaximum(yColumn);
-        final double  scaleX   = (width -1) / (xmax - xmin);
-        final double  scaleY   = (height-1) / (ymax - ymin);
+        final int columnCount = records.columnCount;
+        final int dataCount   = records.getDataCount();
+        final float[] data    = records.getData();
+        final double  xmin    = records.getMinimum(xColumn);
+        final double  ymin    = records.getMinimum(yColumn);
+        final double  xmax    = records.getMaximum(xColumn);
+        final double  ymax    = records.getMaximum(yColumn);
+        final double  scaleX  = (width -1) / (xmax - xmin);
+        final double  scaleY  = (height-1) / (ymax - ymin);
         /*
          * Clears the image area. All values are set to NaN.
          */
@@ -722,7 +716,14 @@ public class TextRecordImageReader extends TextImageReader {
          */
         @Override
         protected boolean isValidContent(final double[][] rows) {
-            if (!super.isValidContent(rows)) {
+            /*
+             * The 12 lines limit is arbitrary and may change in future version.
+             * We ask for a minimal amount of lines in order to have raisonable
+             * chances to determine if the data are distributed on a regular grid.
+             * This limit should be safe if the average line length is lower than
+             * 80 characters (usually they are about 15 characters).
+             */
+            if (rows.length < 12 || !super.isValidContent(rows)) {
                 return false;
             }
             final RecordList records = new RecordList(rows[0], rows.length, xColumn, yColumn, gridTolerance);
@@ -730,8 +731,8 @@ public class TextRecordImageReader extends TextImageReader {
                 records.add(rows[i]);
             }
             try {
-                records.getPointCount(xColumn);
-                records.getPointCount(yColumn);
+                records.getPointCount(records.xColumn);
+                records.getPointCount(records.yColumn);
             } catch (IIOException e) {
                 return false;
             }
@@ -739,14 +740,15 @@ public class TextRecordImageReader extends TextImageReader {
         }
 
         /**
-         * Returns {@code true} if the specified row length is valid. The default implementation
-         * returns {@code true} if the row seems "short", where "short" is arbitrary fixed to 10
-         * columns. This is an arbitrary choice, which is why this method is not public. It may
-         * be changed in any future Geotk version.
+         * Invoked by {@link #isValidColumnCount(int)} for determining if the given number of
+         * columns is valid. Note that this is the number of columns in the data file, not to
+         * be confused with the image width.
+         *
+         * @since 3.07
          */
         @Override
-        boolean isValidColumnCount(final int count) {
-            return count >= (xColumn == yColumn ? 2 : 3) && count <= 10;
+        protected boolean isValidColumnCount(final int count) {
+            return count >= (xColumn == yColumn ? 2 : 3);
         }
 
         /**

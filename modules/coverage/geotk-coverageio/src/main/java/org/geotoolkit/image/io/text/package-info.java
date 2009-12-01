@@ -33,6 +33,12 @@
  *     <th>MIME type</th>
  *     <th>Comments</th>
  *   </tr><tr>
+ *     <td>{@link org.geotoolkit.image.io.text.AsciiGridReader}</td>
+ *     <td>{@link org.geotoolkit.image.io.text.AsciiGridWriter}</td>
+ *     <td>{@code "ascii-grid"}</td>
+ *     <td>text/plain</td>
+ *     <td>US locale and ASCII encoding</td>
+ *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.text.TextMatrixImageReader}</td>
  *     <td>{@link org.geotoolkit.image.io.text.TextMatrixImageWriter}</td>
  *     <td>{@code "matrix"}</td>

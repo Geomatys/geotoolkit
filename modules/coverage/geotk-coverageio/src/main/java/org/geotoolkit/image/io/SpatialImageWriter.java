@@ -20,6 +20,7 @@ package org.geotoolkit.image.io;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +48,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * Base class for writers of spatial (usually geographic) data.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 3.05 (derived from 2.4)
  * @module
@@ -262,6 +263,31 @@ public abstract class SpatialImageWriter extends ImageWriter {
     }
 
     /**
+     * Returns the sample model to use for the destination image to be written. Note that the
+     * {@linkplain SampleModel#getWidth() width} and {@linkplain SampleModel#getHeight() height}
+     * of the returned sample model are usually <strong>not</strong> valids, because they have
+     * not been adjusted for the source or destination regions.
+     *
+     * @param  image The image or raster to be written.
+     * @param  parameters The write parameters, or {@code null} if the whole image will be written.
+     * @return The sample model of the destination image.
+     *
+     * @since 3.07
+     */
+    protected static SampleModel getSampleModel(final IIOImage image, final ImageWriteParam parameters) {
+        if (parameters != null) {
+            final ImageTypeSpecifier type = parameters.getDestinationType();
+            if (type != null) {
+                return type.getSampleModel();
+            }
+        }
+        if (image.hasRaster()) {
+            return image.getRaster().getSampleModel();
+        }
+        return image.getRenderedImage().getSampleModel();
+    }
+
+    /**
      * Returns an iterator over the pixels of the specified image, taking subsampling in account.
      *
      * @param  image The image or raster to be written.
@@ -290,8 +316,8 @@ public abstract class SpatialImageWriter extends ImageWriter {
                         bounds = new Rectangle(i.getMinX(), i.getMinY(), i.getWidth(), i.getHeight());
                     }
                 }
-                final int xOffset  = parameters.getSubsamplingXOffset();
-                final int yOffset  = parameters.getSubsamplingYOffset();
+                final int xOffset = parameters.getSubsamplingXOffset();
+                final int yOffset = parameters.getSubsamplingYOffset();
                 bounds.x      += xOffset;
                 bounds.y      += yOffset;
                 bounds.width  -= xOffset;
@@ -354,7 +380,7 @@ public abstract class SpatialImageWriter extends ImageWriter {
     }
 
     /**
-     * Computes the size of the region to be read, taking subsampling in account.
+     * Computes the size of the region to be written, taking subsampling in account.
      *
      * @param  image The image or raster to be written.
      * @param  parameters The write parameters, or {@code null} if the whole image will be written.
@@ -368,17 +394,24 @@ public abstract class SpatialImageWriter extends ImageWriter {
             dimension = new ImageDimension(image.getRenderedImage());
         }
         if (parameters != null) {
+            int width  = dimension.width;
+            int height = dimension.height;
             final Rectangle bounds = parameters.getSourceRegion();
             if (bounds != null) {
-                if (bounds.width < dimension.width) {
-                    dimension.width = bounds.width;
+                if (bounds.width < width) {
+                    width = bounds.width;
                 }
-                if (bounds.height < dimension.height) {
-                    dimension.height = bounds.height;
+                if (bounds.height < height) {
+                    height = bounds.height;
                 }
             }
-            dimension.width  -= parameters.getSubsamplingXOffset();
-            dimension.height -= parameters.getSubsamplingYOffset();
+            final int sourceXSubsampling = parameters.getSourceXSubsampling();
+            final int sourceYSubsampling = parameters.getSourceYSubsampling();
+            width  -= parameters.getSubsamplingXOffset();
+            height -= parameters.getSubsamplingYOffset();
+            width   = (width  + sourceXSubsampling-1) / sourceXSubsampling;
+            height  = (height + sourceYSubsampling-1) / sourceYSubsampling;
+            dimension.setSize(width, height);
         }
         return dimension;
     }

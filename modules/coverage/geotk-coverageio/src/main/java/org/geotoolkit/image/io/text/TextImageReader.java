@@ -21,12 +21,14 @@ import java.io.*; // Many imports, including some for javadoc only.
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.Set;
 import java.util.Locale;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.image.io.StreamImageReader;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -41,8 +43,8 @@ import org.geotoolkit.resources.Vocabulary;
  * control the character encoding, with the {@link Spi#charset charset} field. Developer can
  * gain yet more control on character encoding by overriding the {@link #getCharset} method.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 1.2
  * @module
@@ -81,6 +83,16 @@ public abstract class TextImageReader extends StreamImageReader {
     }
 
     /**
+     * Returns the locale specified by the provider for the data to be read,
+     * or {@code null} if unspecified.
+     *
+     * @return The locale for the data to be read, or {@code null} if unspecified.
+     */
+    final Locale getDataLocale() {
+        return (originatingProvider instanceof Spi) ? ((Spi) originatingProvider).locale : null;
+    }
+
+    /**
      * Returns the line format to use for parsing every lines in the input stream. The default
      * implementation creates a new {@link LineFormat} instance using the locale specified by
      * {@link Spi#locale}. Subclasses should override this method if they want more control
@@ -93,11 +105,9 @@ public abstract class TextImageReader extends StreamImageReader {
      * @see Spi#locale
      */
     protected LineFormat getLineFormat(final int imageIndex) throws IOException {
-        if (originatingProvider instanceof Spi) {
-            final Locale locale = ((Spi) originatingProvider).locale;
-            if (locale != null) {
-                return new LineFormat(locale);
-            }
+        final Locale locale = getDataLocale();
+        if (locale != null) {
+            return new LineFormat(locale);
         }
         return new LineFormat();
     }
@@ -303,6 +313,15 @@ public abstract class TextImageReader extends StreamImageReader {
         super.close();
     }
 
+    /**
+     * Returns the error message from the given resource key and arguments.
+     * The key shall be one of the {@link Errors.Key} constants. This is used
+     * for formatting the message in {@link IIOException}.
+     */
+    final String error(final int key, final Object... arguments) {
+        return Errors.getResources(getLocale()).getString(key, arguments);
+    }
+
 
 
 
@@ -315,8 +334,8 @@ public abstract class TextImageReader extends StreamImageReader {
      *     charset = Charset.forName("ISO-LATIN-1"); // ISO Latin Alphabet No. 1 (ISO-8859-1)
      * }
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.07
      *
      * @since 2.4
      * @module
@@ -397,7 +416,11 @@ public abstract class TextImageReader extends StreamImageReader {
         /**
          * Returns {@code true} if the supplied source object appears to be of the format
          * supported by this reader. The default implementation tries to parse the first
-         * few lines up to 1024 characters.
+         * few lines up to 2048 characters, as below:
+         *
+         * {@preformat java
+         *     return canDecodeInput(source, 2048);
+         * }
          *
          * @param  source The object (typically an {@link ImageInputStream}) to be decoded.
          * @return {@code true} if the source <em>seems</em> readable.
@@ -405,13 +428,19 @@ public abstract class TextImageReader extends StreamImageReader {
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            return canDecodeInput(source, 1024);
+            return canDecodeInput(source, 2048);
         }
 
         /**
          * Returns {@code true} if the supplied source object appears to be of the format
          * supported by this reader. The default implementation tries to parse the first
-         * few lines up to the specified number of characters.
+         * few lines up to the specified number of characters, then gives those lines to
+         * the {@link #isValidHeader(Set)} and {@link #isValidContent(double[][])} methods.
+         * <p>
+         * The default implementation is suitable for {@link TextMatrixImageReader}, i.e.
+         * it expects only rows for pixel values (no header) and all rows shall have the
+         * same length. If this behavior needs to be changed, consider overriding the
+         * {@code isValidHeader} and {@code isValidContent} methods.
          *
          * @param  source The object (typically an {@link ImageInputStream}) to be decoded.
          * @param  readAheadLimit Maximum number of characters to read. If this amount is reached
@@ -425,15 +454,42 @@ public abstract class TextImageReader extends StreamImageReader {
         {
             final TestReader test = new TestReader(this);
             test.setInput(source);
-            final boolean result = test.canDecode(readAheadLimit);
-            test.close();
-            return result;
+            try {
+                return test.canDecode(readAheadLimit);
+            } finally {
+                test.close();
+            }
         }
 
         /**
-         * Returns {@code true} if the content of the first few rows seems valid, or {@code false}
-         * otherwise. The number of rows depends on the row length and the {@code readAheadLimit}
-         * argument given to {@link #canDecodeInput(Object,int) canDecodeInput}.
+         * Invoked by {@link #canDecodeInput(Object, int)} for determining if the given header is
+         * likely to be valid. This method receives in argument a {@code keywords} set containing
+         * the first word of every <cite>header lines</cite> (defined below), converted to upper
+         * cases using the {@linkplain #locale} defined in this provider.
+         * <p>
+         * A <cite>header line</cite> is defined as a line which is not a
+         * {@linkplain TextImageReader#isComment(String) comment line}, appears before
+         * the first row of pixel values and where the first non-blank character is a
+         * {@linkplain Character#isJavaIdentifierStart(char) Java identifier start}.
+         * <p>
+         * The default implementation returns {@code true} if the given set is empty.
+         * In other words, by default no header is allowed in the data file.
+         *
+         * @param  keywords The first word found in every <cite>header lines</cite>,
+         *         converted to upper-case.
+         * @return {@code true} if the set of keywords is known to this format.
+         *
+         * @since 3.07
+         */
+        protected boolean isValidHeader(final Set<String> keywords) {
+            return keywords.isEmpty();
+        }
+
+        /**
+         * Invoked by {@link #canDecodeInput(Object, int)} for determining if the given rows are
+         * likely to be valid. This method receives in argument a {@code rows} array containing
+         * the first few lines of data. The number of rows depends on the average row length and
+         * the {@code readAheadLimit} argument given to {@code canDecodeInput}.
          * <p>
          * The default implementation returns {@code true} if there is at least one row
          * and every row have the same number of columns.
@@ -455,12 +511,21 @@ public abstract class TextImageReader extends StreamImageReader {
         }
 
         /**
-         * Returns {@code true} if the specified row length is valid. If unsure, this methods
-         * can conservatively returns {@code false}. The default implementation always returns
-         * {@code true}.
+         * Invoked by {@link #isValidContent(double[][])} for determining if the given number
+         * of columns is likely to be valid. This method receives in argument the length of
+         * every rows that were given to {@code isValidContent}, when that length is constant.
+         * <p>
+         * The default implementation returns {@code true} if the number of columns is greater
+         * than zero. Subclasses can override this method if they know the expected number of
+         * columns.
+         *
+         * @param  count The number of columns in the first few line of rows.
+         * @return {@code true} if the given number of columns seems to be valid.
+         *
+         * @since 3.07
          */
-        boolean isValidColumnCount(final int count) {
-            return true;
+        protected boolean isValidColumnCount(final int count) {
+            return count > 0;
         }
     }
 }
