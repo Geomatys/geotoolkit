@@ -52,9 +52,15 @@ public class CoverageToVectorDescriptor implements ProcessDescriptor{
     public static final GeneralParameterDescriptor RANGES =
             new DefaultParameterDescriptor("ranges","Ranges to regroup.",NumberRange[].class,null,false);
 
+    /**
+     * Optional - selected band, default 0
+     */
+    public static final GeneralParameterDescriptor BAND =
+            new DefaultParameterDescriptor("band","Band to transform",Integer.class,0,false);
+
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                new GeneralParameterDescriptor[]{COVERAGE,RANGES});
+                new GeneralParameterDescriptor[]{COVERAGE,RANGES,BAND});
 
     /**
      * Mandatory - Result of vectorisation

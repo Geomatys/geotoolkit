@@ -106,10 +106,13 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         final ProcessDescriptor descriptor = ProcessFinder.getProcessDescriptor(
                 CoverageProcessFactory.NAME, CoverageToVectorDescriptor.NAME);
 
+        final Integer band = styleElement.getChannel().evaluate(null,Integer.class);
+
         final Process process = descriptor.createProcess();
         final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
         input.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
         input.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(styles.keySet().toArray(new NumberRange[0]));
+        input.parameter(CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(band);
         process.setInput(input);
         process.run();
 

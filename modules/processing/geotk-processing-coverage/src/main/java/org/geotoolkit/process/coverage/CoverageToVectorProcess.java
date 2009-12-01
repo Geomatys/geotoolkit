@@ -406,6 +406,11 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
         final GridCoverage2D coverage = (GridCoverage2D) inputParameters.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).getValue();
         final NumberRange[] ranges = (NumberRange[]) inputParameters.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).getValue();
+        Integer band = (Integer) inputParameters.parameter(CoverageToVectorDescriptor.BAND.getName().getCode()).getValue();
+        if(band == null){
+            band = 0;
+        }
+
         try {
             result = toPolygon(coverage, ranges, 0);
         } catch (IOException ex) {
