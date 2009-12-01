@@ -241,12 +241,14 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        try {
-            return CRS.decode(getSrsName());
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.SEVERE, null, ex);
+        String srsName = getSrsName();
+
+        if(srsName != null){
+            try {
+                return CRS.decode(getSrsName());
+            } catch (FactoryException ex) {
+                Logger.getLogger(AbstractGeometryType.class.getName()).log(Level.SEVERE, "Could not decode CRS which name is : " + srsName, ex);
+            }
         }
 
         return null;
