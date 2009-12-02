@@ -60,6 +60,7 @@ import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.StringToDateConverter;
+import org.geotoolkit.util.StringToDateSQLConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 
 import org.opengis.feature.type.Name;
@@ -131,6 +132,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
 
     static{
         ConverterRegistry.system().register(new StringToDateConverter());
+        ConverterRegistry.system().register(new StringToDateSQLConverter());
     }
 
 ////////////////////////////////////////////////////////////////////////////////

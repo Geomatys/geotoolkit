@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
+import java.util.Date;
+import org.geotoolkit.util.Converters;
+
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.expression.Expression;
 
@@ -66,6 +69,39 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
     public boolean isMatchingCase() {
         return match;
     }
+
+    protected Integer compare(Object object){
+        Object objleft = left.evaluate(object);
+
+        if(!(objleft instanceof Comparable)){
+            return null;
+        }
+
+        //see if the right type might be more appropriate for test
+        if( !(objleft instanceof Date) ){
+            Object objright = right.evaluate(object);
+
+            if(objright instanceof Date){
+                //object right class is more appropriate
+
+                Object cdLeft = Converters.convert(objleft, Date.class);
+                if(cdLeft != null){
+                    return ((Comparable)cdLeft).compareTo(objright);
+                }
+
+            }
+
+        }
+
+        Object objright = right.evaluate(object,objleft.getClass());
+
+        if(objright == null){
+            return null;
+        }
+
+        return ((Comparable)objleft).compareTo(objright);
+    }
+
 
     @Override
     public int hashCode() {
