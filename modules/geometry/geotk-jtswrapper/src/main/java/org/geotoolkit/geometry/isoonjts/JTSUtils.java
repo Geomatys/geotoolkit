@@ -25,6 +25,11 @@ import java.util.Set;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.JTSPositionFactory;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.AbstractJTSAggregate;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
@@ -37,6 +42,8 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
+import org.opengis.geometry.aggregate.Aggregate;
+import org.opengis.geometry.aggregate.MultiPoint;
 import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
@@ -123,11 +130,49 @@ public final class JTSUtils {
 
         } else if (jtsGeom instanceof GeometryCollection) {
             com.vividsolutions.jts.geom.GeometryCollection jtsCollection = (com.vividsolutions.jts.geom.GeometryCollection) jtsGeom;
-            MultiPrimitive result = gf.createMultiPrimitive();
-            Set elements = result.getElements();
+            boolean multiPoint   = true;
+            boolean multiCurve   = true;
+            boolean multiSurface = true;
             for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
-                //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
-                elements.add(toISO(jtsCollection.getGeometryN(i), crs));
+                if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Point)) {
+                    multiPoint = false;
+                }
+                if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.LineString)) {
+                    multiCurve = false;
+                }
+                if (!(jtsCollection.getGeometryN(i) instanceof com.vividsolutions.jts.geom.Polygon)) {
+                    multiSurface = false;
+                }
+            }
+            AbstractJTSAggregate result;
+            if (multiPoint) {
+                result = new JTSMultiPoint(crs);
+                Set elements = result.getElements();
+                for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
+                    //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
+                    elements.add(toISO(jtsCollection.getGeometryN(i), crs));
+                }
+            } else if (multiCurve) {
+                result = new JTSMultiCurve(crs);
+                Set elements = result.getElements();
+                for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
+                    //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
+                    elements.add(toISO(jtsCollection.getGeometryN(i), crs));
+                }
+            }  else if (multiSurface) {
+                result = new JTSMultiSurface(crs);
+                Set elements = result.getElements();
+                for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
+                    //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
+                    elements.add(toISO(jtsCollection.getGeometryN(i), crs));
+                }
+            } else {
+                result = new JTSMultiPrimitive();
+                Set elements = result.getElements();
+                for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
+                    //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
+                    elements.add(toISO(jtsCollection.getGeometryN(i), crs));
+                }
             }
             return result;
 

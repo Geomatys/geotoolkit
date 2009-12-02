@@ -287,7 +287,11 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
             // the root Element
             streamWriter.writeStartElement("wfs", "FeatureCollection", "http://www.opengis.net/wfs");
-            streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", featureCollection.getID());
+            String collectionID = "";
+            if (featureCollection.getID() != null) {
+                collectionID = featureCollection.getID();
+            }
+            streamWriter.writeAttribute("gml", GML_NAMESPACE, "id", collectionID);
             streamWriter.writeNamespace("gml", GML_NAMESPACE);
             streamWriter.writeNamespace("wfs", "http://www.opengis.net/wfs");
             if (schemaLocation != null && !schemaLocation.equals("")) {
