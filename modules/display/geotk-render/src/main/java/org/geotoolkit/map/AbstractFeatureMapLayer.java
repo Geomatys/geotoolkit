@@ -37,8 +37,6 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
 
     protected AbstractFeatureMapLayer(MutableStyle style){
         super(style);
-
-        query = QueryBuilder.all(getFeatureSource().getSchema().getName());
     }
 
     @Override
@@ -66,6 +64,10 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
      */
     @Override
     public Query getQuery() {
+        if(query == null){
+            query = QueryBuilder.all(getFeatureSource().getSchema().getName());
+        }
+
         return query;
     }
 
