@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -96,6 +97,11 @@ public class Utils {
                 return Integer.class;
             } else if ("string".equals(name.getLocalPart())) {
                 return String.class;
+            } else if ("decimal".equals(name.getLocalPart())) {
+                return BigDecimal.class;
+            } else if ("short".equals(name.getLocalPart())) {
+                return Short.class;
+
             } else if ("boolean".equals(name.getLocalPart())) {
                 return Boolean.class;
             } else if ("dateTime".equals(name.getLocalPart())) {
@@ -156,6 +162,10 @@ public class Utils {
                 return new QName("http://www.w3.org/2001/XMLSchema", "dateTime");
             } else if (Boolean.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "boolean");
+            } else if (BigDecimal.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "decimal");
+            } else if (Short.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "short");
 
 
             } else if (Geometry.class.isAssignableFrom(binding)) {

@@ -348,6 +348,8 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             streamWriter.writeStartElement("gml", "Envelope", GML_NAMESPACE);
             if (srsName != null) {
                 streamWriter.writeAttribute("srsName", srsName);
+            } else {
+                streamWriter.writeAttribute("srsName", "EPSG:4326");
             }
 
             // lower corner
