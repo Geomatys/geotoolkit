@@ -18,6 +18,7 @@
 package org.geotoolkit.map;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.filter.Filter;
@@ -36,6 +37,8 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
 
     protected AbstractFeatureMapLayer(MutableStyle style){
         super(style);
+
+        query = QueryBuilder.all(getFeatureSource().getSchema().getName());
     }
 
     @Override
