@@ -48,7 +48,6 @@ public final class AsciiGridReaderTest extends TextImageReaderTestBase {
         AsciiGridReader.Spi spi = new AsciiGridReader.Spi();
         final AsciiGridReader reader = new AsciiGridReader(spi);
         reader.setInput(TestData.file(this, "grid.asc"));
-//      reader.setInput("/Users/desruisseaux/Documents/Données/BRGM/geol_1m_asc.asc");
         return reader;
     }
 
@@ -68,8 +67,8 @@ public final class AsciiGridReaderTest extends TextImageReaderTestBase {
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
+            "│   ├───origin=“-9500.0 20500.0”\n" +
             "│   ├───OffsetVectors\n" +
-            "│   │   ├───origin=“-9500.0 20500.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“1000.0 0.0”\n" +
             "│   │   └───OffsetVector\n" +

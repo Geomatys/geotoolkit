@@ -52,8 +52,8 @@ import org.geotoolkit.resources.Errors;
  * US-ASCII character encoding no matter what the {@link Spi#charset} value is. In addition,
  * the US locale is enforced no matter what the {@link Spi#locale} value is.
  * <p>
- * ASCII grid files contains a header before the actual data. The header contains <var>key</var>
- * <var>value</var> pairs, one pair per line and using the space as the separator between key and
+ * ASCII grid files contains a header before the actual data. The header contains (<var>key</var>
+ * <var>value</var>) pairs, one pair per line and using the space as the separator between key and
  * value. The valid keys are listed in table below. Note that Geotk adds three extensions to the
  * standard ASCII grid format:
  * <p>
@@ -127,18 +127,13 @@ import org.geotoolkit.resources.Errors;
  * @module
  *
  * @todo The current implementation ignores the <code>seekForwardOnly</code> parameter.
- *       It process as if that parameter was always set to <code>true</code>.
+ *       It processes as if that parameter was always set to <code>true</code>.
  */
 public class AsciiGridReader extends TextImageReader {
     /**
      * The size of the NIO direct buffer to create.
      */
     private static final int BUFFER_SIZE = 16 * 1024;
-
-    /**
-     * The default {@code "NODATA_VALUE"}. This is part of ASCII Grid specification.
-     */
-    private static final int DEFAULT_FILL = -9999;
 
     /**
      * {@code true} if the header has been read.
@@ -215,7 +210,7 @@ public class AsciiGridReader extends TextImageReader {
                 height   = Integer.parseInt  (ensureDefined(key = "NROWS",    header.remove(key)));
                 cellsize = Double.parseDouble(ensureDefined(key = "CELLSIZE", header.remove(key)));
                 String value = header.remove(key = "NODATA_VALUE");
-                fillValue = (value != null) ? Double.parseDouble(value) : DEFAULT_FILL;
+                fillValue = (value != null) ? Double.parseDouble(value) : super.getPadValue(0);
                 value = header.remove(key = "MIN_VALUE");
                 minValue = (value != null) ? Double.parseDouble(value) : Double.NEGATIVE_INFINITY;
                 value = header.remove(key = "MAX_VALUE");
@@ -621,9 +616,32 @@ readLine:   while (true) {
      * the necessary implementation for creating default {@link AsciiGridReader}s using
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
+     * <p>
+     * The {@linkplain #Spi() default constructor} initializes the fields to the values listed
+     * below. Users wanting different values should create a subclass of {@code Spi} and set
+     * the desired values in their constructor.
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue"><td>Field</td><td>Value</td></tr>
+     *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "ascii-grid"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.AsciiGridReader"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #padValue}        &nbsp;</td><td>&nbsp;{@code -9999}&nbsp;</td></tr>
+     *   <tr><td colspan="2">See {@linkplain TextImageReader#Spi super-class javadoc} for remaining fields</td></tr>
+     * </table>
+     * <p>
+     * Note that the {@code padValue} is used as the default value if no {@code NODATA_VALUE}
+     * attribute is specified in the file header. The -9999 value is conform to ASCII Grid
+     * convention.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
+     *
+     * @see AsciiGridWriter#Spi
      *
      * @since 3.07
      * @module
@@ -646,17 +664,11 @@ readLine:   while (true) {
         static final String[] MIME_TYPES = {"text/plain"};
 
         /**
-         * Constructs a default {@code AsciiGridReader.Spi}. This constructor provides the
-         * following defaults in addition to the defaults defined in the super-class constructor:
+         * Constructs a default {@code AsciiGridReader.Spi}. The fields are initialized as
+         * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
+         * modify those values if desired.
          * <p>
-         * <table><tr>
-         *   <td>{@link #names}           </td><td>=</td><td> {@code "ascii-grid"}</td>
-         *   <td>{@link #MIMETypes}       </td><td>=</td><td> {@code "text/plain"}</td>
-         *   <td>{@link #pluginClassName} </td><td>=</td><td> {@code "org.geotoolkit.image.io.text.AsciiGridReader"}</td>
-         *   <td>{@link #vendorName}      </td><td>=</td><td> {@code "Geotoolkit.org"}</td>
-         * </tr></table>
-         * <p>
-         * For efficienty reasons, the above fields are initialized to shared arrays.
+         * For efficienty reasons, the fields are initialized to shared arrays.
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         public Spi() {
@@ -668,6 +680,7 @@ readLine:   while (true) {
             version         = Version.GEOTOOLKIT.toString();
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");
+            padValue        = -9999;
         }
 
         /**

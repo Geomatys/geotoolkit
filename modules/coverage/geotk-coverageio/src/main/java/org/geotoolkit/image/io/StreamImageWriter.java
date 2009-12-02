@@ -18,29 +18,39 @@
 package org.geotoolkit.image.io;
 
 import java.io.*; // Many imports, including some for javadoc only.
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import javax.imageio.IIOImage;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
 
 /**
  * Base class for simple image encoders. This class provides a {@link #getOutputStream} method,
  * which returns the {@linkplain #output output} as an {@link OutputStream} for convenience.
- * Different kinds of output like {@linkplain File} or {@linkplain URL} are automatically
- * handled.
+ * Different kinds of outputs are automatically handled. The default implementation handles all
+ * the following types:
+ *
+ * <blockquote>
+ * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+ * {@link OutputStream}, {@link ImageOutputStream}, {@link WritableByteChannel}.
+ * </blockquote>
+ *
+ * Note the {@link org.geotoolkit.image.io.text.TextImageWriter} subclass can go one step
+ * further by wrapping the {@code InputStream} into a {@link java.io.BufferedWriter} using
+ * some character encoding.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
+ *
+ * @see StreamImageReader
  *
  * @since 2.4
  * @module
@@ -81,29 +91,6 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
     }
 
     /**
-     * Returns the {@linkplain SpatialMetadataFormat#IMAGE image metadata} for the given image,
-     * or {@code null} if none. This is a convenience method for the implementations of the
-     * {@link #write write} method in subclasses.
-     *
-     * @param  image The image from which to get the metadata.
-     * @return The image metadata, or {@code null} if none.
-     *
-     * @since 3.07
-     */
-    protected SpatialMetadata getImageMetadata(final IIOImage image) {
-        if (image != null) {
-            final IIOMetadata metadata = image.getMetadata();
-            if (metadata != null) {
-                if (metadata instanceof SpatialMetadata) {
-                    return (SpatialMetadata) metadata;
-                }
-                return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, metadata);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Sets the output source to use. Output may be one of the following object:
      * {@link File}, {@link URL}, {@link Writer} (for ASCII data), {@link OutputStream} or
      * {@link ImageOutputStream}. If {@code output} is {@code null}, then any currently
@@ -124,8 +111,8 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * Returns the {@linkplain #output output} as an {@linkplain OutputStream output stream} object.
      * If the output is already an output stream, it is returned unchanged. Otherwise this method
      * creates a new {@linkplain OutputStream output stream} (usually <strong>not</strong>
-     * {@linkplain BufferedOutputStream buffered}) from {@link File}, {@link URL},
-     * {@link URLConnection} or {@link ImageOutputStream} outputs.
+     * {@linkplain BufferedOutputStream buffered}) from {@link File}, {@link URI}, {@link URL},
+     * {@link URLConnection}, {@link ImageOutputStream} or {@link WritableByteChannel} outputs.
      * <p>
      * This method creates a new {@linkplain OutputStream output stream} only when first invoked.
      * All subsequent calls will returns the same instance. Consequently, the returned stream
@@ -158,12 +145,18 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
             } else if (output instanceof File) {
                 stream = new FileOutputStream((File) output);
                 closeOnReset = stream;
+            } else if (output instanceof URI) {
+                stream = ((URI) output).toURL().openConnection().getOutputStream();
+                closeOnReset = stream;
             } else if (output instanceof URL) {
                 stream = ((URL) output).openConnection().getOutputStream();
                 closeOnReset = stream;
             } else if (output instanceof URLConnection) {
                 stream = ((URLConnection) output).getOutputStream();
                 closeOnReset = stream;
+            } else if (output instanceof WritableByteChannel) {
+                stream = Channels.newOutputStream((WritableByteChannel) output);
+                // Do not define closeOnReset since we don't want to close user-provided output.
             } else {
                 throw new IllegalStateException(getErrorResources().getString(
                         Errors.Keys.ILLEGAL_CLASS_$2, Classes.getClass(output), OutputStream.class));
@@ -243,10 +236,22 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
 
 
     /**
-     * Service provider interface (SPI) for {@link StreamImageWriter}s.
+     * Service provider interface (SPI) for {@link StreamImageWriter}s. The constructor of
+     * this class initializes the {@link #outputTypes} field to the value documented in the
+     * {@link StreamImageWriter} javadoc, which are:
+     *
+     * <blockquote>
+     * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+     * {@link OutputStream}, {@link ImageOutputStream}, {@link WritableByteChannel}.
+     * </blockquote>
+     *
+     * It is up to subclass constructors to initialize all other instance variables
+     * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (IRD)
      * @version 3.00
+     *
+     * @see StreamImageReader#Spi
      *
      * @since 2.4
      * @module
@@ -265,14 +270,10 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
         };
 
         /**
-         * Constructs a quasi-blank {@code StreamImageWriter.Spi}. It is up to the subclass to
-         * initialize instance variables in order to provide working versions of all methods.
-         * This constructor provides the following defaults:
-         * <p>
-         * <ul>
-         *   <li>{@link #outputTypes} = {{@link File}, {@link URL}, {@link URLConnection},
-         *       {@link OutputStream}, {@link ImageOutputStream}, {@link String}}</li>
-         * </ul>
+         * Constructs a quasi-blank {@code StreamImageWriter.Spi}. The {@link #inputTypes} field
+         * is initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is
+         * up to the subclass to initialize all other instance variables in order to provide working
+         * versions of all methods.
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.

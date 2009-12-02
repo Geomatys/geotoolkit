@@ -22,7 +22,6 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.IOException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.IIOImage;
@@ -31,13 +30,14 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
-import javax.imageio.metadata.IIOMetadataFormatImpl;
-import javax.imageio.metadata.IIOInvalidTreeException;
 import javax.imageio.event.IIOWriteWarningListener;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 
 import org.geotoolkit.image.ImageDimension;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
@@ -46,14 +46,26 @@ import org.geotoolkit.resources.IndexedResourceBundle;
 
 /**
  * Base class for writers of spatial (usually geographic) data.
+ * This base class provides the following restrictions or conveniences:
+ * <p>
+ * <ul>
+ *   <li>Set the metadata type to {@link SpatialMetadata} and the format to
+ *       {@link SpatialMetadataFormat#STREAM STREAM} for stream metadata, or
+ *       {@link SpatialMetadataFormat#IMAGE IMAGE} for image metadata.</li>
+ *   <li>Provide {@link #getSampleModel getSampleModel}, {@link #createRectIter createRectIter}
+ *       and {@link #computeSize computeSize} static methods as helpers for the
+ *       {@link #write(IIOImage) write(...)} implementations.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
  *
+ * @see SpatialImageReader
+ *
  * @since 3.05 (derived from 2.4)
  * @module
  */
-public abstract class SpatialImageWriter extends ImageWriter {
+public abstract class SpatialImageWriter extends ImageWriter implements Localized {
     /**
      * The logger to use for events related to this image writer.
      */
@@ -82,7 +94,8 @@ public abstract class SpatialImageWriter extends ImageWriter {
     }
 
     /**
-     * Sets the output.
+     * Sets the destination to the given {@link javax.imageio.stream.ImageOutputStream}
+     * or other {@code Object}.
      */
     @Override
     public void setOutput(final Object output) {
@@ -99,39 +112,23 @@ public abstract class SpatialImageWriter extends ImageWriter {
     }
 
     /**
-     * Ensures that the specified parameter is non-null.
-     *
-     * @param  parameter The parameter name, for formatting an error message if needed.
-     * @param  value The value to test.
-     * @throws IllegalArgumentException if {@code value} is null.
-     */
-    private void ensureNonNull(final String parameter, final Object value)
-            throws IllegalArgumentException
-    {
-        if (value == null) {
-            throw new IllegalArgumentException(getErrorResources().
-                        getString(Errors.Keys.NULL_ARGUMENT_$1, parameter));
-        }
-    }
-
-    /**
      * Returns a metadata object containing default values for encoding a stream of images.
-     * The default implementation returns {@code null}, which is appropriate for writer that
-     * do not make use of stream meta-data.
+     * The default implementation returns an instance of {@link SpatialMetadata} using
+     * the {@link SpatialMetadataFormat#STREAM STREAM} format.
      *
      * @param param Parameters that will be used to encode the image (in cases where
      *              it may affect the structure of the metadata), or {@code null}.
      * @return The metadata, or {@code null}.
      */
     @Override
-    public IIOMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
-        return null;
+    public SpatialMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
+        return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, null);
     }
 
     /**
      * Returns a metadata object containing default values for encoding an image of the given
-     * type. The default implementation returns {@code null}, which is appropriate for writer
-     * that do not make use of image meta-data.
+     * type. The default implementation returns an instance of {@link SpatialMetadata} using
+     * the {@link SpatialMetadataFormat#IMAGE IMAGE} format.
      *
      * @param imageType The format of the image to be written later.
      * @param param Parameters that will be used to encode the image (in cases where
@@ -139,16 +136,17 @@ public abstract class SpatialImageWriter extends ImageWriter {
      * @return The metadata, or {@code null}.
      */
     @Override
-    public IIOMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
-                                               final ImageWriteParam    param)
+    public SpatialMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
+                                                   final ImageWriteParam    param)
     {
-        return null;
+        return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
     }
 
     /**
-     * Returns a metadata object initialized to the specified data for encoding a stream
-     * of images. The default implementation copies the specified data into a
-     * {@linkplain #getDefaultStreamMetadata default stream metadata}.
+     * Returns a metadata object initialized to the specified data for encoding a stream of
+     * images. The default implementation returns the given metadata unchanged if it is an
+     * instance of {@link SpatialMetadata} using the {@link SpatialMetadataFormat#STREAM STREAM}
+     * format, or wraps it otherwise.
      *
      * @param inData Stream metadata used to initialize the state of the returned object.
      * @param param Parameters that will be used to encode the image (in cases where
@@ -156,23 +154,26 @@ public abstract class SpatialImageWriter extends ImageWriter {
      * @return The metadata, or {@code null}.
      */
     @Override
-    public IIOMetadata convertStreamMetadata(final IIOMetadata inData, final ImageWriteParam param) {
-        ensureNonNull("inData", inData);
-        final IIOMetadata outData = getDefaultStreamMetadata(param);
-        final String format = commonMetadataFormatName(inData, outData);
-        if (format != null) try {
-            outData.mergeTree(format, inData.getAsTree(format));
-            return outData;
-        } catch (IIOInvalidTreeException ex) {
-            warningOccurred("convertStreamMetadata", ex);
+    public SpatialMetadata convertStreamMetadata(final IIOMetadata     inData,
+                                                 final ImageWriteParam param)
+    {
+        if (inData == null) {
+            return null;
         }
-        return null;
+        if (inData instanceof SpatialMetadata) {
+            final SpatialMetadata sp = (SpatialMetadata) inData;
+            if (SpatialMetadataFormat.STREAM.equals(sp.format)) {
+                return sp;
+            }
+        }
+        return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, inData);
     }
 
     /**
-     * Returns a metadata object initialized to the specified data for encoding an image
-     * of the given type. The default implementation copies the specified data into a
-     * {@linkplain #getDefaultImageMetadata default image metadata}.
+     * Returns a metadata object initialized to the specified data for encoding an image of the
+     * given type. The default implementation returns the given metadata unchanged if it is an
+     * instance of {@link SpatialMetadata} using the {@link SpatialMetadataFormat#IMAGE IMAGE}
+     * format, or wraps it otherwise.
      *
      * @param inData Image metadata used to initialize the state of the returned object.
      * @param imageType The format of the image to be written later.
@@ -181,74 +182,20 @@ public abstract class SpatialImageWriter extends ImageWriter {
      * @return The metadata, or {@code null}.
      */
     @Override
-    public IIOMetadata convertImageMetadata(final IIOMetadata        inData,
-                                            final ImageTypeSpecifier imageType,
-                                            final ImageWriteParam    param)
+    public SpatialMetadata convertImageMetadata(final IIOMetadata        inData,
+                                                final ImageTypeSpecifier imageType,
+                                                final ImageWriteParam    param)
     {
-        ensureNonNull("inData", inData);
-        final IIOMetadata outData = getDefaultImageMetadata(imageType, param);
-        final String format = commonMetadataFormatName(inData, outData);
-        if (format != null) try {
-            outData.mergeTree(format, inData.getAsTree(format));
-            return outData;
-        } catch (IIOInvalidTreeException ex) {
-            warningOccurred("convertImageMetadata", ex);
+        if (inData == null) {
+            return null;
         }
-        return null;
-    }
-
-    /**
-     * Finds a common metadata format name between the two specified metadata objects. This
-     * method query for the {@code outData} {@linkplain #getNativeMetadataFormatName native
-     * metadata format name} first.
-     *
-     * @param  inData  The input metadata.
-     * @param  outData The output metadata.
-     * @return A metadata format name common to {@code inData} and {@code outData},
-     *         or {@code null} if none where found.
-     */
-    private static String commonMetadataFormatName(final IIOMetadata inData, final IIOMetadata outData) {
-        String format = outData.getNativeMetadataFormatName();
-        if (isSupportedFormat(inData, format)) {
-            return format;
-        }
-        final String[] formats = outData.getExtraMetadataFormatNames();
-        if (formats != null) {
-            for (int i=0; i<formats.length; i++) {
-                format = formats[i];
-                if (isSupportedFormat(inData, format)) {
-                    return format;
-                }
+        if (inData instanceof SpatialMetadata) {
+            final SpatialMetadata sp = (SpatialMetadata) inData;
+            if (SpatialMetadataFormat.IMAGE.equals(sp.format)) {
+                return sp;
             }
         }
-        if (outData.isStandardMetadataFormatSupported() && inData.isStandardMetadataFormatSupported()) {
-            return IIOMetadataFormatImpl.standardMetadataFormatName;
-        }
-        return null;
-    }
-
-    /**
-     * Returns {@code true} if the specified metadata supports the specified format.
-     *
-     * @param  metadata The metadata to test.
-     * @param  format The format name to test, or {@code null}.
-     * @return {@code true} if the specified metadata suports the specified format.
-     */
-    private static boolean isSupportedFormat(final IIOMetadata metadata, final String format) {
-        if (format != null) {
-            if (format.equalsIgnoreCase(metadata.getNativeMetadataFormatName())) {
-                return true;
-            }
-            final String[] formats = metadata.getExtraMetadataFormatNames();
-            if (formats != null) {
-                for (int i=0; i<formats.length; i++) {
-                    if (format.equalsIgnoreCase(formats[i])) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, inData);
     }
 
     /**
@@ -504,17 +451,6 @@ public abstract class SpatialImageWriter extends ImageWriter {
         } else {
             processWarningOccurred(IndexedResourceBundle.format(record));
         }
-    }
-
-    /**
-     * Convenience method for logging an exception from the given method.
-     */
-    private void warningOccurred(final String method, final Exception ex) {
-        final LogRecord record = new LogRecord(Level.WARNING, ex.toString());
-        record.setSourceClassName(SpatialImageWriter.class.getName());
-        record.setSourceMethodName(method);
-        record.setThrown(ex);
-        warningOccurred(record);
     }
 
     /**

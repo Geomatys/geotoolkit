@@ -26,8 +26,12 @@ import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import javax.imageio.IIOImage;
+import javax.imageio.metadata.IIOMetadata;
 
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -37,11 +41,23 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageWriter} tests.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 3.06 (derived from 2.4)
  */
 public abstract class TextImageWriterTestBase {
+    /**
+     * Creates dummy metadata for the image to be returned by {@link #createImage()}.
+     */
+    private static IIOMetadata createMetadata() {
+        final IIOMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final GridDomainAccessor domain = new GridDomainAccessor(metadata);
+        domain.setOrigin(-500, 400);
+        domain.addOffsetVector(100, 0);
+        domain.addOffsetVector(0, -100);
+        return metadata;
+    }
+
     /**
      * Returns a one-banded grayscale image with the sample values documented below.
      *
@@ -76,7 +92,7 @@ public abstract class TextImageWriterTestBase {
                 raster.setSample(x, y, 0, value);
             }
         }
-        return new IIOImage(new BufferedImage(cm, raster, false, null), null, null);
+        return new IIOImage(new BufferedImage(cm, raster, false, null), null, createMetadata());
     }
 
     /**

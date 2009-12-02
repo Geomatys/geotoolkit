@@ -147,7 +147,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * The metadata format given at construction time. This is typically
      * {@link SpatialMetadataFormat#IMAGE} or {@link SpatialMetadataFormat#STREAM}.
      */
-    protected final IIOMetadataFormat format;
+    public final IIOMetadataFormat format;
 
     /**
      * The {@link ImageReader} or {@link ImageWriter} that holds the metadata,

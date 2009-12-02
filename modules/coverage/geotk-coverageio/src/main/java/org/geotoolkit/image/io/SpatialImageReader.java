@@ -40,6 +40,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.event.IIOReadWarningListener;
 
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
@@ -47,7 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
-import org.geotoolkit.internal.image.io.MetadataHelper;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
 
 
 /**
@@ -88,12 +89,14 @@ import org.geotoolkit.internal.image.io.MetadataHelper;
  * operators after reading.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.07
+ *
+ * @see SpatialImageWriter
  *
  * @since 3.06 (derived from 1.2)
  * @module
  */
-public abstract class SpatialImageReader extends ImageReader {
+public abstract class SpatialImageReader extends ImageReader implements Localized {
     /**
      * The logger to use for events related to this image reader.
      */
@@ -567,6 +570,7 @@ public abstract class SpatialImageReader extends ImageReader {
             ignoreMetadata = oldIgnore;
         }
         if (metadata != null) {
+            final MetadataHelper helper = new MetadataHelper(this);
             final List<SampleDimension> bands = metadata.getListForType(SampleDimension.class);
             if (bands != null) {
                 final int numMetadataBands = bands.size();
@@ -577,7 +581,7 @@ public abstract class SpatialImageReader extends ImageReader {
                     }
                     final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
                     final double[] nodataValues = band.getFillSampleValues();
-                    final NumberRange<?> range = MetadataHelper.getValidSampleValues(band, nodataValues);
+                    final NumberRange<?> range = helper.getValidSampleValues(band, nodataValues);
                     double minimum, maximum;
                     if (range != null) {
                         minimum = range.getMinimum();

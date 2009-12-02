@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.text;
 
 import java.io.*; // Many imports, including some for javadoc only.
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.Locale;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
+import java.nio.channels.ReadableByteChannel;
 
 import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.image.io.StreamImageReader;
@@ -33,18 +35,24 @@ import org.geotoolkit.resources.Vocabulary;
 
 
 /**
- * Base class for text image decoders. "Text images" are usually ASCII files containing pixel
- * as geophysical values. This base class provides a convenient way to get {@link BufferedReader}
- * for reading lines.
+ * Base class for text image decoders. "<cite>Text images</cite>" are usually ASCII files
+ * where pixels values are actually the geophysical values. This base class provides the
+ * following conveniences:
  * <p>
- * {@code TextImageReader} accepts many input types, including {@link File}, {@link URL},
- * {@link Reader}, {@link InputStream} and {@link ImageInputStream}. The {@link Spi} provider
- * advises those input types. The above cited {@code Spi} provides also a convenient way to
- * control the character encoding, with the {@link Spi#charset charset} field. Developer can
- * gain yet more control on character encoding by overriding the {@link #getCharset} method.
+ * <ul>
+ *   <li>Get a {@link BufferedReader} from the input types, which may be a any type documented
+ *       in the {@linkplain StreamImageReader super-class} plus {@link Reader}.</li>
+ *   <li>Get a {@link LineFormat} for parsing a whole line as a record. Subclasses can override
+ *       this method for parsing text files having non-numeric columns (angles, dates, <i>etc.</i>).</li>
+ *   <li>Get the character encoding and the locale (for parsing numbers) from the fields declared
+ *       in the {@linkplain Spi Service Provider}. Alternatively, subclasses can also get more
+ *       control by overriding the {@link #getCharset(InputStream)} method.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
+ *
+ * @see TextImageWriter
  *
  * @since 1.2
  * @module
@@ -326,16 +334,49 @@ public abstract class TextImageReader extends StreamImageReader {
 
 
     /**
-     * Service provider interface (SPI) for {@link TextImageReader}s. This SPI provides a convenient
-     * way to control the {@link TextImageReader} character encoding: the {@link #charset} field.
-     * For example, many {@code Spi} subclasses will put the following line in their constructor:
+     * Service provider interface (SPI) for {@link TextImageReader}s. This SPI provides additional
+     * fields controling the character encoding ({@link #charset}), the local to use for parsing
+     * numbers, dates or other objects ({@link #locale}) and the value used in place of missing
+     * pixel values ({@link #padValue}).
+     * <p>
+     * By default the {@code charset} and {@code locale} fields are initialized to {@code null},
+     * which stands for the platform-dependant character encoding and locale. In addition the
+     * {@code padValue} is set to {@link Double#NaN}, which means that there is no pad value. If
+     * a subclass wants to fix the encoding, locale and pad value to some format-specific values,
+     * it shall specify those values at construction time as in the example below:
      *
      * {@preformat java
-     *     charset = Charset.forName("ISO-LATIN-1"); // ISO Latin Alphabet No. 1 (ISO-8859-1)
+     *     public Spi() {
+     *         charset  = Charset.forName("ISO-8859-1"); // ISO Latin Alphabet No. 1
+     *         locale   = Locale.US;
+     *         padValue = -9999;
+     *     }
      * }
+     *
+     * The other fields are initialized to the values listed below.
+     * Those values can also be modified by subclass constructors.
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue">
+     *     <td>Field</td>
+     *     <td>Value</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #inputTypes}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+     *               {@link Reader}, {@link InputStream}, {@link ImageInputStream},
+     *               {@link ReadableByteChannel}&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #suffixes}&nbsp;</td>
+     *     <td>&nbsp;{@code "txt"}, {@code "TXT"},
+     *               {@code "asc"}, {@code "ASC"},
+     *               {@code "dat"}, {@code "DAT"}&nbsp;</td>
+     * </tr>
+     * </table>
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.07
+     *
+     * @see TextImageWriter.Spi
      *
      * @since 2.4
      * @module
@@ -346,11 +387,13 @@ public abstract class TextImageReader extends StreamImageReader {
          */
         private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
             File.class,
+            URI.class,
             URL.class,
             URLConnection.class,
             Reader.class,
             InputStream.class,
             ImageInputStream.class,
+            ReadableByteChannel.class,
             String.class  // To be interpreted as file path.
         };
 
@@ -363,46 +406,39 @@ public abstract class TextImageReader extends StreamImageReader {
 
         /**
          * Character encoding, or {@code null} for the default. This field is initially
-         * {@code null}. A value shall be set by subclasses if the files to be decoded
-         * use some specific character encoding.
+         * {@code null}, which means to use the platform-dependant encoding. Subclasses
+         * shall set a non-null value if the files to be decoded use some specific character
+         * encoding.
          *
-         * @see TextImageReader#getCharset
+         * @see TextImageReader#getCharset(InputStream)
          */
         protected Charset charset;
 
         /**
          * The locale for numbers or dates parsing. For example {@link Locale#US} means that
-         * numbers are expected to use dot as decimal separator. This field is initially
-         * {@code null}, which means that default locale should be used.
+         * numbers are expected to use a dot for the decimal separator. This field is initially
+         * {@code null}, which means that the {@linkplain Locale#getDefault() default locale}
+         * will be used.
          *
-         * @see TextImageReader#getLineFormat
+         * @see TextImageReader#getLineFormat(int)
          */
         protected Locale locale;
 
         /**
          * The pad value, or {@link Double#NaN} if none. Every occurences of pixel value equals
-         * to this pad value will be replaced by {@link Double#NaN} during read operation. Note
-         * that this replacement doesn't apply to non-pixel values (for example <var>x</var>,
-         * <var>y</var> coordinates in some file format).
+         * to this pad value will be replaced by {@link Double#NaN} during the read operation.
+         * Note that this replacement doesn't apply to non-pixel values (for example <var>x</var>,
+         * <var>y</var> coordinates in the format read by {@link TextRecordImageReader}).
          *
-         * @see TextImageReader#getPadValue
+         * @see TextImageReader#getPadValue(int)
          */
         protected double padValue;
 
         /**
-         * Constructs a quasi-blank {@code TextImageReader.Spi}. It is up to the subclass to
-         * initialize instance variables in order to provide working versions of all methods.
-         * This constructor provides the following defaults:
-         * <p>
-         * <ul>
-         *   <li>{@link #inputTypes} = {{@link File}, {@link URL}, {@link URLConnection},
-         *       {@link Reader}, {@link InputStream}, {@link ImageInputStream}, {@link String}}</li>
-         *
-         *   <li>{@link #suffixes} = {{@code "txt"}, {@code "asc"}, {@code "dat"}}
-         *       (lowercases and uppercases)</li>
-         *
-         *   <li>{@link #padValue} = {@link Double#NaN}</li>
-         * </ul>
+         * Constructs a quasi-blank {@code TextImageReader.Spi}. This constructor initializes
+         * the fields as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is
+         * up to the subclass to initialize all other instance variables in order to provide
+         * working versions of all methods.
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.

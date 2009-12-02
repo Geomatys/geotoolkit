@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.text;
 
 import java.io.*; // Many imports, including some for javadoc only.
 import java.nio.charset.Charset;
+import java.nio.channels.WritableByteChannel;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
@@ -27,6 +29,7 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 import java.awt.image.DataBuffer;
 import javax.imageio.IIOImage;
+import javax.imageio.IIOException;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
@@ -37,11 +40,25 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Base class for text image encoders. "Text images" are usually ASCII files
- * containing pixel values (often geophysical values, like sea level anomalies).
+ * Base class for text image encoders. "<cite>Text images</cite>" are usually ASCII files
+ * where pixels values are actually the geophysical values. This base class provides the
+ * following conveniences:
+ * <p>
+ * <ul>
+ *   <li>Get a {@link BufferedWriter} from the output types, which may be a any type documented
+ *       in the {@linkplain StreamImageWriter super-class} plus {@link Writer}.</li>
+ *   <li>Offer a {@link #createNumberFormat createNumberFormat(...)} method which set the
+ *       {@linkplain NumberFormat#getMaximumFractionDigits() number of fraction digits} to
+ *       a value determined from the sample values present in the image.</li>
+ *   <li>Get the character encoding and the locale (for formating numbers) from the fields declared
+ *       in the {@linkplain Spi Service Provider}. Alternatively, subclasses can also get more
+ *       control by overriding the {@link #getCharset(ImageWriteParam)} method.</li>
+ * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
+ *
+ * @see TextImageReader
  *
  * @since 1.2
  * @module
@@ -146,9 +163,8 @@ public abstract class TextImageWriter extends StreamImageWriter {
     }
 
     /**
-     * Returns the {@linkplain #output output} as a writer, usually (but not necessarly)
-     * {@linkplain BufferedWriter buffered}. If the output is already a buffered writer,
-     * it is returned unchanged. Otherwise the default implementation creates a new
+     * Returns the {@linkplain #output output} as a writer. If the output is already a buffered
+     * writer, then it is returned unchanged. Otherwise the default implementation creates a new
      * {@link BufferedWriter} from various output types including {@link File}, {@link URL},
      * {@link URLConnection}, {@link Writer}, {@link OutputStream} and {@link ImageOutputStream}.
      * <p>
@@ -166,7 +182,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * @see #getOutput
      * @see #getOutputStream
      */
-    protected Writer getWriter(final ImageWriteParam parameters)
+    protected BufferedWriter getWriter(final ImageWriteParam parameters)
             throws IllegalStateException, IOException
     {
         if (writer == null) {
@@ -315,17 +331,47 @@ public abstract class TextImageWriter extends StreamImageWriter {
 
 
     /**
-     * Service provider interface (SPI) for {@link TextImageWriter}. This SPI provides a
-     * convenient way to control the {@link TextImageWriter} character encoding: the
-     * {@link #charset} field. For example, many {@code Spi} subclasses will put the
-     * following line in their constructor:
+     * Service provider interface (SPI) for {@link TextImageWriter}. This SPI provides additional
+     * fields controling the character encoding ({@link #charset}), the local to use for formating
+     * numbers, dates or other objects ({@link #locale}) and the line separator
+     * ({@link #lineSeparator}).
+     * <p>
+     * By default the {@code charset}, {@code locale} and {@code lineSeparator} fields are
+     * initialized to {@code null}, which stands for the platform-dependant defaults. If a
+     * subclass wants to fix the encoding and locale to some format-specific values, it shall
+     * specify those values at construction time as in the example below:
      *
      * {@preformat java
-     *     charset = Charset.forName("ISO-LATIN-1"); // ISO Latin Alphabet No. 1 (ISO-8859-1)
+     *     public Spi() {
+     *         charset = Charset.forName("ISO-8859-1"); // ISO Latin Alphabet No. 1
+     *         locale  = Locale.US;
+     *     }
      * }
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * The other fields are initialized to the values listed below.
+     * Those values can also be modified by subclass constructors.
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue">
+     *     <td>Field</td>
+     *     <td>Value</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+     *               {@link Writer}, {@link OutputStream}, {@link ImageOutputStream},
+     *               {@link WritableByteChannel}&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #suffixes}&nbsp;</td>
+     *     <td>&nbsp;{@code "txt"}, {@code "TXT"},
+     *               {@code "asc"}, {@code "ASC"},
+     *               {@code "dat"}, {@code "DAT"}&nbsp;</td>
+     * </tr>
+     * </table>
+     *
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.07
+     *
+     * @see TextImageReader.Spi
      *
      * @since 2.4
      * @module
@@ -336,11 +382,13 @@ public abstract class TextImageWriter extends StreamImageWriter {
          */
         private static final Class<?>[] OUTPUT_TYPES = new Class<?>[] {
             File.class,
+            URI.class,
             URL.class,
             URLConnection.class,
             Writer.class,
             OutputStream.class,
             ImageOutputStream.class,
+            WritableByteChannel.class,
             String.class  // To be interpreted as file path.
         };
 
@@ -370,17 +418,10 @@ public abstract class TextImageWriter extends StreamImageWriter {
         protected String lineSeparator;
 
         /**
-         * Constructs a quasi-blank {@code TextImageWriter.Spi}. It is up to the subclass to
-         * initialize instance variables in order to provide working versions of all methods.
-         * This constructor provides the following defaults:
-         * <p>
-         * <ul>
-         *   <li>{@link #outputTypes} = {{@link File}, {@link URL}, {@link URLConnection},
-         *       {@link Writer}, {@link OutputStream}, {@link ImageOutputStream}, {@link String}}</li>
-         *
-         *   <li>{@link #suffixes} = {{@code "txt"}, {@code "asc"}, {@code "dat"}}
-         *       (lowercases and uppercases)</li>
-         * </ul>
+         * Constructs a quasi-blank {@code TextImageWriter.Spi}. This constructor initializes
+         * the fields as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is
+         * up to the subclass to initialize all other instance variables in order to provide
+         * working versions of all methods.
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.

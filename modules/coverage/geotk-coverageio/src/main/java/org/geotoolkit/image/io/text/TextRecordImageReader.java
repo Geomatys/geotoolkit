@@ -583,7 +583,23 @@ public class TextRecordImageReader extends TextImageReader {
     /**
      * Service provider interface (SPI) for {@link TextRecordImageReader}s. This SPI provides
      * necessary implementation for creating default {@link TextRecordImageReader} using default
-     * locale and character set. Subclasses can set some fields at construction time in order to
+     * locale and character set. The {@linkplain #Spi() default constructor} initializes the fields
+     * to the values listed below:
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue"><td>Field</td><td>Value</td></tr>
+     *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "records"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.TextRecordImageReader"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #xColumn}         &nbsp;</td><td>&nbsp;{@code 0}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #yColumn}         &nbsp;</td><td>&nbsp;{@code 1}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #gridTolerance}   &nbsp;</td><td>&nbsp;May vary.&nbsp;</td></tr>
+     *   <tr><td colspan="2">See {@linkplain TextImageReader#Spi super-class javadoc} for remaining fields</td></tr>
+     * </table>
+     * <p>
+     * Subclasses can set some fields at construction time in order to
      * tune the reader to a particular environment, e.g.:
      *
      * {@preformat java
@@ -594,8 +610,8 @@ public class TextRecordImageReader extends TextImageReader {
      *             vendorName = "Institut de Recherche pour le Développement";
      *             version    = "1.0";
      *             locale     = Locale.US;
-     *             charset    = Charset.forName("ISO-LATIN-1");
-     *             padValue   = 9999;
+     *             charset    = Charset.forName("ISO-8859-1"); // ISO-LATIN-1
+     *             padValue   = -9999;
      *         }
      *     }
      * }
@@ -651,18 +667,9 @@ public class TextRecordImageReader extends TextImageReader {
         protected float gridTolerance = EPS;
 
         /**
-         * Constructs a default {@code TextRecordImageReader.Spi}. This constructor
-         * provides the following defaults in addition to the defaults defined in the
-         * super-class constructor:
-         * <p>
-         * <table><tr>
-         *   <td>{@link #names}           </td><td>=</td><td> {@code "records"}</td>
-         *   <td>{@link #MIMETypes}       </td><td>=</td><td> {@code "text/plain"}</td>
-         *   <td>{@link #pluginClassName} </td><td>=</td><td> {@code "org.geotoolkit.image.io.text.TextRecordImageReader"}</td>
-         *   <td>{@link #vendorName}      </td><td>=</td><td> {@code "Geotoolkit.org"}</td>
-         *   <td>{@link #xColumn}         </td><td>=</td><td> {@code 0}</td>
-         *   <td>{@link #yColumn}         </td><td>=</td><td> {@code 1}</td>
-         * </tr></table>
+         * Constructs a default {@code TextRecordImageReader.Spi}. The fields are initialized as
+         * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can modify
+         * those values if desired.
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.

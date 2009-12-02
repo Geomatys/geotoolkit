@@ -23,6 +23,7 @@ import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
@@ -30,8 +31,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
 
 /**
  * A convenience specialization of {@link MetadataAccessor} for nodes related to the
- * {@code "RectifiedGridDomain"} node. This class actually defines itself as an accessor
- * of {@code "RectifiedGridDomain/OffsetVectors"}, but provides also convenience methods
+ * {@code "RectifiedGridDomain"} node. This class provides also convenience methods
  * for the {@code "RectifiedGridDomain/Limits"} and the {@code "SpatialRepresentation"}
  * nodes.
  * <p>
@@ -44,12 +44,17 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 3.06
  * @module
  */
 public final class GridDomainAccessor extends MetadataAccessor {
+    /**
+     * The accessor for offset vectors. Will be created only when first needed.
+     */
+    private MetadataAccessor offsetVectors;
+
     /**
      * Creates a new accessor for the given metadata.
      *
@@ -57,7 +62,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *                 sub-class is recommanded, but not mandatory.
      */
     public GridDomainAccessor(final IIOMetadata metadata) {
-        super(metadata, FORMAT_NAME, "RectifiedGridDomain/OffsetVectors", "OffsetVector");
+        super(metadata, FORMAT_NAME, "RectifiedGridDomain", null);
     }
 
     /**
@@ -68,16 +73,13 @@ public final class GridDomainAccessor extends MetadataAccessor {
      * @param high The value to be assigned to the {@code "high"} attribute.
      */
     public void setLimits(final int[] low, final int[] high) {
-        final MetadataAccessor accessor = new MetadataAccessor(
-                metadata, FORMAT_NAME, "RectifiedGridDomain/Limits", null);
+        final MetadataAccessor accessor = new MetadataAccessor(this, "Limits", null);
         accessor.setAttribute("low",  low);
         accessor.setAttribute("high", high);
     }
 
     /**
-     * Sets the {@code "origin"} attribute to the given value. This method shall be invoked only
-     * when the {@linkplain #selectParent() parent node is selected}. This is typically the case
-     * if this method is invoked before {@link #addOffsetVector(double[])}.
+     * Sets the {@code "origin"} attribute to the given value.
      *
      * @param values The value to be assigned to the {@code "origin"} attribute.
      */
@@ -93,8 +95,12 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *        of a new {@code "OffsetVector"} node.
      */
     public void addOffsetVector(final double... values) {
-        selectChild(appendChild());
-        setAttribute("values", values);
+        MetadataAccessor accessor = offsetVectors;
+        if (accessor == null) {
+            offsetVectors = accessor = new MetadataAccessor(this, "OffsetVectors", "OffsetVector");
+        }
+        accessor.selectChild(accessor.appendChild());
+        accessor.setAttribute("values", values);
     }
 
     /**
@@ -195,7 +201,6 @@ public final class GridDomainAccessor extends MetadataAccessor {
         if (gridToCrsDim != null) {
             checkDimension("gridToCrsDim", gridToCrsDim.length, gridDim);
         }
-        setLimits(low, high);
         setOrigin(origin);
         final double[] vector = new double[crsDim];
         for (int i=0; i<gridDim; i++) {
@@ -204,10 +209,11 @@ public final class GridDomainAccessor extends MetadataAccessor {
             if (!pixelCenter) {
                 span++;
             }
-            vector[j] = MetadataHelper.nice((bounds[i] - origin[i]) / span);
+            vector[j] = MetadataHelper.INSTANCE.adjustForRoundingError((bounds[i] - origin[i]) / span);
             addOffsetVector(vector);
             vector[j] = 0;
         }
+        setLimits(low, high);
     }
 
     /**

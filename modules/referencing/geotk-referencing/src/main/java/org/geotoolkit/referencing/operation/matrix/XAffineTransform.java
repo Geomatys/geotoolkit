@@ -794,6 +794,8 @@ public class XAffineTransform extends AffineTransform {
      * @param tolerance The maximal departure from integers in order to allow rounding.
      *        It is typically a small number like {@code 1E-6}.
      *
+     * @see org.geotoolkit.image.io.metadata.MetadataHelper#adjustForRoundingError(double)
+     *
      * @since 2.3.1
      */
     public static void round(final AffineTransform tr, final double tolerance) {

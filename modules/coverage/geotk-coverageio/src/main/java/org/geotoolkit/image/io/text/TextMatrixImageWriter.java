@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.image.io.text;
 
-import java.io.Writer;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
@@ -80,7 +80,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
                       final ImageWriteParam parameters) throws IOException
     {
         processImageStarted();
-        final Writer           out = getWriter(parameters);
+        final BufferedWriter   out = getWriter(parameters);
         final String lineSeparator = getLineSeparator(parameters);
         final NumberFormat  format = createNumberFormat(image, parameters);
         final FieldPosition    pos = getExpectedFractionPosition(format);
@@ -129,26 +129,34 @@ public class TextMatrixImageWriter extends TextImageWriter {
 
 
     /**
-     * Service provider interface (SPI) for {@link TextMatrixImageWriter}s.
+     * Service provider interface (SPI) for {@link TextMatrixImageWriter}s. This SPI provides
+     * necessary implementation for creating default {@link TextMatrixImageWriter} using default
+     * locale and character set. The {@linkplain #Spi() default constructor} initializes the fields
+     * to the values listed below:
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue"><td>Field</td><td>Value</td></tr>
+     *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "matrix"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.TextMatrixImageWriter"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
+     *   <tr><td colspan="2">See {@linkplain TextImageWriter#Spi super-class javadoc} for remaining fields</td></tr>
+     * </table>
      *
      * @author Martin Desruisseaux (IRD)
      * @version 3.00
+     *
+     * @see TextMatrixImageReader#Spi
      *
      * @since 2.4
      * @module
      */
     public static class Spi extends TextImageWriter.Spi {
         /**
-         * Constructs a default {@code TextMatrixImageWriter.Spi}. This constructor
-         * provides the following defaults in addition to the defaults defined in the
-         * super-class constructor:
-         * <p>
-         * <ul>
-         *   <li>{@link #names}           = {@code "matrix"}</li>
-         *   <li>{@link #MIMETypes}       = {@code "text/x-matrix"}</li>
-         *   <li>{@link #pluginClassName} = {@code "org.geotoolkit.image.io.text.TextMatrixImageWriter"}</li>
-         *   <li>{@link #vendorName}      = {@code "Geotoolkit.org"}</li>
-         * </ul>
+         * Constructs a default {@code TextMatrixImageWriter.Spi}. The fields are initialized as
+         * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can modify
+         * those values if desired.
          * <p>
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.

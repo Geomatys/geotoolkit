@@ -886,6 +886,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int PARSE_EXCEPTION_$2 = 163;
 
         /**
+         * Pixels must be square with no flip and no rotation.
+         */
+        public static final int PIXELS_NOT_SQUARE_OR_ROTATED_IMAGE = 225;
+
+        /**
          * Coordinate ({0}) is outside coverage.
          */
         public static final int POINT_OUTSIDE_COVERAGE_$1 = 164;

@@ -43,10 +43,13 @@ import org.geotoolkit.util.converter.Classes;
  * </blockquote>
  *
  * Note the {@link org.geotoolkit.image.io.text.TextImageReader} subclass can go one step
- * further by wrapping the {@code InputStream} into a {@link java.io.BufferedReader}.
+ * further by wrapping the {@code InputStream} into a {@link java.io.BufferedReader} using
+ * some character encoding.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
+ *
+ * @see StreamImageWriter
  *
  * @since 2.4
  * @module
@@ -234,7 +237,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @see #getInput()
      * @see #getInputStream()
      *
-     * @since 3.06
+     * @since 3.07
      */
     protected ReadableByteChannel getChannel() throws IOException {
         if (channel == null) {
@@ -318,11 +321,13 @@ public abstract class StreamImageReader extends SpatialImageReader {
     }
 
     /**
-     * Closes the streams. This method is automatically invoked by the garbage collector.
+     * Invokes the {@link #close()} method when this reader is garbage-collected.
+     * Note that this will actually close the stream only if it has been created
+     * by this reader, rather than supplied by the user.
      */
     @Override
     protected void finalize() throws Throwable {
-        close();
+        closeSilently();
         super.finalize();
     }
 
@@ -332,7 +337,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * Service provider interface (SPI) for {@link StreamImageReader}s. The constructor of
      * this class initializes the {@link #inputTypes} field to the value documented in the
-     * {@code StreamImageReader} javadoc, which are:
+     * {@link StreamImageReader} javadoc, which are:
      *
      * <blockquote>
      * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
@@ -344,6 +349,8 @@ public abstract class StreamImageReader extends SpatialImageReader {
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.07
+     *
+     * @see StreamImageWriter#Spi
      *
      * @since 2.4
      * @module

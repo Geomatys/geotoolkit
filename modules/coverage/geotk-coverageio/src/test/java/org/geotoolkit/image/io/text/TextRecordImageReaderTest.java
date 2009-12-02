@@ -123,8 +123,8 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
+            "│   ├───origin=“-19000.0 12690.0”\n" +
             "│   ├───OffsetVectors\n" +
-            "│   │   ├───origin=“-19000.0 12690.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“2000.0 0.0”\n" +
             "│   │   └───OffsetVector\n" +

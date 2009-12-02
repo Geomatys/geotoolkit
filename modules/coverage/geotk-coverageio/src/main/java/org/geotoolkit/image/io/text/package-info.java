@@ -19,9 +19,9 @@
 /**
  * Extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter} for
  * ASCII files. The {@link java.nio.charset.Charset} used for decoding/encoding streams, and
- * the {@link java.util.Locale} used for parsing/formatting numbers, are plugin-specific. But
- * some plugins use the {@linkplain java.util.Locale#getDefault() system default} unless otherwise
- * specified, which make them locale-dependant (see the table below).
+ * the {@link java.util.Locale} used for parsing/formatting numbers, are plugin-specific.
+ * Some plugins use the {@linkplain java.util.Locale#getDefault() system default}, which
+ * make them locale-dependant (see the table below).
  * <p>
  * The <code>geotk-coverageio.jar</code> file declares service providers for the following formats:
  * <p>
@@ -53,6 +53,10 @@
  *   </tr>
  * </table>
  * <p>
+ * It is possible to derive a locale-insensitive format from a locale sensitive one.
+ * See the {@link org.geotoolkit.image.io.text.TextMatrixImageReader.Spi} javadoc for
+ * an example.
+ * <p>
  * <b>Example:</b> The text of the left side is an extract of a list of
  * (<var>longitude</var>, <var>latitude</var>, <var>elevation of the ocean floor</var>)
  * records. The image on the right side is the image produced by
@@ -60,22 +64,22 @@
  *
  * <table cellpadding='24'>
  * <tr valign="top"><td><pre>
- * Longitude Latitude Altitude
- * 59.9000   -30.0000   -3022
- * 59.9333   -30.0000   -3194
- * 59.9667   -30.0000   -3888
- * 60.0000   -30.0000   -3888
- * 45.0000   -29.9667   -2502
- * 45.0333   -29.9667   -2502
- * 45.0667   -29.9667   -2576
- * 45.1000   -29.9667   -2576
- * 45.1333   -29.9667   -2624
- * 45.1667   -29.9667   -2690
- * 45.2000   -29.9667   -2690
- * 45.2333   -29.9667   -2692
- * 45.2667   -29.9667   -2606
- * 45.3000   -29.9667   -2606
- * 45.3333   -29.9667   -2528</pre>etc...</td>
+ * # Longitude Latitude Altitude
+ *   59.9000   -30.0000   -3022
+ *   59.9333   -30.0000   -3194
+ *   59.9667   -30.0000   -3888
+ *   60.0000   -30.0000   -3888
+ *   45.0000   -29.9667   -2502
+ *   45.0333   -29.9667   -2502
+ *   45.0667   -29.9667   -2576
+ *   45.1000   -29.9667   -2576
+ *   45.1333   -29.9667   -2624
+ *   45.1667   -29.9667   -2690
+ *   45.2000   -29.9667   -2690
+ *   45.2333   -29.9667   -2692
+ *   45.2667   -29.9667   -2606
+ *   45.3000   -29.9667   -2606
+ *   45.3333   -29.9667   -2528</pre>etc...</td>
  * <td><img src="doc-files/Sandwell.jpeg"></td>
  * </tr></table>
  *
@@ -123,7 +127,7 @@
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 1.2
  * @module
