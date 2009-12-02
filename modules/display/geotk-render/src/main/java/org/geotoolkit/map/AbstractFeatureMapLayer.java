@@ -91,7 +91,7 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
 
         final Query oldQuery;
         synchronized (this) {
-            oldQuery = this.query;
+            oldQuery = getQuery();
             if(oldQuery.equals(query)){
                 return;
             }

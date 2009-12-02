@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style.ogc;
 
+import com.vividsolutions.jts.geom.Polygon;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -68,7 +69,9 @@ import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.spatial.BinarySpatialOperator;
+import org.opengis.filter.spatial.Disjoint;
 import org.opengis.filter.spatial.Overlaps;
+import org.opengis.geometry.Envelope;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -213,7 +216,7 @@ public class OGCforSLD110Test extends TestCase{
             FILE_FIL_SPA_BEYOND = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Beyond.xml").toURI() );
             FILE_FIL_SPA_CONTAINS = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Contains.xml").toURI() );
             FILE_FIL_SPA_CROSSES = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Crosses.xml").toURI() );
-            FILE_FIL_SPA_DISJOINT = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_DWithin.xml").toURI() );
+            FILE_FIL_SPA_DISJOINT = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Disjoint.xml").toURI() );
             FILE_FIL_SPA_DWITHIN = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Disjoint.xml").toURI() );
             FILE_FIL_SPA_EQUALS = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Equals.xml").toURI() );
             FILE_FIL_SPA_INTERSECTS = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Intersects.xml").toURI() );
@@ -1060,7 +1063,24 @@ public class OGCforSLD110Test extends TestCase{
 
     @Test
     public void testFilterSpatialDisjoint() throws JAXBException{
-        
+
+        //Read test
+        Object obj = unMarshall(FILE_FIL_SPA_DISJOINT);
+        assertNotNull(obj);
+
+        JAXBElement<? extends FilterType> jaxfilter = (JAXBElement<? extends FilterType>) obj;
+        assertNotNull(jaxfilter);
+        Filter filter = TRANSFORMER_GT.visitFilter(jaxfilter.getValue());
+        assertNotNull(filter);
+
+        Disjoint prop = (Disjoint) filter;
+        BinarySpatialOperator subfilter =  (BinarySpatialOperator) prop;
+
+        PropertyName left = (PropertyName) subfilter.getExpression1();
+        Literal right = (Literal) subfilter.getExpression2();
+        assertEquals( left.getPropertyName() , valueStr);
+        assertTrue( right.evaluate(null) instanceof Polygon);
+        assertEquals( right.evaluate(null).toString().trim() , "POLYGON ((48 18, 48 21, 52 21, 52 18, 48 18))");
     }
 
     @Test
