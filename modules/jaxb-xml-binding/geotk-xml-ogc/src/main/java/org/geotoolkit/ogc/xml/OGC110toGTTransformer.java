@@ -268,19 +268,21 @@ public class OGC110toGTTransformer {
 
             final Expression left = visitExpression(binary.getExpression().get(0));
             final Expression right = visitExpression(binary.getExpression().get(1));
+            Boolean match = binary.getMatchCase();
+            if(match == null) match = Boolean.TRUE;
 
             if (OGCJAXBStatics.FILTER_COMPARISON_ISEQUAL.equalsIgnoreCase(OpName)) {
-                return filterFactory.equals(left,right);
+                return filterFactory.equal(left,right,match);
             } else if (OGCJAXBStatics.FILTER_COMPARISON_ISNOTEQUAL.equalsIgnoreCase(OpName)) {
-                return filterFactory.notEqual(left, right, false);
+                return filterFactory.notEqual(left, right, match);
             } else if (OGCJAXBStatics.FILTER_COMPARISON_ISLESS.equalsIgnoreCase(OpName)) {
-                return filterFactory.less(left, right);
+                return filterFactory.less(left, right, match);
             } else if (OGCJAXBStatics.FILTER_COMPARISON_ISGREATER.equalsIgnoreCase(OpName)) {
-                return filterFactory.greater(left, right);
+                return filterFactory.greater(left, right, match);
             } else if (OGCJAXBStatics.FILTER_COMPARISON_ISLESSOREQUAL.equalsIgnoreCase(OpName)) {
-                return filterFactory.lessOrEqual(left, right);
+                return filterFactory.lessOrEqual(left, right, match);
             } else if (OGCJAXBStatics.FILTER_COMPARISON_ISGREATEROREQUAL.equalsIgnoreCase(OpName)) {
-                return filterFactory.greaterOrEqual(left, right);
+                return filterFactory.greaterOrEqual(left, right, match);
             }
 
             throw new IllegalArgumentException("Illegal filter element" + OpName + " : " + ops);
