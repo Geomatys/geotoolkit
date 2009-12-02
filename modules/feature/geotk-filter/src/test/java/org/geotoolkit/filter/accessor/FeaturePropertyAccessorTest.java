@@ -45,6 +45,13 @@ public class FeaturePropertyAccessorTest {
         assertNotNull(accessor);
         Object id = accessor.get(FEATURE_1, "@id", null);
         assertEquals(id, FEATURE_1.getIdentifier().getID());
+
+        accessor = Accessors.getAccessor(Feature.class, "*[10]", null);
+        assertNotNull(accessor);
+        Object att = accessor.get(FEATURE_1, "*[10]", null);
+        assertEquals(att, "test string data");
+        assertEquals(att, FEATURE_1.getAttribute("testString"));
+
     }
 
 }

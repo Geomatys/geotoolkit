@@ -110,12 +110,10 @@ public class MapLayerTest extends TestCase{
             //ok
         }
 
-
         try{
             layer.setQuery(QueryBuilder.filtered(fs.getSchema().getName(), Filter.EXCLUDE));
-            throw new IllegalArgumentException("Can not set a null query");
         }catch(Exception ex){
-
+            throw new IllegalArgumentException("Should be able to set this query");
         }
 
     }

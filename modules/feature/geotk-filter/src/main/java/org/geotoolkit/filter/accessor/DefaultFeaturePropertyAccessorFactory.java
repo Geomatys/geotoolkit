@@ -88,7 +88,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         if(xpath.startsWith("//")){
-            xpath = xpath.substring(2, xpath.length());
+            xpath = xpath.substring(2);
         }
 
         //check for fid access--------------------------------------------------
@@ -326,7 +326,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
             if (object instanceof Feature) {
                 final Feature feature = (Feature)object;
-                int i = 0;
+                int i = 1;
                 for(Property prop : feature.getProperties()){
                     if(i == index){
                         return feature.getProperty(prop.getName()).getValue();
@@ -337,7 +337,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
             if (object instanceof FeatureType) {
                 final FeatureType ft = (FeatureType)object;
-                int i = 0;
+                int i = 1;
                 for(PropertyDescriptor prop : ft.getDescriptors()){
                     if(i == index){
                         return prop;
