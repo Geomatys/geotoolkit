@@ -95,6 +95,7 @@ public class FilterTestConstants {
         desc.add(new DummyDescriptor("datetime1", java.util.Date.class));
         desc.add(new DummyDescriptor("datetime2", java.sql.Timestamp.class));
         desc.add(new DummyDescriptor("testNull", String.class));
+        desc.add(new DummyDescriptor("attribut.Géométrie", String.class));
 
         Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(5, 5);
@@ -114,7 +115,7 @@ public class FilterTestConstants {
         WRONG_GEOMETRY = GF.createPolygon(ring, new LinearRing[0]);
 
         // Builds the test feature
-        Object[] attributes = new Object[16];
+        Object[] attributes = new Object[17];
         attributes[0] = RIGHT_GEOMETRY;
         attributes[1] = new Boolean(true);
         attributes[2] = new Character('t');
@@ -135,6 +136,7 @@ public class FilterTestConstants {
         Timestamp stamp = new java.sql.Timestamp(DATE.getTime());
         attributes[14] = stamp;
         attributes[15] = null;
+        attributes[16] = "POINT(45,32)";
 
         // Creates the feature
         final DummySimpleFeatureType featureType = new DummySimpleFeatureType(desc, geomDesc, crs);
