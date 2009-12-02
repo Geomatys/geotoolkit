@@ -8,8 +8,10 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
@@ -33,6 +35,8 @@ public class ObjectFactory {
     private static final QName CURVE_QNAME              = new QName("http://www.opengis.net/gml", "Curve");
     private static final QName ENVELOPE_QNAME           = new QName("http://www.opengis.net/gml", "Envelope");
     private static final QName MULTI_POINT_QNAME        = new QName("http://www.opengis.net/gml", "MultiPoint");
+    private static final QName MULTI_CURVE_QNAME        = new QName("http://www.opengis.net/gml", "MultiCurve");
+    private static final QName MULTI_SURFACE_QNAME        = new QName("http://www.opengis.net/gml", "MultiSurface");
     private static final QName COMPOSITE_CURVE_QNAME    = new QName("http://www.opengis.net/gml", "CompositeCurve");
     private static final QName POLYHEDRAL_SURFACE_QNAME = new QName("http://www.opengis.net/gml", "PolyhedralSurface");
     private static final QName POLYGON_QNAME            = new QName("http://www.opengis.net/gml", "Polygon");
@@ -52,6 +56,14 @@ public class ObjectFactory {
 
     public JTSMultiPoint createJTSMultiPoint() {
         return new JTSMultiPoint();
+    }
+
+    public JTSMultiCurve createJTSMultiCurve() {
+        return new JTSMultiCurve();
+    }
+
+    public JTSMultiSurface createJTSMultiSurface() {
+        return new JTSMultiSurface();
     }
 
     public JTSEnvelope createJTSEnvelope() {
@@ -108,6 +120,16 @@ public class ObjectFactory {
         return new JAXBElement<JTSMultiPoint>(MULTI_POINT_QNAME, JTSMultiPoint.class, null, value);
     }
 
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiSurface")
+    public JAXBElement<JTSMultiSurface> createJTSMultiSurface(JTSMultiSurface value) {
+        return new JAXBElement<JTSMultiSurface>(MULTI_SURFACE_QNAME, JTSMultiSurface.class, null, value);
+    }
+
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiCurve")
+    public JAXBElement<JTSMultiCurve> createJTSMultiCurve(JTSMultiCurve value) {
+        return new JAXBElement<JTSMultiCurve>(MULTI_CURVE_QNAME, JTSMultiCurve.class, null, value);
+    }
+
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry")
     public JAXBElement<JTSMultiPrimitive> createJTSMultiGeometry(JTSMultiPrimitive value) {
         return new JAXBElement<JTSMultiPrimitive>(MULTI_GEOMETRY_QNAME, JTSMultiPrimitive.class, null, value);
@@ -136,6 +158,12 @@ public class ObjectFactory {
 
         } else if (value instanceof JTSMultiPoint) {
             return createJTSMultiPoint((JTSMultiPoint) value);
+
+        } else if (value instanceof JTSMultiSurface) {
+            return createJTSMultiSurface((JTSMultiSurface) value);
+
+        } else if (value instanceof JTSMultiCurve) {
+            return createJTSMultiCurve((JTSMultiCurve) value);
 
         } else if (value instanceof JTSCompositeCurve) {
             return createJTSCompositeCurve((JTSCompositeCurve) value);

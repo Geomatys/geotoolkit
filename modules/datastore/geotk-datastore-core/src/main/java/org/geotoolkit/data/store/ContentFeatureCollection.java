@@ -449,7 +449,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
      */
     @Override
     public String getID() {
-        throw new UnsupportedOperationException();
+        return null;
     }
 
 }
