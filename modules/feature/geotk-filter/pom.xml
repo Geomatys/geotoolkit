@@ -54,6 +54,11 @@
       </dependency>
       <dependency>
           <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-temporal</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-geometry</artifactId>
           <version>${geotoolkit.version}</version>
       </dependency>
