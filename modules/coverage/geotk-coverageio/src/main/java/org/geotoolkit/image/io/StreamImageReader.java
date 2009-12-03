@@ -223,7 +223,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
     /**
      * Returns the {@linkplain #input input} as an {@linkplain ReadableByteChannel readable byte
      * channel}. If the input is already such channel, it is returned unchanged. Otherwise this
-     * method creates a new channel from the value returned by {@link getInputStream()}.
+     * method creates a new channel from the value returned by {@link #getInputStream()}.
      * <p>
      * This method creates a new channel only when first invoked. All subsequent calls will return
      * the same instance. Consequently, the returned channel should never be closed by the caller.

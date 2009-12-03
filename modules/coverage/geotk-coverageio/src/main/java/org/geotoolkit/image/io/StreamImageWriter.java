@@ -270,7 +270,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
         };
 
         /**
-         * Constructs a quasi-blank {@code StreamImageWriter.Spi}. The {@link #inputTypes} field
+         * Constructs a quasi-blank {@code StreamImageWriter.Spi}. The {@link #outputTypes} field
          * is initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is
          * up to the subclass to initialize all other instance variables in order to provide working
          * versions of all methods.

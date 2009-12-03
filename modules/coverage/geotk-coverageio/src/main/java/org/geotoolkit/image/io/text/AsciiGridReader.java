@@ -622,12 +622,12 @@ loop:       for (int y=ymin; ; y++) {
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
      * <p>
-     * The {@linkplain #Spi() default constructor} initializes the fields to the values listed
+     * The {@linkplain #Spi default constructor} initializes the fields to the values listed
      * below. Users wanting different values should create a subclass of {@code Spi} and set
      * the desired values in their constructor.
      * <p>
      * <table border="1" cellspacing="0">
-     *   <tr bgcolor="lightblue"><td>Field</td><td>Value</td></tr>
+     *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "ascii-grid"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.AsciiGridReader"}&nbsp;</td></tr>
@@ -636,7 +636,7 @@ loop:       for (int y=ymin; ; y++) {
      *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #padValue}        &nbsp;</td><td>&nbsp;{@code -9999}&nbsp;</td></tr>
-     *   <tr><td colspan="2">See {@linkplain TextImageReader#Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      * <p>
      * Note that the {@code padValue} is used as the default value if no {@code NODATA_VALUE}
@@ -646,7 +646,7 @@ loop:       for (int y=ymin; ; y++) {
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
      *
-     * @see AsciiGridWriter#Spi
+     * @see AsciiGridWriter.Spi
      *
      * @since 3.07
      * @module

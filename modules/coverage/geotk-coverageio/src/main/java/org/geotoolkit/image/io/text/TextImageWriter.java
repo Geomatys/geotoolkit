@@ -353,8 +353,8 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * <p>
      * <table border="1" cellspacing="0">
      *   <tr bgcolor="lightblue">
-     *     <td>Field</td>
-     *     <td>Value</td>
+     *     <th>Field</th>
+     *     <th>Value</th>
      *   </tr><tr>
      *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
      *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},

@@ -131,23 +131,23 @@ public class TextMatrixImageWriter extends TextImageWriter {
     /**
      * Service provider interface (SPI) for {@link TextMatrixImageWriter}s. This SPI provides
      * necessary implementation for creating default {@link TextMatrixImageWriter} using default
-     * locale and character set. The {@linkplain #Spi() default constructor} initializes the fields
+     * locale and character set. The {@linkplain #Spi default constructor} initializes the fields
      * to the values listed below:
      * <p>
      * <table border="1" cellspacing="0">
-     *   <tr bgcolor="lightblue"><td>Field</td><td>Value</td></tr>
+     *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "matrix"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.TextMatrixImageWriter"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
-     *   <tr><td colspan="2">See {@linkplain TextImageWriter#Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (IRD)
      * @version 3.00
      *
-     * @see TextMatrixImageReader#Spi
+     * @see TextMatrixImageReader.Spi
      *
      * @since 2.4
      * @module

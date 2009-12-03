@@ -240,12 +240,12 @@ public class AsciiGridWriter extends TextImageWriter {
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
      * <p>
-     * The {@linkplain #Spi() default constructor} initializes the fields to the values listed
+     * The {@linkplain #Spi default constructor} initializes the fields to the values listed
      * below. Users wanting different values should create a subclass of {@code Spi} and set
      * the desired values in their constructor.
      * <p>
      * <table border="1" cellspacing="0">
-     *   <tr bgcolor="lightblue"><td>Field</td><td>Value</td></tr>
+     *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "ascii-grid"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.AsciiGridWriter"}&nbsp;</td></tr>
@@ -254,13 +254,13 @@ public class AsciiGridWriter extends TextImageWriter {
      *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #lineSeparator}   &nbsp;</td><td>&nbsp;{@code "\n"}&nbsp;</td></tr>
-     *   <tr><td colspan="2">See {@linkplain TextImageWriter#Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
      *
-     * @see AsciiGridReader#Spi
+     * @see AsciiGridReader.Spi
      *
      * @since 3.07
      * @module
