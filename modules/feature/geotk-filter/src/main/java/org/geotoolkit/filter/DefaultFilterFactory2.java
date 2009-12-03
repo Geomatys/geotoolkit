@@ -62,6 +62,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.DateToDateSQLConverter;
 import org.geotoolkit.util.StringToDateConverter;
 import org.geotoolkit.util.StringToDateSQLConverter;
+import org.geotoolkit.util.TimeStampToDateSQLConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 
 import org.opengis.feature.type.Name;
@@ -135,6 +136,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         ConverterRegistry.system().register(new StringToDateConverter());
         ConverterRegistry.system().register(new StringToDateSQLConverter());
         ConverterRegistry.system().register(new DateToDateSQLConverter());
+        ConverterRegistry.system().register(new TimeStampToDateSQLConverter());
     }
 
 ////////////////////////////////////////////////////////////////////////////////
