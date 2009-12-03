@@ -77,7 +77,7 @@ public abstract class TextImageWriterTestBase {
      * @return The image.
      * @throws IOException Should never happen.
      */
-    protected static IIOImage createImage() throws IOException {
+    protected static strictfp IIOImage createImage() throws IOException {
         final int width  = 8;
         final int height = 10;
         final ColorModel cm = PaletteFactory.getDefault().getContinuousPalette(

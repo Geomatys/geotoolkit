@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.text;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -36,6 +35,8 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
+import javax.media.jai.iterator.RectIterFactory;
+import javax.media.jai.iterator.WritableRectIter;
 import org.geotoolkit.image.io.SampleConverter;
 import org.opengis.metadata.spatial.PixelOrientation;
 
@@ -474,123 +475,127 @@ readLine:   while (true) {
         final int[] destinationBands;
         final int sourceXSubsampling;
         final int sourceYSubsampling;
-        final int destinationXOffset;
-        final int destinationYOffset;
         if (param != null) {
             sourceBands        = param.getSourceBands();
             destinationBands   = param.getDestinationBands();
-            final Point offset = param.getDestinationOffset();
             sourceXSubsampling = param.getSourceXSubsampling();
             sourceYSubsampling = param.getSourceYSubsampling();
-            destinationXOffset = offset.x;
-            destinationYOffset = offset.y;
         } else {
             sourceBands        = null;
             destinationBands   = null;
             sourceXSubsampling = 1;
             sourceYSubsampling = 1;
-            destinationXOffset = 0;
-            destinationYOffset = 0;
         }
-        final int dstBand;
-        if (destinationBands == null) {
-            dstBand = 0;
-        } else {
-            dstBand = destinationBands[0];
-        }
-        final int                 width      = this.width;
-        final int                 height     = this.height;
-        final ByteBuffer          buffer     = this.buffer;
-        final ReadableByteChannel channel    = getChannel();
-        final char[]              charBuffer = new char[48]; // Arbitrary length limit for a sample value.
-        final Rectangle           dstRegion  = new Rectangle();
-        final Rectangle           srcRegion  = getSourceRegion(param, width, height);
-        final SampleConverter[]   converters = new SampleConverter[numDstBands];
-        final BufferedImage       image      = getDestination(imageIndex, param, width, height, converters);
-        final WritableRaster      raster     = image.getRaster();
-        final SampleConverter     converter  = converters[dstBand];
-        final int                 dataType   = raster.getSampleModel().getDataType();
+        final int               width      = this.width;
+        final int               height     = this.height;
+        final SampleConverter[] converters = new SampleConverter[numDstBands];
+        final BufferedImage     image      = getDestination(imageIndex, param, width, height, converters);
+        final WritableRaster    raster     = image.getRaster();
+        final Rectangle         srcRegion  = getSourceRegion(param, width, height);
+        final Rectangle         dstRegion  = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, dstRegion);
-        final int xmin = -srcRegion.x;
-        final int ymin = -srcRegion.y;
-        final int xmax =  srcRegion.width;
-        final int ymax =  srcRegion.height;
-        /*
-         * Before to start reading, set the 'minIndex' in order to prevent new attempt
-         * to read an image from this point.
-         *
-         * TODO: We should mark the position instead if 'seekForwardOnly' is false.
-         */
-        minIndex = imageIndex + 1;
-        /*
-         * At this point we have all the metadata needed for reading the sample values.
-         * The (x,y) index below are relative to the source region to read, not to the
-         * source image.
-         */
-        final float progressScale = 100f / ((ymax - ymin) * width);
-        for (int y=ymin; y<ymax; y++) {
-            if (abortRequested()) {
-                processReadAborted();
-                return image;
-            }
-            final boolean isValidY = (y >= 0) && (y % sourceYSubsampling) == 0;
-            final int sy = y / sourceYSubsampling + destinationYOffset;
-            final int stop = (y != ymax-1) ? (xmin + width) : xmax;
-            for (int x=xmin; x<stop; x++) {
-                /*
-                 * Skip whitespaces or EOL (if any), then copy the next character in the
-                 * string buffer until the next space. If we are outside the region to be
-                 * read, those characters will be discarted immediatly except in case of
-                 * error.
-                 */
-                int nChar = 0;
-                while (true) {
-                    if (!buffer.hasRemaining()) {
-                        processImageProgress(((y - ymin)*width + (x - xmin)) * progressScale);
-                        buffer.clear();
-                        if (channel.read(buffer) < 0) {
-                            throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
-                        }
-                        buffer.flip();
-                    }
-                    final char c = (char) (buffer.get() & 0xFF);
-                    if (c > ' ') {
-                        if (nChar < 0 || nChar >= charBuffer.length) {
-                            throw new IIOException(error(Errors.Keys.BAD_PARAMETER_$2,
-                                    "cell(" + (x - xmin) + ',' + (y - ymin) + ')',
-                                    String.valueOf(charBuffer)));
-                        }
-                        charBuffer[nChar++] = c;
-                    } else if (nChar != 0) {
-                        break;
-                    }
+        final WritableRectIter dstIter = RectIterFactory.createWritable(raster, dstRegion);
+        final int dstBand = (destinationBands != null) ? destinationBands[0] : 0;
+        for (int i=dstBand; --i>=0;) {
+            dstIter.nextBand();
+        }
+        if (!dstIter.finishedBands() && !dstIter.finishedLines() && !dstIter.finishedPixels()) {
+            final int    xmin       = -srcRegion.x;
+            final int    ymin       = -srcRegion.y;
+            final int    xmax       = xmin + width; // Really image width, not region width.
+            final int    dataType   = raster.getSampleModel().getDataType();
+            final char[] charBuffer = new char[48]; // Arbitrary length limit for a sample value.
+            final ByteBuffer          buffer     = this.buffer;
+            final ReadableByteChannel channel    = getChannel();
+            final SampleConverter     converter  = converters[dstBand];
+            /*
+             * Before to start reading, set the 'minIndex' in order to prevent new attempt
+             * to read an image from this point.
+             *
+             * TODO: We should mark the position instead if 'seekForwardOnly' is false.
+             */
+            minIndex = imageIndex + 1;
+            /*
+             * At this point we have all the metadata needed for reading the sample values.
+             * The (x,y) index below are relative to the source region to read, not to the
+             * source image.
+             */
+            final float progressScale = 100f / ((srcRegion.height - ymin) * width);
+loop:       for (int y=ymin; ; y++) {
+                if (abortRequested()) {
+                    processReadAborted();
+                    return image;
                 }
-                /*
-                 * At this point the sample values is available as a string.
-                 * Process only if we need to parse that string.
-                 */
-                if (isValidY && x >= 0 && x < xmax && (x % sourceXSubsampling) == 0) {
-                    final int sx = x / sourceXSubsampling + destinationXOffset;
-                    final String value = new String(charBuffer, 0, nChar);
-                    try {
-                        switch (dataType) {
-                            case DataBuffer.TYPE_DOUBLE: {
-                                raster.setSample(sx, sy, dstBand, converter.convert(Double.parseDouble(value)));
-                                break;
+                int sx = 1;
+                boolean isValid = (y >= 0) && (y % sourceYSubsampling) == 0;
+                for (int x=xmin; x<xmax; x++) {
+                    /*
+                     * Skip whitespaces or EOL (if any), then copy the next character in the
+                     * string buffer until the next space. If we are outside the region to be
+                     * read, those characters will be discarted immediatly except in case of
+                     * error.
+                     */
+                    int nChar = 0;
+                    while (true) {
+                        if (!buffer.hasRemaining()) {
+                            processImageProgress(((y - ymin)*width + (x - xmin)) * progressScale);
+                            buffer.clear();
+                            if (channel.read(buffer) < 0) {
+                                throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
                             }
-                            case DataBuffer.TYPE_FLOAT: {
-                                raster.setSample(sx, sy, dstBand, converter.convert(Float.parseFloat(value)));
-                                break;
-                            }
-                            default: {
-                                raster.setSample(sx, sy, dstBand, converter.convert(Integer.parseInt(value)));
-                                break;
-                            }
+                            buffer.flip();
                         }
-                    } catch (NumberFormatException cause) {
-                        final IIOException e = new IIOException(error(Errors.Keys.UNPARSABLE_NUMBER_$1, value));
-                        e.initCause(cause);
-                        throw e;
+                        final char c = (char) (buffer.get() & 0xFF);
+                        if (c > ' ') {
+                            if (nChar < 0 || nChar >= charBuffer.length) {
+                                throw new IIOException(error(Errors.Keys.BAD_PARAMETER_$2,
+                                        "cell(" + (x - xmin) + ',' + (y - ymin) + ')',
+                                        String.valueOf(charBuffer)));
+                            }
+                            charBuffer[nChar++] = c;
+                        } else if (nChar != 0) {
+                            break;
+                        }
+                    }
+                    /*
+                     * At this point the sample values is available as a string.
+                     * Process only if we need to parse that string.
+                     */
+                    if (isValid && x >= 0 && --sx == 0) {
+                        sx = sourceXSubsampling;
+                        final String value = new String(charBuffer, 0, nChar);
+                        try {
+                            switch (dataType) {
+                                case DataBuffer.TYPE_DOUBLE: {
+                                    dstIter.setSample(converter.convert(Double.parseDouble(value)));
+                                    break;
+                                }
+                                case DataBuffer.TYPE_FLOAT: {
+                                    dstIter.setSample(converter.convert(Float.parseFloat(value)));
+                                    break;
+                                }
+                                default: {
+                                    dstIter.setSample(converter.convert(Integer.parseInt(value)));
+                                    break;
+                                }
+                            }
+                        } catch (NumberFormatException cause) {
+                            final IIOException e = new IIOException(error(Errors.Keys.UNPARSABLE_NUMBER_$1, value));
+                            e.initCause(cause);
+                            throw e;
+                        }
+                        /*
+                         * Move to the next pixel in the destination image. The reading process
+                         * will stop when we have reached the last pixel (which may be sooner
+                         * than the end of the current row in the input image).
+                         */
+                        if (dstIter.nextPixelDone()) {
+                            dstIter.startPixels();
+                            if (dstIter.nextLineDone()) {
+                                break loop;
+                            }
+                            isValid = false;
+                        }
                     }
                 }
             }
