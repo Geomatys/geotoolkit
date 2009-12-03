@@ -133,6 +133,14 @@ public class FilterTest {
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
         assertTrue(between.evaluate(FEATURE_1));
+
+        //test timestamp against string
+        property = FF.property("datetime2");
+        between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
+        assertTrue(between.evaluate(FEATURE_1));
+
+        between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
+        assertFalse(between.evaluate(FEATURE_1));
         
     }
 
