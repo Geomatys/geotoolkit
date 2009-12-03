@@ -1,7 +1,7 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -14,24 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.collection;
 
-import java.io.Closeable;
-import java.util.Iterator;
+package org.geotoolkit.data.collection;
 
 import org.opengis.feature.Feature;
 
 /**
- * Extent the Standard Iterator, limit to Feature class
- * and add a close method (interface Closeable) that is needed by the datastore
- * to release potential resources.
- * 
+ * Abstract Feature Iterator,
+ * Override methods remove and close doing nothing.
+ *
  * @author Johann Sorel (Geomatys)
- * @module pending
  */
-public interface FeatureIterator<F extends Feature> extends Iterator<F>, Closeable{
+public abstract class AbstractFeatureIterator<F extends Feature> implements FeatureIterator<F>{
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    void close();
+    public void remove() {
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void close() {
+    }
 
 }

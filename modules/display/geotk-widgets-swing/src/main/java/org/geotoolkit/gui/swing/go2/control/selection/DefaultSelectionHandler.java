@@ -66,6 +66,8 @@ import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
@@ -259,10 +261,10 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();
                                 
-                                FeatureCollection fc = fl.getFeatureSource().getFeatures(query);
-                                FeatureIterator fi = fc.features();
+                                FeatureCollection<SimpleFeatureType,SimpleFeature> fc = fl.getFeatureSource().getFeatures(query);
+                                FeatureIterator<SimpleFeature> fi = fc.features();
                                 while(fi.hasNext()){
-                                    Feature fea = fi.next();
+                                    SimpleFeature fea = fi.next();
                                     ids.add(fea.getIdentifier());
                                 }
                                 fi.close();
