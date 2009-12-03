@@ -5,7 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -16,7 +18,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, CoordinateReferenceSystem> {
 
-    private static final Map<CoordinateReferenceSystem, String> cachedIdentifier = new HashMap<CoordinateReferenceSystem, String>();
+    private static final Cache<CoordinateReferenceSystem, String> cachedIdentifier = new Cache<CoordinateReferenceSystem, String>();
 
     @Override
     public CoordinateReferenceSystem unmarshal(String v) throws Exception {
@@ -28,18 +30,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
 
     @Override
     public String marshal(CoordinateReferenceSystem v) throws Exception {
-        if (v != null) {
-            String identifier  = cachedIdentifier.get(v);
-            if (identifier == null && !cachedIdentifier.containsKey(v)) {
-                identifier = CRS.toSRS(v);
-                if (identifier == null) {
-                    identifier = CRS.lookupIdentifier(v, false);
-                }
-                cachedIdentifier.put(v, identifier);
-            }
-            return identifier;
-        }
-        return null;
+        return getSrsName(v);
     }
 
     public static String getSrsName(CoordinateReferenceSystem crs) {
@@ -48,9 +39,11 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
             try {
                 srsName = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
-                    srsName = CRS.toSRS(crs);
+                    srsName = CRS.lookupIdentifier(Citations.URN_OGC, crs, false);
+                    System.out.println("lookup donne: " + srsName);
                     if (srsName == null) {
-                        srsName = CRS.lookupIdentifier(crs, false);
+                        srsName = CRS.toSRS(crs);
+                        System.out.println("toSRS donne: " + srsName);
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 
