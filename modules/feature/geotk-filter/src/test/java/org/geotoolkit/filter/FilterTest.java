@@ -133,8 +133,6 @@ public class FilterTest {
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
         assertTrue(between.evaluate(FEATURE_1));
-
-
         
     }
 
