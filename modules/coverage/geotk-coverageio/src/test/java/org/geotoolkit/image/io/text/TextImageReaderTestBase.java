@@ -17,14 +17,18 @@
  */
 package org.geotoolkit.image.io.text;
 
-import java.awt.Rectangle;
+import java.io.File;
 import java.io.IOException;
+import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.color.ColorSpace;
 import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.image.io.SpatialImageReadParam;
 
@@ -35,6 +39,9 @@ import static org.junit.Assert.*;
 
 /**
  * The base class for {@link TextImageReader} tests.
+ * <p>
+ * This class provides also {@link #loadAndPrint} and {@link #printStatistics} static methods
+ * for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.06
@@ -172,5 +179,62 @@ public abstract class TextImageReaderTestBase {
         assertEquals(0, byteRaster.getSample( 3,  4, 0));
         assertEquals(1, byteRaster.getSample( 0, 41, 0));
         assertEquals(0, byteRaster.getSample(19,  4, 0));
+    }
+
+    /**
+     * Loads the given image using the given provider, and prints information about it.
+     * This is used only as a helper tools for tuning the test suites.
+     *
+     * @param  provider     The provider from which to get a reader.
+     * @param  input        The file to read.
+     * @param  region       The region in the file to read.
+     * @param  xSubsampling Subsampling along the <var>x</var> axis (1 if none).
+     * @param  ySubsampling Subsampling along the <var>y</var> axis (1 if none).
+     * @return The raster which have been read.
+     * @throws IOException In an error occured while reading.
+     */
+    public static Raster loadAndPrint(final ImageReaderSpi provider, final File input,
+            final Rectangle region, final int xSubsampling, final int ySubsampling) throws IOException
+    {
+        final ImageReader reader = provider.createReaderInstance();
+        reader.setInput(input);
+        System.out.println(reader.getImageMetadata(0));
+
+        final ImageReadParam param = reader.getDefaultReadParam();
+        param.setSourceRegion(region);
+        param.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
+
+        final long timestamp = System.currentTimeMillis();
+        BufferedImage image = reader.read(0, param);
+        System.out.println("Ellapsed time: " + (System.currentTimeMillis() - timestamp) / 1000f + " seconds.");
+        reader.dispose();
+
+        final Raster raster = image.getRaster();
+        printStatistics(raster);
+        System.out.println();
+        return raster;
+    }
+
+    /**
+     * Prints the minimal and maximal values found in the given raster.
+     * This is used only as a helper tools for tuning the test suites.
+     *
+     * @param raster The raster for which to print extrema.
+     */
+    public static void printStatistics(final Raster raster) {
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+        final int xmin = raster.getMinX();
+        final int ymin = raster.getMinY();
+        final int xmax = raster.getWidth() + xmin;
+        final int ymax = raster.getHeight() + ymin;
+        for (int y=ymin; y<ymax; y++) {
+            for (int x=xmin; x<xmax; x++) {
+                final float value = raster.getSampleFloat(x, y, 0);
+                if (value < min) min = value;
+                if (value > max) max = value;
+            }
+        }
+        System.out.println("Range of sample values: [" + min + " ... " + max + ']');
     }
 }

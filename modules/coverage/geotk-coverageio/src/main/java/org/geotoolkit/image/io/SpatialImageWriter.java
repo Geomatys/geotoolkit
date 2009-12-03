@@ -282,7 +282,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
             sourceYSubsampling = 1;
         }
         /*
-         * Creates the JAIiterator which will iterates over all pixels in the source region.
+         * Creates the JAI iterator which will iterate over all pixels in the source region.
          * If no subsampling is specified and the source bands do not move and band, then the
          * JAI iterator is returned directly.
          */

@@ -491,7 +491,7 @@ readLine:   while (true) {
         final SampleConverter[] converters = new SampleConverter[numDstBands];
         final BufferedImage     image      = getDestination(imageIndex, param, width, height, converters);
         final WritableRaster    raster     = image.getRaster();
-        final Rectangle         srcRegion  = getSourceRegion(param, width, height);
+        final Rectangle         srcRegion  = new Rectangle();
         final Rectangle         dstRegion  = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, dstRegion);
         final WritableRectIter dstIter = RectIterFactory.createWritable(raster, dstRegion);
@@ -500,11 +500,8 @@ readLine:   while (true) {
             dstIter.nextBand();
         }
         if (!dstIter.finishedBands() && !dstIter.finishedLines() && !dstIter.finishedPixels()) {
-            final int    xmin       = -srcRegion.x;
-            final int    ymin       = -srcRegion.y;
-            final int    xmax       = xmin + width; // Really image width, not region width.
-            final int    dataType   = raster.getSampleModel().getDataType();
-            final char[] charBuffer = new char[48]; // Arbitrary length limit for a sample value.
+            final int                 dataType   = raster.getSampleModel().getDataType();
+            final char[]              charBuffer = new char[48]; // Arbitrary length limit for a sample value.
             final ByteBuffer          buffer     = this.buffer;
             final ReadableByteChannel channel    = getChannel();
             final SampleConverter     converter  = converters[dstBand];
@@ -520,15 +517,19 @@ readLine:   while (true) {
              * The (x,y) index below are relative to the source region to read, not to the
              * source image.
              */
-            final float progressScale = 100f / ((srcRegion.height - ymin) * width);
-loop:       for (int y=ymin; ; y++) {
+            final float progressScale = 100f / ((srcRegion.x + srcRegion.height) * width);
+            int sy = 1 + srcRegion.y;
+loop:       for (int y=0; /* stop condition inside */; y++) {
                 if (abortRequested()) {
                     processReadAborted();
                     return image;
                 }
-                int sx = 1;
-                boolean isValid = (y >= 0) && (y % sourceYSubsampling) == 0;
-                for (int x=xmin; x<xmax; x++) {
+                boolean isValid = (--sy == 0);
+                if (isValid) {
+                    sy = sourceYSubsampling;
+                }
+                int sx = 1 + srcRegion.x;
+                for (int x=0; x<width; x++) {
                     /*
                      * Skip whitespaces or EOL (if any), then copy the next character in the
                      * string buffer until the next space. If we are outside the region to be
@@ -538,7 +539,7 @@ loop:       for (int y=ymin; ; y++) {
                     int nChar = 0;
                     while (true) {
                         if (!buffer.hasRemaining()) {
-                            processImageProgress(((y - ymin)*width + (x - xmin)) * progressScale);
+                            processImageProgress((y*width + x) * progressScale);
                             buffer.clear();
                             if (channel.read(buffer) < 0) {
                                 throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
@@ -547,9 +548,9 @@ loop:       for (int y=ymin; ; y++) {
                         }
                         final char c = (char) (buffer.get() & 0xFF);
                         if (c > ' ') {
-                            if (nChar < 0 || nChar >= charBuffer.length) {
+                            if (nChar >= charBuffer.length) {
                                 throw new IIOException(error(Errors.Keys.BAD_PARAMETER_$2,
-                                        "cell(" + (x - xmin) + ',' + (y - ymin) + ')',
+                                        "cell(" + x + ',' + y + ')',
                                         String.valueOf(charBuffer)));
                             }
                             charBuffer[nChar++] = c;
@@ -561,7 +562,7 @@ loop:       for (int y=ymin; ; y++) {
                      * At this point the sample values is available as a string.
                      * Process only if we need to parse that string.
                      */
-                    if (isValid && x >= 0 && --sx == 0) {
+                    if (isValid && --sx == 0) {
                         sx = sourceXSubsampling;
                         final String value = new String(charBuffer, 0, nChar);
                         try {
@@ -590,14 +591,19 @@ loop:       for (int y=ymin; ; y++) {
                          * than the end of the current row in the input image).
                          */
                         if (dstIter.nextPixelDone()) {
-                            dstIter.startPixels();
                             if (dstIter.nextLineDone()) {
                                 break loop;
                             }
+                            dstIter.startPixels();
                             isValid = false;
                         }
                     }
                 }
+                /*
+                 * At this point we finished to parse a line. 'isValid' should always be false.
+                 * If not, then 'dstRegion' computation was probably inaccurate.
+                 */
+                assert !isValid : dstRegion;
             }
         }
         processImageComplete();

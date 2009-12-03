@@ -17,10 +17,15 @@
  */
 package org.geotoolkit.image.io.text;
 
-import java.util.Iterator;
+import java.awt.Rectangle;
+import java.awt.image.Raster;
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import java.util.Iterator;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -33,6 +38,8 @@ import static org.geotoolkit.test.Commons.*;
 
 /**
  * Tests {@link AsciiGridReader}.
+ * <p>
+ * This class provides also a {@link #verify} static method for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
@@ -122,5 +129,67 @@ public final class AsciiGridReaderTest extends TextImageReaderTestBase {
             }
         }
         fail("Reader not found.");
+    }
+
+    /**
+     * Compares the content of the given raster with the value read from the given file.
+     * Any mismatch found is printed to the standard output stream.
+     *
+     * @param  input            The file to read.
+     * @param  width            The image width.
+     * @param  raster           The raster from which to compare the values.
+     * @param  region           The region of the source file to compare.
+     * @param  xSubsampling     Subsampling along the <var>x</var> axis (1 if none).
+     * @param  ySubsampling     Subsampling along the <var>y</var> axis (1 if none).
+     * @param  headerLineCount  The number of header lines to skip.
+     * @throws IOException If an error occured while reading the file.
+     */
+    public static void verify(final File input, final int width, final Raster raster, final Rectangle region,
+            final int xSubsampling, final int ySubsampling, final int headerLineCount) throws IOException
+    {
+        assertEquals(0, raster.getMinX());
+        assertEquals(0, raster.getMinY());
+        assertEquals((region.width  + xSubsampling-1) / xSubsampling, raster.getWidth());
+        assertEquals((region.height + ySubsampling-1) / ySubsampling, raster.getHeight());
+        System.out.println("Comparing the values in region " + region);
+
+        final long timestamp = System.currentTimeMillis();
+        final BufferedReader reader = new BufferedReader(new FileReader(input));
+        for (int i=1; i<=headerLineCount; i++) {
+            System.out.println("Header " + i + ": " + reader.readLine());
+        }
+        final StringBuilder buffer = new StringBuilder();
+        int c, x=0, y=0, errorCount=0;
+        while ((c = reader.read()) >= 0) {
+            if (c > ' ') {
+                buffer.append((char) c);
+            } else if (buffer.length() != 0) {
+                final float value  = Float.parseFloat(buffer.toString());
+                if (region.contains(x, y)) {
+                    int tx = x - region.x;
+                    int ty = y - region.y;
+                    if ((tx % xSubsampling) == 0 && (ty % ySubsampling) == 0) {
+                        tx /= xSubsampling;
+                        ty /= ySubsampling;
+                        final float stored = raster.getSampleFloat(tx, ty, 0);
+                        if (value != stored && !Float.isNaN(stored)) {
+                            System.out.println("Expected " + value + " but found " + stored + " at coordinate (" + x + ',' + y + ')');
+                            if (++errorCount >= 100) {
+                                System.out.println("Too many errors.");
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (++x == width) {
+                    x = 0;
+                    y++;
+                }
+                buffer.setLength(0);
+            }
+        }
+        reader.close();
+        System.out.println("Coordinate of the next pixel to read, if it existed: (" + x + ',' + y + ')');
+        System.out.println("Ellapsed time: " + (System.currentTimeMillis() - timestamp) / 1000f + " seconds.");
     }
 }
