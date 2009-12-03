@@ -144,8 +144,10 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
     private static List<CachedSymbolizer> getCached(List<Symbolizer> symbols){
         final List<CachedSymbolizer> cached = new ArrayList<CachedSymbolizer>();
 
-        for(final Symbolizer sy : symbols){
-            cached.add(GO2Utilities.getCached(sy));
+        if(symbols != null){
+            for(final Symbolizer sy : symbols){
+                cached.add(GO2Utilities.getCached(sy));
+            }
         }
 
         return cached;

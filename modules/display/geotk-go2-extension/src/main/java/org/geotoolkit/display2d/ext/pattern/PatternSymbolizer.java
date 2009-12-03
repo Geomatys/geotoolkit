@@ -17,15 +17,17 @@
 
 package org.geotoolkit.display2d.ext.pattern;
 
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.measure.unit.NonSI;
 
 import org.geotoolkit.style.AbstractExtensionSymbolizer;
 
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -37,7 +39,35 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
     public static final String NAME = "Pattern";
 
     private final Map<Expression, List<Symbolizer>> thredholds =
-            new HashMap<Expression, List<Symbolizer>>();
+            new TreeMap<Expression, List<Symbolizer>>(new ExpComparator());
+
+    private static final class ExpComparator implements Comparator<Expression>{
+
+        @Override
+        public int compare(Expression t, Expression t1) {
+            final Literal left = (Literal) t;
+            final Literal right = (Literal) t1;
+
+            if(left == null || left.getValue() == null){
+                return -1;
+            }else if(right == null || right.getValue() == null){
+                return +1;
+            }else{
+                final Number leftN = left.evaluate(null,Number.class);
+                final Number righN = right.evaluate(null,Number.class);
+                final double res = leftN.doubleValue() - righN.doubleValue();
+                if(res < 0){
+                    return -1;
+                }else if(res > 0){
+                    return +1;
+                }else{
+                    return 0;
+                }
+            }
+        }
+
+    }
+
 
     private final Expression channel;
 
