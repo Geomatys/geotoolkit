@@ -332,6 +332,8 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             eventWriter.add(new StartElementEvent(env));
             if (srsName != null) {
                 eventWriter.add(new AttributeImpl("srsName", srsName));
+            } else {
+               eventWriter.add(new AttributeImpl("srsName", "EPSG:4326"));
             }
 
             // lower corner
