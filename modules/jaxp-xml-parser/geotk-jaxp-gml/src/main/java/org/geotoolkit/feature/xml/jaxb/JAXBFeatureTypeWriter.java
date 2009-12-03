@@ -137,6 +137,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
             int i = 0;
             while (typeNamespace == null && i < featureTypes.size()) {
                 typeNamespace = featureTypes.get(i).getName().getNamespaceURI();
+                i++;
             }
             Schema schema        = new Schema(FormChoice.QUALIFIED, typeNamespace);
             schema.addImport(gmlImport);
