@@ -60,7 +60,7 @@ public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
      */
     @Test
     public void testWrite() throws IOException {
-        final IIOImage image = createImage();
+        final IIOImage image = createImage(false);
         final TextMatrixImageWriter writer = createImageWriter();
         final StringWriter out = new StringWriter();
         writer.setOutput(out);

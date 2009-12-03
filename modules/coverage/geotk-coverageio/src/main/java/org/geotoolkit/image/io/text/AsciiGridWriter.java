@@ -24,6 +24,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.List;
 import java.util.LinkedHashMap;
 import javax.imageio.IIOImage;
 import javax.imageio.IIOException;
@@ -41,7 +42,9 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -65,6 +68,11 @@ import org.geotoolkit.resources.Errors;
  */
 public class AsciiGridWriter extends TextImageWriter {
     /**
+     * The default fill value. This is part of the ASCII grid format specification.
+     */
+    private static final String DEFAULT_FILL = "-9999";
+
+    /**
      * Constructs a new image writer.
      *
      * @param provider the provider that is invoking this constructor, or {@code null} if none.
@@ -81,9 +89,10 @@ public class AsciiGridWriter extends TextImageWriter {
      * @param  metadata The metadata.
      * @param  header The map in which to store the (<var>key</var>, <var>value</var>) pairs
      *         to be written.
+     * @return The fill value, or {@code Double#NaN} if none.
      * @throws IOException If the metadata can not be prepared.
      */
-    private void prepareHeader(final SpatialMetadata metadata, final Map<String,String> header,
+    private String prepareHeader(final SpatialMetadata metadata, final Map<String,String> header,
             final ImageWriteParam param) throws IOException
     {
         final MetadataHelper   helper    = new MetadataHelper(this);
@@ -110,6 +119,26 @@ public class AsciiGridWriter extends TextImageWriter {
         header.put(xll, String.valueOf(gridToCRS.getTranslateX()));
         header.put(yll, String.valueOf(gridToCRS.getTranslateY()));
         header.put("CELLSIZE", String.valueOf(helper.getCellSize(gridToCRS)));
+        /*
+         * Get the fill sample value, which is optional. The default defined by
+         * the ASCII grid format is -9999.
+         */
+        String fillValue = DEFAULT_FILL;
+        final List<SampleDimension> dimensions = metadata.getListForType(SampleDimension.class);
+        if (dimensions != null && !dimensions.isEmpty()) {
+            final SampleDimension dim = dimensions.get(0);
+            if (dim != null) {
+                final double[] fillValues = dim.getFillSampleValues();
+                if (fillValues != null && fillValues.length != 0) {
+                    final double value = fillValues[0];
+                    if (!Double.isNaN(value)) {
+                        fillValue = StringUtilities.trimFractionalPart(String.valueOf(value));
+                        header.put("NODATA_VALUE", fillValue);
+                    }
+                }
+            }
+        }
+        return fillValue;
     }
 
     /**
@@ -139,7 +168,7 @@ public class AsciiGridWriter extends TextImageWriter {
             first = false;
             final String key = entry.getKey();
             out.write(key);
-            out.write(Utilities.spaces(1 + Math.max(0, length - key.length())));
+            out.write(Utilities.spaces(2 + Math.max(0, length - key.length())));
             out.write(entry.getValue());
         }
         // We intentionaly ommit the line separator for the last line,
@@ -168,8 +197,9 @@ public class AsciiGridWriter extends TextImageWriter {
         header.put("NCOLS", String.valueOf(size.width ));
         header.put("NROWS", String.valueOf(size.height));
         final SpatialMetadata metadata = convertImageMetadata(image.getMetadata(), null, parameters);
+        String fillValue = DEFAULT_FILL;
         if (metadata != null) {
-            prepareHeader(metadata, header, parameters);
+            fillValue = prepareHeader(metadata, header, parameters);
         }
         writeHeader(header, out);
         /*
@@ -199,11 +229,13 @@ public class AsciiGridWriter extends TextImageWriter {
                     final String value;
                     switch (dataType) {
                         case DataBuffer.TYPE_DOUBLE: {
-                            value = Double.toString(iterator.getSampleDouble());
+                            final double v = iterator.getSampleDouble();
+                            value = Double.isNaN(v) ? fillValue : Double.toString(v);
                             break;
                         }
                         case DataBuffer.TYPE_FLOAT: {
-                            value = Float.toString(iterator.getSampleFloat());
+                            final float v = iterator.getSampleFloat();
+                            value = Float.isNaN(v) ? fillValue : Float.toString(v);
                             break;
                         }
                         default: {

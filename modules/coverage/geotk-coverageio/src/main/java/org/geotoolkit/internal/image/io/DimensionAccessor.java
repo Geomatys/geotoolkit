@@ -97,6 +97,24 @@ public final class DimensionAccessor extends MetadataAccessor {
      *
      * @param value The value to be assigned to the {@code "fillSampleValues"} attribute.
      */
+    public void setFillSampleValues(final int value) {
+        setAttribute("fillSampleValues", value);
+    }
+
+    /**
+     * Sets the {@code "fillSampleValues"} attribute to the given array.
+     *
+     * @param values The values to be assigned to the {@code "fillSampleValues"} attribute.
+     */
+    public void setFillSampleValues(final int... values) {
+        setAttribute("fillSampleValues", values);
+    }
+
+    /**
+     * Sets the {@code "fillSampleValues"} attribute to the given value.
+     *
+     * @param value The value to be assigned to the {@code "fillSampleValues"} attribute.
+     */
     public void setFillSampleValues(final float value) {
         setAttribute("fillSampleValues", value);
     }
@@ -108,6 +126,15 @@ public final class DimensionAccessor extends MetadataAccessor {
      */
     public void setFillSampleValues(final float... values) {
         setAttribute("fillSampleValues", values);
+    }
+
+    /**
+     * Sets the {@code "fillSampleValues"} attribute to the given value.
+     *
+     * @param value The value to be assigned to the {@code "fillSampleValues"} attribute.
+     */
+    public void setFillSampleValues(final double value) {
+        setAttribute("fillSampleValues", value);
     }
 
     /**

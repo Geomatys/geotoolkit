@@ -31,6 +31,7 @@ import javax.imageio.metadata.IIOMetadata;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
 import org.junit.*;
@@ -55,6 +56,10 @@ public abstract class TextImageWriterTestBase {
         domain.setOrigin(-500, 400);
         domain.addOffsetVector(100, 0);
         domain.addOffsetVector(0, -100);
+        final DimensionAccessor dimensions = new DimensionAccessor(metadata);
+        dimensions.selectChild(dimensions.appendChild());
+        dimensions.setValueRange(0f, 88.97f);
+        dimensions.setFillSampleValues(-9998); // Intentionnaly use a value different than -9999.
         return metadata;
     }
 
@@ -74,10 +79,12 @@ public abstract class TextImageWriterTestBase {
      *    88.90  88.91  88.92  88.93  88.94  88.95  88.96  88.97
      * }
      *
+     * @param  withNaN If {@code true}, a few NaN numbers will be added in the matrix.
+     *         They are put in place of {@code 0.32} and {@code 88.76} values.
      * @return The image.
      * @throws IOException Should never happen.
      */
-    protected static strictfp IIOImage createImage() throws IOException {
+    protected static strictfp IIOImage createImage(final boolean withNaN) throws IOException {
         final int width  = 8;
         final int height = 10;
         final ColorModel cm = PaletteFactory.getDefault().getContinuousPalette(
@@ -88,6 +95,10 @@ public abstract class TextImageWriterTestBase {
                 double value = (10*y + x) / 100.0;
                 if (y >= 5) {
                     value += 88;
+                }
+                if (withNaN) {
+                    if (x == 2 && y == 3) value = Double.NaN;
+                    if (x == 6 && y == 7) value = Double.NaN;
                 }
                 raster.setSample(x, y, 0, value);
             }
@@ -111,7 +122,7 @@ public abstract class TextImageWriterTestBase {
      */
     @Test
     public void testCreateNumberFormat() throws IOException {
-        final IIOImage image = createImage();
+        final IIOImage image = createImage(false);
         final TextImageWriter writer = createImageWriter();
         assertEquals(Locale.CANADA, writer.getDataLocale(null));
 
