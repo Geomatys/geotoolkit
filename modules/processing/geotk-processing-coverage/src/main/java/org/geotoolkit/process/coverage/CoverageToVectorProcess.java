@@ -169,6 +169,10 @@ public class CoverageToVectorProcess extends AbstractProcess {
     private void append(Point point, Number value) {
         //System.err.println("POINT["+point+"] value = " + value);
 
+        //special case for NaN or null
+        //todo
+
+
         for (final NumberRange range : polygons.keySet()) {
 
             if (range.contains(value)) {
