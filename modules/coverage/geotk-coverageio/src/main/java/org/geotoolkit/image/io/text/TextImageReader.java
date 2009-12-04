@@ -24,6 +24,8 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Set;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 import java.nio.channels.ReadableByteChannel;
@@ -322,6 +324,19 @@ public abstract class TextImageReader extends StreamImageReader {
     }
 
     /**
+     * Convenience method for logging a warning from the given method.
+     */
+    final void warningOccurred(final Class<?> caller, final String method,
+            final int key, final Object... arguments)
+    {
+        final LogRecord record = Errors.getResources(getLocale())
+                .getLogRecord(Level.WARNING, key, arguments);
+        record.setSourceClassName(caller.getName());
+        record.setSourceMethodName(method);
+        warningOccurred(record);
+    }
+
+    /**
      * Returns the error message from the given resource key and arguments.
      * The key shall be one of the {@link Errors.Key} constants. This is used
      * for formatting the message in {@link IIOException}.
@@ -356,7 +371,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * The other fields are initialized to the values listed below.
      * Those values can also be modified by subclass constructors.
      * <p>
-     * <table border="1" cellspacing="0">
+     * <table border="1">
      *   <tr bgcolor="lightblue">
      *     <th>Field</th>
      *     <th>Value</th>

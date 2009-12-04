@@ -51,16 +51,52 @@ import org.geotoolkit.resources.Errors;
 /**
  * Writer for the ASCII Grid format. As the "ASCII" name implies, the data file are written in
  * US-ASCII character encoding no matter what the {@link Spi#charset} value is. In addition, the
- * US locale is enforced no matter what the {@link Spi#locale} value is.
+ * US locale is enforced no matter what the {@link Spi#locale} value is. The default implementation
+ * writes only the header attribute defined below:
  * <p>
- * This format writes only the standard header attributes defined in the ASCII Grid standard.
- * The Geotk extensions described in the {@link AsciiGridReader} class are not formatted by
- * default.
+ * <table border="1" cellspacing="0">
+ *   <tr bgcolor="lightblue">
+ *     <th>Keyword</th>
+ *     <th>Value type</th>
+ *     <th>Obligation</th>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code NCOLS}&nbsp;</td>
+ *     <td>&nbsp;Integer&nbsp;</td>
+ *     <td>&nbsp;Mandatory&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code NROWS}&nbsp;</td>
+ *     <td>&nbsp;Integer&nbsp;</td>
+ *     <td>&nbsp;Mandatory&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code XLLCORNER} or {@code XLLCENTER}&nbsp;</td>
+ *     <td>&nbsp;Floating point&nbsp;</td>
+ *     <td>&nbsp;Mandatory&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code YLLCORNER} or {@code YLLCENTER}&nbsp;</td>
+ *     <td>&nbsp;Floating point&nbsp;</td>
+ *     <td>&nbsp;Mandatory&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code CELLSIZE}&nbsp;</td>
+ *     <td>&nbsp;Floating point&nbsp;</td>
+ *     <td>&nbsp;Mandatory&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code NODATA_VALUE}&nbsp;</td>
+ *     <td>&nbsp;Floating point&nbsp;</td>
+ *     <td>&nbsp;Optional, default to -9999&nbsp;</td>
+ *   </tr>
+ * </table>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
  *
  * @see <a href="http://daac.ornl.gov/MODIS/ASCII_Grid_Format_Description.html">ASCII Grid Format Description</a>
+ * @see <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI Grid on Wikipedia</a>
  * @see AsciiGridReader
  *
  * @since 3.07
@@ -272,11 +308,11 @@ public class AsciiGridWriter extends TextImageWriter {
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
      * <p>
-     * The {@linkplain #Spi default constructor} initializes the fields to the values listed
-     * below. Users wanting different values should create a subclass of {@code Spi} and set
-     * the desired values in their constructor.
+     * The default constructor initializes the fields to the values listed below.
+     * Users wanting different values should create a subclass of {@code Spi} and
+     * set the desired values in their constructor.
      * <p>
-     * <table border="1" cellspacing="0">
+     * <table border="1">
      *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "ascii-grid"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>

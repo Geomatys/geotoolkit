@@ -101,7 +101,7 @@ import org.geotoolkit.resources.Errors;
  *   <tr>
  *     <td>&nbsp;{@code NODATA_VALUE}&nbsp;</td>
  *     <td>&nbsp;Floating point&nbsp;</td>
- *     <td>&nbsp;Optional, default to -9999&nbsp;</td>
+ *     <td>&nbsp;Optional&nbsp;</td>
  *   </tr>
  *   <tr>
  *     <td>&nbsp;{@code MIN_VALUE}&nbsp;</td>
@@ -122,6 +122,7 @@ import org.geotoolkit.resources.Errors;
  * @version 3.07
  *
  * @see <a href="http://daac.ornl.gov/MODIS/ASCII_Grid_Format_Description.html">ASCII Grid Format Description</a>
+ * @see <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI Grid on Wikipedia</a>
  * @see AsciiGridWriter
  *
  * @since 3.07
@@ -237,8 +238,8 @@ public class AsciiGridReader extends TextImageReader {
             /*
              * We should not have any entry left.
              */
-            if (!header.isEmpty()) {
-                throw new IIOException(error(Errors.Keys.UNKNOW_PARAMETER_$1, header.keySet().iterator().next()));
+            for (final String extra : header.keySet()) {
+                warningOccurred(AsciiGridReader.class, "readHeader", Errors.Keys.UNKNOW_PARAMETER_$1, extra);
             }
         }
     }
@@ -628,11 +629,11 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
      * <p>
-     * The {@linkplain #Spi default constructor} initializes the fields to the values listed
-     * below. Users wanting different values should create a subclass of {@code Spi} and set
-     * the desired values in their constructor.
+     * The default constructor initializes the fields to the values listed below.
+     * Users wanting different values should create a subclass of {@code Spi} and
+     * set the desired values in their constructor.
      * <p>
-     * <table border="1" cellspacing="0">
+     * <table border="1">
      *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "ascii-grid"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
@@ -641,13 +642,8 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #padValue}        &nbsp;</td><td>&nbsp;{@code -9999}&nbsp;</td></tr>
      *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
-     * <p>
-     * Note that the {@code padValue} is used as the default value if no {@code NODATA_VALUE}
-     * attribute is specified in the file header. The -9999 value is conform to ASCII Grid
-     * convention.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
@@ -691,7 +687,6 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
             version         = Version.GEOTOOLKIT.toString();
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");
-            padValue        = -9999;
         }
 
         /**

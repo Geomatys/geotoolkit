@@ -351,7 +351,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * The other fields are initialized to the values listed below.
      * Those values can also be modified by subclass constructors.
      * <p>
-     * <table border="1" cellspacing="0">
+     * <table border="1">
      *   <tr bgcolor="lightblue">
      *     <th>Field</th>
      *     <th>Value</th>
