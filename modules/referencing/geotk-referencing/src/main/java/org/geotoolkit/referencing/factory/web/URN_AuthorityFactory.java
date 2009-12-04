@@ -26,6 +26,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
@@ -36,6 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
+import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AuthorityFactoryAdapter;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -51,8 +53,8 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.remov
  * registered for use in {@link org.opengis.referencing.ReferencingFactoryFinder}.
  *
  * @author Justin Deoliveira (TOPP)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @see <A HREF="https://portal.opengeospatial.org/files/?artifact_id=8814">URNs of definitions
  *      in OGC namespace</A>
@@ -153,7 +155,7 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
     @Override
     protected AuthorityFactory getAuthorityFactory(final String code) throws FactoryException {
         if (code != null) {
-            return getAuthorityFactory(getParser(code).type.type.asSubclass(AuthorityFactory.class), code);
+            return getAuthorityFactory(getParser(code).type.factoryType.asSubclass(AuthorityFactory.class), code);
         } else {
             return super.getAuthorityFactory(code);
         }
@@ -315,6 +317,24 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
     }
 
     /**
+     * Returns a finder which can be used for looking up unidentified objects. The default
+     * implementation forwards all method calls to the finder of the underlying
+     * {@link AllAuthoritiesFactory}. No additional work is performed, except in the case
+     * of the {@link IdentifiedObjectFinder#findIdentifier findIdentifier} method which
+     * format the code in a {@code "urn:ogc:def"} syntax.
+     *
+     * @throws FactoryException if the finder can not be created.
+     *
+     * @since 3.07
+     */
+    @Override
+    public IdentifiedObjectFinder getIdentifiedObjectFinder(Class<? extends IdentifiedObject> type)
+            throws FactoryException
+    {
+        return new FinderAdapter(factory, type);
+    }
+
+    /**
      * Returns {@code true} if this factory meets the requirements specified by a map of hints.
      * This information is for {@link org.geotoolkit.factory.FactoryRegistry} usage only.
      *
@@ -327,7 +347,8 @@ public class URN_AuthorityFactory extends AuthorityFactoryAdapter implements CRS
 
     /**
      * Sets the ordering of this factory relative to other factories. By default
-     * {@code URN} positions itself last.
+     * {@code URN_AuthorityFactory} is selected only if there is no suitable instance
+     * of {@link AbstractAuthorityFactory} for user request.
      *
      * @since 3.00
      */

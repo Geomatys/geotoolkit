@@ -28,7 +28,10 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
+import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
+import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -38,8 +41,8 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 /**
  * Tests the {@link URN_AuthorityFactory} class backed by WMS or AUTO factories.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  */
@@ -154,5 +157,30 @@ public final class URN_AuthorityFactoryTest {
             Hints.removeSystemDefault(Hints.FORCE_AXIS_ORDER_HONORING);
             Hints.removeSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER);
         }
+    }
+
+    /**
+     * Tests identifier lookup. Note that a test involving the EPSG database if provided by
+     * {@link org.geotoolkit.referencing.CRS_WithEpsgTest#testLookupIdentifierWithURN()}.
+     * The later has the advantage of testing the concatenation of EPSG database version.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.07
+     */
+    @Test
+    public void testLookup() throws FactoryException {
+        final CRSAuthorityFactory factory = getCRSAuthorityFactory("URN:OGC:DEF", null);
+        assertTrue("The correct working of CRS.lookupIdentifier(authority, crs) requires that " +
+                   "the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
+                   Citations.identifierMatches(factory.getAuthority(), Citations.URN_OGC));
+        assertTrue(factory instanceof AbstractAuthorityFactory);
+
+        final IdentifiedObjectFinder finder = ((AbstractAuthorityFactory) factory)
+                .getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
+        final CoordinateReferenceSystem crs =
+                factory.createCoordinateReferenceSystem("URN:X-OGC:DEF:CRS:CRS:84");
+        assertEquals("CRS:84", CRS.getDeclaredIdentifier(crs));
+        assertEquals("urn:ogc:def:crs:crs:84", finder.findIdentifier(crs));
     }
 }

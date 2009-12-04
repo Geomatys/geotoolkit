@@ -17,15 +17,15 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
+import javax.measure.unit.Unit;
+
+import org.opengis.referencing.cs.*;
+import org.opengis.referencing.crs.*;
+import org.opengis.referencing.datum.*;
+import org.opengis.referencing.operation.*;
 import org.opengis.referencing.AuthorityFactory;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CSAuthorityFactory;
-import org.opengis.referencing.cs.RangeMeaning;
-import org.opengis.referencing.datum.DatumAuthorityFactory;
-import org.opengis.referencing.datum.PixelInCell;
-import org.opengis.referencing.datum.VerticalDatumType;
-import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
+import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.lang.Immutable;
 
@@ -33,8 +33,8 @@ import org.geotoolkit.lang.Immutable;
 /**
  * An "object type" in a URN.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  * @module
@@ -46,22 +46,22 @@ final class URN_Type {
      * <code>"urn:ogc:def:<b>crs</b>:EPSG:6.8"</code>.
      */
     private static final URN_Type[] TYPES = {
-        new URN_Type("crs",                 CRSAuthorityFactory                .class),
-        new URN_Type("datum",               DatumAuthorityFactory              .class),
-        new URN_Type("meridian",            DatumAuthorityFactory              .class),
-        new URN_Type("ellipsoid",           DatumAuthorityFactory              .class),
-        new URN_Type("cs",                  CSAuthorityFactory                 .class),
-        new URN_Type("axis",                CSAuthorityFactory                 .class),
-        new URN_Type("coordinateOperation", CoordinateOperationAuthorityFactory.class),
-        new URN_Type("method",              CoordinateOperationAuthorityFactory.class),
-        new URN_Type("parameter",           CoordinateOperationAuthorityFactory.class),
-        new URN_Type("group",               CoordinateOperationAuthorityFactory.class),
-//      new URN_Type("derivedCRSType",      ),
-        new URN_Type("verticalDatumType",   VerticalDatumType                  .class),
-        new URN_Type("pixelInCell",         PixelInCell                        .class),
-        new URN_Type("rangeMeaning",        RangeMeaning                       .class),
-        new URN_Type("axisDirection",       AxisDirection                      .class),
-        new URN_Type("uom",                 CSAuthorityFactory                 .class)
+        new URN_Type("crs",                 CoordinateReferenceSystem.class, CRSAuthorityFactory.class),
+        new URN_Type("datum",               Datum.class,                     DatumAuthorityFactory.class),
+        new URN_Type("meridian",            PrimeMeridian.class,             DatumAuthorityFactory.class),
+        new URN_Type("ellipsoid",           Ellipsoid.class,                 DatumAuthorityFactory.class),
+        new URN_Type("cs",                  CoordinateSystem.class,          CSAuthorityFactory.class),
+        new URN_Type("axis",                CoordinateSystemAxis.class,      CSAuthorityFactory.class),
+        new URN_Type("coordinateOperation", CoordinateOperation.class,       CoordinateOperationAuthorityFactory.class),
+        new URN_Type("method",              OperationMethod.class,           CoordinateOperationAuthorityFactory.class),
+        new URN_Type("parameter",           ParameterValue.class,            CoordinateOperationAuthorityFactory.class),
+        new URN_Type("group",               ParameterValueGroup.class,       CoordinateOperationAuthorityFactory.class),
+//      new URN_Type("derivedCRSType",      ...),
+        new URN_Type("verticalDatumType",   VerticalDatumType.class,         VerticalDatumType.class),
+        new URN_Type("pixelInCell",         PixelInCell.class,               PixelInCell.class),
+        new URN_Type("rangeMeaning",        RangeMeaning.class,              RangeMeaning.class),
+        new URN_Type("axisDirection",       AxisDirection.class,             AxisDirection.class),
+        new URN_Type("uom",                 Unit.class,                      CSAuthorityFactory.class)
     };
 
     /**
@@ -77,23 +77,29 @@ final class URN_Type {
     public final String name;
 
     /**
-     * The factory for this type, either as a {@link AuthorityFactory} subinterface
+     * The object type, either as an {@link IdentifiedObject} subinterface or a {@link CodeList}.
+     */
+    public final Class<?> objectType;
+
+    /**
+     * The factory for this type, either as an {@link AuthorityFactory} subinterface
      * or a {@link CodeList}.
      */
-    public final Class<?> type;
+    public final Class<?> factoryType;
 
     /**
      * Creates a new instance of {@code URN_Type}.
      */
-    private URN_Type(final String name, final Class<?> type) {
-        this.name = name;
-        this.type = type;
+    private URN_Type(final String name, final Class<?> objectType, final Class<?> factoryType) {
+        this.name        = name;
+        this.objectType  = objectType;
+        this.factoryType = factoryType;
     }
 
     /**
      * Returns an instance of the specified name (case-insensitive), or {@code null} if none.
      */
-    public static URN_Type get(final String name) {
+    public static URN_Type getInstance(final String name) {
         for (int i=0; i<TYPES.length; i++) {
             final URN_Type candidate = TYPES[i];
             if (name.equalsIgnoreCase(candidate.name)) {
@@ -104,10 +110,25 @@ final class URN_Type {
     }
 
     /**
+     * Returns an instance of the specified type, or {@code null} if none.
+     *
+     * @since 3.07
+     */
+    public static URN_Type getInstance(final Class<?> type) {
+        for (int i=0; i<TYPES.length; i++) {
+            final URN_Type candidate = TYPES[i];
+            if (candidate.objectType.isAssignableFrom(type)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns {@code true} if the specified factory is an instance of this type.
      */
     public boolean isInstance(final AuthorityFactory factory) {
-        return type.isInstance(factory);
+        return factoryType.isInstance(factory);
     }
 
     /**

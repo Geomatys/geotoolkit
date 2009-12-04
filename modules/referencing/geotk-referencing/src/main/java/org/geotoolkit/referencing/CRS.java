@@ -1000,6 +1000,12 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * fullScan)</code> except that the search is performed only among the factories of the given
      * authority.
      *
+     * {@section Identifiers in URN and HTTP namespaces}
+     * Note that if the given authority is {@link Citations#URN_OGC} or {@link Citations#HTTP_OGC},
+     * then this method behaves as if the code was searched in all authority factories and the
+     * result formatted in a {@code "urn:ogc:def:"} or
+     * {@value org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory#BASE_URL} namespace.
+     *
      * @param  authority The authority for the code to search.
      * @param  crs The Coordinate Reference System whose identifier is to be found, or {@code null}.
      * @param  fullScan If {@code true}, an exhaustive full scan against all registered objects

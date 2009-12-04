@@ -133,6 +133,25 @@ if (identifier != null) {
         longitude axis to appear first.</p>
       </answer>
     </faq>
+    <faq id="lookupURN">
+      <question>
+        How do I get the URN of an existing CRS?
+      </question>
+      <answer>
+        <p>OGC defines URN for CRS identifiers, for example <code>"urn:ogc:def:crs:epsg:7.1:4326"</code>
+        where <code>"7.1"</code> is the version of the EPSG database used. URN may or may not be present
+        in the set of identifiers returned by <code>crs.getIdentifiers()</code>. In many cases (especially
+        if the CRS was parsed from a <cite>Well Known Text</cite>), only simple identifiers like
+        <code>"EPSG:4326"</code> are provided. An easy way to build the full URN is to use the code
+        below:</p>
+
+<blockquote><pre>String urn = CRS.lookupIdentifier(Citations.URN_OGC, myCRS, false);</pre></blockquote>
+
+      <p>The boolean argument can be set to <code>true</code> for allowing a database scan (see the
+      FAQ item above), and the authority can also be <code>HTTP_OGC</code> for a URL of the form
+      <code>"http://www.opengis.net/gml/srs/epsg.xml#4326"</code>.</p>
+      </answer>
+    </faq>
   </part>
 
   <!-- ======================================================================================== -->

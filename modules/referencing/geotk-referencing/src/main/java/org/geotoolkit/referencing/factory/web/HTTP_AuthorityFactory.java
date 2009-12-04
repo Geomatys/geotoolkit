@@ -18,7 +18,9 @@
 package org.geotoolkit.referencing.factory.web;
 
 import org.opengis.metadata.citation.Citation;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
@@ -33,6 +35,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.AuthorityFactoryAdapter;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 
 
 /**
@@ -43,8 +46,11 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
  *     http://www.opengis.net/gml/srs/epsg.xml#4326
  * }
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * Users don't need to create an instance of this class, since one is automatically
+ * registered for use in {@link org.opengis.referencing.ReferencingFactoryFinder}.
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  * @module
@@ -57,6 +63,11 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
      * The base URL, which is {@value}.
      */
     public static final String BASE_URL = "http://www.opengis.net/gml/srs/";
+
+    /**
+     * The backing factory.
+     */
+    private final AllAuthoritiesFactory factory;
 
     /**
      * Creates a default wrapper.
@@ -86,6 +97,7 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
      */
     public HTTP_AuthorityFactory(final AllAuthoritiesFactory factory) {
         super(factory);
+        this.factory = factory;
     }
 
     /**
@@ -174,6 +186,39 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
     }
 
     /**
+     * Returns a finder which can be used for looking up unidentified objects. The default
+     * implementation forwards all method calls to the finder of the underlying
+     * {@link AllAuthoritiesFactory}. No additional work is performed, except in the case
+     * of the {@link IdentifiedObjectFinder#findIdentifier findIdentifier} method which
+     * format the code in a {@value #BASE_URL} syntax.
+     *
+     * @throws FactoryException if the finder can not be created.
+     *
+     * @since 3.07
+     */
+    @Override
+    public IdentifiedObjectFinder getIdentifiedObjectFinder(Class<? extends IdentifiedObject> type)
+            throws FactoryException
+    {
+        return new Finder(factory, type);
+    }
+
+    /**
+     * The same finder than the one for {@link URN_AuthorityFactory},
+     * but adapted for the {@link HTTP_AuthorityFactory} namespace.
+     */
+    private static final class Finder extends FinderAdapter {
+        Finder(AbstractAuthorityFactory factory, Class<? extends IdentifiedObject> type) throws FactoryException {
+            super(factory, type);
+        }
+
+        @Override
+        StringBuilder path(IdentifiedObject object, ReferenceIdentifier identifier, String codespace) {
+            return new StringBuilder(BASE_URL).append(codespace).append(".xml#");
+        }
+    }
+
+    /**
      * Returns {@code true} if this factory meets the requirements specified by a map of hints.
      * This information is for {@link org.geotoolkit.factory.FactoryRegistry} usage only.
      *
@@ -186,7 +231,8 @@ public class HTTP_AuthorityFactory extends AuthorityFactoryAdapter implements CR
 
     /**
      * Sets the ordering of this factory relative to other factories. By default
-     * {@code HTTP_AuthorityFactory} positions itself last.
+     * {@code HTTP_AuthorityFactory} is selected only if there is no suitable instance
+     * of {@link AbstractAuthorityFactory} for user request.
      *
      * @since 3.00
      */

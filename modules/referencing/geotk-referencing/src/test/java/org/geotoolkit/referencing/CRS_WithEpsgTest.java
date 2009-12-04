@@ -54,12 +54,20 @@ import static org.junit.Assume.assumeTrue;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.05
+ * @version 3.07
  *
  * @since 2.4
  */
 @Depend(CRS_Test.class)
 public class CRS_WithEpsgTest extends ReferencingTestCase {
+    /**
+     * The version of the EPSG database used. Please update this field if the version of
+     * the embedded EPSG database provided in the {@code "geotk-epsg"} module is updated.
+     *
+     * @since 3.07
+     */
+    public static final String EPSG_VERSION = "7.1";
+
     /**
      * Tests the (latitude, longitude) axis order for EPSG:4326.
      *
@@ -248,7 +256,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      * @throws FactoryException Should not happen.
      */
     @Test
-    public void testFind() throws FactoryException {
+    public void testLookupIdentifier() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
 
         CoordinateReferenceSystem crs = getED50("ED50");
@@ -264,6 +272,30 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assertEquals("With scan allowed, should find the CRS.", "EPSG:4230",
                      CRS.lookupIdentifier(crs, true));
         assertEquals(Integer.valueOf(4230), CRS.lookupEpsgCode(crs, true));
+    }
+
+    /**
+     * Tests {@link CRS#lookupIdentifier} in the URN namespace.
+     * Also test the HTTP namespace by opportunity.
+     * <p>
+     * <strong>THIS TEST ASSUMES THAT THE EPSG DATABASE VERSION {@value #EPSG_VERSION} IS USED</strong>.
+     * If this is not the case, please update the {@link #EPSG_VERSION} field.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testLookupIdentifierWithURN() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+
+        final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        assertEquals("http://www.opengis.net/gml/srs/epsg.xml#4326",
+                CRS.lookupIdentifier(Citations.HTTP_OGC, crs, false));
+        assertEquals("NOTE: This test assumes that the EPSG database version " + EPSG_VERSION +
+                " is used. It should be the case if the embedded database is used (geotk-epsg)." +
+                " If that module is upgrated with a newer version of the EPSG database, please" +
+                " update this test.",
+                "urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326",
+                CRS.lookupIdentifier(Citations.URN_OGC, crs, false));
     }
 
     /**

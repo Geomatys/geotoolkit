@@ -22,25 +22,29 @@ import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
+import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.forceAxisOrderHonoring;
 
 
 /**
  * Tests the {@link HTTP_AuthorityFactory} class backed by WMS or AUTO factories.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  */
@@ -91,7 +95,7 @@ public final class HTTP_AuthorityFactoryTest {
      * Returns the factory for the given hints.
      */
     static final HTTP_AuthorityFactory getFactory(final Hints hints) {
-        return (HTTP_AuthorityFactory) AuthorityFactoryFinder.getCRSAuthorityFactory("http://www.opengis.net", hints);
+        return (HTTP_AuthorityFactory) getCRSAuthorityFactory("http://www.opengis.net", hints);
     }
 
     /**
@@ -172,5 +176,30 @@ public final class HTTP_AuthorityFactoryTest {
         crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/crs.xml#83");
         assertSame(crs, CRS.decode("CRS:83"));
         assertFalse(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, crs));
+    }
+
+    /**
+     * Tests identifier lookup. Note that a test involving the EPSG database if provided by
+     * {@link org.geotoolkit.referencing.CRS_WithEpsgTest#testLookupIdentifierWithURN()}.
+     * The later has the advantage of testing the concatenation of EPSG database version.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.07
+     */
+    @Test
+    public void testLookup() throws FactoryException {
+        final CRSAuthorityFactory factory = getCRSAuthorityFactory("http://www.opengis.net", null);
+        assertTrue("The correct working of CRS.lookupIdentifier(authority, crs) requires that " +
+                   "the URN_AuthorityFactory can been found from the Citations.URN_OGC constant.",
+                   Citations.identifierMatches(factory.getAuthority(), Citations.HTTP_OGC));
+        assertTrue(factory instanceof AbstractAuthorityFactory);
+
+        final IdentifiedObjectFinder finder = ((AbstractAuthorityFactory) factory)
+                .getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
+        final CoordinateReferenceSystem crs =
+                factory.createCoordinateReferenceSystem("http://www.opengis.net/gml/srs/crs.xml#84");
+        assertEquals("CRS:84", CRS.getDeclaredIdentifier(crs));
+        assertEquals("http://www.opengis.net/gml/srs/crs.xml#84", finder.findIdentifier(crs));
     }
 }

@@ -107,7 +107,7 @@ final class URN_Parser {
                 final int typeEnd = code.indexOf(SEPARATOR, typeStart);
                 if (typeEnd >= 0) {
                     type = code.substring(typeStart, typeEnd).trim();
-                    final URN_Type candidate = URN_Type.get(type);
+                    final URN_Type candidate = URN_Type.getInstance(type);
                     if (candidate != null) {
                         final int nameEnd = code.indexOf(SEPARATOR, typeEnd + 1);
                         if (nameEnd >= 0) {
@@ -142,7 +142,7 @@ final class URN_Parser {
      * may be wrong.
      */
     final void logWarningIfTypeMismatch(final Class<? extends AuthorityFactory> expected) {
-        if (!expected.isAssignableFrom(type.type)) {
+        if (!expected.isAssignableFrom(type.factoryType)) {
             // Build a simplified URN, omitting "urn:ogc:def" and version number.
             final String urn = "..." + SEPARATOR + type + SEPARATOR + authority + SEPARATOR + code;
             final LogRecord record = Loggings.format(Level.WARNING, Loggings.Keys.MISMATCHED_URN_TYPE_$1, urn);
