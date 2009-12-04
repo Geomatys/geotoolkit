@@ -40,10 +40,8 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
                 srsName = CoordinateReferenceSystemAdapter.cachedIdentifier.get(crs);
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
                     srsName = CRS.lookupIdentifier(Citations.URN_OGC, crs, false);
-                    System.out.println("lookup donne: " + srsName);
                     if (srsName == null) {
                         srsName = CRS.toSRS(crs);
-                        System.out.println("toSRS donne: " + srsName);
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 
