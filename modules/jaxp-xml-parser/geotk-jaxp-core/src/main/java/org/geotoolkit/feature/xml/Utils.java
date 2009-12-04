@@ -248,7 +248,7 @@ public class Utils {
             String dValue  = dateFormatter.format((java.util.Date) obj);
             return dValue;
 
-        } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double || obj instanceof Boolean) {
+        } else if (obj instanceof Integer || obj instanceof Long || obj instanceof Double || obj instanceof Boolean || obj instanceof BigDecimal) {
             return obj + "";
 
         } else if (obj != null) {
