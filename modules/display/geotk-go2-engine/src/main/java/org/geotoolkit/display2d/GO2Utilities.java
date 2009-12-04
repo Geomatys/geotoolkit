@@ -472,10 +472,6 @@ public final class GO2Utilities {
                 }
             }
 
-            if(dashes.length>2){
-                return new float[]{dashes[0],dashes[1]};
-            }
-
             return dashes;
         }
     }
