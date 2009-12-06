@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  * Tests the {@link IOUtilities} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 3.00
  */
@@ -57,5 +57,27 @@ public class IOUtilitiesTest {
          * Do not test a Windows-specific path (e.g. "file:///C:/some/path/Picture.png").
          * The result is different on Windows or Unix platforms.
          */
+    }
+
+    /**
+     * Tests the {@link IOUtilities#changeExtension} method.
+     *
+     * @throws IOException Should not happen.
+     *
+     * @since 3.07
+     */
+    @Test
+    public void testChangeExtension() throws IOException {
+        assertEquals("Picture.tiff",
+                IOUtilities.changeExtension("Picture.png", "tiff"));
+        assertEquals("Users/name/Picture.tiff",
+                IOUtilities.changeExtension("Users/name/Picture.png", "tiff"));
+        assertEquals(new File("Picture.tiff"),
+                IOUtilities.changeExtension(new File("Picture.png"), "tiff"));
+        assertEquals(new File("Users/name/Picture.tiff"),
+                IOUtilities.changeExtension(new File("Users/name/Picture.png"), "tiff"));
+
+        final File file = new File("Users/name/Picture.png");
+        assertSame(file, IOUtilities.changeExtension(file, "png"));
     }
 }

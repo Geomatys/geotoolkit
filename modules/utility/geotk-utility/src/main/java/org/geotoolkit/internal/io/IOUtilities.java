@@ -37,7 +37,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 3.00
  * @module
@@ -180,8 +180,58 @@ public final class IOUtilities {
             }
             base = name.lastIndexOf('/');
         }
-        final int i = name.lastIndexOf('.') + 1;
-        return (i > base) ? name.substring(i).trim() : "";
+        final int i = name.lastIndexOf('.');
+        return (i > base) ? name.substring(i+1).trim() : "";
+    }
+
+    /**
+     * Changes the extension of the given {@link String}, {@link File}, {@link URL} or
+     * {@link URI} argument. If the argument is not recognized, returns {@code null}.
+     * If the result of this method is an object equals to {@code path}, then the
+     * {@code path} instance is returned.
+     * <p>
+     * Note that this method converts {@link URI} objects to {@link URL}.
+     *
+     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @param  extension The new extension.
+     * @return The path with the new extension, or {@code null} if the given object has
+     *         not been recognized.
+     * @throws MalformedURLException If the given object is an {@link URI} or {@link URL},
+     *         and changing the extension does not result in a valid URL.
+     *
+     * @since 3.07
+     */
+    public static Object changeExtension(final Object path, final String extension) throws MalformedURLException {
+        String name;
+        final int base;
+        if (path instanceof File) {
+            name = ((File) path).getName();
+            base = 0;
+        } else {
+            if (path instanceof URL || path instanceof URI || path instanceof CharSequence) {
+                name = path.toString();
+            } else {
+                return null;
+            }
+            base = name.lastIndexOf('/');
+        }
+        final StringBuffer buffer = new StringBuffer(name);
+        final int i = name.lastIndexOf('.');
+        if (i > base) {
+            buffer.setLength(i+1);
+        } else {
+            buffer.append('.');
+        }
+        name = buffer.append(extension).toString();
+        final Object result;
+        if (path instanceof File) {
+            result = new File(((File) path).getParent(), name);
+        } else if (path instanceof URL || path instanceof URI) {
+            result = new URL(name);
+        } else {
+            result = name;
+        }
+        return path.equals(result) ? path : result;
     }
 
     /**

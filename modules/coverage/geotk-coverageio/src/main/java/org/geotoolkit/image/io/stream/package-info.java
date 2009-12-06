@@ -20,9 +20,6 @@
  * Services provider for {@linkplain javax.imageio.stream.ImageInputStream image input streams}.
  * This package adds a service provider for creating input stream from URL. The default service
  * provider assumes no {@linkplain java.net.Proxy proxy}.
- * <p>
- * This package should not be used directly, since providers are declared in the
- * {@code META-INF/services/} directory.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
