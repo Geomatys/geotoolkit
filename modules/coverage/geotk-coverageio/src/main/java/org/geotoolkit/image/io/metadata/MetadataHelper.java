@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.metadata;
 import java.awt.Point;
 import java.util.List;
 import java.awt.Rectangle;
+import java.awt.geom.Dimension2D;
 import javax.imageio.IIOParam;
 import javax.imageio.IIOException;
 import java.awt.geom.AffineTransform;
@@ -31,6 +32,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.display.shape.DoubleDimension2D;
 
 
 /**
@@ -252,7 +254,7 @@ public class MetadataHelper {
     /**
      * Returns the size of pixels, which must be square. The {@code gridToCRS} argument is
      * typically the output of {@link #getAffineTransform getAffineTransform}. This method
-     * checks if the given complies with the following conditions:
+     * checks if the given transform complies with the following conditions:
      * <p>
      * <ul>
      *   <li>The {@link AffineTransform#getScaleX() scaleX} coefficient must be
@@ -264,8 +266,10 @@ public class MetadataHelper {
      *       shearY} coefficients must be zero.</li>
      * </ul>
      * <p>
-     * If all those condition are meet, then {@code scaleX} is returned. Otherwise an
-     * exception is thrown.
+     * If all those conditions are meet, then {@code scaleX} is returned. Otherwise an
+     * exception is thrown. This behavior is convenient for code like the
+     * {@linkplain org.geotoolkit.image.io.text.AsciiGridWriter ASCII Grid writer},
+     * which require square pixels as of format specification.
      *
      * @param  gridToCRS The affine transform from which to extract the cell size.
      * @return The cell size as a positive and non-null value.
@@ -283,6 +287,38 @@ public class MetadataHelper {
             }
         }
         throw new IIOException(error(Errors.Keys.PIXELS_NOT_SQUARE_OR_ROTATED_IMAGE));
+    }
+
+    /**
+     * Returns the dimension of pixels, or {@code null} if not applicable. The {@code gridToCRS}
+     * argument is typically the output of {@link #getAffineTransform getAffineTransform}. This
+     * method checks if the given transform complies with the following conditions:
+     * <p>
+     * <ul>
+     *   <li>The {@link AffineTransform#getShearX() shearX}
+     *       and {@link AffineTransform#getShearY() shearY} coefficients are zero.</li>
+     * </ul>
+     * <p>
+     * If this condition is meet, then {@code scaleX} and <strong>the negative value</strong>
+     * of {@code scaleY} (because the Y axis is assumed reversed) are returned in a new
+     * {@link Dimension2D} object. Otherwise {@code null} is returned. This behavior is
+     * convenient for code like the {@linkplain org.geotoolkit.image.io.text.AsciiGridWriter
+     * ASCII Grid writer}, which require square pixels unless some extensions are enabled for
+     * rectangular pixel.
+     *
+     * @param  gridToCRS The affine transform from which to extract the cell size.
+     * @return The cell dimension, or {@code null} if the image is rotated.
+     */
+    public Dimension2D getCellDimension(final AffineTransform gridToCRS) {
+        final double dx =  gridToCRS.getScaleX();
+        final double dy = -gridToCRS.getScaleY();
+        final double tol = Math.max(Math.abs(dx), Math.abs(dy)) * EPS;
+        if (Math.abs(gridToCRS.getShearX()) <= tol &&
+            Math.abs(gridToCRS.getShearY()) <= tol)
+        {
+            return new DoubleDimension2D(dx, dy);
+        }
+        return null;
     }
 
     /**

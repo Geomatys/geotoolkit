@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.text;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
 import java.awt.image.DataBuffer;
 import java.util.Locale;
 import java.io.BufferedWriter;
@@ -83,7 +84,13 @@ import org.geotoolkit.resources.Errors;
  *   <tr>
  *     <td>&nbsp;{@code CELLSIZE}&nbsp;</td>
  *     <td>&nbsp;Floating point&nbsp;</td>
- *     <td>&nbsp;Mandatory&nbsp;</td>
+ *     <td>&nbsp;Mandatory, unless {@code DX} and {@code DY} are allowed.&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code DX} and {@code DY}&nbsp;</td>
+ *     <td>&nbsp;Floating point&nbsp;</td>
+ *     <td>&nbsp;Forbidden if {@linkplain #setStrictCellSize strict cell size}
+ *         has been set to {@code false}&nbsp;</td>
  *   </tr>
  *   <tr>
  *     <td>&nbsp;{@code NODATA_VALUE}&nbsp;</td>
@@ -91,6 +98,12 @@ import org.geotoolkit.resources.Errors;
  *     <td>&nbsp;Optional, default to -9999&nbsp;</td>
  *   </tr>
  * </table>
+ * <p>
+ * The {@code DX} and {@code DY} attributes are non-standard, but recognized by the GDAL library
+ * and Golden Surfer as <a href="http://www.gdal.org/frmt_various.html#AAIGrid">documented here</a>.
+ * The default {@code AsciiGridWriter} behavior is to use those parameters if the image has rectangular
+ * pixels, unless <code>{@linkplain #setStrictCellSize(boolean) setStrictCellSize}(true)</code> is
+ * invoked.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
@@ -109,12 +122,48 @@ public class AsciiGridWriter extends TextImageWriter {
     private static final String DEFAULT_FILL = "-9999";
 
     /**
+     * {@code true} if attempts to write an image with non-square pixels should throw an
+     * exception, or {@code false} for allowing the use of the {@code DX} and {@code DY}
+     * in such case.
+     */
+    private boolean strictCellSize;
+
+    /**
      * Constructs a new image writer.
      *
      * @param provider the provider that is invoking this constructor, or {@code null} if none.
      */
     protected AsciiGridWriter(final ImageWriterSpi provider) {
         super(provider);
+    }
+
+    /**
+     * Sets whatever the policy about the {@code CELLSIZE} attribute is to be strict.
+     * If {@code true}, attempts to write an image with non-square pixels will throw an
+     * exception. If {@code false} (the default) and an image has rectangular pixels, then
+     * the {@code DX} and {@code DY} attributes will be used instead of {@code CELLSIZE}
+     * and a warning will be emitted.
+     * <p>
+     * The {@code DX} and {@code DY} attributes are non-standard, but recognized by the GDAL
+     * library and Golden Surfer. The default value is {@code false}, thus allowing creation
+     * of non-standard ASCII grid file.
+     *
+     * @param strict {@code true} if attempts to write an image with non-square pixels should
+     *        throw an exception, or {@code false} for emitting a warning instead.
+     */
+    public void setStrictCellSize(final boolean strict) {
+        strictCellSize = strict;
+    }
+
+    /**
+     * Returns the value set by the last call to {@link #setStrictCellSize(boolean)}.
+     * The default value is {@code false}.
+     *
+     * @return {@code true} if attempts to write an image with non-square pixels should
+     *         throw an exception, or {@code false} for emitting a warning instead.
+     */
+    public boolean getStrictCellSize() {
+        return strictCellSize;
     }
 
     /**
@@ -154,7 +203,21 @@ public class AsciiGridWriter extends TextImageWriter {
         }
         header.put(xll, String.valueOf(gridToCRS.getTranslateX()));
         header.put(yll, String.valueOf(gridToCRS.getTranslateY()));
-        header.put("CELLSIZE", String.valueOf(helper.getCellSize(gridToCRS)));
+        /*
+         * Use the CELLSIZE attribute if the pixels are square, or the DX, DY attibutes
+         * if they are rectangular and we are allowed to use those non-standard attributes.
+         */
+        try {
+            header.put("CELLSIZE", String.valueOf(helper.getCellSize(gridToCRS)));
+        } catch (IIOException e) {
+            final Dimension2D size;
+            if (strictCellSize || (size = helper.getCellDimension(gridToCRS)) == null) {
+                throw e;
+            }
+            warning(AsciiGridWriter.class, "writeHeader", e);
+            header.put("DX", String.valueOf(size.getWidth()));
+            header.put("DY", String.valueOf(size.getHeight()));
+        }
         /*
          * Get the fill sample value, which is optional. The default defined by
          * the ASCII grid format is -9999.

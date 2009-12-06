@@ -24,6 +24,8 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
@@ -37,6 +39,7 @@ import javax.media.jai.iterator.RectIter;
 
 import org.geotoolkit.image.io.StreamImageWriter;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -316,6 +319,26 @@ public abstract class TextImageWriter extends StreamImageWriter {
     protected void close() throws IOException {
         writer = null;
         super.close();
+    }
+
+    /**
+     * Emits a warning from the given class and method for the given exception.
+     * We put the name of the exception class in the message only if the exception does
+     * not provide a localized message, or that message is made of only one word.
+     */
+    final void warning(final Class<?> classe, final String method, final Exception exception) {
+        String message = exception.getLocalizedMessage();
+        if (message == null || ((message = message.trim()).indexOf(' ') < 0)) {
+            final String word = message;
+            message = Classes.getShortClassName(exception);
+            if (word != null) {
+                message = message + ": " + word;
+            }
+        }
+        final LogRecord record = new LogRecord(Level.WARNING, message);
+        record.setSourceClassName(classe.getName());
+        record.setSourceMethodName(method);
+        warningOccurred(record);
     }
 
     /**

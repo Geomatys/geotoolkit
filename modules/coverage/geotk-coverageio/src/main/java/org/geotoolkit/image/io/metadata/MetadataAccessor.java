@@ -1656,15 +1656,21 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     /**
      * Convenience flavor of {@link #warning(String, int, Object)} with a message fetched
      * from the given exception. This is invoked when we failed to parse an attribute.
+     * <p>
+     * We put the name of the exception class in the message only if the exception does
+     * not provide a localized message, or that message is made of only one word.
      */
     final void warning(final Class<?> classe, final String method, final Exception exception) {
         if (!Level.OFF.equals(warningsLevel)) {
-            String text = Classes.getShortClassName(exception);
-            final String message = exception.getLocalizedMessage();
-            if (message != null) {
-                text = text + ": " + message;
+            String message = exception.getLocalizedMessage();
+            if (message == null || ((message = message.trim()).indexOf(' ') < 0)) {
+                final String word = message;
+                message = Classes.getShortClassName(exception);
+                if (word != null) {
+                    message = message + ": " + word;
+                }
             }
-            final LogRecord record = new LogRecord(warningsLevel, text);
+            final LogRecord record = new LogRecord(warningsLevel, message);
             record.setSourceClassName(classe.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
