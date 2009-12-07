@@ -35,4 +35,7 @@ public abstract class AbstractService {
     
     public abstract String getAbstract();
 
+    public abstract String getAccessConstraints();
+
+    public abstract void setAccessConstraints(final String constraint);
 }

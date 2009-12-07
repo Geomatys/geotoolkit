@@ -142,10 +142,12 @@ public class Service extends AbstractService {
     * Gets the value of the accessConstraints property.
     * 
     */
+    @Override
     public String getAccessConstraints() {
         return accessConstraints;
     }
 
+    @Override
     public void setAccessConstraints(final String constraint) {
         this.accessConstraints = constraint;
     }

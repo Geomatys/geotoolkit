@@ -188,6 +188,7 @@ public class Service extends AbstractService {
     * Gets the value of the accessConstraints property.
     * 
     */
+    @Override
     public String getAccessConstraints() {
         return accessConstraints;
     }
@@ -214,6 +215,7 @@ public class Service extends AbstractService {
         return maxHeight;
     }
 
+    @Override
     public void setAccessConstraints(final String constraint) {
         this.accessConstraints = constraint;
     }
