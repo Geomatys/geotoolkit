@@ -108,7 +108,9 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
         if(observedProperty != null){
             this.observedProperty = Arrays.asList(new PhenomenonPropertyType(observedProperty));
         }
-        this.featureOfInterest = Arrays.asList(featureOfInterest);
+        if (featureOfInterest != null) {
+            this.featureOfInterest = Arrays.asList(featureOfInterest);
+        }
         this.responseFormat    = responseFormat;
         this.resultModel       = resultModel;
         this.responseMode      = responseMode;
