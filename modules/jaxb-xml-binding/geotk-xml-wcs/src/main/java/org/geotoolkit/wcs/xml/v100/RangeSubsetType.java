@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.RangeSubset;
 
 
 /**
@@ -60,10 +61,16 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "RangeSubsetType", propOrder = {
     "axisSubset"
 })
-public class RangeSubsetType {
+public class RangeSubsetType implements RangeSubset {
 
     @XmlElement(required = true)
     private List<RangeSubsetType.AxisSubset> axisSubset;
+
+    public RangeSubsetType(){}
+
+    public RangeSubsetType(final List<RangeSubsetType.AxisSubset> axisSubset) {
+        this.axisSubset = axisSubset;
+    }
 
     /**
      * Gets the value of the axisSubset property.
@@ -100,6 +107,13 @@ public class RangeSubsetType {
 
         @XmlAttribute(required = true)
         private String name;
+
+        public AxisSubset() {}
+
+        public AxisSubset(final String name, final List<Object> objects) {
+            super(objects);
+            this.name = name;
+        }
 
         /**
          * Gets the value of the name property.

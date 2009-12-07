@@ -81,5 +81,7 @@ public interface GetCoverage extends Versioned {
      */
     String getTime();
 
+    RangeSubset getRangeSubset();
+
     String toKvp();
 }

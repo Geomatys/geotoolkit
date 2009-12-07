@@ -51,6 +51,12 @@ public class IntervalType extends ValueRangeType {
 
     private TypedLiteralType res;
 
+    public IntervalType() {}
+
+    public IntervalType(final TypedLiteralType min, final TypedLiteralType max) {
+        super(min, max, "xs:double");
+    }
+
     /**
      * Gets the value of the res property.
      */

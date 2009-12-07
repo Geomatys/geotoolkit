@@ -132,6 +132,7 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Gets the value of the rangeSubset property.
      */
+    @Override
     public RangeSubsetType getRangeSubset() {
         return rangeSubset;
     }

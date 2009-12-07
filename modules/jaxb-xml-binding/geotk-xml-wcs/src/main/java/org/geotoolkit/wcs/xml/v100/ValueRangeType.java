@@ -77,6 +77,14 @@ public class ValueRangeType {
     @XmlAttribute(namespace = "http://www.opengis.net/wcs")
     private List<String> closure;
 
+    public ValueRangeType() {}
+
+    public ValueRangeType(final TypedLiteralType min, final TypedLiteralType max, final String type) {
+        this.min = min;
+        this.max = max;
+        this.type = type;
+    }
+
     /**
      * Gets the value of the min property.
      */

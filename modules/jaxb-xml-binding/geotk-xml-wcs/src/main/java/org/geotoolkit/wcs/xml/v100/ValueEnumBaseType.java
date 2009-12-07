@@ -66,6 +66,12 @@ public class ValueEnumBaseType {
     })
     private List<Object> intervalOrSingleValue;
 
+    public ValueEnumBaseType() {}
+
+    public ValueEnumBaseType(final List<Object> objects) {
+        intervalOrSingleValue = objects;
+    }
+
     /**
      * Gets the value of the intervalOrSingleValue property.
      * (unmodifiable)

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CodeType;
+import org.geotoolkit.wcs.xml.RangeSubset;
 
 
 /**
@@ -64,7 +65,7 @@ import org.geotoolkit.ows.xml.v110.CodeType;
 @XmlType(name = "RangeSubsetType", propOrder = {
     "fieldSubset"
 })
-public class RangeSubsetType {
+public class RangeSubsetType implements RangeSubset {
 
     @XmlElement(name = "FieldSubset", required = true)
     private List<RangeSubsetType.FieldSubset> fieldSubset;

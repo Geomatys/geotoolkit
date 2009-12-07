@@ -56,6 +56,13 @@ public class TypedLiteralType {
     @XmlSchemaType(name = "anyURI")
     private String type;
 
+    public TypedLiteralType() {}
+
+    public TypedLiteralType(final String value, final String type) {
+        this.value = value;
+        this.type = type;
+    }
+
     /**
      * Gets the value of the value property.
      */
