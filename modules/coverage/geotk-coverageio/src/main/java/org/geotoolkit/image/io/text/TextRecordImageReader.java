@@ -490,9 +490,9 @@ public class TextRecordImageReader extends TextImageReader {
          */
         final int numDstBands = (dstBands != null) ? dstBands.length :
                                 (srcBands != null) ? srcBands.length : numSrcBands;
-        checkReadParamBandSettings(param, numSrcBands, numDstBands);
         final SampleConverter[] converters = new SampleConverter[numDstBands];
         final BufferedImage image = getDestination(imageIndex, param, width, height, converters);
+        checkReadParamBandSettings(param, numSrcBands, image.getSampleModel().getNumBands());
 
         final Rectangle srcRegion = new Rectangle();
         final Rectangle dstRegion = new Rectangle();

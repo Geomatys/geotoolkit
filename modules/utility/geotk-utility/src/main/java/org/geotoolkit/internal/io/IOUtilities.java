@@ -193,7 +193,7 @@ public final class IOUtilities {
      * Note that this method converts {@link URI} objects to {@link URL}.
      *
      * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
-     * @param  extension The new extension.
+     * @param  extension The new extension, without leading dot.
      * @return The path with the new extension, or {@code null} if the given object has
      *         not been recognized.
      * @throws MalformedURLException If the given object is an {@link URI} or {@link URL},

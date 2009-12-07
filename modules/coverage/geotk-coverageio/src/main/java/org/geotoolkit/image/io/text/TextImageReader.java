@@ -34,6 +34,7 @@ import org.geotoolkit.io.LineFormat;
 import org.geotoolkit.image.io.StreamImageReader;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -324,9 +325,23 @@ public abstract class TextImageReader extends StreamImageReader {
     }
 
     /**
+     * Convenience method for logging a warning from the given exception.
+     */
+    final void warning(final Class<?> caller, final String method, final Exception exception) {
+        String message = exception.getLocalizedMessage();
+        if (message == null) {
+            message = Classes.getShortClassName(exception);
+        }
+        final LogRecord record = new LogRecord(Level.WARNING, message);
+        record.setSourceClassName(caller.getName());
+        record.setSourceMethodName(method);
+        warningOccurred(record);
+    }
+
+    /**
      * Convenience method for logging a warning from the given method.
      */
-    final void warningOccurred(final Class<?> caller, final String method,
+    final void warning(final Class<?> caller, final String method,
             final int key, final Object... arguments)
     {
         final LogRecord record = Errors.getResources(getLocale())

@@ -121,6 +121,17 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     }
 
     /**
+     * Clears the cache. This method is invoked when a new input is set or when the reader
+     * is disposed. Sub-classes may override this method if they have more cache elements,
+     * but should always invoke {@code super.clearCache()}.
+     *
+     * @todo For now we do not allow overriding. This is a hook for possible future development.
+     */
+    private void clearCache() {
+        metadata = null;
+    }
+
+    /**
      * Sets the input source to use.
      *
      * @param input           The input object to use for future decoding.
@@ -130,7 +141,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      */
     @Override
     public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
-        metadata = null; // Clears the cache
+        clearCache();
         super.setInput(input, seekForwardOnly, ignoreMetadata);
     }
 
@@ -422,7 +433,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      *             without shifting the valid values if this shift can be avoided.</li>
      *         <li>At least one {@linkplain SampleDimension#getFillSampleValues() fill value} is
      *             far away from the {@linkplain SampleDimension#getValidSampleValues() range of
-     *             valid values} (for example 9999 while the range of valid values is [0..255]).
+     *             valid values} (for example 9999 while the range of valid values is [0&hellip;255]).
      *             The meaning of "far away" is determined by the {@link #collapseNoDataValues
      *             collapseNoDataValues} method.</li>
      *       </ul>
@@ -793,15 +804,15 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      *   <li><p>If this method returns {@link DataBuffer#TYPE_SHORT}, then the data will be
      *       stored "as is" without transformation. However the {@linkplain IndexColorModel
      *       index color model} will have the maximal length allowed by 16 bits integers, with
-     *       positive values in the [0 .. {@value java.lang.Short#MAX_VALUE}] range and negative
-     *       values wrapped in the [32768 .. 65535] range in two's complement binary form. The
+     *       positive values in the [0 &hellip; {@value java.lang.Short#MAX_VALUE}] range and negative
+     *       values wrapped in the [32768 &hellip; 65535] range in two's complement binary form. The
      *       results is a color model consuming 256 kilobytes in every cases. The space not used
-     *       by the [-23000 .. +23000] range (in the above example) is lost.</p></li>
+     *       by the [-23000 &hellip; +23000] range (in the above example) is lost.</p></li>
      *
      *   <li><p>If this method returns {@link DataBuffer#TYPE_USHORT}, then the data will be
      *       translated to the smallest strictly positive range that can holds the data
-     *       ([1..46000] for the above example). Value 0 is reserved for missing data. The
-     *       result is a smaller {@linkplain IndexColorModel index color model} than the
+     *       ([1 &hellip; 46000] for the above example). Value 0 is reserved for missing data.
+     *       The result is a smaller {@linkplain IndexColorModel index color model} than the
      *       one used by untranslated data.</p></li>
      * </ul>
      *
@@ -852,8 +863,8 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      * is determined by inspecting the supplied parameters if it is non-null, as described
      * in the {@linkplain #getDestination(ImageReadParam,Iterator,int,int) super-class method}.
      * <p>
-     * Implementations of the {@link #read(int,ImageReadParam)} method should invoke this
-     * method instead of {@link #getDestination(ImageReadParam,Iterator,int,int)}.
+     * Implementations of the {@link #read(int, ImageReadParam)} method should invoke this
+     * method instead of {@link #getDestination(ImageReadParam, Iterator, int, int)}.
      *
      * @param  imageIndex The index of the image to be retrieved.
      * @param  parameters The parameter given to the {@code read} method.
@@ -996,6 +1007,6 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      * To be overriden and made {@code protected} by {@link StreamImageReader} only.
      */
     void close() throws IOException {
-        metadata = null;
+        clearCache();
     }
 }

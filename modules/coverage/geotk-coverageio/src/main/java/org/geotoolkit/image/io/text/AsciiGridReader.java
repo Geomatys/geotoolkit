@@ -17,33 +17,46 @@
  */
 package org.geotoolkit.image.io.text;
 
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.stream.ImageInputStream;
 
 import javax.media.jai.iterator.RectIterFactory;
 import javax.media.jai.iterator.WritableRectIter;
-import org.geotoolkit.image.io.SampleConverter;
+import com.sun.media.imageio.stream.RawImageInputStream;
+
 import org.opengis.metadata.spatial.PixelOrientation;
 
+import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.stream.ChannelImageInputStream;
+import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.resources.Errors;
 
@@ -55,17 +68,26 @@ import org.geotoolkit.resources.Errors;
  * <p>
  * ASCII grid files contains a header before the actual data. The header contains (<var>key</var>
  * <var>value</var>) pairs, one pair per line and using the space as the separator between key and
- * value. The valid keys are listed in table below. Note that Geotk adds three extensions to the
- * standard ASCII grid format:
+ * value. The valid keys are listed in table below (see the
+ * <a href="http://daac.ornl.gov/MODIS/ASCII_Grid_Format_Description.html">ASCII Grid Format
+ * Description</a> for more details). Note that Geotk adds some extensions to the standard
+ * ASCII grid format:
  * <p>
  * <ul>
  *   <li>{@linkplain #isComment(String) Comment lines} and empty lines are ignored.</li>
  *   <li>The {@code '='} and {@code ':'} characters can be used as a separator between
  *       the keys and the values.</li>
+ *   <li>The {@code CELLSIZE} attribute can be substitued by the {@code DX} and {@code DY}
+ *       attributes. {@code DX}/{@code DY} are not standard, but can be produced by the GDAL
+ *       library. See <a href="http://www.gdal.org/frmt_various.html#AAIGrid">GDAL notes</a>
+ *       for more information.</li>
  *   <li>The {@code "MIN_VALUE"} and {@code "MAX_VALUE"} attributes are Geotk extensions
  *       not defined in the ASCII Grid standard. While optional, they are quite convenient
  *       for setting the color space.</li>
  * </ul>
+ * <p>
+ * Subclasses can add their own (<var>key</var>, <var>value</var>) pairs, or modify the
+ * ones defined below, by overriding the {@link #processHeader(Map)} method.
  * <p>
  * <table border="1" cellspacing="0">
  *   <tr bgcolor="lightblue">
@@ -96,7 +118,12 @@ import org.geotoolkit.resources.Errors;
  *   <tr>
  *     <td>&nbsp;{@code CELLSIZE}&nbsp;</td>
  *     <td>&nbsp;Floating point&nbsp;</td>
- *     <td>&nbsp;Mandatory&nbsp;</td>
+ *     <td>&nbsp;Mandatory, unless {@code DX} and {@code DY} are present&nbsp;</td>
+ *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code DX} and {@code DY}&nbsp;</td>
+ *     <td>&nbsp;Floating point&nbsp;</td>
+ *     <td>&nbsp;Accepted but non-standard&nbsp;</td>
  *   </tr>
  *   <tr>
  *     <td>&nbsp;{@code NODATA_VALUE}&nbsp;</td>
@@ -113,10 +140,20 @@ import org.geotoolkit.resources.Errors;
  *     <td>&nbsp;Floating point&nbsp;</td>
  *     <td>&nbsp;Optional - this is a Geotk extension&nbsp;</td>
  *   </tr>
+ *   <tr>
+ *     <td>&nbsp;{@code BINARY_TYPE}&nbsp;</td>
+ *     <td>&nbsp;String&nbsp;</td>
+ *     <td>&nbsp;Optional - this is a Geotk extension&nbsp;</td>
+ *   </tr>
  * </table>
  * <p>
- * Subclasses can add their own (<var>key</var>, <var>value</var>) pairs, or modify the values
- * of the ones defined above, by overriding the {@link #processHeader(Map)} method.
+ * {@code BINARY_TYPE} is a Geotk extension provided for performance only. If this attribute
+ * is provided and if the input is a {@link java.io.File}, {@link java.net.URL} or
+ * {@link java.net.URI}, then {@code AsciiGridReader} will looks for a file of the same name
+ * with the {@code ".raw"} extension. If this file is found, then the data in the ASCII file
+ * will be ignored (they can be non-existant) and the RAW file will be read instead, which is
+ * usually much faster. The value of the {@code BINARY_TYPE} attribute specify the data type:
+ * {@code BYTE}, {@code SHORT}, {@code USHORT}, {@code INT}, {@code FLOAT} or {@code DOUBLE}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
@@ -162,10 +199,10 @@ public class AsciiGridReader extends TextImageReader {
     private boolean xCenter, yCenter;
 
     /**
-     * The {@code CELLSIZE} attribute.
+     * The {@code CELLSIZE} attribute, or the {@code DX} and {@code DY} attributes.
      * This value is valid only if {@link #headerValid} is {@code true}.
      */
-    private double cellsize;
+    private double scaleX, scaleY;
 
     /**
      * The optional {@code NODATA_VALUE} attribute, or {@code NaN} if none.
@@ -177,6 +214,19 @@ public class AsciiGridReader extends TextImageReader {
      * The minimum and maximum values, or infinities if they are not specified.
      */
     private double minValue, maxValue;
+
+    /**
+     * If a binary type has been specified, the corresponding {@link DataBuffer}
+     * constant. Otherwise {@link DataBuffer#TYPE_UNDEFINED}. This information is
+     * valid only if {@link headerValid} is {@code true}.
+     */
+    private int binaryType;
+
+    /**
+     * The image reader for reading binary images, or {@code null} if not needed.
+     * This is used only if {@link #binaryType} is defined.
+     */
+    private transient ImageReader binaryReader;
 
     /**
      * The buffer used for data transfert. This is created only when first needed.
@@ -208,10 +258,17 @@ public class AsciiGridReader extends TextImageReader {
             processHeader(header);
             String key = null;
             try {
-                width    = Integer.parseInt  (ensureDefined(key = "NCOLS",    header.remove(key)));
-                height   = Integer.parseInt  (ensureDefined(key = "NROWS",    header.remove(key)));
-                cellsize = Double.parseDouble(ensureDefined(key = "CELLSIZE", header.remove(key)));
-                String value = header.remove(key = "NODATA_VALUE");
+                width  = Integer.parseInt(ensureDefined(key = "NCOLS", header.remove(key)));
+                height = Integer.parseInt(ensureDefined(key = "NROWS", header.remove(key)));
+                String value = header.remove(key = "CELLSIZE");
+                if (value != null) {
+                    scaleX = scaleY = Double.parseDouble(value);
+                } else {
+                    // If missing, declare that CELLSIZE is missing since DX and DY are not standard.
+                    scaleX = Double.parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DX")));
+                    scaleY = Double.parseDouble(ensureDefined("CELLSIZE", header.remove(key = "DY")));
+                }
+                value = header.remove(key = "NODATA_VALUE");
                 fillValue = (value != null) ? Double.parseDouble(value) : super.getPadValue(0);
                 value = header.remove(key = "MIN_VALUE");
                 minValue = (value != null) ? Double.parseDouble(value) : Double.NEGATIVE_INFINITY;
@@ -234,12 +291,24 @@ public class AsciiGridReader extends TextImageReader {
                 ex.initCause(cause);
                 throw ex;
             }
+            /*
+             * The binary format, which is a Geotk extension.
+             */
+            binaryType = DataBuffer.TYPE_UNDEFINED;
+            String value = header.remove("BINARY_TYPE");
+            if (value != null) {
+                binaryType = DataTypes.decode(value);
+                if (binaryType == DataBuffer.TYPE_UNDEFINED) {
+                    warning(AsciiGridReader.class, "readHeader",
+                            Errors.Keys.BAD_PARAMETER_$2, "BINARY_TYPE", value);
+                }
+            }
             headerValid = true;
             /*
              * We should not have any entry left.
              */
             for (final String extra : header.keySet()) {
-                warningOccurred(AsciiGridReader.class, "readHeader", Errors.Keys.UNKNOW_PARAMETER_$1, extra);
+                warning(AsciiGridReader.class, "readHeader", Errors.Keys.UNKNOW_PARAMETER_$1, extra);
             }
         }
     }
@@ -372,6 +441,7 @@ readLine:   while (true) {
      */
     @Override
     public int getWidth(int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
         ensureHeaderRead();
         return width;
     }
@@ -386,8 +456,25 @@ readLine:   while (true) {
      */
     @Override
     public int getHeight(int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
         ensureHeaderRead();
         return height;
+    }
+
+    /**
+     * Returns the data type which most closely represents the "raw" internal data of the image.
+     * If a {@code "BINARY_TYPE"} attribute is presents in the header, then the code corresponding
+     * to that attribute is returned. Otherwise {@link DataBuffer#TYPE_FLOAT} is returned.
+     *
+     * @param  imageIndex The index of the image to be queried.
+     * @return The data type ({@link DataBuffer#TYPE_FLOAT} by default).
+     * @throws IOException If an error occurs reading the format information from the input source.
+     */
+    @Override
+    protected int getRawDataType(int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
+        ensureHeaderRead();
+        return (binaryType != DataBuffer.TYPE_UNDEFINED) ? binaryType : DataBuffer.TYPE_FLOAT;
     }
 
     /**
@@ -413,13 +500,13 @@ readLine:   while (true) {
             // we are reverting the direction of the y axis in the computation of origin
             // and offset vectors.
         }
-        final double[] origin = new double[] {xll, yll + cellsize * (height - (yCenter ? 1 : 0))};
-        final double[] bounds = new double[] {xll + cellsize * (width - (xCenter ? 1 : 0)), yll};
+        final double[] origin = new double[] {xll, yll + scaleX * (height - (yCenter ? 1 : 0))};
+        final double[] bounds = new double[] {xll + scaleY * (width - (xCenter ? 1 : 0)), yll};
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
         final GridDomainAccessor domain = new GridDomainAccessor(metadata);
         domain.setOrigin(origin);
-        domain.addOffsetVector(cellsize, 0);
-        domain.addOffsetVector(0, -cellsize);
+        domain.addOffsetVector(scaleX, 0);
+        domain.addOffsetVector(0, -scaleY);
         domain.setLimits(new int[2], new int[] {width-1, height-1});
         domain.setSpatialRepresentation(origin, bounds, null, po);
         final boolean hasRange = !Double.isInfinite(minValue) && !Double.isInfinite(maxValue);
@@ -460,14 +547,25 @@ readLine:   while (true) {
      */
     @Override
     public BufferedImage read(int imageIndex, final ImageReadParam param) throws IOException {
+        clearAbortRequest();
+        checkImageIndex(imageIndex);
         processImageStarted(imageIndex);
         ensureHeaderRead();
+        if (binaryType != DataBuffer.TYPE_UNDEFINED) {
+            /*
+             * Optional Geotk extension: if a binary file is present, reads
+             * that file instead than the ASCII file. This is much faster.
+             */
+            final BufferedImage image = readBinary(imageIndex, param);
+            if (image != null) {
+                return image;
+            }
+        }
         /*
          * Parameters check.
          */
         final int numSrcBands = 1; // To be modified in a future version if we support multi-bands.
         final int numDstBands = 1;
-        checkImageIndex(imageIndex);
         checkReadParamBandSettings(param, numSrcBands, numDstBands);
         /*
          * Extract user's parameters.
@@ -612,11 +710,86 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
     }
 
     /**
+     * Reads the binary file associated with the ASCII file. This is a Geotk extension
+     * enabled only if the {@code "BINARY_TYPE"} attribute is present.
+     * <p>
+     * Note that this method reuses the existing {@linkplain #buffer}. Consequently, if this
+     * method returns a non-null image, then any previous content of the buffer is lost. If
+     * this method returns {@code null}, then the previous content still valid.
+     *
+     * @param  input The file, URL or URI to the binary file.
+     * @param  param The parameter of the image to be read.
+     * @return The image, or {@code null} if this method can not process.
+     * @throws IOException If an error occured while reading the binary file.
+     */
+    private BufferedImage readBinary(final int imageIndex, final ImageReadParam param) throws IOException {
+        Object binaryInput = IOUtilities.changeExtension(input, "raw");
+        if (binaryInput == null || binaryInput == input) {
+            // The input type is unknown, or the extension is already "raw".
+            return null;
+        }
+        /*
+         * The binary file is optional. In the particular case of File input,
+         * we perform a test cheaper than the attempt to open the connection.
+         * We also check for the existence of the RAW image reader before to
+         * attempt to open the connection.
+         */
+        if (binaryInput instanceof File) {
+            final File file = (File) binaryInput;
+            if (!file.isFile() || !file.canRead()) {
+                return null;
+            }
+        }
+        if (binaryReader == null) {
+            final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("raw");
+            if (!it.hasNext()) {
+                return null;
+            }
+            binaryReader = it.next();
+        }
+        final InputStream binaryStream;
+        try {
+            binaryStream = IOUtilities.open(binaryInput);
+        } catch (IOException e) {
+            warning(AsciiGridReader.class, "readBinary", e);
+            return null;
+        }
+        /*
+         * At this point we have successfully opened a connection to the binary stream.
+         * Make the buffer empty before to use it. Now we are not allowed to return null
+         * anymore since we have destroyed the previous buffer content.
+         */
+        final BufferedImage image;
+        try {
+            buffer.clear().limit(0);
+            final ImageInputStream in = new ChannelImageInputStream(Channels.newChannel(binaryStream), buffer);
+            final SampleConverter[] converters = new SampleConverter[1];
+            final ImageTypeSpecifier type = getImageType(imageIndex, param, converters);
+            final RawImageInputStream rawStream = new RawImageInputStream(in, type, new long[1],
+                    new Dimension[] {new Dimension(width, height)});
+            try {
+                binaryReader.setInput(rawStream, true, true);
+                image = binaryReader.read(imageIndex, param);
+            } finally {
+                rawStream.close();
+            }
+        } finally {
+            binaryStream.close();
+            binaryReader.reset();
+        }
+        return image;
+    }
+
+    /**
      * Allows any resources held by this reader to be released.
      */
     @Override
     public void dispose() {
         buffer = null;
+        if (binaryReader != null) {
+            binaryReader.dispose();
+            binaryReader = null;
+        }
         super.dispose();
     }
 
