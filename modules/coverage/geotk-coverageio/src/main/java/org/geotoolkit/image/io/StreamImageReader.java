@@ -350,7 +350,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @author Martin Desruisseaux (IRD, Geomatys)
      * @version 3.07
      *
-     * @see StreamImageWriter#Spi
+     * @see StreamImageWriter.Spi
      *
      * @since 2.4
      * @module

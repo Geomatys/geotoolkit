@@ -26,7 +26,7 @@ import com.sun.media.imageio.stream.FileChannelImageInputStream;
 
 
 /**
- * An {@linkplain ImageInputStream Image Input Stream} using a {@linkplain FileChannel FileChannel}
+ * An {@linkplain ImageInputStream Image Input Stream} using a {@linkplain FileChannel File Channel}
  * as the data source. This implementation differs from the Sun's parent implementation in three
  * ways:
  * <p>

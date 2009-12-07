@@ -40,18 +40,28 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Wraps a {@link Channel} into an {@link ImageInputStream}. Using this class is similar
- * to using the code below:
+ * An {@linkplain ImageInputStream Image Input Stream} using a {@linkplain ReadableByteChannel
+ * Readable Byte Channel} as the data source. Using this class is similar to using the code below:
  *
  * {@preformat java
- *     stream = ImageIO.createImageInputStream(Channels.newInputStream(channel));
+ *     import javax.imageio.ImageIO;
+ *     import java.nio.channels.Channels;
+ *
+ *     // Omitting class and method declaration...
+ *
+ *     ReadableByteChannel channel = ...;
+ *     ImageInputStream stream = ImageIO.createImageInputStream(Channels.newInputStream(channel));
  * }
  *
- * except that this class is both and {@link InputStream} and an {@link ImageInputStream},
- * it delegates most of the work to the underlying {@link ByteBuffer} (by constrast, the
- * standard {@link javax.imageio.stream.ImageInputStreamImpl} performs many work itself,
- * including the {@linkplain ByteOrder byte order} handling), and this class can uses an
- * existing buffer supplied by the caller.
+ * except that:
+ * <p>
+ * <ul>
+ *   <li>This class is both and {@link InputStream} and an {@link ImageInputStream}.</li>
+ *   <li>It delegates most of the work to the underlying {@link ByteBuffer} (by constrast,
+ *       the standard {@link javax.imageio.stream.ImageInputStreamImpl} performs many work
+ *       itself, including the {@linkplain ByteOrder byte order} handling).</li>
+ *   <li>This class can uses an existing buffer supplied by the caller.</li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
@@ -307,7 +317,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
 
     /**
      * Returns the current bit offset, as an integer between 0 and 7 inclusive. Note that the
-     * bit offset is reset to 0 by every call to a {@code read} methods except {@link #readBit())
+     * bit offset is reset to 0 by every call to a {@code read} methods except {@link #readBit()}
      * and {@link #readBits(int)}.
      *
      * @return The bit offset of the stream.
@@ -320,7 +330,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
 
     /**
      * Sets the bit offset to the given value. Note that the bit offset is implicitly reset to 0
-     * by every call to a {@code read} methods except {@link #readBit()) and {@link #readBits(int)}.
+     * by every call to a {@code read} methods except {@link #readBit()} and {@link #readBits(int)}.
      *
      * @param bitOffset The new bit offset of the stream.
      * @throws IOException if an I/O error occurs.
@@ -347,7 +357,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * Reads a single byte from the stream and returns it as an int between 0 and 255.
      * If EOF is reached, -1 is returned.
      *
-     * @return The value of the next byte in the stream, or {@code-1} on EOF.
+     * @return The value of the next byte in the stream, or {@code -1} on EOF.
      * @throws IOException If an error occured while reading.
      */
     @Override
@@ -364,7 +374,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
     /**
      * Reads a single bit from the stream. The bit to be read depends on the
      * {@linkplain #getBitOffset() current bit offset}. Note that the bit offset is reset
-     * to 0 by every {@code read} methods except {@code readBit()) and {@link #readBits(int)}.
+     * to 0 by every {@code read} methods except {@code readBit()} and {@link #readBits(int)}.
      *
      * @return The value of the next bit from the stream.
      * @throws IOException If an error occured while reading (including EOF).
@@ -386,7 +396,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
     /**
      * Reads many bits from the stream. The first bit to be read depends on the
      * {@linkplain #getBitOffset() current bit offset}. Note that the bit offset is reset
-     * to 0 by every {@code read} methods except {@code readBit()) and {@link #readBits(int)}.
+     * to 0 by every {@code read} methods except {@code readBit()} and {@link #readBits(int)}.
      *
      * @param  numBits The number of bits to read.
      * @return The value of the next bits from the stream.

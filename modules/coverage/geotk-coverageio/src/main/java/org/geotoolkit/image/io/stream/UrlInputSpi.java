@@ -33,7 +33,7 @@ import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * A service provider for {@link ImageInputStream} from {@link URL} connection.
+ * A service provider for creating {@link ImageInputStream}s from {@link URL}s.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

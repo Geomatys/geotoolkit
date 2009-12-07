@@ -251,7 +251,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * @author Martin Desruisseaux (IRD)
      * @version 3.00
      *
-     * @see StreamImageReader#Spi
+     * @see StreamImageReader.Spi
      *
      * @since 2.4
      * @module

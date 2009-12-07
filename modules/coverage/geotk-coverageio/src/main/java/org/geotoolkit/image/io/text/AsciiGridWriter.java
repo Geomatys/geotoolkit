@@ -367,7 +367,7 @@ public class AsciiGridWriter extends TextImageWriter {
 
     /**
      * Service provider interface (SPI) for {@link AsciiGridWriter}s. This SPI provides
-     * the necessary implementation for creating default {@link AsciiGriWriter}s using
+     * the necessary implementation for creating default {@link AsciiGridWriter}s using
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
      * <p>

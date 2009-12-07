@@ -24,7 +24,7 @@ import org.geotoolkit.lang.Static;
 
 
 /**
- * Utilities methods related to umage compression.
+ * Utilities methods related to image compression.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

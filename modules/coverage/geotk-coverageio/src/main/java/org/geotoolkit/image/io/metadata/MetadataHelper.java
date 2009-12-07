@@ -327,7 +327,7 @@ public class MetadataHelper {
      * an exception because they have a very deep impact on performance, especially the scale
      * factors: integer scales are often processed by optimized loops much faster than the loops
      * for fractional scales, and operations like matrix multiplications are more likely to produce
-     * special cases like the {@link AffineTransform#isidentity() identity transform} when the
+     * special cases like the {@linkplain AffineTransform#isIdentity() identity transform} when the
      * initial matrix coefficients have an exact IEEE 754 representation.
      * <p>
      * This method processes as below:
