@@ -34,7 +34,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Jody Garnett, Refractions Research, Inc.
  * @module pending
  */
-public class DelegateFeatureIterator<F extends Feature> implements FeatureIterator<F> {
+public class DelegateFeatureIterator<F extends Feature> extends AbstractFeatureIterator<F> {
 
     private final Iterator<F> delegate;
     private final FeatureCollection<? extends FeatureType, F> collection;

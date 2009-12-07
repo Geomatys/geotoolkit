@@ -29,7 +29,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Ian Schneider
  * @module pending
  */
-public class DefaultFeatureIterator<F extends Feature> implements FeatureIterator<F> {
+public class DefaultFeatureIterator<F extends Feature> extends AbstractFeatureIterator<F> {
 
     /** The iterator from the FeatureCollection<SimpleFeatureType, SimpleFeature> to return features from. */
     private final java.util.Iterator<F> iterator;

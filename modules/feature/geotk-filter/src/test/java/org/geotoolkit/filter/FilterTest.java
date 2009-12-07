@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -99,21 +100,47 @@ public class FilterTest {
         between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
         assertFalse(between.evaluate(FEATURE_1));
 
-        //TODO waiting converter
+        property = FF.property("date");
 
-//        property = FF.property("date");
-//
-//        Date dbefore = new Date(DATE.getTime()-360000);
-//        Date dafter = new Date(DATE.getTime()+360000);
-//
-//        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-//        assertTrue(between.evaluate(FEATURE_1));
-//
-//        dbefore = new Date(DATE.getTime()+10000);
-//        dafter = new Date(DATE.getTime()+360000);
-//
-//        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
-//        assertFalse(between.evaluate(FEATURE_1));
+        Date dbefore = new Date(DATE.getTime()-360000);
+        Date dafter = new Date(DATE.getTime()+360000);
+
+        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
+        assertTrue(between.evaluate(FEATURE_1));
+
+        dbefore = new Date(DATE.getTime()+10000);
+        dafter = new Date(DATE.getTime()+360000);
+
+        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
+        assertFalse(between.evaluate(FEATURE_1));
+
+        //test against strings
+        between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
+        assertTrue(between.evaluate(FEATURE_1));
+
+        between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
+        assertFalse(between.evaluate(FEATURE_1));
+
+        //test against timestamp
+        dbefore = new Timestamp(DATE.getTime()+10000);
+        dafter = new Timestamp(DATE.getTime()+360000);
+
+        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
+        assertFalse(between.evaluate(FEATURE_1));
+
+        dbefore = new Timestamp(DATE.getTime()-360000);
+        dafter = new Timestamp(DATE.getTime()+360000);
+
+        between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
+        assertTrue(between.evaluate(FEATURE_1));
+
+        //test timestamp against string
+        property = FF.property("datetime2");
+        between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
+        assertTrue(between.evaluate(FEATURE_1));
+
+        between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
+        assertFalse(between.evaluate(FEATURE_1));
         
     }
 

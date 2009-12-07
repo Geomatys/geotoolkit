@@ -20,11 +20,17 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.filter.GeometrytoJTS;
+import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
@@ -38,6 +44,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -46,6 +53,9 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.FactoryException;
 
 /**
  * Transform OGC jaxb xml in GT classes.
@@ -95,10 +105,21 @@ public class OGC110toGTTransformer {
         if (ops instanceof org.geotoolkit.ogc.xml.v110.BinarySpatialOpType) {
             final org.geotoolkit.ogc.xml.v110.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v110.BinarySpatialOpType) ops;
             final JAXBElement<? extends AbstractGeometryType> geom = binary.getAbstractGeometry();
+            final JAXBElement<EnvelopeEntry> env = binary.getEnvelope();
             final org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = binary.getPropertyName().getValue();
                         
             final Expression left = filterFactory.property(pnt.getContent());
-            final Expression right = visit(geom);
+            final Expression right;
+            if(env != null && env.getValue() != null){
+                try {
+                    right = visitEnv(env);
+                } catch (FactoryException ex) {
+                    throw new IllegalArgumentException("SRS name is unknowned : " + ex.getLocalizedMessage(),ex);
+                }
+            }else{
+                right = visit(geom);
+            }
+            
 
             if (OGCJAXBStatics.FILTER_SPATIAL_CONTAINS.equalsIgnoreCase(OpName)) {
                 return filterFactory.contains(left,right);
@@ -362,6 +383,19 @@ public class OGC110toGTTransformer {
 
     public Expression visit(JAXBElement<? extends AbstractGeometryType> ele){
         return filterFactory.literal(GeometrytoJTS.toJTS(ele.getValue()));
+    }
+
+    public Expression visitEnv(JAXBElement<EnvelopeEntry> env) throws FactoryException{
+        final EnvelopeEntry entry = env.getValue();
+        String srs = entry.getSrsName();
+        DirectPositionType lower = entry.getLowerCorner();
+        DirectPositionType upper = entry.getUpperCorner();
+
+        GeneralEnvelope genv = new GeneralEnvelope(CRS.decode(srs));
+        genv.setRange(0, lower.getOrdinate(0), upper.getOrdinate(0));
+        genv.setRange(1, lower.getOrdinate(1), upper.getOrdinate(1));
+
+        return filterFactory.literal(genv);
     }
 
     public PropertyName visitPropertyName(PropertyNameType pnt){

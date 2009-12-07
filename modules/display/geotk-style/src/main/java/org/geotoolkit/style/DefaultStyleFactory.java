@@ -516,7 +516,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     public Fill fill(final Color color){
         return new DefaultFill(
                 null, 
-                FF.literal(color),
+                literal(color),
                 null);
     }
 

@@ -93,11 +93,12 @@ import org.opengis.util.ProgressListener;
  * @author Rob Hranac, VFNY
  * @author Ian Schneider, USDA-ARS
  * @author Jody Garnett, Refractions Research, Inc.
+ * @author Johann Sorel, Geomatys
  * @version $Id$
  *
  * @module pending
  */
-public interface FeatureCollection<T extends FeatureType, F extends Feature> {
+public interface FeatureCollection<T extends FeatureType, F extends Feature> extends Collection<F> {
 
     /**
      * Obtain a FeatureIterator<SimpleFeature> of the Features within this collection.
@@ -316,6 +317,7 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * </p>
      * @return Iterator
      */
+    @Override
     Iterator<F> iterator();
     
     /**
@@ -323,53 +325,22 @@ public interface FeatureCollection<T extends FeatureType, F extends Feature> {
      * <p>
      * This method is often not impelmented for collections produced as the result of a query.
      * 
-     * @return true of the element was added
      * @see java.util.Collection#add(Object)
      */
+    @Override
     boolean add(F obj);
     
     /**
      * Add all the objects to the collection.
      * <p>
      * This method is often not implemented for collections produced as the results of a query.
+     *
      * @see java.util.Collection#addAll(Collection)
      */
+    @Override
     boolean addAll(Collection<? extends F> collection);
 
     /** @see #addAll(Collection) */
     boolean addAll(FeatureCollection<? extends T,? extends F> resource);
     
-    /** @see java.util.Collection#clear() */
-    void clear();
-    
-    /**
-     * @see java.util.Collection#contains(Object)
-     */
-    boolean contains(Object o);
-    
-    /**
-     * @see java.util.Collection#containsAll(Collection)
-     */
-    boolean containsAll(Collection<?> o);
-
-    /** @see java.util.Collection#isEmpty() */
-    boolean isEmpty();
-    
-    /** @see java.util.Collection#remove(Object) */
-    boolean remove(Object o);
-    
-    /** @see java.util.Collection#removeAll(Collection) */
-    boolean removeAll(Collection<?> c);
-    
-    /** @see java.util.Collection#retainAll(Collection) */   
-    boolean retainAll(Collection<?> c);
-      
-    /** @see java.util.Collection#size() */
-    int size();
-    
-    /** @see java.util.Collection#toArray() */    
-    Object[] toArray();
-    
-    /** @see java.util.Collection#toArray(Object[]) */ 
-    <O> O[] toArray(O[] a);    
 }

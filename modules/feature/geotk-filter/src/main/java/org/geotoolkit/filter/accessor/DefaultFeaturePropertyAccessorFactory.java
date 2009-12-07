@@ -52,7 +52,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
     private static final PropertyAccessor FID_ACCESS = new FidSimpleFeaturePropertyAccessor();
     private static final PropertyAccessor XNUM_ACCESS = new XNumPropertyAccessor();
     private static final Pattern ID_PATTERN       = Pattern.compile("@(\\w+:)?id");
-    private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(\\w+)");
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("(\\w+:)?(.+)");
     private static final Cache<String,PropertyAccessor> CACHE = new Cache<String, PropertyAccessor>();
 
     /**
@@ -88,7 +88,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         }
 
         if(xpath.startsWith("//")){
-            xpath = xpath.substring(2, xpath.length());
+            xpath = xpath.substring(2);
         }
 
         //check for fid access--------------------------------------------------
@@ -100,17 +100,6 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             }
             handler.putAndUnlock(accessor);
             return FID_ACCESS;
-        }
-
-        //check for simple property acess---------------------------------------
-        if (PROPERTY_PATTERN.matcher(xpath).matches()) {
-            final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
-            accessor = handler.peek();
-            if (accessor == null) {
-                accessor = ATTRIBUTE_ACCESS;
-            }
-            handler.putAndUnlock(accessor);
-            return ATTRIBUTE_ACCESS;
         }
 
         //check xpath form *[number]--------------------------------------------
@@ -135,6 +124,19 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             }
         }
 
+        //check for simple property acess---------------------------------------
+        if (PROPERTY_PATTERN.matcher(xpath).matches()) {
+            final Cache.Handler<PropertyAccessor> handler = CACHE.lock(xpath);
+            accessor = handler.peek();
+            if (accessor == null) {
+                accessor = ATTRIBUTE_ACCESS;
+            }
+            handler.putAndUnlock(accessor);
+            return ATTRIBUTE_ACCESS;
+        }
+
+        
+
         return null;
     }
 
@@ -151,7 +153,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
      */
     private static String stripPrefix(String xpath) {
         if(xpath.startsWith("//")){
-            xpath = xpath.substring(2, xpath.length());
+            xpath = xpath.substring(2);
         }
 
         final int split = xpath.indexOf(':');
@@ -326,7 +328,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
             if (object instanceof Feature) {
                 final Feature feature = (Feature)object;
-                int i = 0;
+                int i = 1;
                 for(Property prop : feature.getProperties()){
                     if(i == index){
                         return feature.getProperty(prop.getName()).getValue();
@@ -337,7 +339,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
             if (object instanceof FeatureType) {
                 final FeatureType ft = (FeatureType)object;
-                int i = 0;
+                int i = 1;
                 for(PropertyDescriptor prop : ft.getDescriptors()){
                     if(i == index){
                         return prop;

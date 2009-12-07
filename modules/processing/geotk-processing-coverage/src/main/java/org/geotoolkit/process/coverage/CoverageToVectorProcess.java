@@ -75,6 +75,10 @@ public class CoverageToVectorProcess extends AbstractProcess {
             throws IOException, TransformException {
         coverage = coverage.view(ViewType.GEOPHYSICS);
 
+        //add a range for Nan values.
+        NumberRange NaNRange = new NaNRange();
+        polygons.put(NaNRange, new ArrayList<Polygon>());
+
         for (final NumberRange range : ranges) {
             polygons.put(range, new ArrayList<Polygon>());
         }
@@ -168,6 +172,10 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
     private void append(Point point, Number value) {
         //System.err.println("POINT["+point+"] value = " + value);
+
+        //special case for NaN or null
+        //todo
+
 
         for (final NumberRange range : polygons.keySet()) {
 
@@ -420,6 +428,19 @@ public class CoverageToVectorProcess extends AbstractProcess {
         }
 
         getMonitor().ended(new ProcessEvent(this));
+
+    }
+
+    private static class NaNRange extends NumberRange{
+
+        public NaNRange(){
+            super(Number.class,0,0);
+        }
+
+        @Override
+        public boolean contains(Number number) throws IllegalArgumentException {
+            return Double.isNaN(number.doubleValue());
+        }
 
     }
 

@@ -33,6 +33,7 @@ import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.xml.Namespaces;
 import org.opengis.feature.Property;
@@ -339,7 +340,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
                 try {
-                    srsName = CRS.lookupIdentifier(bounds.getCoordinateReferenceSystem(), true);
+                    srsName = CRS.lookupIdentifier(Citations.URN_OGC, bounds.getCoordinateReferenceSystem(), true);
                 } catch (FactoryException ex) {
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
@@ -348,6 +349,8 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             streamWriter.writeStartElement("gml", "Envelope", GML_NAMESPACE);
             if (srsName != null) {
                 streamWriter.writeAttribute("srsName", srsName);
+            } else {
+                streamWriter.writeAttribute("srsName", "");
             }
 
             // lower corner

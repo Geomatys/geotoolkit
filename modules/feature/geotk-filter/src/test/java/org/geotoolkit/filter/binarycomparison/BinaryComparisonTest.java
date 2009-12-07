@@ -18,6 +18,7 @@
 package org.geotoolkit.filter.binarycomparison;
 
 import java.util.Date;
+import org.geotoolkit.temporal.object.Utils;
 import org.junit.Test;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsGreaterThan;
@@ -230,6 +231,24 @@ public class BinaryComparisonTest {
         assertFalse(filter.evaluate(FEATURE_1));
         filter = FF.greater(underLiteral,property);
         assertFalse(filter.evaluate(FEATURE_1));
+
+        //test against string dates
+        Literal aboveStrLiteral = FF.literal("3021-05-25");
+        Literal underStrLiteral = FF.literal("1850-11-01");
+        property = FF.property("date");
+        filter = FF.greater(property,aboveStrLiteral);
+        assertFalse(filter.evaluate(FEATURE_1));
+        filter = FF.greater(property,underStrLiteral);
+        assertTrue(filter.evaluate(FEATURE_1));
+
+        //ensure the test in mad in primary on dates over string
+        property = FF.property("date");
+        filter = FF.greater(aboveStrLiteral,property);
+        assertTrue(filter.evaluate(FEATURE_1));
+        filter = FF.greater(underStrLiteral,property);
+        assertFalse(filter.evaluate(FEATURE_1));
+
+
 
         property = FF.property("time");
         filter = FF.greater(aboveLiteral,property);

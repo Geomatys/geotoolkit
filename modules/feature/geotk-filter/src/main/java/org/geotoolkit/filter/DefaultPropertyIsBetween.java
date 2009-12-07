@@ -92,7 +92,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
             return false;
         }
 
-        return down.compareTo(test) <= 0 && up.compareTo(test) >= 0;
+        return down.compareTo(test) < 0 && up.compareTo(test) >= 0;
     }
 
     /**

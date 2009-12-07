@@ -38,19 +38,8 @@ public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperat
      */
     @Override
     public boolean evaluate(Object object) {
-        Object objleft = left.evaluate(object);
-
-        if(!(objleft instanceof Comparable)){
-            return false;
-        }
-
-        Object objright = right.evaluate(object,objleft.getClass());
-
-        if(objright == null){
-            return false;
-        }
-
-        return ((Comparable)objleft).compareTo(objright) > 0;
+        final Integer v = compare(object);
+        return (v == null) ? false : (v > 0) ;
     }
 
     /**

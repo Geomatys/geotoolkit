@@ -61,6 +61,12 @@ import org.opengis.referencing.operation.TransformException;
 public class PatternRenderer implements SymbolizerRenderer<PatternSymbolizer,CachedPatternSymbolizer>{
 
     private static final Logger LOGGER = Logging.getLogger(PatternRenderer.class);
+    
+    /**
+     * minimum size of the blocks to use. 
+     * Values between 1 and 3 give fair result.
+     */
+    private static final float MINIMUM_BLOCK_SIZE = 1.5f;
 
     @Override
     public Class<PatternSymbolizer> getSymbolizerClass() {
@@ -88,8 +94,8 @@ public class PatternRenderer implements SymbolizerRenderer<PatternSymbolizer,Cac
             RenderingContext2D context) throws PortrayalException {
 
         double[] resolution = context.getResolution();
-        resolution[0] *= 3;
-        resolution[1] *= 3;
+        resolution[0] *= MINIMUM_BLOCK_SIZE;
+        resolution[1] *= MINIMUM_BLOCK_SIZE;
 
         final CoordinateReferenceSystem gridCRS = projectedCoverage.getCoverageLayer().getBounds().getCoordinateReferenceSystem();
 

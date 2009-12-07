@@ -29,6 +29,7 @@ import java.util.Set;
 import org.geotoolkit.data.FeatureEvent;
 import org.geotoolkit.data.FeatureListener;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.collection.AbstractFeatureIterator;
 import org.geotoolkit.data.collection.CollectionEvent;
 import org.geotoolkit.data.collection.CollectionListener;
 import org.geotoolkit.data.collection.FeatureCollection;
@@ -152,7 +153,7 @@ public class ContentFeatureCollection implements FeatureCollection<SimpleFeature
     }
 
     // Iterators
-    public static class WrappingFeatureIterator implements FeatureIterator<SimpleFeature> {
+    public static class WrappingFeatureIterator extends AbstractFeatureIterator<SimpleFeature> {
 
         final FeatureReader<SimpleFeatureType, SimpleFeature> delegate;
 

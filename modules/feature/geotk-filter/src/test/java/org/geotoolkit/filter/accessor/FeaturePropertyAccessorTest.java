@@ -36,15 +36,33 @@ public class FeaturePropertyAccessorTest {
 
     @Test
     public void testAccessor() {
+
+        //test a simple attribut------------------------------------------------
         PropertyAccessor accessor = Accessors.getAccessor(Feature.class, "testGeometry", null);
         assertNotNull(accessor);
         Geometry geom = (Geometry) accessor.get(FEATURE_1, "testGeometry", Geometry.class);
         assertEquals(geom, FEATURE_1.getDefaultGeometry());
 
+        //test id---------------------------------------------------------------
         accessor = Accessors.getAccessor(Feature.class, "@id", null);
         assertNotNull(accessor);
         Object id = accessor.get(FEATURE_1, "@id", null);
         assertEquals(id, FEATURE_1.getIdentifier().getID());
+
+        //test xpath index------------------------------------------------------
+        accessor = Accessors.getAccessor(Feature.class, "*[10]", null);
+        assertNotNull(accessor);
+        Object att = accessor.get(FEATURE_1, "*[10]", null);
+        assertEquals(att, "test string data");
+        assertEquals(att, FEATURE_1.getAttribute("testString"));
+
+        //test a geometry name with accents-------------------------------------
+        accessor = Accessors.getAccessor(Feature.class, "sf:attribut.Géométrie", null);
+        assertNotNull(accessor);
+        att = accessor.get(FEATURE_1, "sf:attribut.Géométrie", null);
+        assertEquals(att, "POINT(45,32)");
+        assertEquals(att, FEATURE_1.getAttribute("attribut.Géométrie"));
+
     }
 
 }

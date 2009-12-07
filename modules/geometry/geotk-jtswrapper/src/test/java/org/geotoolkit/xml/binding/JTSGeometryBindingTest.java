@@ -182,7 +182,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void PointMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:4326");
         assertTrue(crs != null);
 
         DirectPosition dp = new GeneralDirectPosition(crs);
@@ -196,7 +196,7 @@ public class JTSGeometryBindingTest {
         String result = sw.toString();
 
         String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"              + '\n' +
-                           "<gml:Point srsName=\"EPSG:4326\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+                           "<gml:Point srsName=\"urn:ogc:def:crs:epsg:7.1:4326\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
                            "    <gml:pos>2.1 12.6</gml:pos>"   + '\n' +
                            "</gml:Point>" + '\n';
 
@@ -215,14 +215,14 @@ public class JTSGeometryBindingTest {
     public void PointUnMarshalingTest() throws Exception {
 
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"    + '\n' +
-                     "<gml:Point srsName=\"EPSG:4326\" xmlns:gml=\"http://www.opengis.net/gml\">"             + '\n' +
+                     "<gml:Point srsName=\"urn:ogc:def:crs:epsg:7.1:4326\" xmlns:gml=\"http://www.opengis.net/gml\">"             + '\n' +
                      "    <gml:pos>2.1 12.6</gml:pos>" + '\n' +
                      "</gml:Point>" + '\n';
 
         JAXBElement<JTSPoint> result = (JAXBElement) un.unmarshal(new StringReader(xml));
 
 
-        CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:4326");
         assertTrue(crs != null);
 
         DirectPosition dp = new GeneralDirectPosition(crs);
@@ -244,7 +244,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void CurveMarshalingTest() throws Exception {
     
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         JTSCurve curve = new JTSCurve(crs);
@@ -285,7 +285,7 @@ public class JTSGeometryBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n' +
-        "<gml:Curve srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                   + '\n' +
+        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                   + '\n' +
         "    <gml:segments>"                                                                            + '\n' +
         "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
         "            <gml:pos>401500.0 3334500.0</gml:pos>"   + '\n' +
@@ -315,7 +315,7 @@ public class JTSGeometryBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n' +
-        "<gml:Curve srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                   + '\n' +
+        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                   + '\n' +
         "    <gml:segments>"                                                                            + '\n' +
         "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
         "            <gml:pos>401500.0 3334500.0</gml:pos>"   + '\n' +
@@ -329,7 +329,7 @@ public class JTSGeometryBindingTest {
         "    </gml:segments>"                                                                           + '\n' +
         "</gml:Curve>"                                                                                  + '\n';
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         JTSCurve expResult = new JTSCurve(crs);
@@ -383,7 +383,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void EnvelopeMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -420,7 +420,7 @@ public class JTSGeometryBindingTest {
     @Ignore
     public void EnvelopeUnMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -457,7 +457,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void MultiPointMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -481,14 +481,14 @@ public class JTSGeometryBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:MultiPoint srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"            + '\n' +
+        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"            + '\n' +
         "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"EPSG:27572\">"                                                  + '\n' +
+        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                  + '\n' +
         "            <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
         "        </gml:Point>"                                                                        + '\n' +
         "    </gml:pointMember>"                                                                      + '\n' +
         "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"EPSG:27572\">"                                                  + '\n' +
+        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                  + '\n' +
         "            <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
         "        </gml:Point>"                                                                        + '\n' +
         "    </gml:pointMember>"                                                                      + '\n' +
@@ -505,7 +505,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void MultiPointUnmarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -526,14 +526,14 @@ public class JTSGeometryBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:MultiPoint srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"            + '\n' +
+        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"            + '\n' +
         "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"EPSG:27572\">"                                                  + '\n' +
+        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                  + '\n' +
         "            <gml:pos>402200.0 3335200.0</gml:pos>" + '\n' +
         "        </gml:Point>"                                                                        + '\n' +
         "    </gml:pointMember>"                                                                      + '\n' +
         "    <gml:pointMember>"                                                                       + '\n' +
-        "        <gml:Point srsName=\"EPSG:27572\">"                                                  + '\n' +
+        "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                  + '\n' +
         "            <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
         "        </gml:Point>"                                                                        + '\n' +
         "    </gml:pointMember>"                                                                      + '\n' +
@@ -554,7 +554,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void CompositeCurveMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -616,9 +616,9 @@ public class JTSGeometryBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:CompositeCurve srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                + '\n' +
+        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                + '\n' +
         "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
@@ -633,7 +633,7 @@ public class JTSGeometryBindingTest {
         "        </gml:Curve>"                                                                                + '\n' +
         "    </gml:curveMember>"                                                                              + '\n' +
         "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
@@ -655,7 +655,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void CompositeCurveUnmarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -712,9 +712,9 @@ public class JTSGeometryBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:CompositeCurve srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                + '\n' +
+        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                + '\n' +
         "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
@@ -729,7 +729,7 @@ public class JTSGeometryBindingTest {
         "        </gml:Curve>"                                                                                + '\n' +
         "    </gml:curveMember>"                                                                              + '\n' +
         "    <gml:curveMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
@@ -757,7 +757,7 @@ public class JTSGeometryBindingTest {
      */
    @Test
     public void PolyHedralSurfaceMarshalingTest() throws Exception {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
         JTSPolyhedralSurface polyHedralSurface = new JTSPolyhedralSurface(crs);
 
@@ -898,7 +898,7 @@ public class JTSGeometryBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                       + '\n'  +
-        "<gml:PolyhedralSurface srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                             + '\n'  +
+        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                             + '\n'  +
         "    <gml:polygonPatches>"                                                                                            + '\n'  +
         "        <gml:PolygonPatch>"                                                                                          + '\n'  +
         "            <gml:exterior>"                                                                                          + '\n'  +
@@ -937,7 +937,7 @@ public class JTSGeometryBindingTest {
      */
    @Test
     public void PolyHedralSurfaceUnmarshalingTest() throws Exception {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
         
         JTSPolyhedralSurface expResult = new JTSPolyhedralSurface(crs);
@@ -1073,7 +1073,7 @@ public class JTSGeometryBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                       + '\n'  +
-        "<gml:PolyhedralSurface srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                             + '\n'  +
+        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                             + '\n'  +
         "    <gml:polygonPatches>"                                                                                            + '\n'  +
         "        <gml:PolygonPatch>"                                                                                          + '\n'  +
         "            <gml:exterior>"                                                                                          + '\n'  +
@@ -1136,7 +1136,7 @@ public class JTSGeometryBindingTest {
      */
    @Test
     public void RingMarshalingTest() throws Exception {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         JTSRing ring    = new JTSRing(crs);
@@ -1179,9 +1179,9 @@ public class JTSGeometryBindingTest {
 
         String expResult = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
-        "<gml:Ring srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n'  +
+        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n'  +
         "    <gml:curveMember>"                                                            + '\n'  +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                       + '\n'  +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                       + '\n'  +
         "            <gml:segments>"                                                       + '\n'  +
         "                <gml:LineStringSegment interpolation=\"linear\">"                 + '\n'  +
         "                    <gml:pos>401500.0 3334500.0</gml:pos>"                        + '\n'  +
@@ -1207,7 +1207,7 @@ public class JTSGeometryBindingTest {
      */
    @Test
     public void RingUnmarshalingTest() throws Exception {
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         JTSRing expResult    = new JTSRing(crs);
@@ -1246,9 +1246,9 @@ public class JTSGeometryBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
-        "<gml:Ring srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n'  +
+        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n'  +
         "    <gml:curveMember>"                                                            + '\n'  +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                       + '\n'  +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                       + '\n'  +
         "            <gml:segments>"                                                       + '\n'  +
         "                <gml:LineStringSegment interpolation=\"linear\">"                 + '\n'  +
         "                    <gml:pos>401500.0 3334500.0</gml:pos>"                        + '\n'  +
@@ -1279,7 +1279,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void PolygonMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         // EXTERIOR
@@ -1351,7 +1351,7 @@ public class JTSGeometryBindingTest {
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:Polygon srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
         "    <gml:exterior>"                                                                                          + '\n'  +
         "        <gml:LinearRing>"                                                                   + '\n'  +
         "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
@@ -1375,7 +1375,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void PolygonUnmarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         // EXTERIOR
@@ -1445,7 +1445,7 @@ public class JTSGeometryBindingTest {
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:Polygon srsName=\"EPSG:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.1:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
         "    <gml:exterior>"                                                                                          + '\n'  +
         "        <gml:LinearRing>"                                                                   + '\n'  +
         "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
@@ -1473,7 +1473,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void MultiPrimitiveMarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -1536,7 +1536,7 @@ public class JTSGeometryBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
         "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
         "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
@@ -1551,7 +1551,7 @@ public class JTSGeometryBindingTest {
         "        </gml:Curve>"                                                                                + '\n' +
         "    </gml:geometryMember>"                                                                              + '\n' +
         "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
@@ -1565,7 +1565,7 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult, result);
 
 
-        crs = CRS.decode("epsg:27593");
+        crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27593");
         assertTrue(crs != null);
 
         /*
@@ -1614,7 +1614,7 @@ public class JTSGeometryBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
         "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
         "    <gml:geometryMember>" + '\n' +
-        "        <gml:PolyhedralSurface srsName=\"EPSG:27593\">" + '\n' +
+        "        <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.1:27593\">" + '\n' +
         "            <gml:polygonPatches>" + '\n' +
         "                <gml:PolygonPatch>" + '\n' +
         "                    <gml:exterior>" + '\n' +
@@ -1631,7 +1631,7 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult, result);
 
         
-        crs = CRS.decode("epsg:4326");
+        crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:4326");
 
          // EXTERIOR
         exterior1    = new JTSRing(crs);
@@ -1687,7 +1687,7 @@ public class JTSGeometryBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
         "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                                                        + '\n' +
         "    <gml:geometryMember>"                                                                   + '\n' +
-        "        <gml:Polygon srsName=\"EPSG:4326\">"                                                + '\n' +
+        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.1:4326\">"                                                + '\n' +
         "            <gml:exterior>"                                                                 + '\n' +
         "                <gml:LinearRing>"                                                           + '\n' +
         "                    <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
@@ -1708,7 +1708,7 @@ public class JTSGeometryBindingTest {
    @Test
     public void MultiPrimitiveUnmarshalingTest() throws Exception {
 
-        CoordinateReferenceSystem crs = CRS.decode("epsg:27572");
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27572");
         assertTrue(crs != null);
 
         DirectPosition p1 = new GeneralDirectPosition(crs);
@@ -1766,7 +1766,7 @@ public class JTSGeometryBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
         "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
         "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>401500.0 3334500.0</gml:pos>" + '\n' +
@@ -1781,7 +1781,7 @@ public class JTSGeometryBindingTest {
         "        </gml:Curve>"                                                                                + '\n' +
         "    </gml:geometryMember>"                                                                              + '\n' +
         "    <gml:geometryMember>"                                                                               + '\n' +
-        "        <gml:Curve srsName=\"EPSG:27572\">"                                                          + '\n' +
+        "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.1:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
         "                <gml:LineStringSegment interpolation=\"linear\">"                                    + '\n' +
         "                    <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
@@ -1807,14 +1807,14 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult.getElements(), result.getElements());
         assertEquals(expResult, result);
 
-        crs = CRS.decode("epsg:27593");
+        crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:27593");
         assertTrue(crs != null);
 
         xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
         "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
         "    <gml:geometryMember>" + '\n' +
-        "        <gml:PolyhedralSurface srsName=\"EPSG:27593\">" + '\n' +
+        "        <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.1:27593\">" + '\n' +
         "            <gml:polygonPatches>" + '\n' +
         "                <gml:PolygonPatch>" + '\n' +
         "                    <gml:exterior>" + '\n' +
@@ -1888,7 +1888,7 @@ public class JTSGeometryBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
         "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                                                        + '\n' +
         "    <gml:geometryMember>"                                                                   + '\n' +
-        "        <gml:Polygon srsName=\"EPSG:4326\">"                                                + '\n' +
+        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.1:4326\">"                                                + '\n' +
         "            <gml:exterior>"                                                                 + '\n' +
         "                <gml:LinearRing>"                                                           + '\n' +
         "                    <gml:posList>-1.0 0.0 0.0 1.0 1.0 0.0 0.0 -1.0 -1.0 0.0</gml:posList>"  + '\n' +
@@ -1902,7 +1902,7 @@ public class JTSGeometryBindingTest {
 
 
        
-        crs = CRS.decode("epsg:4326");
+        crs = CRS.decode("urn:ogc:def:crs:epsg:7.1:4326");
 
          // EXTERIOR
         exterior1    = new JTSRing(crs);

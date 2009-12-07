@@ -59,6 +59,12 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.DateToDateSQLConverter;
+import org.geotoolkit.util.StringToDateConverter;
+import org.geotoolkit.util.StringToDateSQLConverter;
+import org.geotoolkit.util.StringToTimeStampConverter;
+import org.geotoolkit.util.TimeStampToDateSQLConverter;
+import org.geotoolkit.util.converter.ConverterRegistry;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
@@ -126,6 +132,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public class DefaultFilterFactory2 implements FilterFactory2{
+
+    static{
+        ConverterRegistry.system().register(new StringToDateConverter());
+        ConverterRegistry.system().register(new StringToDateSQLConverter());
+        ConverterRegistry.system().register(new StringToTimeStampConverter());
+        ConverterRegistry.system().register(new DateToDateSQLConverter());
+        ConverterRegistry.system().register(new TimeStampToDateSQLConverter());
+    }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
