@@ -1183,26 +1183,28 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (sources.size() == 1) {
             return createOperation(sources.get(0), targetCRS);
         }
-        if (!needsGeodetic3D(sources, targetCRS)) {
-            // No need for a datum change (see 'needGeodetic3D' javadoc).
-            final List<SingleCRS> targets = singletonList(targetCRS);
-            return createOperationStep(sourceCRS, sources, targetCRS, targets);
+        if (needsGeodetic3D(sources, targetCRS, true)) {
+            /*
+             * There is a change of datum.  It may be a vertical datum change (for example from
+             * ellipsoidal to geoidal height), in which case geographic coordinates are usually
+             * needed. It may also be a geodetic datum change, in which case the height is part
+             * of computation. Try to convert the source CRS into a 3D-geodetic CRS.
+             */
+            final CoordinateReferenceSystem source3D = factories.toGeodetic3D(sourceCRS);
+            if (source3D != sourceCRS) {
+                return createOperation(source3D, targetCRS);
+            }
+            /*
+             * TODO: Search for non-ellipsoidal height, and lets supplemental axis (e.g. time)
+             *       pass through. See javadoc comments above.
+             */
+            if (!lenientDatumShift && needsGeodetic3D(sources, targetCRS, false)) {
+                throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
+            }
         }
-        /*
-         * There is a change of datum.  It may be a vertical datum change (for example from
-         * ellipsoidal to geoidal height), in which case geographic coordinates are usually
-         * needed. It may also be a geodetic datum change, in which case the height is part
-         * of computation. Try to convert the source CRS into a 3D-geodetic CRS.
-         */
-        final CoordinateReferenceSystem source3D = factories.toGeodetic3D(sourceCRS);
-        if (source3D != sourceCRS) {
-            return createOperation(source3D, targetCRS);
-        }
-        /*
-         * TODO: Search for non-ellipsoidal height, and lets supplemental axis (e.g. time)
-         *       pass through. See javadoc comments above.
-         */
-        throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
+        // No need for a datum change (see 'needGeodetic3D' javadoc).
+        final List<SingleCRS> targets = singletonList(targetCRS);
+        return createOperationStep(sourceCRS, sources, targetCRS, targets);
     }
 
     /**
@@ -1261,17 +1263,19 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * vertical components together.
          */
         for (final SingleCRS target : targets) {
-            if (needsGeodetic3D(sources, target)) {
+            if (needsGeodetic3D(sources, target, true)) {
                 final CoordinateReferenceSystem source3D = factories.toGeodetic3D(sourceCRS);
                 final CoordinateReferenceSystem target3D = factories.toGeodetic3D(targetCRS);
-                if (source3D!=sourceCRS || target3D!=targetCRS) {
+                if (source3D != sourceCRS || target3D != targetCRS) {
                     return createOperation(source3D, target3D);
                 }
                 /*
                  * TODO: Search for non-ellipsoidal height, and lets supplemental axis pass through.
                  *       See javadoc comments for createOperation(CompoundCRS, SingleCRS).
                  */
-                throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
+                if (!lenientDatumShift && needsGeodetic3D(sources, target, false)) {
+                    throw new OperationNotFoundException(getErrorMessage(sourceCRS, targetCRS));
+                }
             }
         }
         // No need for a datum change (see 'needGeodetic3D' javadoc).
@@ -1423,58 +1427,81 @@ search: for (int j=0; j<targets.size(); j++) {
     }
 
     /**
-     * Returns {@code true} if a transformation path from {@code sourceCRS} to
-     * {@code targetCRS} is likely to requires a tri-dimensional geodetic CRS as an
-     * intermediate step. More specifically, this method returns {@code false} if at
-     * least one of the following conditions is meet:
+     * Returns {@code true} if a transformation path from {@code sourceCRS} to {@code targetCRS} is
+     * likely to require a tri-dimensional geodetic CRS as an intermediate step. More specifically,
+     * this method returns {@code false} if at least one of the following conditions is meet:
      *
      * <ul>
-     *   <li>The target datum is not a vertical or geodetic one (the two datum that must work
+     *   <li><p>The target datum is not a vertical or geodetic one (the two datum that must work
      *       together). Consequently, a potential datum change is not the caller's business.
-     *       It will be handled by the generic method above.</li>
+     *       It will be handled by the generic method above.</p></li>
      *
-     *   <li>The target datum is vertical or geodetic, but there is no datum change. It is
+     *   <li><p>The target datum is vertical or geodetic, but there is no datum change. It is
      *       better to not try to create 3D-geodetic CRS, since they are more difficult to
      *       separate in the generic method above. An exception to this rule occurs when
-     *       the target datum is used in a three-dimensional CRS.</li>
+     *       the target datum is used in a three-dimensional CRS.</p></li>
      *
-     *   <li>A datum change is required, but source CRS doesn't have both a geodetic
-     *       and a vertical CRS, so we can't apply a 3D datum shift anyway.</li>
+     *   <li><p>A datum change is required, but source CRS doesn't have both a geodetic
+     *       and a vertical CRS, so we can't apply a 3D datum shift anyway.</p></li>
      * </ul>
+     *
+     * @param strict {@code false} if we tolerate some errror (typically up to 3 metres).
+     *        To be set to {@code false} only in last ressort before throwing an exception.
+     *        Must be {@code true} in all other cases.
      */
-    private static boolean needsGeodetic3D(final List<SingleCRS> sourceCRS, final SingleCRS targetCRS) {
-        final boolean targetGeodetic;
+    private static boolean needsGeodetic3D(final List<SingleCRS> sourceCRS,
+            final SingleCRS targetCRS, final boolean strict)
+    {
+        final boolean targetIsGeodetic;
         final Datum targetDatum = targetCRS.getDatum();
         if (targetDatum instanceof GeodeticDatum) {
-            targetGeodetic = true;
+            targetIsGeodetic = true;
         } else if (targetDatum instanceof VerticalDatum) {
-            targetGeodetic = false;
+            targetIsGeodetic = false;
         } else {
             return false;
         }
-        boolean horizontal = false;
-        boolean vertical   = false;
-        boolean shift      = false;
+        boolean hasHorizontal  = false; // Whatever at least one source component is horizontal.
+        boolean hasVertical    = false; // Whatever at least one source component is vertical.
+        boolean needDatumShift = false;
         for (final SingleCRS crs : sourceCRS) {
             final Datum sourceDatum = crs.getDatum();
-            final boolean sourceGeodetic;
+            final boolean sourceIsGeodetic;
             if (sourceDatum instanceof GeodeticDatum) {
-                horizontal     = true;
-                sourceGeodetic = true;
+                hasHorizontal    = true;
+                sourceIsGeodetic = true;
             } else if (sourceDatum instanceof VerticalDatum) {
-                vertical       = true;
-                sourceGeodetic = false;
+                hasVertical      = true;
+                sourceIsGeodetic = false;
             } else {
                 continue;
             }
-            if (!shift && sourceGeodetic == targetGeodetic) {
-                shift = !equalsIgnoreMetadata(sourceDatum, targetDatum);
+            /*
+             * If we have found the source component of the same kind than the target element
+             * (either a GeodeticDatum or a VerticalDatum), check if there is a need for a datum
+             * shift. The other source components are ignored, which is okay if the target CRS is
+             * only 1D or 2D since this means that the extra source components will be discarted
+             * anyway. The case where the target CRS is 3D is handled at the end of this method.
+             */
+            if (!needDatumShift && sourceIsGeodetic == targetIsGeodetic) {
                 assert Classes.implementSameInterfaces(sourceDatum.getClass(),
-                                              targetDatum.getClass(), Datum.class);
+                        targetDatum.getClass(), Datum.class) : targetDatum;
+
+                if (sourceIsGeodetic && targetIsGeodetic) {
+                    final GeodeticDatum sd = (GeodeticDatum) sourceDatum;
+                    final GeodeticDatum td = (GeodeticDatum) targetDatum;
+                    if (strict) {
+                        needDatumShift = !equalsIgnorePrimeMeridian(sd, td);
+                    } else {
+                        needDatumShift = isDatumShiftRequired(sd, td);
+                    }
+                } else {
+                    needDatumShift = !equalsIgnoreMetadata(sourceDatum, targetDatum);
+                }
             }
         }
-        return horizontal && vertical &&
-               (shift || targetCRS.getCoordinateSystem().getDimension() >= 3);
+        return hasHorizontal && hasVertical &&
+               (needDatumShift || targetCRS.getCoordinateSystem().getDimension() >= 3);
     }
 
 
@@ -1488,6 +1515,44 @@ search: for (int j=0; j<targets.size(); j++) {
     ////////////                                                         ////////////
     /////////////////////////////////////////////////////////////////////////////////
     /////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Returns {@code true} if conversions between CRS using the given datum are likely to require
+     * a datum shift. This method is not provided in the public API because it is not correct. For
+     * example NAD83 and WGS84 are close enough for having Bursa-Wolf parameters set to 0, but are
+     * nevertheless not identical. They don't have the same ellipsoid for instance. Considering
+     * them as equal is okay only if we don't need an accuracy better than 3 metres.
+     * <p>
+     * Use this method only in last resort, before throwing an exception if we can't consider
+     * that there is no datum shift. In current implementation, this method is used only in
+     * the context of {@link CompoundCRS}.
+     *
+     * @param  source The datum of the source CRS.
+     * @param  target The datum of the target CRS
+     * @return {@code true} If conversions between CRS using the given datum are likely to require
+     *         a datum shift. Note that a return value of {@code false} does not mean that there is
+     *         no rotation of prime meridian.
+     *
+     * @since 3.07
+     */
+    private static boolean isDatumShiftRequired(final GeodeticDatum source, final GeodeticDatum target) {
+        if (equalsIgnoreMetadata(source, target)) {
+            return false;
+        }
+        if (source instanceof DefaultGeodeticDatum) {
+            final BursaWolfParameters param = ((DefaultGeodeticDatum) source).getBursaWolfParameters(target);
+            if (param != null && param.isIdentity()) {
+                return false;
+            }
+        }
+        if (target instanceof DefaultGeodeticDatum) {
+            final BursaWolfParameters param = ((DefaultGeodeticDatum) target).getBursaWolfParameters(source);
+            if (param != null && param.isIdentity()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     /**
      * Compares the specified datum for equality, except the prime meridian.

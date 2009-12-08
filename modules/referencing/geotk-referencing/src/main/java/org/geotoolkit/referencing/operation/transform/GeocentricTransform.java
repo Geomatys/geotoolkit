@@ -304,12 +304,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
             final double cosLat = cos(P);
             final double sinLat = sin(P);
             final double rn = a / sqrt(1 - e2 * (sinLat*sinLat));
-            /*
-             * The next lines repeat (rn+h)*cosLat twice, but we hope that the compiler will
-             * optimize that. If we stored the intermediate result in a double, we would lost
-             * the 80 bits precision of Intel registers since non-anonymous double values are
-             * rounded to 64 bits as of Java Language specification.
-             */
+
             dstPts[dstOff++] = (rn + h) * cosLat * cos(L);  // X: Toward prime meridian
             dstPts[dstOff++] = (rn + h) * cosLat * sin(L);  // Y: Toward East
             dstPts[dstOff++] = (rn * (1-e2) + h) * sinLat;  // Z: Toward North

@@ -72,9 +72,8 @@ import org.geotoolkit.resources.Errors;
 /**
  * Simple utility class for making use of the {@linkplain CoordinateReferenceSystem
  * Coordinate Reference System} and associated {@linkplain org.opengis.referencing.Factory}
- * implementations. This utility class is made up of static final functions. This class is
- * not a factory or a builder. It makes use of the GeoAPI factory interfaces provided by
- * {@link FactoryFinder}.
+ * implementations. This utility class is made up of static functions working with arbitrary
+ * implementations of GeoAPI interfaces as much as possible.
  * <p>
  * The methods defined in this class can be grouped in three categories:
  * <p>
@@ -1109,10 +1108,9 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * <code>{@link AbstractIdentifiedObject#equals(AbstractIdentifiedObject,boolean) equals}(..., false)</code>.
      * Otherwise if the given objects are instances of {@link AbstractMathTransform}, then this method delegates to
      * <code>{@link AbstractMathTransform#equivalent(MathTransform,boolean) equivalent}(..., false)</code>.
-     * <p>
      * The {@code false} boolean argument value in the later case explains why the comparison of math
-     * transforms is only approximative. <strong>Note that it may change in a future release</strong>.
-     * See <a href="http://jira.geotoolkit.org/browse/GEOTK-62">GEOTK-62</a>.
+     * transforms is only approximative. <strong>Note that it may change in a future release</strong>
+     * (see <a href="http://jira.geotoolkit.org/browse/GEOTK-62">GEOTK-62</a>).
      *
      * @param  object1 The first object to compare (may be null).
      * @param  object2 The second object to compare (may be null).
