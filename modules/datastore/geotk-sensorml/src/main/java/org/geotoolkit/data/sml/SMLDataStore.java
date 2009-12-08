@@ -742,7 +742,7 @@ public class SMLDataStore extends AbstractDataStore {
         }
         JTSEnvelope2D bounds;
         if (count > 0){
-            bounds = new JTSEnvelope2D(minx, maxx, minx, maxy, defaultCRS);
+            bounds = new JTSEnvelope2D(minx, maxx, miny, maxy, defaultCRS);
         } else {
             bounds = new JTSEnvelope2D(defaultCRS);
         }
