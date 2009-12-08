@@ -52,26 +52,21 @@ import static org.junit.Assert.*;
 
 
 /**
- * Test the default coordinate operation factory.
+ * Tests the default coordinate operation factory.
  * <p>
  * <strong>NOTE:</strong> Some tests are disabled in the particular case when the
  * {@link CoordinateOperationFactory} is actually an {@link AuthorityBackedFactory}
  * instance. This is because the later can replace source or target CRS by some CRS
  * found in the EPSG authority factory, causing {@code assertSame} to fails. It may
  * also returns a more accurate operation than the one expected from the WKT in the
- * code below, causing transformation checks to fail as well. This situation occurs
- * only if some EPSG authority factory like {@code plugin/epsg-hsql} is found in the
- * classpath while the test are running. It should not occurs during Maven build, so
- * all tests should be executed with Maven. It may occurs during an execution from
- * the IDE however, in which case the tests are disabled in order to allows normal
- * execution of other tests.
+ * code below, causing transformation checks to fail as well.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.1
  */
-public final class CoordinateOperationFactoryTest extends TransformTestCase {
+public class CoordinateOperationFactoryTest extends TransformTestCase {
     /**
      * WKT of compound CRS to be tested.
      */
@@ -83,6 +78,11 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
             NAD27_H = "COMPD_CS[\"NAD27 + Z\"," + WKT.GEOGCS_NAD27      + ',' + WKT.VERTCS_HEIGHT + ']';
 
     /**
+     * The hints used for fetching the factories.
+     */
+    private final Hints testHints;
+
+    /**
      * {@code true} if {@link #opFactory} is <strong>not</strong> an instance of
      * {@link AuthorityBackedFactory}. See class javadoc for rational.
      */
@@ -92,7 +92,17 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
      * Creates a new test suite.
      */
     public CoordinateOperationFactoryTest() {
-        super(AbstractMathTransform.class, null);
+        this(null);
+    }
+
+    /**
+     * Creates a new test suite using factories created from the given hints.
+     *
+     * @param hints The hints to use for fecthing factories, or {@code null} for the default ones.
+     */
+    protected CoordinateOperationFactoryTest(final Hints hints) {
+        super(AbstractMathTransform.class, hints);
+        this.testHints = hints;
     }
 
     /**
@@ -103,7 +113,21 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
     public void ensureClassLoaded() {
         assertNotNull(DATUM_SHIFT_APPLIED);
         assertNotNull(DATUM_SHIFT_OMITTED);
-        usingDefaultFactory = ((AbstractCoordinateOperationFactory) opFactory).getBackingFactory() == null;
+        usingDefaultFactory = isUsingDefaultFactory(opFactory);
+    }
+
+    /**
+     * Returns {@code true} if the given factory is an {@link AuthorityBackedFactory}
+     * and is not backed neither by such factory.
+     */
+    static boolean isUsingDefaultFactory(final CoordinateOperationFactory factory) {
+        if (factory instanceof AuthorityBackedFactory) {
+            return false;
+        }
+        if (factory instanceof AbstractCoordinateOperationFactory) {
+            return isUsingDefaultFactory(((AbstractCoordinateOperationFactory) factory).getBackingFactory());
+        }
+        return true;
     }
 
     /**
@@ -113,10 +137,10 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void testFactoryWithHints() {
-        final Hints hints = new Hints();
-        hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-        hints.put(Hints.FORCE_STANDARD_AXIS_DIRECTIONS,   Boolean.TRUE);
-        hints.put(Hints.FORCE_STANDARD_AXIS_UNITS,        Boolean.TRUE);
+        final Hints hints = new Hints(testHints);
+        assertNull(hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
+        assertNull(hints.put(Hints.FORCE_STANDARD_AXIS_DIRECTIONS,   Boolean.TRUE));
+        assertNull(hints.put(Hints.FORCE_STANDARD_AXIS_UNITS,        Boolean.TRUE));
 
         final CoordinateOperationFactory factory =
                 AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
@@ -197,10 +221,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NAD83);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84_ESRI);
         final CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, operation.getSourceCRS());
-            assertSame(targetCRS, operation.getTargetCRS());
-        }
+        assertSame(sourceCRS, operation.getSourceCRS());
+        assertSame(targetCRS, operation.getTargetCRS());
         transform = operation.getMathTransform();
         validate();
         tolerance = 1E-6;
@@ -222,12 +244,10 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NTF);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84);
         final CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
-        if (usingDefaultFactory) {
-            assertSame (sourceCRS, operation.getSourceCRS());
-            assertSame (targetCRS, operation.getTargetCRS());
-            assertTrue (operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_APPLIED));
-            assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
-        }
+        assertSame (sourceCRS, operation.getSourceCRS());
+        assertSame (targetCRS, operation.getTargetCRS());
+        assertTrue (operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_APPLIED));
+        assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
         tolerance = 1E-6;
@@ -261,10 +281,11 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
          * Try again with hints, asking for a lenient factory.
          */
         CoordinateOperationFactory lenientFactory;
-        Hints hints = new Hints(Hints.LENIENT_DATUM_SHIFT, Boolean.FALSE);
+        final Hints hints = new Hints(testHints);
+        assertNull(hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.FALSE));
         lenientFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
         assertSame(opFactory, lenientFactory);
-        hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+        assertEquals(Boolean.FALSE, hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE));
         lenientFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
         assertNotSame(opFactory, lenientFactory);
         final CoordinateOperation lenient = lenientFactory.createOperation(amputedCRS, targetCRS);
@@ -294,12 +315,10 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84;
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_UTM_58S);
         CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, operation.getSourceCRS());
-            assertSame(targetCRS, operation.getTargetCRS());
-            assertTrue (operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_APPLIED));
-            assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
-        }
+        assertSame(sourceCRS, operation.getSourceCRS());
+        assertSame(targetCRS, operation.getTargetCRS());
+        assertTrue (operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_APPLIED));
+        assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
         tolerance = 1E-6;
@@ -315,12 +334,10 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
                 AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
         assertNotSame(opFactory, lenientFactory);
         operation = lenientFactory.createOperation(sourceCRS, targetCRS);
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, operation.getSourceCRS());
-            assertSame(targetCRS, operation.getTargetCRS());
-            assertTrue (operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_APPLIED));
-            assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
-        }
+        assertSame(sourceCRS, operation.getSourceCRS());
+        assertSame(targetCRS, operation.getTargetCRS());
+        assertTrue (operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_APPLIED));
+        assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
         tolerance = 1E-6;
@@ -340,8 +357,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
         assertTrue(op instanceof Transformation);
+        assertSame(sourceCRS, op.getSourceCRS());
         if (usingDefaultFactory) {
-            assertSame(sourceCRS, op.getSourceCRS());
             assertSame(targetCRS, op.getTargetCRS());
         }
         assertFalse(transform.isIdentity());
@@ -368,10 +385,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, op.getSourceCRS());
-            assertSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame(sourceCRS, op.getSourceCRS());
+        assertSame(targetCRS, op.getTargetCRS());
         assertTrue(op instanceof Conversion);
         assertTrue(transform.isIdentity());
         validate();
@@ -388,10 +403,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, op.getSourceCRS());
-            assertSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame(sourceCRS, op.getSourceCRS());
+        assertSame(targetCRS, op.getTargetCRS());
         assertTrue(op instanceof Conversion);
         assertTrue(transform.isIdentity());
         validate();
@@ -487,10 +500,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84_DMHS);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertNotSame(sourceCRS, op.getSourceCRS());
-            assertSame   (targetCRS, op.getTargetCRS());
-        }
+        assertNotSame(sourceCRS, op.getSourceCRS());
+        assertSame   (targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
         // Note: Expected values below were computed with Geotk (not an external library).
@@ -515,10 +526,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, op.getSourceCRS());
-            assertSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame(sourceCRS, op.getSourceCRS());
+        assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
         tolerance = 1E-6;
@@ -538,10 +547,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_Z);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame   (sourceCRS, op.getSourceCRS());
-            assertNotSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame   (sourceCRS, op.getSourceCRS());
+        assertNotSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
         // Note: Expected values below were computed with Geotk (not an external library).
@@ -598,10 +605,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_H);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame   (sourceCRS, op.getSourceCRS());
-            assertNotSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame   (sourceCRS, op.getSourceCRS());
+        assertNotSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
     }
@@ -617,10 +622,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.VERTCS_HEIGHT);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, op.getSourceCRS());
-            assertSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame(sourceCRS, op.getSourceCRS());
+        assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
         tolerance = 1E-6;
@@ -642,10 +645,8 @@ public final class CoordinateOperationFactoryTest extends TransformTestCase {
         sourceCRS = new DefaultCompoundCRS("Mercator 4D", sourceCRS, DefaultTemporalCRS.MODIFIED_JULIAN);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        if (usingDefaultFactory) {
-            assertSame(sourceCRS, op.getSourceCRS());
-            assertSame(targetCRS, op.getTargetCRS());
-        }
+        assertSame(sourceCRS, op.getSourceCRS());
+        assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         assertTrue("The somewhat complex MathTransform chain should have been simplified " +
                    "to a single affine transform.", transform instanceof LinearTransform);

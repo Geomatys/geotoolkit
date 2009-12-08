@@ -34,7 +34,6 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.junit.*;
-import static org.junit.Assert.*;
 
 
 /**

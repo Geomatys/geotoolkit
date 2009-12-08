@@ -48,7 +48,6 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 

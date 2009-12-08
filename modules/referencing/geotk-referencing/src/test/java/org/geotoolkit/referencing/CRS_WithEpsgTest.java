@@ -548,12 +548,12 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         CoordinateSystem cs = horizontal.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
-        assertEquals(AxisDirection.EAST, cs.getAxis(1).getDirection());
+        assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
     }
 
     /**
-     * Tests the number of CRS that can be created. This test will be executed only if this test
-     * suite is run with the {@link #verbose} is set to {@code true}.
+     * Tests the number of CRS that can be created. This test will be executed only if
+     * this test suite is run while the {@link #verbose} field is set to {@code true}.
      *
      * @throws FactoryException Should not happen.
      */

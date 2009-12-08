@@ -19,11 +19,14 @@ package org.geotoolkit.referencing;
 
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.io.wkt.FormattableObject;
 
 import org.junit.Assert;
@@ -35,11 +38,16 @@ import static org.geotoolkit.test.Commons.*;
  * going to use.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 3.00
  */
 public abstract class ReferencingTestCase extends Assert {
+    /**
+     * Small tolerance for comparisons of floating point values.
+     */
+    private static final double EPS = 1E-7;
+
     /**
      * Set to {@code true} for sending debugging information to the standard output stream.
      */
@@ -68,6 +76,40 @@ public abstract class ReferencingTestCase extends Assert {
         }
         assertTrue(factory instanceof ThreadedEpsgFactory);
         return true;
+    }
+
+    /**
+     * Asserts that the given transform is represented by diagonal matrix where every elements
+     * on the diagonal have the given values. The matrix doesn't need to be square. The last
+     * row is handled especially if the {@code affine} argument is {@code true}.
+     *
+     * @param tr     The transform.
+     * @param affine If {@code true}, then the last row is expected to contains the value 1
+     *               in the last column, and all other columns set to 0.
+     * @param values The values which are expected on the diagonal. If this array length is
+     *               smaller than the diagonal length, then the last element in the array
+     *               is repeated for all remaining diagonal elements.
+     *
+     * @since 3.07
+     */
+    public static void assertDiagonalMatrix(final MathTransform tr, final boolean affine, final double... values) {
+        assertTrue("The transform shall be linear.", tr instanceof LinearTransform);
+        final Matrix matrix = ((LinearTransform) tr).getMatrix();
+        final int numRows = matrix.getNumRow();
+        final int numCols = matrix.getNumCol();
+        for (int j=0; j<numRows; j++) {
+            for (int i=0; i<numCols; i++) {
+                final double expected;
+                if (affine && j == numRows-1) {
+                    expected = (i == numCols-1) ? 1 : 0;
+                } else if (i == j) {
+                    expected = values[Math.min(values.length-1, i)];
+                } else {
+                    expected = 0;
+                }
+                assertEquals("matrix(" + j + ',' + i + ')', expected, matrix.getElement(j, i), EPS);
+            }
+        }
     }
 
     /**

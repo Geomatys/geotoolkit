@@ -350,7 +350,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      */
     private void assertEquals(final ParameterValueGroup expected, final ParameterValueGroup actual) {
         for (final GeneralParameterValue candidate : expected.values()) {
-            if (!(candidate instanceof ParameterValue)) {
+            if (!(candidate instanceof ParameterValue<?>)) {
                 throw new UnsupportedOperationException("Not yet implemented.");
             }
             final ParameterValue<?> value = (ParameterValue<?>) candidate;
