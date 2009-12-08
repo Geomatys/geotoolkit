@@ -70,7 +70,7 @@ import org.geotoolkit.util.Utilities;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(name = "SensorMLType", propOrder = {
     "keywords",
     "identification",
     "classification",

@@ -38,6 +38,7 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.collection.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -130,10 +131,21 @@ public class SMLDataStore extends AbstractDataStore {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
+    private CoordinateReferenceSystem defaultCRS;
+    
     public SMLDataStore(Connection connection) {
         //not transactional for the moment
         super(false);
         this.connection = connection;
+        try {
+            defaultCRS = CRS.decode("EPSG:27582");
+
+        } catch (NoSuchAuthorityCodeException ex) {
+            getLogger().log(Level.WARNING, null, ex);
+        } catch (FactoryException ex) {
+            getLogger().log(Level.WARNING, null, ex);
+        }
+        
         initTypes();
         initStatement();
     }
@@ -704,7 +716,37 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     protected JTSEnvelope2D getBounds(Query query) throws IOException {
-        return null;
+        FeatureCollection<SimpleFeatureType, SimpleFeature> fc = getFeatureSource(query.getTypeName()).getFeatures(query);
+        FeatureIterator<SimpleFeature> iterator                = fc.features();
+        int count = 0;
+        
+        double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE, maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
+        while (iterator.hasNext()) {
+            SimpleFeature sf = iterator.next();
+            Point p = (Point) sf.getAttribute(LOCATION);
+            if (p != null) {
+                count++;
+                if (p.getX() > maxx) {
+                    maxx = p.getX();
+                }
+                if (p.getX() < minx) {
+                    minx = p.getX();
+                }
+                if (p.getY() > maxy) {
+                    maxy = p.getY();
+                }
+                if (p.getY() < miny) {
+                    miny = p.getY();
+                }
+            }
+        }
+        JTSEnvelope2D bounds;
+        if (count > 0){
+            bounds = new JTSEnvelope2D(minx, maxx, minx, maxy, defaultCRS);
+        } else {
+            bounds = new JTSEnvelope2D(defaultCRS);
+        }
+        return bounds;
     }
 
     /**
@@ -712,7 +754,13 @@ public class SMLDataStore extends AbstractDataStore {
      */
     @Override
     protected int getCount(Query query) throws IOException {
-        return -1;
+        FeatureCollection<SimpleFeatureType, SimpleFeature> fc = getFeatureSource(query.getTypeName()).getFeatures(query);
+        FeatureIterator<SimpleFeature> iterator                = fc.features();
+        int count = 0;
+        while (iterator.hasNext()) {
+            count++;
+        }
+        return count;
     }
 
     /**

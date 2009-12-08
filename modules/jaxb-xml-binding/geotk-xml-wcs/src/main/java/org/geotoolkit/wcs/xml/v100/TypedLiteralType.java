@@ -25,7 +25,10 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
- * A single value for a variable, encoded as a string. This type can be used for one value, for a spacing between allowed values, or for the default value of a parameter. The "type" attribute indicates the datatype of this value (default is a string). The value for a typed literal is found by applying the datatype mapping associated with the datatype URI to the lexical form string. 
+ * A single value for a variable, encoded as a string.
+ * This type can be used for one value, for a spacing between allowed values, or for the default value of a parameter.
+ * The "type" attribute indicates the datatype of this value (default is a string).
+ * The value for a typed literal is found by applying the datatype mapping associated with the datatype URI to the lexical form string.
  * 
  * <p>Java class for TypedLiteralType complex type.
  * 
