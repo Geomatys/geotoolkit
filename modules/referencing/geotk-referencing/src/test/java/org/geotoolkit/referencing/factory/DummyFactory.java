@@ -67,7 +67,7 @@ final class DummyFactory extends AbstractAuthorityFactory {
          */
         @Override
         protected AbstractAuthorityFactory createBackingStore() {
-            assertTrue("Should be invoked in a synchronized block.", Thread.holdsLock(this));
+            assertFalse("Should be invoked outside synchronized block.", Thread.holdsLock(this));
             final DummyFactory factory = new DummyFactory();
             assertTrue(factories.add(factory));
             return factory;

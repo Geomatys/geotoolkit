@@ -200,7 +200,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * initialized by {@link AnsiDialectEpsgFactory} and saved here only in order to avoid
      * querying the database metadata everytime a new backing store factory is created.
      */
-    private transient Map<String,String> dialect;
+    private transient Map<String,String> toANSI;
 
     /**
      * Constructs an authority factory using the default set of factories. The instance
@@ -535,6 +535,14 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     {
         final DataSource source = getDataSource();
         final Connection connection;
+        final String user, password, schema;
+        final Map<String,String> toANSI;
+        synchronized (this) {
+            user     = this.user;
+            password = this.password;
+            schema   = this.schema;
+            toANSI   = this.toANSI;
+        }
         if (user != null && password != null) {
             connection = source.getConnection(user, password);
         } else {
@@ -544,14 +552,20 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         final DatabaseMetaData metadata = connection.getMetaData();
         final AnsiDialectEpsgFactory factory;
         switch (Dialect.guess(metadata)) {
+            /*
+             * NOTE: It is better to keep the code below outside synchronized block, if
+             * possible, because the creation of those EPSG factories implies fetching
+             * a lot of dependencies, which may lead to tricky dead-lock in the factory
+             * system if there is too many locks hold.
+             */
             case ACCESS: {
                 return new DirectEpsgFactory(hints, connection);
             }
             default: // Fallback on ANSI syntax by default.
             case ANSI: {
-                final Map<String,String> dialect = this.dialect;
-                if (dialect != null) {
-                    return new AnsiDialectEpsgFactory(hints, connection, dialect);
+                if (toANSI != null) {
+                    return new AnsiDialectEpsgFactory(hints, connection, toANSI);
+                    // The toANSI map already contains the schema, if any.
                 }
                 factory = new AnsiDialectEpsgFactory(hints, connection);
                 break;
@@ -561,7 +575,15 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
             factory.setSchema(schema, metadata.getIdentifierQuoteString(), true);
         }
         factory.autoconfig(metadata);
-        dialect = factory.toANSI;
+        synchronized (this) {
+            /*
+             * It could happen that the map has been assigned in an other thread. In such case,
+             * the content should be identical unless the database metadata changed (which should
+             * not occur - this class assumes that the database is stable). If such change happen
+             * anyway, keep the most recent map.
+             */
+            this.toANSI = factory.toANSI;
+        }
         return factory;
     }
 
@@ -581,12 +603,22 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *         This exception usually has a {@link SQLException} as its cause.
      */
     @Override
-    protected synchronized AbstractAuthorityFactory createBackingStore() throws FactoryException {
+    protected AbstractAuthorityFactory createBackingStore() throws FactoryException {
+        /*
+         * NOTE: This method should not be synchronized, in order to a void dead-lock.
+         * Every methods invoked below should be thread-safe. The only things requirying
+         * special attention are access to hints and the createBackingStore(Hints) method.
+         */
         final boolean isLoggable = LOGGER.isLoggable(Level.CONFIG);
         String product = null, url = null;
         final AbstractAuthorityFactory factory;
         final Hints sourceHints = EMPTY_HINTS.clone();
-        sourceHints.putAll(hints);
+        synchronized (this) {
+            // The hints should already be initialized.
+            // Nevertheless we synchronize as a safety.
+            // Do not invoke getImplementationHints()!
+            sourceHints.putAll(hints);
+        }
         sourceHints.putAll(factories.getImplementationHints());
         try {
             factory = createBackingStore(sourceHints);

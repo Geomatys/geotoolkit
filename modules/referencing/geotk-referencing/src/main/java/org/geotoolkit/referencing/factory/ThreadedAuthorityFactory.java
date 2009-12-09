@@ -267,6 +267,9 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * {@code createXXX(...)} method is invoked. It may also be invoked again if additional
      * factories are needed in different threads, or if all factories have been disposed
      * after the timeout.
+     * <p>
+     * This method shall be thread-safe. Subclasses are responsible for applying
+     * synchronisation if needed.
      *
      * @return The backing store to uses in {@code createXXX(...)} methods.
      * @throws NoSuchFactoryException if the backing store has not been found.
@@ -290,39 +293,63 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
          */
         final Usage usage = current.get();
         AbstractAuthorityFactory factory = usage.factory;
-        if (factory == null) synchronized (this) {
-            /**
-             * If we have reached the maximal amount of backing stores allowed, wait for a backing
-             * store to become available. In theory the 2 seconds timeout is not necessary, but we
-             * put it as a safety in case we fail to invoke a notify() matching this wait(), for
-             * example someone else is waiting on this monitor or because the release(...) method
-             * threw an exception.
-             */
-            while (remainingBackingStores == 0) {
-                try {
-                    wait(2000);
-                } catch (InterruptedException e) {
-                    // Someone doesn't want to let us sleep.
-                    throw new FactoryException(e.getLocalizedMessage(), e);
+        if (factory == null) {
+            synchronized (this) {
+                /**
+                 * If we have reached the maximal amount of backing stores allowed, wait for a backing
+                 * store to become available. In theory the 2 seconds timeout is not necessary, but we
+                 * put it as a safety in case we fail to invoke a notify() matching this wait(), for
+                 * example someone else is waiting on this monitor or because the release(...) method
+                 * threw an exception.
+                 */
+                while (remainingBackingStores == 0) {
+                    try {
+                        wait(2000);
+                    } catch (InterruptedException e) {
+                        // Someone doesn't want to let us sleep.
+                        throw new FactoryException(e.getLocalizedMessage(), e);
+                    }
                 }
+                /*
+                 * Reuses the most recently used factory, if available. If there is no factory
+                 * available for reuse, creates a new one. We don't add it to the queue now;
+                 * it will be done by the release(...) method.
+                 */
+                final Store store = stores.pollLast();
+                if (store != null) {
+                    factory = store.factory; // Should never be null.
+                }
+                remainingBackingStores--; // Should be done last when we are sure to not fail.
             }
             /*
-             * Reuses the most recently used factory, if available. If there is no factory
-             * available for reuse, creates a new one. We don't add it to the queue now;
-             * it will be done by the release(...) method.
+             * If there is a need to create a new factory, do that outside the synchronized
+             * block because this creation may involve a lot of client code. This is better
+             * for reducing the dead-lock risk. Subclasses are responsible of synchronizing
+             * their createBackingStore() method if necessary.
              */
-            final Store store = stores.pollLast();
-            if (store != null) {
-                factory = store.factory;
-            } else {
-                factory = createBackingStore();
+            try {
+                assert usage.count == 0;
                 if (factory == null) {
-                    throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
+                    factory = createBackingStore();
+                    if (factory == null) {
+                        throw new NoSuchFactoryException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
+                    }
+                }
+                usage.factory = factory;
+            } finally {
+                /*
+                 * If any kind of error occured, restore the 'remainingBackingStores' field
+                 * as if no code were executed.  This code would not have been needed if we
+                 * were allowed to decrement 'remainingBackingStores' only as the very last
+                 * step (when we know that everything else succeed). Unfortunatly it needed
+                 * to be decremented inside the synchronized block.
+                 */
+                if (factory == null) {
+                    synchronized (this) {
+                        remainingBackingStores++;
+                    }
                 }
             }
-            assert usage.count == 0;
-            usage.factory = factory;
-            remainingBackingStores--; // Must be done last when we are sure to not fail.
         }
         // Increment below is safe even if outside the synchronized block,
         // because each thread own exclusively its Usage instance
@@ -335,9 +362,9 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * This method marks the factory as available for reuse by other threads.
      */
     @Override
-    final synchronized void release() {
+    final void release() {
         final Usage usage = current.get();
-        if (--usage.count == 0) {
+        if (--usage.count == 0) synchronized (this) {
             remainingBackingStores++; // Must be done first in case an exception happen after this point.
             final AbstractAuthorityFactory factory = usage.factory;
             usage.factory = null;

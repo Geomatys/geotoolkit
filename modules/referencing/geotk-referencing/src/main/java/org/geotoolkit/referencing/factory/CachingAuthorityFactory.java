@@ -103,7 +103,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * {@link Throwable} if it is not available or {@code null} if this status has not yet
      * been determined.
      */
-    private transient Object status;
+    private transient volatile Object status;
 
     /**
      * The pool of cached objects. The keys are instances of {@link String} or {@link Pair}.
@@ -223,16 +223,11 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * Returns the backing store authority factory. The returned backing store must be thread-safe.
      * This method shall be used together with {@link #release} in a {@code try ... finally} block.
      *
-     * {@note The default implementation is not synchronized because <code>backingStore</code> is
-     *        already initialized at construction time and will not change, except for being set
-     *        to the <code>null</code> value which is safe. However subclasses will synchronize
-     *        this method.}
-     *
      * @return The backing store to use in {@code createXXX(...)} methods.
      * @throws FactoryException if the creation of backing store failed.
      */
     AbstractAuthorityFactory getBackingStore() throws FactoryException {
-        final AbstractAuthorityFactory backingStore = this.backingStore; // Protect from changes.
+        final AbstractAuthorityFactory backingStore = this.backingStore;
         if (backingStore == null) {
             throw new FactoryException(Errors.format(Errors.Keys.DISPOSED_FACTORY));
         }
@@ -255,7 +250,15 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * @since 3.03
      */
     @Override
-    public synchronized ConformanceResult availability() {
+    public ConformanceResult availability() {
+        /*
+         * We do not synchronize since the "getBackingStore() ... release()" pattern
+         * is thread-safe. It is not a big deal if the status is determined twice by
+         * two concurrent threads. It should not happen anyway since this method is
+         * usually invoked (indirectly) by FactoryFinder, which is synchronized. It
+         * is much better to avoid synchronisation (if not strictly necessary) in
+         * order to avoid dead-lock issues.
+         */
         Object s = status;
         if (s == null) {
             AbstractAuthorityFactory factory = null;
@@ -285,9 +288,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
         }
         return new Availability() {
             @Override public boolean pass() {
-                synchronized (CachingAuthorityFactory.class) {
-                    return Boolean.TRUE.equals(status) && super.pass();
-                }
+                return Boolean.TRUE.equals(status) && super.pass();
             }
         };
     }
@@ -300,7 +301,6 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * @param factory The backing store, or {@code null} if we failed to get it.
      */
     final void unavailable(final FactoryException exception, final AbstractAuthorityFactory factory) {
-        assert Thread.holdsLock(this);
         final Level level;
         if (exception instanceof NoSuchFactoryException) {
             /*
@@ -357,7 +357,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      */
     @Override
     final boolean sameAuthorityCodes(final AuthorityFactory factory) {
-        final AbstractAuthorityFactory backingStore = this.backingStore; // Protect from changes.
+        final AbstractAuthorityFactory backingStore = this.backingStore;
         if (backingStore != null && backingStore.sameAuthorityCodes(factory)) {
             return true;
         }
@@ -1188,12 +1188,12 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      *        this method is invoked during the process of a JVM shutdown.
      */
     @Override
-    protected synchronized void dispose(final boolean shutdown) {
-        cache.clear();
+    protected void dispose(final boolean shutdown) {
+        super.dispose(shutdown); // Mark the factory as not available anymore.
         final AbstractAuthorityFactory factory = backingStore;
         if (factory != null) {
             factory.dispose(shutdown);
         }
-        super.dispose(shutdown);
+        cache.clear();
     }
 }

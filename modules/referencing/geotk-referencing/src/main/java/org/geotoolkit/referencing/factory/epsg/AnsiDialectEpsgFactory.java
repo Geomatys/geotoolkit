@@ -148,9 +148,9 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     /**
      * Constructs an authority factory using an existing map.
      */
-    AnsiDialectEpsgFactory(Hints userHints, Connection connection, Map<String,String> map) {
+    AnsiDialectEpsgFactory(Hints userHints, Connection connection, Map<String,String> toANSI) {
         super(userHints, connection);
-        this.toANSI = map;
+        this.toANSI = toANSI;
     }
 
     /**
