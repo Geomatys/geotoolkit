@@ -99,6 +99,8 @@ public class SMLDataStore extends AbstractDataStore {
     private PreparedStatement getTextValue;
     private PreparedStatement getTextValue2;
     private PreparedStatement getSMLType;
+    private PreparedStatement getContactRole;
+    private PreparedStatement getContactName;
 
     /*
      * Shared attributes
@@ -152,11 +154,15 @@ public class SMLDataStore extends AbstractDataStore {
 
     private void initStatement() {
         try {
-            getTextValue  = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
-            getTextValue2 = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
-            getSMLType    = connection.prepareStatement("SELECT \"type\"       FROM \"Storage\".\"Values\"     WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?");
-            getAllFormId  = connection.prepareStatement("SELECT \"identifier\" FROM \"Storage\".\"Forms\"      WHERE \"catalog\"='SMLC'");
-
+            getTextValue   = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
+            getTextValue2  = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?");
+            getSMLType     = connection.prepareStatement("SELECT \"type\"       FROM \"Storage\".\"Values\"     WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?");
+            getAllFormId   = connection.prepareStatement("SELECT \"identifier\" FROM \"Storage\".\"Forms\"      WHERE \"catalog\"='SMLC'");
+            getContactRole = connection.prepareStatement("SELECT \"id_value\"  FROM \"Storage\".\"TextValues\" WHERE \"path\"='SensorML:SensorML:member:contact:role'" +
+                                                         "                                                      AND   \"value\"='urn:x-ogc:def:role:producer'"          +
+                                                         "                                                      AND   \"form\"=?");
+            getContactName = connection.prepareStatement("SELECT \"value\"      FROM \"Storage\".\"TextValues\" WHERE \"id_value\"=? AND \"form\"=?");
+            
         } catch (SQLException ex) {
            getLogger().severe("SQL Exception while initializing the prepared statement for SensorML database:" + ex.getMessage());
         }
@@ -646,6 +652,34 @@ public class SMLDataStore extends AbstractDataStore {
              * TODO SML : PRODUCER
              *
              */
+             Map<String, String> producers = new HashMap<String, String>();
+             getContactRole.setInt(1, formID);
+             List<String> contacts = new ArrayList<String>();
+             result2 = getContactRole.executeQuery();
+             while (result2.next()) {
+                 String completePath = result2.getString(1);
+                 contacts.add(completePath.substring(0, completePath.lastIndexOf(':')));
+             }
+             result2.close();
+             for (String contactPath : contacts) {
+                 getContactName.setString(1, contactPath + ":organizationName.1");
+                 getContactName.setInt(2, formID);
+                 result2 = getContactName.executeQuery();
+                 String orgName = null;
+                 if (result2.next()) {
+                     orgName = result2.getString(1);
+                 }
+                 getContactName.setString(1, contactPath + ":individualName.1");
+                 getContactName.setInt(2, formID);
+                 result2 = getContactName.executeQuery();
+                 String indName = null;
+                 if (result2.next()) {
+                     indName = result2.getString(1);
+                 }
+                 producers.put(orgName, indName);
+             }
+             result2.close();
+             builder.set(PRODUCER, producers);
 
 
             /*
