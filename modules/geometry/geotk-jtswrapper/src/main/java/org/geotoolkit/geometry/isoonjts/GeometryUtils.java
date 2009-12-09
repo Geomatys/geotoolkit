@@ -426,9 +426,9 @@ public final class GeometryUtils {
     	
 	GeographicCRS wgs84crs = null;
         try {
-                wgs84crs = (GeographicCRS) CRS.decode("EPSG:4327");
+                wgs84crs = (GeographicCRS) CRS.decode("EPSG:4979");
         } catch (Exception nsace){
-                LOGGER.warning("could not get crs for EPSG:4327");
+                LOGGER.warning("could not get crs for EPSG:4979");
         }
     	
         //have doubts about following line, was the commented out 2nd clause to condition doing anything - colin       
