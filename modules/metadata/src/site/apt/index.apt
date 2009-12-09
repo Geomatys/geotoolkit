@@ -113,7 +113,7 @@ Metadata
   view from the <<<IIOMetadata>>>. A more direct way may be provided in a future version.
 
 
-*** As a table record in a database (using <<<<org.geotoolkit.metadata.sql>>>)
+*** As a table record in a database (using <<<org.geotoolkit.metadata.sql>>>)
 
   It is possible to etablish the following mapping between metadata and a SQL database:
 

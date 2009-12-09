@@ -245,7 +245,7 @@ public enum Installation {
      *
      * @param  caller The class to use for fetching resources, typically the caller class.
      * @param  path   A string representation of a filename or a URL.
-     * @return A File or URL created from the string representation.
+     * @return {@code true} if the file or URL exists.
      * @throws IOException if the URL cannot be created.
      */
     public boolean exists(final Class<?> caller, final String path) throws IOException {

@@ -614,9 +614,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         final AbstractAuthorityFactory factory;
         final Hints sourceHints = EMPTY_HINTS.clone();
         synchronized (this) {
-            // The hints should already be initialized.
-            // Nevertheless we synchronize as a safety.
-            // Do not invoke getImplementationHints()!
+            // See javadoc in super-class method.
             sourceHints.putAll(hints);
         }
         sourceHints.putAll(factories.getImplementationHints());

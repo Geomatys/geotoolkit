@@ -267,9 +267,24 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * {@code createXXX(...)} method is invoked. It may also be invoked again if additional
      * factories are needed in different threads, or if all factories have been disposed
      * after the timeout.
+     *
+     * {@section Synchronization}
+     * This method needs to be thread-safe. {@code ThreadedAuthorityFactory} does not hold a lock
+     * when invoking this method. Subclasses are responsible to apply their own synchronisation if
+     * needed, but are encouraged to avoid doing so if possible.
      * <p>
-     * This method shall be thread-safe. Subclasses are responsible for applying
-     * synchronisation if needed.
+     * In addition, implementations should not invoke {@link #availability() availability()},
+     * {@link #getImplementationHints()}, {@link #getAuthority() getAuthority()},
+     * {@link #getVendor() getVendor()} or any {@code createXXX()} method in order to avoid
+     * never-ending loop. If hints are needed, use the code below instead but keep in mind
+     * that the map may not contains the definitive set of hints at this stage:
+     *
+     * {@preformat java
+     *     final Hints localHints = EMPTY_HINTS.clone();
+     *     synchronized (this) {
+     *         localHints.putAll(hints);
+     *     }
+     * }
      *
      * @return The backing store to uses in {@code createXXX(...)} methods.
      * @throws NoSuchFactoryException if the backing store has not been found.
