@@ -565,8 +565,6 @@ readLine:   while (true) {
          * Parameters check.
          */
         final int numSrcBands = 1; // To be modified in a future version if we support multi-bands.
-        final int numDstBands = 1;
-        checkReadParamBandSettings(param, numSrcBands, numDstBands);
         /*
          * Extract user's parameters.
          */
@@ -585,20 +583,25 @@ readLine:   while (true) {
             sourceXSubsampling = 1;
             sourceYSubsampling = 1;
         }
-        final int               width      = this.width;
-        final int               height     = this.height;
+        final int width       = this.width;
+        final int height      = this.height;
+        final int numDstBands = (destinationBands != null) ? destinationBands.length : numSrcBands;
         final SampleConverter[] converters = new SampleConverter[numDstBands];
         final BufferedImage     image      = getDestination(imageIndex, param, width, height, converters);
         final WritableRaster    raster     = image.getRaster();
-        final Rectangle         srcRegion  = new Rectangle();
-        final Rectangle         dstRegion  = new Rectangle();
+        checkReadParamBandSettings(param, numSrcBands, raster.getNumBands());
+
+        final Rectangle srcRegion = new Rectangle();
+        final Rectangle dstRegion = new Rectangle();
         computeRegions(param, width, height, image, srcRegion, dstRegion);
-        final WritableRectIter dstIter = RectIterFactory.createWritable(raster, dstRegion);
+        final WritableRectIter iter = RectIterFactory.createWritable(raster, dstRegion);
         final int dstBand = (destinationBands != null) ? destinationBands[0] : 0;
         for (int i=dstBand; --i>=0;) {
-            dstIter.nextBand();
+            if (iter.nextBandDone()) {
+                throw new IIOException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, dstBand));
+            }
         }
-        if (!dstIter.finishedBands() && !dstIter.finishedLines() && !dstIter.finishedPixels()) {
+        if (!iter.finishedBands() && !iter.finishedLines() && !iter.finishedPixels()) {
             final int                 dataType   = raster.getSampleModel().getDataType();
             final char[]              charBuffer = new char[48]; // Arbitrary length limit for a sample value.
             final ByteBuffer          buffer     = this.buffer;
@@ -667,15 +670,15 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                         try {
                             switch (dataType) {
                                 case DataBuffer.TYPE_DOUBLE: {
-                                    dstIter.setSample(converter.convert(Double.parseDouble(value)));
+                                    iter.setSample(converter.convert(Double.parseDouble(value)));
                                     break;
                                 }
                                 case DataBuffer.TYPE_FLOAT: {
-                                    dstIter.setSample(converter.convert(Float.parseFloat(value)));
+                                    iter.setSample(converter.convert(Float.parseFloat(value)));
                                     break;
                                 }
                                 default: {
-                                    dstIter.setSample(converter.convert(Integer.parseInt(value)));
+                                    iter.setSample(converter.convert(Integer.parseInt(value)));
                                     break;
                                 }
                             }
@@ -689,11 +692,11 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                          * will stop when we have reached the last pixel (which may be sooner
                          * than the end of the current row in the input image).
                          */
-                        if (dstIter.nextPixelDone()) {
-                            if (dstIter.nextLineDone()) {
+                        if (iter.nextPixelDone()) {
+                            if (iter.nextLineDone()) {
                                 break loop;
                             }
-                            dstIter.startPixels();
+                            iter.startPixels();
                             isValid = false;
                         }
                     }

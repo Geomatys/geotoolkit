@@ -17,10 +17,15 @@
  */
 
 /**
- * Extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter} for spatial
- * data. The base class for reading operations is {@link org.geotoolkit.image.io.SpatialImageReader},
- * completed by {@link org.geotoolkit.image.io.SpatialImageReadParam} and
- * {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
+ * Base classes for extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter}
+ * for spatial data. The base {@code ImageReader} class for reading raster data is
+ * {@link org.geotoolkit.image.io.SpatialImageReader}, completed by a specialized {@code ImageReadParam}
+ * class for parameters ({@link org.geotoolkit.image.io.SpatialImageReadParam}) and a specialized
+ * {@code IIOMetadata} class for metadata ({@link org.geotoolkit.image.io.metadata.SpatialMetadata}).
+ * <p>
+ * Concrete implementations are provided in the {@linkplain org.geotoolkit.image.io.plugin plugin}
+ * sub-package for binary image formats, and in the {@linkplain org.geotoolkit.image.io.text text}
+ * sub-package for ASCII (or other text encoding) image formats.
  *
  * {@section Conversion of sample values}
  * Spatial image formats often contain geophysical values (e.g. temperatures in Celsius degrees,
@@ -40,7 +45,10 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.06
+ * @version 3.07
+ *
+ * @see org.geotoolkit.image.io.text
+ * @see org.geotoolkit.image.io.plugin
  *
  * @since 1.2
  * @module

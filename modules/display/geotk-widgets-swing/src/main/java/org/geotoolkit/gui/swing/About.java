@@ -290,49 +290,66 @@ public class About extends JPanel implements Dialog {
          * IMAGE ENCODERS/DECODERS TAB
          */
         if (true) {
-            final StringBuilder buffer = new StringBuilder();
-            final Map<String,DefaultMutableTreeNode> mimes = new TreeMap<String,DefaultMutableTreeNode>();
-            boolean writer = false;
-            do {
+            final StringBuilder rootName = new StringBuilder();
+            final Map<String, DefaultMutableTreeNode[]> mimes =
+                    new TreeMap<String, DefaultMutableTreeNode[]>();
+            /*
+             * The array in the above map will have a length of 2. The first element is for
+             * readers, and the second element is for writer. The following loop is executed
+             * twice: first for readers, then for writers.
+             */
+            for (int index=0; index<2; index++) {
                 final int titleKey;
                 final Class<? extends ImageReaderWriterSpi> category;
-                if (writer) {
-                    titleKey = Vocabulary.Keys.ENCODERS;
-                    category = ImageWriterSpi.class;
-                } else {
-                    titleKey = Vocabulary.Keys.DECODERS;
-                    category = ImageReaderSpi.class;
+                switch (index) {
+                    case 0: {
+                        titleKey = Vocabulary.Keys.DECODERS;
+                        category = ImageReaderSpi.class;
+                        break;
+                    }
+                    case 1: {
+                        titleKey = Vocabulary.Keys.ENCODERS;
+                        category = ImageWriterSpi.class;
+                        break;
+                    }
+                    default: throw new AssertionError(index);
                 }
-                String title = resources.getString(titleKey);
+                final String title = resources.getString(titleKey);
                 Iterator<? extends ImageReaderWriterSpi> it =
                         IIORegistry.getDefaultInstance().getServiceProviders(category, true);
                 while (it.hasNext()) {
                     final ImageReaderWriterSpi spi = it.next();
-                    final String  name = spi.getDescription(locale);
-                    final String[] mimeTypes = spi.getMIMETypes();
-                    patchMimes(mimeTypes);
-                    for (int i=0; i<mimeTypes.length; i++) {
-                        final String mimeType = mimeTypes[i];
-                        DefaultMutableTreeNode child = mimes.get(mimeType);
+                    final String name = spi.getDescription(locale);
+                    final String[] mimeTypes = patchMimes(spi.getMIMETypes());
+                    for (final String mimeType : mimeTypes) {
+                        DefaultMutableTreeNode[] childs = mimes.get(mimeType);
+                        if (childs == null) {
+                            childs = new DefaultMutableTreeNode[2];
+                            mimes.put(mimeType, childs);
+                        }
+                        DefaultMutableTreeNode child = childs[index];
                         if (child == null) {
-                            child = new DefaultMutableTreeNode(mimeType);
-                            mimes.put(mimeType, child);
+                            child = new DefaultMutableTreeNode(title);
+                            childs[index] = child;
                         }
                         child.add(new DefaultMutableTreeNode(name, false));
                     }
-                    if (title!=null && mimeTypes.length!=0) {
-                        if (buffer.length() != 0) {
-                            buffer.append(" / ");
-                        }
-                        buffer.append(title);
-                        title = null;
+                }
+                if (rootName.length() != 0) {
+                    rootName.append(" / ");
+                }
+                rootName.append(title);
+            }
+            final DefaultMutableTreeNode root = new DefaultMutableTreeNode(rootName.toString());
+            for (final Map.Entry<String, DefaultMutableTreeNode[]> entry : mimes.entrySet()) {
+                final DefaultMutableTreeNode node = new DefaultMutableTreeNode(entry.getKey());
+                root.add(node);
+                final DefaultMutableTreeNode[] childs = entry.getValue();
+                for (int i=0; i<childs.length; i++) {
+                    if (childs[i] != null) {
+                        node.add(childs[i]);
                     }
                 }
-            } while ((writer = !writer) == true);
-            final String title = buffer.toString();
-            final DefaultMutableTreeNode root = new DefaultMutableTreeNode(title);
-            for (final DefaultMutableTreeNode node : mimes.values()) {
-                root.add(node);
             }
             JComponent tree = new JTree(root);
             tree.setBorder(BorderFactory.createEmptyBorder(6,6,0,0));
@@ -359,16 +376,22 @@ public class About extends JPanel implements Dialog {
     }
 
     /**
-     * Patch the mime type, replacing "" by "(raw)" for JAI I/O codec.
+     * Patch the mime type, replacing "" by "(untitled)" for JAI I/O codec.
+     * This happen mostly for RAW format, but we have no garanteed that it
+     * doesn't happen for other format.
      */
-    private static void patchMimes(String[] mimes) {
+    private String[] patchMimes(String[] mimes) {
+        if (mimes == null) {
+            mimes = new String[] {""};
+        }
         for (int i=0; i<mimes.length; i++) {
             String name = mimes[i].trim();
             if (name.length() == 0) {
-                name = "(raw)";
+                name = resources.getString(Vocabulary.Keys.UNTITLED);
             }
             mimes[i] = name;
         }
+        return mimes;
     }
 
     /**

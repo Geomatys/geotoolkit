@@ -19,6 +19,9 @@ package org.geotoolkit.image.io.text;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileOutputStream;
+import java.io.DataOutputStream;
+import java.io.BufferedOutputStream;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.color.ColorSpace;
@@ -44,7 +47,7 @@ import static org.junit.Assert.*;
  * for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 3.06
  */
@@ -235,6 +238,31 @@ public abstract class TextImageReaderTestBase {
                 if (value > max) max = value;
             }
         }
+        System.out.println("Raster origin: " + raster.getMinX() + ", " + raster.getMinY());
+        System.out.println("Raster dimension: " + raster.getWidth() + ", " + raster.getHeight());
         System.out.println("Range of sample values: [" + min + " ... " + max + ']');
+    }
+
+    /**
+     * Saves the first band of the given raster in a binary float format in the given file.
+     * This is sometime useful for comparison purpose, and is used only as a helper tools
+     * for tuning the test suites.
+     *
+     * @param  raster The raster to write in binary format.
+     * @param  file The file to create.
+     * @throws IOException If an error occured while writing the file.
+     */
+    public static void saveBinary(final Raster raster, final File file) throws IOException {
+        final DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+        final int xmin = raster.getMinX();
+        final int ymin = raster.getMinY();
+        final int xmax = raster.getWidth()  + xmin;
+        final int ymax = raster.getHeight() + ymin;
+        for (int y=ymin; y<ymax; y++) {
+            for (int x=xmin; x<xmax; x++) {
+                out.writeFloat(raster.getSampleFloat(x, y, 0));
+            }
+        }
+        out.close();
     }
 }

@@ -56,11 +56,11 @@ import org.geotoolkit.resources.Errors;
  * except that:
  * <p>
  * <ul>
- *   <li>This class is both and {@link InputStream} and an {@link ImageInputStream}.</li>
+ *   <li>This class is both an {@link InputStream} and an {@link ImageInputStream}.</li>
  *   <li>It delegates most of the work to the underlying {@link ByteBuffer} (by constrast,
  *       the standard {@link javax.imageio.stream.ImageInputStreamImpl} performs many work
  *       itself, including the {@linkplain ByteOrder byte order} handling).</li>
- *   <li>This class can uses an existing buffer supplied by the caller.</li>
+ *   <li>This class can uses an existing {@link ByteBuffer} supplied by the caller.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -284,6 +284,8 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
 
     /**
      * Returns the length of the stream (in bytes), or -1 if unknown.
+     *
+     * @throws IOException If an error occured while fetching the stream length.
      */
     @Override
     public long length() throws IOException {

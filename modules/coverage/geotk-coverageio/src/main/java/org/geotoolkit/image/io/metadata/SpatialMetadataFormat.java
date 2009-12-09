@@ -49,8 +49,6 @@ import org.opengis.metadata.acquisition.*;
 import org.opengis.metadata.maintenance.*;
 import org.opengis.metadata.distribution.*;
 import org.opengis.metadata.identification.*;
-import org.opengis.metadata.identification.Identification; // Override the package class.
-import org.opengis.metadata.content.Band; // Override the package class.
 
 import org.opengis.coverage.grid.GridCell;
 import org.opengis.coverage.grid.GridPoint;

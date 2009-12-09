@@ -129,6 +129,8 @@
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
  *
+ * @see org.geotoolkit.image.io.plugin
+ *
  * @since 1.2
  * @module
  */

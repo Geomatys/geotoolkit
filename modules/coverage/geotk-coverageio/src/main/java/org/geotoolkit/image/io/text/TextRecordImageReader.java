@@ -760,9 +760,9 @@ public class TextRecordImageReader extends TextImageReader {
 
         /**
          * Invoked when this Service Provider is registered. This method
-         * {@linkplain ServiceRegistry#setOrdering(Class,.Object, Object) set the ordering}
-         * of this {@code TextRecordImageReader} before {@link TextMatrixImageReader}, because
-         * the later is generic enough for claiming to be able to read records file.
+         * {@linkplain ServiceRegistry#setOrdering(Class, Object, Object) sets the ordering}
+         * of this {@code TextRecordImageReader.Spi} before {@link TextMatrixImageReader.Spi},
+         * because the later is generic enough for claiming to be able to read records file.
          *
          * @param registry The registry where is service is registered.
          * @param category The category for which this service is registered.
