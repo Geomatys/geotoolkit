@@ -76,9 +76,9 @@ public final class MetadataProxyTest {
          * Ask for an element which was excluded from the metadata format.
          * The intend is to ensure that no exception is thrown.
          */
-        final Level originalLevel = accessor.setWarningsLevel(Level.OFF);
+        final Level originalLevel = accessor.setWarningLevel(Level.OFF);
         assertNull(proxy.getAttributeDescription());
-        accessor.setWarningsLevel(originalLevel);
+        accessor.setWarningLevel(originalLevel);
         /*
          * Check the methods defined in java.lang.Object.
          */

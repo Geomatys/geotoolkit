@@ -433,6 +433,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         substitution.put(Platform.class, null);
         substitution.remove(Identifier.class); // Allow full expansion.
         addTree(standard, Instrument[].class, "Instruments", "Platform", substitution);
+        mapName("Instruments", "getCitations", "citation");
     }
 
     /**

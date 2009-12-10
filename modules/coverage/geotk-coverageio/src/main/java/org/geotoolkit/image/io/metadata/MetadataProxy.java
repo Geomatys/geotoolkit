@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Date;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
@@ -68,7 +70,7 @@ import org.geotoolkit.resources.Errors;
  * @param <T> The metadata interface implemented by the proxy.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 3.06
  * @module
@@ -346,6 +348,9 @@ final class MetadataProxy<T> implements InvocationHandler {
                 return UnmodifiableArrayList.wrap(SimpleInternationalString.wrap(
                         accessor.getAttributeAsStrings(name, false)));
             }
+            if (componentType.isAssignableFrom(Citation.class)) {
+                return Collections.singletonList(accessor.getAttributeAsCitation(name));
+            }
             /*
              * Assume a nested element. We will create a "live" list and cache it for future
              * reuse. The type of list elements may be a subtype of 'componentType' because
@@ -407,6 +412,32 @@ final class MetadataProxy<T> implements InvocationHandler {
             childs.put(methodName, child);
         }
         return (child != Void.TYPE) ? child : null;
+    }
+
+    /**
+     * Sets the warning level of all proxy instances in the given collection.
+     *
+     * @param instances The collections of proxy instances.
+     * @param level The new warning level.
+     */
+    static void setWarningLevel(final Collection<?> instances, final Level level) {
+        for (final Object proxy : instances) {
+            if (proxy instanceof MetadataProxyList<?>) {
+                ((MetadataProxyList<?>) proxy).setWarningLevel(level);
+            } else if (proxy instanceof Collection<?>) {
+                setWarningLevel((Collection<?>) proxy, level);
+            } else if (proxy != null) {
+                final MetadataProxy<?> handler = (MetadataProxy<?>) Proxy.getInvocationHandler(proxy);
+                if (!level.equals(handler.accessor.setWarningLevel(level))) {
+                    // Recursive calls only if the level changed. This
+                    // is a precaution against infinite recursivity.
+                    final Map<String, Object> childs = handler.childs;
+                    if (childs != null) {
+                        setWarningLevel(childs.values(), level);
+                    }
+                }
+            }
+        }
     }
 
     /**

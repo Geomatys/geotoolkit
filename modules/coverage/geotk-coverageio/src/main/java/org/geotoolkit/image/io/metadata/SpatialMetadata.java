@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
@@ -127,7 +128,7 @@ import org.geotoolkit.measure.RangeFormat;
  * to treat some warnings as fatal errors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @see SpatialMetadataFormat
  *
@@ -190,6 +191,12 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @see #rangeFormat()
      */
     private transient LoggedFormat<NumberRange<?>> rangeFormat;
+
+    /**
+     * The default logging level for the warnings. This is given to the
+     * {@link MetadataAccessor} objects created for this metadata.
+     */
+    private Level warningLevel = Level.WARNING;
 
     /**
      * Creates a metadata with no format. This constructor
@@ -341,9 +348,24 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
         T object = (T) instances.get(type);
         if (object == null) {
             final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
-            object = accessor.getUserObject(type);
-            if (object == null) {
-                object = accessor.newProxyInstance(type);
+            /*
+             * The normal usage is to invoke this method for a singleton. However if the user
+             * invoked this method for a list (he should have invoked 'getListForType(Class)'
+             * instead), returns the first element of that list as a convenience, creating an
+             * empty one if needed.
+             */
+            if (accessor.allowsChildren()) {
+                final List<T> list = getListForType(type);
+                if (list.isEmpty()) {
+                    accessor.appendChild();
+                }
+                object = list.get(0);
+            } else {
+                // The normal case (singleton).
+                object = accessor.getUserObject(type);
+                if (object == null) {
+                    object = accessor.newProxyInstance(type);
+                }
             }
             instances.put(type, object);
         }
@@ -621,15 +643,43 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
     }
 
     /**
-     * Resets all the data stored in this object to default values.
-     * All nodes below the root node are discarted.
+     * Returns the level at which warnings are emitted. The default implementation returns
+     * the last value given to the {@link #setWarningLevel(Level)}, or {@link Level#WARNING}
+     * if the level has not been explicitly defined.
+     *
+     * @return The current level at which warnings are emitted.
+     *
+     * @see MetadataAccessor#getWarningLevel()
+     *
+     * @since 3.07
      */
-    @Override
-    public void reset() {
-        root = null;
-        if (fallback != null) {
-            fallback.reset();
-        }
+    public Level getWarningLevel() {
+        return warningLevel;
+    }
+
+    /**
+     * Sets the warning level. This logging level is given to all {@link MetadataAccessor} created
+     * by this {@code SpatialMetadata} instance. The default value is {@link Level#WARNING}.
+     * <p>
+     * Note that in the default implementation, warnings are logged only
+     * if this {@code SpatialMetadata} instance is not associated to an
+     * {@linkplain ImageReader image reader} or {@linkplain ImageWriter writer} having
+     * {@linkplain javax.imageio.event.IIOReadWarningListener warning listeners}.
+     * See {@link #warningOccurred(LogRecord)} for more details.
+     *
+     * @param level The new logging level.
+     *
+     * @see MetadataAccessor#setWarningLevel(Level)
+     *
+     * @since 3.07
+     */
+    public void setWarningLevel(final Level level) {
+        MetadataAccessor.ensureNonNull("level", level);
+        warningLevel = level;
+        if (instances   != null) MetadataProxy.setWarningLevel(instances.values(), level);
+        if (lists       != null) MetadataProxy.setWarningLevel(lists    .values(), level);
+        if (dateFormat  != null) dateFormat .setLevel(level);
+        if (rangeFormat != null) rangeFormat.setLevel(level);
     }
 
     /**
@@ -783,6 +833,18 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
             rangeFormat = (LoggedFormat) createLoggedFormat(NumberRange.class, "getAttributeAsRange");
         }
         return rangeFormat;
+    }
+
+    /**
+     * Resets all the data stored in this object to default values.
+     * All nodes below the root node are discarted.
+     */
+    @Override
+    public void reset() {
+        root = null;
+        if (fallback != null) {
+            fallback.reset();
+        }
     }
 
     /**

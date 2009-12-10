@@ -68,13 +68,13 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>
  * <table cellspacing="0" cellpadding="0">
  * <tr>
- *   <td><ul><li>{@code "RectifiedGridDomain/CRS/Datum"}</li></ul></td>
+ *   <td>{@code "RectifiedGridDomain/CRS/Datum"}</td>
  *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#IMAGE image} metadata format)</td>
  * </tr><tr>
- *   <td><ul><li>{@code "RectifiedGridDomain/CRS/CoordinateSystem"}</li></ul></td>
+ *   <td>{@code "RectifiedGridDomain/CRS/CoordinateSystem"}</td>
  *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#IMAGE image} metadata format)</td>
  * </tr><tr>
- *   <td><ul><li>{@code "DiscoveryMetadata/Extent/GeographicElement"}</li></ul></td>
+ *   <td>{@code "DiscoveryMetadata/Extent/GeographicElement"}</td>
  *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#STREAM stream} metadata format)</td>
  * </tr>
  * </table>
@@ -160,7 +160,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @see SpatialMetadata#getInstanceForType(Class)
  * @see SpatialMetadata#getListForType(Class)
@@ -221,9 +221,9 @@ public class MetadataAccessor {
     private transient Element current;
 
     /**
-     * The warning levels, or {@link Level#OFF} if disabled.
+     * The logging level for the warnings, or {@link Level#OFF} if disabled.
      */
-    private transient Level warningsLevel = Level.WARNING;
+    private transient Level warningLevel;
 
     /**
      * Creates an accessor with the same parent and childs than the specified one. The two
@@ -232,17 +232,22 @@ public class MetadataAccessor {
      * accessor. However each accessor can {@linkplain #selectChild select their child}
      * independently.
      * <p>
+     * The initially {@linkplain #selectChild selected child} and {@linkplain #getWarningLevel()
+     * warnings level} are the same one than the given accessor.
+     * <p>
      * The main purpose of this constructor is to create many views over the same list
      * of childs, where each view can {@linkplain #selectChild select} a different child.
      *
      * @param clone The accessor to clone.
      */
     public MetadataAccessor(final MetadataAccessor clone) {
-        metadata  = clone.metadata;
-        format    = clone.format;
-        parent    = clone.parent;
-        childPath = clone.childPath;
-        childs    = clone.childs;
+        metadata     = clone.metadata;
+        format       = clone.format;
+        parent       = clone.parent;
+        childPath    = clone.childPath;
+        childs       = clone.childs;
+        current      = clone.current;
+        warningLevel = clone.warningLevel;
     }
 
     /**
@@ -403,8 +408,9 @@ public class MetadataAccessor {
          */
         final Node root;
         if (parentAccessor != null) {
-            format = parentAccessor.format;
-            root   = parentAccessor.parent;
+            format       = parentAccessor.format;
+            root         = parentAccessor.parent;
+            warningLevel = parentAccessor.warningLevel;
         } else if (formatName != null && !formatName.equals("#auto")) {
             format = metadata.getMetadataFormat(formatName);
             root   = metadata.getAsTree(formatName);
@@ -420,6 +426,10 @@ public class MetadataAccessor {
         }
         if (format == null) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UNDEFINED_FORMAT_$1, formatName));
+        }
+        if (warningLevel == null) {
+            warningLevel = (metadata instanceof SpatialMetadata) ?
+                ((SpatialMetadata) metadata).getWarningLevel() : Level.WARNING;
         }
         /*
          * If the user asked for a metadata working on a node for user object of
@@ -646,7 +656,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  object User argument.
      * @throws NullArgumentException if {@code object} is null.
      */
-    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
+    static void ensureNonNull(String name, Object object) throws NullArgumentException {
         if (object == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
@@ -1633,7 +1643,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * with the {@code Object} type, which is too generic.
      */
     final void warning(final String method, final int key, final Object arg1, final Object arg2) {
-        if (!Level.OFF.equals(warningsLevel)) {
+        if (!Level.OFF.equals(warningLevel)) {
             warning(method, key, new Object[] {arg1, arg2});
         }
     }
@@ -1643,10 +1653,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * would not work for warnings emitted by the {@link #getAttributeAsDate} method.
      */
     final void warning(final String method, final int key, final Object value) {
-        if (!Level.OFF.equals(warningsLevel)) {
+        if (!Level.OFF.equals(warningLevel)) {
             final Locale locale = (metadata instanceof Localized) ?
                     ((Localized) metadata).getLocale() : Locale.getDefault();
-            final LogRecord record = Errors.getResources(locale).getLogRecord(warningsLevel, key, value);
+            final LogRecord record = Errors.getResources(locale).getLogRecord(warningLevel, key, value);
             record.setSourceClassName(MetadataAccessor.class.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
@@ -1661,7 +1671,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * not provide a localized message, or that message is made of only one word.
      */
     final void warning(final Class<?> classe, final String method, final Exception exception) {
-        if (!Level.OFF.equals(warningsLevel)) {
+        if (!Level.OFF.equals(warningLevel)) {
             String message = exception.getLocalizedMessage();
             if (message == null || ((message = message.trim()).indexOf(' ') < 0)) {
                 final String word = message;
@@ -1670,7 +1680,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                     message = message + ": " + word;
                 }
             }
-            final LogRecord record = new LogRecord(warningsLevel, message);
+            final LogRecord record = new LogRecord(warningLevel, message);
             record.setSourceClassName(classe.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
@@ -1698,7 +1708,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param record The logging record to log.
      */
     protected void warningOccurred(final LogRecord record) {
-        if (!Level.OFF.equals(warningsLevel)) {
+        if (!Level.OFF.equals(warningLevel)) {
             if (metadata instanceof SpatialMetadata) {
                 ((SpatialMetadata) metadata).warningOccurred(record);
             } else {
@@ -1719,8 +1729,18 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *
      * @return The current level at which warnings are emitted.
      */
+    public Level getWarningLevel() {
+        return warningLevel;
+    }
+
+    /**
+     * @deprecated Renamed {@link #getWarningLevel()}.
+     *
+     * @return The current level at which warnings are emitted.
+     */
+    @Deprecated
     public Level getWarningsLevel() {
-        return warningsLevel;
+        return getWarningLevel();
     }
 
     /**
@@ -1740,11 +1760,22 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @param  level {@link Level#OFF} for disabling warnings, or an other value for enabling them.
      * @return The previous state before this method has been invoked.
      */
-    public Level setWarningsLevel(final Level level) {
+    public Level setWarningLevel(final Level level) {
         ensureNonNull("level", level);
-        final Level old = warningsLevel;
-        warningsLevel = level;
+        final Level old = warningLevel;
+        warningLevel = level;
         return old;
+    }
+
+    /**
+     * @deprecated Renamed {@link #setWarningLevel(Level)}.
+     *
+     * @param  level {@link Level#OFF} for disabling warnings, or an other value for enabling them.
+     * @return The previous state before this method has been invoked.
+     */
+    @Deprecated
+    public Level setWarningsLevel(final Level level) {
+        return setWarningLevel(level);
     }
 
     /**

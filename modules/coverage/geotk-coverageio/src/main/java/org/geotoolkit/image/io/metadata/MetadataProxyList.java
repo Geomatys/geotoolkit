@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Arrays;
 import java.util.AbstractList;
 import java.util.RandomAccess;
+import java.util.logging.Level;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.CheckedCollection;
@@ -68,6 +69,17 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
      */
     private MetadataProxyList(final Class<T> elementType, final MetadataAccessor accessor) {
         parent = new MetadataProxy<T>(elementType, accessor);
+    }
+
+    /**
+     * Sets the logging level of all proxies created up to date. This will be executed
+     * only if the level is different than the one used up to date, as a safety against
+     * infinite recursivity.
+     */
+    final void setWarningLevel(final Level level) {
+        if (!level.equals(parent.accessor.setWarningLevel(level))) {
+            MetadataProxy.setWarningLevel(Arrays.asList(elements), level);
+        }
     }
 
     /**

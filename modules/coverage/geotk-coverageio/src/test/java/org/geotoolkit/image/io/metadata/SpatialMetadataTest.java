@@ -19,13 +19,20 @@ package org.geotoolkit.image.io.metadata;
 
 import java.util.List;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.logging.Level;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.content.ImagingCondition;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 
 import org.junit.*;
 
@@ -36,12 +43,19 @@ import static org.junit.Assert.*;
  * Tests {@link SpatialMetadata}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 3.06
  */
 @Depend(MetadataProxyTest.class)
 public final class SpatialMetadataTest {
+    /**
+     * The warning level to use in this test. We set them to FINE in order to avoid
+     * polluting the console output during Maven build. In order to see the warnings,
+     * set this field to Level.WARNING.
+     */
+    private static final Level WARNING_LEVEL = Level.FINE;
+
     /**
      * Tests the {@link SpatialMetadata#getInstanceForType} method for an {@link ImageDescription}
      * metadata.
@@ -63,6 +77,68 @@ public final class SpatialMetadataTest {
         assertEquals(Double.valueOf(20), description.getCloudCoverPercentage());
         assertNull(description.getCompressionGenerationQuantity());
         assertSame("The metadata should be cached", description, metadata.getInstanceForType(ImageDescription.class));
+        /*
+         * Test the copy to an org.geotoolkit.metadata.iso object.
+         * Note that the following warning is emmited:
+         *
+         *    org.opengis.metadata.content.ImageDescription getAttributeDescription
+         *    WARNING: No such element: AttributeDescription
+         *
+         * We set the level to FINE in order to not pollute
+         * the console output during Maven build.
+         */
+        metadata.setWarningLevel(WARNING_LEVEL);
+        final ImageDescription copy = new DefaultImageDescription(description);
+        assertEquals(ImagingCondition.CLOUD, copy.getImagingCondition());
+        assertEquals(Double.valueOf(20), copy.getCloudCoverPercentage());
+        assertNull(copy.getCompressionGenerationQuantity());
+        assertNull(copy.getAttributeDescription());
+    }
+
+    /**
+     * Tests the {@link SpatialMetadata#getInstanceForType} method for an {@link Instrument}
+     * metadata.
+     *
+     * @since 3.07
+     */
+    @Test
+    public void testInstrument() {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        MetadataAccessor accessor = new MetadataAccessor(metadata, null, "AcquisitionMetadata/Platform/Instruments", "Instrument");
+        accessor.selectChild(accessor.appendChild());
+        accessor.setAttribute("type", "Currentmeter");
+        accessor.setAttribute("citation", "Some paper");
+        /*
+         * Read the Instrument metadata.
+         */
+        final List<Instrument> instruments = metadata.getListForType(Instrument.class);
+        assertEquals("getListForType(...) should have returned a singleton " +
+                     "since our test declared only one instrument.", 1, instruments.size());
+        final Instrument instrument = instruments.get(0);
+        assertSame("getInstanceForType(...) should have detected that the node is a list, " +
+                   "and returned the first element of that list as a convenience.",
+                   instrument, metadata.getInstanceForType(Instrument.class));
+
+        // Expected values
+        final CharSequence type = new SimpleInternationalString("Currentmeter");
+        final List<?> citations = Collections.singletonList(new DefaultCitation("Some paper"));
+        assertEquals("getType()",      type,      instrument.getType());
+        assertEquals("getCitations()", citations, instrument.getCitations());
+        /*
+         * Test the copy to an org.geotoolkit.metadata.iso object.
+         * Note that the following warning is emmited:
+         *
+         *    org.opengis.metadata.acquisition.Instrument getMountedOn
+         *    WARNING: No such element: MountedOn
+         *
+         * We set the level to FINE in order to not pollute
+         * the console output during Maven build.
+         */
+        metadata.setWarningLevel(WARNING_LEVEL);
+        final Instrument copy = new DefaultInstrument(instrument);
+        assertEquals("getType()",      type,      copy.getType());
+        assertEquals("getCitations()", citations, copy.getCitations());
+        assertNull  ("getMountedOn()",            copy.getMountedOn());
     }
 
     /**
