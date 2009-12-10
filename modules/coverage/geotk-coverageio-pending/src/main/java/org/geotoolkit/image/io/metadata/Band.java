@@ -96,12 +96,12 @@ public class Band extends MetadataAccessor {
     @SuppressWarnings({"unchecked","rawtypes"})
     public NumberRange<? extends Number> getValidRange() {
         Number minimum, maximum;
-        final Level level = setWarningsLevel(Level.OFF);
+        final Level level = setWarningLevel(Level.OFF);
         try {
             minimum = getAttributeAsInteger("minValue");
             maximum = getAttributeAsInteger("maxValue");
         } finally {
-            setWarningsLevel(level);
+            setWarningLevel(level);
         }
         final Class<? extends Number> type;
         if (minimum == null || maximum == null) {
