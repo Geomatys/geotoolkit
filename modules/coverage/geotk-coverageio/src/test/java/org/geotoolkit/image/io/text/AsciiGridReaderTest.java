@@ -46,7 +46,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.07
  */
-public final class AsciiGridReaderTest extends TextImageReaderTestBase {
+public class AsciiGridReaderTest extends TextImageReaderTestBase {
     /**
      * Creates a reader.
      */
@@ -59,7 +59,7 @@ public final class AsciiGridReaderTest extends TextImageReaderTestBase {
     }
 
     /**
-     * Tests the metadata of the {@link "matrix.txt"} file.
+     * Tests the metadata of the {@link "grid.asc"} file.
      *
      * @throws IOException if an error occured while reading the file.
      */
@@ -151,7 +151,9 @@ public final class AsciiGridReaderTest extends TextImageReaderTestBase {
         assertEquals(0, raster.getMinY());
         assertEquals((region.width  + xSubsampling-1) / xSubsampling, raster.getWidth());
         assertEquals((region.height + ySubsampling-1) / ySubsampling, raster.getHeight());
-        System.out.println("Comparing the values in region " + region);
+        String regionString = region.toString();
+        regionString = regionString.substring(regionString.indexOf('['));
+        System.out.println("Comparing the values in region " + regionString);
 
         final long timestamp = System.currentTimeMillis();
         final BufferedReader reader = new BufferedReader(new FileReader(input));
@@ -172,8 +174,13 @@ public final class AsciiGridReaderTest extends TextImageReaderTestBase {
                         tx /= xSubsampling;
                         ty /= ySubsampling;
                         final float stored = raster.getSampleFloat(tx, ty, 0);
+                        // Test only 'stored' for NaN because the values that we read from the
+                        // file may be pad values like -9999, and we don't handle them in this
+                        // simple test method.
                         if (value != stored && !Float.isNaN(stored)) {
-                            System.out.println("Expected " + value + " but found " + stored + " at coordinate (" + x + ',' + y + ')');
+                            System.out.println("Expected " + value + " but found " + stored +
+                                    " at coordinate (" + x + ',' + y + ") in the file," +
+                                    " which is (" + tx + ',' + ty + " in the raster.");
                             if (++errorCount >= 100) {
                                 System.out.println("Too many errors.");
                                 break;

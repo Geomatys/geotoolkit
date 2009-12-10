@@ -31,12 +31,10 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import javax.imageio.IIOException;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageTypeSpecifier;
@@ -56,6 +54,7 @@ import org.geotoolkit.image.io.stream.ChannelImageInputStream;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.internal.image.io.RawFiles;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.resources.Errors;
@@ -744,11 +743,10 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
             }
         }
         if (binaryReader == null) {
-            final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("raw");
-            if (!it.hasNext()) {
+            binaryReader = RawFiles.getImageReader(null);
+            if (binaryReader == null) {
                 return null;
             }
-            binaryReader = it.next();
         }
         final InputStream binaryStream;
         try {

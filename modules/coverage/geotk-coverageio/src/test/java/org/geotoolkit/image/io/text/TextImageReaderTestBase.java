@@ -28,11 +28,14 @@ import java.awt.color.ColorSpace;
 import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
+import java.awt.image.WritableRaster;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.geotoolkit.math.Statistics;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 
 import org.junit.*;
@@ -222,25 +225,25 @@ public abstract class TextImageReaderTestBase {
      * Prints the minimal and maximal values found in the given raster.
      * This is used only as a helper tools for tuning the test suites.
      *
-     * @param raster The raster for which to print extrema.
+     * @param  raster The raster for which to print extrema.
      */
     public static void printStatistics(final Raster raster) {
-        float min = Float.MAX_VALUE;
-        float max = Float.MIN_VALUE;
+        final Statistics stats = new Statistics();
         final int xmin = raster.getMinX();
         final int ymin = raster.getMinY();
-        final int xmax = raster.getWidth() + xmin;
+        final int xmax = raster.getWidth()  + xmin;
         final int ymax = raster.getHeight() + ymin;
-        for (int y=ymin; y<ymax; y++) {
-            for (int x=xmin; x<xmax; x++) {
-                final float value = raster.getSampleFloat(x, y, 0);
-                if (value < min) min = value;
-                if (value > max) max = value;
+        final int nb   = raster.getNumBands();
+        for (int b=0; b<nb; b++) {
+            for (int y=ymin; y<ymax; y++) {
+                for (int x=xmin; x<xmax; x++) {
+                    stats.add(raster.getSampleDouble(x, y, b));
+                }
             }
         }
-        System.out.println("Raster origin: " + raster.getMinX() + ", " + raster.getMinY());
-        System.out.println("Raster dimension: " + raster.getWidth() + ", " + raster.getHeight());
-        System.out.println("Range of sample values: [" + min + " ... " + max + ']');
+        System.out.println("Raster bounds: (" + xmin + ',' + ymin + ") - (" + xmax + ',' + ymax + ')');
+        System.out.println("Statistics on sample values (" + nb + " bands):");
+        System.out.println(stats);
     }
 
     /**
@@ -264,5 +267,41 @@ public abstract class TextImageReaderTestBase {
             }
         }
         out.close();
+    }
+
+    /**
+     * Saves the first band of the given raster in a PNG format in the given file.
+     * This is sometime useful for visual check purpose, and is used only as a helper
+     * tools for tuning the test suites. The image is converted to grayscale before to
+     * be saved.
+     *
+     * @param  raster The raster to write in PNG format.
+     * @param  file The file to create.
+     * @throws IOException If an error occured while writing the file.
+     */
+    public static void savePNG(final Raster raster, final File file) throws IOException {
+        float min = Float.POSITIVE_INFINITY;
+        float max = Float.NEGATIVE_INFINITY;
+        final int xmin   = raster.getMinX();
+        final int ymin   = raster.getMinY();
+        final int width  = raster.getWidth();
+        final int height = raster.getHeight();
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                final float value = raster.getSampleFloat(x + xmin, y + ymin, 0);
+                if (value < min) min = value;
+                if (value > min) max = value;
+            }
+        }
+        final float scale = 255 / (max - min);
+        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_GRAY);
+        final WritableRaster dest = image.getRaster();
+        for (int y=0; y<height; y++) {
+            for (int x=0; x<width; x++) {
+                final double value = raster.getSampleDouble(x + xmin, y + ymin, 0);
+                dest.setSample(x, y, 0, Math.round((value - min) * scale));
+            }
+        }
+        ImageIO.write(image, "png", file);
     }
 }

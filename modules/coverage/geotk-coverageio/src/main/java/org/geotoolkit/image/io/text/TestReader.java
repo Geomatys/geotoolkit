@@ -187,7 +187,7 @@ final class TestReader extends TextImageReader {
         if (true) { // Set to 'false' and we want to use only the abovec 256 characters.
             final int more = input.read(buffer, readAheadLimit, buffer.length - readAheadLimit);
             if (more >= 0) {
-                if (containsBinary(buffer, readAheadLimit, buffer.length)) {
+                if (containsBinary(buffer, readAheadLimit, readAheadLimit + more)) {
                     return false;
                 }
                 readAheadLimit += more;

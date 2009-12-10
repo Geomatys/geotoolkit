@@ -166,7 +166,7 @@ public final class Utilities {
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Boolean#equals
+     * @see Boolean#equals(Object)
      */
     public static boolean equals(boolean o1, boolean o2) {
         return o1 == o2;
@@ -181,7 +181,7 @@ public final class Utilities {
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Character#equals
+     * @see Character#equals(Object)
      */
     public static boolean equals(char o1, char o2) {
         return o1 == o2;
@@ -196,7 +196,7 @@ public final class Utilities {
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Byte#equals
+     * @see Byte#equals(Object)
      */
     public static boolean equals(byte o1, byte o2) {
         return o1 == o2;
@@ -211,7 +211,7 @@ public final class Utilities {
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Short#equals
+     * @see Short#equals(Object)
      */
     public static boolean equals(short o1, short o2) {
         return o1 == o2;
@@ -226,7 +226,7 @@ public final class Utilities {
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Integer#equals
+     * @see Integer#equals(Object)
      */
     public static boolean equals(int o1, int o2) {
         return o1 == o2;
@@ -241,7 +241,7 @@ public final class Utilities {
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Long#equals
+     * @see Long#equals(Object)
      */
     public static boolean equals(long o1, long o2) {
         return o1 == o2;
@@ -249,13 +249,13 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given floats are equals. Positive and negative zero are
-     * considered different, while a NaN value is considered equal to other NaN values.
+     * considered different, while a NaN value is considered equal to all other NaN values.
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Float#equals
+     * @see Float#equals(Object)
      */
     public static boolean equals(float o1, float o2) {
         return Float.floatToIntBits(o1) == Float.floatToIntBits(o2);
@@ -263,13 +263,13 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given doubles are equals. Positive and negative zero are
-     * considered different, while a NaN value is considered equal to other NaN values.
+     * considered different, while a NaN value is considered equal to all other NaN values.
      *
      * @param o1 The first value to compare.
      * @param o2 The second value to compare.
      * @return {@code true} if both values are equal.
      *
-     * @see Double#equals
+     * @see Double#equals(Object)
      */
     public static boolean equals(double o1, double o2) {
         return Double.doubleToLongBits(o1) == Double.doubleToLongBits(o2);
@@ -601,8 +601,8 @@ public final class Utilities {
      * @param <E> The type of elements in the empty collection.
      * @return An empty collection.
      *
-     * @see Collections#emptyList
-     * @see Collections#emptySet
+     * @see Collections#emptyList()
+     * @see Collections#emptySet()
      */
     @SuppressWarnings("unchecked")
     public static <E> Queue<E> emptyQueue() {
