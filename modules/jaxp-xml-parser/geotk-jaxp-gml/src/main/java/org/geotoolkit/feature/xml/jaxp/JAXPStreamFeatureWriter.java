@@ -174,7 +174,9 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                         } else {
                             streamWriter.writeStartElement(a.getName().getLocalPart());
                         }
-                        streamWriter.writeAttribute("name", (String)key);
+                        if (key != null) {
+                            streamWriter.writeAttribute("name", (String)key);
+                        }
                         streamWriter.writeCharacters(Utils.getStringValue(map.get(key)));
                         streamWriter.writeEndElement();
                     }
