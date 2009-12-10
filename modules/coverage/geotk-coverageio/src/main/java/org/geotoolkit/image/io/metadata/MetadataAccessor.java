@@ -1706,17 +1706,22 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * </ol>
      *
      * @param record The logging record to log.
+     * @return {@code true} if the message has been sent to at least one warning listener,
+     *         or {@code false} otherwise (either the message has been sent to the logging
+     *         system as a fallback, or the {@linkplain #getWarningLevel() warning level}
+     *         if {@link Level#OFF OFF}).
      */
-    protected void warningOccurred(final LogRecord record) {
+    protected boolean warningOccurred(final LogRecord record) {
         if (!Level.OFF.equals(warningLevel)) {
             if (metadata instanceof SpatialMetadata) {
-                ((SpatialMetadata) metadata).warningOccurred(record);
+                return ((SpatialMetadata) metadata).warningOccurred(record);
             } else {
                 final Logger logger = Logging.getLogger(MetadataAccessor.class);
                 record.setLoggerName(logger.getName());
                 logger.log(record);
             }
         }
+        return false;
     }
 
     /**

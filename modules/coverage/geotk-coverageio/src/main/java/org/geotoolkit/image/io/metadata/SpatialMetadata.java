@@ -696,19 +696,22 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * throwing exception if some warnings should be considered as fatal errors.
      *
      * @param record The warning record to log.
+     * @return {@code true} if the message has been sent to at least one warning listener,
+     *         or {@code false} if it has been sent to the logging system as a fallback.
      *
      * @see MetadataAccessor#warningOccurred(LogRecord)
      * @see javax.imageio.event.IIOReadWarningListener
      */
-    protected void warningOccurred(final LogRecord record) {
+    protected boolean warningOccurred(final LogRecord record) {
         if (owner instanceof SpatialImageReader) {
-            ((SpatialImageReader) owner).warningOccurred(record);
+            return ((SpatialImageReader) owner).warningOccurred(record);
         } else if (owner instanceof SpatialImageWriter) {
-            ((SpatialImageWriter) owner).warningOccurred(record);
+            return ((SpatialImageWriter) owner).warningOccurred(record);
         } else {
             final Logger logger = Logging.getLogger("org.geotoolkit.image.io");
             record.setLoggerName(logger.getName());
             logger.log(record);
+            return false;
         }
     }
 

@@ -441,15 +441,19 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
      * throwing exception if some warnings should be considered as fatal errors.
      *
      * @param record The warning record to log.
+     * @return {@code true} if the message has been sent to at least one warning listener,
+     *         or {@code false} if it has been sent to the logging system as a fallback.
      *
      * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
      */
-    public void warningOccurred(final LogRecord record) {
+    public boolean warningOccurred(final LogRecord record) {
         if (warningListeners == null) {
             record.setLoggerName(LOGGER.getName());
             LOGGER.log(record);
+            return false;
         } else {
             processWarningOccurred(IndexedResourceBundle.format(record));
+            return true;
         }
     }
 
