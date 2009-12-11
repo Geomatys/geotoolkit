@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.util.concurrent.locks.Lock;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
@@ -92,8 +93,15 @@ public class SwingVolatileGeoComponent extends JComponent{
 
     @Override
     public void paintComponent(final Graphics g) {
-        if (img != null) {
-            g.drawImage(img, 0, 0, this);
+        final Lock lock = canvas.getPaintingLock();
+        lock.lock();
+        try{
+            canvas.getVolatile();
+            if (img != null) {
+                g.drawImage(img, 0, 0, this);
+            }
+        }finally{
+            lock.unlock();
         }
     }
 

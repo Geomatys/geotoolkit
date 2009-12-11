@@ -30,6 +30,9 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.image.VolatileImage;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer;
@@ -57,6 +60,8 @@ public class J2DCanvasVolatile extends J2DCanvas{
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
+    private final ReadWriteLock volatileLock = new ReentrantReadWriteLock(true);
+
 
     private final Area dirtyArea = new Area();
     
@@ -140,72 +145,99 @@ public class J2DCanvasVolatile extends J2DCanvas{
         return bounds;
     }
 
+    /**
+     * If you want to avoid binking black screen when the background painter is repainting
+     * then use this lock.
+     *
+     * exemple :
+     * final Lock lock = getPaintingLock();
+     * lock.lock();
+     * try{
+     *   g.paint(canvas.getVolatile());
+     * }finally{
+     *   lock.unlock();
+     * }
+     *
+     * @return Lock
+     */
+    public Lock getPaintingLock(){
+        return volatileLock.readLock();
+    }
 
     private void render(Shape paintingDisplayShape){
 
         if(paintingDisplayShape == null) paintingDisplayShape = getDisplayBounds();
 
+        //ensure no one will ask the volatile image if the background is not painted.
+        final Lock backgroundLock = volatileLock.writeLock();
+        backgroundLock.lock();
+
         final Graphics2D output;
-        if(buffer0 == null){
-            //create the buffer at the last possible moment
-            //or create a new one if we are already rendering
-            //TODO : find a way to stop previous thread
-            VolatileImage buffer = createBackBuffer();
-            buffer.setAccelerationPriority(1);
+        try{
+            if(buffer0 == null){
+                //create the buffer at the last possible moment
+                //or create a new one if we are already rendering
+                //TODO : find a way to stop previous thread
+                VolatileImage buffer = createBackBuffer();
+                buffer.setAccelerationPriority(1);
 
-            output = (Graphics2D) buffer.getGraphics();
-            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-            output.fillRect(0,0,dim.width,dim.height);
+                output = (Graphics2D) buffer.getGraphics();
+                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+                output.fillRect(0,0,dim.width,dim.height);
 
-            buffer0 = buffer;
+                buffer0 = buffer;
 
-        }else{
-            //we clear the buffer part if it exists
-            output = (Graphics2D) buffer0.getGraphics();
-            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-            output.fill(paintingDisplayShape);
-//            output.setColor(Color.WHITE);
-//            output.fill(paintingDisplayShape);
-        }
+            }else{
+                //we clear the buffer part if it exists
+                output = (Graphics2D) buffer0.getGraphics();
+                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+                output.fill(paintingDisplayShape);
+    //            output.setColor(Color.WHITE);
+    //            output.fill(paintingDisplayShape);
+            }
 
-        output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
+            output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
 
-        monitor.renderingStarted();
-        fireRenderingStateChanged(RenderingState.RENDERING);
+            monitor.renderingStarted();
+            fireRenderingStateChanged(RenderingState.RENDERING);
 
-//        Rectangle clipBounds = output.getClipBounds();
-//        /*
-//         * Sets a flag for avoiding some "refresh()" events while we are actually painting.
-//         * For example some implementation of the GraphicPrimitive2D.paint(...) method may
-//         * detects changes since the last rendering and invokes some kind of invalidate(...)
-//         * methods before the graphic rendering begin. Invoking those methods may cause in some
-//         * indirect way a call to GraphicPrimitive2D.refresh(), which will trig an other widget
-//         * repaint. This second repaint is usually not needed, since Graphics usually managed
-//         * to update their informations before they start their rendering. Consequently,
-//         * disabling repaint events while we are painting help to reduces duplicated rendering.
-//         */
-//        final Rectangle displayBounds = getDisplayBounds().getBounds();
-//        Rectangle2D dirtyArea = XRectangle2D.INFINITY;
-//        if (clipBounds == null) {
-//            clipBounds = displayBounds;
-//        } else if (displayBounds.contains(clipBounds)) {
-//            dirtyArea = clipBounds;
-//        }
-//        output.setClip(clipBounds);
-//        paintStarted(dirtyArea);
-        output.setClip(paintingDisplayShape);
+    //        Rectangle clipBounds = output.getClipBounds();
+    //        /*
+    //         * Sets a flag for avoiding some "refresh()" events while we are actually painting.
+    //         * For example some implementation of the GraphicPrimitive2D.paint(...) method may
+    //         * detects changes since the last rendering and invokes some kind of invalidate(...)
+    //         * methods before the graphic rendering begin. Invoking those methods may cause in some
+    //         * indirect way a call to GraphicPrimitive2D.refresh(), which will trig an other widget
+    //         * repaint. This second repaint is usually not needed, since Graphics usually managed
+    //         * to update their informations before they start their rendering. Consequently,
+    //         * disabling repaint events while we are painting help to reduces duplicated rendering.
+    //         */
+    //        final Rectangle displayBounds = getDisplayBounds().getBounds();
+    //        Rectangle2D dirtyArea = XRectangle2D.INFINITY;
+    //        if (clipBounds == null) {
+    //            clipBounds = displayBounds;
+    //        } else if (displayBounds.contains(clipBounds)) {
+    //            dirtyArea = clipBounds;
+    //        }
+    //        output.setClip(clipBounds);
+    //        paintStarted(dirtyArea);
+            output.setClip(paintingDisplayShape);
 
-        final DefaultRenderingContext2D context = prepareContext(context2D, output, paintingDisplayShape);
+            prepareContext(context2D, output, paintingDisplayShape);
 
-        //paint background if there is one.
-        if(painter != null){
-            painter.paint(context2D);
+            //paint background if there is one.
+            if(painter != null){
+                painter.paint(context2D);
+            }
+        }finally{
+            //ensure we release the lock
+            backgroundLock.unlock();
         }
 
         final AbstractContainer renderer         = getContainer();
         if(renderer != null && renderer instanceof AbstractContainer2D){
             final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
-            render(context, renderer2D.getSortedGraphics());
+            render(context2D, renderer2D.getSortedGraphics());
         }
         
         //End painting
