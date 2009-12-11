@@ -52,12 +52,10 @@ import javax.media.jai.RenderedOp;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReadParam;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
@@ -73,8 +71,8 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.util.converter.Classes;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.geometry.Envelope;
@@ -93,7 +91,7 @@ import org.opengis.style.ShadedRelief;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
+public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
 
     private static final Logger LOGGER = Logging.getLogger(DefaultRasterSymbolizerRenderer.class);
 
@@ -125,14 +123,6 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedFeature graphic, CachedRasterSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
-        //nothing to portray
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
 
@@ -155,15 +145,11 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         }
 
         if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),context.getObjectiveCRS())){
-            //coverage is not in objective crs, resample it
-            try{
-                //we resample the native view of the coverage only, the style will be applied later.
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                        dataCoverage.view(ViewType.NATIVE),
-                        context.getObjectiveCRS());
-            }catch(Exception ex){
-                System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
-            }
+            context.getMonitor().exceptionOccured(
+                    new IllegalStateException("Coverage is not in the requested CRS, found : " +
+                    "\n"+ dataCoverage.getCoordinateReferenceSystem() +
+                    " was expecting \n : " + context.getObjectiveCRS()), Level.SEVERE);
+            return;
         }
 
         final Graphics2D g2 = context.getGraphics();
@@ -227,16 +213,6 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         }
 
         context.switchToDisplayCRS();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean hit(ProjectedFeature feature, CachedRasterSymbolizer symbol, 
-            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
-        //nothing to hit on a feature with raster symbolizer
-        return false;
     }
 
     /**
@@ -732,26 +708,6 @@ public class DefaultRasterSymbolizerRenderer implements SymbolizerRenderer<Raste
         pb.addSource(image);
         pb.add(lookup);
         return JAI.create("lookup", pb, null);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    // usefull methods /////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Chack that the resolution asked match at least the span of the envelope.
-     * @param resolution : resolution to check
-     * @param bounds : reference envelope
-     * @return resolution changed if necessary
-     */
-    private static double[] checkResolution(double[] resolution, Envelope bounds) {
-        double span0 = bounds.getSpan(0);
-        double span1 = bounds.getSpan(1);
-
-        if(resolution[0] > span0) resolution[0] = span0;
-        if(resolution[1] > span1) resolution[1] = span1;
-
-        return resolution;
     }
 
 }
