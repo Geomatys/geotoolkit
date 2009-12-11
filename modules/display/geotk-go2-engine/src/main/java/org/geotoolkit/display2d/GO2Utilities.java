@@ -797,6 +797,8 @@ public final class GO2Utilities {
                     final SymbolizerRenderer renderer = findRenderer(symbol.getClass());
                     if(renderer != null){
                         value = renderer.createCachedSymbolizer(symbol);
+                    } else {
+                        throw new IllegalStateException("No renderer for the style "+ symbol);
                     }
                 }
             } finally {
