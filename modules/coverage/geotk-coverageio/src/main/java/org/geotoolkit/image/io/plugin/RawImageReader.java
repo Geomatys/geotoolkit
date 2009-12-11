@@ -291,7 +291,8 @@ public class RawImageReader extends SpatialImageReader {
         final int interspace = SampleModels.getDataTypeSize(sampleModel) * (sourceXSubsampling - 1) / Byte.SIZE;
         final boolean isRowDirect =  sourceXSubsampling  == 1 &&
                 SampleModels.getPixelStride(streamModel) == 1 &&
-                SampleModels.getPixelStride(sampleModel) == 1;
+                SampleModels.getPixelStride(sampleModel) == 1 &&
+                sampleModel.getDataType() == dataType;
         final boolean isDirect = isRowDirect && sourceYSubsampling == 1 && dstScanline == scanlineStride;
         /*
          * Now process to the read operation. We read each band sequentially. The values will
@@ -356,14 +357,13 @@ public class RawImageReader extends SpatialImageReader {
                         processImageProgress((j + i*numReads) * progressFactor);
                     }
                     input.seek(position);
-                    // TODO: convert values.
                     switch (dataType) {
-                        case DataBuffer.TYPE_BYTE:   input.readFully(((DataBufferByte)   buffer).getData(bank), offset, length); break;
-                        case DataBuffer.TYPE_USHORT: input.readFully(((DataBufferUShort) buffer).getData(bank), offset, length); break;
-                        case DataBuffer.TYPE_SHORT:  input.readFully(((DataBufferShort)  buffer).getData(bank), offset, length); break;
-                        case DataBuffer.TYPE_INT:    input.readFully(((DataBufferInt)    buffer).getData(bank), offset, length); break;
-                        case DataBuffer.TYPE_FLOAT:  input.readFully(((DataBufferFloat)  buffer).getData(bank), offset, length); break;
-                        case DataBuffer.TYPE_DOUBLE: input.readFully(((DataBufferDouble) buffer).getData(bank), offset, length); break;
+                        case DataBuffer.TYPE_BYTE:   {byte  [] array = ((DataBufferByte)   buffer).getData(bank); input.readFully(array, offset, length); converter.convertUnsigned(array, offset, length); break;}
+                        case DataBuffer.TYPE_USHORT: {short [] array = ((DataBufferUShort) buffer).getData(bank); input.readFully(array, offset, length); converter.convertUnsigned(array, offset, length); break;}
+                        case DataBuffer.TYPE_SHORT:  {short [] array = ((DataBufferShort)  buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
+                        case DataBuffer.TYPE_INT:    {int   [] array = ((DataBufferInt)    buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
+                        case DataBuffer.TYPE_FLOAT:  {float [] array = ((DataBufferFloat)  buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
+                        case DataBuffer.TYPE_DOUBLE: {double[] array = ((DataBufferDouble) buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
                         default: throw new IIOException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
                     }
                     position += bytesPerRow * sourceYSubsampling;

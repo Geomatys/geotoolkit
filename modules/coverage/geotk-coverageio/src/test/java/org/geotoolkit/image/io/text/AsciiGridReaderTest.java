@@ -96,13 +96,17 @@ public class AsciiGridReaderTest extends TextImageReaderTestBase {
     }
 
     /**
-     * Disables this test, since attempts to read the image as byte values when
-     * the data are actually float throw an {@link IIOException}.
+     * Do not run this test for {@code AsciiGridReaderTest}. This is because the reader
+     * implementation tries to read numbers as integers (which is the wanted behavior),
+     * which result in an {@link IIOException} caused by a {@link NumberFormatException}:
+     * "Can not parse -1.123".
      */
     @Test
-    @Ignore
     @Override
     public void testByteType() throws IOException {
+        if (!getClass().equals(AsciiGridReaderTest.class)) {
+            super.testByteType();
+        }
     }
 
     /**

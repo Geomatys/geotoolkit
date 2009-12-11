@@ -50,7 +50,7 @@ import org.geotoolkit.util.converter.Classes;
  * which match the primitive types expected by the {@link Raster} API.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 2.4
  * @module
@@ -166,6 +166,108 @@ public abstract class SampleConverter {
     public abstract int convert(int value);
 
     /**
+     * Converts in-place an array of double-precision values.
+     *
+     * @param values The values to convert.
+     * @param offset Index of the first sample to convert.
+     * @param length Number of samples to convert.
+     *
+     * @since 3.07
+     */
+    public void convert(final double[] values, int offset, int length) {
+        length += offset;
+        while (offset < length) {
+            values[offset] = convert(values[offset]);
+            offset++;
+        }
+    }
+
+    /**
+     * Converts in-place an array of single-precision values.
+     *
+     * @param values The values to convert.
+     * @param offset Index of the first sample to convert.
+     * @param length Number of samples to convert.
+     *
+     * @since 3.07
+     */
+    public void convert(final float[] values, int offset, int length) {
+        length += offset;
+        while (offset < length) {
+            values[offset] = convert(values[offset]);
+            offset++;
+        }
+    }
+
+    /**
+     * Converts in-place an array of integer values.
+     *
+     * @param values The values to convert.
+     * @param offset Index of the first sample to convert.
+     * @param length Number of samples to convert.
+     *
+     * @since 3.07
+     */
+    public void convert(final int[] values, int offset, int length) {
+        length += offset;
+        while (offset < length) {
+            values[offset] = convert(values[offset]);
+            offset++;
+        }
+    }
+
+    /**
+     * Converts in-place an array of short values.
+     *
+     * @param values The values to convert.
+     * @param offset Index of the first sample to convert.
+     * @param length Number of samples to convert.
+     *
+     * @since 3.07
+     */
+    public void convert(final short[] values, int offset, int length) {
+        length += offset;
+        while (offset < length) {
+            values[offset] = (short) convert(values[offset]);
+            offset++;
+        }
+    }
+
+    /**
+     * Converts in-place an array of unsigned short values.
+     *
+     * @param values The values to convert.
+     * @param offset Index of the first sample to convert.
+     * @param length Number of samples to convert.
+     *
+     * @since 3.07
+     */
+    public void convertUnsigned(final short[] values, int offset, int length) {
+        length += offset;
+        while (offset < length) {
+            values[offset] = (short) convert(values[offset] & 0xFFFF);
+            offset++;
+        }
+    }
+
+    /**
+     * Converts in-place an array of unsigned byte values.
+     *
+     * @param values The values to convert.
+     * @param offset Index of the first sample to convert.
+     * @param length Number of samples to convert.
+     *
+     * @since 3.07
+     */
+    public void convertUnsigned(final byte[] values, int offset, int length) {
+        length += offset;
+        while (offset < length) {
+            values[offset] = (byte) convert(values[offset] & 0xFF);
+            offset++;
+        }
+    }
+
+    /**
      * If this converter applies an offset, returns the offset. Otherwise returns 0.
      *
      * @return The offset applied when converting sample values.
@@ -184,21 +286,19 @@ public abstract class SampleConverter {
     }
 
     /**
-     * A sample converter that do not performs any conversion.
+     * A sample converter that does not perform any conversion.
      */
     @Immutable
     private static final class Identity extends SampleConverter {
-        @Override public double convert(double value) {
-            return value;
-        }
-
-        @Override public float convert(float value) {
-            return value;
-        }
-
-        @Override public int convert(int value) {
-            return value;
-        }
+        @Override public double convert(double   value)  {return value;}
+        @Override public float  convert(float    value)  {return value;}
+        @Override public int    convert(int      value)  {return value;}
+        @Override public void   convert(double[] values, int offset, int length) {}
+        @Override public void   convert(float[]  values, int offset, int length) {}
+        @Override public void   convert(int[]    values, int offset, int length) {}
+        @Override public void   convert(short[]  values, int offset, int length) {}
+        @Override public void   convertUnsigned(short[] values, int offset, int length) {}
+        @Override public void   convertUnsigned(byte[]  values, int offset, int length) {}
     }
 
     /**

@@ -239,7 +239,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      *
      * @since 3.07
      */
-    protected ReadableByteChannel getChannel() throws IOException {
+    protected ReadableByteChannel getChannel() throws IllegalStateException, IOException {
         if (channel == null) {
             final Object input = getInput();
             if (input instanceof ReadableByteChannel) {

@@ -998,29 +998,30 @@ loop:   while ((c = read()) >= 0) {
     @Override
     public long skipBytes(long n) throws IOException {
         bitOffset = 0;
-        long remaining = n; // Number of bytes that still need to be skipped.
-        while (remaining > 0) {
+        long numToSkip = n; // Number of bytes that still need to be skipped.
+        while (numToSkip > 0) {
             final int numBuffered = buffer.remaining();
-            if (remaining <= numBuffered) {
-                buffer.position(buffer.position() + (int) remaining);
+            if (numToSkip <= numBuffered) {
+                buffer.position(buffer.position() + (int) numToSkip);
                 break; // We have been able to skip everything.
             }
             buffer.position(buffer.limit());
-            remaining -= numBuffered;
+            numToSkip -= numBuffered;
             if (channel instanceof FileChannel) {
-                final FileChannel fc = (FileChannel) channel;
-                final long position = fc.position();
-                final long canSkip  = fc.size() - position;
-                if (canSkip < remaining) {
-                    n -= (remaining - canSkip);
-                    remaining = canSkip;
+                final FileChannel fc  = (FileChannel) channel;
+                final long position   = fc.position();
+                final long numCanSkip = fc.size() - position;
+                // If the user wants to skip past EOF, clamp to EOF.
+                if (numToSkip > numCanSkip) {
+                    n -= (numToSkip - numCanSkip);
+                    numToSkip = numCanSkip;
                 }
-                fc.position(position + remaining);
-                bufferPosition += remaining;
+                fc.position(position + numToSkip);
+                bufferPosition += numToSkip;
                 break;
             }
             if (fillBuffer() <= 0) {
-                n -= remaining;
+                n -= numToSkip;
                 break;
             }
         }
@@ -1045,7 +1046,7 @@ loop:   while ((c = read()) >= 0) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
                     pos, bufferPosition, (size >= 0) ? size : "\u221E"));
         }
-        if (relativePosition < buffer.capacity()) {
+        if (relativePosition < buffer.limit()) {
             buffer.position((int) relativePosition);
         } else {
             skipBytes(relativePosition - buffer.position());

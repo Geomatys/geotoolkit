@@ -37,7 +37,6 @@ import java.util.Set;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
-import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
@@ -50,11 +49,11 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.plugin.RawImageReader;
 import org.geotoolkit.image.io.stream.ChannelImageInputStream;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-import org.geotoolkit.internal.image.io.RawFiles;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.resources.Errors;
@@ -347,7 +346,7 @@ public class AsciiGridReader extends TextImageReader {
         }
         buffer.clear();
         buffer.limit(buffer.position()); // For forcing a filling of the buffer.
-        while (true) {
+readHeader: while (true) {
             final int startPos = buffer.position();
             boolean skipWhitespaces = true;
             /*
@@ -369,7 +368,11 @@ readLine:   while (true) {
                      */
                     buffer.limit(Math.min(capacity, Math.max(512, 2*pos)));
                     if (channel.read(buffer) < 0) {
-                        throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
+                        if (skipWhitespaces) {
+                            break readHeader;
+                        } else {
+                            break readLine;
+                        }
                     }
                     buffer.flip().position(pos);
                 }
@@ -391,7 +394,7 @@ readLine:   while (true) {
                     // If the first non-blank character seems to be part of a number, stop.
                     if (c >= '+' && c <= '9') { // Include +,-./ and digits
                         buffer.position(startPos);
-                        return header;
+                        break readHeader;
                     }
                     if (c > ' ') {
                         skipWhitespaces = false;
@@ -428,6 +431,7 @@ readLine:   while (true) {
                 }
             }
         }
+        return header;
     }
 
     /**
@@ -742,11 +746,9 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                 return null;
             }
         }
+        ImageReader binaryReader = this.binaryReader;
         if (binaryReader == null) {
-            binaryReader = RawFiles.getImageReader(null);
-            if (binaryReader == null) {
-                return null;
-            }
+            this.binaryReader = binaryReader = new RawReader(getOriginatingProvider());
         }
         final InputStream binaryStream;
         try {
@@ -764,10 +766,8 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         try {
             buffer.clear().limit(0);
             final ImageInputStream in = new ChannelImageInputStream(Channels.newChannel(binaryStream), buffer);
-            final SampleConverter[] converters = new SampleConverter[1];
-            final ImageTypeSpecifier type = getImageType(imageIndex, param, converters);
-            final RawImageInputStream rawStream = new RawImageInputStream(in, type, new long[1],
-                    new Dimension[] {new Dimension(width, height)});
+            final RawImageInputStream rawStream = new RawImageInputStream(in, getRawImageType(imageIndex),
+                    new long[1], new Dimension[] {new Dimension(width, height)});
             try {
                 binaryReader.setInput(rawStream, true, true);
                 image = binaryReader.read(imageIndex, param);
@@ -779,6 +779,71 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
             binaryReader.reset();
         }
         return image;
+    }
+
+    /**
+     * The reader to use for decoding the RAW file that may be provided together with the
+     * ASCII image file. This is created by {@link AsciiGridReader#readBinary} only if needed.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.07
+     *
+     * @since 3.07
+     * @module
+     */
+    private final class RawReader extends RawImageReader {
+        /**
+         * Creates a new reader. The provider is set to the ASCII grid reader provider.
+         */
+        RawReader(final ImageReaderSpi provider) {
+            super(provider);
+        }
+
+        /**
+         * Delegates to the stream metadata of the enclosing {@link AsciiGridReader}.
+         * This is provided only for completness with {@link #getImageMetadata(int)}.
+         */
+        @Override
+        public SpatialMetadata getStreamMetadata() throws IOException {
+            return AsciiGridReader.this.getStreamMetadata();
+        }
+
+        /**
+         * Delegates to the image metadata of the enclosing {@link AsciiGridReader}.
+         * This is necessary for allowing {@link SpatialImageReader#getDestination}
+         * to build the same color model than what it would have done if we were
+         * reading with the normal ASCII reader.
+         */
+        @Override
+        public SpatialMetadata getImageMetadata(final int imageIndex) throws IOException {
+            return AsciiGridReader.this.getImageMetadata(imageIndex);
+        }
+
+        /**
+         * Forwards to the enclosing image reader. Note: we do not forward
+         * {@code processImageStarted()} because {@link AsciiGridReader#read}
+         * has already sent this notification.
+         */
+        @Override
+        protected void processImageComplete() {
+            AsciiGridReader.this.processImageComplete();
+        }
+
+        /**
+         * Forwards to the enclosing image reader.
+         */
+        @Override
+        protected void processImageProgress(final float percentageDone) {
+            AsciiGridReader.this.processImageProgress(percentageDone);
+        }
+
+        /**
+         * Forwards to the enclosing image reader.
+         */
+        @Override
+        protected void processReadAborted() {
+            AsciiGridReader.this.processReadAborted();
+        }
     }
 
     /**
@@ -895,7 +960,21 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
          */
         @Override
         protected boolean isValidHeader(final Set<String> keywords) {
-            return keywords.contains("NCOLS") && keywords.contains("NROWS");
+            return keywords.contains("NCOLS")     && keywords.contains("NROWS")      &&
+                  (keywords.contains("XLLCORNER") || keywords.contains("XLLCENTER")) &&
+                  (keywords.contains("YLLCORNER") || keywords.contains("YLLCENTER")) &&
+                  (keywords.contains("CELLSIZE") || (keywords.contains("DX") && keywords.contains("DY")));
+        }
+
+        /**
+         * Returns {@code true} inconditionnaly, because ASCII grid files don't require lines
+         * of same length. This method returns {@code true} even if there is no data at all,
+         * because those data can be stored in a separated RAW file (this behavior is a Geotk
+         * extension)
+         */
+        @Override
+        protected boolean isValidContent(final double[][] rows) {
+            return true;
         }
     }
 }
