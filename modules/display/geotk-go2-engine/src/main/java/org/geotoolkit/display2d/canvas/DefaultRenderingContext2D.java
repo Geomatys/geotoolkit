@@ -44,10 +44,9 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -454,7 +453,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
             return getResolution();
         }else{
-            final double[] res = new double[2];
+            final double[] res = getResolution();
 
             final Envelope env;
             try {
@@ -463,7 +462,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                 res[0] = Math.abs(canvasCRSBounds.getWidth()/canvasDisplaybounds.getWidth());
                 res[1] = Math.abs(canvasCRSBounds.getHeight()/canvasDisplaybounds.getHeight());
             } catch (TransformException ex) {
-                Logger.getLogger(DefaultRenderingContext2D.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.log(Level.SEVERE, null, ex);
+            } catch (IllegalArgumentException ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
             }
             
             return res;

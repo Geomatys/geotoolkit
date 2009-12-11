@@ -67,6 +67,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -189,9 +190,27 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
-                System.err.println("FeatureGraphicLayerJ2D ligne 191 :" +ex.getMessage());
+                monitor.exceptionOccured(ex, Level.WARNING);
 //                renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
                 env = new Envelope2D();
+            }catch(IllegalArgumentException ex){
+                //looks like the coordinate of the bbox are outside of the crs valide area.
+                //some crs raise this error, other not.
+                //if so we should reduce our bbox to the valide extent of the crs.
+                monitor.exceptionOccured(ex, Level.WARNING);
+
+                final GeographicBoundingBox gbox = CRS.getGeographicBoundingBox(layerBounds.getCoordinateReferenceSystem());
+
+                if(gbox == null){
+                    env = new GeneralEnvelope(layerBounds.getCoordinateReferenceSystem());
+                }else{
+                    env = new GeneralEnvelope(gbox);
+                }
+                
+            }catch(Exception ex){
+                //we should not catch this but we must not block the canvas
+                monitor.exceptionOccured(ex, Level.SEVERE);
+                return;
             }
             
             //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
