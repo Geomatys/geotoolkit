@@ -22,12 +22,13 @@ package org.geotoolkit.lang;
  * Marker interface for <cite>Service Providers</cite> that may override a JDK
  * service, or a service provided by a standard extension. For example the
  * {@link org.geotoolkit.image.io.plugin.RawImageReader.Spi} class provides a
- * {@code "raw"} image reader which can override the {@code "raw"} reader provided
- * by the <cite>Image I/O extension for JAI</cite> library.
+ * {@code "raw"} image reader which can override the one provided by the
+ * <cite>Image I/O extension for JAI</cite> library.
  * <p>
- * The default behavior (override the standard provider or not) is provider-dependent.
- * However the behavior can be forced explicitly. For example Geotk can be prevented
+ * The default behavior (to override the standard provider or not) is provider-dependent.
+ * However the actual behavior can be forced explicitly. For example Geotk can be prevented
  * from overriding any standard JDK or extension services in the two ways show below.
+ * <p>
  * From the command line:
  *
  * {@preformat shell
@@ -48,7 +49,7 @@ package org.geotoolkit.lang;
  * }
  *
  * For a complete list of Geotk services that can override standard services, see the
- * "<cite>Implemented by</cite>" section below.
+ * "<cite>All Known Implementing Classes</cite>" section above.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
@@ -59,8 +60,9 @@ package org.geotoolkit.lang;
 public interface SystemOverride {
     /**
      * The {@linkplain System#getProperties() system properties} key which control whatever
-     * Geotk is allowed to override standard providers. The name of this property key is {@value}.
-     * The value associated to this key can be {@code "true"} or {@code "false"}, case-insensitive.
+     * Geotk is allowed to override standard providers. The name of this property key is
+     * <code>{@value}</code>. The value associated to this key can be {@code "true"} or
+     * {@code "false"}, case-insensitive.
      */
     String KEY_ALLOW_OVERRIDE = "geotk.system.override";
 }

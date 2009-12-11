@@ -33,8 +33,7 @@
  *     <td>&nbsp;</td>
  *     <td>{@code "raw"}</td>
  *     <td>&nbsp;</td>
- *     <td>&nbsp;Similar to the {@code "raw"} plugin provided by the
- *         <cite>Image I/O extensions for JAI</cite> library.&nbsp;</td>
+ *     <td>&nbsp;Requires {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
  *   </tr>
  * </table>
  * <p>

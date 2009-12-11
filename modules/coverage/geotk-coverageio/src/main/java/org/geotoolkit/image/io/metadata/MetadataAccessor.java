@@ -65,8 +65,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * <p>
  * The metadata object is specified at construction time, together with a path to the
  * {@linkplain Element element} of interest. Examples of valid paths:
- * <p>
- * <table cellspacing="0" cellpadding="0">
+ *
+ * <blockquote><table cellspacing="0" cellpadding="0">
  * <tr>
  *   <td>{@code "RectifiedGridDomain/CRS/Datum"}</td>
  *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#IMAGE image} metadata format)</td>
@@ -77,8 +77,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *   <td>{@code "DiscoveryMetadata/Extent/GeographicElement"}</td>
  *   <td>&nbsp;&nbsp;(assuming the {@linkplain SpatialMetadataFormat#STREAM stream} metadata format)</td>
  * </tr>
- * </table>
- * <p>
+ * </table></blockquote>
+ *
  * If no node exists for the given path, then the node will be created at {@code MetadataAccessor}
  * construction time. For example the last exemple in the above list will ensure that the metadata
  * tree contains at least the nodes below, creating the missing ones if needed (Note: the value of

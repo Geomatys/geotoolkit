@@ -71,11 +71,13 @@ import org.geotoolkit.util.logging.Logging;
  * <p>
  * This class provides similar functionalities than the RAW image reader provided by the
  * <cite>Image I/O extensions for JAI</cite> library. The main difference is that this class
- * can be extended, and provide support for color palette and "<cite>no data value</cite>"
- * handling as documented in the super-class. Experience also suggests that this class is
- * faster at least for floating point values.
+ * can be extended, and provides support for color palette and "<cite>no data value</cite>"
+ * conversion as documented in the super-class. Experience also suggests that this class is
+ * faster at least for floating point values. In addition, version 1.1 of the <cite>Image I/O
+ * extension for JAI</cite> seems to have a bug in their reading of subsampled floating point
+ * values.
  *
- * {@section Restrictions on the data layout}
+ * {@section Restrictions on the sample model}
  * The current implementations requires that the image in the stream has a
  * {@linkplain SampleModels#getPixelStride(SampleModel) pixel stride} equals to 1.
  * If the pixel stride may be different, consider using the reader provided by the
@@ -430,11 +432,13 @@ public class RawImageReader extends SpatialImageReader {
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
      * </table>
+     * <p>
+     * By default, this provider register itself <em>after</em> the provider supplied by the
+     * <cite>Image I/O extension for JAI</cite>, because the later supports a wider range of
+     * sample models. See {@link #onRegistration onRegistration} for more information.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
-     *
-     * @see AsciiGridWriter.Spi
      *
      * @since 3.07 (derived from 2.0)
      * @module
@@ -453,7 +457,7 @@ public class RawImageReader extends SpatialImageReader {
         };
 
         /**
-         * Constructs a default {@code AsciiGridReader.Spi}. The fields are initialized as
+         * Constructs a default {@code RawImageReader.Spi}. The fields are initialized as
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
          * modify those values if desired.
          * <p>
@@ -518,10 +522,10 @@ public class RawImageReader extends SpatialImageReader {
         /**
          * Invoked when this Service Provider is registered. By default, this method
          * {@linkplain ServiceRegistry#setOrdering(Class, Object, Object) sets the ordering}
-         * of this {@code RawImageReader.Spi} after the one provided in <cite>Image I/O extension
-         * for JAI</cite>. This behavior can be changed by setting the
-         * {@value org.geotoolkit.lang.SystemOverride#KEY_ALLOW_OVERRIDE} system property
-         * explicitly to {@code true}.
+         * of this {@code RawImageReader.Spi} after the one provided in
+         * <cite>Image I/O extension for JAI</cite>. This behavior can be changed by setting the
+         * <code>{@value org.geotoolkit.lang.SystemOverride#KEY_ALLOW_OVERRIDE}</code>
+         * system property explicitly to {@code true}.
          * <p>
          * Note that the Geotk RAW image reader will be selected only if the source given to the
          * {@link #canDecodeInput(Object)} method is compliant with the restrictions documented

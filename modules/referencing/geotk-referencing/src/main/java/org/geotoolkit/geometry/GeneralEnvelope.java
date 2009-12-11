@@ -799,7 +799,28 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     private static boolean equalsIgnoreMetadata(final CoordinateReferenceSystem crs1,
                                                 final CoordinateReferenceSystem crs2)
     {
-        return crs1==null || crs2==null || CRS.equalsIgnoreMetadata(crs1, crs2);
+        return (crs1 == null) || (crs2 == null) || CRS.equalsIgnoreMetadata(crs1, crs2);
+    }
+
+    /**
+     * Returns {@code true} if at least one ordinate in the given position
+     * is {@link Double#NaN}. This is used for assertions only.
+     */
+    private static boolean hasNaN(final DirectPosition position) {
+        for (int i=position.getDimension(); --i>=0;) {
+            if (Double.isNaN(position.getOrdinate(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if at least one ordinate in the given envelope
+     * is {@link Double#NaN}. This is used for assertions only.
+     */
+    private static boolean hasNaN(final Envelope envelope) {
+        return hasNaN(envelope.getLowerCorner()) || hasNaN(envelope.getUpperCorner());
     }
 
     /**
@@ -823,10 +844,10 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
         assert equalsIgnoreMetadata(crs, position.getCoordinateReferenceSystem()) : position;
         for (int i=0; i<dim; i++) {
             final double value = position.getOrdinate(i);
-            if (value < ordinates[i    ]) ordinates[i    ]=value;
-            if (value > ordinates[i+dim]) ordinates[i+dim]=value;
+            if (value < ordinates[i    ]) ordinates[i    ] = value;
+            if (value > ordinates[i+dim]) ordinates[i+dim] = value;
         }
-        assert isEmpty() || contains(position);
+        assert isEmpty() || contains(position) || hasNaN(position) : position;
     }
 
     /**
@@ -848,14 +869,16 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
         for (int i=0; i<dim; i++) {
             final double min = envelope.getMinimum(i);
             final double max = envelope.getMaximum(i);
-            if (min < ordinates[i    ]) ordinates[i    ]=min;
-            if (max > ordinates[i+dim]) ordinates[i+dim]=max;
+            if (min < ordinates[i    ]) ordinates[i    ] = min;
+            if (max > ordinates[i+dim]) ordinates[i+dim] = max;
         }
-        assert isEmpty() || contains(envelope, true);
+        assert isEmpty() || contains(envelope, true) || hasNaN(envelope) : envelope;
     }
 
     /**
      * Tests if a specified coordinate is inside the boundary of this envelope.
+     * If it least one ordinate value in the given point is {@link Double#NaN NaN},
+     * then this method returns {@code false}.
      *
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
      *        For performance reason, it will no be verified unless Java assertions are enabled.}
@@ -919,7 +942,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
                 return false;
             }
         }
-        assert intersects(envelope, edgesInclusive);
+        assert intersects(envelope, edgesInclusive) || hasNaN(envelope) : envelope;
         return true;
     }
 
