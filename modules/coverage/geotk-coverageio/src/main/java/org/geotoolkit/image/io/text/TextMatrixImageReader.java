@@ -360,6 +360,7 @@ public class TextMatrixImageReader extends TextImageReader {
             final DataBuffer     buffer = new DataBufferFloat(data, data.length);
             final WritableRaster raster = Raster.createWritableRaster(model, buffer, null);
             this.data = null; // See the above block comment.
+            minIndex = imageIndex + 1;
             return new BufferedImage(type.getColorModel(), raster, false, null);
         }
         /*

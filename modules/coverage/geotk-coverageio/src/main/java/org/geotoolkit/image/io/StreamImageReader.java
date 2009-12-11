@@ -124,7 +124,6 @@ public abstract class StreamImageReader extends SpatialImageReader {
             try {
                 streamOrigin = ((ImageInputStream) input).getStreamPosition();
             } catch (IOException exception) {
-                streamOrigin = 0;
                 Logging.unexpectedException(LOGGER, StreamImageReader.class, "setInput", exception);
             }
         }

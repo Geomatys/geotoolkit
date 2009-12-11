@@ -26,12 +26,17 @@ import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.math.Statistics;
+import org.geotoolkit.internal.image.ImageUtilities;
+
+import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**
@@ -59,6 +64,99 @@ public abstract class ImageReaderTestBase {
      * @throws IOException If an error occured while creating the format.
      */
     protected abstract ImageReader createImageReader() throws IOException;
+
+    /**
+     * Loads the full image, then load random regions.
+     * The results are then compared with the pixels in the original image.
+     *
+     * @throws IOException If an error occured while reading the images.
+     */
+    @Test
+    public void testRandomRegions() throws IOException {
+        testRandom(true, false);
+    }
+
+    /**
+     * Loads the full image, then load with random subsamplings.
+     * The results are then compared with the pixels in the original image.
+     *
+     * @throws IOException If an error occured while reading the images.
+     */
+    @Test
+    public void testRandomSubsamplings() throws IOException {
+        testRandom(false, true);
+    }
+
+    /**
+     * Loads the full image, then load random regions with random subsamplings.
+     * The results are then compared with the pixels in the original image.
+     *
+     * @throws IOException If an error occured while reading the images.
+     */
+    @Test
+    public void testRandomRegionsAndSubsamplings() throws IOException {
+        testRandom(true, true);
+    }
+
+    /**
+     * Implementation of the {@code testRandomXXX()} method.
+     *
+     * @param  regions      {@code true} for setting random regions.
+     * @param  subsamplings {@code true} for setting random subsamplings.
+     * @throws IOException  If an error occured while reading the images.
+     */
+    private void testRandom(final boolean regions, final boolean subsamplings) throws IOException {
+        final ImageReader reader   = createImageReader();
+        final Object      input    = reader.getInput();
+        final Raster      original = reader.read(0).getRaster();
+        final Random      random   = new Random();
+        for (int i=0; i<100; i++) {
+            if (reader.getMinIndex() != 0) {
+                reader.reset();
+                reader.setInput(input);
+            }
+            final ImageReadParam param = reader.getDefaultReadParam();
+            Rectangle region = ImageUtilities.getBounds(original);
+            if (regions) {
+                region.x     += random.nextInt(region.width);
+                region.y     += random.nextInt(region.height);
+                region.width  = random.nextInt(region.width)  + 1;
+                region.height = random.nextInt(region.height) + 1;
+                region = region.intersection(ImageUtilities.getBounds(original));
+                param.setSourceRegion(region);
+            }
+            int xSubsampling=1, ySubsampling=1;
+            if (subsamplings) {
+                xSubsampling = random.nextInt(region.width)  + 1;
+                ySubsampling = random.nextInt(region.height) + 1;
+                param.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
+            }
+            final Raster raster = reader.read(0, param).getRaster();
+            final int xmin = raster.getMinX();
+            final int ymin = raster.getMinY();
+            final int xmax = raster.getWidth()  + xmin;
+            final int ymax = raster.getHeight() + ymin;
+            final StringBuilder message = new StringBuilder()
+                    .append("Source origin: ").append(region.x)    .append(',').append(region.y)     .append('\n')
+                    .append("Source size:   ").append(region.width).append(',').append(region.height).append('\n')
+                    .append("Target origin: ").append(xmin)        .append(',').append(ymin)         .append('\n')
+                    .append("Target size:   ").append(xmax - xmin) .append(',').append(ymax - ymin)  .append('\n')
+                    .append("Subsampling:   ").append(xSubsampling).append(',').append(ySubsampling) .append('\n')
+                    .append("Sample coord.: ");
+            final int messageBase = message.length();
+            for (int y=ymin; y<ymax; y++) {
+                final int sy = (y - ymin) * ySubsampling + region.y;
+                for (int x=xmin; x<xmax; x++) {
+                    final int sx = (x - xmin) * xSubsampling + region.x;
+                    message.setLength(messageBase);
+                    assertEquals(message.append(x).append(',').append(y).toString(),
+                            original.getSampleFloat(sx, sy, 0),
+                            raster.getSampleFloat(x, y, 0), 1E-3f);
+                }
+            }
+        }
+        reader.dispose();
+    }
 
     /**
      * Loads the given image using the given provider, and prints information about it.
