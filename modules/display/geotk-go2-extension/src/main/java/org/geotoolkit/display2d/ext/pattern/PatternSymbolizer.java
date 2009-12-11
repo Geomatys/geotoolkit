@@ -97,4 +97,18 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
         return NAME;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Pattern symbolizer \n");
+
+        for(Map.Entry<Expression,List<Symbolizer>> entry : thredholds.entrySet()){
+            System.out.println(" - " + entry.getKey());
+            for(Symbolizer s : entry.getValue()){
+                System.out.println(" - - " + s);
+            }
+        }
+
+        return sb.toString();
+    }
+
 }
