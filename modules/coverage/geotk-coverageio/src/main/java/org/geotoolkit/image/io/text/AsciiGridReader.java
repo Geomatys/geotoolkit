@@ -243,6 +243,15 @@ public class AsciiGridReader extends TextImageReader {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
+        super.setInput(input, seekForwardOnly, ignoreMetadata);
+        headerValid = false;
+    }
+
+    /**
      * Reads the header, if it was not already read. If successful, then all the instance
      * variables declared in this class should be assigned to their final value.
      *

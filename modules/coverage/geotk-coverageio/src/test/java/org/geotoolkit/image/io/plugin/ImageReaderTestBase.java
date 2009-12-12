@@ -32,6 +32,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.internal.image.ImageUtilities;
 
@@ -136,22 +137,21 @@ public abstract class ImageReaderTestBase {
             final int ymin = raster.getMinY();
             final int xmax = raster.getWidth()  + xmin;
             final int ymax = raster.getHeight() + ymin;
-            final StringBuilder message = new StringBuilder()
-                    .append("Source origin: ").append(region.x)    .append(',').append(region.y)     .append('\n')
-                    .append("Source size:   ").append(region.width).append(',').append(region.height).append('\n')
-                    .append("Target origin: ").append(xmin)        .append(',').append(ymin)         .append('\n')
-                    .append("Target size:   ").append(xmax - xmin) .append(',').append(ymax - ymin)  .append('\n')
-                    .append("Subsampling:   ").append(xSubsampling).append(',').append(ySubsampling) .append('\n')
-                    .append("Sample coord.: ");
-            final int messageBase = message.length();
             for (int y=ymin; y<ymax; y++) {
                 final int sy = (y - ymin) * ySubsampling + region.y;
                 for (int x=xmin; x<xmax; x++) {
                     final int sx = (x - xmin) * xSubsampling + region.x;
-                    message.setLength(messageBase);
-                    assertEquals(message.append(x).append(',').append(y).toString(),
-                            original.getSampleFloat(sx, sy, 0),
-                            raster.getSampleFloat(x, y, 0), 1E-3f);
+                    final float expected = original.getSampleFloat(sx, sy, 0);
+                    final float actual   = raster  .getSampleFloat( x,  y, 0);
+                    if (!Utilities.equals(expected, actual)) {
+                        fail("Source origin: " + region.x      + ',' + region.y      + '\n' +
+                             "Source size:   " + region.width  + ',' + region.height + '\n' +
+                             "Target origin: " + xmin          + ',' + ymin          + '\n' +
+                             "Target size:   " + (xmax - xmin) + ',' + (ymax - ymin) + '\n' +
+                             "Subsampling:   " + xSubsampling  + ',' + ySubsampling  + '\n' +
+                             "Sample coord.: " + x             + ',' + y             + '\n' +
+                             "Expected " + expected + " but got " + actual);
+                    }
                 }
             }
         }
