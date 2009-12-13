@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,8 +33,10 @@ import java.text.NumberFormat;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
@@ -60,6 +63,7 @@ public class JCoordinateBar extends JToolBar {
     private static final ImageIcon ICON_XY_DISABLE = IconBundle.getInstance().getIcon("16_xy_disable");
     private static final ImageIcon ICON_STATEFULL = IconBundle.getInstance().getIcon("16_statefull");
     private static final ImageIcon ICON_STATEFULL_DISABLE = IconBundle.getInstance().getIcon("16_statefull_disable");
+    private static final ImageIcon ICON_TEMPORAL = IconBundle.getInstance().getIcon("16_temporal");
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
@@ -71,16 +75,22 @@ public class JCoordinateBar extends JToolBar {
     private final JScaleCombo guiCombo = new JScaleCombo();
     private final JTextField guiCoord = new JTextField();
     private final JCheckBox guiStatefull = new JCheckBox();
-    private final JCRSButton gui_crsButton = new JCRSButton();
-    private final JProgressBar painting = new JProgressBar();
-    private final String message = MessageBundle.getString("map_painting");
+    private final JCRSButton guiCRS = new JCRSButton();
+    private final JProgressBar guiPainting = new JProgressBar();
+    private final JToggleButton guiTemporal = new JToggleButton(ICON_TEMPORAL);
+    private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
     public JCoordinateBar() {
         this(null);
     }
 
     public JCoordinateBar(Map2D candidate) {
-        setLayout(new GridBagLayout());
+        setLayout(new BorderLayout(0,1));
+        final JPanel bottom = new JPanel(new GridBagLayout());
+        bottom.setOpaque(false);
+        add(BorderLayout.SOUTH,bottom);
+        add(BorderLayout.CENTER,guiTimeLine);
+
 
         guiAxis.setSelected(true);
         guiAxis.addActionListener(new ActionListener() {
@@ -103,7 +113,7 @@ public class JCoordinateBar extends JToolBar {
         });
         guiStatefull.setToolTipText(MessageBundle.getString("map_statefull"));
 
-        gui_crsButton.setEnabled(false);
+        guiCRS.setEnabled(false);
         guiAxis.setPressedIcon(ICON_XY);
         guiAxis.setSelectedIcon(ICON_XY);
         guiAxis.setRolloverSelectedIcon(ICON_XY);
@@ -122,8 +132,20 @@ public class JCoordinateBar extends JToolBar {
         guiCoord.setEditable(false);
         guiCoord.setHorizontalAlignment(SwingConstants.CENTER);
 
-        painting.setPreferredSize(new Dimension(80,painting.getPreferredSize().height));
-        painting.setString(message);
+        guiPainting.setPreferredSize(new Dimension(80,guiPainting.getPreferredSize().height));
+        guiPainting.setString(MessageBundle.getString("map_painting"));
+
+        guiTemporal.setToolTipText(MessageBundle.getString("map_temporal_slider"));
+        guiTemporal.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                guiTimeLine.setVisible(guiTemporal.isSelected());
+            }
+        });
+
+        guiTimeLine.setVisible(false);
+        guiTimeLine.setPreferredSize(new Dimension(100, 100));
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
@@ -131,29 +153,22 @@ public class JCoordinateBar extends JToolBar {
         constraints.weightx = 0.0;
         constraints.weighty = 1.0;
 
-        add(painting);
-        add(guiStatefull,constraints);
-        add(guiAxis,constraints);
+        bottom.add(guiTemporal);
+        bottom.add(guiPainting);
+        bottom.add(guiStatefull,constraints);
+        bottom.add(guiAxis,constraints);
 
-
-//        //a an empty component to fill space, like glue
-//        constraints.fill = GridBagConstraints.BOTH;
-//        constraints.anchor = GridBagConstraints.WEST;
-//        constraints.weightx = 1.0;
-//        JComponent glue = new JComponent() {};
-//        glue.setOpaque(false);
-//        add(glue,constraints);
 
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.EAST;
         constraints.weightx = 1.0;
-        add(guiCoord,constraints);
+        bottom.add(guiCoord,constraints);
 
         constraints.weightx = 0.5;
-        add(guiCombo,constraints);
+        bottom.add(guiCombo,constraints);
 
         constraints.weightx = 0.0;
-        add(gui_crsButton,constraints);
+        bottom.add(guiCRS,constraints);
 
         setMap(candidate);
     }
@@ -164,6 +179,7 @@ public class JCoordinateBar extends JToolBar {
 
     public void setMap(Map2D map) {
         guiCombo.setMap(map);
+        guiTimeLine.setMap(map);
         
         if(this.map != null){
             this.map.getComponent().removeMouseMotionListener(listener);
@@ -171,7 +187,7 @@ public class JCoordinateBar extends JToolBar {
         }
         
         this.map = map;
-        gui_crsButton.setMap(this.map);
+        guiCRS.setMap(this.map);
         
         if(this.map != null){
             this.map.getComponent().addMouseMotionListener(listener);
@@ -179,11 +195,11 @@ public class JCoordinateBar extends JToolBar {
             map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
 
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
-            gui_crsButton.setText(crs.getName().toString());
+            guiCRS.setText(crs.getName().toString());
 
         }
         
-        gui_crsButton.setEnabled(this.map != null);
+        guiCRS.setEnabled(this.map != null);
     }
 
     public void setScales(List<Number> scales){
@@ -240,21 +256,21 @@ public class JCoordinateBar extends JToolBar {
         @Override
         public void propertyChange(PropertyChangeEvent arg0) {
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
-            gui_crsButton.setText(crs.getName().toString());
+            guiCRS.setText(crs.getName().toString());
         }
 
         @Override
         public void canvasChanged(CanvasEvent event) {
 
             if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
-                painting.setStringPainted(false);
-                painting.setIndeterminate(false);
+                guiPainting.setStringPainted(false);
+                guiPainting.setIndeterminate(false);
             }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                painting.setStringPainted(true);
-                painting.setIndeterminate(true);
+                guiPainting.setStringPainted(true);
+                guiPainting.setIndeterminate(true);
             }else{
-                painting.setStringPainted(false);
-                painting.setIndeterminate(false);
+                guiPainting.setStringPainted(false);
+                guiPainting.setIndeterminate(false);
             }
         }
 

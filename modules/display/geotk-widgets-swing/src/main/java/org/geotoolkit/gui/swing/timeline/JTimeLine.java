@@ -150,21 +150,25 @@ public class JTimeLine extends JComponent implements MouseListener, MouseMotionL
     }
 
     public Date getDateAt(int x) {
-        return null;
+        final float center = width / 2f;
+        
+        width = getWidth();
+        final float extend = YEAR_IN_MILLI * factor * zoom;
+        final float timeByPixel = extend / width;
+        final long l = (long) ((x - center) * timeByPixel);
+
+        return new Date(centralDate.getTime() + l);
     }
 
-    private int getPosition(Date t) {
-        int position = -1;
-
-        float center = width / 2f;
-        long centerMili = centralGregorian.getTimeInMillis();
-        long diff = centerMili - t.getTime();
+    protected int getPosition(Date t) {
+        final float center = width / 2f;
+        final long centerMili = centralGregorian.getTimeInMillis();
+        final long diff = centerMili - t.getTime();
 
         width = getWidth();
-        float extend = YEAR_IN_MILLI * factor * zoom;
-        float timeByPixel = extend / width;
-
-        float f = center - diff / timeByPixel;
+        final float extend = YEAR_IN_MILLI * factor * zoom;
+        final float timeByPixel = extend / width;
+        final float f = center - diff / timeByPixel;
 
         return Math.round(f);
     }
