@@ -82,6 +82,7 @@ public class JTimeLine extends JComponent implements MouseListener, MouseMotionL
     private int newMouseX = 0;
     private int newMouseY = 0;
     private boolean flagScroll = false;
+    private boolean flagMove = false;
     
     private Date centralDate = new Date();
     private GregorianCalendar centralGregorian = new GregorianCalendar();
@@ -526,6 +527,9 @@ public class JTimeLine extends JComponent implements MouseListener, MouseMotionL
     }
 
     public void mousePressed(MouseEvent e) {
+
+        flagMove = (e.getButton() == MouseEvent.BUTTON1);
+
         newMouseX = e.getX();
         newMouseY = e.getY();
 
@@ -551,6 +555,9 @@ public class JTimeLine extends JComponent implements MouseListener, MouseMotionL
     }
 
     public void mouseDragged(MouseEvent e) {
+
+        if(!flagMove) return;
+
         newMouseX = e.getX();
         newMouseY = e.getY();
 

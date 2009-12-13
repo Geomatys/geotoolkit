@@ -21,9 +21,17 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.Date;
+import javax.swing.AbstractAction;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.timeline.JTimeLine;
 
 /**
@@ -38,11 +46,184 @@ public class JMapTimeLine extends JTimeLine{
     private static final Color SECOND = new Color(0f,0.3f,0.6f,0.4f);
     private static final float LIMIT_WIDTH = 1.25f;
 
-    private Map2D map = null;
+    private final JPopupMenu menu;
+    private volatile Map2D map = null;
 
 
     public JMapTimeLine(){
 
+        menu = new JPopupMenu(){
+
+            @Override
+            public void setVisible(boolean b) {
+                Point pt = MouseInfo.getPointerInfo().getLocation();
+                int x = pt.x - JMapTimeLine.this.getLocationOnScreen().x;
+                popupEdit = getDateAt(x);
+                super.setVisible(b);
+            }
+
+        };
+
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_move_temporal_center")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        if (getMap() != null && popupEdit != null) {
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            final Date[] range = controller.getTemporalRange();
+                            if (range == null || range[0] == null || range[1] == null) {
+                                controller.setTemporalRange(popupEdit, popupEdit);
+                            } else {
+                                long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
+                                long step = popupEdit.getTime() - middleDate;
+                                Date start = new Date(range[0].getTime() + step);
+                                Date end = new Date(range[1].getTime() + step);
+                                getMap().getCanvas().getController().setTemporalRange(start, end);
+                            }
+                            JMapTimeLine.this.repaint();
+                        }
+                    }
+                }){
+
+            @Override
+            public boolean isEnabled() {
+                return getMap() != null;
+            }
+        });
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_move_temporal_left")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(getMap() != null && popupEdit != null){
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            final Date[] range = controller.getTemporalRange();
+                            if(range == null){
+                                controller.setTemporalRange(popupEdit, popupEdit);
+                            }else{
+                                controller.setTemporalRange(popupEdit, range[1]);
+                            }
+                            JMapTimeLine.this.repaint();
+                        }
+                    }
+            }){
+
+            @Override
+            public boolean isEnabled() {
+                if(getMap() != null){
+                    final CanvasController2D controller = getMap().getCanvas().getController();
+                    final Date[] range = controller.getTemporalRange();
+                    return range == null || range[1] == null || (range[1] != null && range[1].after(popupEdit));
+                }
+                return false;
+            }
+        });
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_move_temporal_right")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(getMap() != null && popupEdit != null){
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            final Date[] range = controller.getTemporalRange();
+                            if(range == null){
+                                controller.setTemporalRange(popupEdit, popupEdit);
+                            }else{
+                                controller.setTemporalRange(range[0],popupEdit);
+                            }
+                            JMapTimeLine.this.repaint();
+                        }
+                    }
+            }){
+
+            @Override
+            public boolean isEnabled() {
+                if(getMap() != null){
+                    final CanvasController2D controller = getMap().getCanvas().getController();
+                    final Date[] range = controller.getTemporalRange();
+                    return range == null || range[0] == null || (range[0] != null && range[0].before(popupEdit));
+                }
+                return false;
+            }
+        });
+        
+        menu.addSeparator();
+        
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_remove_temporal")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(getMap() != null && popupEdit != null){
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            controller.setTemporalRange(null, null);
+                            JMapTimeLine.this.repaint();
+                        }
+                    }
+            }){
+
+            @Override
+            public boolean isEnabled() {
+                if(getMap() != null){
+                    final CanvasController2D controller = getMap().getCanvas().getController();
+                    final Date[] range = controller.getTemporalRange();
+                    return range != null;
+                }
+                return false;
+            }
+        });
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_remove_temporal_left")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(getMap() != null && popupEdit != null){
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            final Date[] range = controller.getTemporalRange();
+                            if(range != null){
+                                range[0] = null;
+                                controller.setTemporalRange(range[0], range[1]);
+                            }
+                            JMapTimeLine.this.repaint();
+                        }
+                    }
+            }){
+
+            @Override
+            public boolean isEnabled() {
+                if(getMap() != null){
+                    final CanvasController2D controller = getMap().getCanvas().getController();
+                    final Date[] range = controller.getTemporalRange();
+                    return range != null && range[0] != null;
+                }
+                return false;
+            }
+        });
+        menu.add(new JMenuItem(
+                new AbstractAction(MessageBundle.getString("map_remove_temporal_right")) {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if(getMap() != null && popupEdit != null){
+                            final CanvasController2D controller = getMap().getCanvas().getController();
+                            final Date[] range = controller.getTemporalRange();
+                            if(range != null){
+                                range[1] = null;
+                                controller.setTemporalRange(range[0], range[1]);
+                            }
+                            JMapTimeLine.this.repaint();
+                        }
+                    }
+            }){
+
+            @Override
+            public boolean isEnabled() {
+                if(getMap() != null){
+                    final CanvasController2D controller = getMap().getCanvas().getController();
+                    final Date[] range = controller.getTemporalRange();
+                    return range != null && range[0] != null;
+                }
+                return false;
+            }
+        });
+
+        setComponentPopupMenu(menu);
     }
 
     public Map2D getMap() {
@@ -114,6 +295,7 @@ public class JMapTimeLine extends JTimeLine{
     // 2 for right limit
     private int selected = -1;
     private Date edit = null;
+    private volatile Date popupEdit = null;
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -177,7 +359,7 @@ public class JMapTimeLine extends JTimeLine{
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        
         if(selected >= 0){
             //drag one limit
             edit = getDateAt(e.getX());
