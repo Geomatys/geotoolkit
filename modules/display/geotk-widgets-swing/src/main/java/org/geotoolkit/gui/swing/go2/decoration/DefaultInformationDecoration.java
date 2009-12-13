@@ -36,11 +36,10 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  */
 public class DefaultInformationDecoration extends JPanel implements InformationDecoration {
 
+    private Map2D map = null;;
     private final Map<String, LEVEL> messages = new LinkedHashMap<String, LEVEL>();
     private boolean lowlevel = true;
 
-     //waiting animation
-    private final WaitingAnim anim = new WaitingAnim(true);
 
 
     public DefaultInformationDecoration() {
@@ -48,19 +47,11 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
         OverlayLayout layout = new OverlayLayout(this);
         setLayout(layout);
         setOpaque(false);
-        anim.setVisible(false);
-        add(anim);
     }
 
 
     @Override
     public void setPaintingIconVisible(boolean b) {
-
-        if(b){
-            anim.setVisible(true);
-        }else{
-            anim.setVisible(false);
-        }
         revalidate();
         repaint();
     }
@@ -77,12 +68,12 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
 
     @Override
     public void setMap2D(Map2D map) {
-        anim.setMap(map);
+        this.map = map;
     }
 
     @Override
     public Map2D getMap2D() {
-        return anim.getMap();
+        return map;
     }
 
     @Override

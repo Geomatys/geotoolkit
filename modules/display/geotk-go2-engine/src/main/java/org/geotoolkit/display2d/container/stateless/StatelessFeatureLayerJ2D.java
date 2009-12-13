@@ -191,7 +191,6 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
                 monitor.exceptionOccured(ex, Level.WARNING);
-//                renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
                 env = new Envelope2D();
             }catch(IllegalArgumentException ex){
                 //looks like the coordinate of the bbox are outside of the crs valide area.

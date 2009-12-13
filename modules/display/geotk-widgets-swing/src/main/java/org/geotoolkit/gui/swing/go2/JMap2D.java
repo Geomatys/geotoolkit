@@ -24,6 +24,8 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.control.AbstractCanvasMonitor;
+import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
@@ -53,6 +55,7 @@ public class JMap2D extends AbstractMap2D{
     public JMap2D(boolean statefull){
         super();
         geoComponent = new SwingVolatileGeoComponent(DefaultGeographicCRS.WGS84);
+        geoComponent.getCanvas().setMonitor(new NeverFailMonitor());
         setMapComponent(geoComponent);
         final ReferencedCanvas2D canvas = geoComponent.getCanvas();
         canvas.setContainer(new DefaultContextContainer2D(canvas, statefull));

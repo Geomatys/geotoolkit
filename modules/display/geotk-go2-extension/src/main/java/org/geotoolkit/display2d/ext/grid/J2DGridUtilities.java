@@ -120,6 +120,8 @@ public class J2DGridUtilities {
                 Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
                 ls = JTS.transform(ls, gridToObj);
 
+                if(ls == null) continue;
+
                 final Geometry geom = ls.intersection(bounds);
                 final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(geom);
                 pg.setObjToDisplay(objToDisp);

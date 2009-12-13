@@ -60,7 +60,8 @@ public class J2DCanvasVolatile extends J2DCanvas{
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
-    private final ReadWriteLock volatileLock = new ReentrantReadWriteLock(true);
+
+    private final Object LOCK = new Object();
 
 
     private final Area dirtyArea = new Area();
@@ -145,61 +146,37 @@ public class J2DCanvasVolatile extends J2DCanvas{
         return bounds;
     }
 
-    /**
-     * If you want to avoid binking black screen when the background painter is repainting
-     * then use this lock.
-     *
-     * exemple :
-     * final Lock lock = getPaintingLock();
-     * lock.lock();
-     * try{
-     *   g.paint(canvas.getVolatile());
-     * }finally{
-     *   lock.unlock();
-     * }
-     *
-     * @return Lock
-     */
-    public Lock getPaintingLock(){
-        return volatileLock.readLock();
-    }
 
     private void render(Shape paintingDisplayShape){
 
         if(paintingDisplayShape == null) paintingDisplayShape = getDisplayBounds();
 
-        //ensure no one will ask the volatile image if the background is not painted.
-        final Lock backgroundLock = volatileLock.writeLock();
-        backgroundLock.lock();
-
         final Graphics2D output;
-        try{
-            if(buffer0 == null){
-                //create the buffer at the last possible moment
-                //or create a new one if we are already rendering
-                //TODO : find a way to stop previous thread
-                VolatileImage buffer = createBackBuffer();
-                buffer.setAccelerationPriority(1);
 
-                output = (Graphics2D) buffer.getGraphics();
-                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-                output.fillRect(0,0,dim.width,dim.height);
+        synchronized(LOCK){
+        VolatileImage buffer;
 
-                buffer0 = buffer;
+        if(buffer0 == null){
+            //create the buffer at the last possible moment
+            //or create a new one if we are already rendering
+            //TODO : find a way to stop previous thread
+            buffer = createBackBuffer();
+            buffer.setAccelerationPriority(1);
+            output = (Graphics2D) buffer.getGraphics();
+            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+            output.fillRect(0,0,dim.width,dim.height);
+        }else{
+            buffer = buffer0;
+            //we clear the buffer part if it exists
+            output = (Graphics2D) buffer0.getGraphics();
+            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+            output.fill(paintingDisplayShape);
+        }
 
-            }else{
-                //we clear the buffer part if it exists
-                output = (Graphics2D) buffer0.getGraphics();
-                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-                output.fill(paintingDisplayShape);
-    //            output.setColor(Color.WHITE);
-    //            output.fill(paintingDisplayShape);
-            }
+        buffer0 = buffer;
 
             output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
 
-            monitor.renderingStarted();
-            fireRenderingStateChanged(RenderingState.RENDERING);
 
     //        Rectangle clipBounds = output.getClipBounds();
     //        /*
@@ -229,10 +206,12 @@ public class J2DCanvasVolatile extends J2DCanvas{
             if(painter != null){
                 painter.paint(context2D);
             }
-        }finally{
-            //ensure we release the lock
-            backgroundLock.unlock();
         }
+
+
+            monitor.renderingStarted();
+            fireRenderingStateChanged(RenderingState.RENDERING);
+
 
         final AbstractContainer renderer         = getContainer();
         if(renderer != null && renderer instanceof AbstractContainer2D){
@@ -260,7 +239,9 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     public VolatileImage getVolatile(){
-        return buffer0;
+        synchronized(LOCK){
+            return buffer0;
+        }
     }
 
     @Override

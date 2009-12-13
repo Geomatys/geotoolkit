@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.geotoolkit.gui.swing.go2.Map2D;
@@ -50,7 +51,7 @@ import org.jdesktop.animation.timing.interpolation.PropertySetter;
  */
 public class WaitingAnim extends JPanel{
 
-    private static final ImageIcon ICO_NOVER = IconBundle.getInstance().getIcon("32_play");
+//    private static final ImageIcon ICO_NOVER = IconBundle.getInstance().getIcon("32_play");
     private static final ImageIcon ICO_OVER = IconBundle.getInstance().getIcon("32_stop");
     
     private final JButton stopRendering;
@@ -58,7 +59,6 @@ public class WaitingAnim extends JPanel{
 
 
     //waiting animation
-    private final BufferedImage buffer;
     private final Color pulseColor = Color.GRAY;
     private final Color transparant = new Color(1f,1f,1f,0f);
     private final Animator waitController;
@@ -71,10 +71,8 @@ public class WaitingAnim extends JPanel{
         super(new BorderLayout());
         setOpaque(true);
         setBackground(Color.WHITE);
-        Dimension fixed = new Dimension(120, 50);
+        Dimension fixed = new Dimension(80, 20);
         setPreferredSize(fixed);
-        setMaximumSize(fixed);
-        setMinimumSize(fixed);
         setSize(fixed);
         setAlignmentX(Component.CENTER_ALIGNMENT);
         setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -82,38 +80,8 @@ public class WaitingAnim extends JPanel{
         waitController = new Animator(2500, Animator.INFINITE, Animator.RepeatBehavior.LOOP, new PropertySetter(this, "propagation", 1.0f));
 
         if(animated) waitController.start();
-
         
-        buffer = new BufferedImage(fixed.width,fixed.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = buffer.createGraphics();
-
-        ////////////////////////////////////////////////////////////////////////
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        int width = fixed.width-1;
-        int height = fixed.height-1;
-
-        g2.setColor(new Color(1f, 1f, 1f, 0.9f));
-        g2.fillRoundRect(0, 0, width, height, 16,16);
-
-//        try{
-            BufferedImage EMPTY_ICON = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB); //getInstance().getBuffer("EARTH_WHITE");
-            Paint imgPaint = new TexturePaint(EMPTY_ICON, new Rectangle(width, height));
-            g2.setPaint(imgPaint);
-            g2.fillRoundRect(0, 0, width, height, 16,16);
-//        }catch(IOException ex){
-//
-//        }
-
-        g2.setColor(Color.BLACK);
-        g2.drawRoundRect(0, 0, width, height, 8,8);
-        g2.dispose();
-
-        ////////////////////////////////////////////////////////////////////////
-       
-        
-        stopRendering = new JButton(ICO_NOVER);
-        stopRendering.setRolloverIcon(ICO_OVER);
+        stopRendering = new JButton("Painting...");
         stopRendering.setBorder(null);
         stopRendering.setBorderPainted(false);
         stopRendering.setContentAreaFilled(false);
@@ -144,10 +112,13 @@ public class WaitingAnim extends JPanel{
     }
     
     public void startWaitSequence() {
+        stopRendering.setVisible(true);
         waitController.resume();
     }
 
     public void stopWaitSequence() {
+        stopRendering.setVisible(false);
+        setPropagation(0);
         waitController.pause();
     }
 
@@ -199,11 +170,31 @@ public class WaitingAnim extends JPanel{
         
     protected void paintWaiting(final Graphics g) {
         final Graphics2D g2 = (Graphics2D) g.create();
-        g2.drawImage(buffer, 0,0, this);
+
+        ////////////////////////////////////////////////////////////////////////
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int width = getWidth();
+        int height = getHeight();
+
+        g2.setColor(new Color(1f, 1f, 1f, 0.9f));
+        g2.fillRoundRect(0, 0, width, height, 16,16);
+
+//        try{
+            BufferedImage EMPTY_ICON = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB); //getInstance().getBuffer("EARTH_WHITE");
+            Paint imgPaint = new TexturePaint(EMPTY_ICON, new Rectangle(width, height));
+            g2.setPaint(imgPaint);
+            g2.fillRoundRect(0, 0, width, height, 16,16);
+//        }catch(IOException ex){
+//
+//        }
+
+        g2.setColor(Color.BLACK);
+        g2.drawRoundRect(0, 0, width-1, height-1, 8,8);
 
         if(radial != null){
             g2.setPaint(radial);
-            g2.fillRoundRect(0, 0,getWidth()-1, getHeight()-1, 16,16);
+            g2.fillRoundRect(0, 0,width-1, height-1, 16,16);
         }
 
     }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -31,17 +32,21 @@ import java.text.NumberFormat;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
-
 import javax.swing.SwingConstants;
+
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+
+import org.opengis.display.canvas.CanvasEvent;
+import org.opengis.display.canvas.CanvasListener;
+import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -67,6 +72,8 @@ public class JCoordinateBar extends JToolBar {
     private final JTextField guiCoord = new JTextField();
     private final JCheckBox guiStatefull = new JCheckBox();
     private final JCRSButton gui_crsButton = new JCRSButton();
+    private final JProgressBar painting = new JProgressBar();
+    private final String message = MessageBundle.getString("map_painting");
 
     public JCoordinateBar() {
         this(null);
@@ -115,11 +122,16 @@ public class JCoordinateBar extends JToolBar {
         guiCoord.setEditable(false);
         guiCoord.setHorizontalAlignment(SwingConstants.CENTER);
 
+        painting.setPreferredSize(new Dimension(80,painting.getPreferredSize().height));
+        painting.setString(message);
+
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.fill = GridBagConstraints.BOTH;
         constraints.anchor = GridBagConstraints.WEST;
         constraints.weightx = 0.0;
+        constraints.weighty = 1.0;
 
+        add(painting);
         add(guiStatefull,constraints);
         add(guiAxis,constraints);
 
@@ -155,6 +167,7 @@ public class JCoordinateBar extends JToolBar {
         
         if(this.map != null){
             this.map.getComponent().removeMouseMotionListener(listener);
+            this.map.getCanvas().removeCanvasListener(listener);
         }
         
         this.map = map;
@@ -162,6 +175,7 @@ public class JCoordinateBar extends JToolBar {
         
         if(this.map != null){
             this.map.getComponent().addMouseMotionListener(listener);
+            this.map.getCanvas().addCanvasListener(listener);
             map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
 
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
@@ -188,7 +202,7 @@ public class JCoordinateBar extends JToolBar {
         return guiCombo.getStepSize();
     }
 
-    private class myListener extends MouseMotionAdapter implements PropertyChangeListener{
+    private class myListener extends MouseMotionAdapter implements PropertyChangeListener,CanvasListener{
 
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -227,6 +241,21 @@ public class JCoordinateBar extends JToolBar {
         public void propertyChange(PropertyChangeEvent arg0) {
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             gui_crsButton.setText(crs.getName().toString());
+        }
+
+        @Override
+        public void canvasChanged(CanvasEvent event) {
+
+            if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
+                painting.setStringPainted(false);
+                painting.setIndeterminate(false);
+            }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
+                painting.setStringPainted(true);
+                painting.setIndeterminate(true);
+            }else{
+                painting.setStringPainted(false);
+                painting.setIndeterminate(false);
+            }
         }
 
     }

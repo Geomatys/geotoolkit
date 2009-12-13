@@ -24,7 +24,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.concurrent.locks.Lock;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
@@ -63,7 +62,7 @@ public class SwingVolatileGeoComponent extends JComponent{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                    repaint();
+                repaint();
             }
         });
         
@@ -72,14 +71,12 @@ public class SwingVolatileGeoComponent extends JComponent{
 
             @Override
             public void canvasChanged(CanvasEvent event) {
-                if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
-                    timer.stop();
-                    repaint();
-                }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                        img = canvas.getVolatile();
-                        timer.start();
+                if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
+                    img = canvas.getVolatile();
+                    timer.start();
                 }else{
                     timer.stop();
+                    repaint();
                 }
             }
         });
@@ -92,16 +89,11 @@ public class SwingVolatileGeoComponent extends JComponent{
     }
 
     @Override
-    public void paintComponent(final Graphics g) {
-        final Lock lock = canvas.getPaintingLock();
-        lock.lock();
-        try{
-            canvas.getVolatile();
-            if (img != null) {
-                g.drawImage(img, 0, 0, this);
-            }
-        }finally{
-            lock.unlock();
+    public void paint(final Graphics g) {
+        img = canvas.getVolatile();
+
+        if (img != null) {
+            g.drawImage(img, 0, 0, this);
         }
     }
 
