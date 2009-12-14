@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageReader;
@@ -46,7 +45,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -173,12 +171,17 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *   <li>{@link Strings} are warnings.</li>
      * </ul>
      */
-    final void processBackgroundMessages(final List<?> chunks) {
+    final void processBackgroundMessages(final Worker caller, final List<?> chunks) {
+        if (caller != worker) {
+            return;
+        }
+        final ImagePane viewer = this.viewer;
         boolean hasWarnings = false;
         for (final Object chunk : chunks) {
             if (chunk instanceof File) {
+                viewer.setProgress(0);
                 viewer.setProgressLabel(Vocabulary.getResources(getLocale())
-                        .getString(Vocabulary.Keys.LOADING_$1, chunk));
+                        .getString(Vocabulary.Keys.LOADING_$1, ((File) chunk).getName()));
             } else if (chunk instanceof Boolean) {
                 viewer.setProgressVisible((Boolean) chunk);
             } else if (chunk instanceof Integer) {
@@ -204,104 +207,64 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
-     * Sets the image to the given info. At the contrary of public {@code setImage} methods,
-     * <strong>this method must be invoked in the Swing thread</strong>.
-     *
-     * @param streamMetadata The stream metadata, or {@code null} if none.
-     * @param images The informations about each image.
-     */
-    private void setImage(final IIOMetadata streamMetadata, final Info[] images) {
-        assert EventQueue.isDispatchThread();
-        if (images.length == 0) {
-            super.setImage((RenderedImage) null);
-            return;
-        }
-        /*
-         * Clear the metadata because we are going to define new values.
-         * But do not clear the warnings, because they are the result of
-         * the reading process we just finished and we want to show them.
-         */
-        metadata.clear();
-        images[0].show(this);
-        /*
-         * Add non-null metadata.
-         */
-        IIOMetadata[] metadata = new IIOMetadata[images.length];
-        int count = 0;
-        for (final Info info : images) {
-            final IIOMetadata m = info.metadata;
-            if (m != null) {
-                metadata[count++] = m;
-            }
-        }
-        metadata = XArrays.resize(metadata, count);
-        this.metadata.addMetadata(streamMetadata, metadata);
-        /*
-         * Sets the overview to the first image having a thumbnail.
-         */
-        BufferedImage thumbnail = null;
-        for (final Info info : images) {
-            thumbnail = info.thumbnail;
-            if (thumbnail != null) {
-                break;
-            }
-        }
-        viewer.setImage(thumbnail);
-    }
-
-    /**
      * Sets the specified {@linkplain ImageReader image reader} as the source of metadata
-     * and thumbnails. The information are extracted immediately and no reference to the
-     * given image reader is retained. This method does not read the image.
+     * and thumbnails, reading the information at the given image index. The information
+     * are extracted immediately and no reference to the given image reader is retained.
      * <p>
      * This method can be invoked from any thread. Actually it is recommanded to invoke
      * it from an other thread than the Swing one.
      *
      * @param  reader The image reader from which to read the informations.
+     * @param  imageIndex The index of the image to read (usually 0).
+     * @throws IOException If an error occured while reading the metadata or the thumbnails.
+     *
+     * @since 3.07
+     */
+    public void setImage(final ImageReader reader, final int imageIndex) throws IOException {
+        warnings.clear();
+        tabs.setEnabledAt(warningsTab, false);
+        /*
+         * Reads only the metadata, and refresh the information panel
+         * as soon as those metadata are available.
+         */
+        final IIOMetadata streamMetadata = reader.getStreamMetadata();
+        final Info info = new Info(reader, imageIndex);
+        EventQueue.invokeLater(new Runnable() {
+            @Override public void run() {
+                info.show(ImageFileProperties.this);
+                metadata.clear();
+                metadata.addMetadata(streamMetadata, info.getMetadata());
+            }
+        });
+        /*
+         * Reads the thumbnail or the image now.
+         */
+        final BufferedImage thumbnail = info.readThumbnail(reader, imageIndex, preferredThumbnailSize);
+        EventQueue.invokeLater(new Runnable() {
+            @Override public void run() {
+                viewer.setImage(thumbnail);
+            }
+        });
+    }
+
+    /**
+     * Sets the specified {@linkplain ImageReader image reader} as the source of metadata
+     * and thumbnails. The information are extracted immediately and no reference to the
+     * given image reader is retained.
+     * <p>
+     * This method can be invoked from any thread. Actually it is recommanded to invoke
+     * it from an other thread than the Swing one.
+     * <p>
+     * The default implementation delegates to {@link #setImage(ImageReader, int)} with
+     * an <cite>image index</cite> of 0. Subclasses should override this method if they
+     * wants to choose automatically an image index depending on the format and the
+     * input.
+     *
+     * @param  reader The image reader from which to read the informations.
      * @throws IOException If an error occured while reading the metadata or the thumbnails.
      */
     public void setImage(final ImageReader reader) throws IOException {
-        warnings.clear();
-        tabs.setEnabledAt(warningsTab, false);
-        final IIOMetadata metadata = reader.getStreamMetadata();
-        final int numImages = reader.getNumImages(false);
-        Info[] infos;
-        if (numImages >= 0) {
-            infos = new Info[numImages];
-            for (int i=0; i<numImages; i++) {
-                infos[i] = new Info(reader, i, preferredThumbnailSize);
-            }
-        } else {
-            /*
-             * numImages is -1 if this information is too costly to fetch. This occurs for example
-             * in animated GIF files. In such case the image I/O documentation recommands to fetch
-             * the images sequentially until an IndexOutOfBoundsException is thrown.
-             */
-            final ArrayList<Info> list = new ArrayList<Info>();
-            while (true) {
-                final Info info;
-                final int index = list.size();
-                try {
-                    info = new Info(reader, index, preferredThumbnailSize);
-                } catch (IndexOutOfBoundsException e) {
-                    // This is the expected exception, but log anyway.
-                    Logging.recoverableException(ImageFileProperties.class, "setImage", e);
-                    break;
-                }
-                list.add(info);
-            }
-            infos = list.toArray(new Info[list.size()]);
-        }
-        /*
-         * At this point we have all informations we want.
-         * Now declare those informations to the widget.
-         */
-        final Info[] images = infos;
-        EventQueue.invokeLater(new Runnable() {
-            @Override public void run() {
-                setImage(metadata, images);
-            }
-        });
+        setImage(reader, 0);
     }
 
     /**
@@ -442,7 +405,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                     Worker w = this.worker;
                     if (w != null) {
                         worker = null;
-                        w.cancel(false);
+                        w.cancel();
                     }
                     w = new Worker(file);
                     worker = w; // Must be before execute.
@@ -471,6 +434,11 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         private final File input;
 
         /**
+         * The image reader. Used only for cancelation.
+         */
+        private volatile ImageReader reader;
+
+        /**
          * Creates a new worker thread for reading the given image.
          */
         Worker(final File input) {
@@ -489,8 +457,8 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         }
 
         @Override public void sequenceStarted  (ImageReader r, int image)      {}
-        @Override public void imageStarted     (ImageReader r, int image)      {publish(Boolean.TRUE);}
-        @Override public void thumbnailStarted (ImageReader r, int i, int t)   {publish(Boolean.TRUE);}
+        @Override public void imageStarted     (ImageReader r, int image)      {publish(Boolean.TRUE); reader=r;}
+        @Override public void thumbnailStarted (ImageReader r, int i, int t)   {publish(Boolean.TRUE); reader=r;}
         @Override public void imageProgress    (ImageReader r, float percent)  {publish(Math.round(percent));}
         @Override public void thumbnailProgress(ImageReader r, float percent)  {publish(Math.round(percent));}
         @Override public void warningOccurred  (ImageReader r, String warning) {publish(warning);}
@@ -504,7 +472,19 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          */
         @Override
         protected void process(final List<Object> chunks) {
-            processBackgroundMessages(chunks);
+            processBackgroundMessages(this, chunks);
+        }
+
+        /**
+         * Cancels the current reading operation.
+         * This method can be invoked from any thread.
+         */
+        final void cancel() {
+            final ImageReader reader = this.reader;
+            if (reader != null) {
+                reader.abort();
+            }
+            cancel(true);
         }
 
         /**
@@ -515,16 +495,12 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         protected void done() {
             if (worker == this) {
                 worker = null;
-            }
-            final ImagePane viewer = ImageFileProperties.this.viewer;
-            viewer.setProgressVisible(false);
-            viewer.setProgressLabel(null);
-            viewer.setProgress(0);
-            try {
-                get();
-            } catch (Exception e) {
-                setImage((RenderedImage) null);
-                processBackgroundMessages(Collections.singletonList(e.getLocalizedMessage()));
+                try {
+                    get();
+                } catch (Exception e) {
+                    setImage((RenderedImage) null);
+                    processBackgroundMessages(this, Collections.singletonList(e.getLocalizedMessage()));
+                }
             }
         }
     }
@@ -562,28 +538,31 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         /**
          * The metadata, or {@code null} if none.
          */
-        final IIOMetadata metadata;
-
-        /**
-         * The thumbnail, or {@code null} if none. If the image has many
-         * thumbnails, only the first one is used.
-         */
-        final BufferedImage thumbnail;
+        private final IIOMetadata metadata;
 
         /**
          * Fetches the informations from the given image reader for the image at the given index.
+         * The thumbnail is not read yet; an explicit call to {@code readThumbnail} will be needed.
+         */
+        Info(final ImageReader reader, final int index) throws IOException {
+            provider   = reader.getOriginatingProvider();
+            width      = reader.getWidth(index);
+            height     = reader.getHeight(index);
+            tileWidth  = reader.getTileWidth(index);
+            tileHeight = reader.getTileHeight(index);
+            type       = reader.getRawImageType(index);
+            metadata   = reader.getImageMetadata(index);
+        }
+
+        /**
+         * Reads the thumbnail, or the full image if there is no thumbnail. The reader and index
+         * given to this method shall be the same than the ones given to the constructor.
          */
         @SuppressWarnings("fallthrough")
-        Info(final ImageReader reader, final int index, final Dimension preferredThumbnailSize)
-                throws IOException
+        final BufferedImage readThumbnail(final ImageReader reader, final int index,
+                final Dimension preferredThumbnailSize) throws IOException
         {
-            provider    = reader.getOriginatingProvider();
-            width       = reader.getWidth(index);
-            height      = reader.getHeight(index);
-            tileWidth   = reader.getTileWidth(index);
-            tileHeight  = reader.getTileHeight(index);
-            type        = reader.getRawImageType(index);
-            metadata    = reader.getImageMetadata(index);
+            BufferedImage thumbnail;
             final int n = reader.getNumThumbnails(index);
             int ti = 0;
             switch (n) {
@@ -623,12 +602,20 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                     break;
                 }
             }
+            return thumbnail;
+        }
+
+        /**
+         * Returns the metadata, or an empty array if none.
+         */
+        final IIOMetadata[] getMetadata() {
+            return (metadata != null) ? new IIOMetadata[] {metadata} : new IIOMetadata[0];
         }
 
         /**
          * Shows the content of this {@code Info} object in the given properties pane.
          */
-        final void show(final ImageProperties properties) {
+        final void show(final ImageFileProperties properties) {
             properties.setDescription(type.getColorModel(), type.getSampleModel(),
                     width, height, tileWidth, tileHeight,
                     (width  + tileWidth -1) / tileWidth,
