@@ -46,7 +46,7 @@ import static org.junit.Assume.*;
  * @param <T> The type of the widget to be tested.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 2.3
  */
@@ -145,7 +145,21 @@ public abstract class SwingBase<T extends JComponent> {
                 ImageIO.write(image, "png", file);
                 System.out.println("Image saved in " + file.getAbsolutePath());
             }
+        } else {
+            animate(component);
         }
+    }
+
+    /**
+     * Invoked in the JUnit thread if the widget has been shown. The default implementation
+     * does nothing. Subclasses can override this method for testing an animation.
+     *
+     * @param component The widget that were created.
+     * @throws Exception If an exception occured while animating the widget.
+     *
+     * @since 3.07
+     */
+    protected void animate(final JComponent component) throws Exception {
     }
 
     /**

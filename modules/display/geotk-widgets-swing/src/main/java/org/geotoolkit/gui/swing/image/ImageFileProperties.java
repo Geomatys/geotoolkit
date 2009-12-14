@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.event.IIOReadWarningListener;
+import javax.imageio.event.IIOReadProgressListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
@@ -105,7 +107,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     private final IIOMetadataPanel metadata;
 
     /**
-     * The warnings
+     * The warnings.
      */
     private final DefaultListModel warnings;
 
@@ -116,10 +118,14 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     private final int warningsTab;
 
     /**
-     * If a worker is currently running, that worker. This is used for
-     * cancelling a running action before to start a new one.
+     * If a worker is currently running, that worker. This is used by {@link #propertyChange}
+     * (invoked when a new file is selected in the file chooser) for cancelling a running action
+     * before to start a new one. This is also used as progress and warning listeners to be
+     * registered to the image reader.
+     * <p>
+     * This field shall be read and set in the Swing thread only.
      */
-    private transient volatile Worker worker;
+    private transient Worker worker;
 
     /**
      * Creates a new instance of {@code ImageFileProperties} with no image.
@@ -156,12 +162,34 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
-     * Adds the given lines to the warnings tab.
+     * Processes the messages sent by the background process. The behavior depends on the
+     * object type:
+     * <p>
+     * <ul>
+     *   <li>{@link Boolean#TRUE} means that the reading process started.</li>
+     *   <li>{@link Boolean#FALSE} means that the reading process finished or has been canceled.</li>
+     *   <li>{@link File} gives the filename to write in the label above the progress.</li>
+     *   <li>{@link Integer} are progress as a percentage between 0 and 100.</li>
+     *   <li>{@link Strings} are warnings.</li>
+     * </ul>
      */
-    final void addWarnings(final List<String> chunks) {
-        tabs.setEnabledAt(warningsTab, true);
-        for (final String warning : chunks) {
-            warnings.addElement(warning);
+    final void processBackgroundMessages(final List<?> chunks) {
+        boolean hasWarnings = false;
+        for (final Object chunk : chunks) {
+            if (chunk instanceof File) {
+                viewer.setProgressLabel(Vocabulary.getResources(getLocale())
+                        .getString(Vocabulary.Keys.LOADING_$1, chunk));
+            } else if (chunk instanceof Boolean) {
+                viewer.setProgressVisible((Boolean) chunk);
+            } else if (chunk instanceof Integer) {
+                viewer.setProgress((Integer) chunk);
+            } else {
+                warnings.addElement(chunk);
+                if (!hasWarnings) {
+                    tabs.setEnabledAt(warningsTab, true);
+                    hasWarnings = true;
+                }
+            }
         }
     }
 
@@ -235,55 +263,45 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     public void setImage(final ImageReader reader) throws IOException {
         warnings.clear();
         tabs.setEnabledAt(warningsTab, false);
-        final IIOReadWarningListener listener = worker;
-        if (listener != null) {
-            reader.addIIOReadWarningListener(listener);
-        }
-        try {
-            final IIOMetadata metadata = reader.getStreamMetadata();
-            final int numImages = reader.getNumImages(false);
-            Info[] infos;
-            if (numImages >= 0) {
-                infos = new Info[numImages];
-                for (int i=0; i<numImages; i++) {
-                    infos[i] = new Info(reader, i, preferredThumbnailSize);
-                }
-            } else {
-                /*
-                 * numImages is -1 if this information is too costly to fetch. This occurs for example
-                 * in animated GIF files. In such case the image I/O documentation recommands to fetch
-                 * the images sequentially until an IndexOutOfBoundsException is thrown.
-                 */
-                final ArrayList<Info> list = new ArrayList<Info>();
-                while (true) {
-                    final Info info;
-                    final int index = list.size();
-                    try {
-                        info = new Info(reader, index, preferredThumbnailSize);
-                    } catch (IndexOutOfBoundsException e) {
-                        // This is the expected exception, but log anyway.
-                        Logging.recoverableException(ImageFileProperties.class, "setImage", e);
-                        break;
-                    }
-                    list.add(info);
-                }
-                infos = list.toArray(new Info[list.size()]);
+        final IIOMetadata metadata = reader.getStreamMetadata();
+        final int numImages = reader.getNumImages(false);
+        Info[] infos;
+        if (numImages >= 0) {
+            infos = new Info[numImages];
+            for (int i=0; i<numImages; i++) {
+                infos[i] = new Info(reader, i, preferredThumbnailSize);
             }
+        } else {
             /*
-             * At this point we have all informations we want.
-             * Now declare those informations to the widget.
+             * numImages is -1 if this information is too costly to fetch. This occurs for example
+             * in animated GIF files. In such case the image I/O documentation recommands to fetch
+             * the images sequentially until an IndexOutOfBoundsException is thrown.
              */
-            final Info[] images = infos;
-            EventQueue.invokeLater(new Runnable() {
-                @Override public void run() {
-                    setImage(metadata, images);
+            final ArrayList<Info> list = new ArrayList<Info>();
+            while (true) {
+                final Info info;
+                final int index = list.size();
+                try {
+                    info = new Info(reader, index, preferredThumbnailSize);
+                } catch (IndexOutOfBoundsException e) {
+                    // This is the expected exception, but log anyway.
+                    Logging.recoverableException(ImageFileProperties.class, "setImage", e);
+                    break;
                 }
-            });
-        } finally {
-            if (listener != null) {
-                reader.removeIIOReadWarningListener(listener);
+                list.add(info);
             }
+            infos = list.toArray(new Info[list.size()]);
         }
+        /*
+         * At this point we have all informations we want.
+         * Now declare those informations to the widget.
+         */
+        final Info[] images = infos;
+        EventQueue.invokeLater(new Runnable() {
+            @Override public void run() {
+                setImage(metadata, images);
+            }
+        });
     }
 
     /**
@@ -316,17 +334,66 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      *         given input, or if an error occured while reading the metadata or the thumbnails.
      */
     public void setImageInput(final Object input) throws IOException {
-        Formats.selectImageReader(input, getLocale(), new Formats.ReadCall() {
-            @Override
-            public void read(final ImageReader reader) throws IOException {
-                setImage(reader);
-            }
+        final Reader reader = new Reader();
+        SwingUtilities.invokeAndWait(reader);
+        Formats.selectImageReader(input, getLocale(), reader);
+    }
 
-            @Override
-            public void recoverableException(final Throwable error) {
-                Logging.recoverableException(ImageFileProperties.class, "setImageInput", error);
+    /**
+     * The task to be run by {@link ImageFileProperties#setImageInput(Object) in the caller
+     * (preferably a background) thread. The {@link Runnable} part is to be run in the Swing
+     * thread. The {@link Formats.ReadCall} part is to be run in the caller thread.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.07
+     *
+     * @since 3.05
+     * @module
+     */
+    private final class Reader implements Runnable, Formats.ReadCall {
+        /**
+         * A copy of the {@link ImageFileProperties#worker} field,
+         * used in order to register listeners to the image reader.
+         */
+        private Worker listener;
+
+        /**
+         * Executed from the Swing thread in order to initialize {@link #listener} to the
+         * value of {@link ImageFileProperties#worker}. Note that this is run from a thread
+         * different than everything else declared in the {@code setImageInput} method body.
+         */
+        @Override
+        public void run() {
+            listener = worker;
+        }
+
+        /**
+         * Reads the image. This is run from the caller (preferably a background) thread.
+         */
+        @Override
+        public void read(final ImageReader reader) throws IOException {
+            final Worker listener = this.listener;
+            if (listener != null) {
+                reader.addIIOReadWarningListener (listener);
+                reader.addIIOReadProgressListener(listener);
             }
-        });
+            try {
+                setImage(reader);
+            } finally {
+                if (listener != null) {
+                    reader.removeIIOReadProgressListener(listener);
+                    reader.removeIIOReadWarningListener (listener);
+                }
+            }
+        }
+
+        /**
+         * Invoked when a recoverable error (not during image read) occured.
+         */
+        @Override
+        public void recoverableException(final Throwable error) {
+            Logging.recoverableException(ImageFileProperties.class, "setImageInput", error);
+        }
     }
 
     /**
@@ -395,7 +462,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * @since 3.05
      * @module
      */
-    private final class Worker extends SwingWorker<Object,String> implements IIOReadWarningListener {
+    private final class Worker extends SwingWorker<Object,Object>
+            implements IIOReadProgressListener, IIOReadWarningListener
+    {
         /**
          * The file to read.
          */
@@ -414,24 +483,28 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          */
         @Override
         protected Object doInBackground() throws IOException {
+            publish (input);
             setImage(input);
             return null;
         }
 
-        /**
-         * Invoked when a warning occured while reading an image.
-         */
-        @Override
-        public void warningOccurred(final ImageReader source, final String warning) {
-            publish(warning);
-        }
+        @Override public void sequenceStarted  (ImageReader r, int image)      {}
+        @Override public void imageStarted     (ImageReader r, int image)      {publish(Boolean.TRUE);}
+        @Override public void thumbnailStarted (ImageReader r, int i, int t)   {publish(Boolean.TRUE);}
+        @Override public void imageProgress    (ImageReader r, float percent)  {publish(Math.round(percent));}
+        @Override public void thumbnailProgress(ImageReader r, float percent)  {publish(Math.round(percent));}
+        @Override public void warningOccurred  (ImageReader r, String warning) {publish(warning);}
+        @Override public void readAborted      (ImageReader r)                 {publish(Boolean.FALSE);}
+        @Override public void thumbnailComplete(ImageReader r)                 {publish(Boolean.FALSE);}
+        @Override public void imageComplete    (ImageReader r)                 {publish(Boolean.FALSE);}
+        @Override public void sequenceComplete (ImageReader r)                 {}
 
         /**
-         * Invoked from the Swing thread for processing the warnings.
+         * Invoked from the Swing thread for processing the progress or the warnings.
          */
         @Override
-        protected void process(final List<String> chunks) {
-            addWarnings(chunks);
+        protected void process(final List<Object> chunks) {
+            processBackgroundMessages(chunks);
         }
 
         /**
@@ -443,11 +516,15 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
             if (worker == this) {
                 worker = null;
             }
+            final ImagePane viewer = ImageFileProperties.this.viewer;
+            viewer.setProgressVisible(false);
+            viewer.setProgressLabel(null);
+            viewer.setProgress(0);
             try {
                 get();
             } catch (Exception e) {
                 setImage((RenderedImage) null);
-                addWarnings(Collections.singletonList(e.getLocalizedMessage()));
+                processBackgroundMessages(Collections.singletonList(e.getLocalizedMessage()));
             }
         }
     }
@@ -535,18 +612,14 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                 }
                 case 0: {
                     /*
-                     * Special case in the absence of thumbnail: if the image is small enough,
-                     * read it and use it directly as the thumbnail. If the image is too big,
-                     * we don't read it even with subsampling because it may be a too costly
-                     * operation.
+                     * No thumbnail: read the image with a subsampling. Note that it may be a slow
+                     * operation, but we are running this constructor in a background thread anyway.
                      */
-                    if (width  / 2 <= preferredThumbnailSize.width &&
-                        height / 2 <= preferredThumbnailSize.height)
-                    {
-                        thumbnail = reader.read(index);
-                    } else {
-                        thumbnail = null;
-                    }
+                    final int xSubsampling = Math.max(1, width  / preferredThumbnailSize.width);
+                    final int ySubsampling = Math.max(1, height / preferredThumbnailSize.height);
+                    final ImageReadParam param = reader.getDefaultReadParam();
+                    param.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
+                    thumbnail = reader.read(index, param);
                     break;
                 }
             }

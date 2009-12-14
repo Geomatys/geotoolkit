@@ -346,8 +346,8 @@ public class RawImageReader extends SpatialImageReader {
                     numReads = dstRegion.height;
                     length   = dstRegion.width;
                 }
-                final int progressInterval = Math.max(1, numReads / 100);
                 final float progressFactor = 100f / (numReads * numDstBands);
+                final int progressInterval = Math.max(1, Math.round(1 / progressFactor));
                 for (int j=0; j<numReads; j++) {
                     if (abortRequested()) {
                         processReadAborted();
@@ -374,6 +374,9 @@ public class RawImageReader extends SpatialImageReader {
             /*
              * General case: use the RectIter.
              */
+            final float progressFactor = 100f / (dstRegion.height * numDstBands);
+            final int progressInterval = Math.max(1, Math.round(1 / progressFactor));
+            int currentRow = i*dstRegion.height;
             iter.startBands();
             for (int j=dstBand; --j>=0;) {
                 if (iter.nextBandDone()) {
@@ -386,7 +389,9 @@ public class RawImageReader extends SpatialImageReader {
                     processReadAborted();
                     return image;
                 }
-                // TODO: update progress.
+                if ((++currentRow % progressInterval) == 0) {
+                    processImageProgress(currentRow * progressFactor);
+                }
                 input.seek(position);
                 iter.startPixels();
                 if (!iter.finishedPixels()) do {

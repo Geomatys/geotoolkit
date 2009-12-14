@@ -40,7 +40,7 @@ import org.geotoolkit.util.XArrays;
  * {@link ImageReader} instance is not yet know or available.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -258,29 +258,7 @@ public class IIOListeners implements Serializable {
      * @category Reader
      */
     public void addListenersTo(final ImageReader reader) {
-        final Object[] listeners = this.listeners.getListenerList();
-        for (int i=0; i<listeners.length;) {
-            final Object classe   = listeners[i++];
-            final Object listener = listeners[i++];
-            if (IIOReadProgressListener.class.equals(classe)) {
-                final IIOReadProgressListener l = (IIOReadProgressListener) listener;
-                reader.removeIIOReadProgressListener(l); // Ensure singleton
-                reader.   addIIOReadProgressListener(l);
-                continue;
-            }
-            if (IIOReadUpdateListener.class.equals(classe)) {
-                final IIOReadUpdateListener l = (IIOReadUpdateListener) listener;
-                reader.removeIIOReadUpdateListener(l); // Ensure singleton
-                reader.   addIIOReadUpdateListener(l);
-                continue;
-            }
-            if (IIOReadWarningListener.class.equals(classe)) {
-                final IIOReadWarningListener l = (IIOReadWarningListener) listener;
-                reader.removeIIOReadWarningListener(l); // Ensure singleton
-                reader.   addIIOReadWarningListener(l);
-                continue;
-            }
-        }
+        manageListeners(reader, true);
     }
 
     /**
@@ -292,6 +270,76 @@ public class IIOListeners implements Serializable {
      * @category Writer
      */
     public void addListenersTo(final ImageWriter writer) {
+        manageListeners(writer, true);
+    }
+
+    /**
+     * Removes all listeners registered in this object from the specified image reader.
+     *
+     * @param reader The reader from which to unregister the listeners.
+     *
+     * @since 3.07
+     * @category Reader
+     */
+    public void removeListenersFrom(final ImageReader reader) {
+        manageListeners(reader, false);
+    }
+
+    /**
+     * Removes all listeners registered in this object from the specified image writer.
+     *
+     * @param writer The writer from which to unregister the listeners.
+     *
+     * @since 3.07
+     * @category Writer
+     */
+    public void removeListenersFrom(final ImageWriter writer) {
+        manageListeners(writer, false);
+    }
+
+    /**
+     * Adds or removes all listeners registered in this object to/from the specified image reader.
+     *
+     * @param reader The reader from which to (un)register the listeners.
+     * @param add {@code true} for adding the listeners, or {@code false} for removing them.
+     *
+     * @category Reader
+     */
+    private void manageListeners(final ImageReader reader, final boolean add) {
+        final Object[] listeners = this.listeners.getListenerList();
+        for (int i=0; i<listeners.length;) {
+            final Object classe   = listeners[i++];
+            final Object listener = listeners[i++];
+            if (IIOReadProgressListener.class.equals(classe)) {
+                final IIOReadProgressListener l = (IIOReadProgressListener) listener;
+                reader.removeIIOReadProgressListener(l); // Ensure singleton
+                if (add) reader.addIIOReadProgressListener(l);
+                continue;
+            }
+            if (IIOReadUpdateListener.class.equals(classe)) {
+                final IIOReadUpdateListener l = (IIOReadUpdateListener) listener;
+                reader.removeIIOReadUpdateListener(l); // Ensure singleton
+                if (add) reader.addIIOReadUpdateListener(l);
+                continue;
+            }
+            if (IIOReadWarningListener.class.equals(classe)) {
+                final IIOReadWarningListener l = (IIOReadWarningListener) listener;
+                reader.removeIIOReadWarningListener(l); // Ensure singleton
+                if (add) reader.addIIOReadWarningListener(l);
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Adds or removes all listeners registered in this object to/from the specified image writer.
+     *
+     * @param writer The writer from which to (un)register the listeners.
+     * @param add {@code true} for adding the listeners, or {@code false} for removing them.
+     *
+     * @category Writer
+     */
+    private void manageListeners(final ImageWriter writer, final boolean add) {
         final Object[] listeners = this.listeners.getListenerList();
         for (int i=0; i<listeners.length;) {
             final Object classe   = listeners[i++];
@@ -299,13 +347,13 @@ public class IIOListeners implements Serializable {
             if (IIOWriteProgressListener.class.equals(classe)) {
                 final IIOWriteProgressListener l = (IIOWriteProgressListener) listener;
                 writer.removeIIOWriteProgressListener(l); // Ensure singleton
-                writer.   addIIOWriteProgressListener(l);
+                if (add) writer.addIIOWriteProgressListener(l);
                 continue;
             }
             if (IIOWriteWarningListener.class.equals(classe)) {
                 final IIOWriteWarningListener l = (IIOWriteWarningListener) listener;
                 writer.removeIIOWriteWarningListener(l); // Ensure singleton
-                writer.   addIIOWriteWarningListener(l);
+                if (add) writer.addIIOWriteWarningListener(l);
                 continue;
             }
         }
