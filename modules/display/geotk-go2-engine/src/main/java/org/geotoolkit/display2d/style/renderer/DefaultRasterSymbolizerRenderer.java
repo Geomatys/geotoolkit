@@ -53,6 +53,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -126,6 +127,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
     public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
 
+        final CanvasMonitor monitor = context.getMonitor();
+
         double[] resolution = context.getResolution();
         final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
         resolution = checkResolution(resolution,bounds);
@@ -145,11 +148,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
         }
 
         if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),context.getObjectiveCRS())){
-            context.getMonitor().exceptionOccured(
-                    new IllegalStateException("Coverage is not in the requested CRS, found : " +
-                    "\n"+ dataCoverage.getCoordinateReferenceSystem() +
-                    " was expecting \n : " + context.getObjectiveCRS()), Level.SEVERE);
-            return;
+            //todo : we should raise an ERROR exception, not just an info
+//            monitor.exceptionOccured(
+//                    new IllegalStateException("Coverage is not in the requested CRS, found : " +
+//                    "\n"+ dataCoverage.getCoordinateReferenceSystem() +
+//                    " was expecting \n : " + context.getObjectiveCRS()), Level.ERROR);
+            //todo : we should return here since the coverage is not in the good crs
+            //but for the moment postgrid return a crs not exactly the same, but pretty near
+            //return;
         }
 
         final Graphics2D g2 = context.getGraphics();
