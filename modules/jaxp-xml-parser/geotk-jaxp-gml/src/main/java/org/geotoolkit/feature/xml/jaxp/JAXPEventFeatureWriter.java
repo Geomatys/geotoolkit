@@ -175,9 +175,12 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
                         } else {
                             property = new QName(a.getName().getNamespaceURI(), a.getName().getLocalPart());
                         }
-                        eventWriter.add(new StartElementEvent(property));
-                        eventWriter.add(new CharacterEvent(Utils.getStringValue(a.getValue())));
-                        eventWriter.add(new EndElementEvent(property));
+                        String value = Utils.getStringValue(a.getValue());
+                        if (value != null) {
+                            eventWriter.add(new StartElementEvent(property));
+                            eventWriter.add(new CharacterEvent(value));
+                            eventWriter.add(new EndElementEvent(property));
+                        }
                     } else {
                         LOGGER.severe("the propertyName is null for property:" + a);
                     }
