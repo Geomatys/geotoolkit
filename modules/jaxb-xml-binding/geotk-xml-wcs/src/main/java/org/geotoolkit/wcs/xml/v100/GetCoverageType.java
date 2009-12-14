@@ -197,7 +197,7 @@ public class GetCoverageType implements GetCoverage {
          * a 2D one, then we have to add a VerticalCRS to the one gotten by the crs decoding step.
          * Otherwise the CRS decoded is already fine, and we just return it.
          */
-        if (positions.size() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
+        if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
             final VerticalCRS verticalCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             return new DefaultCompoundCRS(objCrs.getName().getCode() + " (3D)", objCrs, verticalCRS);
         } else {
@@ -228,17 +228,16 @@ public class GetCoverageType implements GetCoverage {
         if (positions == null || positions.size() == 0) {
             return null;
         }
-        final DirectPositionType lonPos = positions.get(0);
-        final DirectPositionType latPos = positions.get(1);
+        final DirectPositionType lows = positions.get(0);
+        final DirectPositionType highs = positions.get(1);
         final CoordinateReferenceSystem crs = getCRS();
         final GeneralEnvelope objEnv = new GeneralEnvelope(crs);
-        objEnv.setRange(0, lonPos.getValue().get(0), lonPos.getValue().get(1));
-        objEnv.setRange(1, latPos.getValue().get(0), latPos.getValue().get(1));
+        objEnv.setRange(0, lows.getValue().get(0), highs.getValue().get(0));
+        objEnv.setRange(1, lows.getValue().get(1), highs.getValue().get(1));
 
         // If the CRS has a vertical part, then the envelope to return should be a 3D one.
         if (CRS.getVerticalCRS(crs) != null) {
-            final DirectPositionType elevPos = positions.get(2);
-            objEnv.setRange(2, elevPos.getValue().get(0), elevPos.getValue().get(1));
+            objEnv.setRange(2, lows.getValue().get(2), highs.getValue().get(2));
         }
         return objEnv;
     }
@@ -281,7 +280,7 @@ public class GetCoverageType implements GetCoverage {
          * a 2D one, then we have to add a VerticalCRS to the one gotten by the crs decoding step.
          * Otherwise the CRS decoded is already fine, and we just return it.
          */
-        if (positions.size() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
+        if (positions.get(0).getDimension() > 2 && objCrs.getCoordinateSystem().getDimension() < 3) {
             final VerticalCRS verticalCRS = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             return new DefaultCompoundCRS(objCrs.getName().getCode() + " (3D)", objCrs, verticalCRS);
         } else {

@@ -324,7 +324,10 @@ public class DirectPositionType implements DirectPosition {
 
     @Override
     public int getDimension() {
-        return getSrsDimension().intValue();
+        if (srsDimension != null) {
+            return srsDimension.intValue();
+        }
+        return value.size();
     }
 
     @Override
