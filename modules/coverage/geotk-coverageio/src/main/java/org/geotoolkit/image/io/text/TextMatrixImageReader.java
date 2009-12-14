@@ -418,7 +418,7 @@ public class TextMatrixImageReader extends TextImageReader {
      * <table border="1">
      *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "matrix"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}, {@code "text/x-matrix"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.TextMatrixImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
@@ -465,7 +465,7 @@ public class TextMatrixImageReader extends TextImageReader {
         /**
          * The mime types for the default {@link TextMatrixImageReader} configuration.
          */
-        static final String[] MIME_TYPES = {"application/matrix", "text/plain"};
+        static final String[] MIME_TYPES = {"text/plain", "text/x-matrix"};
 
         /**
          * Constructs a default {@code TextMatrixImageReader.Spi}. The fields are initialized as

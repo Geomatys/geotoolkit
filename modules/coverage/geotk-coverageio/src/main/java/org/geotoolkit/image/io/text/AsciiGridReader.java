@@ -884,7 +884,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
      * <table border="1">
      *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "ascii-grid"}&nbsp;</td></tr>
-     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>
+     *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}, {@code "text/x-ascii-grid"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.text.AsciiGridReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
@@ -911,12 +911,12 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
          * The file suffixes. This replace the {@link TextImageReader.Spi#SUFFIXES} declared
          * in the parent class.
          */
-        static final String[] SUFFIXES = {"asc", "ASC", "grd", "GRD"};
+        static final String[] SUFFIXES = {"asc", "ASC", "grd", "GRD", "agr", "AGR"};
 
         /**
          * The mime types for the default {@link AsciiGridReader} configuration.
          */
-        static final String[] MIME_TYPES = {"text/plain"};
+        static final String[] MIME_TYPES = {"text/plain", "text/x-ascii-grid"};
 
         /**
          * Constructs a default {@code AsciiGridReader.Spi}. The fields are initialized as
