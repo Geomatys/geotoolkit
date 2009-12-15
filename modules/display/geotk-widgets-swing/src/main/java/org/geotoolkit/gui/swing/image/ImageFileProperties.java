@@ -84,7 +84,7 @@ import org.geotoolkit.resources.Vocabulary;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @see ImageProperties
  * @see ImageFileChooser
@@ -257,8 +257,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * <p>
      * The default implementation delegates to {@link #setImage(ImageReader, int)} with
      * an <cite>image index</cite> of 0. Subclasses should override this method if they
-     * wants to choose automatically an image index depending on the format and the
-     * input.
+     * want to choose automatically an image index depending on the format and the input.
      *
      * @param  reader The image reader from which to read the informations.
      * @throws IOException If an error occured while reading the metadata or the thumbnails.
