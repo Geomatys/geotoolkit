@@ -366,6 +366,15 @@ public class DefaultPortrayalService implements PortrayalService{
         portray(canvasDef, sceneDef, viewDef, outputDef);
     }
 
+    /**
+     *
+     * @param canvasDef
+     * @param sceneDef
+     * @param viewDef
+     * @param outputDef : The compression parameter will not necesarly be used
+     *              if the mime type write can not support it.
+     * @throws PortrayalException
+     */
     public static void portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef, OutputDef outputDef) throws PortrayalException{
 
         final BufferedImage image = portray(canvasDef,sceneDef,viewDef);
@@ -379,7 +388,7 @@ public class DefaultPortrayalService implements PortrayalService{
             final ImageWriteParam param = writer.getDefaultWriteParam();
 
             final Float compression = outputDef.getCompression();
-            if(compression != null){
+            if(compression != null && param.canWriteCompressed()){
                 param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                 param.setCompressionQuality(compression);
             }
