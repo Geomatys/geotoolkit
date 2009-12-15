@@ -51,7 +51,7 @@
         action is to make that file available in the classpath (typically inside a JAR file) under
         the following directory and name:</p>
 
-<blockquote><pre>org/geotoolkit/referencing/factory/espg/epsg.properties</pre></blockquote>
+<blockquote><pre>org/geotoolkit/referencing/factory/epsg/epsg.properties</pre></blockquote>
 
         <p>No coding is required to make it works, unless you wish to search for the
         <code>epsg.properties</code> file in an other directory (see
@@ -250,9 +250,9 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
       <answer>
         <p>Make sure that the right projection is used. Some projection names are confusing. For
         example "<cite>Oblique Mercator</cite>" and "<cite>Hotine Oblique Mercator</cite>" (in EPSG
-        naming) are two different projections. But Oblique Mercator (<strong>not</strong> Hotine) in
+        naming) are two different projections. But "Oblique Mercator" (<strong>not</strong> Hotine) in
         EPSG naming is also called "<cite>Hotine Oblique Mercator Azimuth Center</cite>" by ESRI,
-        while <strong>Hotine</strong> Oblique Mercator (EPSG naming) is called "<cite>Hotine Oblique
+        while "<strong>Hotine</strong> Oblique Mercator" (EPSG naming) is called "<cite>Hotine Oblique
         Mercator Azimuth Natural Origin</cite>" by ESRI.</p>
 
         <p>The "<cite>Oblique Stereographic</cite>" projection (EPSG name) is called "<cite>Double
