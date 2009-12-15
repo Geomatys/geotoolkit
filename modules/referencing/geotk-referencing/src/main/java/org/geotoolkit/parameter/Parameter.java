@@ -29,6 +29,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.converter.UnitConverter;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.util.CodeList;
 import org.opengis.parameter.ParameterValue;
@@ -250,7 +251,11 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
-        return actual.getConverterTo(unit).convert(doubleValue());
+        try {
+            return actual.getConverterToAny(unit).convert(doubleValue());
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
     }
 
     /**
@@ -377,7 +382,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
-        final UnitConverter converter = actual.getConverterTo(unit);
+        final UnitConverter converter;
+        try {
+            converter = actual.getConverterToAny(unit);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
         final double[] values = doubleValueList().clone();
         for (int i=0; i<values.length; i++) {
             values[i] = converter.convert(values[i]);
@@ -524,7 +534,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
             throw new InvalidParameterValueException(Errors.format(expectedID, unit),
                       descriptor.getName().getCode(), value);
         }
-        final Double converted = unit.getConverterTo(targetUnit).convert(value);
+        final Double converted;
+        try {
+            converted = unit.getConverterToAny(targetUnit).convert(value);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
         ensureValidValue(descriptor, converted);
         /*
          * Really store the original value, not the converted one, because we store the given
@@ -636,7 +651,12 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
         final double[] converted = values.clone();
-        final UnitConverter converter = unit.getConverterTo(targetUnit);
+        final UnitConverter converter;
+        try {
+            converter = unit.getConverterToAny(targetUnit);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
         for (int i=0; i<converted.length; i++) {
             converted[i] = converter.convert(converted[i]);
         }

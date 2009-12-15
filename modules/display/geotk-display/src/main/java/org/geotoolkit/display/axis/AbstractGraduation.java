@@ -24,7 +24,6 @@ import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
 
 import javax.measure.unit.Unit;
-import javax.measure.converter.ConversionException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
@@ -168,10 +167,10 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
      *
      * @param  unit The new units, or {@code null} if unknow. If null, minimum and maximum values
      *         are not converted.
-     * @throws ConversionException if units are not convertible, or if the
+     * @throws IllegalArgumentException if units are not convertible, or if the
      *         specified units is illegal for this graduation.
      */
-    public void setUnit(final Unit<?> unit) throws ConversionException {
+    public void setUnit(final Unit<?> unit) throws IllegalArgumentException {
         final Unit<?> oldUnit;
         synchronized (this) {
             oldUnit = this.unit;

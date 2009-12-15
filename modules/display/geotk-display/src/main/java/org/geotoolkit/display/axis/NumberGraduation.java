@@ -24,6 +24,8 @@ import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
+import org.geotoolkit.resources.Errors;
+
 import static java.lang.Double.doubleToLongBits;
 
 
@@ -210,10 +212,10 @@ public class NumberGraduation extends AbstractGraduation {
      *
      * @param  unit The new units, or {@code null} if unknow.
      *         If null, minimum and maximum values are not converted.
-     * @throws ConversionException if units are not convertible.
+     * @throws IllegalArgumentException if units are not convertible.
      */
     @Override
-    public void setUnit(final Unit<?> unit) throws ConversionException {
+    public void setUnit(final Unit<?> unit) throws IllegalArgumentException {
         final Double oldMin;
         final Double oldMax;
         final Unit<?> oldUnit;
@@ -222,8 +224,14 @@ public class NumberGraduation extends AbstractGraduation {
             oldMin  = min = minimum;
             oldMax  = max = maximum;
             oldUnit = this.unit;
-            if (oldUnit!=null && unit!=null) {
-                final UnitConverter converter = oldUnit.getConverterTo(unit);
+            if (oldUnit != null && unit != null) {
+                final UnitConverter converter;
+                try {
+                    converter = oldUnit.getConverterToAny(unit);
+                } catch (ConversionException e) {
+                    throw new IllegalArgumentException(Errors.format(
+                            Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+                }
                 min = converter.convert(min);
                 max = converter.convert(max);
             }

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -761,7 +762,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
         ensureNonNull("direction",    direction);
         ensureNonNull("unit",         unit);
         if (Units.isAngular(unit)) {
-            final UnitConverter fromDegrees = NonSI.DEGREE_ANGLE.getConverterTo(unit);
+            final UnitConverter fromDegrees = NonSI.DEGREE_ANGLE.getConverterTo(unit.asType(Angle.class));
             final AxisDirection dir = direction.absolute();
             if (dir.equals(AxisDirection.NORTH)) {
                 final double range = Math.abs(fromDegrees.convert(90));

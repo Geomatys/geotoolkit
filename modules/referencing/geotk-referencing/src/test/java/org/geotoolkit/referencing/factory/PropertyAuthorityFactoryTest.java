@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.awt.RenderingHints;
 import javax.measure.unit.NonSI;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.AxisDirection;
@@ -113,9 +114,10 @@ public final class PropertyAuthorityFactoryTest {
      *
      * @throws IOException Should never happen.
      * @throws FactoryException Should never happen.
+     * @throws ConversionException Should never happen.
      */
     @Test
-    public void testDefaultHintsWithAxis() throws IOException, FactoryException {
+    public void testDefaultHintsWithAxis() throws IOException, FactoryException, ConversionException {
         final URL r1 = PropertyEpsgFactory.class.getResource(FILENAME_XY);
         final URL r2 = PropertyEpsgFactory.class.getResource(FILENAME);
         assertNotNull(FILENAME_XY, r1);
@@ -146,7 +148,7 @@ public final class PropertyAuthorityFactoryTest {
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
         assertEquals("Expected grade units", 1,
-                cs.getAxis(0).getUnit().getConverterTo(NonSI.GRADE).convert(1), 1E-8);
+                cs.getAxis(0).getUnit().getConverterToAny(NonSI.GRADE).convert(1), 1E-8);
         /*
          * Tests again when we asked for FORCE_LONGITUDE_FIRST_AXIS_ORDER. Now (at the opposite
          * of previous testDefaultHint()) the factory should care about the hints because the
@@ -175,7 +177,7 @@ public final class PropertyAuthorityFactoryTest {
         assertEquals(AxisDirection.EAST,  cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.NORTH, cs.getAxis(1).getDirection());
         assertEquals("Expected grade units because units are declared outside AXIS elements.", 1,
-                cs.getAxis(0).getUnit().getConverterTo(NonSI.GRADE).convert(1), 1E-8);
+                cs.getAxis(0).getUnit().getConverterToAny(NonSI.GRADE).convert(1), 1E-8);
         /*
          * Tests a CRS sample.
          */

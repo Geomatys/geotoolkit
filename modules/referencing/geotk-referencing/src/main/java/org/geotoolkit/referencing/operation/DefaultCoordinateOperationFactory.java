@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.List;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
+import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
 import javax.vecmath.SingularMatrixException;
 
@@ -649,9 +650,9 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          * 1970 at 00:00 UTC.  We compute how much to add to a time in 'sourceCRS' in order
          * to get a time in 'targetCRS'. This "epoch shift" is in units of 'targetCRS'.
          */
-        final TimeCS  sourceCS   = sourceCRS.getCoordinateSystem();
-        final TimeCS  targetCS   = targetCRS.getCoordinateSystem();
-        final Unit<?> targetUnit = targetCS.getAxis(0).getUnit();
+        final TimeCS sourceCS = sourceCRS.getCoordinateSystem();
+        final TimeCS targetCS = targetCRS.getCoordinateSystem();
+        final Unit<Duration> targetUnit = targetCS.getAxis(0).getUnit().asType(Duration.class);
         double epochShift = sourceDatum.getOrigin().getTime() -
                             targetDatum.getOrigin().getTime();
         epochShift = MILLISECOND.getConverterTo(targetUnit).convert(epochShift);

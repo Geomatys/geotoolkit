@@ -188,7 +188,7 @@ public final class RangeFormatTest {
         assertEquals("maxPos.endIndex",   9, maxPos.getEndIndex());
 
         maxPos = new FieldPosition(RangeFormat.UNIT_FIELD);
-        assertEquals("[-1 … 2] km", format(MeasurementRange.create(-1, 2, SI.KILO(SI.METRE))));
+        assertEquals("[-1 … 2] km", format(MeasurementRange.create(-1, 2, SI.KILOMETRE)));
         assertEquals("unitPos.beginIndex", 9, maxPos.getBeginIndex());
         assertEquals("unitPos.endIndex",  11, maxPos.getEndIndex());
     }

@@ -25,8 +25,8 @@ import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Duration;
 import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
 
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
@@ -93,11 +93,8 @@ public class DateGraduation extends AbstractGraduation {
      * @param  timezone The timezone.
      * @param  unit The unit. Must be compatible with
      *         {@linkplain org.geotoolkit.measure.Units#MILLISECOND milliseconds}.
-     * @throws ConversionException if the supplied unit is not a time unit.
      */
-    public DateGraduation(final TimeZone timezone, final Unit<Duration> unit)
-            throws ConversionException
-    {
+    public DateGraduation(final TimeZone timezone, final Unit<Duration> unit) {
         super(unit);
         ensureTimeUnit(unit);
         this.timezone = (TimeZone) timezone.clone();
@@ -107,11 +104,11 @@ public class DateGraduation extends AbstractGraduation {
      * Checks if the specified unit is a time unit.
      *
      * @param the unit to check.
-     * @throws ConversionException if the specified unit is not a time unit.
+     * @throws IllegalArgumentException if the specified unit is not a time unit.
      */
-    private static void ensureTimeUnit(final Unit<?> unit) throws ConversionException {
-        if (unit == null || !MILLISECOND.isCompatible(unit)) {
-            throw new ConversionException(Errors.format(
+    private static void ensureTimeUnit(final Unit<?> unit) throws IllegalArgumentException {
+        if (Units.isTemporal(unit)) {
+            throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "unit", unit));
         }
     }
@@ -324,10 +321,10 @@ public class DateGraduation extends AbstractGraduation {
      *
      * @param unit The new units, or {@code null} if unknow. If null, minimum and maximum values
      *             are not converted.
-     * @throws ConversionException if the specified unit is not a time unit.
+     * @throws IllegalArgumentException if the specified unit is not a time unit.
      */
     @Override
-    public void setUnit(final Unit<?> unit) throws ConversionException {
+    public void setUnit(final Unit<?> unit) throws IllegalArgumentException {
         ensureTimeUnit(unit);
         fromMillis = null;
         toMillis   = null;

@@ -641,7 +641,7 @@ public class Formatter {
             }
             buffer.append(symbols.quote);
             resetColor();
-            append(unit.toStandardUnit().convert(1));
+            append(Units.toStandardUnit(unit));
             buffer.append(symbols.close);
         }
     }

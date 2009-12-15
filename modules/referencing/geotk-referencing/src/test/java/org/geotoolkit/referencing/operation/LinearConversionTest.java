@@ -18,9 +18,8 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Random;
+import javax.measure.converter.ConversionException;
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Length;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
@@ -140,14 +139,14 @@ public final class LinearConversionTest {
     /**
      * Tests an example similar to the one provided in the
      * {@link AbstractCS#testScaleAndSwapAxis} javadoc.
+     *
+     * @throws ConversionException Should not happen.
      */
     @Test
-    public void testScaleAndSwapAxis() {
-        final Unit<Length> cm = SI.CENTI(SI.METRE);
-        final Unit<Length> mm = SI.MILLI(SI.METRE);
+    public void testScaleAndSwapAxis() throws ConversionException {
         final AbstractCS cs = new DefaultCartesianCS("Test",
-              new DefaultCoordinateSystemAxis("y", SOUTH, cm),
-              new DefaultCoordinateSystemAxis("x", EAST,  mm));
+              new DefaultCoordinateSystemAxis("y", SOUTH, SI.CENTIMETRE),
+              new DefaultCoordinateSystemAxis("x", EAST,  SI.MILLIMETRE));
         Matrix matrix;
         matrix = AbstractCS.swapAndScaleAxis(DefaultCartesianCS.GENERIC_2D, cs);
         assertEquals(new GeneralMatrix(new double[][] {

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.crs;
 import java.util.Map;
 import java.util.Date;
 import java.util.Collections;
+import javax.measure.quantity.Duration;
 import javax.measure.converter.UnitConverter;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -235,7 +236,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      */
     private void initializeConverter() {
         origin   = getDatum().getOrigin().getTime();
-        toMillis = getAxis(0).getUnit().getConverterTo(Units.MILLISECOND);
+        toMillis = getAxis(0).getUnit().asType(Duration.class).getConverterTo(Units.MILLISECOND);
     }
 
     /**

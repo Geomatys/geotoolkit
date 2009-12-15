@@ -17,9 +17,10 @@
  */
 package org.geotoolkit.measure;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.io.ObjectStreamException;
 import javax.measure.converter.UnitConverter;
-import javax.measure.converter.ConversionException;
 
 import org.geotoolkit.lang.Immutable;
 
@@ -34,7 +35,7 @@ import org.geotoolkit.lang.Immutable;
  * Unfortunatly, this pseudo-unit is extensively used in the EPSG database.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -106,12 +107,23 @@ class SexagesimalConverter extends UnitConverter {
      * Performs a conversion from fractional degrees to sexagesimal degrees.
      */
     @Override
-    public double convert(double value) throws ConversionException {
+    public double convert(double value) {
         final int deg,min,sec;  deg = (int) value; // Round toward 0
         value = (value-deg)*60; min = (int) value; // Round toward 0
         value = (value-min)*60; sec = (int) value; // Round toward 0
         value -= sec;          // The remainer (fraction of seconds)
-        return (((deg*100 + min)*100 + sec) + value)/divider;
+        return (((deg*100 + min)*100 + sec) + value) / divider;
+    }
+
+    /**
+     * Performs a conversion from fractional degrees to sexagesimal degrees.
+     * This method delegates to the version working on {@code double} primitive
+     * type, and consenquently does not provide the accuracy normally required
+     * by this method contract.
+     */
+    @Override
+    public final BigDecimal convert(final BigDecimal value, final MathContext context) {
+        return new BigDecimal(convert(value.doubleValue()), context);
     }
 
     /**
@@ -119,14 +131,6 @@ class SexagesimalConverter extends UnitConverter {
      */
     public final double derivative(double x) {
         return 1;
-    }
-
-    /**
-     * Returns {@code false} since this converter is non-linear.
-     */
-    @Override
-    public final boolean isLinear() {
-        return false;
     }
 
     /**
@@ -185,17 +189,17 @@ class SexagesimalConverter extends UnitConverter {
          * Performs a conversion from sexagesimal degrees to fractional degrees.
          */
         @Override
-        public double convert(double value) throws ConversionException {
+        public double convert(double value) {
             value *= this.divider;
             int deg,min;
             deg = (int) (value/10000); value -= 10000*deg;
             min = (int) (value/  100); value -=   100*min;
-            if (min<=-60 || min>=60) {  // Accepts NaN
+            if (min <= -60 || min >= 60) {  // Accepts NaN
                 if (Math.abs(Math.abs(min) - 100) <= EPS) {
                     if (min >= 0) deg++; else deg--;
                     min = 0;
                 } else {
-                    throw new ConversionException("Invalid minutes: "+min);
+                    throw new ArithmeticException("Invalid minutes: " + min);
                 }
             }
             if (value<=-60 || value>=60) { // Accepts NaN
@@ -203,7 +207,7 @@ class SexagesimalConverter extends UnitConverter {
                     if (value >= 0) min++; else min--;
                     value = 0;
                 } else {
-                    throw new ConversionException("Invalid secondes: "+value);
+                    throw new ArithmeticException("Invalid secondes: " + value);
                 }
             }
             value = ((value/60) + min)/60 + deg;

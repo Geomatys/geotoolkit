@@ -19,8 +19,6 @@ package org.geotoolkit.parameter;
 
 import org.junit.*;
 import org.opengis.parameter.*;
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Length;
 
 import static org.junit.Assert.*;
 import static org.opengis.test.Validators.*;
@@ -73,7 +71,6 @@ public final class ParameterDescriptorTest {
         assertEquals("unit",     METRE,              parameter.getUnit());
         validate(parameter);
 
-        final Unit<Length> CENTIMETRE = CENTI(METRE);
         for (int i=4; i<=20; i++) {
             parameter.setValue(i);
             assertEquals("value", Double.valueOf(i), parameter.getValue());

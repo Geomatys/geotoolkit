@@ -20,6 +20,8 @@ package org.geotoolkit.internal.jaxb.uom;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.geotoolkit.measure.Units;
+
 
 /**
  * JAXB adapter for unit of measurement.
@@ -44,7 +46,7 @@ public final class UnitAdapter extends XmlAdapter<String, Unit<?>> {
         if (value != null) {
             value = value.trim();
             if (value.length() != 0) {
-                return Unit.valueOf(value.trim());
+                return Units.valueOf(value);
             }
         }
         return null;

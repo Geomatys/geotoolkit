@@ -34,6 +34,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.UnitFormat;
 import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Duration;
 
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.TemporalDatum;
@@ -283,7 +284,7 @@ public class CoordinateFormat extends Format {
                 else                                      type = ANGLE;
                 types       [i] = type;
                 formats     [i] = getAngleFormat();
-                toFormatUnit[i] = unit.getConverterTo(NonSI.DEGREE_ANGLE);
+                toFormatUnit[i] = unit.asType(javax.measure.quantity.Angle.class).getConverterTo(NonSI.DEGREE_ANGLE);
                 negate      [i] = neg;
                 continue;
             }
@@ -299,7 +300,7 @@ public class CoordinateFormat extends Format {
                     }
                     types       [i] = DATE;
                     formats     [i] = getDateFormat();
-                    toFormatUnit[i] = unit.getConverterTo(Units.MILLISECOND);
+                    toFormatUnit[i] = unit.asType(Duration.class).getConverterTo(Units.MILLISECOND);
                     epochs      [i] = ((TemporalDatum) datum).getOrigin().getTime();
                     negate      [i] = neg;
                     continue;

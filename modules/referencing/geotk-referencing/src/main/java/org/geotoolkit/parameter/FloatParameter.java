@@ -22,6 +22,7 @@ package org.geotoolkit.parameter;
 
 import java.net.URI;
 import javax.measure.unit.Unit;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
@@ -135,7 +136,11 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
-        return thisUnit.getConverterTo(unit).convert(value);
+        try {
+            return thisUnit.getConverterToAny(unit).convert(value);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
     }
 
     /**
@@ -261,7 +266,11 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
         if (getUnitMessageID(unit) != expectedID) {
             throw new IllegalArgumentException(Errors.format(expectedID, unit));
         }
-        value = unit.getConverterTo(thisUnit).convert(value);
+        try {
+            value = unit.getConverterToAny(thisUnit).convert(value);
+        } catch (ConversionException e) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
+        }
         this.value = ensureValidValue(descriptor, Double.valueOf(value));
     }
 

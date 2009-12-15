@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.quantity.Length;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.quality.Result;
@@ -45,6 +46,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
+import org.geotoolkit.measure.Units;
 
 
 /**
@@ -391,12 +393,13 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                     final Collection<? extends Record> records = quantity.getValues();
                     if (records != null) {
                         final Unit<?> unit = quantity.getValueUnit();
-                        if (unit!=null && SI.METRE.isCompatible(unit)) {
+                        if (Units.isLinear(unit)) {
+                            final Unit<Length> unitOfLength = unit.asType(Length.class);
                             for (final Record record : records) {
                                 for (final Object value : record.getAttributes().values()) {
                                     if (value instanceof Number) {
                                         double v = ((Number) value).doubleValue();
-                                        v = unit.getConverterTo(SI.METRE).convert(v);
+                                        v = unitOfLength.getConverterTo(SI.METRE).convert(v);
                                         return v;
                                     }
                                 }

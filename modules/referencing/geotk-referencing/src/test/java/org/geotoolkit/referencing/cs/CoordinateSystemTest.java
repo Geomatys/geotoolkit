@@ -17,8 +17,7 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Length;
+import javax.measure.converter.ConversionException;
 import static javax.measure.unit.SI.*;
 
 import org.opengis.test.Validators;
@@ -99,9 +98,11 @@ public final class CoordinateSystemTest extends ReferencingTestCase {
 
     /**
      * Tests the swapping of axis.
+     *
+     * @throws ConversionException Should not happen.
      */
     @Test
-    public void testAxisSwapping() {
+    public void testAxisSwapping() throws ConversionException {
         CoordinateSystem cs1, cs2;
         cs1 = new DefaultEllipsoidalCS("cs1",
                 DefaultCoordinateSystemAxis.GEODETIC_LONGITUDE,
@@ -150,10 +151,11 @@ public final class CoordinateSystemTest extends ReferencingTestCase {
 
     /**
      * Compares the matrix computes by {@link AbstractCS#swapAndScaleAxis} with the specified one.
+     *
+     * @throws ConversionException Should not happen.
      */
-    private static void compareMatrix(final CoordinateSystem cs1,
-                                      final CoordinateSystem cs2,
-                                      final double[] expected)
+    private static void compareMatrix(final CoordinateSystem cs1, final CoordinateSystem cs2,
+            final double[] expected) throws ConversionException
     {
         final Matrix matrix = AbstractCS.swapAndScaleAxis(cs1, cs2);
         final int numRow = matrix.getNumRow();
@@ -169,7 +171,6 @@ public final class CoordinateSystemTest extends ReferencingTestCase {
     @Test
     public void testAxisUsingUnit() {
         assertNull("Should detect that no axis change is needed", PROJECTED.axisUsingUnit(METRE));
-        final Unit<Length> KILOMETRE = KILO(METRE);
         final CoordinateSystemAxis[] axis = PROJECTED.axisUsingUnit(KILOMETRE);
         assertNotNull(axis);
         assertEquals("Expected two-dimensional", 2, axis.length);

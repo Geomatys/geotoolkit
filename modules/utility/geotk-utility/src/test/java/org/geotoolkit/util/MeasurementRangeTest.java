@@ -18,8 +18,7 @@
 package org.geotoolkit.util;
 
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Length;
+import javax.measure.converter.ConversionException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -30,8 +29,8 @@ import org.geotoolkit.test.Depend;
 /**
  * Tests the {@link MeasurementRange}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.4
  */
@@ -39,13 +38,14 @@ import org.geotoolkit.test.Depend;
 public final class MeasurementRangeTest {
     /**
      * Tests unit conversions.
+     *
+     * @throws ConversionException Should not happen.
      */
     @Test
-    public void testConversion() {
+    public void testConversion() throws ConversionException {
         final MeasurementRange<Float> range = MeasurementRange.create(1000f, 2000f, SI.METRE);
         assertSame(range, range.convertTo(SI.METRE));
-        final Unit<Length> KILOMETRE = SI.KILO(SI.METRE);
-        assertEquals(MeasurementRange.create(1f, 2f, KILOMETRE), range.convertTo(KILOMETRE));
+        assertEquals(MeasurementRange.create(1f, 2f, SI.KILOMETRE), range.convertTo(SI.KILOMETRE));
     }
 
     /**
@@ -53,15 +53,14 @@ public final class MeasurementRangeTest {
      */
     @Test
     public void testIntersectWithConversion() {
-        final Unit<Length> KILOMETRE = SI.KILO(SI.METRE);
         NumberRange<Float> r1 = MeasurementRange.create(1000f, 2000f, SI.METRE);
-        NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, KILOMETRE);
+        NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, SI.KILOMETRE);
         assertEquals(Float.class, r1.getElementClass());
         assertEquals(Float.class, r2.getElementClass());
-        assertEquals(MeasurementRange.create(1000f, 3000f, SI.METRE ), r1.union    (r2));
-        assertEquals(MeasurementRange.create(1f,    3f,    KILOMETRE), r2.union    (r1));
-        assertEquals(MeasurementRange.create(1500f, 2000f, SI.METRE ), r1.intersect(r2));
-        assertEquals(MeasurementRange.create(1.5f,  2f,    KILOMETRE), r2.intersect(r1));
+        assertEquals(MeasurementRange.create(1000f, 3000f, SI.METRE ),    r1.union    (r2));
+        assertEquals(MeasurementRange.create(1f,    3f,    SI.KILOMETRE), r2.union    (r1));
+        assertEquals(MeasurementRange.create(1500f, 2000f, SI.METRE ),    r1.intersect(r2));
+        assertEquals(MeasurementRange.create(1.5f,  2f,    SI.KILOMETRE), r2.intersect(r1));
     }
 
     /**
@@ -69,7 +68,7 @@ public final class MeasurementRangeTest {
      */
     @Test
     public void testToString() {
-        final MeasurementRange<Float> range = MeasurementRange.create(10f, 20f, SI.KILO(SI.METRE));
+        final MeasurementRange<Float> range = MeasurementRange.create(10f, 20f, SI.KILOMETRE);
         assertEquals("[10.0 … 20.0] km", range.toString());
     }
 
@@ -78,9 +77,8 @@ public final class MeasurementRangeTest {
      */
     @Test
     public void testSerialization() {
-        final Unit<Length> KILOMETRE = SI.KILO(SI.METRE);
         NumberRange<Float> r1 = MeasurementRange.create(1000f, 2000f, SI.METRE);
-        NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, KILOMETRE);
+        NumberRange<Float> r2 = MeasurementRange.create(1.5f, 3f, SI.KILOMETRE);
         assertNotSame(r1, serialize(r1));
         assertNotSame(r2, serialize(r2));
     }

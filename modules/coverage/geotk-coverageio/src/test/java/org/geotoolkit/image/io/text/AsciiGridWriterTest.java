@@ -113,12 +113,12 @@ public final class AsciiGridWriterTest extends TextImageWriterTestBase {
     }
 
     /**
-     * Disables this test because the locale of ASCII grids is forced to US locale.
+     * Skip that test because the locale of ASCII grids is forced to US locale.
      */
     @Test
-    @Ignore
     @Override
     public void testCreateNumberFormat() {
+        // Intentionnaly empty block.
     }
 
     /**

@@ -104,7 +104,7 @@ public enum SampleCoverage {
                         (MathTransform1D) ConcatenatedTransform.create(
                         LinearTransform1D.create(0.015, -1.985),
                         ExponentialTransform1D.create(10, 1)))
-        }, MILLI(GRAM).divide(CUBIC_METRE))),
+        }, MetricPrefix.MILLI(GRAM).divide(CUBIC_METRE))),
 
     /**
      * A float coverage. Because we use only one tile with one band, the code below

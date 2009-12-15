@@ -245,7 +245,7 @@ public class ReferencingMarsallingTest {
         properties.clear();
         properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "meters"));
         final DefaultCoordinateSystemAxis axis = new DefaultCoordinateSystemAxis(properties, "meters",
-                AxisDirection.DOWN, Unit.valueOf("m"));
+                AxisDirection.DOWN, SI.METRE);
 
         properties.clear();
         properties.put(NAME_KEY, new DefaultReferenceIdentifier(null, null, "meters"));

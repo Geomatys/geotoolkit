@@ -28,6 +28,7 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Quantity;
+import javax.measure.unit.SI;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
@@ -54,6 +55,7 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.internal.referencing.WktUtilities;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 
 import static java.util.Collections.singletonMap;
@@ -424,9 +426,9 @@ public class ReferencingParser extends MathTransformParser {
         final Element element = parent.pullElement("UNIT");
         final String     name = element.pullString("name");
         final double   factor = element.pullDouble("factor");
-        final Map<String,?> properties = parseAuthority(element, name);
+        final Map<String,?> properties = parseAuthority(element, name); // Ignored for now.
         element.close();
-        return (factor != 1) ? unit.times(factor) : unit;
+        return Units.multiply(unit, factor);
     }
 
     /**

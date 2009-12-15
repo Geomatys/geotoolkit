@@ -618,7 +618,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
         if (crs != null) {
             final Unit<?> source = crs.getCoordinateSystem().getAxis(dimension).getUnit();
             if (source != null) {
-                value = source.getConverterTo(unit).convert(value);
+                value = source.getConverterToAny(unit).convert(value);
             }
         }
         return value;

@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.Arrays;
 import java.util.HashSet;
 import javax.measure.unit.Unit;
-import javax.measure.quantity.Length;
 import static javax.measure.unit.SI.*;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 
@@ -149,7 +148,6 @@ public final class ParameterTest {
         final ParameterDescriptor<Double> descriptor = parameter.getDescriptor();
         validate(parameter);
 
-        final Unit<Length> CENTIMETRE = CENTI(METRE);
         assertEquals("intValue",      3,               parameter.intValue());
         assertEquals("doubleValue",   3,               parameter.doubleValue(), STRICT);
         assertEquals("doubleValue", 300,               parameter.doubleValue(CENTIMETRE), STRICT);

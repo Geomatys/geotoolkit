@@ -22,6 +22,8 @@ import javax.measure.unit.NonSI;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 
+import org.geotoolkit.measure.Units;
+
 
 /**
  * A measurement value together with its unit of measure.
@@ -116,9 +118,6 @@ public final class Measure {
             throw new IllegalStateException();
         }
         uom = uom.trim();
-        if (uom.equalsIgnoreCase("pixel")) {
-            unit = NonSI.PIXEL;
-        }
         int i = uom.lastIndexOf("@gml:id=");
         if (i >= 0) {
             i += 8; // 8 is the length of "@gml:id="
@@ -132,6 +131,6 @@ public final class Measure {
             final int stop = uom.lastIndexOf('\'');
             uom = ((stop > i) ? uom.substring(i, stop) : uom.substring(i)).trim();
         }
-        unit = Unit.valueOf(uom);
+        unit = Units.valueOf(uom);
     }
 }

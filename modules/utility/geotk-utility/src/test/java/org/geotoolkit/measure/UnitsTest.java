@@ -17,12 +17,15 @@
  */
 package org.geotoolkit.measure;
 
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import javax.measure.unit.NonSI;
 import javax.measure.quantity.Quantity;
 import javax.measure.converter.UnitConverter;
 import static javax.measure.unit.Unit.ONE;
 import static javax.measure.unit.SI.METRE;
 import static javax.measure.unit.SI.RADIAN;
+import static javax.measure.unit.SI.KILOMETRE;
 import static javax.measure.unit.NonSI.CENTIRADIAN;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import static javax.measure.unit.NonSI.MINUTE_ANGLE;
@@ -43,7 +46,7 @@ import static org.geotoolkit.test.Commons.*;
  * Test conversions using the units declared in {@link Units}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 2.5
  */
@@ -74,11 +77,8 @@ public class UnitsTest {
 
     /**
      * Tests serialization of units.
-     *
-     * @todo Disabled for now. Needs JSR-275 fix.
      */
     @Test
-    @Ignore
     public void testSerialization() {
         assertEquals(DEGREE_ANGLE,         serialize(DEGREE_ANGLE));
         assertEquals(SEXAGESIMAL_DMS,      serialize(SEXAGESIMAL_DMS));
@@ -192,5 +192,48 @@ public class UnitsTest {
         assertFalse(isScale(MILLISECOND));
         assertFalse(isScale(SEXAGESIMAL_DMS));
         assertFalse(isScale(DEGREE_MINUTE_SECOND));
+    }
+
+    /**
+     * Tests {@link Units#toStandardUnit}.
+     */
+    @Test
+    public void testToStandardUnit() {
+        assertEquals(1000.0,               Units.toStandardUnit(KILOMETRE),    1E-15);
+        assertEquals(0.017453292519943295, Units.toStandardUnit(DEGREE_ANGLE), 1E-15);
+    }
+
+    /**
+     * Tests {@link Units#multiply}.
+     */
+    @Test
+    public void testMultiply() {
+        assertSame(KILOMETRE,    Units.multiply(METRE,  1000));
+        assertSame(DEGREE_ANGLE, Units.multiply(RADIAN, 0.017453292519943295));
+    }
+
+    /**
+     * Tests {@link Units#valueOf}.
+     */
+    @Test
+    public void testValueOf() {
+        assertSame(DEGREE_ANGLE, Units.valueOf("deg"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("degree"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("degrees"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("DEGREES"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("°"));
+        assertSame(RADIAN,       Units.valueOf("rad"));
+        assertSame(RADIAN,       Units.valueOf("radian"));
+        assertSame(RADIAN,       Units.valueOf("radians"));
+        assertSame(METRE,        Units.valueOf("m"));
+        assertSame(METRE,        Units.valueOf("metre"));
+        assertSame(METRE,        Units.valueOf("meter"));
+        assertSame(METRE,        Units.valueOf("metres"));
+        assertSame(METRE,        Units.valueOf("meters"));
+        assertSame(KILOMETRE,    Units.valueOf("km"));
+        assertSame(KILOMETRE,    Units.valueOf("kilometre"));
+        assertSame(KILOMETRE,    Units.valueOf("kilometer"));
+        assertSame(KILOMETRE,    Units.valueOf("kilometres"));
+        assertSame(KILOMETRE,    Units.valueOf("kilometers"));
     }
 }

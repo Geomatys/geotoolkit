@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.factory;
 
 import java.util.*;
 import java.awt.RenderingHints;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -339,8 +340,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
              * only ones, the result is returned directly. Otherwise, a new compound CRS is created.
              */
             final boolean xyFirst = (hi < vi);
-            final SingleCRS single = toGeodetic3D(count == 2 ? crs : null,
-                    horizontal, vertical, xyFirst);
+            final SingleCRS single = toGeodetic3D(count == 2 ? crs : null, horizontal, vertical, xyFirst);
             if (count == 2) {
                 return single;
             }
@@ -441,14 +441,24 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      *         CS, instead of the usual opposite way.
      * @return The matrix of an affine transform performing the requested standardization.
      */
-    private static Matrix toStandard(final CoordinateReferenceSystem crs, final boolean inverse) {
-        final CoordinateSystem sourceCS = crs.getCoordinateSystem();
-        final CoordinateSystem targetCS = AbstractCS.standard(sourceCS);
-        if (inverse) {
-            return AbstractCS.swapAndScaleAxis(targetCS, sourceCS);
-        } else {
-            return AbstractCS.swapAndScaleAxis(sourceCS, targetCS);
+    private static Matrix toStandard(final CoordinateReferenceSystem crs, final boolean inverse)
+            throws FactoryException
+    {
+        Exception failure;
+        try {
+            final CoordinateSystem sourceCS = crs.getCoordinateSystem();
+            final CoordinateSystem targetCS = AbstractCS.standard(sourceCS);
+            if (inverse) {
+                return AbstractCS.swapAndScaleAxis(targetCS, sourceCS);
+            } else {
+                return AbstractCS.swapAndScaleAxis(sourceCS, targetCS);
+            }
+        } catch (IllegalArgumentException e) {
+            failure = e;
+        } catch (ConversionException e) {
+            failure = e;
         }
+        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName()), failure);
     }
 
     /**

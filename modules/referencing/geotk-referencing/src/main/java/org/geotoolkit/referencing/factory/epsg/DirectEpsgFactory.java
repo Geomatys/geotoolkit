@@ -31,6 +31,7 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import javax.measure.converter.ConversionException;
 import javax.measure.quantity.Length;
 import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
@@ -141,7 +142,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             case 9001: return SI   .METRE;
             case 9002: return NonSI.FOOT;
             case 9030: return NonSI.NAUTICAL_MILE;
-            case 9036: return SI   .KILO(SI.METRE);
+            case 9036: return SI   .KILOMETRE;
             case 9101: return SI   .RADIAN;
             case 9122: // Fall through
             case 9102: return NonSI.DEGREE_ANGLE;
@@ -150,7 +151,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             case 9105: return NonSI.GRADE;
             case 9107: return Units.DEGREE_MINUTE_SECOND;
             case 9108: return Units.DEGREE_MINUTE_SECOND;
-            case 9109: return SI   .MICRO(SI.RADIAN);
+            case 9109: return SI.MetricPrefix.MICRO(SI.RADIAN);
             case 9110: return Units.SEXAGESIMAL_DMS;
 //TODO      case 9111: return NonSI.SEXAGESIMAL_DM;
             case 9203: // Fall through
@@ -178,8 +179,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             else if (code <= 8710) target = NonSI.SECOND_ANGLE;
             else if (code == 8611) target = Units.PPM;
         }
-        if (target != unit) {
-            value = unit.getConverterTo(target).convert(value);
+        if (target != unit) try {
+            value = unit.getConverterToAny(target).convert(value);
+        } catch (ConversionException e) {
+            throw new FactoryException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, unit), e);
         }
         switch (code) {
             case 8605: parameters.dx  = value; break;
@@ -1196,8 +1199,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 Unit<?> unit = getUnit(source);
                 if (unit != null) {
                     // TODO: check unit consistency here.
-                } else if (b!=0 && c!=0) {
-                    unit = (b == c) ? base : base.times(b / c);
+                } else if (b != 0 && c != 0) {
+                    unit = Units.multiply(base, b/c);
                 } else {
                     // TODO: provide a localized message.
                     throw new FactoryException("Unsupported unit: " + code);

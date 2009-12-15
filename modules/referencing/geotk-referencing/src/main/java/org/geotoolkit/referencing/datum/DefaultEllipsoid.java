@@ -26,6 +26,7 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
+import javax.measure.converter.ConversionException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -465,7 +466,9 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * value or the semi minor axis value, according to what have been defined in the
      * second defining parameter given. This is for JAXB unmarshalling process only.
      */
-    private void setSecondDefiningParameter(SecondDefiningParameter second) {
+    private void setSecondDefiningParameter(SecondDefiningParameter second)
+            throws ConversionException
+    {
         while (second.secondDefiningParameter != null) {
             second = second.secondDefiningParameter;
         }
@@ -482,7 +485,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                 final Unit<?> uom = measure.unit;
                 if (uom != null) {
                     if (unit != null) {
-                        value = uom.getConverterTo(unit).convert(value);
+                        value = uom.getConverterToAny(unit).convert(value);
                     } else {
                         unit = uom.asType(Length.class);
                     }

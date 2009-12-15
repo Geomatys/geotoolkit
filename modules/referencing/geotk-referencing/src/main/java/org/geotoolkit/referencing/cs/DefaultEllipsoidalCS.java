@@ -21,6 +21,8 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Map;
+import javax.measure.quantity.Angle;
+import javax.measure.quantity.Length;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -227,24 +229,24 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
     /**
      * Update the converters.
      */
-    private void update() {
+    private void updateConverters() {
         for (int i=getDimension(); --i>=0;) {
             final CoordinateSystemAxis axis = getAxis(i);
             final AxisDirection   direction = axis.getDirection().absolute();
             final Unit<?>              unit = axis.getUnit();
             if (AxisDirection.EAST.equals(direction)) {
                 longitudeAxis      = i;
-                longitudeConverter = unit.getConverterTo(NonSI.DEGREE_ANGLE);
+                longitudeConverter = unit.asType(Angle.class).getConverterTo(NonSI.DEGREE_ANGLE);
                 continue;
             }
             if (AxisDirection.NORTH.equals(direction)) {
                 latitudeAxis      = i;
-                latitudeConverter = unit.getConverterTo(NonSI.DEGREE_ANGLE);
+                latitudeConverter = unit.asType(Angle.class).getConverterTo(NonSI.DEGREE_ANGLE);
                 continue;
             }
             if (AxisDirection.UP.equals(direction)) {
                 heightAxis      = i;
-                heightConverter = unit.getConverterTo(SI.METRE);
+                heightConverter = unit.asType(Length.class).getConverterTo(SI.METRE);
                 continue;
             }
             // Should not happen, since 'isCompatibleDirection'
@@ -263,10 +265,15 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      */
     public double getLongitude(final double[] coordinates) throws MismatchedDimensionException {
         ensureDimensionMatch("coordinates", coordinates);
-        if (longitudeConverter == null) {
-            update();
+        UnitConverter converter;
+        synchronized (this) {
+            converter = longitudeConverter;
+            if (converter == null) {
+                updateConverters();
+                converter = longitudeConverter;
+            }
         }
-        return longitudeConverter.convert(coordinates[longitudeAxis]);
+        return converter.convert(coordinates[longitudeAxis]);
     }
 
     /**
@@ -279,10 +286,15 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      */
     public double getLatitude(final double[] coordinates) throws MismatchedDimensionException {
         ensureDimensionMatch("coordinates", coordinates);
-        if (latitudeConverter == null) {
-            update();
+        UnitConverter converter;
+        synchronized (this) {
+            converter = latitudeConverter;
+            if (converter == null) {
+                updateConverters();
+                converter = latitudeConverter;
+            }
         }
-        return latitudeConverter.convert(coordinates[latitudeAxis]);
+        return converter.convert(coordinates[latitudeAxis]);
     }
 
     /**
@@ -296,13 +308,18 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
      */
     public double getHeight(final double[] coordinates) throws MismatchedDimensionException {
         ensureDimensionMatch("coordinates", coordinates);
-        if (heightConverter == null) {
-            update();
-            if (heightConverter == null) {
-                throw new IllegalStateException(Errors.format(Errors.Keys.NOT_THREE_DIMENSIONAL_CS));
+        UnitConverter converter;
+        synchronized (this) {
+            converter = heightConverter;
+            if (converter == null) {
+                updateConverters();
+                converter = heightConverter;
+                if (converter == null) {
+                    throw new IllegalStateException(Errors.format(Errors.Keys.NOT_THREE_DIMENSIONAL_CS));
+                }
             }
         }
-        return heightConverter.convert(coordinates[heightAxis]);
+        return converter.convert(coordinates[heightAxis]);
     }
 
     /**

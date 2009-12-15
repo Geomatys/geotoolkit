@@ -28,6 +28,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import javax.measure.converter.UnitConverter;
+import javax.measure.converter.LinearConverter;
 import javax.measure.converter.ConversionException;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -41,6 +42,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.measure.Measure;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.util.converter.Classes;
@@ -103,7 +105,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * The unit for measuring distance in this coordinate system, or {@code null} if none.
      * Will be computed only when first needed.
      */
-    private transient Unit<?> distanceUnit;
+    private transient volatile Unit<?> distanceUnit;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -335,7 +337,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      *         an affine transform. Only axis direction and units are taken in account.
      * @throws IllegalArgumentException if axis doesn't matches, or the CS doesn't have the
      *         same geometry.
-     * @throws ConversionException if the unit conversion is non-linear.
+     * @throws ConversionException if the units are not compatible, or the conversion is non-linear.
      */
     public static Matrix swapAndScaleAxis(final CoordinateSystem sourceCS,
                                           final CoordinateSystem targetCS)
@@ -383,14 +385,13 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
                     // between source[i] and target[j].
                     continue;
                 }
-                final UnitConverter converter = sourceUnit.getConverterTo(targetUnit);
-                if (!converter.isLinear()) {
+                final UnitConverter converter = sourceUnit.getConverterToAny(targetUnit);
+                if (!(converter instanceof LinearConverter)) {
                     throw new ConversionException(Errors.format(
                               Errors.Keys.NON_LINEAR_UNIT_CONVERSION_$2, sourceUnit, targetUnit));
                 }
                 final double offset = converter.convert(0);
-// JSR-275      final double scale  = converter.derivative(0);
-                final double scale  = converter.convert(1) - offset;
+                final double scale  = Units.derivative(converter, 0);
                 matrix.setElement(j,i, element*scale);
                 matrix.setElement(j,sourceDim, matrix.getElement(j,sourceDim) + element*offset);
             }
@@ -440,34 +441,23 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * implementation scans all {@linkplain CoordinateSystemAxis#getUnit axis units},
      * ignoring angular ones (this also implies ignoring {@linkplain Unit#ONE dimensionless} ones).
      * If more than one non-angular unit is found, the default implementation returns the "largest"
-     * one (e.g. kilometers instead of meters).
+     * one (e.g. kilometre instead of metre).
      *
      * @return Suggested distance unit.
-     * @throws ConversionException if some non-angular units are incompatibles.
      */
-    final Unit<?> getDistanceUnit() throws ConversionException {
+    final Unit<?> getDistanceUnit() {
         Unit<?> unit = distanceUnit;  // Avoid the need for synchronization.
         if (unit == null) {
+            double maxScale = 0;
             for (int i=0; i<axis.length; i++) {
                 final Unit<?> candidate = axis[i].getUnit();
-                if (candidate!=null && !candidate.isCompatible(SI.RADIAN)) {
+                if (candidate != null && !Units.isAngular(candidate)) {
                     // TODO: checks the unit scale type (keeps RATIO only).
-                    if (unit != null) {
-                        final UnitConverter converter = candidate.getConverterTo(unit);
-                        if (!converter.isLinear()) {
-                            // TODO: use the localization provided in 'swapAxis'. We could also
-                            //       do a more intelligent work by checking the unit scale type.
-                            throw new ConversionException("Unit conversion is non-linear");
-                        }
-// JSR-275              final double scale = converter.derivative(0);
-                        final double scale = converter.convert(1) - converter.convert(0);
-                        if (Math.abs(scale) <= 1) {
-                            // The candidate is a "smaller" unit than the current one
-                            // (e.g. "m" instead of "km"). Keeps the "largest" unit.
-                            continue;
-                        }
+                    final double scale = Math.abs(Units.toStandardUnit(candidate));
+                    if (unit == null || scale > maxScale) {
+                        unit = candidate;
+                        maxScale = scale;
                     }
-                    unit = candidate;
                 }
             }
             distanceUnit = unit;

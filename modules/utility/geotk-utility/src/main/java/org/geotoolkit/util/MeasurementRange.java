@@ -22,6 +22,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -224,7 +225,12 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     {
         if (range instanceof MeasurementRange<?>) {
             final MeasurementRange<?> casted = (MeasurementRange<?>) range;
-            return casted.convertAndCast(type, units);
+            try {
+                return casted.convertAndCast(type, units);
+            } catch (ConversionException e) {
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.INCOMPATIBLE_UNIT_$1, casted.units), e);
+            }
         }
         return new MeasurementRange<N>(type, range, units);
     }
@@ -254,7 +260,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
         if (units == null) {
             return new MeasurementRange<N>(type, this, targetUnits);
         }
-        final UnitConverter converter = units.getConverterTo(targetUnits);
+        final UnitConverter converter = units.getConverterToAny(targetUnits);
         if (converter.equals(UnitConverter.IDENTITY)) {
             return new MeasurementRange<N>(type, this, targetUnits);
         }

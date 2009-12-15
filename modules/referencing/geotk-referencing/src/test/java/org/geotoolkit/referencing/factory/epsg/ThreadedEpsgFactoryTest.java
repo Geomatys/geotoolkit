@@ -503,9 +503,6 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
 
     /**
      * Tests the serialization of the specified object.
-     *
-     * @todo assertEquals disabled since the switch to JSR-275, because of serialization
-     *       issue with the later.
      */
     private static void serialize(final Object object) throws IOException, ClassNotFoundException {
         final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -515,7 +512,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         final Object read = in.readObject();
         in.close();
-//      assertEquals(object, read);
+        assertEquals(object, read);
         assertEquals(object.hashCode(), read.hashCode());
     }
 

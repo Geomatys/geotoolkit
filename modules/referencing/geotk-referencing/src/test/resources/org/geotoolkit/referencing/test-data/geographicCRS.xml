@@ -5,14 +5,14 @@
     <gml:EllipsoidalCS gml:id="Géodésique 2D">
       <gml:name>Géodésique 2D</gml:name>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="°" gml:id="Geodetic longitude">
+        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodetic longitude">
           <gml:name>Geodetic longitude</gml:name>
           <gml:axisAbbrev>λ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">east</gml:axisDirection>
         </gml:CoordinateSystemAxis>
       </gml:axis>
       <gml:axis>
-        <gml:CoordinateSystemAxis uom="°" gml:id="Geodetic latitude">
+        <gml:CoordinateSystemAxis uom="deg" gml:id="Geodetic latitude">
           <gml:name>Geodetic latitude</gml:name>
           <gml:axisAbbrev>φ</gml:axisAbbrev>
           <gml:axisDirection codeSpace="EPSG">north</gml:axisDirection>

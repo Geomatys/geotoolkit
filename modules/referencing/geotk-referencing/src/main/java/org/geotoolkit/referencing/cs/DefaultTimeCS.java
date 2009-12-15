@@ -32,6 +32,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -105,7 +106,7 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
         final InternationalString name = axis.getAlias().iterator().next().toInternationalString();
         axis = new DefaultCoordinateSystemAxis(name, "t", AxisDirection.FUTURE, SI.SECOND);
         SECONDS = new DefaultTimeCS(properties, axis);
-        axis = new DefaultCoordinateSystemAxis(name, "t", AxisDirection.FUTURE, SI.MILLI(SI.SECOND));
+        axis = new DefaultCoordinateSystemAxis(name, "t", AxisDirection.FUTURE, Units.MILLISECOND);
         MILLISECONDS = new DefaultTimeCS(properties, axis);
     }
 

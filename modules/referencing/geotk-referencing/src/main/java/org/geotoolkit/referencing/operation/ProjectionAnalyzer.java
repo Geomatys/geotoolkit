@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
+import javax.measure.converter.ConversionException;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
 
@@ -50,6 +51,7 @@ import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.logging.Logging;
 
 import static org.geotoolkit.referencing.AbstractIdentifiedObject.nameMatches;
 
@@ -119,7 +121,7 @@ final class ProjectionAnalyzer {
      * {@link ConcatenatedTransform} in their {@link #geographicScale}, {@link #projectedScale}
      * and {@link #transform} components.
      */
-    private ProjectionAnalyzer(final ProjectedCRS crs) {
+    private ProjectionAnalyzer(final ProjectedCRS crs) throws ConversionException {
         Matrix geographicScale = null;
         Matrix  projectedScale = null;
         projection = crs.getConversionFromBase();
@@ -392,8 +394,14 @@ search: for (final Iterator<GeneralParameterValue> targetIter=target.iterator();
         if (!CRS.equalsIgnoreMetadata(sourceCRS.getDatum(), targetCRS.getDatum())) {
             return null;
         }
-        final ProjectionAnalyzer source = new ProjectionAnalyzer(sourceCRS);
-        final ProjectionAnalyzer target = new ProjectionAnalyzer(targetCRS);
+        final ProjectionAnalyzer source, target;
+        try {
+            source = new ProjectionAnalyzer(sourceCRS);
+            target = new ProjectionAnalyzer(targetCRS);
+        } catch (ConversionException e) {
+            Logging.recoverableException(ProjectionAnalyzer.class, "createLinearConversion", e);
+            return null; // This is compliant with the method contract.
+        }
         if (!nameMatches(source.projection.getMethod(), target.projection.getMethod())) {
             /*
              * In theory, we can not find a linear conversion if the operation method is

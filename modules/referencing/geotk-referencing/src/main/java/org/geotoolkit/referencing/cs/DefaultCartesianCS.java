@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.cs;
 import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CartesianCS;
@@ -145,7 +146,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * {@linkplain #getDistanceUnit distance unit}. Will be constructed only when
      * first needed.
      */
-    private transient UnitConverter[] converters;
+    private transient volatile UnitConverter[] converters;
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -272,11 +273,12 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
      * @param  coord1 Coordinates of the first point.
      * @param  coord2 Coordinates of the second point.
      * @return The distance between {@code coord1} and {@code coord2}.
+     * @throws UnsupportedOperationException if this coordinate system can't compute distances.
      * @throws MismatchedDimensionException if a coordinate doesn't have the expected dimension.
      */
     @Override
     public Measure distance(final double[] coord1, final double[] coord2)
-            throws MismatchedDimensionException
+            throws UnsupportedOperationException, MismatchedDimensionException
     {
         ensureDimensionMatch("coord1", coord1);
         ensureDimensionMatch("coord2", coord2);
@@ -285,7 +287,13 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
         if (converters == null) {
             converters = new UnitConverter[getDimension()];
             for (int i=0; i<converters.length; i++) {
-                converters[i] = getAxis(i).getUnit().getConverterTo(unit);
+                final Unit<?> axisUnit = getAxis(i).getUnit();
+                try {
+                    converters[i] = axisUnit.getConverterToAny(unit);
+                } catch (ConversionException e) {
+                    throw new UnsupportedOperationException(Errors.format(
+                            Errors.Keys.INCOMPATIBLE_UNIT_$1, axisUnit), e);
+                }
             }
             this.converters = converters;
         }

@@ -18,13 +18,12 @@
 package org.geotoolkit.util;
 
 import java.util.Date;
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.measure.quantity.Duration;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 
 
@@ -46,11 +45,6 @@ public class DateRange extends Range<Date> {
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -6400011350250757942L;
-
-    /**
-     * The unit used for time representation in a date.
-     */
-    private static final Unit<Duration> MILLISECOND = SI.MILLI(SI.SECOND);
 
     /**
      * Creates a new date range for the given dates. Start time and end time are inclusive.
@@ -128,7 +122,7 @@ public class DateRange extends Range<Date> {
         if (source == null) {
             throw new ConversionException(Errors.format(Errors.Keys.NO_UNIT));
         }
-        return source.getConverterTo(MILLISECOND);
+        return source.getConverterToAny(Units.MILLISECOND);
     }
 
     /**

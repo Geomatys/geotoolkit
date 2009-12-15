@@ -521,7 +521,15 @@ public class IndexedResourceBundle extends ResourceBundle {
                 format.applyPattern(pattern);
                 lastKey = key;
             }
-            return format.format(arguments);
+            try {
+                return format.format(arguments);
+            } catch (RuntimeException e) {
+                /*
+                 * Safety against badly implemented toString() method
+                 * in libraries that we don't control.
+                 */
+                return "[Unformattable message: " + e + ']';
+            }
         }
     }
 
