@@ -138,4 +138,15 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
 
         return hashCode;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (getCoordinateReferenceSystem() != null) {
+            sb.append("crs=").append(getCoordinateReferenceSystem().getName());
+        } else {
+            sb.append("crs null");
+        }
+        return sb.toString();
+    }
 }

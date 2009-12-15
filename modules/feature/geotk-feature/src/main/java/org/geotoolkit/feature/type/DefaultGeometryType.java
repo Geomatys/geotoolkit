@@ -32,7 +32,7 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultGeometryType extends DefaultAttributeType<AttributeType> implements GeometryType {
 
-    protected final CoordinateReferenceSystem crs;
+    protected CoordinateReferenceSystem crs;
 
     public DefaultGeometryType(final Name name, final Class binding, final CoordinateReferenceSystem crs,
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,

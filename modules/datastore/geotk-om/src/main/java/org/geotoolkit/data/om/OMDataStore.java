@@ -44,6 +44,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 
@@ -192,7 +193,12 @@ public class OMDataStore extends AbstractDataStore {
                     CoordinateReferenceSystem crs;
                     try {
                         crs = CRS.decode(srsName);
-                        ((DefaultSimpleFeatureType)sft).setCoordinateReferenceSystem(crs);
+                        if (sft instanceof DefaultSimpleFeatureType) {
+                            ((DefaultSimpleFeatureType) sft).setCoordinateReferenceSystem(crs);
+                        }
+                        if (sft.getGeometryDescriptor() instanceof DefaultGeometryDescriptor) {
+                            ((DefaultGeometryDescriptor) sft.getGeometryDescriptor()).setCoordinateReferenceSystem(crs);
+                        }
                         firstCRS = false;
                     } catch (NoSuchAuthorityCodeException ex) {
                         throw new IOException(ex);

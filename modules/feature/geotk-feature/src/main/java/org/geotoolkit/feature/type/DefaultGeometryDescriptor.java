@@ -47,6 +47,15 @@ public class DefaultGeometryDescriptor extends DefaultAttributeDescriptor<Geomet
     /**
      * {@inheritDoc }
      */
+    public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+        if (type instanceof DefaultGeometryType)  {
+            ((DefaultGeometryType)type).crs = crs;
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String getLocalName() {
         return name.getLocalPart();
