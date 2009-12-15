@@ -50,7 +50,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
                             new Dimension(500, 40),10,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
-                            3,true,false, new Font("Serial", Font.PLAIN, 12),true,SI.METER);
+                            3,true,false, new Font("Serial", Font.PLAIN, 12),true,SI.METRE);
 
 
     public GraphicScaleBarJ2D(ReferencedCanvas2D canvas){

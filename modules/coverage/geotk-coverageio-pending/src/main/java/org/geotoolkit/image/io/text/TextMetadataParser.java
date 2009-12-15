@@ -159,7 +159,7 @@ public abstract class TextMetadataParser {
      * <ul>
      *   <li>If the unit is compatible with {@linkplain NonSI#DEGREE_ANGLE degrees},
      *       then a {@linkplain GeographicCRS geographic CRS} is assumed.</li>
-     *   <li>Otherwise, if this unit is compatible with {@linkplain SI#METER metres},
+     *   <li>Otherwise, if this unit is compatible with {@linkplain SI#METRE metres},
      *       then a {@linkplain ProjectedCRS projected CRS} is assumed.</li>
      * </ul>
      *

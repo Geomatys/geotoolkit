@@ -54,7 +54,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,
-                            SI.METER);
+                            SI.METRE);
 
     private final Dimension scaleDimension = new Dimension(500, 40);
     private final BufferedImage buffer = new BufferedImage(scaleDimension.width, scaleDimension.height, BufferedImage.TYPE_INT_ARGB);

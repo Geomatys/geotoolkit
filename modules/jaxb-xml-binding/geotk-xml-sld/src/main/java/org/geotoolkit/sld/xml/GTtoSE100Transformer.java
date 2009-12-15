@@ -448,7 +448,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a Unit to the corresponding SLD string.
      */
     public String visitUOM(Unit<Length> uom) {
-        if(uom.equals(SI.METER) || uom.equals(SI.METRE)){
+        if(uom.equals(SI.METRE)){
             return "http://www.opengeospatial.org/se/units/metre";
         }else if(uom.equals(NonSI.FOOT) ){
             return "http://www.opengeospatial.org/se/units/foot";

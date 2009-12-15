@@ -272,8 +272,8 @@ public final class GeoTiffMetadata2CRSAdapter {
         Unit linearUnit;
         try {
             linearUnit = createUnit(GeoTiffPCSCodes.PROJ_LINEAR_UNITS_GEO_KEY,
-                    GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, SI.METER,
-                    SI.METER, metadata);
+                    GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, SI.METRE,
+                    SI.METRE, metadata);
         } catch (GeoTiffException e) {
             linearUnit = null;
         }
@@ -361,8 +361,8 @@ public final class GeoTiffMetadata2CRSAdapter {
         Unit linearUnit = null;
         try {
             linearUnit = createUnit(GeoTiffGCSCodes.GEOG_LINEAR_UNITS_GEO_KEY,
-                    GeoTiffGCSCodes.GEOG_LINEAR_UNIT_SIZE_GEO_KEY, SI.METER,
-                    SI.METER, metadata);
+                    GeoTiffGCSCodes.GEOG_LINEAR_UNIT_SIZE_GEO_KEY, SI.METRE,
+                    SI.METRE, metadata);
         } catch (GeoTiffException e) {
             linearUnit = null;
         }
@@ -675,7 +675,7 @@ public final class GeoTiffMetadata2CRSAdapter {
 //        // ///
 //        if (projUserDefined) {
 //            // user defined projection
-//            if (linearUnit != null && linearUnit.equals(SI.METER)) {
+//            if (linearUnit != null && linearUnit.equals(SI.METRE)) {
 //                return new DefaultProjectedCRS(Collections.singletonMap("name", projectedCrsName), gcs, null, parameters, DefaultCartesianCS.PROJECTED);
 //                return this.factories.createProjectedCRS(Collections.singletonMap("name", projectedCrsName), gcs, null,
 //                        parameters, DefaultCartesianCS.PROJECTED);
@@ -685,7 +685,7 @@ public final class GeoTiffMetadata2CRSAdapter {
 //                    DefaultCartesianCS.PROJECTED.usingUnit(linearUnit));
 //        }
 //        // standard projection
-//        if (linearUnit != null && !linearUnit.equals(SI.METER)) {
+//        if (linearUnit != null && !linearUnit.equals(SI.METRE)) {
 //            return factories.createProjectedCRS(Collections.singletonMap(
 //                    "name", projectedCrsName), gcs, projection,
 //                    DefaultCartesianCS.PROJECTED.usingUnit(linearUnit));
@@ -738,7 +738,7 @@ public final class GeoTiffMetadata2CRSAdapter {
             throw new NullPointerException(
                     "Error when trying to create a PCS using this linear UoM ");
         }
-        if (!linearUnit.isCompatible(SI.METER)) {
+        if (!linearUnit.isCompatible(SI.METRE)) {
             throw new IllegalArgumentException(
                     "Error when trying to create a PCS using this linear UoM " + linearUnit.toString());
         }

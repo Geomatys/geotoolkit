@@ -65,7 +65,7 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>net.java.dev.jsr-275</groupId>
+      <groupId>javax.measure</groupId>
       <artifactId>jsr-275</artifactId>
     </dependency>
     <dependency>

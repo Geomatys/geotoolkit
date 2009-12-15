@@ -221,7 +221,7 @@ public class MetadataReader {
      */
     private Unit<?> getUnit(final String unitName) throws MetadataException {
         if (contains(unitName, METRES)) {
-            return SI.METER;
+            return SI.METRE;
         } else if (contains(unitName, DEGREES)) {
             return NonSI.DEGREE_ANGLE;
         } else {
