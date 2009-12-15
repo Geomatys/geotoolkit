@@ -86,14 +86,14 @@ public final class Utils {
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    private static final Unit<javax.measure.quantity.Duration> MONTH = NonSI.DAY.times(MONTH_MS / DAY_MS);
+    public static final Unit<javax.measure.quantity.Duration> MONTH_UNIT = NonSI.DAY.times(MONTH_MS / DAY_MS);
 
     /**
      * The units for years.
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
      */
-    private static final Unit<javax.measure.quantity.Duration> YEAR = NonSI.DAY.times(YEAR_MS / DAY_MS);
+    public static final Unit<javax.measure.quantity.Duration> YEAR_UNIT = NonSI.DAY.times(YEAR_MS / DAY_MS);
 
     private Utils(){
 
@@ -427,11 +427,11 @@ public final class Utils {
         final long mills = dduration.getTimeInMillis();
         long temp = mills / YEAR_MS;
         if (temp >= 1) {
-            return YEAR;
+            return YEAR_UNIT;
         }
         temp = mills / MONTH_MS;
         if (temp >= 1) {
-            return MONTH;
+            return MONTH_UNIT;
         }
         temp = mills / WEEK_MS;
         if (temp >= 1) {
