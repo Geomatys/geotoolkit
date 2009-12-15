@@ -70,8 +70,8 @@ public class DefaultSession implements Session {
     @Override
     public FeatureReader getFeatureIterator(Query query) throws IOException {
         FeatureReader reader = store.getFeatureReader(query);
-        for(final Alteration alt : getDiff().alterations()){
-            reader = alt.alterate(reader);
+        for(final Delta alt : getDiff().alterations()){
+            reader = alt.modify(reader);
         }
         return reader;
     }
@@ -109,8 +109,8 @@ public class DefaultSession implements Session {
     @Override
     public void commit() throws IOException {
         //todo : must lock on the diff to avoid sync issues
-        for(final Alteration alt : getDiff().alterations()){
-            alt.apply(store);
+        for(final Delta alt : getDiff().alterations()){
+            alt.modify(store);
             alt.dispose();
         }
     }
@@ -129,8 +129,8 @@ public class DefaultSession implements Session {
     @Override
     public long getCount(Query query) throws IOException {
         long count = store.getCount(query);
-        for(final Alteration alt : getDiff().alterations()){
-            count = alt.alterate(count);
+        for(final Delta alt : getDiff().alterations()){
+            count = alt.modify(count);
         }
         return count;
     }
@@ -141,8 +141,8 @@ public class DefaultSession implements Session {
     @Override
     public Envelope getEnvelope(Query query) throws IOException {
         Envelope env = store.getEnvelope(query);
-        for(final Alteration alt : getDiff().alterations()){
-            env = alt.alterate(env);
+        for(final Delta alt : getDiff().alterations()){
+            env = alt.modify(env);
         }
         return env;
     }

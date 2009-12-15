@@ -28,17 +28,17 @@ import java.util.List;
  */
 public class DefaultSessionDiff implements SessionDiff{
 
-    private final List<Alteration> alterations = new ArrayList<Alteration>();
+    private final List<Delta> alterations = new ArrayList<Delta>();
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<Alteration> alterations() {
+    public List<Delta> alterations() {
         return Collections.unmodifiableList(alterations);
     }
 
-    public void add(Alteration alt){
+    public void add(Delta alt){
         alterations.add(alt);
     }
 
@@ -46,7 +46,7 @@ public class DefaultSessionDiff implements SessionDiff{
         alterations.clear();
     }
 
-    public void remove(Alteration alt){
+    public void remove(Delta alt){
         alterations.remove(alt);
     }
 

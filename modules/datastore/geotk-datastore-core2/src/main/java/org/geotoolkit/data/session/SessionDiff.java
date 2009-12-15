@@ -25,6 +25,6 @@ import java.util.List;
  */
 public interface SessionDiff {
 
-    List<Alteration> alterations();
+    List<Delta> alterations();
 
 }

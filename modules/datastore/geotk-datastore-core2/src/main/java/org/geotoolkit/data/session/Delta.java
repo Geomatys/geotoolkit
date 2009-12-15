@@ -26,17 +26,17 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Alteration {
+public interface Delta {
 
-    Query alterate(Query query);
+    Query modify(Query query);
 
-    FeatureReader alterate(FeatureReader reader);
+    FeatureReader modify(FeatureReader reader);
     
-    long alterate(long count);
+    long modify(long count);
 
-    Envelope alterate(Envelope env);
+    Envelope modify(Envelope env);
 
-    void apply(DataStore store);
+    void modify(DataStore store);
 
     void dispose();
 
