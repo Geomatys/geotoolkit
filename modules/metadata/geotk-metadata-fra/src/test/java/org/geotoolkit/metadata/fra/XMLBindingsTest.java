@@ -49,13 +49,6 @@ public final class XMLBindingsTest {
     private static final String RESOURCE_FILE = "DirectReferenceSystem.xml";
 
     /**
-     * Skips the two first lines, because the xlmns are not always in the same order.
-     */
-    private static String skipHeader(final String xml) {
-        return xml.substring(xml.indexOf('\n', xml.indexOf('\n') + 1) + 1);
-    }
-
-    /**
      * Ensures that the marshalling process of a {@link DefaultMetadata} produces
      * an XML document which complies with the one expected.
      *
@@ -71,10 +64,7 @@ public final class XMLBindingsTest {
 
         String expected = TestData.readText(this, RESOURCE_FILE);
         String actual = XML.marshal(metadata);
-
-        expected = skipHeader(expected);
-        actual   = skipHeader(actual);
-        assertMultilinesEquals(expected, actual);
+        assertXmlEquals(expected, actual);
     }
 
     /**

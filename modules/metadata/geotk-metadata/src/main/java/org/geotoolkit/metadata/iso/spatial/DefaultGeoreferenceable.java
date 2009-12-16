@@ -35,6 +35,7 @@ import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.Georeferenceable;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -45,7 +46,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -247,7 +248,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      *       handle the XML formatting for this one?
      */
     @Override
-    @XmlElement(name = "geolocationInformation")
+    @XmlElement(name = "geolocationInformation", namespace = Namespaces.GMI)
     public synchronized Collection<GeolocationInformation> getGeolocationInformation() {
         return geolocationInformation = nonNullCollection(geolocationInformation, GeolocationInformation.class);
     }

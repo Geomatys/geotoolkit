@@ -48,6 +48,7 @@ import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -56,7 +57,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -717,7 +718,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "acquisitionInformation")
+    @XmlElement(name = "acquisitionInformation", namespace = Namespaces.GMI)
     public synchronized Collection<AcquisitionInformation> getAcquisitionInformation() {
         return xmlOptional(acquisitionInformation = nonNullCollection(acquisitionInformation,
                 AcquisitionInformation.class));

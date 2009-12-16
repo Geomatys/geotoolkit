@@ -37,10 +37,15 @@ public final class DateTimeAdapter extends XmlAdapter<DateTimeAdapter, Date> {
      * The date value.
      */
     @XmlElement(name = "DateTime")
-    public Date dateTime;
+    private Date dateTime;
 
+    /**
+     * The date value using the {@code "Date"} name. This is used during unmarshalling
+     * for compatibility with element using that name. Only one of {@code date} and
+     * {@link #dateTime} shall be non-null.
+     */
     @XmlElement(name = "Date")
-    public Date date;
+    private Date date;
 
     /**
      * Empty constructor for JAXB only.

@@ -32,15 +32,16 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Result of a data quality measure organising the measured values as a coverage.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
- * @since 3.00
+ * @since 3.03
  * @module
  */
 @ThreadSafe
@@ -103,7 +104,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the method used to spatially represent the coverage result.
      */
     @Override
-    @XmlElement(name = "spatialRepresentationType")
+    @XmlElement(name = "spatialRepresentationType", namespace = Namespaces.GMI)
     public synchronized SpatialRepresentationType getSpatialRepresentationType() {
         return spatialRepresentationType;
     }
@@ -122,7 +123,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the digital representation of data quality measures composing the coverage result.
      */
     @Override
-    @XmlElement(name = "resultSpatialRepresentation")
+    @XmlElement(name = "resultSpatialRepresentation", namespace = Namespaces.GMI)
     public synchronized SpatialRepresentation getResultSpatialRepresentation() {
         return resultSpatialRepresentation;
     }
@@ -142,7 +143,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * of the data quality measures.
      */
     @Override
-    @XmlElement(name = "resultContentDescription")
+    @XmlElement(name = "resultContentDescription", namespace = Namespaces.GMI)
     public synchronized CoverageDescription getResultContentDescription() {
         return resultContentDescription;
     }
@@ -162,7 +163,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the information about the format of the result coverage data.
      */
     @Override
-    @XmlElement(name = "resultFormat")
+    @XmlElement(name = "resultFormat", namespace = Namespaces.GMI)
     public synchronized Format getResultFormat() {
         return resultFormat;
     }

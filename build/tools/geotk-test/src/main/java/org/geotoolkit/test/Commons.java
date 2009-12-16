@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * Provides assertion methods in addition of the JUnit ones.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.07
  *
  * @since 3.00
  */
@@ -47,7 +47,7 @@ public final class Commons {
     }
 
     /**
-     * Asserts that two string are equal, ignoring the differences in EOL characters.
+     * Asserts that two strings are equal, ignoring the differences in EOL characters.
      * The comparisons is performed one a line-by-line basis. For each line, leading
      * and trailing spaces are ignored in order to make the comparison independant of
      * indentation.
@@ -60,7 +60,7 @@ public final class Commons {
     }
 
     /**
-     * Asserts that two string are equal, ignoring the differences in EOL characters.
+     * Asserts that two strings are equal, ignoring the differences in EOL characters.
      * The comparisons is performed one a line-by-line basis. For each line, leading
      * and trailing spaces are ignored in order to make the comparison independant of
      * indentation.
@@ -92,6 +92,29 @@ public final class Commons {
         if (c2.hasNext()) {
             fail("Unexpected line: " + c2.next());
         }
+    }
+
+    /**
+     * Asserts that two strings formatted by the XML marshaller are equal. The XML header is
+     * skipped, then the remaining is compared as with {@link #assertMultilinesEquals(String,
+     * String)}.
+     *
+     * @param expected The expected string.
+     * @param actual The actual string.
+     *
+     * @since 3.07
+     */
+    public static void assertXmlEquals(String expected, String actual) {
+        expected = skipHeader(expected);
+        actual   = skipHeader(actual);
+        assertMultilinesEquals(expected, actual);
+    }
+
+    /**
+     * Skips the two first lines, because the xlmns are not always in the same order.
+     */
+    private static String skipHeader(final String xml) {
+        return xml.substring(xml.indexOf('\n', xml.indexOf('\n') + 1) + 1);
     }
 
     /**

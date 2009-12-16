@@ -32,7 +32,7 @@
  * </ul>
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  * @see org.opengis.util.CodeList
@@ -43,6 +43,7 @@
 @XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED,
 namespace = Namespaces.GMD,
 xmlns = {
+    @XmlNs(prefix = "gmi", namespaceURI = Namespaces.GMI),
     @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO)
 })

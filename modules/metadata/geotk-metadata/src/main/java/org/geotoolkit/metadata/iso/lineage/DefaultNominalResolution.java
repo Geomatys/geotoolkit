@@ -29,13 +29,14 @@ import org.opengis.metadata.lineage.NominalResolution;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Distance between consistent parts of (centre, left side, right side) adjacent pixels.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -45,7 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "scanningResolution",
     "groundResolution"
 })
-@XmlRootElement(name = "LE_NominalResolution")
+@XmlRootElement(name = "LE_NominalResolution", namespace = Namespaces.GMI)
 public class DefaultNominalResolution extends MetadataEntity implements NominalResolution {
     /**
      * Serial number for interoperability with different versions.

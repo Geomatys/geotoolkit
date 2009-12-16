@@ -31,13 +31,14 @@ import org.opengis.referencing.ReferenceSystem;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Information about a control point collection.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -49,7 +50,7 @@ import org.geotoolkit.lang.ThreadSafe;
     "coordinateReferenceSystem",
     "GCPs"
 })
-@XmlRootElement(name = "MI_GCPCollection")
+@XmlRootElement(name = "MI_GCPCollection", namespace = Namespaces.GMI)
 public class DefaultGCPCollection extends AbstractGeolocationInformation implements GCPCollection {
     /**
      * Serial number for interoperability with different versions.

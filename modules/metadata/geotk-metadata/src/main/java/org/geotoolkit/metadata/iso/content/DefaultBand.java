@@ -33,6 +33,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -47,7 +48,7 @@ import org.geotoolkit.lang.ValueRange;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -343,7 +344,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "bandBoundaryDefinition")
+    @XmlElement(name = "bandBoundaryDefinition", namespace = Namespaces.GMI)
     public synchronized BandDefinition getBandBoundaryDefinition() {
         return bandBoundaryDefinition;
     }
@@ -369,7 +370,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlElement(name = "nominalSpatialResolution")
+    @XmlElement(name = "nominalSpatialResolution", namespace = Namespaces.GMI)
     public synchronized Double getNominalSpatialResolution() {
         return nominalSpatialResolution;
     }
@@ -394,7 +395,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "transferFunctionType")
+    @XmlElement(name = "transferFunctionType", namespace = Namespaces.GMI)
     public synchronized TransferFunctionType getTransferFunctionType() {
         return transferFunctionType;
     }
@@ -418,7 +419,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "transmittedPolarization")
+    @XmlElement(name = "transmittedPolarization", namespace = Namespaces.GMI)
     public synchronized PolarizationOrientation getTransmittedPolarization() {
         return transmittedPolarization;
     }
@@ -441,7 +442,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "detectedPolarization")
+    @XmlElement(name = "detectedPolarization", namespace = Namespaces.GMI)
     public synchronized PolarizationOrientation getDetectedPolarization() {
         return detectedPolarization;
     }

@@ -33,6 +33,7 @@ import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.util.RecordType;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -41,7 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -165,7 +166,7 @@ public class DefaultCoverageDescription extends AbstractContentInformation imple
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "rangeElementDescription")
+    @XmlElement(name = "rangeElementDescription", namespace = Namespaces.GMI)
     public synchronized Collection<RangeElementDescription> getRangeElementDescriptions() {
         return xmlOptional(rangeElementDescriptions =
                 nonNullCollection(rangeElementDescriptions, RangeElementDescription.class));

@@ -24,11 +24,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Collections;
+import java.util.TimeZone;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import org.geotoolkit.xml.MarshallerPool;
+import org.opengis.metadata.identification.CharacterSet;
+import org.opengis.metadata.quality.EvaluationMethodType;
+import org.opengis.metadata.spatial.DimensionNameType;
+
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -36,6 +40,8 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistribution;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
+import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 import org.geotoolkit.metadata.iso.quality.DefaultCompletenessCommission;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
@@ -43,15 +49,15 @@ import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xml.Namespaces;
-
-import org.opengis.metadata.identification.CharacterSet;
-import org.opengis.metadata.quality.EvaluationMethodType;
-import org.opengis.metadata.spatial.DimensionNameType;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.TestData;
+import static org.geotoolkit.test.Commons.*;
 
 
 /**
@@ -62,12 +68,47 @@ import org.geotoolkit.test.Depend;
  * fields of this object are compared with the original value.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.07
  *
  * @since 2.5
  */
 @Depend(MetadataStandardTest.class)
 public final class MetadataMarshallingTest {
+    /**
+     * The buffer where to write XML output.
+     */
+    private final StringWriter writer = new StringWriter();
+
+    /**
+     * The pool of marshaller. Must be set by the test method.
+     */
+    private MarshallerPool pool;
+
+    /**
+     * Marshalls the given metadata object.
+     */
+    private String marshal(final Object metadata) throws JAXBException {
+        final Marshaller marshaller = pool.acquireMarshaller();
+        marshaller.marshal(metadata, writer);
+        pool.release(marshaller);
+        final String xml = writer.toString();
+        writer.getBuffer().setLength(0);
+        return xml;
+    }
+
+    /**
+     * Parses the given XML string.
+     */
+    private Object unmarshal(final String xml) throws JAXBException {
+        final StringReader reader = new StringReader(xml);
+        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        final Object obj = unmarshaller.unmarshal(reader);
+        pool.release(unmarshaller);
+        reader.close();
+        return obj;
+    }
+
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
      * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.
@@ -78,21 +119,59 @@ public final class MetadataMarshallingTest {
      * @throws IOException Should never happen since we are writting to a buffer.
      */
     @Test
-    public void testMarshalling() throws JAXBException, IOException {
-        final MarshallerPool pool = new MarshallerPool(Collections.singletonMap(
+    public void testMetadata() throws JAXBException, IOException {
+        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
+        pool = new MarshallerPool(Collections.singletonMap(
                 MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), DefaultMetadata.class);
-        final Marshaller marshaller = pool.acquireMarshaller();
+
+        // Note: the text in the comment blocks below were produced by:
+        //
+        //       System.out.println(theObjectCreated);
+        //
+        //       Run this line again if the text needs to be updated.
         /*
-         * Fill metadata values.
+         * Metadata:
+         *   Contacts:
+         *     [1] Geotoolkit.org:
+         *       Role: principal investigator
+         *       Organisation Name: Geotoolkit.org
+         *       Contact Info:
+         *         Online Resource:
+         *           Linkage: http://www.geotoolkit.org
+         *           Function: information
+         *     [2] OpenGIS consortium:
+         *       Role: resource provider
+         *       Organisation Name: OpenGIS consortium
+         *       Contact Info:
+         *         Online Resource:
+         *           Linkage: http://www.opengis.org
+         *           Function: information
+         *   Date Stamp: 16 décembre 2009 12:00:29 CET
+         *   Character Set: utf 8
+         *   Language: fr
          */
         final DefaultMetadata metadata = new DefaultMetadata();
         metadata.setLanguage(Locale.FRENCH);
         metadata.setCharacterSet(CharacterSet.UTF_8);
-        metadata.setDateStamp(new Date());
+        metadata.setDateStamp(new Date(1260961229580L));
         metadata.setContacts(Arrays.asList(
             DefaultResponsibleParty.GEOTOOLKIT, DefaultResponsibleParty.OPEN_GIS
         ));
         metadata.setMetadataStandardVersion("ISO-19115");
+        /*
+         * Data Identification:
+         *   Abstract: Geotoolkit.org, projet OpenSource
+         *   Citation:
+         *     Title: Geotoolkit.org
+         *     Cited Responsible Parties:
+         *       Role: principal investigator
+         *       Organisation Name: Geotoolkit.org
+         *       Contact Info:
+         *         Online Resource:
+         *           Linkage: http://www.geotoolkit.org
+         *           Function: information
+         *   Languages: fr
+         */
         final DefaultCitation citationGeotk = new DefaultCitation();
         citationGeotk.setTitle(new SimpleInternationalString("Geotoolkit.org"));
         citationGeotk.setCitedResponsibleParties(Arrays.asList(DefaultResponsibleParty.GEOTOOLKIT));
@@ -109,7 +188,14 @@ public final class MetadataMarshallingTest {
         metadata.setIdentificationInfo(Arrays.asList(
             dataIdent
         ));
-        // Spatial representation part.
+        /*
+         * Grid Spatial Representation:
+         *   Axis Dimension Properties:
+         *     Dimension Name: column
+         *     Dimension Size: 830
+         *     Resolution: 70,5
+         *   Transformation Parameter Available: false
+         */
         final DefaultDimension dimension = new DefaultDimension();
         dimension.setDimensionName(DimensionNameType.COLUMN);
         dimension.setDimensionSize(830);
@@ -117,13 +203,53 @@ public final class MetadataMarshallingTest {
         final DefaultGridSpatialRepresentation gridSpatialRepres = new DefaultGridSpatialRepresentation();
         gridSpatialRepres.setAxisDimensionProperties(Arrays.asList(dimension));
         metadata.setSpatialRepresentationInfo(Arrays.asList(gridSpatialRepres));
+        /*
+         * Distribution:
+         *   Distributors:
+         *     Distributor Contact:
+         *       Role: principal investigator
+         *       Organisation Name: Geotoolkit.org
+         *       Contact Info:
+         *         Online Resource:
+         *           Linkage: http://www.geotoolkit.org
+         *           Function: information
+         */
         final DefaultDistribution distrib = new DefaultDistribution();
         distrib.setDistributors(Arrays.asList(
             new DefaultDistributor(DefaultResponsibleParty.GEOTOOLKIT)
         ));
         metadata.setDistributionInfo(distrib);
-        // DataQuality part.
-        final DefaultDataQuality dataQuality = new DefaultDataQuality();
+        /*
+         * Data Quality:
+         *   Reports:
+         *     Results:
+         *       Explanation: conformance to the WMS standard
+         *       Pass: true
+         *       Specification:
+         *         Title: Geotoolkit.org
+         *         Cited Responsible Parties:
+         *           Role: principal investigator
+         *           Organisation Name: Geotoolkit.org
+         *           Contact Info:
+         *             Online Resource:
+         *               Linkage: http://www.geotoolkit.org
+         *               Function: information
+         *     Evaluation Method Description: method
+         *     Evaluation Method Type: indirect
+         *     Evaluation Procedure:
+         *       Title: Geotoolkit.org
+         *       Cited Responsible Parties:
+         *         Role: principal investigator
+         *         Organisation Name: Geotoolkit.org
+         *         Contact Info:
+         *           Online Resource:
+         *             Linkage: http://www.geotoolkit.org
+         *             Function: information
+         *     Measure Description: description
+         *     Measure Identification:
+         *       Code: ident measure
+         *     Names Of Measure: my measure
+         */
         final DefaultCompletenessCommission completeComm = new DefaultCompletenessCommission();
         completeComm.setEvaluationMethodDescription(new SimpleInternationalString("method"));
         completeComm.setEvaluationMethodType(EvaluationMethodType.INDIRECT);
@@ -134,28 +260,19 @@ public final class MetadataMarshallingTest {
         final DefaultConformanceResult conformResult = new DefaultConformanceResult(citationGeotk,
                 new SimpleInternationalString("conformance to the WMS standard"), true);
         completeComm.setResults(Arrays.asList(conformResult));
+        final DefaultDataQuality dataQuality = new DefaultDataQuality();
         dataQuality.setReports(Arrays.asList(completeComm));
         metadata.setDataQualityInfo(Arrays.asList(dataQuality));
         /*
-         * Write in output buffer.
+         * Writes in output buffer.
          */
-        final StringWriter writer = new StringWriter();
-        marshaller.marshal(metadata, writer);
-        final String xml = writer.toString();
-        pool.release(marshaller);
-        writer.close();
+        final String xml = marshal(metadata);
         assertFalse("Nothing to write.", xml.length() == 0);
-        /*
-         * Parses the xml string.
-         */
-        final StringReader reader = new StringReader(xml);
-        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        final Object obj = unmarshaller.unmarshal(reader);
-        pool.release(unmarshaller);
-        reader.close();
+        assertXmlEquals(TestData.readText(MetadataMarshallingTest.class, "Metadata.xml"), xml);
         /*
          * Validation tests.
          */
+        final Object obj = unmarshal(xml);
         assertNotNull(obj);
         assertTrue("The unmarshalled object gotten from the XML file marshalled is not an instance " +
                    "of DefaultMetadata. So the unmarshalling process fails for that XML string.",
@@ -167,5 +284,39 @@ public final class MetadataMarshallingTest {
         assertEquals(metadata.getIdentificationInfo(), dataUnmarsh.getIdentificationInfo());
         assertEquals(metadata.getDataQualityInfo(), dataUnmarsh.getDataQualityInfo());
         assertEquals(metadata, dataUnmarsh);
+    }
+
+    /**
+     * Tests the marshalling of {@link DefaultProcessStep}.
+     * This metadata mixes elements from ISO 19115 and ISO 19115-2 standards.
+     *
+     * @throws JAXBException If an error occured during the creation of the JAXB context,
+     *                       or during marshalling / unmarshalling processes.
+     * @throws IOException Should never happen since we are writting to a buffer.
+     *
+     * @since 3.07
+     */
+    @Test
+    public void testProcessStep() throws JAXBException, IOException {
+        pool = new MarshallerPool(Collections.singletonMap(
+                MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), DefaultMetadata.class);
+
+        final DefaultProcessing info = new DefaultProcessing();
+        info.setProcedureDescription(new SimpleInternationalString("Some procedure."));
+        final DefaultProcessStep process = new DefaultProcessStep();
+        process.setDescription(new SimpleInternationalString("Some process step."));
+        process.setProcessingInformation(info);
+        /*
+         * Writes in output buffer.
+         */
+        final String xml = marshal(process);
+        assertFalse("Nothing to write.", xml.length() == 0);
+        assertXmlEquals(TestData.readText(MetadataMarshallingTest.class, "ProcessStep.xml"), xml);
+        /*
+         * Validation tests.
+         */
+        final Object obj = unmarshal(xml);
+        assertTrue(obj instanceof DefaultProcessStep);
+        assertEquals(process, obj);
     }
 }

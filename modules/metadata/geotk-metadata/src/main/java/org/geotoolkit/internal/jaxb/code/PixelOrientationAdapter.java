@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
  * the handling of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 2.5
  * @module
@@ -77,7 +78,7 @@ public final class PixelOrientationAdapter
      * @return The value to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_PixelOrientationCode")
+    @XmlElement(name = "MD_PixelOrientationCode", namespace = Namespaces.GMI)
     public CodeListProxy getElement() {
         return proxy;
     }

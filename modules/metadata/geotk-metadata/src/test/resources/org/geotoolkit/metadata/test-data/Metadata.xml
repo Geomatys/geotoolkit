@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<MD_Metadata xmlns="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" xmlns:gmi="http://www.isotc211.org/2005/gmi" xmlns:gmx="http://www.isotc211.org/2005/gmx">
+  <language>
+    <gco:CharacterString>fra</gco:CharacterString>
+  </language>
+  <characterSet>
+    <MD_CharacterSetCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#utf8" codeListValue="utf8"/>
+  </characterSet>
+  <contact>
+    <CI_ResponsibleParty>
+      <organisationName>
+        <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+      </organisationName>
+      <contactInfo>
+        <CI_Contact>
+          <onlineResource>
+            <CI_OnlineResource>
+              <linkage>
+                <URL>http://www.geotoolkit.org</URL>
+              </linkage>
+              <function>
+                <CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
+              </function>
+            </CI_OnlineResource>
+          </onlineResource>
+        </CI_Contact>
+      </contactInfo>
+      <role>
+        <CI_RoleCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator" codeListValue="principalInvestigator"/>
+      </role>
+    </CI_ResponsibleParty>
+  </contact>
+  <contact>
+    <CI_ResponsibleParty>
+      <organisationName>
+        <gco:CharacterString>OpenGIS consortium</gco:CharacterString>
+      </organisationName>
+      <contactInfo>
+        <CI_Contact>
+          <onlineResource>
+            <CI_OnlineResource>
+              <linkage>
+                <URL>http://www.opengis.org</URL>
+              </linkage>
+              <function>
+                <CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
+              </function>
+            </CI_OnlineResource>
+          </onlineResource>
+        </CI_Contact>
+      </contactInfo>
+      <role>
+        <CI_RoleCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#resourceProvider" codeListValue="resourceProvider"/>
+      </role>
+    </CI_ResponsibleParty>
+  </contact>
+  <dateStamp>
+    <gco:DateTime>2009-12-16T12:00:29.580+01:00</gco:DateTime>
+  </dateStamp>
+  <metadataStandardVersion>
+    <gco:CharacterString>ISO-19115</gco:CharacterString>
+  </metadataStandardVersion>
+  <spatialRepresentationInfo>
+    <MD_GridSpatialRepresentation>
+      <axisDimensionProperties>
+        <MD_Dimension>
+          <dimensionName>
+            <MD_DimensionNameTypeCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#column" codeListValue="column"/>
+          </dimensionName>
+          <dimensionSize>830</dimensionSize>
+          <resolution>
+            <gco:Measure uom="pixel">70.5</gco:Measure>
+          </resolution>
+        </MD_Dimension>
+      </axisDimensionProperties>
+      <transformationParameterAvailability>false</transformationParameterAvailability>
+    </MD_GridSpatialRepresentation>
+  </spatialRepresentationInfo>
+  <identificationInfo>
+    <MD_DataIdentification>
+      <citation>
+        <CI_Citation>
+          <title>
+            <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+          </title>
+          <citedResponsibleParty>
+            <CI_ResponsibleParty>
+              <organisationName>
+                <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+              </organisationName>
+              <contactInfo>
+                <CI_Contact>
+                  <onlineResource>
+                    <CI_OnlineResource>
+                      <linkage>
+                        <URL>http://www.geotoolkit.org</URL>
+                      </linkage>
+                      <function>
+                        <CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
+                      </function>
+                    </CI_OnlineResource>
+                  </onlineResource>
+                </CI_Contact>
+              </contactInfo>
+              <role>
+                <CI_RoleCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator" codeListValue="principalInvestigator"/>
+              </role>
+            </CI_ResponsibleParty>
+          </citedResponsibleParty>
+        </CI_Citation>
+      </citation>
+      <abstract xsi:type="PT_FreeText_PropertyType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <gco:CharacterString>Geotoolkit.org, projet OpenSource</gco:CharacterString>
+        <PT_FreeText>
+          <textGroup>
+            <LocalisedCharacterString locale="#locale-eng">Geotoolkit.org, OpenSource Project</LocalisedCharacterString>
+            <LocalisedCharacterString locale="#locale-ita">Geotoolkit.org, progetto OpenSource</LocalisedCharacterString>
+            <LocalisedCharacterString locale="#locale-fra">Geotoolkit.org, projet OpenSource</LocalisedCharacterString>
+          </textGroup>
+        </PT_FreeText>
+      </abstract>
+      <language>
+        <gco:CharacterString>fra</gco:CharacterString>
+      </language>
+    </MD_DataIdentification>
+  </identificationInfo>
+  <distributionInfo>
+    <MD_Distribution>
+      <distributor>
+        <MD_Distributor>
+          <distributorContact>
+            <CI_ResponsibleParty>
+              <organisationName>
+                <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+              </organisationName>
+              <contactInfo>
+                <CI_Contact>
+                  <onlineResource>
+                    <CI_OnlineResource>
+                      <linkage>
+                        <URL>http://www.geotoolkit.org</URL>
+                      </linkage>
+                      <function>
+                        <CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
+                      </function>
+                    </CI_OnlineResource>
+                  </onlineResource>
+                </CI_Contact>
+              </contactInfo>
+              <role>
+                <CI_RoleCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator" codeListValue="principalInvestigator"/>
+              </role>
+            </CI_ResponsibleParty>
+          </distributorContact>
+        </MD_Distributor>
+      </distributor>
+    </MD_Distribution>
+  </distributionInfo>
+  <dataQualityInfo>
+    <DQ_DataQuality>
+      <report>
+        <DQ_CompletenessCommission>
+          <nameOfMeasure>
+            <gco:CharacterString>my measure</gco:CharacterString>
+          </nameOfMeasure>
+          <measureIdentification>
+            <MD_Identifier>
+              <code>
+                <gco:CharacterString>ident measure</gco:CharacterString>
+              </code>
+            </MD_Identifier>
+          </measureIdentification>
+          <measureDescription>
+            <gco:CharacterString>description</gco:CharacterString>
+          </measureDescription>
+          <evaluationMethodType>
+            <DQ_EvaluationMethodTypeCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#indirect" codeListValue="indirect"/>
+          </evaluationMethodType>
+          <evaluationMethodDescription>
+            <gco:CharacterString>method</gco:CharacterString>
+          </evaluationMethodDescription>
+          <evaluationProcedure>
+            <CI_Citation>
+              <title>
+                <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+              </title>
+              <citedResponsibleParty>
+                <CI_ResponsibleParty>
+                  <organisationName>
+                    <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+                  </organisationName>
+                  <contactInfo>
+                    <CI_Contact>
+                      <onlineResource>
+                        <CI_OnlineResource>
+                          <linkage>
+                            <URL>http://www.geotoolkit.org</URL>
+                          </linkage>
+                          <function>
+                            <CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
+                          </function>
+                        </CI_OnlineResource>
+                      </onlineResource>
+                    </CI_Contact>
+                  </contactInfo>
+                  <role>
+                    <CI_RoleCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator" codeListValue="principalInvestigator"/>
+                  </role>
+                </CI_ResponsibleParty>
+              </citedResponsibleParty>
+            </CI_Citation>
+          </evaluationProcedure>
+          <result>
+            <DQ_ConformanceResult>
+              <specification>
+                <CI_Citation>
+                  <title>
+                    <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+                  </title>
+                  <citedResponsibleParty>
+                    <CI_ResponsibleParty>
+                      <organisationName>
+                        <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+                      </organisationName>
+                      <contactInfo>
+                        <CI_Contact>
+                          <onlineResource>
+                            <CI_OnlineResource>
+                              <linkage>
+                                <URL>http://www.geotoolkit.org</URL>
+                              </linkage>
+                              <function>
+                                <CI_OnLineFunctionCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#information" codeListValue="information"/>
+                              </function>
+                            </CI_OnlineResource>
+                          </onlineResource>
+                        </CI_Contact>
+                      </contactInfo>
+                      <role>
+                        <CI_RoleCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator" codeListValue="principalInvestigator"/>
+                      </role>
+                    </CI_ResponsibleParty>
+                  </citedResponsibleParty>
+                </CI_Citation>
+              </specification>
+              <explanation>
+                <gco:CharacterString>conformance to the WMS standard</gco:CharacterString>
+              </explanation>
+              <pass>true</pass>
+            </DQ_ConformanceResult>
+          </result>
+        </DQ_CompletenessCommission>
+      </report>
+    </DQ_DataQuality>
+  </dataQualityInfo>
+</MD_Metadata>

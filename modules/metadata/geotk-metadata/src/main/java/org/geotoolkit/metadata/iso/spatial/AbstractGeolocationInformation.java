@@ -31,13 +31,14 @@ import org.opengis.metadata.spatial.GeolocationInformation;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Information used to determine geographic location corresponding to image location.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -46,7 +47,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlType(propOrder={
     "qualityInfo"
 })
-@XmlRootElement(name = "MI_GeolocationInformation")
+@XmlRootElement(name = "MI_GeolocationInformation", namespace = Namespaces.GMI)
 public class AbstractGeolocationInformation extends MetadataEntity implements GeolocationInformation {
     /**
      * Serial number for interoperability with different versions.

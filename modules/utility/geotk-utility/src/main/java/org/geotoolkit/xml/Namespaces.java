@@ -28,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * List some namespaces URLs used by JAXB when (un)marshalling.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.07
  *
  * @since 3.00
  * @module
@@ -62,6 +62,15 @@ public final class Namespaces {
      * @category ISO
      */
     public static final String GMD = "http://www.isotc211.org/2005/gmd";
+
+    /**
+     * The {@value} URL.
+     *
+     * @category ISO
+     *
+     * @since 3.07
+     */
+    public static final String GMI = "http://www.isotc211.org/2005/gmi";
 
     /**
      * The {@value} URL.

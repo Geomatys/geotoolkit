@@ -36,6 +36,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -44,7 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -116,6 +117,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      * Creates an initially empty process step.
      */
     public DefaultProcessStep() {
+        date = Long.MIN_VALUE;
     }
 
     /**
@@ -183,7 +185,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     @Override
     @XmlElement(name = "dateTime")
     public synchronized Date getDate() {
-        return (date!=Long.MIN_VALUE) ? new Date(date) : null;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -194,7 +196,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      */
     public synchronized void setDate(final Date newValue) {
         checkWritePermission();
-        date = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        date = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**
@@ -242,7 +244,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "output")
+    @XmlElement(name = "output", namespace = Namespaces.GMI)
     public synchronized Collection<Source> getOutputs() {
         return xmlOptional(outputs = nonNullCollection(outputs, Source.class));
     }
@@ -266,7 +268,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "processingInformation")
+    @XmlElement(name = "processingInformation", namespace = Namespaces.GMI)
     public synchronized Processing getProcessingInformation() {
         return processingInformation;
     }
@@ -291,7 +293,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "report")
+    @XmlElement(name = "report", namespace = Namespaces.GMI)
     public synchronized Collection<ProcessStepReport> getReports() {
         return xmlOptional(reports = nonNullCollection(reports, ProcessStepReport.class));
     }

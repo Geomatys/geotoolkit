@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.quality.Usability;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -37,7 +38,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlRootElement(name = "QE_Usability")
+@XmlRootElement(name = "QE_Usability", namespace = Namespaces.GMI)
 public class DefaultUsability extends AbstractElement implements Usability {
     /**
      * Serial number for interoperability with different versions.

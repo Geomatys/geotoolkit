@@ -30,6 +30,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -37,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * readings.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -47,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "citation",
     "description"
 })
-@XmlRootElement(name = "LE_Algorithm")
+@XmlRootElement(name = "LE_Algorithm", namespace = Namespaces.GMI)
 public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
     /**
      * Serial number for interoperability with different versions.

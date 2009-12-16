@@ -32,13 +32,14 @@ import org.opengis.util.Record;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Description of specific range elements.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -49,7 +50,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "definition"/*,
     "rangeElements"*/
 })
-@XmlRootElement(name = "MI_RangeElementDescription")
+@XmlRootElement(name = "MI_RangeElementDescription", namespace = Namespaces.GMI)
 public class DefaultRangeElementDescription extends MetadataEntity implements RangeElementDescription {
     /**
      * Serial number for interoperability with different versions.

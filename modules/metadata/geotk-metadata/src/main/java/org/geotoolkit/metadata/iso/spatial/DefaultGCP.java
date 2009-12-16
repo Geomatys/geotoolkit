@@ -31,13 +31,14 @@ import org.opengis.metadata.spatial.GCP;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Information on ground control point.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -47,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     //"geographicCoordinates",
     "accuracyReports"
 })
-@XmlRootElement(name = "MI_GCP")
+@XmlRootElement(name = "MI_GCP", namespace = Namespaces.GMI)
 public class DefaultGCP extends MetadataEntity implements GCP {
     /**
      * Serial number for interoperability with different versions.

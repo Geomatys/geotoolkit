@@ -30,7 +30,6 @@ import javax.xml.bind.Unmarshaller;
 
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.identification.CharacterSet;

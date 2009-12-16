@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.metadata.acquisition.GeometryType;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.acquisition.GeometryType;
  * of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 3.02
  * @module
@@ -75,7 +76,7 @@ public final class GeometryTypeAdapter extends CodeListAdapter<GeometryTypeAdapt
      * @return The value to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_GeometryTypeCode")
+    @XmlElement(name = "MI_GeometryTypeCode", namespace = Namespaces.GMI)
     public CodeListProxy getElement() {
         return proxy;
     }

@@ -29,13 +29,14 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
  * Report of what occurred during the process step.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  * @module
@@ -46,7 +47,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "description",
     "fileType"
 })
-@XmlRootElement(name = "LE_ProcessStepReport")
+@XmlRootElement(name = "LE_ProcessStepReport", namespace = Namespaces.GMI)
 public class DefaultProcessStepReport extends MetadataEntity implements ProcessStepReport {
     /**
      * Serial number for interoperability with different versions.

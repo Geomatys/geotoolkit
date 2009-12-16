@@ -37,6 +37,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -45,7 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 2.1
  * @module
@@ -256,7 +257,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "processedLevel")
+    @XmlElement(name = "processedLevel", namespace = Namespaces.GMI)
     public synchronized Identifier getProcessedLevel() {
         return processedLevel;
     }
@@ -280,7 +281,7 @@ public class DefaultSource extends MetadataEntity implements Source {
      * @since 3.03
      */
     @Override
-    @XmlElement(name = "resolution")
+    @XmlElement(name = "resolution", namespace = Namespaces.GMI)
     public synchronized NominalResolution getResolution() {
         return resolution;
     }
