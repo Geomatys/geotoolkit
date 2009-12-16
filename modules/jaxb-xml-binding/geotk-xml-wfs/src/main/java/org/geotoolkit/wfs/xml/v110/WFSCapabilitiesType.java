@@ -79,6 +79,13 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType {
     @XmlElement(name = "Filter_Capabilities", namespace = "http://www.opengis.net/ogc", required = true)
     private FilterCapabilities filterCapabilities;
 
+    public WFSCapabilitiesType() {
+
+    }
+
+    public WFSCapabilitiesType(String version) {
+        super(version);
+    }
     /**
      * Gets the value of the featureTypeList property.
      * 
