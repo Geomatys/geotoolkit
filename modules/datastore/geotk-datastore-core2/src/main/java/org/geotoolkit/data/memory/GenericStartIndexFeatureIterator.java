@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.session.ContentException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -56,7 +56,7 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
      * {@inheritDoc }
      */
     @Override
-    public F next() throws ContentException {
+    public F next() throws DataStoreRuntimeException {
         if (hasNext()) {
             return iterator.next();
         } else {
@@ -68,7 +68,7 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
      * {@inheritDoc }
      */
     @Override
-    public void close() throws ContentException {
+    public void close() throws DataStoreRuntimeException {
         iterator.close();
     }
 
@@ -76,7 +76,7 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws ContentException {
+    public boolean hasNext() throws DataStoreRuntimeException {
         if(!translateDone){
             for(int i=0;i<startIndex;i++){
                 if(iterator.hasNext()){
@@ -140,7 +140,7 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
         }
 
         @Override
-        public void write() throws ContentException {
+        public void write() throws DataStoreRuntimeException {
             iterator.write();
         }
     }

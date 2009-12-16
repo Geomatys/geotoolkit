@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -44,6 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
  * </p>
  *
  * @author Jody Garnett, Refractions Research
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {

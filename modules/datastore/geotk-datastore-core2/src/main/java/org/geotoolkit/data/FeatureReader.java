@@ -18,7 +18,7 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 import java.util.NoSuchElementException;
-import org.geotoolkit.data.session.ContentException;
+
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -102,7 +102,7 @@ public interface FeatureReader<T extends FeatureType, F extends Feature> extends
      *         Reader.
      */
     @Override
-    F next() throws ContentException;
+    F next() throws DataStoreRuntimeException;
 
     /**
      * Query whether this FeatureReader has another Feature.
@@ -115,6 +115,6 @@ public interface FeatureReader<T extends FeatureType, F extends Feature> extends
      *         Features.
      */
     @Override
-    boolean hasNext() throws ContentException;
+    boolean hasNext() throws DataStoreRuntimeException;
 
 }

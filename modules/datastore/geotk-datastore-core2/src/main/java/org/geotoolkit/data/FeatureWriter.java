@@ -17,7 +17,6 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
-import org.geotoolkit.data.session.ContentException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -84,7 +83,7 @@ public interface FeatureWriter<T extends FeatureType, F extends Feature> extends
      * @throws IOException DOCUMENT ME!
      */
     @Override
-    F next() throws ContentException;
+    F next() throws DataStoreRuntimeException;
 
     /**
      * Removes current Feature, must be called before hasNext.
@@ -110,7 +109,7 @@ public interface FeatureWriter<T extends FeatureType, F extends Feature> extends
      * @throws IOException DOCUMENT ME!
      */
     @Override
-    void remove() throws ContentException;
+    void remove() throws DataStoreRuntimeException;
 
     /**
      * Wrties the current Feature, must be called before hasNext.
@@ -147,6 +146,6 @@ public interface FeatureWriter<T extends FeatureType, F extends Feature> extends
      *
      * @throws IOException
      */
-    void write() throws ContentException;
+    void write() throws DataStoreRuntimeException;
 
 }

@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.session.ContentException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -63,7 +63,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * {@inheritDoc }
      */
     @Override
-    public F next() throws ContentException {
+    public F next() throws DataStoreRuntimeException {
         return iterator.next();
     }
 
@@ -71,7 +71,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * {@inheritDoc }
      */
     @Override
-    public void close() throws ContentException {
+    public void close() throws DataStoreRuntimeException {
         iterator.close();
     }
 
@@ -79,7 +79,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws ContentException {
+    public boolean hasNext() throws DataStoreRuntimeException {
         return iterator.hasNext();
     }
 
@@ -116,7 +116,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
 
         @Override
-        public F next() throws ContentException {
+        public F next() throws DataStoreRuntimeException {
 
             SimpleFeature next = (SimpleFeature) iterator.next();
             Object[] attributes = next.getAttributes().toArray();
@@ -128,7 +128,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                     }
                 }
             } catch (TransformException e) {
-                throw new ContentException("A transformation exception occurred while reprojecting data on the fly", e);
+                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
             }
 
             return (F) SimpleFeatureBuilder.build(schema, attributes, next.getID());

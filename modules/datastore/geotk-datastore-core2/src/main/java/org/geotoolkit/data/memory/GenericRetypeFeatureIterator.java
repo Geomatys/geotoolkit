@@ -20,7 +20,7 @@ package org.geotoolkit.data.memory;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.session.ContentException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.util.converter.Classes;
 
@@ -109,7 +109,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public void close() throws ContentException {
+    public void close() throws DataStoreRuntimeException {
         iterator.close();
     }
 
@@ -117,7 +117,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws ContentException {
+    public boolean hasNext() throws DataStoreRuntimeException {
         return iterator.hasNext();
     }
 
@@ -147,7 +147,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
 
         @Override
-        public F next() throws ContentException {
+        public F next() throws DataStoreRuntimeException {
             final SimpleFeature next = (SimpleFeature) iterator.next();
             final String id = next.getID();
 

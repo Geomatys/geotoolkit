@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.session.ContentException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -62,7 +62,7 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
         this.comparator = new SortByComparator(orders);
     }
 
-    private synchronized void sort() throws ContentException{
+    private synchronized void sort() throws DataStoreRuntimeException{
         if(ordered != null) return;
 
         ordered = new ArrayList<F>();
@@ -78,7 +78,7 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public F next() throws ContentException {
+    public F next() throws DataStoreRuntimeException {
         sort();
         F c = ordered.get(index);
         index++;
@@ -89,7 +89,7 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public void close() throws ContentException {
+    public void close() throws DataStoreRuntimeException {
         iterator.close();
     }
 
@@ -97,7 +97,7 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
      * {@inheritDoc }
      */
     @Override
-    public boolean hasNext() throws ContentException {
+    public boolean hasNext() throws DataStoreRuntimeException {
         sort();
         return index < ordered.size();
     }

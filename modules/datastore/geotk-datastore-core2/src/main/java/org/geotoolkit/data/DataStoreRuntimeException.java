@@ -15,24 +15,27 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.session;
+package org.geotoolkit.data;
 
 /**
+ * Exception used in FeatureCollection, extends RuntimeException to
+ * be useable in standard collection classes.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
-public class ContentException extends RuntimeException{
+public class DataStoreRuntimeException extends RuntimeException{
 
-    public ContentException(String message){
-
+    public DataStoreRuntimeException(String message){
+        super(message);
     }
 
-    public ContentException(String message, Exception ex){
-
+    public DataStoreRuntimeException(String message, Throwable th){
+        super(message, th);
     }
 
-    public ContentException(Exception ex){
-        
+    public DataStoreRuntimeException(Throwable th){
+        super(th);
     }
 
 }

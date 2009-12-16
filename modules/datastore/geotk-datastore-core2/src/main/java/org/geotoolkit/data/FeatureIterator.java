@@ -23,7 +23,7 @@ import org.opengis.feature.Feature;
 
 /**
  * Extent the Standard Iterator, limit to Feature class
- * and add a close method (interface Closeable) that is needed by the datastore
+ * and add a close method from interface Closeable that is needed by the datastore
  * to release potential resources.
  * 
  * @author Johann Sorel (Geomatys)

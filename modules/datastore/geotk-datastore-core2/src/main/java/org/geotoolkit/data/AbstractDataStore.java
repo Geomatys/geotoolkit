@@ -1,15 +1,30 @@
-
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
 
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 
-import org.geotoolkit.data.memory.EmptyFeatureReader;
-import org.geotoolkit.data.memory.EmptyFeatureWriter;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.DefaultSession;
@@ -28,6 +43,11 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+/**
+ *
+ * @author Johann Sorel (Geomatys)
+ * @module pending
+ */
 public abstract class AbstractDataStore implements DataStore{
 
     /**
@@ -114,6 +134,25 @@ public abstract class AbstractDataStore implements DataStore{
     // useful methods for datastore that doesn't implement all query parameters/
     ////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Wrap a feature reader with a query.
+     * This method can be use if the datastore implementation can not support all
+     * filtering parameters. The returned reader will repect the remaining query
+     * parameters but keep in mind that this is done in a generic way, which might
+     * not be the most effective way.
+     *
+     * Becareful if you give a sortBy parameter in the query, this can cause
+     * OutOfMemory errors since the generic implementation must iterate over all
+     * feature and holds them in memory before ordering them.
+     * It may be a better solution to say in the query capabilities that sortBy
+     * are not handle by this datastore implementation.
+     *
+     * @param reader FeatureReader to wrap
+     * @param remainingParameters , query holding the parameters that where not handle
+     * by the datastore implementation
+     * @return FeatureReader Reader wrapping the given reader with all query parameters
+     * @throws IOException
+     */
     protected FeatureReader handleRemaining(FeatureReader reader, Query remainingParameters) throws IOException{
 
         final Integer start = remainingParameters.getStartIndex();
@@ -132,14 +171,17 @@ public abstract class AbstractDataStore implements DataStore{
 
         //wrap sort by ---------------------------------------------------------
         //This can be really expensive, and force the us to read the full iterator.
-        //that may cause out of memory errors. we can not handle this here.
+        //that may cause out of memory errors.
+        if(sorts != null && sorts.length != 0){
+            reader = GenericSortByFeatureIterator.wrap(reader, sorts);
+        }
 
         //wrap filter ----------------------------------------------------------
         //we must keep the filter first since it impacts the start index and max feature
         if(filter != null && filter != Filter.INCLUDE){
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed reader
-                reader = new EmptyFeatureReader(reader.getFeatureType());
+                reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
             }else{
                 reader = GenericFilterFeatureIterator.wrap(reader, filter);
             }
@@ -154,7 +196,7 @@ public abstract class AbstractDataStore implements DataStore{
         if(max != null){
             if(max == 0){
                 //use an optimized reader
-                reader = new EmptyFeatureReader(reader.getFeatureType());
+                reader = GenericEmptyFeatureIterator.createReader(reader.getFeatureType());
             }else{
                 reader = GenericMaxFeatureIterator.wrap(reader, max);
             }
@@ -185,7 +227,7 @@ public abstract class AbstractDataStore implements DataStore{
         if(filter != null && filter != Filter.INCLUDE){
             if(filter == Filter.EXCLUDE){
                 //filter that exclude everything, use optimzed writer
-                writer = new EmptyFeatureWriter(writer.getFeatureType());
+                writer = GenericEmptyFeatureIterator.createWriter(writer.getFeatureType());
             }else{
                 writer = GenericFilterFeatureIterator.wrap(writer, filter);
             }

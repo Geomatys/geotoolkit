@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.session;
 
+import org.geotoolkit.data.DataStoreRuntimeException;
 import java.io.IOException;
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -68,11 +69,11 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema() throws ContentException{
+    public FeatureType getSchema() throws DataStoreRuntimeException{
         try {
             return session.getDataStore().getSchema(query.getTypeName());
         } catch (IOException ex) {
-            throw new ContentException(ex);
+            throw new DataStoreRuntimeException(ex);
         }
     }
 
@@ -80,11 +81,11 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator() throws ContentException{
+    public FeatureIterator<Feature> iterator() throws DataStoreRuntimeException{
         try {
             return session.getFeatureIterator(query);
         } catch (IOException ex) {
-            throw new ContentException(ex);
+            throw new DataStoreRuntimeException(ex);
         }
     }
 
@@ -92,11 +93,11 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
      * {@inheritDoc }
      */
     @Override
-    public int size() throws ContentException {
+    public int size() throws DataStoreRuntimeException {
         try {
             return (int) session.getCount(query);
         } catch (IOException ex) {
-            throw new ContentException(ex);
+            throw new DataStoreRuntimeException(ex);
         }
     }
 
@@ -104,11 +105,11 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope() throws ContentException{
+    public Envelope getEnvelope() throws DataStoreRuntimeException{
         try {
             return session.getEnvelope(query);
         } catch (IOException ex) {
-            throw new ContentException(ex);
+            throw new DataStoreRuntimeException(ex);
         }
     }
 
@@ -129,7 +130,7 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
             session.add(query.getTypeName(), clctn);
             return true;
         } catch (IOException ex) {
-            throw new ContentException(ex);
+            throw new DataStoreRuntimeException(ex);
         }
     }
 

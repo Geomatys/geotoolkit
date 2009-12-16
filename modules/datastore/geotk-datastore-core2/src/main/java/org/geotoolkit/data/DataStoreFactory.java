@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;

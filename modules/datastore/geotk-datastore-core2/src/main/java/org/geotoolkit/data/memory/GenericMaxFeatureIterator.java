@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.session.ContentException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -57,7 +57,7 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
      * {@inheritDoc }
      */
     @Override
-    public F next() throws ContentException {
+    public F next() throws DataStoreRuntimeException {
         if (hasNext()) {
             counter++;
             return iterator.next();
@@ -70,7 +70,7 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
      * {@inheritDoc }
      */
     @Override
-    public void close() throws ContentException {
+    public void close() throws DataStoreRuntimeException {
         iterator.close();
     }
 
@@ -80,7 +80,7 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
      * @throws IOException If the reader we are filtering encounters a problem
      */
     @Override
-    public boolean hasNext() throws ContentException {
+    public boolean hasNext() throws DataStoreRuntimeException {
         return ((counter < maxFeatures) && iterator.hasNext());
     }
 
@@ -134,7 +134,7 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
         }
 
         @Override
-        public void write() throws ContentException {
+        public void write() throws DataStoreRuntimeException {
             iterator.write();
         }
     }

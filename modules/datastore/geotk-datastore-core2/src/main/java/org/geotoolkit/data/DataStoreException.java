@@ -17,31 +17,24 @@
 
 package org.geotoolkit.data;
 
-import java.util.Collection;
-
-import org.opengis.feature.Feature;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.geometry.Envelope;
-
 /**
+ * Exception used in DataStores, extends Exception.
  *
  * @author Johann Sorel (Geomatys)
- * @param <F>
  * @module pending
  */
-public interface FeatureCollection<F extends Feature> extends Collection<F> {
+public class DataStoreException extends Exception{
 
-    String getID();
+    public DataStoreException(String message){
+        super(message);
+    }
 
-    FeatureType getSchema();
+    public DataStoreException(String message, Throwable th){
+        super(message, th);
+    }
 
-    Envelope getEnvelope();
-
-    @Override
-    FeatureIterator<F> iterator();
-
-    void addListener();
-
-    void removeListener();
+    public DataStoreException(Throwable th){
+        super(th);
+    }
 
 }
