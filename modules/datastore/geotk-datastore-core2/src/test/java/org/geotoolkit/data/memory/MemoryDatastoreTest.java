@@ -435,6 +435,8 @@ public class MemoryDatastoreTest extends TestCase{
             reader.hasNext();
             sf = (SimpleFeature) reader.next();
             assertEquals(sf.getAttribute("date"),new Date(1000L));
+
+            assertFalse(reader.hasNext());
         }finally{
             reader.close();
         }
@@ -489,8 +491,28 @@ public class MemoryDatastoreTest extends TestCase{
             reader.close();
         }
 
-
+        //TEST ATTRIBUTS LIMITATION --------------------------------------------
+        QueryBuilder qb = new QueryBuilder(name);
+        qb.setProperties(new String[]{"string","date"});
+        query = qb.buildQuery();
         
+        assertEquals(store.getCount(query),3);
+
+        reader = store.getFeatureReader(query);
+        assertEquals(reader.getFeatureType().getDescriptors().size(),2);
+        assertNotNull(reader.getFeatureType().getDescriptor("string"));
+        assertNotNull(reader.getFeatureType().getDescriptor("date"));
+
+        try{
+            while(reader.hasNext()){
+                SimpleFeature f = (SimpleFeature) reader.next();
+                assertTrue( f.getAttribute(0) instanceof String );
+                assertTrue( f.getAttribute(1) instanceof Double );
+            }
+        }finally{
+            reader.close();
+        }
+
 
     }
     
