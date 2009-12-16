@@ -24,7 +24,6 @@ import java.io.InputStream;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.UnmarshallerHandler;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
@@ -39,21 +38,21 @@ import org.xml.sax.InputSource;
 
 
 /**
- * Wraps a {@link Unmarshaller} in order to have some control on the modifications applied on it.
- * This is done in order to make the unmarshaller safer for reuse.
+ * Wraps a {@link javax.xml.bind.Unmarshaller} in order to have some control on the modifications
+ * applied on it. This is done in order to make the unmarshaller safer for reuse.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 3.00
  * @module
  */
-@Decorator(Unmarshaller.class)
-final class PooledUnmarshaller extends Pooled implements Unmarshaller {
+@Decorator(javax.xml.bind.Unmarshaller.class)
+final class PooledUnmarshaller extends Pooled implements Trapping.Unmarshaller {
     /**
      * The wrapper marshaller which does the real work.
      */
-    private final Unmarshaller unmarshaller;
+    private final javax.xml.bind.Unmarshaller unmarshaller;
 
     /**
      * Creates a pooled unmarshaller wrapping the given one.
@@ -63,7 +62,7 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      *        or {@code false} if this is an external implementation like a JAR put in the
      *        endorsed directory.
      */
-    PooledUnmarshaller(final Unmarshaller unmarshaller, final boolean internal) {
+    PooledUnmarshaller(final javax.xml.bind.Unmarshaller unmarshaller, final boolean internal) {
         super(internal);
         this.unmarshaller = unmarshaller;
     }
@@ -96,7 +95,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final InputStream input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -104,7 +108,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final URL input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -112,7 +121,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final File input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -120,7 +134,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final Reader input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -128,7 +147,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final InputSource input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -136,7 +160,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final Node input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -144,7 +173,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final Node input, final Class<T> declaredType) throws JAXBException {
-        return unmarshaller.unmarshal(input, declaredType);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input, declaredType);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -152,7 +186,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final Source input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -160,7 +199,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final Source input, final Class<T> declaredType) throws JAXBException {
-        return unmarshaller.unmarshal(input, declaredType);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input, declaredType);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -168,7 +212,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final XMLStreamReader input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -176,7 +225,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final XMLStreamReader input, final Class<T> declaredType) throws JAXBException {
-        return unmarshaller.unmarshal(input, declaredType);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input, declaredType);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -184,7 +238,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public Object unmarshal(final XMLEventReader input) throws JAXBException {
-        return unmarshaller.unmarshal(input);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -192,7 +251,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public <T> JAXBElement<T> unmarshal(final XMLEventReader input, final Class<T> declaredType) throws JAXBException {
-        return unmarshaller.unmarshal(input, declaredType);
+        begin();
+        try {
+            return unmarshaller.unmarshal(input, declaredType);
+        } finally {
+            finish();
+        }
     }
 
     /**
@@ -200,7 +264,12 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
      */
     @Override
     public UnmarshallerHandler getUnmarshallerHandler() {
-        return unmarshaller.getUnmarshallerHandler();
+        begin();
+        try {
+            return unmarshaller.getUnmarshallerHandler();
+        } finally {
+            finish();
+        }
     }
 
     /**

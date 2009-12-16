@@ -35,12 +35,12 @@ import javax.xml.validation.Schema;
  * "endorsed JAR" names if needed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 3.00
  * @module
  */
-abstract class Pooled {
+abstract class Pooled implements Trapping {
     /**
      * The prefix of property names which are internal to Sun implementation of JAXB.
      */
@@ -67,6 +67,13 @@ abstract class Pooled {
     private final Map<Object, Object> initial;
 
     /**
+     * The object converters to use during (un)marshalling.
+     *
+     * @since 3.07
+     */
+    private ObjectConverters converters;
+
+    /**
      * Default constructor.
      *
      * @param internal {@code true} if the JAXB implementation is the one bundled in JDK 6,
@@ -76,6 +83,7 @@ abstract class Pooled {
     Pooled(final boolean internal) {
         this.internal = internal;
         initial = new LinkedHashMap<Object, Object>();
+        converters = ObjectConverters.DEFAULT;
     }
 
     /**
@@ -211,4 +219,60 @@ abstract class Pooled {
      * A method which is common to both {@code Marshaller} and {@code Unmarshaller}.
      */
     public abstract ValidationEventHandler getEventHandler() throws JAXBException;
+
+
+
+    ////////////////                                               ////////////////
+    ////////////////   Methods related to the Trapping interface   ////////////////
+    ////////////////                                               ////////////////
+
+    /**
+     * Returns the current object converters. This is {@link ObjectConverters#DEFAULT}
+     * unless the user invoked {@link #setObjectConverters(ObjectConverters)}.
+     *
+     * @since 3.07
+     */
+    @Override
+    public final ObjectConverters getObjectConverters() {
+        return converters;
+    }
+
+    /**
+     * Sets a new object converters to use for (un)marshalling processes.
+     *
+     * @since 3.07
+     */
+    @Override
+    public final void setObjectConverters(final ObjectConverters converters) {
+        this.converters = (converters != null) ? converters : ObjectConverters.DEFAULT;
+    }
+
+    /**
+     * Must be invoked by subclasses before a {@code try} block performing a (un)marshalling
+     * operation. Must be followed by a call to {@link #finish()} in a {@code finally} block.
+     *
+     * {@preformat java
+     *     begin();
+     *     try {
+     *         ...
+     *     } finally {
+     *         finish();
+     *     }
+     * }
+     *
+     * @since 3.07
+     */
+    protected void begin() {
+        ObjectConverters.CURRENT.set(converters);
+    }
+
+    /**
+     * Must be invoked by subclasses in a {@code finally} block after a (un)marshalling
+     * operation. Must be preceded by a call to {@link #begin()} before the {@code try} block.
+     *
+     * @since 3.07
+     */
+    protected void finish() {
+        ObjectConverters.CURRENT.remove();
+    }
 }

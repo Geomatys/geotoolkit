@@ -18,16 +18,11 @@
 package org.geotoolkit.metadata;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Collections;
 import java.util.TimeZone;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
 import org.opengis.metadata.identification.CharacterSet;
 import org.opengis.metadata.quality.EvaluationMethodType;
@@ -49,8 +44,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.xml.XML;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -76,40 +70,6 @@ import static org.geotoolkit.test.Commons.*;
 @Depend(MetadataStandardTest.class)
 public final class MetadataMarshallingTest {
     /**
-     * The buffer where to write XML output.
-     */
-    private final StringWriter writer = new StringWriter();
-
-    /**
-     * The pool of marshaller. Must be set by the test method.
-     */
-    private MarshallerPool pool;
-
-    /**
-     * Marshalls the given metadata object.
-     */
-    private String marshal(final Object metadata) throws JAXBException {
-        final Marshaller marshaller = pool.acquireMarshaller();
-        marshaller.marshal(metadata, writer);
-        pool.release(marshaller);
-        final String xml = writer.toString();
-        writer.getBuffer().setLength(0);
-        return xml;
-    }
-
-    /**
-     * Parses the given XML string.
-     */
-    private Object unmarshal(final String xml) throws JAXBException {
-        final StringReader reader = new StringReader(xml);
-        final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        final Object obj = unmarshaller.unmarshal(reader);
-        pool.release(unmarshaller);
-        reader.close();
-        return obj;
-    }
-
-    /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
      * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.
      * Some assertions about the validity of the unmarshalled data are checked.
@@ -121,8 +81,6 @@ public final class MetadataMarshallingTest {
     @Test
     public void testMetadata() throws JAXBException, IOException {
         TimeZone.setDefault(TimeZone.getTimeZone("CET"));
-        pool = new MarshallerPool(Collections.singletonMap(
-                MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), DefaultMetadata.class);
 
         // Note: the text in the comment blocks below were produced by:
         //
@@ -266,13 +224,13 @@ public final class MetadataMarshallingTest {
         /*
          * Writes in output buffer.
          */
-        final String xml = marshal(metadata);
+        final String xml = XML.marshal(metadata);
         assertFalse("Nothing to write.", xml.length() == 0);
         assertXmlEquals(TestData.readText(MetadataMarshallingTest.class, "Metadata.xml"), xml);
         /*
          * Validation tests.
          */
-        final Object obj = unmarshal(xml);
+        final Object obj = XML.unmarshal(xml);
         assertNotNull(obj);
         assertTrue("The unmarshalled object gotten from the XML file marshalled is not an instance " +
                    "of DefaultMetadata. So the unmarshalling process fails for that XML string.",
@@ -298,9 +256,6 @@ public final class MetadataMarshallingTest {
      */
     @Test
     public void testProcessStep() throws JAXBException, IOException {
-        pool = new MarshallerPool(Collections.singletonMap(
-                MarshallerPool.ROOT_NAMESPACE_KEY, Namespaces.GMD), DefaultMetadata.class);
-
         final DefaultProcessing info = new DefaultProcessing();
         info.setProcedureDescription(new SimpleInternationalString("Some procedure."));
         final DefaultProcessStep process = new DefaultProcessStep();
@@ -309,13 +264,13 @@ public final class MetadataMarshallingTest {
         /*
          * Writes in output buffer.
          */
-        final String xml = marshal(process);
+        final String xml = XML.marshal(process);
         assertFalse("Nothing to write.", xml.length() == 0);
         assertXmlEquals(TestData.readText(MetadataMarshallingTest.class, "ProcessStep.xml"), xml);
         /*
          * Validation tests.
          */
-        final Object obj = unmarshal(xml);
+        final Object obj = XML.unmarshal(xml);
         assertTrue(obj instanceof DefaultProcessStep);
         assertEquals(process, obj);
     }

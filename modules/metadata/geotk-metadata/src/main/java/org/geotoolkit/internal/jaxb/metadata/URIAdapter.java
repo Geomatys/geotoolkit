@@ -24,12 +24,14 @@ import java.net.MalformedURLException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.geotoolkit.xml.ObjectConverters;
+
 
 /**
  * JAXB adapter wrapping a URI in a {@code <gmd:URL>} element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 2.5
  * @module
@@ -71,7 +73,7 @@ public final class URIAdapter extends XmlAdapter<URIAdapter, URI> {
         if (value == null) {
             return null;
         }
-        return value.url.toURI();
+        return ObjectConverters.current().toURI(value.url);
     }
 
     /**
@@ -85,9 +87,12 @@ public final class URIAdapter extends XmlAdapter<URIAdapter, URI> {
      */
     @Override
     public URIAdapter marshal(final URI value) throws MalformedURLException, IllegalArgumentException {
-        if (value == null) {
-            return null;
+        if (value != null) {
+            final URL url = ObjectConverters.current().toURL(value);
+            if (url != null) {
+                return new URIAdapter(url);
+            }
         }
-        return new URIAdapter(value.toURL());
+        return null;
     }
 }

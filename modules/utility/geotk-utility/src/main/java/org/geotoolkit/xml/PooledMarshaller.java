@@ -20,7 +20,6 @@ package org.geotoolkit.xml;
 import java.io.File;
 import java.io.Writer;
 import java.io.OutputStream;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.ValidationEventHandler;
@@ -34,25 +33,25 @@ import org.xml.sax.ContentHandler;
 import org.w3c.dom.Node;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.internal.io.XML;
+import org.geotoolkit.internal.jaxb.XmlUtilities;
 
 
 /**
- * Wraps a {@link Marshaller} in order to have some control on the modifications applied on it.
- * This is done in order to make the marshaller safer for reuse.
+ * Wraps a {@link javax.xml.bind.Marshaller} in order to have some control on the modifications
+ * applied on it. This is done in order to make the marshaller safer for reuse.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 3.00
  * @module
  */
-@Decorator(Marshaller.class)
-final class PooledMarshaller extends Pooled implements Marshaller {
+@Decorator(javax.xml.bind.Marshaller.class)
+final class PooledMarshaller extends Pooled implements Trapping.Marshaller {
     /**
      * The wrapper marshaller which does the real work.
      */
-    private final Marshaller marshaller;
+    private final javax.xml.bind.Marshaller marshaller;
 
     /**
      * Creates a pooled marshaller wrapping the given one.
@@ -62,9 +61,27 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      *        or {@code false} if this is an external implementation like a JAR put in the
      *        endorsed directory.
      */
-    PooledMarshaller(final Marshaller marshaller, final boolean internal) {
+    PooledMarshaller(final javax.xml.bind.Marshaller marshaller, final boolean internal) {
         super(internal);
         this.marshaller = marshaller;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void begin() {
+        super.begin();
+        XmlUtilities.marshalling(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void finish() {
+        XmlUtilities.marshalling(false);
+        super.finish();
     }
 
     /**
@@ -79,7 +96,7 @@ final class PooledMarshaller extends Pooled implements Marshaller {
     protected void reset(final Object key, Object value) throws PropertyException {
         if (key instanceof String) {
             final String k = (String) key;
-            if (value == null && (k.endsWith(".xmlHeaders") || k.equals(Marshaller.JAXB_SCHEMA_LOCATION))) {
+            if (value == null && (k.endsWith(".xmlHeaders") || k.equals(JAXB_SCHEMA_LOCATION))) {
                 value = ""; // Null value doesn't seem to be accepted.
             }
             marshaller.setProperty(k, value);
@@ -99,11 +116,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final Result output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -112,11 +129,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final OutputStream output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -125,11 +142,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final File output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -138,11 +155,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final Writer output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -151,11 +168,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final ContentHandler output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -164,11 +181,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final Node output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -177,11 +194,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final XMLStreamWriter output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -190,11 +207,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public void marshal(final Object object, final XMLEventWriter output) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             marshaller.marshal(object, output);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 
@@ -203,11 +220,11 @@ final class PooledMarshaller extends Pooled implements Marshaller {
      */
     @Override
     public Node getNode(final Object object) throws JAXBException {
-        XML.marshalling(true);
+        begin();
         try {
             return marshaller.getNode(object);
         } finally {
-            XML.marshalling(false);
+            finish();
         }
     }
 

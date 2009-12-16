@@ -41,7 +41,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.07
  *
  * @since 3.00
  * @module
@@ -101,13 +101,13 @@ public class MarshallerPool {
      * The pool of marshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
-    private final Deque<Marshaller> marshallers = new LinkedList<Marshaller>();
+    private final Deque<Trapping.Marshaller> marshallers = new LinkedList<Trapping.Marshaller>();
 
     /**
      * The pool of unmarshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
-    private final Deque<Unmarshaller> unmarshallers = new LinkedList<Unmarshaller>();
+    private final Deque<Trapping.Unmarshaller> unmarshallers = new LinkedList<Trapping.Unmarshaller>();
 
     /**
      * Returns the root classes of Geotk objects to be marshalled by default.
@@ -223,7 +223,7 @@ public class MarshallerPool {
      * Returns the marshaller or unmarshaller to use from the given queue.
      * If the queue is empty, returns {@code null}.
      */
-    private static <T> T acquire(final Deque<T> queue) {
+    private static <T extends Trapping> T acquire(final Deque<T> queue) {
         synchronized (queue) {
             return queue.pollLast();
         }
@@ -232,7 +232,7 @@ public class MarshallerPool {
     /**
      * Marks the given marshaller or unmarshaller available for further reuse.
      */
-    private static <T> void release(final Deque<T> queue, final T marshaller) {
+    private static <T extends Trapping> void release(final Deque<T> queue, final T marshaller) {
         try {
             ((Pooled) marshaller).reset();
         } catch (JAXBException exception) {
@@ -269,11 +269,10 @@ public class MarshallerPool {
      * @return A marshaller configured for formatting OGC/ISO XML.
      * @throws JAXBException If an error occured while creating and configuring a marshaller.
      */
-    public Marshaller acquireMarshaller() throws JAXBException {
-        Marshaller marshaller = acquire(marshallers);
+    public Trapping.Marshaller acquireMarshaller() throws JAXBException {
+        Trapping.Marshaller marshaller = acquire(marshallers);
         if (marshaller == null) {
-            marshaller = createMarshaller();
-            marshaller = new PooledMarshaller(marshaller, internal);
+            marshaller = new PooledMarshaller(createMarshaller(), internal);
         }
         return marshaller;
     }
@@ -297,11 +296,10 @@ public class MarshallerPool {
      * @return A unmarshaller configured for parsing OGC/ISO XML.
      * @throws JAXBException If an error occured while creating and configuring the unmarshaller.
      */
-    public Unmarshaller acquireUnmarshaller() throws JAXBException {
-        Unmarshaller unmarshaller = acquire(unmarshallers);
+    public Trapping.Unmarshaller acquireUnmarshaller() throws JAXBException {
+        Trapping.Unmarshaller unmarshaller = acquire(unmarshallers);
         if (unmarshaller == null) {
-            unmarshaller = createUnmarshaller();
-            unmarshaller = new PooledUnmarshaller(unmarshaller, internal);
+            unmarshaller = new PooledUnmarshaller(createUnmarshaller(), internal);
         }
         return unmarshaller;
     }
@@ -313,7 +311,9 @@ public class MarshallerPool {
      * @param marshaller The marshaller to return to the pool.
      */
     public void release(final Marshaller marshaller) {
-        release(marshallers, marshaller);
+        if (marshaller instanceof Trapping.Marshaller) {
+            release(marshallers, (Trapping.Marshaller) marshaller);
+        }
     }
 
     /**
@@ -323,7 +323,9 @@ public class MarshallerPool {
      * @param unmarshaller The unmarshaller to return to the pool.
      */
     public void release(final Unmarshaller unmarshaller) {
-        release(unmarshallers, unmarshaller);
+        if (unmarshaller instanceof Trapping.Unmarshaller) {
+            release(unmarshallers, (Trapping.Unmarshaller) unmarshaller);
+        }
     }
 
     /**
