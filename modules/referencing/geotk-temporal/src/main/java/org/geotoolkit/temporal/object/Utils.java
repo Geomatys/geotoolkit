@@ -108,9 +108,13 @@ public final class Utils {
         final String dateFormat1 = "yyyy-MM-dd'T'HH:mm:ssZ";
         final String dateFormat2 = "yyyy-MM-dd";
         final String dateFormat3 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+        final String dateFormat4 = "yyyy-MM-dd'T'HH:mm:ss";
         final SimpleDateFormat sdf = new java.text.SimpleDateFormat(dateFormat1);
         final SimpleDateFormat sdf2 = new java.text.SimpleDateFormat(dateFormat2);
         final SimpleDateFormat sdf3 = new java.text.SimpleDateFormat(dateFormat3);
+        final SimpleDateFormat sdf4 = new java.text.SimpleDateFormat(dateFormat4);
+
+        boolean defaultTimezone = false;
 
         if (dateString.contains("T")) {
             String timezoneStr;
@@ -134,7 +138,7 @@ public final class Utils {
                 dateString = dateString.substring(0, dateString.length() - 1).concat("+0000");
             } else {
                 //e.g : 1985-04-12T10:15:30
-                dateString = dateString + "+0000";
+                defaultTimezone = true;
             }
             final String timezone = getTimeZone(dateString);
             sdf.setTimeZone(TimeZone.getTimeZone(timezone));
@@ -142,7 +146,12 @@ public final class Utils {
             if (dateString.contains(".")) {
                 return sdf3.parse(dateString);
             }
-            return sdf.parse(dateString);
+            if ( ! defaultTimezone ) {
+                return sdf.parse(dateString);
+            }else {
+                //applying default timezone
+                return sdf4.parse(dateString);
+            }
         }
         if (dateString.contains("-")) {
             return sdf2.parse(dateString);
