@@ -54,12 +54,13 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void createSchema(FeatureType featureType) throws IOException {
+    public synchronized void createSchema(Name name, FeatureType featureType) throws IOException {
         if(featureType == null){
             throw new NullPointerException("Feature type can not be null.");
         }
-
-        final Name name = featureType.getName();
+        if(name == null){
+            throw new NullPointerException("Name can not be null.");
+        }
 
         if(getSchema(name) != null){
             throw new IllegalArgumentException("FeatureType with name : " + featureType.getName() + " already exist.");
@@ -79,7 +80,7 @@ public class MemoryDataStore extends AbstractDataStore{
     public synchronized void updateSchema(Name typeName, FeatureType featureType) throws IOException {
         //todo must do it a way to avoid destroying all features.
         deleteSchema(typeName);
-        createSchema(featureType);
+        createSchema(typeName,featureType);
     }
 
     /**

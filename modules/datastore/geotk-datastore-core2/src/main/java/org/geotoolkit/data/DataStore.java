@@ -18,7 +18,7 @@ public interface DataStore {
 
     Set<Name> getNames() throws IOException;
 
-    void createSchema(FeatureType featureType) throws IOException;
+    void createSchema(Name typeName, FeatureType featureType) throws IOException;
 
     void updateSchema(Name typeName, FeatureType featureType) throws IOException;
 
