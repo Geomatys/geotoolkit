@@ -104,6 +104,14 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
+    public Object getQueryCapabilities() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public long getCount(Query query) throws IOException {
         final List<Feature> lst = features.get(query.getTypeName());
 
@@ -174,6 +182,10 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureWriter getFeatureWriterAppend(Name typeName) throws IOException {
+
+        //todo make a writer append
+        //make a generic iterator wish append to a callable ?
+
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

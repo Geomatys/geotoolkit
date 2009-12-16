@@ -21,6 +21,7 @@ package org.geotoolkit.data.memory;
 import java.io.IOException;
 import java.util.Set;
 import junit.framework.TestCase;
+
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.junit.After;
@@ -28,8 +29,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 
 /**
@@ -142,5 +143,41 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
     }
+
+    @Test
+    public void testFeatures() throws IOException {
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final MemoryDataStore store = new MemoryDataStore();
+
+
+        //create the schema
+        Name name = new DefaultName("http://test.com", "TestSchema1");
+        builder.reset();
+        builder.setName(name);
+        builder.add("att1", String.class);
+        final SimpleFeatureType type = builder.buildFeatureType();
+        store.createSchema(name,type);
+
+
+        //test reader with no features in datastore
+        //todo
+
+        //test a non existant type
+        //todo
+
+        //create a few features
+        //todo implemente the writer
+//        final FeatureWriter writer = store.getFeatureWriterAppend(name);
+//
+//        for(int i=0;i<10;i++){
+//            SimpleFeature f = (SimpleFeature) writer.next();
+//            f.setAttribute("att1", "hop"+i);
+//            writer.write();
+//        }
+//        writer.close();
+
+
+    }
+
 
 }

@@ -28,6 +28,17 @@ public interface DataStore {
 
     boolean isWriteable(Name typeName) throws IOException;
 
+    /**
+     * Retrieve informations about the query capabilites of this datastore.
+     * Some datastore may not be enough "intelligent" to support all
+     * parameters in the query.
+     * This capabilities can be used to fetch the list of what it can handle.
+     *
+     * @return QueryCapabilities
+     * @todo move query capabilities from old datastore model
+     */
+    Object getQueryCapabilities();
+
     long getCount(Query query) throws IOException;
 
     /**
