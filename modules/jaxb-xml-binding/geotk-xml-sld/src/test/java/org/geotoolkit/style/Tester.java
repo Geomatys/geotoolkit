@@ -258,7 +258,7 @@ public class Tester {
     private static LineSymbolizer createLineSymbolizer(){
         String name = "the line symbolizer name";
         Description desc = STYLE_FACTORY.description("Line symbolizer title", "Line symbolizer description");
-        Unit uom = SI.METER;
+        Unit uom = SI.METRE;
         String geom = "geom";
         
         Stroke stroke = STYLE_FACTORY.stroke(Color.RED, 3, new float[]{3,6});
@@ -299,7 +299,7 @@ public class Tester {
     private static RasterSymbolizer createRasterSymbolizer(){
         String name = "Raster symbolizer name";
         Description desc = STYLE_FACTORY.description("Raster symbolizer title", "Raster symbolizer description");
-        Unit uom = SI.METER;
+        Unit uom = SI.METRE;
         String geom = "geom";
         
         Expression opacity = FILTER_FACTORY.literal(0.5);

@@ -56,8 +56,8 @@ public class LenghtHandler implements CanvasHandler {
     public static final List<Unit> UNITS = new ArrayList<Unit>();
 
     static{
-        UNITS.add(SI.KILOMETER);
-        UNITS.add(SI.METER);
+        UNITS.add(SI.KILOMETRE);
+        UNITS.add(SI.METRE);
         UNITS.add(NonSI.MILE);
         UNITS.add(NonSI.INCH);
     }

@@ -165,8 +165,8 @@ public class J2DScaleBarUtilities {
          * "snap" the length to some number easier to read. For example the length 2371 will be
          * snapped to 2500. Finally, the new "snapped" length will be converted bach to pixel units.
          */
-        final Unit mapUnitX = mapCRS.getCoordinateSystem().getAxis(0).getUnit();
-        final Unit mapUnitY = mapCRS.getCoordinateSystem().getAxis(1).getUnit();
+        final Unit<?> mapUnitX = mapCRS.getCoordinateSystem().getAxis(0).getUnit();
+        final Unit<?> mapUnitY = mapCRS.getCoordinateSystem().getAxis(1).getUnit();
         if (mapUnitX == null || mapUnitY == null) {
             throw new NullPointerException("no unit for one axi.");
         }
@@ -175,15 +175,15 @@ public class J2DScaleBarUtilities {
         try {
 
             if (ellipsoid != null && ellipsoid instanceof DefaultEllipsoid) {
-                final UnitConverter xConverter = mapUnitX.getConverterTo(NonSI.DEGREE_ANGLE);
-                final UnitConverter yConverter = mapUnitY.getConverterTo(NonSI.DEGREE_ANGLE);
+                final UnitConverter xConverter = mapUnitX.getConverterToAny(NonSI.DEGREE_ANGLE);
+                final UnitConverter yConverter = mapUnitY.getConverterToAny(NonSI.DEGREE_ANGLE);
                 P1.setLocation(xConverter.convert(P1.getX()), yConverter.convert(P1.getY()));
                 P2.setLocation(xConverter.convert(P2.getX()), yConverter.convert(P2.getY()));
                 logicalLength = ((DefaultEllipsoid)ellipsoid).orthodromicDistance(P1, P2);
-                logicalLength = ellipsoid.getAxisUnit().getConverterTo(scaleUnit).convert(logicalLength);
+                logicalLength = ellipsoid.getAxisUnit().getConverterToAny(scaleUnit).convert(logicalLength);
             } else {
-                final UnitConverter xConverter = mapUnitX.getConverterTo(scaleUnit);
-                final UnitConverter yConverter = mapUnitY.getConverterTo(scaleUnit);
+                final UnitConverter xConverter = mapUnitX.getConverterToAny(scaleUnit);
+                final UnitConverter yConverter = mapUnitY.getConverterToAny(scaleUnit);
                 P1.setLocation(xConverter.convert(P1.getX()), yConverter.convert(P1.getY()));
                 P2.setLocation(xConverter.convert(P2.getX()), yConverter.convert(P2.getY()));
                 logicalLength = P1.distance(P2);

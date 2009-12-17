@@ -17,6 +17,8 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -134,9 +136,15 @@ public class DefaultFeatureResults extends DataFeatureCollection {
                     schema = FeatureTypeUtilities.createSubType(featureSource.getSchema(), query.getPropertyNames());
                 }
             } else {
+                URI namespace = null;
+                try {
+                    namespace = new URI(query.getTypeName().getNamespaceURI());
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(DefaultFeatureResults.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 // we need to change the projection of the origional type
                 schema = FeatureTypeUtilities.createSubType(origionalType, query.getPropertyNames(), 
-                        cs, query.getTypeName().getLocalPart(), null);
+                        cs, query.getTypeName().getLocalPart(), namespace);
             }
         } catch (SchemaException e) {
             // we were unable to create the schema requested!

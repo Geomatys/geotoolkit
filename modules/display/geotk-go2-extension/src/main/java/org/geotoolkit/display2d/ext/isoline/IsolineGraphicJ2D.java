@@ -301,7 +301,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 NumberRange.create(0, 255),
                 NumberRange.create(0, 30));
 
-        final GridSampleDimension dim = new GridSampleDimension("elevation", new Category[]{cat},SI.METER).geophysics(true);
+        final GridSampleDimension dim = new GridSampleDimension("elevation", new Category[]{cat},SI.METRE).geophysics(true);
 
         final GridCoverageFactory gcf = new GridCoverageFactory();
         return gcf.create("elevationgrid", raster, env, new GridSampleDimension[]{dim});

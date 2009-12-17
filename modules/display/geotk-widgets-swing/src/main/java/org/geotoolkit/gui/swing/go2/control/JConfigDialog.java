@@ -73,8 +73,8 @@ public class JConfigDialog extends javax.swing.JDialog {
         
 
         List<Unit> list = new ArrayList<Unit>();
-        list.add(SI.METER);
-        list.add(SI.KILOMETER);
+        list.add(SI.METRE);
+        list.add(SI.KILOMETRE);
         list.add(NonSI.FOOT);
         list.add(NonSI.MILE);
 

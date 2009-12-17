@@ -213,7 +213,6 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                         if (namespaceProperty != null) {
                             streamWriter.writeStartElement(geometryName.getNamespaceURI(), geometryName.getLocalPart());
                         } else {
-                            System.out.println("geometric namespace property nulllllll");
                             streamWriter.writeStartElement(geometryName.getLocalPart());
                         }
                         Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) a.getValue(), feature.getFeatureType().getCoordinateReferenceSystem());

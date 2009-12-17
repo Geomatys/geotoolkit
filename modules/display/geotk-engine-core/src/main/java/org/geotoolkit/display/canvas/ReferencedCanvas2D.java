@@ -354,12 +354,12 @@ public abstract class ReferencedCanvas2D extends ReferencedCanvas {
                  * mile, which is the length of an angle of 1 minute along the meridian at 45° of
                  * latitude.
                  */
-                m = unit.getConverterTo(SI.RADIAN).convert(m) *
+                m = unit.getConverterToAny(SI.RADIAN).convert(m) *
                         0.5*(ellipsoid.getSemiMajorAxis() + ellipsoid.getSemiMinorAxis());
                 unit = ellipsoid.getAxisUnit();
             }
             if (unit != null) {
-                m = unit.getConverterTo(SI.METER).convert(m);
+                m = unit.getConverterToAny(SI.METRE).convert(m);
             }
         } catch (ConversionException exception) {
             /*

@@ -226,6 +226,19 @@ public final class MemoryDataStore extends AbstractDataStore {
         if (collection == null) {
             throw new IllegalArgumentException("Provided FeatureCollection<SimpleFeatureType, SimpleFeature> is empty");
         }
+
+        final SimpleFeatureType featureType = collection.getSchema();
+        final Name typeName = featureType.getName();
+
+        if (!memory.containsKey(typeName)) {
+            try {
+                createSchema(featureType);
+            }catch(IOException ex){
+                getLogger().log(Level.SEVERE, "Could not create schema", ex);
+            }
+        }
+
+
         synchronized (memory) {
             try {
                 collection.accepts(new FeatureVisitor() {

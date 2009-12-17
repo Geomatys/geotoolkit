@@ -84,8 +84,8 @@ public class MesureUtilities {
                 lenght += calculator.getOrthodromicDistance();
             }
 
-            if(unit != SI.METER){
-                UnitConverter converter = SI.METER.getConverterTo(unit);
+            if(!SI.METRE.equals(unit)){
+                UnitConverter converter = SI.METRE.getConverterTo(unit);
                 lenght = converter.convert(lenght);
             }
 

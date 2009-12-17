@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.TransformException;
 public class GeometricUtilities {
     
     /**
-     *  WGS 1984 ellipsoid with axis in {@linkplain SI#METER metres}.
+     *  WGS 1984 ellipsoid with axis in {@linkplain SI#METRE metres}.
      */
     private static final DefaultEllipsoid DE = DefaultEllipsoid.WGS84;
 

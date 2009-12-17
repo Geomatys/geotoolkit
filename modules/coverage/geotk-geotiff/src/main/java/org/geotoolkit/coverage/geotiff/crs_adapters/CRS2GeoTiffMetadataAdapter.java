@@ -368,11 +368,11 @@ public final class CRS2GeoTiffMetadataAdapter {
 
         // getting the linear unit
         final Unit linearUnit = CRSUtilities.getUnit(projectedCRS.getCoordinateSystem());
-        if (linearUnit != null && !SI.METER.isCompatible(linearUnit)) {
+        if (linearUnit != null && !SI.METRE.isCompatible(linearUnit)) {
             throw new IllegalArgumentException("Non linear unit");
         }
-        if (SI.METER.isCompatible(linearUnit)) {
-            if (SI.METER.equals(linearUnit)) {
+        if (SI.METRE.isCompatible(linearUnit)) {
+            if (SI.METRE.equals(linearUnit)) {
                 metadata.addGeoShortParam(
                         GeoTiffPCSCodes.PROJ_LINEAR_UNITS_GEO_KEY,
                         GeoTiffUoMCodes.LINEAR_METER);
@@ -384,21 +384,21 @@ public final class CRS2GeoTiffMetadataAdapter {
                         GeoTiffPCSCodes.PROJ_LINEAR_UNITS_GEO_KEY,
                         GeoTiffUoMCodes.LINEAR_MILE_INTERNATIONAL_NAUTICAL);
                 metadata.addGeoDoubleParam(
-                        GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, linearUnit.getConverterTo(SI.METER).convert(1));
+                        GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, linearUnit.getConverterTo(SI.METRE).convert(1));
             }
             if (NonSI.FOOT.equals(linearUnit)) {
                 metadata.addGeoShortParam(
                         GeoTiffPCSCodes.PROJ_LINEAR_UNITS_GEO_KEY,
                         GeoTiffUoMCodes.LINEAR_FOOT);
                 metadata.addGeoDoubleParam(
-                        GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, linearUnit.getConverterTo(SI.METER).convert(1));
+                        GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, linearUnit.getConverterTo(SI.METRE).convert(1));
             }
             if (NonSI.YARD.equals(linearUnit)) {
                 metadata.addGeoShortParam(
                         GeoTiffPCSCodes.PROJ_LINEAR_UNITS_GEO_KEY,
                         GeoTiffUoMCodes.LINEAR_YARD_SEARS);// ??
                 metadata.addGeoDoubleParam(
-                        GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, linearUnit.getConverterTo(SI.METER).convert(1));
+                        GeoTiffPCSCodes.PROJ_LINEAR_UNITS_SIZE_GEO_KEY, linearUnit.getConverterTo(SI.METRE).convert(1));
             }
         }
     }
@@ -897,8 +897,8 @@ public final class CRS2GeoTiffMetadataAdapter {
         metadata.addGeoAscii(GeoTiffGCSCodes.GEOG_CITATION_GEO_KEY, unit.toString());// unitFormat.labelFor(unit)
 
         Unit base = null;
-        if (SI.METER.isCompatible(unit)) {
-            base = SI.METER;
+        if (SI.METRE.isCompatible(unit)) {
+            base = SI.METRE;
         } else if (SI.SECOND.isCompatible(unit)) {
             base = SI.SECOND;
         } else if (SI.RADIAN.isCompatible(unit)) {

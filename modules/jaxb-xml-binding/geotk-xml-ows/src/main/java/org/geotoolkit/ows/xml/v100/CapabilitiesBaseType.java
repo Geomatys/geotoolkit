@@ -78,10 +78,17 @@ public class CapabilitiesBaseType {
     private String updateSequence;
 
     /**
+     *Build the base of a Capabilities document.
+     */
+    public CapabilitiesBaseType(String version) {
+        this.version = version;
+    }
+
+    /**
      * Empty constructor used by JAXB.
      */
     protected CapabilitiesBaseType() {
-    }   
+    }
     
     /**
      * Build the base of a Capabilities document.
@@ -124,6 +131,10 @@ public class CapabilitiesBaseType {
      */
     public OperationsMetadata getOperationsMetadata() {
         return operationsMetadata;
+    }
+
+    public void setOperationsMetadata(OperationsMetadata operationsMetadata) {
+        this.operationsMetadata = operationsMetadata;
     }
 
     /**

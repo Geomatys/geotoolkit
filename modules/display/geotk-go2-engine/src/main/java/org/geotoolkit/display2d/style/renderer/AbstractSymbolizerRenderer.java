@@ -126,7 +126,7 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
             trs.setOriginalShape(shape);
             trs.scale(size, size);
             renderFill(trs, mark.getFill(), target);
-            renderStroke(trs, mark.getStroke(), SI.METER, target);
+            renderStroke(trs, mark.getStroke(), SI.METRE, target);
         }
 
     }

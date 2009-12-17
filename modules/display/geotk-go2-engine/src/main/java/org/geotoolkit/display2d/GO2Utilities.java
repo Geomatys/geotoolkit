@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import javax.measure.converter.LinearConverter;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
@@ -401,7 +402,7 @@ public final class GO2Utilities {
             if (axisUnit.isCompatible(symbolUnit)){
                 final UnitConverter converter = axisUnit.getConverterTo(symbolUnit);
 
-                if(!converter.isLinear()){
+                if(!(converter instanceof LinearConverter)){
                     throw new UnsupportedOperationException("Cannot convert nonlinear units yet");
                 }else{
                     converters.add(converter.convert(1) - converter.convert(0));

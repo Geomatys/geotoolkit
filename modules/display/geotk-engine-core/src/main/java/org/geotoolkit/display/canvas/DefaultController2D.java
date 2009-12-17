@@ -68,7 +68,7 @@ public class DefaultController2D implements CanvasController2D{
 
     private final Date[] dateRange = new Date[2];
     private final double[] elevationRange = new double[]{Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY};
-    private Unit<Length> elevationUnit = SI.METER;
+    private Unit<Length> elevationUnit = SI.METRE;
     
     public DefaultController2D(ReferencedCanvas2D canvas){
         this.canvas = canvas;
@@ -610,10 +610,10 @@ public class DefaultController2D implements CanvasController2D{
         final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
 
         final double distance;
-        if(unit.isCompatible(SI.METER)){
+        if(unit.isCompatible(SI.METRE)){
             final Point2D p1 = new Point2D.Double(P1[0], P1[1]);
             final Point2D p2 = new Point2D.Double(P2[0], P2[1]);
-            final UnitConverter conv = unit.getConverterTo(SI.METER);
+            final UnitConverter conv = unit.getConverterTo(SI.METRE);
             distance = conv.convert(p1.distance(p2));
         }else{
             try{

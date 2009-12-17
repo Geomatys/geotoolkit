@@ -276,7 +276,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         if(uom == null) return NonSI.PIXEL;
         
         if(UOM_METRE.equalsIgnoreCase(uom)){
-            return SI.METER;
+            return SI.METRE;
         }else if(UOM_FOOT.equalsIgnoreCase(uom)){
             return NonSI.FOOT;
         }else if(UOM_PIXEL.equalsIgnoreCase(uom)){

@@ -24,6 +24,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.BinarySpatialOperator;
@@ -82,12 +83,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     }
 
     protected static Unit toUnit(String str){
-        if(str.equalsIgnoreCase("kilometers")){
-            return Unit.valueOf("km");
-        }else if(str.equalsIgnoreCase("meters")){
-            return Unit.valueOf("m");
-        }
-        return Unit.valueOf(str);
+        return Units.valueOf(str);
     }
 
     /**
@@ -145,7 +141,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 return new Object[]{leftGeom,rightGeom,geomCRS};
             }else{
                 //the crs unit is not compatible, we must reproject both geometries to a more appropriate crs
-                if(SI.METER.isCompatible(unit)){
+                if(SI.METRE.isCompatible(unit)){
                     //in that case we reproject to mercator EPSG:3395
                     final MathTransform trs = CRS.findMathTransform(geomCRS, MERCATOR);
 
@@ -181,7 +177,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
                 rightMatch = rightGeom;
             }else{
                 //the crs unit is not compatible, we must reproject both geometries to a more appropriate crs
-                if(SI.METER.isCompatible(unit)){
+                if(SI.METRE.isCompatible(unit)){
                     //in that case we reproject to mercator EPSG:3395
                     matchingCRS = MERCATOR;
 

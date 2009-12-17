@@ -45,7 +45,7 @@ public class JUOMPane extends StyleElementEditor<Unit<Length>>{
 
     @Override
     public void parse(Unit<Length> target) {
-        if(SI.METER.equals(target)){
+        if(SI.METRE.equals(target)){
             jcb_uom.setSelectedIndex(1);
         }else if(NonSI.FOOT.equals(target)){
             jcb_uom.setSelectedIndex(2);
@@ -58,7 +58,7 @@ public class JUOMPane extends StyleElementEditor<Unit<Length>>{
     public Unit<Length> create() {
         switch(jcb_uom.getSelectedIndex()){
             case 1 :
-                return SI.METER;
+                return SI.METRE;
             case 2 :
                 return NonSI.FOOT;
             default :

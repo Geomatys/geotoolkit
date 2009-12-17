@@ -378,7 +378,7 @@ public class SEforSLD110Test extends TestCase{
         assertNotNull(lineSymbol);
         
         assertEquals(lineSymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(SI.METER, lineSymbol.getUnitOfMeasure());
+        assertEquals(SI.METRE, lineSymbol.getUnitOfMeasure());
         assertNotNull(lineSymbol.getStroke());
         
         assertEquals(lineSymbol.getStroke().getWidth().evaluate(null, Float.class), 13f);
@@ -488,7 +488,7 @@ public class SEforSLD110Test extends TestCase{
         assertNotNull(rasterSymbol);
         
         assertEquals(rasterSymbol.getGeometryPropertyName(), valueGeom);
-        assertEquals(SI.METER, rasterSymbol.getUnitOfMeasure());
+        assertEquals(SI.METRE, rasterSymbol.getUnitOfMeasure());
         
         assertNotNull(rasterSymbol.getChannelSelection());
         assertEquals(rasterSymbol.getChannelSelection().getRGBChannels()[0].getChannelName(), "band_1");

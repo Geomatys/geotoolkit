@@ -50,7 +50,7 @@ public class ScaleBarRenderer implements JRRenderable{
                             null,new Dimension(300,30),6,
                             false, 5, NumberFormat.getNumberInstance(),
                             Color.BLACK, Color.BLACK, Color.WHITE,
-                            3,true,false, new Font("Serial", Font.PLAIN, 8),true,SI.METER);
+                            3,true,false, new Font("Serial", Font.PLAIN, 8),true,SI.METRE);
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private Canvas canvas = null;
