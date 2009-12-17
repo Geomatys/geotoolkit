@@ -43,7 +43,7 @@ import org.opengis.filter.sort.SortOrder;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
+public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
     protected final R iterator;
@@ -103,6 +103,14 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void remove() {
+        iterator.remove();
+    }
+
+    /**
      * Wrap a FeatureReader that will sort features using the given sort by.
      *
      * @param <T> extends FeatureType
@@ -121,10 +129,6 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
             return iterator.getFeatureType();
         }
 
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
     }
 
     private static class SortByComparator<F extends Feature> implements Comparator<F>{
@@ -167,6 +171,13 @@ public abstract class GenericSortByFeatureIterator<F extends Feature, R extends 
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(FeatureReader<T,F> reader, SortBy[] orders){
         return new GenericSortByFeatureReader(reader, orders);
+    }
+
+    /**
+     * Wrap a FeatureIterator will a sort by order.
+     */
+    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, SortBy[] orders){
+        return new GenericSortByFeatureIterator(reader, orders);
     }
 
 }

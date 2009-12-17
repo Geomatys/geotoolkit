@@ -36,7 +36,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
+public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
     protected final R iterator;
@@ -100,6 +100,14 @@ public abstract class GenericFilterFeatureIterator<F extends Feature, R extends 
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void remove() {
+        iterator.remove();
+    }
+
+    /**
      * Wrap a FeatureReader with a filter.
      * 
      * @param <T> extends FeatureType
@@ -118,10 +126,6 @@ public abstract class GenericFilterFeatureIterator<F extends Feature, R extends 
             return iterator.getFeatureType();
         }
 
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
     }
 
     /**
@@ -144,14 +148,16 @@ public abstract class GenericFilterFeatureIterator<F extends Feature, R extends 
         }
 
         @Override
-        public void remove() {
-            iterator.remove();
-        }
-
-        @Override
         public void write() throws DataStoreRuntimeException {
             iterator.write();
         }
+    }
+
+    /**
+     * Wrap a FeatureIterator with a filter.
+     */
+    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, Filter filter){
+        return new GenericFilterFeatureIterator(reader, filter);
     }
 
     /**

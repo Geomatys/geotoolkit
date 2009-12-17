@@ -35,7 +35,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericMaxFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
+public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
     protected final R iterator;
@@ -85,6 +85,14 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void remove() {
+        iterator.remove();
+    }
+
+    /**
      * Wrap a FeatureReader with a max limit.
      * 
      * @param <T> extends FeatureType
@@ -103,10 +111,6 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
             return iterator.getFeatureType();
         }
 
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
     }
 
     /**
@@ -129,14 +133,16 @@ public abstract class GenericMaxFeatureIterator<F extends Feature, R extends Fea
         }
 
         @Override
-        public void remove() {
-            iterator.remove();
-        }
-
-        @Override
         public void write() throws DataStoreRuntimeException {
             iterator.write();
         }
+    }
+
+    /**
+     * Wrap a FeatureReader with a max limit.
+     */
+    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, int limit){
+        return new GenericMaxFeatureIterator(reader, limit);
     }
 
     /**

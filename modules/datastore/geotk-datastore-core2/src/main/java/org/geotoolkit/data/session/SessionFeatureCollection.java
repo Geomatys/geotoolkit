@@ -150,4 +150,12 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
         //todo
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureCollection<Feature> subCollection(Query query) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

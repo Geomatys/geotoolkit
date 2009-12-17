@@ -33,6 +33,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class DefaultSession implements Session {
 
@@ -69,9 +70,12 @@ public class DefaultSession implements Session {
      */
     @Override
     public FeatureReader getFeatureIterator(Query query) throws IOException {
+        for(final Delta alt : getDiff().alterations()){
+            query = alt.modify(query);
+        }
         FeatureReader reader = store.getFeatureReader(query);
         for(final Delta alt : getDiff().alterations()){
-            reader = alt.modify(reader);
+            reader = alt.modify(query,reader);
         }
         return reader;
     }
@@ -110,7 +114,7 @@ public class DefaultSession implements Session {
     public void commit() throws IOException {
         //todo : must lock on the diff to avoid sync issues
         for(final Delta alt : getDiff().alterations()){
-            alt.modify(store);
+            alt.commit(store);
             alt.dispose();
         }
     }
@@ -128,9 +132,12 @@ public class DefaultSession implements Session {
      */
     @Override
     public long getCount(Query query) throws IOException {
+        for(final Delta alt : getDiff().alterations()){
+            query = alt.modify(query);
+        }
         long count = store.getCount(query);
         for(final Delta alt : getDiff().alterations()){
-            count = alt.modify(count);
+            count = alt.modify(query,count);
         }
         return count;
     }
@@ -140,9 +147,12 @@ public class DefaultSession implements Session {
      */
     @Override
     public Envelope getEnvelope(Query query) throws IOException {
+        for(final Delta alt : getDiff().alterations()){
+            query = alt.modify(query);
+        }
         Envelope env = store.getEnvelope(query);
         for(final Delta alt : getDiff().alterations()){
-            env = alt.modify(env);
+            env = alt.modify(query,env);
         }
         return env;
     }

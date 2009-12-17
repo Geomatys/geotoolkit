@@ -30,13 +30,13 @@ public interface Delta {
 
     Query modify(Query query);
 
-    FeatureReader modify(FeatureReader reader);
+    FeatureReader modify(Query query, FeatureReader reader);
     
-    long modify(long count);
+    long modify(Query query, long count);
 
-    Envelope modify(Envelope env);
+    Envelope modify(Query query, Envelope env);
 
-    void modify(DataStore store);
+    void commit(DataStore store);
 
     void dispose();
 

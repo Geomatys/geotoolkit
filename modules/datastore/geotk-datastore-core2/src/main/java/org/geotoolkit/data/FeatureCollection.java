@@ -19,6 +19,8 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 
+import org.geotoolkit.data.query.Query;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.geometry.Envelope;
@@ -26,7 +28,7 @@ import org.opengis.geometry.Envelope;
 /**
  *
  * @author Johann Sorel (Geomatys)
- * @param <F>
+ * @param <F> extends Feature
  * @module pending
  */
 public interface FeatureCollection<F extends Feature> extends Collection<F> {
@@ -35,10 +37,18 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
 
     FeatureType getSchema();
 
-    Envelope getEnvelope();
+    Envelope getEnvelope() throws DataStoreException;
 
+    FeatureCollection<F> subCollection(Query query) throws DataStoreException;
+
+    /**
+     * Override Iterator to return a limited type FeatureIterator.
+     * 
+     * @return FeatureIterator
+     * @throws DataStoreRuntimeException
+     */
     @Override
-    FeatureIterator<F> iterator();
+    FeatureIterator<F> iterator() throws DataStoreRuntimeException;
 
     void addListener();
 

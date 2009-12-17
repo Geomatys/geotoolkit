@@ -34,7 +34,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericStartIndexFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
+public class GenericStartIndexFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
     protected final R iterator;
@@ -92,6 +92,14 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void remove() {
+        iterator.remove();
+    }
+
+    /**
      * Wrap a FeatureReader with a start index.
      *
      * @param <T> extends FeatureType
@@ -110,10 +118,6 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
             return iterator.getFeatureType();
         }
 
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
     }
 
     /**
@@ -134,16 +138,18 @@ public abstract class GenericStartIndexFeatureIterator<F extends Feature, R exte
         public T getFeatureType() {
             return iterator.getFeatureType();
         }
-
-        @Override
-        public void remove() {
-            iterator.remove();
-        }
-
+        
         @Override
         public void write() throws DataStoreRuntimeException {
             iterator.write();
         }
+    }
+
+    /**
+     * Wrap a FeatureIterator with a start index.
+     */
+    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, int limit){
+        return new GenericStartIndexFeatureIterator(reader, limit);
     }
 
     /**
