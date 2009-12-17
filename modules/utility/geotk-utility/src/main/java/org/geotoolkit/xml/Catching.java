@@ -19,7 +19,7 @@ package org.geotoolkit.xml;
 
 
 /**
- * Common interface for (un)marshallers capable to trap errors which may occur while processing
+ * Common interface for (un)marshallers capable to catch errors which may occur while processing
  * some kind of objects. This allows client code to control the behavior of the (un)marshalling
  * process when an element can not be processed. For example if an element in a XML document can
  * not be parsed as a {@linkplain java.net.URL}, the default behavior is to throw an exception
@@ -35,7 +35,7 @@ package org.geotoolkit.xml;
  *         List<String> messages = new ArrayList<String>();
  *
  *         // Collects the warnings and allows the process to continue.
- *         protected boolean exceptionOccured(Exception e) {
+ *         protected <T> boolean exceptionOccured(T value, Class<T> sourceType, Class<T> targetType, Exception e) {
  *             mesages.add(e.getLocalizedMessage());
  *             return true;
  *         }
@@ -45,7 +45,7 @@ package org.geotoolkit.xml;
  *     // Not all errors are trapped - see the ObjectConverters
  *     // javadoc for more details.
  *     Warnings myWarningList = new Warnings();
- *     Trapping.Unmarshaller um = marshallerPool.acquireUnmarshaller();
+ *     Catching.Unmarshaller um = marshallerPool.acquireUnmarshaller();
  *     um.setObjectConverter(myWarningList);
  *     Object obj = um.unmarshal(xml);
  *     marshallerPool.release(um);
@@ -63,9 +63,9 @@ package org.geotoolkit.xml;
  * @since 3.07
  * @module
  */
-public interface Trapping {
+public interface Catching {
     /**
-     * JAXB {@linkplain javax.xml.bind.Marshaller marshaller} combined with the {@link Trapping}
+     * JAXB {@linkplain javax.xml.bind.Marshaller marshaller} combined with the {@link Catching}
      * interface. This is the specialized marshaller returned by {@link MarshallerPool}.
      *
      * @author Martin Desruisseaux (Geomatys)
@@ -74,11 +74,11 @@ public interface Trapping {
      * @since 3.07
      * @module
      */
-    interface Marshaller extends javax.xml.bind.Marshaller, Trapping {
+    interface Marshaller extends javax.xml.bind.Marshaller, Catching {
     }
 
     /**
-     * JAXB {@linkplain javax.xml.bind.Unmarshaller unmarshaller} combined with the {@link Trapping}
+     * JAXB {@linkplain javax.xml.bind.Unmarshaller unmarshaller} combined with the {@link Catching}
      * interface. This is the specialized unmarshaller returned by {@link MarshallerPool}.
      *
      * @author Martin Desruisseaux (Geomatys)
@@ -87,7 +87,7 @@ public interface Trapping {
      * @since 3.07
      * @module
      */
-    interface Unmarshaller extends javax.xml.bind.Unmarshaller, Trapping {
+    interface Unmarshaller extends javax.xml.bind.Unmarshaller, Catching {
     }
 
     /**
@@ -103,7 +103,7 @@ public interface Trapping {
      * Sets a new converters to use for some kind of objects found in XML documents. If this
      * method is never invoked, then failure to parse an {@linkplain java.net.URL} (for example)
      * from a XML document will cause the unmarshalling to fail. Client code can set their
-     * own converter which trap the errors instead.
+     * own converter which catch the errors instead.
      *
      * @param converters The new converters for some kind of objects found in XML documents.
      */

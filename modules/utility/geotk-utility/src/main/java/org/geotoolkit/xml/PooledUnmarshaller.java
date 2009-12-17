@@ -48,7 +48,7 @@ import org.xml.sax.InputSource;
  * @module
  */
 @Decorator(javax.xml.bind.Unmarshaller.class)
-final class PooledUnmarshaller extends Pooled implements Trapping.Unmarshaller {
+final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
     /**
      * The wrapper marshaller which does the real work.
      */

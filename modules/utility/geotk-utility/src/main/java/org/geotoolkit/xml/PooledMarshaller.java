@@ -47,7 +47,7 @@ import org.geotoolkit.internal.jaxb.XmlUtilities;
  * @module
  */
 @Decorator(javax.xml.bind.Marshaller.class)
-final class PooledMarshaller extends Pooled implements Trapping.Marshaller {
+final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     /**
      * The wrapper marshaller which does the real work.
      */

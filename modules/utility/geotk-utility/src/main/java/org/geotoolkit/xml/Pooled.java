@@ -40,7 +40,7 @@ import javax.xml.validation.Schema;
  * @since 3.00
  * @module
  */
-abstract class Pooled implements Trapping {
+abstract class Pooled implements Catching {
     /**
      * The prefix of property names which are internal to Sun implementation of JAXB.
      */
@@ -223,7 +223,7 @@ abstract class Pooled implements Trapping {
 
 
     ////////////////                                               ////////////////
-    ////////////////   Methods related to the Trapping interface   ////////////////
+    ////////////////   Methods related to the Catching interface   ////////////////
     ////////////////                                               ////////////////
 
     /**

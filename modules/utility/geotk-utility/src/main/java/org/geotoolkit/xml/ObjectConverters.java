@@ -50,7 +50,7 @@ import java.net.MalformedURLException;
  *     }
  * }
  *
- * See the {@link Trapping} javadoc for an example of registering a custom
+ * See the {@link Catching} javadoc for an example of registering a custom
  * {@code ObjectConverters} to a (un)marshaller.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -63,7 +63,7 @@ public class ObjectConverters {
     /**
      * The default, thread-safe and immutable instance. This instance defines the
      * converters used during every (un)marshalling if no {@code ObjectConverters}
-     * was {@linkplain Trapping#setObjectConverters explicitly set}.
+     * was {@linkplain Catching#setObjectConverters explicitly set}.
      */
     public static final ObjectConverters DEFAULT = new ObjectConverters();
 
@@ -94,29 +94,37 @@ public class ObjectConverters {
     }
 
     /**
-     * Invoked when an exception occured in any {@code toXXX} method. The default implementation
+     * Invoked when an exception occured in any {@code toXXX(...)} method. The default implementation
      * does nothing and return {@code false}, which will cause the (un)marshalling process of the
      * whole XML document to fail.
      * <p>
      * This method provides a single hook that subclasses can override in order to provide their
      * own error handling for every methods defined in this class, like the example documented in
-     * the {@link Trapping} javadoc. Subclasses also have the possibility to override individual
-     * {@code toXXX} method, like the example provided in this <a href="#skip-navbar_top">class
+     * the {@link Catching} javadoc. Subclasses also have the possibility to override individual
+     * {@code toXXX(...)} methods, like the example provided in this <a href="#skip-navbar_top">class
      * javadoc</a>.
      *
-     * @param  exception The exception that occured.
+     * @param  <T> The compile-time type of the {@code sourceType} argument.
+     * @param  value The value that can't be converted.
+     * @param  sourceType The base type of the value to convert. This is determined by the argument
+     *         type of the method that catched the exception. For example the source type is always
+     *         {@code URI.class} if the exception has been catched by the {@link #toURL(URI)} method.
+     * @param  targetType The expected type of the converted object.
+     * @param  exception The exception that occured during the attempt to convert.
      * @return {@code true} if the (un)marshalling process should continue despite this error,
      *         or {@code false} (the default) if the exception should be propagated, thus causing
      *         the (un)marshalling to fail.
      */
-    protected boolean exceptionOccured(final Exception exception) {
+    protected <T> boolean exceptionOccured(T value, Class<T> sourceType, Class<?> targetType,
+            Exception exception)
+    {
         return false;
     }
 
     /**
      * Converts the given URL to a URI. The default implementation is as below, omitting
-     * the check for null value and the call to {@link #exceptionOccured(Exception)} in
-     * case of error:
+     * the check for null value and the call to {@link #exceptionOccured exceptionOccured}
+     * in case of error:
      *
      * {@preformat java
      *     return value.toURI();
@@ -133,7 +141,7 @@ public class ObjectConverters {
         if (value != null) try {
             return value.toURI();
         } catch (URISyntaxException e) {
-            if (!exceptionOccured(e)) {
+            if (!exceptionOccured(value, URL.class, URI.class, e)) {
                 throw e;
             }
         }
@@ -142,8 +150,8 @@ public class ObjectConverters {
 
     /**
      * Converts the given URI to a URL. The default implementation is as below, omitting
-     * the check for null value and the call to {@link #exceptionOccured(Exception)} in
-     * case of error:
+     * the check for null value and the call to {@link #exceptionOccured exceptionOccured}
+     * in case of error:
      *
      * {@preformat java
      *     return value.toURL();
@@ -154,17 +162,17 @@ public class ObjectConverters {
      *         exception was thrown and {@code exceptionOccured} returned {@code true}.
      * @throws MalformedURLException If the given URI can not be converted to a URL.
      *
-     * @see URL#toURI()
+     * @see URI#toURL()
      */
     public URL toURL(final URI value) throws MalformedURLException {
         if (value != null) try {
             return value.toURL();
         } catch (MalformedURLException e) {
-            if (!exceptionOccured(e)) {
+            if (!exceptionOccured(value, URI.class, URL.class, e)) {
                 throw e;
             }
         } catch (IllegalArgumentException e) {
-            if (!exceptionOccured(e)) {
+            if (!exceptionOccured(value, URI.class, URL.class, e)) {
                 throw e;
             }
         }
