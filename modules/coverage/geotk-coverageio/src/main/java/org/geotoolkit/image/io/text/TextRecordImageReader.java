@@ -123,9 +123,9 @@ public class TextRecordImageReader extends TextImageReader {
     /**
      * Constructs a new image reader.
      *
-     * @param provider the provider that is invoking this constructor, or {@code null} if none.
+     * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
-    public TextRecordImageReader(final ImageReaderSpi provider) {
+    public TextRecordImageReader(final Spi provider) {
         super(provider);
     }
 

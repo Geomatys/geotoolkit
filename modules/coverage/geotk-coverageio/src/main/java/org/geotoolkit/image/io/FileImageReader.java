@@ -60,10 +60,9 @@ public abstract class FileImageReader extends StreamImageReader {
     /**
      * Constructs a new image reader.
      *
-     * @param provider The {@link ImageReaderSpi} that is invoking this constructor,
-     *        or {@code null} if none.
+     * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
-    public FileImageReader(final ImageReaderSpi provider) {
+    protected FileImageReader(final Spi provider) {
         super(provider);
     }
 

@@ -61,9 +61,9 @@ public class TextMatrixImageWriter extends TextImageWriter {
     /**
      * Constructs a new image writer.
      *
-     * @param provider the provider that is invoking this constructor, or {@code null} if none.
+     * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      */
-    protected TextMatrixImageWriter(final ImageWriterSpi provider) {
+    protected TextMatrixImageWriter(final Spi provider) {
         super(provider);
     }
 
@@ -154,6 +154,11 @@ public class TextMatrixImageWriter extends TextImageWriter {
      */
     public static class Spi extends TextImageWriter.Spi {
         /**
+         * The provider of the corresponding image reader.
+         */
+        private static final String[] READERS = {"org.geotoolkit.image.io.text.TextMatrixImageReader.Spi"};
+
+        /**
          * Constructs a default {@code TextMatrixImageWriter.Spi}. The fields are initialized as
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can modify
          * those values if desired.
@@ -165,6 +170,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
             names           = TextMatrixImageReader.Spi.NAMES;
             MIMETypes       = TextMatrixImageReader.Spi.MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.TextMatrixImageWriter";
+            readerSpiNames  = READERS;
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
         }

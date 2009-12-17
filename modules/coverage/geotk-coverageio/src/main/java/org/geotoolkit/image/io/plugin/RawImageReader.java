@@ -97,7 +97,7 @@ public class RawImageReader extends SpatialImageReader {
      *
      * @param provider the {@link ImageReaderSpi} that is invoking this constructor, or null.
      */
-    public RawImageReader(final ImageReaderSpi provider) {
+    public RawImageReader(final Spi provider) {
         super(provider);
     }
 

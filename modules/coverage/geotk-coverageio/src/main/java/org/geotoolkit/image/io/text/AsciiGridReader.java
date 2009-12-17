@@ -236,9 +236,9 @@ public class AsciiGridReader extends TextImageReader {
     /**
      * Constructs a new image reader.
      *
-     * @param provider the provider that is invoking this constructor, or {@code null} if none.
+     * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
-    protected AsciiGridReader(final ImageReaderSpi provider) {
+    protected AsciiGridReader(final Spi provider) {
         super(provider);
     }
 
@@ -757,7 +757,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         }
         ImageReader binaryReader = this.binaryReader;
         if (binaryReader == null) {
-            this.binaryReader = binaryReader = new RawReader(getOriginatingProvider());
+            this.binaryReader = binaryReader = new RawReader(null);
         }
         final InputStream binaryStream;
         try {
@@ -804,7 +804,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         /**
          * Creates a new reader. The provider is set to the ASCII grid reader provider.
          */
-        RawReader(final ImageReaderSpi provider) {
+        RawReader(final Spi provider) {
             super(provider);
         }
 
@@ -919,6 +919,11 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         static final String[] MIME_TYPES = {"text/plain", "text/x-ascii-grid"};
 
         /**
+         * The provider of the corresponding image writer.
+         */
+        private static final String[] WRITERS = {"org.geotoolkit.image.io.text.AsciiGridWriter.Spi"};
+
+        /**
          * Constructs a default {@code AsciiGridReader.Spi}. The fields are initialized as
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
          * modify those values if desired.
@@ -931,6 +936,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
             suffixes        = SUFFIXES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.AsciiGridReader";
+            writerSpiNames  = WRITERS;
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             locale          = Locale.US;

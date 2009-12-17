@@ -103,9 +103,9 @@ public abstract class TextImageWriter extends StreamImageWriter {
     /**
      * Constructs a {@code TextImageWriter}.
      *
-     * @param provider The {@code ImageWriterSpi} that is constructing this object, or {@code null}.
+     * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      */
-    protected TextImageWriter(final ImageWriterSpi provider) {
+    protected TextImageWriter(final Spi provider) {
         super(provider);
     }
 
@@ -399,7 +399,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * @since 2.4
      * @module
      */
-    public static abstract class Spi extends StreamImageWriter.Spi {
+    protected static abstract class Spi extends StreamImageWriter.Spi {
         /**
          * List of legal output types for {@link TextImageWriter}.
          */
@@ -449,7 +449,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.
          */
-        public Spi() {
+        protected Spi() {
             outputTypes = OUTPUT_TYPES;
             suffixes    = TextImageReader.Spi.SUFFIXES;
         }

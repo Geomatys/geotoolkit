@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.lang.Static;
@@ -38,7 +39,7 @@ import org.geotoolkit.resources.Errors;
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 3.01
  * @module
@@ -197,5 +198,39 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
             } while (!XArrays.contains(spi.getFormatNames(), format));
         }
         return spi;
+    }
+
+    /**
+     * Wraps the given input in an {@link ImageInputStream}, given preference to uncached streams
+     * if possible. It may be faster when reading small images or when reading just the first few
+     * bytes (for example in order to determine if a file is in a known format).
+     * <p>
+     * If no uncached stream can be created, this method fallbacks on the default cached stream.
+     *
+     * @param  input The input for which we want an image input stream.
+     * @return The image input stream, or {@code null} if no suitable stream were found.
+     * @throws IOException If an error occured while creating the stream.
+     *
+     * @since 3.07
+     */
+    public static ImageInputStream createUncachedImageInputStream(final Object input) throws IOException {
+        ImageInputStreamSpi fallback = null;
+        final Iterator<ImageInputStreamSpi> it = IIORegistry.getDefaultInstance()
+                .getServiceProviders(ImageInputStreamSpi.class, true);
+        while (it.hasNext()) {
+            final ImageInputStreamSpi spi = it.next();
+            if (spi.getInputClass().isInstance(input)) {
+                if (!spi.needsCacheFile()) {
+                    return spi.createInputStreamInstance(input, false, ImageIO.getCacheDirectory());
+                }
+                if (fallback == null) {
+                    fallback = spi;
+                }
+            }
+        }
+        if (fallback != null) {
+            return fallback.createInputStreamInstance(input, false, ImageIO.getCacheDirectory());
+        }
+        return null;
     }
 }

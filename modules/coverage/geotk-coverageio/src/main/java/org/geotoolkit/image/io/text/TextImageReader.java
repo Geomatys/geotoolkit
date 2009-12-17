@@ -71,9 +71,9 @@ public abstract class TextImageReader extends StreamImageReader {
     /**
      * Constructs a new image reader.
      *
-     * @param provider The provider that is invoking this constructor, or {@code null} if none.
+     * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
-    protected TextImageReader(final ImageReaderSpi provider) {
+    protected TextImageReader(final Spi provider) {
         super(provider);
     }
 
@@ -411,7 +411,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * @since 2.4
      * @module
      */
-    public static abstract class Spi extends StreamImageReader.Spi {
+    protected static abstract class Spi extends StreamImageReader.Spi {
         /**
          * List of legal input types for {@link TextImageReader}.
          */
@@ -473,7 +473,7 @@ public abstract class TextImageReader extends StreamImageReader {
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.
          */
-        public Spi() {
+        protected Spi() {
             inputTypes = INPUT_TYPES;
             suffixes   = SUFFIXES;
             padValue   = Double.NaN;

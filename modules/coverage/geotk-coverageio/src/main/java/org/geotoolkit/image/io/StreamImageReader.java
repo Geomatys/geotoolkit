@@ -95,7 +95,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @param provider The {@link ImageReaderSpi} that is invoking this constructor,
      *        or {@code null} if none.
      */
-    protected StreamImageReader(final ImageReaderSpi provider) {
+    protected StreamImageReader(final Spi provider) {
         super(provider);
     }
 
@@ -354,7 +354,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @since 2.4
      * @module
      */
-    public static abstract class Spi extends ImageReaderSpi {
+    protected static abstract class Spi extends ImageReaderSpi {
         /**
          * List of legal input types for {@link StreamImageReader}.
          */

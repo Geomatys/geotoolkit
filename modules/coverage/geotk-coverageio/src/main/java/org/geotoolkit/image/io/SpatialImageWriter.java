@@ -86,7 +86,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
     /**
      * Constructs a {@code SpatialImageWriter}.
      *
-     * @param provider The {@code ImageWriterSpi} that is constructing this object, or {@code null}.
+     * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      */
     protected SpatialImageWriter(final ImageWriterSpi provider) {
         super(provider);

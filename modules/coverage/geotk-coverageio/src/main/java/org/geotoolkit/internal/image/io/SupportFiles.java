@@ -34,7 +34,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
  * Those additional files have the {@code ".tfw"} or {@code ".prj"} suffixes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 3.00
  * @module
@@ -59,59 +59,74 @@ public final class SupportFiles {
      * <p>
      * This method returns preferrably a file with lower case extension. However if no
      * such file exists but a file of the same name with upper case extension exists,
-     * then the later is returned. If none of them are found but a file with the {@code tfw}
-     * extension exists, then that file is returned. If all the above fail, then the returned
-     * file is the one with the given extension.
+     * then the later is returned.
+     * <p>
+     * If none of the above was found and the {@code tfw} argument is {@code true}, then
+     * if a file with the same name and extension than the given {@code file}, with only
+     * a {@code 'w'} character appended, is found, then that file is returned. Otherwise
+     * if a file with the {@code tfw} extension exists, that file is returned.
+     * <p>
+     * If all the above fail, then the returned file is the one with the given extension.
      *
-     * @param file The file, or {@code null}.
-     * @param extension The wanted extension in lower cases and without the dot separator.
-     * @return the file with the given extension, or {@code null} if the given file was null.
+     * @param  file The image file.
+     * @param  extension The wanted extension in lower cases and without the dot separator.
+     * @param  tfw {@code true} if this method is invoked for the TFW file.
+     * @return the file with the given extension.
      */
-    @SuppressWarnings("fallthrough")
-    private static File toSupportFile(File file, final String extension) {
-        if (file != null) {
-            String name = file.getName();
-            final File parent = file.getParentFile();
-            final int separator = name.lastIndexOf('.');
-            if (separator >= 0) {
-                if (extension.equalsIgnoreCase(name.substring(separator + 1))) {
-                    /*
-                     * Already a file having the requested extension. If the file exists, we
-                     * are done. Otherwise continue in order to try lower case and upper case.
-                     */
-                    if (file.isFile()) {
-                        return file;
-                    }
+    private static File toSupportFile(final File file, final String extension, final boolean tfw) {
+        final File parent = file.getParentFile();
+        final StringBuilder buffer = new StringBuilder(file.getName());
+        int base = buffer.lastIndexOf(".");
+        final String currentExtension;
+        if (base >= 0) {
+            currentExtension = buffer.substring(++base);
+            buffer.setLength(base);
+        } else {
+            currentExtension = "";
+            base = buffer.append('.').length();
+        }
+        File fallback = file;
+        final int stop = tfw ? 6 : 2;
+        for (int i=0; i<stop; i++) {
+            switch (i) {
+                case 0: buffer.append(extension); break;
+                case 1: buffer.append(extension.toUpperCase()); break;
+                case 2: {
+                    buffer.append(currentExtension).append('w');
+                    break;
                 }
-                name = name.substring(0, separator + 1);
-            } else {
-                name += '.';
+                case 3: {
+                    buffer.append(currentExtension.toUpperCase()).append('W');
+                    break;
+                }
+                case 4: {
+                    if (extension.equals("tfw")) {
+                        continue;
+                    }
+                    buffer.append("tfw");
+                    break;
+                }
+                case 5: {
+                    if (extension.equals("TFW")) {
+                        continue;
+                    }
+                    buffer.append("TFW");
+                    break;
+                }
+                default: throw new AssertionError(i);
             }
-            final String basename = name;
-attempts:   for (int i=0; ; i++) {
-                switch (i) {
-                    case 0: name = basename + extension;               break;
-                    case 1: name = basename + extension.toUpperCase(); break;
-                    case 2: if (!extension.equals("tfw")) {
-                        name = basename + "tfw";
-                        break;
-                    }
-                    case 3: if (!extension.equals("TFW")) {
-                        name = basename + "TFW";
-                        break;
-                    }
-                    default: break attempts;
-                }
-                final File candidate = new File(parent, name);
-                if (candidate.isFile()) {
-                    return candidate;
-                }
-                if (i == 0) {
-                    file = candidate;
-                }
+            final File candidate = new File(parent, buffer.toString());
+            if (candidate.isFile()) {
+                return candidate;
+            }
+            buffer.setLength(base);
+            // Retain the first attempt, which will be
+            // used as a fallback if no file was found.
+            if (i == 0) {
+                fallback = candidate;
             }
         }
-        return file;
+        return fallback;
     }
 
     /**
@@ -173,7 +188,7 @@ attempts:   for (int i=0; ; i++) {
      *         errors while parsing the numbers.
      */
     public static AffineTransform parseTFW(File file) throws IOException {
-        file = toSupportFile(file, toSuffixTFW(file));
+        file = toSupportFile(file, toSuffixTFW(file), true);
         if (!file.isFile()) {
             // Formats our own error message instead of the JSE one in order to localize it.
             throw new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, file.getName()));
@@ -215,6 +230,6 @@ attempts:   for (int i=0; ; i++) {
      *         errors while parsing the WKT.
      */
     public static CoordinateReferenceSystem parsePRJ(File file) throws IOException {
-        return PrjFiles.read(toSupportFile(file, "prj"));
+        return PrjFiles.read(toSupportFile(file, "prj", false));
     }
 }

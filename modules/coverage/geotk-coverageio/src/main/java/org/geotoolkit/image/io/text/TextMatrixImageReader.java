@@ -96,9 +96,9 @@ public class TextMatrixImageReader extends TextImageReader {
     /**
      * Constructs a new image reader.
      *
-     * @param provider the provider that is invoking this constructor, or {@code null} if none.
+     * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
-    protected TextMatrixImageReader(final ImageReaderSpi provider) {
+    protected TextMatrixImageReader(final Spi provider) {
         super(provider);
     }
 
@@ -468,6 +468,11 @@ public class TextMatrixImageReader extends TextImageReader {
         static final String[] MIME_TYPES = {"text/plain", "text/x-matrix"};
 
         /**
+         * The provider of the corresponding image writer.
+         */
+        private static final String[] WRITERS = {"org.geotoolkit.image.io.text.TextMatrixImageWriter.Spi"};
+
+        /**
          * Constructs a default {@code TextMatrixImageReader.Spi}. The fields are initialized as
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can modify
          * those values if desired.
@@ -479,6 +484,7 @@ public class TextMatrixImageReader extends TextImageReader {
             names           = NAMES;
             MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.TextMatrixImageReader";
+            writerSpiNames  = WRITERS;
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
         }

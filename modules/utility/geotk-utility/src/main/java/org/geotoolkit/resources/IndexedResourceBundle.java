@@ -698,7 +698,7 @@ public class IndexedResourceBundle extends ResourceBundle {
     }
 
     /**
-     * Localize and format the message string from a log record. This method performs a work
+     * Localizes and formats the message string from a log record. This method performs a work
      * similar to {@link java.util.logging.Formatter#formatMessage}, except that the work will be
      * delegated to {@link #getString(int, Object)} if the {@linkplain LogRecord#getResourceBundle
      * record resource bundle} is an instance of {@code IndexedResourceBundle}.

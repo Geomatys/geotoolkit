@@ -131,9 +131,9 @@ public class AsciiGridWriter extends TextImageWriter {
     /**
      * Constructs a new image writer.
      *
-     * @param provider the provider that is invoking this constructor, or {@code null} if none.
+     * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      */
-    protected AsciiGridWriter(final ImageWriterSpi provider) {
+    protected AsciiGridWriter(final Spi provider) {
         super(provider);
     }
 
@@ -398,6 +398,11 @@ public class AsciiGridWriter extends TextImageWriter {
      */
     public static class Spi extends TextImageWriter.Spi {
         /**
+         * The provider of the corresponding image reader.
+         */
+        private static final String[] READERS = {"org.geotoolkit.image.io.text.AsciiGridReader.Spi"};
+
+        /**
          * Constructs a default {@code AsciiGridWriter.Spi}. The fields are initialized as
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
          * modify those values if desired.
@@ -410,6 +415,7 @@ public class AsciiGridWriter extends TextImageWriter {
             MIMETypes       = AsciiGridReader.Spi.MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.text.AsciiGridWriter";
             vendorName      = "Geotoolkit.org";
+            readerSpiNames  = READERS;
             version         = Version.GEOTOOLKIT.toString();
             locale          = Locale.US;
             charset         = Charset.forName("US-ASCII");

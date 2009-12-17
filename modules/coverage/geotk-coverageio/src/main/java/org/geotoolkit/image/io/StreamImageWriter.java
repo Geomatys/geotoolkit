@@ -83,10 +83,9 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
     /**
      * Constructs a new image writer.
      *
-     * @param provider The {@link ImageWriterSpi} that is invoking this constructor,
-     *        or {@code null} if none.
+     * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      */
-    protected StreamImageWriter(final ImageWriterSpi provider) {
+    protected StreamImageWriter(final Spi provider) {
         super(provider);
     }
 
@@ -256,7 +255,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * @since 2.4
      * @module
      */
-    public static abstract class Spi extends ImageWriterSpi {
+    protected static abstract class Spi extends ImageWriterSpi {
         /**
          * List of legal output types for {@link StreamImageWriter}.
          */
@@ -278,7 +277,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
          * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.
          */
-        public Spi() {
+        protected Spi() {
             outputTypes = OUTPUT_TYPES;
         }
 

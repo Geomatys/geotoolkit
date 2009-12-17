@@ -112,8 +112,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     /**
      * Constructs a new image reader.
      *
-     * @param provider The {@link ImageReaderSpi} that is invoking this constructor,
-     *        or {@code null} if none.
+     * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
     protected SpatialImageReader(final ImageReaderSpi provider) {
         super(provider);

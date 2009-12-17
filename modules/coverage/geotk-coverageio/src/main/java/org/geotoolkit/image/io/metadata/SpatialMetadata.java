@@ -347,27 +347,60 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
         @SuppressWarnings("unchecked")
         T object = (T) instances.get(type);
         if (object == null) {
-            final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
-            /*
-             * The normal usage is to invoke this method for a singleton. However if the user
-             * invoked this method for a list (he should have invoked 'getListForType(Class)'
-             * instead), returns the first element of that list as a convenience, creating an
-             * empty one if needed.
-             */
-            if (accessor.allowsChildren()) {
-                final List<T> list = getListForType(type);
-                if (list.isEmpty()) {
-                    accessor.appendChild();
-                }
-                object = list.get(0);
-            } else {
-                // The normal case (singleton).
-                object = accessor.getUserObject(type);
-                if (object == null) {
-                    object = accessor.newProxyInstance(type);
-                }
-            }
+            object = getInstanceForType(type, new MetadataAccessor(this, null, type));
             instances.put(type, object);
+        }
+        return object;
+    }
+
+    /**
+     * Returns an instance of the given type extracted from this {@code IIOMetadata} at the given
+     * path. This method performs the same work than {@link #getInstanceForType(Class)}, except
+     * that the path is explicitly specified instead than automatically inferred from the type.
+     * <p>
+     * <b>Example:</b>
+     *
+     * {@preformat java
+     *     EnvironmentalRecord er = getInstanceForType(EnvironmentalRecord.class, "AcquisitionMetadata/EnvironmentalConditions");
+     * }
+     *
+     * {@note At the opposite of <code>getInstanceForType(Class)</code>, the current implementation
+     *        of this method does not cache the returned proxy. Caching may be implemented in a
+     *        future version.}
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface implemented by the instance to fetch.
+     * @param  path The path where to fetch the metadata.
+     * @return An implementation of the given interface.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @since 3.07
+     */
+    public <T> T getInstanceForType(final Class<T> type, final String path) throws IllegalArgumentException {
+        return getInstanceForType(type, new MetadataAccessor(this, null, path, "#auto"));
+    }
+
+    /**
+     * Returns the instance for the given type using the given accessor.
+     * <p>
+     * The normal usage is to invoke this method for a singleton. However if the user invoked
+     * this method for a list (he should have invoked {@link #getListForType(Class)} instead),
+     * returns the first element of that list as a convenience, creating an empty one if needed.
+     */
+    private <T> T getInstanceForType(final Class<T> type, final MetadataAccessor accessor) {
+        T object;
+        if (accessor.allowsChildren()) {
+            final List<T> list = getListForType(type);
+            if (list.isEmpty()) {
+                accessor.appendChild();
+            }
+            object = list.get(0);
+        } else {
+            // The normal case (singleton).
+            object = accessor.getUserObject(type);
+            if (object == null) {
+                object = accessor.newProxyInstance(type);
+            }
         }
         return object;
     }
@@ -399,6 +432,37 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
             lists.put(type, list);
         }
         return list;
+    }
+
+    /**
+     * Returns a list of instances of the given type extracted from this {@code IIOMetadata} at the
+     * given path. This method performs the same work than {@link #getListForType(Class)}, except
+     * that the path and the name of children are explicitly specified instead than automatically
+     * inferred from the type.
+     * <p>
+     * <b>Example:</b>
+     *
+     * {@preformat java
+     *     Instrument it = getListForType(Instrument.class, "AcquisitionMetadata/Platform/Instruments", "Instrument");
+     * }
+     *
+     * {@note At the opposite of <code>getListForType(Class)</code>, the current implementation
+     *        of this method does not cache the returned proxy. Caching may be implemented in a
+     *        future version.}
+     *
+     * @param  <T> The compile-time type specified as the {@code type} argument.
+     * @param  type The interface implemented by the elements of the list to fetch.
+     * @param  path The path of the parent node where to fetch the metadata.
+     * @param  children The name of children under the parent node.
+     * @return A list of implementations of the given interface.
+     * @throws IllegalArgumentException If the given type is not a valid interface.
+     *
+     * @since 3.07
+     */
+    public <T> List<T> getListForType(final Class<T> type, final String path, final String children)
+            throws IllegalArgumentException
+    {
+        return new MetadataAccessor(this, null, path, children).newProxyList(type);
     }
 
     /**
