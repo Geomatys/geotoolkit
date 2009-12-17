@@ -45,6 +45,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -180,6 +181,56 @@ public class SessionTest extends TestCase{
 
         assertEquals(store.getCount(query),3);
         assertEquals(session.getCount(query),4);
+
+        reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("string"),"hop4");
+            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("date"),new Date(100L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
+
+        //check that he new feature is available in the session and in the datastore
+        session.commit();
+
+        assertEquals(store.getCount(query),4);
+        assertEquals(session.getCount(query),4);
+
+        //make a more deep test to find our feature
+        reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("string"),"hop4");
+            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("date"),new Date(100L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
+        reader = store.getFeatureReader(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("string"),"hop4");
+            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("date"),new Date(100L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
 
 
     }

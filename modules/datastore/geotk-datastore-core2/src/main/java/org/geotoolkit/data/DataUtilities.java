@@ -35,7 +35,7 @@ public class DataUtilities {
     }
 
     public static FeatureCollection sequence(String id, FeatureCollection... collections) {
-        return new FeatureCollectionGroup(id, collections);
+        return new FeatureCollectionSequence(id, collections);
     }
 
     public static <F extends Feature> FeatureIterator<F> sequence(FeatureIterator<F> ... iterators){
@@ -55,11 +55,11 @@ public class DataUtilities {
      * @author Johann Sorel (Geomatys)
      * @module pending
      */
-    private static class FeatureCollectionGroup extends AbstractFeatureCollection {
+    private static class FeatureCollectionSequence extends AbstractFeatureCollection {
 
         private final FeatureCollection[] wrapped;
 
-        private FeatureCollectionGroup(String id, FeatureCollection[] wrapped) {
+        private FeatureCollectionSequence(String id, FeatureCollection[] wrapped) {
             super(id, (SimpleFeatureType) wrapped[0].getSchema());
             this.wrapped = wrapped;
         }
@@ -94,11 +94,11 @@ public class DataUtilities {
         }
 
         public static FeatureCollection sequence(FeatureCollection... cols) {
-            return new FeatureCollectionGroup("collection-1", cols);
+            return new FeatureCollectionSequence("collection-1", cols);
         }
 
         public static FeatureCollection sequence(String id, FeatureCollection... cols) {
-            return new FeatureCollectionGroup(id, cols);
+            return new FeatureCollectionSequence(id, cols);
         }
 
         private class SequenceIterator implements FeatureIterator {
@@ -184,6 +184,7 @@ public class DataUtilities {
                 throw new IllegalArgumentException("Iterators can not be empty or null");
             }
             this.wrapped = wrapped;
+            active = wrapped[0];
         }
 
         @Override
@@ -258,6 +259,7 @@ public class DataUtilities {
                 throw new IllegalArgumentException("Readers can not be empty or null");
             }
             this.wrapped = wrapped;
+            active = wrapped[0];
         }
 
         @Override

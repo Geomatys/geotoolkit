@@ -25,17 +25,21 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
 /**
+ * Delta which add a collection of features.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @todo make this concurrent
  */
 public class AddDelta extends AbstractDelta{
 
@@ -107,6 +111,22 @@ public class AddDelta extends AbstractDelta{
      */
     @Override
     public void commit(DataStore store) throws DataStoreException {
+        final FeatureWriter writer = store.getFeatureWriterAppend(type);
+
+        try{
+            for(final Feature f : features){
+                final Feature candidate = writer.next();
+
+                for(final Property property : f.getProperties()){
+                    candidate.getProperty(property.getName()).setValue(property.getValue());
+                }
+
+                writer.write();
+            }
+        }finally{
+            writer.close();
+        }
+
     }
 
     /**
@@ -114,6 +134,7 @@ public class AddDelta extends AbstractDelta{
      */
     @Override
     public void dispose() {
+        features.clear();
     }
 
 }

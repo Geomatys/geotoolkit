@@ -85,8 +85,7 @@ public class DefaultSession implements Session {
      */
     @Override
     public void add(Name groupName, Collection newFeatures) {
-        throw new UnsupportedOperationException("Not supported yet.");
-        //todo must add a new alteration
+        diff.add(new AddDelta(groupName, newFeatures));
     }
 
     /**
