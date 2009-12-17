@@ -24,9 +24,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import org.geotoolkit.data.DataStoreException;
 
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.query.QueryBuilder;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -42,6 +44,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.primitive.Graphic;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -102,7 +105,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     public SimpleFeature getFeature(){
         try {
             return getCompleteFeature(getFeatureId());
-        } catch (IOException ex) {
+        } catch (DataStoreException ex) {
             Logging.getLogger(DefaultGraphicFeatureJ2D.class).log(Level.SEVERE, null, ex);
         }
 
@@ -218,19 +221,20 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
         return dispBounds;
     }
 
-    private SimpleFeature getCompleteFeature(FeatureId id)throws IOException{
+    private SimpleFeature getCompleteFeature(FeatureId id)throws DataStoreException{
 
         if(layer != null){
             Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
 
             SimpleFeature feature = null;
 
-            final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = layer.getFeatureSource().getFeatures(filter);
+            final FeatureCollection<? extends Feature> collection =
+                    layer.getCollection().subCollection(QueryBuilder.filtered(null, filter));
 
             if(!collection.isEmpty()){
-                final FeatureIterator<SimpleFeature> ite = collection.features();
+                final FeatureIterator<? extends Feature> ite = collection.iterator();
                 if(ite.hasNext()){
-                    feature = ite.next();
+                    feature = (SimpleFeature) ite.next();
                 }
                 ite.close();
             }

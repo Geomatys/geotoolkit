@@ -98,7 +98,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-datastore-core</artifactId>
+      <artifactId>geotk-datastore-core2</artifactId>
       <version>${geotoolkit.version}</version>
     </dependency>
 

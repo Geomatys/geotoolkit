@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.container.statefull;
 
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,9 +27,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.geometry.Envelope2D;
@@ -89,7 +88,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
         params = new StatefullContextParams(canvas,layer);
-        dataCRS = layer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
+        dataCRS = layer.getCollection().getSchema().getCoordinateReferenceSystem();
     }
 
     private synchronized void updateCache(RenderingContext2D context){
@@ -157,7 +156,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             return;
         }
 
-        final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();
+        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
         final FeatureType schema                                 = fs.getSchema();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
@@ -222,10 +221,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         if(monitor.stopRequested()) return;
 
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> features;
+        final FeatureCollection<SimpleFeature> features;
         try{
-            features = fs.getFeatures(query);
-        }catch(IOException ex){
+            features = fs.subCollection(query);
+        }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.SEVERE);
             //can not continue this layer with this error
             return;
@@ -245,10 +244,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         
     }
 
-    private void renderByFeatureOrder(FeatureCollection<SimpleFeatureType,SimpleFeature> features,
+    private void renderByFeatureOrder(FeatureCollection<SimpleFeature> features,
             CanvasMonitor monitor, RenderingContext2D context, CachedRule[] rules){
         // read & paint in the same thread, all symbolizer for each feature
-        final FeatureIterator<SimpleFeature> iterator = features.features();
+        final FeatureIterator<SimpleFeature> iterator = features.iterator();
 
         //sort the rules
         final int elseRuleIndex = sortByElseRule(rules);
@@ -309,10 +308,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
     }
 
-    private void renderBySymbolOrder(FeatureCollection<SimpleFeatureType,SimpleFeature> features,
+    private void renderBySymbolOrder(FeatureCollection<SimpleFeature> features,
             CanvasMonitor monitor, RenderingContext2D context, CachedRule[] rules){
         // read & paint in the same thread, all symbolizer for each feature
-        final FeatureIterator<SimpleFeature> iterator = features.features();
+        final FeatureIterator<SimpleFeature> iterator = features.iterator();
 
         List<StatefullProjectedFeature> cycle = new ArrayList<StatefullProjectedFeature>();
 
@@ -388,7 +387,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             final RenderingContext2D context, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
         updateCache(context);
 
-        final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();
+        final FeatureCollection<SimpleFeature> fs               = (FeatureCollection<SimpleFeature>) layer.getCollection();
         final FeatureType schema                                 = fs.getSchema();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
@@ -462,10 +461,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
 
 
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> features;
+        final FeatureCollection<SimpleFeature> features;
         try{
-            features = fs.getFeatures(query);
-        }catch(IOException ex){
+            features = fs.subCollection(query);
+        }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.SEVERE);
             //can not continue this layer with this error
             return graphics;
@@ -480,7 +479,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final int elseRuleIndex = sortByElseRule(rules);
 
         // read & paint in the same thread
-        final FeatureIterator<SimpleFeature> iterator = features.features();
+        final FeatureIterator<SimpleFeature> iterator = features.iterator();
         try{
             while(iterator.hasNext()){
                 final SimpleFeature feature = iterator.next();

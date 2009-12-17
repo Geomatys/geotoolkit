@@ -7,26 +7,28 @@ package org.geotoolkit.map;
 
 import java.io.IOException;
 import junit.framework.TestCase;
+
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
-import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.Feature;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
 /**
@@ -73,27 +75,23 @@ public class MapLayerTest extends TestCase{
     }
 
     @Test
-    public void testLayer() throws IOException {
+    public void testLayer() throws DataStoreException {
 
         try{
-            MapBuilder.createFeatureLayer((FeatureSource<SimpleFeatureType, SimpleFeature>)null, null);
+            MapBuilder.createFeatureLayer(null, null);
             throw new IllegalArgumentException("Creating maplayer with null source should raise an error");
         }catch(Exception ex){
             //ok
         }
 
-        try{
-            MapBuilder.createFeatureLayer((FeatureCollection<SimpleFeatureType, SimpleFeature>)null, null);
-            throw new IllegalArgumentException("Creating maplayer with null source should raise an error");
-        }catch(Exception ex){
-            //ok
-        }
-
+        final Name name = new DefaultName("test");
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.setName("test");
+        builder.setName(name);
+        SimpleFeatureType type = builder.buildFeatureType();
 
-        DataStore ds = MemoryDataStore.create(builder.buildFeatureType());
-        FeatureSource<SimpleFeatureType, SimpleFeature> fs = ds.getFeatureSource(ds.getTypeNames()[0]);
+        DataStore ds = new MemoryDataStore();
+        ds.createSchema(name,type);
+        FeatureCollection<SimpleFeature> fs = ds.createSession().features(QueryBuilder.all(name));
 
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());

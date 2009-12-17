@@ -128,7 +128,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
         if (layer != null) {
             guiFields.removeAll();
 
-            final Collection<PropertyDescriptor> col = layer.getFeatureSource().getSchema().getDescriptors();
+            final Collection<PropertyDescriptor> col = layer.getCollection().getSchema().getDescriptors();
             final Iterator<PropertyDescriptor> it = col.iterator();
 
             final List<String> vec = new ArrayList<String>();

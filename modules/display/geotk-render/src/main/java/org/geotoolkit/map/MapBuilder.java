@@ -22,12 +22,12 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.CoverageReader;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.MutableStyle;
 
 import org.geotoolkit.style.MutableStyleFactory;
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
@@ -63,18 +63,12 @@ public final class MapBuilder {
         final MutableStyleFactory factory = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
         return new EmptyMapLayer(factory.style());
     }
-    /**
-     * Create a default feature maplayer with a featuresource and a style.
-     */
-    public static FeatureMapLayer createFeatureLayer(final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource, final MutableStyle style){
-        return new DefaultFeatureMapLayer(featureSource, style);
-    }
 
     /**
      * Create a default feature maplayer with a featurecollection and a style.
      */
-    public static FeatureMapLayer createFeatureLayer(final FeatureCollection<SimpleFeatureType, SimpleFeature> collection, final MutableStyle style){
-        return createFeatureLayer( DataUtilities.source(collection), style );
+    public static FeatureMapLayer createFeatureLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style){
+        return new DefaultFeatureMapLayer(collection, style);
     }
 
     /**

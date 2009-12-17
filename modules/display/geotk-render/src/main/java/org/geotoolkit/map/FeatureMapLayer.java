@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+
+import org.opengis.feature.Feature;
 import org.opengis.filter.Id;
 
 /**
@@ -36,7 +36,7 @@ public interface FeatureMapLayer extends MapLayer{
      *
      * @return The features for this layer, can not be null.
      */
-    FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource();
+    FeatureCollection<? extends Feature> getCollection();
     
     
     /**

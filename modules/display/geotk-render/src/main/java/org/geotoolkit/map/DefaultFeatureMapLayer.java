@@ -17,21 +17,18 @@
  */
 package org.geotoolkit.map;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.FeatureSource;
-
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.style.MutableStyle;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.Feature;
 import org.opengis.geometry.Envelope;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -42,28 +39,28 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
 
-    private final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
+    private final FeatureCollection<? extends Feature> collection;
 
     /**
      * Creates a new instance of DefaultFeatureMapLayer
      * 
-     * @param featureSource : the data source for this layer
+     * @param collection : the data source for this layer
      * @param style : the style used to represent this layer
      */
-    DefaultFeatureMapLayer(FeatureSource<SimpleFeatureType, SimpleFeature> featureSource, MutableStyle style) {
+    DefaultFeatureMapLayer(FeatureCollection<? extends Feature> collection, MutableStyle style) {
         super(style);
-        if (featureSource == null) {
+        if (collection == null) {
             throw new NullPointerException("FeatureSource and Style can not be null");
         }
-        this.featureSource = featureSource;
+        this.collection = collection;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource() {
-        return this.featureSource;
+    public FeatureCollection<? extends Feature> getCollection() {
+        return this.collection;
     }
     
     /**
@@ -72,13 +69,11 @@ final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
     @Override
     public Envelope getBounds() {
 
-        final CoordinateReferenceSystem sourceCrs = featureSource.getSchema().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem sourceCrs = collection.getSchema().getCoordinateReferenceSystem();
         Envelope env = null;
         try {
-            env = featureSource.getBounds();
-        } catch (MismatchedDimensionException e) {
-            LOGGER.log(Level.SEVERE, "Could not create referecenced envelope.",e);
-        } catch (IOException e) {
+            env = collection.getEnvelope();
+        } catch (DataStoreException e) {
             LOGGER.log(Level.SEVERE, "Could not create referecenced envelope.",e);
         }
 

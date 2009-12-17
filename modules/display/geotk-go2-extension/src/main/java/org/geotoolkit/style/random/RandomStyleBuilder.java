@@ -30,15 +30,13 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-
-import org.geotoolkit.data.FeatureSource;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
-
 import org.geotoolkit.factory.Hints;
+
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
@@ -168,7 +166,7 @@ public class RandomStyleBuilder extends Factory {
         return style;
     }
 
-    public MutableStyle createDefaultVectorStyle(FeatureSource<SimpleFeatureType, SimpleFeature> fs){
+    public MutableStyle createDefaultVectorStyle(FeatureCollection<SimpleFeature> fs){
 
         final Symbolizer ps;
 
@@ -193,7 +191,7 @@ public class RandomStyleBuilder extends Factory {
         return style;
     }
     
-    public MutableStyle createRandomVectorStyle(FeatureSource<SimpleFeatureType, SimpleFeature> fs) {
+    public MutableStyle createRandomVectorStyle(FeatureCollection<SimpleFeature> fs) {
         
         final Symbolizer ps;
         final FeatureType typ = fs.getSchema();

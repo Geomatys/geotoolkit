@@ -17,13 +17,12 @@
 
 package org.geotoolkit.data.session;
 
-import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 
@@ -36,13 +35,13 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SessionFeatureCollection extends AbstractCollection<Feature> implements FeatureCollection<Feature>{
+public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>{
 
     private final Session session;
-    private final String id;
     private final Query query;
 
     public SessionFeatureCollection(Session session, String id, Query query){
+        super(id,null);
         if(session == null){
             throw new NullPointerException("Session can not be null.");
         }
@@ -53,17 +52,9 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
             throw new NullPointerException("Query can not be null.");
         }
         this.session = session;
-        this.id = id;
         this.query = query;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getID() {
-        return id;
-    }
 
     /**
      * {@inheritDoc }
@@ -132,30 +123,6 @@ public class SessionFeatureCollection extends AbstractCollection<Feature> implem
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void addListener() {
-        //todo
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeListener() {
-        //todo
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureCollection<Feature> subCollection(Query query) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

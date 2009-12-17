@@ -28,17 +28,14 @@ import java.util.Map;
 import java.util.logging.Level;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
-
 import org.geotoolkit.util.collection.NotifiedCheckedList;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -245,7 +242,6 @@ final class DefaultMapContext implements MapContext {
         }
         GeneralEnvelope result = null;
 
-        FeatureSource<SimpleFeatureType, SimpleFeature> fs;
         GeneralEnvelope env;
         CoordinateReferenceSystem sourceCrs;
         for(final MapLayer layer : layers){

@@ -20,7 +20,6 @@ package org.geotoolkit.map;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 
-import org.geotoolkit.data.FeatureSource;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.style.MutableStyle;
 

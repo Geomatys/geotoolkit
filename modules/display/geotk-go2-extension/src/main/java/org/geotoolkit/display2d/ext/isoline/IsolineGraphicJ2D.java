@@ -52,6 +52,8 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -62,8 +64,8 @@ import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.logging.Logging;
 
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -113,10 +115,10 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         final AffineTransform objToDisp = context.getObjectiveToDisplay();
 
         try {
-            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection =
-                    layer.getFeatureSource().getFeatures(layer.getQuery());
+            final FeatureCollection<SimpleFeature> collection =
+                    (FeatureCollection<SimpleFeature>) layer.getCollection();
 
-            final FeatureIterator<SimpleFeature> iterator = collection.features();
+            final FeatureIterator<SimpleFeature> iterator = collection.iterator();
             final List<Coordinate> coords = new ArrayList<Coordinate>();
             double minx = Double.POSITIVE_INFINITY;
             double miny = Double.POSITIVE_INFINITY;
@@ -138,7 +140,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             }catch(IOException ex){
                 LOGGER.log(Level.WARNING, "Could not calculate isoline matrice",ex);
             }finally {
-                collection.close(iterator);
+                iterator.close();
             }
 
             final int s = coords.size();
@@ -249,7 +251,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 g2.fill(shape);
             }
 
-        } catch (IOException ex) {
+        } catch (DataStoreRuntimeException ex) {
             Logger.getLogger(IsolineGraphicJ2D.class.getName()).log(Level.SEVERE, null, ex);
         }
 

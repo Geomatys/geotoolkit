@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
+import org.geotoolkit.data.DataStoreException;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -37,10 +38,9 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-
-import org.geotoolkit.data.collection.FeatureIterator;
-
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -333,7 +333,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the different numeric attributs
-        SimpleFeatureType schema = layer.getFeatureSource().getSchema();
+        SimpleFeatureType schema = (SimpleFeatureType) layer.getCollection().getSchema();
 
         for(PropertyDescriptor desc : schema.getDescriptors()){
             Class<?> type = desc.getType().getBinding();
@@ -368,7 +368,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the extreme values
-        final QueryBuilder query = new QueryBuilder(layer.getFeatureSource().getSchema().getName());
+        final QueryBuilder query = new QueryBuilder(layer.getCollection().getSchema().getName());
 
         if(classification == null || layer == null) return;
 
@@ -384,7 +384,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
         FeatureIterator<SimpleFeature> features = null;
         try{
-            features = layer.getFeatureSource().getFeatures(query.buildQuery()).features();
+            features = (FeatureIterator<SimpleFeature>) layer.getCollection().subCollection(query.buildQuery()).iterator();
             List<Double> values = new ArrayList<Double>();
 
             while(features.hasNext()){
@@ -425,7 +425,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                 median = allValues[allValues.length / 2];
             }
 
-        }catch(IOException ex){
+        }catch(DataStoreException ex){
             ex.printStackTrace();
         }finally{
             if(features != null){

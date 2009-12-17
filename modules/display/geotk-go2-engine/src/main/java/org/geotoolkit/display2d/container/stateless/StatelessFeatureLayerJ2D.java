@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import org.geotoolkit.data.DataStoreException;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -53,9 +54,8 @@ import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -98,7 +98,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //we abort painting if the layer is not visible.
         if (!layer.isVisible()) return;  
 
-        final SimpleFeatureType sft = layer.getFeatureSource().getSchema();
+        final SimpleFeatureType sft = (SimpleFeatureType) layer.getCollection().getSchema();
         final CachedRule[] rules;
 
         final Filter selectionFilter = layer.getSelectionFilter();
@@ -173,7 +173,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return;
         }
 
-        final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();
+        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
         final FeatureType schema                                 = fs.getSchema();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
@@ -246,10 +246,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         if(monitor.stopRequested()) return;
         
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> features;
+        final FeatureCollection<SimpleFeature> features;
         try{
-            features = fs.getFeatures(query);
-        }catch(IOException ex){
+            features = fs.subCollection(query);
+        }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
             //can not continue this layer with this error
             return;
@@ -282,7 +282,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final int elseRuleIndex = sortByElseRule(rules);
 
         // read & paint in the same thread
-        final FeatureIterator<SimpleFeature> iterator = features.features();
+        final FeatureIterator<SimpleFeature> iterator = features.iterator();
         try{
             while(iterator.hasNext()){
                 if(monitor.stopRequested()) return;
@@ -334,7 +334,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
 
-        final FeatureSource<SimpleFeatureType, SimpleFeature> fs = layer.getFeatureSource();
+        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
         final FeatureType schema                                 = fs.getSchema();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
@@ -384,10 +384,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         builder.setProperties(atts);
         final Query query = builder.buildQuery();
         
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> features;
+        final FeatureCollection<SimpleFeature> features;
         try{
-            features = fs.getFeatures(query);
-        }catch(IOException ex){
+            features = fs.subCollection(query);
+        }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
             //can not continue this layer with this error
             return graphics;
@@ -419,7 +419,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
 
         // iterate and find the first graphic that hit the given point
-        final FeatureIterator<SimpleFeature> iterator = features.features();
+        final FeatureIterator<SimpleFeature> iterator = features.iterator();
 //        final StatelessProjectedFeature graphic = new StatelessProjectedFeature(getCanvas(), getCanvas().getObjectiveCRS());
 
 //        try {
@@ -496,7 +496,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //nothing visible so no possible selection
         if (!layer.isVisible()) return graphics;
 
-        final Name featureTypeName = layer.getFeatureSource().getSchema().getName();
+        final Name featureTypeName = layer.getCollection().getSchema().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getGeographicScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least

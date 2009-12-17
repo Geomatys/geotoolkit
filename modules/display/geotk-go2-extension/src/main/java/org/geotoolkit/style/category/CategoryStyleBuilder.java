@@ -29,11 +29,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -111,7 +113,7 @@ public class CategoryStyleBuilder extends Factory {
 
         properties.clear();
         if(layer != null){
-            SimpleFeatureType schema = layer.getFeatureSource().getSchema();
+            SimpleFeatureType schema = (SimpleFeatureType) layer.getCollection().getSchema();
 
             for(PropertyDescriptor desc : schema.getDescriptors()){
                 Class<?> type = desc.getType().getBinding();
@@ -257,18 +259,20 @@ public class CategoryStyleBuilder extends Factory {
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(layer.getFeatureSource().getSchema().getName());
+        builder.setTypeName(layer.getCollection().getSchema().getName());
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 
         FeatureIterator<SimpleFeature> features = null;
         try{
-            features = layer.getFeatureSource().getFeatures(query).features();
+            features = (FeatureIterator<SimpleFeature>) layer.getCollection().subCollection(query).iterator();
             while(features.hasNext()){
                 final SimpleFeature feature = features.next();
                 differentValues.add(property.evaluate(feature));
             }
-        }catch(IOException ex){
+        }catch(DataStoreException ex){
+            ex.printStackTrace();
+        }catch(DataStoreRuntimeException ex){
             ex.printStackTrace();
         }finally{
             if(features != null){
