@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.uom;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.geotoolkit.measure.Units;
+import org.geotoolkit.xml.ObjectConverters;
 
 
 /**
@@ -28,7 +28,7 @@ import org.geotoolkit.measure.Units;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.07
  *
  * @since 2.5
  * @module
@@ -43,13 +43,7 @@ public final class UnitAdapter extends XmlAdapter<String, Unit<?>> {
      */
     @Override
     public Unit<?> unmarshal(String value) throws IllegalArgumentException {
-        if (value != null) {
-            value = value.trim();
-            if (value.length() != 0) {
-                return Units.valueOf(value);
-            }
-        }
-        return null;
+        return ObjectConverters.current().toUnit(value);
     }
 
     /**

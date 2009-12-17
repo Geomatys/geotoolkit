@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.metadata.Obligation;
+import org.geotoolkit.internal.CodeLists;
 
 
 /**
@@ -28,7 +29,7 @@ import org.opengis.metadata.Obligation;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.07
  *
  * @since 2.5
  * @module
@@ -39,14 +40,10 @@ public final class ObligationAdapter extends XmlAdapter<String, Obligation> {
      *
      * @param value The obligation name.
      * @return The obligation enumeration for the given name.
-     * @throws IllegalArgumentException If the given name is unknown.
      */
     @Override
-    public Obligation unmarshal(String value) throws IllegalArgumentException {
-        if (value == null || (value = value.trim()).length() == 0) {
-            return null;
-        }
-        return Obligation.valueOf(value);
+    public Obligation unmarshal(String value) {
+        return CodeLists.valueOf(Obligation.class, value);
     }
 
     /**

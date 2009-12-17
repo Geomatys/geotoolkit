@@ -22,13 +22,15 @@ import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.geotoolkit.xml.ObjectConverters;
+
 
 /**
  * JAXB adapter wrapping a URI value with a {@code <gco:CharacterString>}
  * element, for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.07
  *
  * @since 2.5
  * @module
@@ -65,10 +67,7 @@ public final class URINameAdapter extends XmlAdapter<URINameAdapter, URI> {
      */
     @Override
     public URI unmarshal(final URINameAdapter value) throws URISyntaxException {
-        if (value == null || value.uri == null) {
-            return null;
-        }
-        return new URI(value.uri);
+        return (value != null) ? ObjectConverters.current().toURI(value.uri) : null;
     }
 
     /**

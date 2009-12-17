@@ -21,6 +21,9 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+import javax.measure.unit.Unit;
+
+import org.geotoolkit.measure.Units;
 
 
 /**
@@ -119,6 +122,60 @@ public class ObjectConverters {
             Exception exception)
     {
         return false;
+    }
+
+    /**
+     * Converts the given string to a unit. The default implementation is as below, omitting
+     * the check for null value and the call to {@link #exceptionOccured exceptionOccured}
+     * in case of error:
+     *
+     * {@preformat java
+     *     return Units.valueOf(value);
+     * }
+     *
+     * @param  value The string to convert to a unit, or {@code null}.
+     * @return The converted unit, or {@code null} if the given value was null of if an
+     *         exception was thrown and {@code exceptionOccured} returned {@code true}.
+     * @throws IllegalArgumentException If the given string can not be converted to a unit.
+     *
+     * @see Units#valueOf(String)
+     */
+    public Unit<?> toUnit(String value) throws IllegalArgumentException {
+        if (value != null && (value = value.trim()).length() != 0) try {
+            return Units.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            if (!exceptionOccured(value, String.class, Unit.class, e)) {
+                throw e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given string to a URI. The default implementation is as below, omitting
+     * the check for null value and the call to {@link #exceptionOccured exceptionOccured}
+     * in case of error:
+     *
+     * {@preformat java
+     *     return new URI(value);
+     * }
+     *
+     * @param  value The string to convert to a URI, or {@code null}.
+     * @return The converted URI, or {@code null} if the given value was null of if an
+     *         exception was thrown and {@code exceptionOccured} returned {@code true}.
+     * @throws URISyntaxException If the given string can not be converted to a URI.
+     *
+     * @see URI#URI(String)
+     */
+    public URI toURI(String value) throws URISyntaxException {
+        if (value != null && (value = value.trim()).length() != 0) try {
+            return new URI(value);
+        } catch (URISyntaxException e) {
+            if (!exceptionOccured(value, String.class, URI.class, e)) {
+                throw e;
+            }
+        }
+        return null;
     }
 
     /**

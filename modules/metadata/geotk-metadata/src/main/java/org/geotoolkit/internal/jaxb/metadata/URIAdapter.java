@@ -70,10 +70,7 @@ public final class URIAdapter extends XmlAdapter<URIAdapter, URI> {
      */
     @Override
     public URI unmarshal(final URIAdapter value) throws URISyntaxException {
-        if (value == null) {
-            return null;
-        }
-        return ObjectConverters.current().toURI(value.url);
+        return (value != null) ? ObjectConverters.current().toURI(value.url) : null;
     }
 
     /**
