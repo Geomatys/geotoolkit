@@ -42,7 +42,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -506,8 +505,9 @@ public class MemoryDatastoreTest extends TestCase{
         try{
             while(reader.hasNext()){
                 SimpleFeature f = (SimpleFeature) reader.next();
+                assertEquals(f.getAttributeCount(), 2);
                 assertTrue( f.getAttribute(0) instanceof String );
-                assertTrue( f.getAttribute(1) instanceof Double );
+                assertTrue( f.getAttribute(1) instanceof Date );
             }
         }finally{
             reader.close();

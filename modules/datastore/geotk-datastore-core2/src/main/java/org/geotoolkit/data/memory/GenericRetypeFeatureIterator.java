@@ -42,17 +42,14 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         implements FeatureIterator<F> {
 
     protected final R iterator;
-    protected final FeatureType mask;
 
     /**
      * Creates a new instance of GenericRetypeFeatureIterator
      *
      * @param iterator FeatureReader to limit
-     * @param FeatureType the expected type
      */
-    private GenericRetypeFeatureIterator(final R iterator, final FeatureType mask) {
+    private GenericRetypeFeatureIterator(final R iterator) {
         this.iterator = iterator;
-        this.mask = mask;
     }
 
     /**
@@ -139,9 +136,11 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
          * Creates retyped features
          */
         private final SimpleFeatureBuilder builder;
+        protected final T mask;
 
-        private GenericRetypeFeatureReader(R reader, FeatureType mask){
-            super(reader,mask);
+        private GenericRetypeFeatureReader(R reader, T mask){
+            super(reader);
+            this.mask = mask;
             types = typeAttributes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
             builder = new SimpleFeatureBuilder((SimpleFeatureType) mask);
         }
@@ -162,7 +161,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
 
         @Override
         public T getFeatureType() {
-            return iterator.getFeatureType();
+            return mask;
         }
 
         @Override

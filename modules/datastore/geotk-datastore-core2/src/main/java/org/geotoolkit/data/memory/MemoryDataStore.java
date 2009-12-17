@@ -71,7 +71,13 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureType getSchema(Name name) throws IOException {
-        return types.get(name);
+        FeatureType type = types.get(name);
+
+        if(type == null){
+            throw new IOException("Schema "+ name +" doesnt exist in this datastore.");
+        }
+
+        return type;
     }
 
     /**
@@ -86,7 +92,7 @@ public class MemoryDataStore extends AbstractDataStore{
             throw new NullPointerException("Name can not be null.");
         }
 
-        if(getSchema(name) != null){
+        if(types.containsKey(name)){
             throw new IllegalArgumentException("FeatureType with name : " + featureType.getName() + " already exist.");
         }
 
@@ -196,7 +202,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws IOException {
-        final FeatureType type = types.remove(typeName);
+        final FeatureType type = getSchema(typeName);
         final FeatureWriter writer = new MemoryFeatureWriter(typeName, type);
         return handleRemaining(writer, filter);
     }
@@ -206,7 +212,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureWriter getFeatureWriterAppend(final Name typeName) throws IOException {
-        final FeatureType type = types.remove(typeName);
+        final FeatureType type = getSchema(typeName);
         return new MemoryFeatureWriterAppend(typeName, type);
     }
 
