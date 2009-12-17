@@ -18,6 +18,10 @@
 
 package org.geotoolkit.data.memory;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
@@ -30,6 +34,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.referencing.CRS;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,6 +49,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 /**
  *
@@ -564,5 +570,93 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
     }
-    
+
+    @Test
+    public void testQueryCRSReprojectSupport() throws Exception {
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final MemoryDataStore store = new MemoryDataStore();
+        final GeometryFactory gf = new GeometryFactory();
+
+        //create the schema
+        final Name name = new DefaultName("http://test.com", "TestSchema1");
+        builder.reset();
+        builder.setName(name);
+        builder.add("geometry", Point.class, CRS.decode("EPSG:27582"));
+        builder.add("string", String.class);
+        final SimpleFeatureType type = builder.buildFeatureType();
+        store.createSchema(name,type);
+        final QueryBuilder qb = new QueryBuilder(name);
+
+        //create a few features
+        FeatureWriter writer = store.getFeatureWriterAppend(name);
+        try{
+            SimpleFeature f = (SimpleFeature) writer.next();
+            f.setAttribute("geometry", gf.createPoint(new Coordinate(10, 10)));
+            f.setAttribute("string", "hop1");
+            writer.write();
+
+        }finally{
+            writer.close();
+        }
+
+        //quick count check
+        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name));
+        int count = 0;
+        try{
+            while(reader.hasNext()){
+                reader.next();
+                count++;
+            }
+        }finally{
+            reader.close();
+        }
+        assertEquals(count, 1);
+        assertEquals(store.getCount(QueryBuilder.all(name)), 1);
+
+        //try simple read-------------------------------------------------------
+        //check geometry has not been modified
+        qb.reset();
+        qb.setTypeName(name);
+        Query query = qb.buildQuery();
+
+        assertEquals(1,store.getCount(query));
+
+        reader = store.getFeatureReader(query);
+
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals( ((Point)sf.getAttribute("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
+            assertEquals( ((Point)sf.getAttribute("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
+        //test reprojection-------------------------------------------------------
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setCRS(CRS.decode("EPSG:4326"));
+        query = qb.buildQuery();
+
+        assertEquals(1,store.getCount(query));
+
+        reader = store.getFeatureReader(query);
+
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertNotSame( ((Point)sf.getAttribute("geometry")).getX(), gf.createPoint(new Coordinate(10, 10)).getX() );
+            assertNotSame( ((Point)sf.getAttribute("geometry")).getY(), gf.createPoint(new Coordinate(10, 10)).getY() );
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
+     }
+
 }
