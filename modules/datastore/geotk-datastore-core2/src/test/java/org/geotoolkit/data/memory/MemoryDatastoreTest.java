@@ -79,12 +79,12 @@ public class MemoryDatastoreTest extends TestCase{
     }
 
     @Test
-    public void testCreateDataStore() throws IOException {
+    public void testCreateDataStore() throws Exception {
         MemoryDataStore store = new MemoryDataStore();
     }
 
     @Test
-    public void testSchemas() throws IOException {
+    public void testSchemas() throws Exception {
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
         Set<Name> names;
@@ -165,7 +165,7 @@ public class MemoryDatastoreTest extends TestCase{
     }
 
     @Test
-    public void testFeatures() throws IOException {
+    public void testFeatures() throws Exception {
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
 
@@ -284,7 +284,7 @@ public class MemoryDatastoreTest extends TestCase{
     }
 
     @Test
-    public void testQuerySupport() throws IOException {
+    public void testQuerySupport() throws Exception {
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         final MemoryDataStore store = new MemoryDataStore();
 

@@ -38,17 +38,17 @@ public interface DataStore {
 
     Session createSession();
 
-    Set<Name> getNames() throws IOException;
+    Set<Name> getNames() throws DataStoreException;
 
-    void createSchema(Name typeName, FeatureType featureType) throws IOException;
+    void createSchema(Name typeName, FeatureType featureType) throws DataStoreException;
 
-    void updateSchema(Name typeName, FeatureType featureType) throws IOException;
+    void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException;
 
-    void deleteSchema(Name typeName) throws IOException;
+    void deleteSchema(Name typeName) throws DataStoreException;
 
-    FeatureType getSchema(Name typeName) throws IOException;
+    FeatureType getSchema(Name typeName) throws DataStoreException;
 
-    boolean isWriteable(Name typeName) throws IOException;
+    boolean isWriteable(Name typeName) throws DataStoreException;
 
     /**
      * Retrieve informations about the query capabilites of this datastore.
@@ -61,7 +61,7 @@ public interface DataStore {
      */
     Object getQueryCapabilities();
 
-    long getCount(Query query) throws IOException;
+    long getCount(Query query) throws DataStoreException;
 
     /**
      * Get the envelope of all features matching the given query.
@@ -70,13 +70,13 @@ public interface DataStore {
      * @return Envelope or null if no features where found.
      * @throws IOException : error occured while reading
      */
-    Envelope getEnvelope(Query query) throws IOException;
+    Envelope getEnvelope(Query query) throws DataStoreException;
 
-    FeatureReader getFeatureReader(Query query) throws IOException;
+    FeatureReader getFeatureReader(Query query) throws DataStoreException;
 
-    FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws IOException;
+    FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException;
 
-    FeatureWriter getFeatureWriterAppend(Name typeName) throws IOException;
+    FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException;
 
     void dispose();
     

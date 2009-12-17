@@ -17,29 +17,20 @@
 
 package org.geotoolkit.data.session;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.Query;
-
-import org.opengis.geometry.Envelope;
+import java.util.logging.Logger;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Delta {
+public abstract class AbstractDelta implements Delta{
 
-    Query modify(Query query);
+    private static final Logger LOGGER = Logging.getLogger(AbstractDelta.class);
 
-    FeatureIterator modify(Query query, FeatureIterator iterator) throws DataStoreException;
-    
-    long modify(Query query, long count) throws DataStoreException;
 
-    Envelope modify(Query query, Envelope env) throws DataStoreException;
-
-    void commit(DataStore store) throws DataStoreException;
-
-    void dispose();
+    protected Logger getLogger(){
+        return LOGGER;
+    }
 
 }

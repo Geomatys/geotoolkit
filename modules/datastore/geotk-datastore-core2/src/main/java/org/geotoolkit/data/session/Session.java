@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -52,31 +53,31 @@ public interface Session {
      *
      * @param query
      * @return FeatureIterator
-     * @throws IOException
+     * @throws DataStoreException
      */
-    FeatureIterator getFeatureIterator(Query query) throws IOException;
+    FeatureIterator getFeatureIterator(Query query) throws DataStoreException;
 
-    void add(Name groupName, Collection<? extends Feature> newFeatures) throws IOException;
+    void add(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
-    void update(Name groupName, AttributeDescriptor[] type, Object[] value, Filter filter) throws IOException;
+    void update(Name groupName, AttributeDescriptor[] type, Object[] value, Filter filter) throws DataStoreException;
 
-    void remove(Name groupName, Filter filter) throws IOException;
+    void remove(Name groupName, Filter filter) throws DataStoreException;
 
     /**
      * Apply all the changes made in this session on the datastore.
      *
-     * @throws IOException
+     * @throws DataStoreException
      */
-    void commit() throws IOException;
+    void commit() throws DataStoreException;
 
     /**
      * Revert all changes made in this session.
      */
     void rollback();
 
-    long getCount(Query query) throws IOException;
+    long getCount(Query query) throws DataStoreException;
 
-    Envelope getEnvelope(Query query) throws IOException;
+    Envelope getEnvelope(Query query) throws DataStoreException;
 
     SessionDiff getDiff();
     

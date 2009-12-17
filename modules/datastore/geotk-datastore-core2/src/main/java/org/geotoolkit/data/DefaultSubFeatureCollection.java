@@ -26,6 +26,7 @@ import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -116,7 +117,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
 
 
         //change to a reader to get information about the type
-        FeatureReader reader = DataUtilities.reader(iterator, original.getSchema());
+        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(iterator, original.getSchema());
 
         //wrap properties ------------------------------------------------------
         if(properties != null){

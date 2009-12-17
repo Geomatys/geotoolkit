@@ -17,12 +17,12 @@
 
 package org.geotoolkit.data.session;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 
 import org.opengis.feature.type.AttributeDescriptor;
@@ -69,11 +69,11 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader getFeatureIterator(Query query) throws IOException {
+    public FeatureIterator getFeatureIterator(Query query) throws DataStoreException {
         for(final Delta alt : getDiff().alterations()){
             query = alt.modify(query);
         }
-        FeatureReader reader = store.getFeatureReader(query);
+        FeatureIterator reader = store.getFeatureReader(query);
         for(final Delta alt : getDiff().alterations()){
             reader = alt.modify(query,reader);
         }
@@ -111,7 +111,7 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public void commit() throws IOException {
+    public void commit() throws DataStoreException {
         //todo : must lock on the diff to avoid sync issues
         for(final Delta alt : getDiff().alterations()){
             alt.commit(store);
@@ -131,7 +131,7 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public long getCount(Query query) throws IOException {
+    public long getCount(Query query) throws DataStoreException {
         for(final Delta alt : getDiff().alterations()){
             query = alt.modify(query);
         }
@@ -146,7 +146,7 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(Query query) throws IOException {
+    public Envelope getEnvelope(Query query) throws DataStoreException {
         for(final Delta alt : getDiff().alterations()){
             query = alt.modify(query);
         }

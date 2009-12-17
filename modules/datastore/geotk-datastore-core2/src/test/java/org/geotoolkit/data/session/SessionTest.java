@@ -71,7 +71,7 @@ public class SessionTest extends TestCase{
     }
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() throws Exception {
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
 
         //create the schema
@@ -130,7 +130,7 @@ public class SessionTest extends TestCase{
     }
 
     @Test
-    public void testSessionReader() throws IOException {
+    public void testSessionReader() throws Exception {
         final Name name = store.getNames().iterator().next();
         final QueryBuilder qb = new QueryBuilder();
         Query query;

@@ -18,6 +18,8 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -30,6 +32,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 
 import org.opengis.feature.Feature;
@@ -62,7 +65,7 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public boolean isWriteable(Name typeName) throws IOException {
+    public boolean isWriteable(Name typeName) throws DataStoreException {
         //while raise an error if type doesnt exist
         getSchema(typeName);
         return false;
@@ -76,7 +79,7 @@ public abstract class AbstractDataStore implements DataStore{
      * calculate count.
      */
     @Override
-    public long getCount(Query query) throws IOException {
+    public long getCount(Query query) throws DataStoreException {
         long count = 0;
 
         final FeatureReader reader = getFeatureReader(query);
@@ -100,7 +103,7 @@ public abstract class AbstractDataStore implements DataStore{
      * calculate envelope.
      */
     @Override
-    public Envelope getEnvelope(Query query) throws IOException {
+    public Envelope getEnvelope(Query query) throws DataStoreException {
         BoundingBox env = null;
 
         final FeatureReader reader = getFeatureReader(query);
@@ -153,7 +156,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @return FeatureReader Reader wrapping the given reader with all query parameters
      * @throws IOException
      */
-    protected FeatureReader handleRemaining(FeatureReader reader, Query remainingParameters) throws IOException{
+    protected FeatureReader handleRemaining(FeatureReader reader, Query remainingParameters) throws DataStoreException{
 
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
@@ -204,7 +207,12 @@ public abstract class AbstractDataStore implements DataStore{
 
         //wrap properties ------------------------------------------------------
         if(properties != null){
-            final FeatureType mask = FeatureTypeUtilities.createSubType((SimpleFeatureType) reader.getFeatureType(), properties);
+            final FeatureType mask;
+            try {
+                mask = FeatureTypeUtilities.createSubType((SimpleFeatureType) reader.getFeatureType(), properties);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
             reader = GenericRetypeFeatureIterator.wrap(reader, mask);
         }
 
@@ -213,7 +221,9 @@ public abstract class AbstractDataStore implements DataStore{
             try {
                 reader = GenericReprojectFeatureIterator.wrap(reader, crs);
             } catch (FactoryException ex) {
-                throw new IOException(ex);
+                throw new DataStoreException(ex);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
             }
         }
 
@@ -221,7 +231,7 @@ public abstract class AbstractDataStore implements DataStore{
     }
 
 
-    protected FeatureWriter handleRemaining(FeatureWriter writer, Filter filter) throws IOException{
+    protected FeatureWriter handleRemaining(FeatureWriter writer, Filter filter) throws DataStoreException{
 
         //wrap filter ----------------------------------------------------------
         if(filter != null && filter != Filter.INCLUDE){

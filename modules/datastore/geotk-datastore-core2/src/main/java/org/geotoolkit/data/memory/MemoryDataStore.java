@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.memory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,8 +27,8 @@ import java.util.Set;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.AbstractFeatureWriterAppend;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureIDGenerator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -59,7 +58,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized Set<Name> getNames() throws IOException {
+    public synchronized Set<Name> getNames() throws DataStoreException {
         if(nameCache == null){
             nameCache = new HashSet<Name>(types.keySet());
         }
@@ -70,11 +69,11 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema(Name name) throws IOException {
+    public FeatureType getSchema(Name name) throws DataStoreException {
         FeatureType type = types.get(name);
 
         if(type == null){
-            throw new IOException("Schema "+ name +" doesnt exist in this datastore.");
+            throw new DataStoreException("Schema "+ name +" doesnt exist in this datastore.");
         }
 
         return type;
@@ -84,7 +83,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void createSchema(Name name, FeatureType featureType) throws IOException {
+    public synchronized void createSchema(Name name, FeatureType featureType) throws DataStoreException {
         if(featureType == null){
             throw new NullPointerException("Feature type can not be null.");
         }
@@ -108,7 +107,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void updateSchema(Name typeName, FeatureType featureType) throws IOException {
+    public synchronized void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
         //todo must do it a way to avoid destroying all features.
         deleteSchema(typeName);
         createSchema(typeName,featureType);
@@ -118,7 +117,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void deleteSchema(Name typeName) throws IOException {
+    public synchronized void deleteSchema(Name typeName) throws DataStoreException {
         final FeatureType type = types.remove(typeName);
 
         if(type == null){
@@ -144,7 +143,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public long getCount(Query query) throws IOException {
+    public long getCount(Query query) throws DataStoreException {
         final List<Feature> lst = features.get(query.getTypeName());
 
         if(lst == null){
@@ -200,7 +199,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader getFeatureReader(Query query) throws IOException {
+    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType type = getSchema(query.getTypeName());
         final List<Feature> lst = features.get(query.getTypeName());
 
@@ -210,14 +209,14 @@ public class MemoryDataStore extends AbstractDataStore{
 
         //fall back on generic parameter handling.
         //todo we should handle at least spatial filter here by using a quadtree.
-        return handleRemaining(DataUtilities.reader(lst.iterator(), type), query);
+        return handleRemaining(GenericWrapFeatureIterator.wrapToReader(lst.iterator(), type), query);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws IOException {
+    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
         final FeatureType type = getSchema(typeName);
         final FeatureWriter writer = new MemoryFeatureWriter(typeName, type);
         return handleRemaining(writer, filter);
@@ -227,7 +226,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws IOException {
+    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
         final FeatureType type = getSchema(typeName);
         return new MemoryFeatureWriterAppend(typeName, type);
     }

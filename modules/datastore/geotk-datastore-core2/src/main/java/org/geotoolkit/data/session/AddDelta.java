@@ -18,15 +18,15 @@
 package org.geotoolkit.data.session;
 
 import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
@@ -37,7 +37,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class AddDelta implements Delta{
+public class AddDelta extends AbstractDelta{
 
     private final Name type;
     private final FeatureCollection<Feature> features;
@@ -68,47 +68,45 @@ public class AddDelta implements Delta{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader modify(Query query, FeatureReader reader) {
+    public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return reader;
 
-        //todo;
-        return reader;
+        final FeatureIterator affected = features.subCollection(query).iterator();
+
+        return DataUtilities.sequence(reader, affected);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public long modify(Query query, long count) {
+    public long modify(Query query, long count) throws DataStoreException{
         if(!query.getTypeName().equals(type)) return count;
 
-        try {
-            int affected = features.subCollection(query).size();
-            count += affected;
-        } catch (DataStoreException ex) {
-            Logger.getLogger(AddDelta.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        final int affected = features.subCollection(query).size();
 
-        return count;
+        return count + affected;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Envelope modify(Query query, Envelope env) {
+    public Envelope modify(Query query, Envelope env) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return env;
 
-        //todo
+        final Envelope affected = features.subCollection(query).getEnvelope();
+        final JTSEnvelope2D combine = new JTSEnvelope2D(env);
+        combine.expandToInclude(new JTSEnvelope2D(affected));
 
-        return env;
+        return combine;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void commit(DataStore store) {
+    public void commit(DataStore store) throws DataStoreException {
     }
 
     /**
