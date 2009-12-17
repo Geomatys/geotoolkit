@@ -541,6 +541,28 @@ public class MemoryDatastoreTest extends TestCase{
             reader.close();
         }
 
+        //TEST max features ----------------------------------------------------
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setMaxFeatures(1);
+        qb.setSortBy(new SortBy[]{FF.sort("date", SortOrder.DESCENDING)});
+        query = qb.buildQuery();
+
+        assertEquals(1,store.getCount(query));
+
+        reader = store.getFeatureReader(query);
+
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("date"),new Date(100000L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
     }
     
 }

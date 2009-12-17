@@ -162,7 +162,7 @@ public class MemoryDataStore extends AbstractDataStore{
         //filter should never be null in the query
         if(filter == Filter.INCLUDE){
             if(max != null){
-                size = Math.max(lst.size(), max);
+                size = Math.min(lst.size(), max);
             }else{
                 size = lst.size();
             }
