@@ -291,6 +291,7 @@ public class MemoryDatastoreTest extends TestCase{
         builder.add("date", Date.class);
         final SimpleFeatureType type = builder.buildFeatureType();
         store.createSchema(name,type);
+        final QueryBuilder qb = new QueryBuilder(name);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
@@ -491,7 +492,8 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
         //TEST ATTRIBUTS LIMITATION --------------------------------------------
-        QueryBuilder qb = new QueryBuilder(name);
+        qb.reset();
+        qb.setTypeName(name);
         qb.setProperties(new String[]{"string","date"});
         query = qb.buildQuery();
         
@@ -513,6 +515,31 @@ public class MemoryDatastoreTest extends TestCase{
             reader.close();
         }
 
+        //TEST start index -----------------------------------------------------
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setStartIndex(2);
+        qb.setSortBy(new SortBy[]{FF.sort("date", SortOrder.DESCENDING)});
+        query = qb.buildQuery();
+
+        assertEquals(2,store.getCount(query));
+
+        reader = store.getFeatureReader(query);
+        assertEquals(reader.getFeatureType().getDescriptors().size(),3);
+
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("date"),new Date(10000L));
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("date"),new Date(1000L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
 
     }
     

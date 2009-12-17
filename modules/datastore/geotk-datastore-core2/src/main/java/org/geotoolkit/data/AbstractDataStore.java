@@ -188,7 +188,7 @@ public abstract class AbstractDataStore implements DataStore{
         }
 
         //wrap start index -----------------------------------------------------
-        if(start != null && start > 0){
+        if(start != null && start >1){
             reader = GenericStartIndexFeatureIterator.wrap(reader, start);
         }
         

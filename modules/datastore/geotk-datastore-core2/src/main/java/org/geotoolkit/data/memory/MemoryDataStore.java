@@ -152,19 +152,24 @@ public class MemoryDataStore extends AbstractDataStore{
         }
 
         final Integer max = query.getMaxFeatures();
+        final Integer startIndex = query.getStartIndex();
         final Filter filter = query.getFilter();
+
+        long size = 0;
+
+
 
         //filter should never be null in the query
         if(filter == Filter.INCLUDE){
             if(max != null){
-                return Math.max(lst.size(), max);
+                size = Math.max(lst.size(), max);
             }else{
-                return lst.size();
+                size = lst.size();
             }
         }else if(filter == Filter.EXCLUDE){
             return 0;
         }else{
-            int count = 0;
+            long count = 0;
 
             if(max != null){
                 for(int index=0; index <= max; index++){
@@ -176,8 +181,19 @@ public class MemoryDataStore extends AbstractDataStore{
                 }
             }
             
-            return count;
+            size = count;
         }
+
+        //reduce by startIndex
+        if(startIndex != null && startIndex > 1){
+            if(size > startIndex-1){
+                size = size - (startIndex-1);
+            }else{
+                size = 0;
+            }
+        }
+
+        return size;
     }
 
     /**
