@@ -31,9 +31,10 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 
 /**
@@ -42,11 +43,11 @@ import static org.junit.Assert.*;
  * declared in the EPSG database, but this could be extented to other authorities as well.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.07
  *
  * @since 3.03
  */
-public final class ConformanceTest {
+public final class ConformanceTest extends ReferencingTestCase {
     /**
      * Tests the conformance of EPSG codes.
      *
@@ -54,6 +55,7 @@ public final class ConformanceTest {
      */
     @Test
     public void testEPSG() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
         run(Citations.EPSG, AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory("EPSG", null));
     }
 
@@ -64,6 +66,7 @@ public final class ConformanceTest {
      */
     @Test
     public void testGeoTIFF() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
         run(Citations.GEOTIFF, null);
     }
 

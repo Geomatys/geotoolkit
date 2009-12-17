@@ -35,8 +35,8 @@ import org.geotoolkit.internal.referencing.Identifiers;
  * case of "{@linkplain PositionVector7Param Position Vector 7-param. transformation"}
  * where only the translation terms can be set to a non-null value.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.2
  * @module
@@ -56,7 +56,8 @@ public class GeocentricTranslation extends PositionVector7Param {
     @SuppressWarnings("hiding")
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
-            new NamedIdentifier(Citations.EPSG, "Geocentric translations"),
+            new NamedIdentifier(Citations.EPSG, "Geocentric translations (geog2D domain)"),
+            new NamedIdentifier(Citations.EPSG, "Geocentric Translations"), // Legacy name
             new IdentifierCode (Citations.EPSG,  9603)
         }, new ParameterDescriptor<?>[] {
             DX, DY, DZ,

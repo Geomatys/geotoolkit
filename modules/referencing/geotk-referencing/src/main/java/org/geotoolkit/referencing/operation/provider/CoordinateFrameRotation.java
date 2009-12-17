@@ -25,12 +25,12 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 
 
 /**
- * The provider for "<cite>Coordinate Frame rotation</cite>" (EPSG:9607). This is the same
+ * The provider for "<cite>Coordinate Frame Rotation</cite>" (EPSG:9607). This is the same
  * transformation than "{@linkplain PositionVector7Param Position Vector 7-param."} except
  * that the rotation angles have the opposite sign.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.2
  * @module
@@ -47,8 +47,8 @@ public class CoordinateFrameRotation extends PositionVector7Param {
      * {@link PositionVector7Param#PARAMETERS} except for the name.
      */
     @SuppressWarnings("hiding")
-    public static final ParameterDescriptorGroup PARAMETERS =
-            createDescriptorGroup("Coordinate Frame rotation", 9607);
+    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(9607,
+            "Coordinate Frame Rotation (geog2D domain)", "Coordinate Frame Rotation");
 
     /**
      * Constructs the provider.

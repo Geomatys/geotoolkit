@@ -51,8 +51,8 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
 /**
  * The provider for "<cite>Position Vector 7-parameters transformation</cite>" (EPSG:9606).
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.2
  * @module
@@ -235,15 +235,18 @@ public class PositionVector7Param extends MathTransformProvider {
     /**
      * The parameters group.
      */
-    public static final ParameterDescriptorGroup PARAMETERS =
-            createDescriptorGroup("Position Vector 7-param. transformation", 9606);
+    public static final ParameterDescriptorGroup PARAMETERS = createDescriptorGroup(9606,
+            "Position Vector transformation (geog2D domain)", "Position Vector 7-param. transformation");
 
     /**
      * Creates a parameters group using the 7 parameters.
      */
-    static ParameterDescriptorGroup createDescriptorGroup(final String name, final int code) {
+    static ParameterDescriptorGroup createDescriptorGroup(final int code, final String name,
+            final String legacyName)
+    {
         return Identifiers.createDescriptorGroup(new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.EPSG, name),
+            new NamedIdentifier(Citations.EPSG, legacyName),
             new NamedIdentifier(Citations.EPSG, "Bursa-Wolf"),
             new IdentifierCode (Citations.EPSG, code)
         }, new ParameterDescriptor<?>[] {

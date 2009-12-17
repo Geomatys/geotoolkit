@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -49,6 +50,7 @@ import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 
 /**
@@ -639,6 +641,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void test4D_to_2D() throws Exception {
+        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = targetCRS;
         sourceCRS = new DefaultCompoundCRS("Mercator 3D", sourceCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);

@@ -102,8 +102,10 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     /**
      * Version of the embedded database. This string must be updated when
      * the SQL scripts in the {@code geotk-epsg} module are updated.
+     *
+     * @see http://www.geotoolkit.org/build/tools/geotk-epsg-pack/index.html
      */
-    static final String VERSION = "7.01";
+    static final String VERSION = "7.04";
 
     /**
      * The user configuration file, which is {@value}. This file is used if no {@link DataSource}

@@ -63,6 +63,20 @@ final class EpsgDataPack extends ScriptRunner {
     }
 
     /**
+     * Returns {@code true} if the given line should be omitted from the script.
+     *
+     * @param  line The line, without trailing {@code ';'}.
+     * @return {@code true} if the line should be omitted.
+     */
+    private static boolean omit(final String line) {
+        if (line.startsWith("UPDATE epsg_datum SET realization_epoch = replace(realization_epoch, CHAR(182), CHAR(10))")) {
+            // We ommit this line because we changed the type from VARCHAR to SMALLINT.
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Compacts the given file.
      *
      * @param  inputFile    The input file where to read the SQL statements to compact.
@@ -142,8 +156,10 @@ final class EpsgDataPack extends ScriptRunner {
             }
         }
         insertStatement = null;
-        out.write(line);
-        out.write(";\n");
+        if (!omit(line)) {
+            out.write(line);
+            out.write(";\n");
+        }
         return 0;
     }
 

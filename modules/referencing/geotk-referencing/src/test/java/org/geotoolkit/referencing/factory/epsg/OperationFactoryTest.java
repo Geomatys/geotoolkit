@@ -179,7 +179,7 @@ public class OperationFactoryTest extends EpsgFactoryTestCase {
                 "    PARAMETER[“dim”, 2],\n" +
                 "    PARAMETER[“semi_major”, 6378249.2],\n" +
                 "    PARAMETER[“semi_minor”, 6356515.0]],\n" +
-                "  PARAM_MT[“Geocentric translations”,\n" +
+                "  PARAM_MT[“Geocentric translations (geog2D domain)”,\n" +
                 "    PARAMETER[“dx”, -168.0],\n" +
                 "    PARAMETER[“dy”, -60.0],\n" +
                 "    PARAMETER[“dz”, 320.0]],\n" +
