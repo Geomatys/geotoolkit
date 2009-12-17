@@ -59,13 +59,11 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.geometry.jts.JTS;
-
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
-
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.opengis.feature.Feature;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.Filter;
@@ -244,10 +242,10 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             final Set<Identifier> ids = new HashSet<Identifier>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
-                            final String geoStr = fl.getFeatureSource().getSchema().getGeometryDescriptor().getLocalName();
+                            final String geoStr = fl.getCollection().getSchema().getGeometryDescriptor().getLocalName();
                             final Expression geomField = FF.property(geoStr);
 
-                            CoordinateReferenceSystem dataCrs = fl.getFeatureSource().getSchema().getCoordinateReferenceSystem();
+                            CoordinateReferenceSystem dataCrs = fl.getCollection().getSchema().getCoordinateReferenceSystem();
 
                             try {
                                 final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map2D.getCanvas().getDisplayCRS(), dataCrs,true));
@@ -256,13 +254,13 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
                                 final QueryBuilder builder = new QueryBuilder();
-                                builder.setTypeName(fml.getFeatureSource().getSchema().getName());
+                                builder.setTypeName(fml.getCollection().getSchema().getName());
                                 builder.setFilter(f);
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();
                                 
-                                FeatureCollection<SimpleFeatureType,SimpleFeature> fc = fl.getFeatureSource().getFeatures(query);
-                                FeatureIterator<SimpleFeature> fi = fc.features();
+                                FeatureCollection<SimpleFeature> fc = (FeatureCollection<SimpleFeature>) fl.getCollection().subCollection(query);
+                                FeatureIterator<SimpleFeature> fi = fc.iterator();
                                 while(fi.hasNext()){
                                     SimpleFeature fea = fi.next();
                                     ids.add(fea.getIdentifier());

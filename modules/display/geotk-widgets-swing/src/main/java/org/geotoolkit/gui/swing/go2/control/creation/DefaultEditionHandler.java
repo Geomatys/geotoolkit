@@ -46,8 +46,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
 
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -57,7 +55,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.misc.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapLayer;
+
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
@@ -78,28 +76,28 @@ public class DefaultEditionHandler implements CanvasHandler {
         public void actionPerformed(ActionEvent arg0) {
             final Object candidate = guiLayers.getSelectedItem();
             if(candidate instanceof FeatureMapLayer){
-                FeatureMapLayer layer = (FeatureMapLayer)candidate;
-                FeatureSource fs = layer.getFeatureSource();
-                if(fs instanceof FeatureStore){
-                    final Class c = fs.getSchema().getGeometryDescriptor().getType().getBinding();
-                    guiLayers.setEnabled(false);
-                    startAction.setEnabled(false);
-                    guiEnd.setEnabled(true);
-                    if(c == Point.class){
-                        setDelegate(new PointDelegate(DefaultEditionHandler.this));
-                    }else if(c == LineString.class){
-                        setDelegate(new LineDelegate(DefaultEditionHandler.this));
-                    }else if(c == Polygon.class){
-                        setDelegate(new PolygonDelegate(DefaultEditionHandler.this));
-                    }else if(c == MultiPoint.class){
-                        setDelegate(new MultiPointDelegate(DefaultEditionHandler.this));
-                    }else if(c == MultiLineString.class){
-                        setDelegate(new MultiLineDelegate(DefaultEditionHandler.this));
-                    }else if(c == MultiPolygon.class){
-                        setDelegate(new MultiPolygonDelegate(DefaultEditionHandler.this));
-                    }else if(c == Geometry.class){
-                    }
-                }
+//                FeatureMapLayer layer = (FeatureMapLayer)candidate;
+//                FeatureSource fs = layer.getFeatureSource();
+//                if(fs instanceof FeatureStore){
+//                    final Class c = fs.getSchema().getGeometryDescriptor().getType().getBinding();
+//                    guiLayers.setEnabled(false);
+//                    startAction.setEnabled(false);
+//                    guiEnd.setEnabled(true);
+//                    if(c == Point.class){
+//                        setDelegate(new PointDelegate(DefaultEditionHandler.this));
+//                    }else if(c == LineString.class){
+//                        setDelegate(new LineDelegate(DefaultEditionHandler.this));
+//                    }else if(c == Polygon.class){
+//                        setDelegate(new PolygonDelegate(DefaultEditionHandler.this));
+//                    }else if(c == MultiPoint.class){
+//                        setDelegate(new MultiPointDelegate(DefaultEditionHandler.this));
+//                    }else if(c == MultiLineString.class){
+//                        setDelegate(new MultiLineDelegate(DefaultEditionHandler.this));
+//                    }else if(c == MultiPolygon.class){
+//                        setDelegate(new MultiPolygonDelegate(DefaultEditionHandler.this));
+//                    }else if(c == Geometry.class){
+//                    }
+//                }
             }
 
         }
@@ -126,13 +124,13 @@ public class DefaultEditionHandler implements CanvasHandler {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 final Object candidate = guiLayers.getSelectedItem();
-            if(candidate instanceof FeatureMapLayer){
-                FeatureMapLayer layer = (FeatureMapLayer)candidate;
-                FeatureSource fs = layer.getFeatureSource();
-                if(fs instanceof FeatureStore){
-                    guiStart.setEnabled(true);
-                }
-            }
+//            if(candidate instanceof FeatureMapLayer){
+//                FeatureMapLayer layer = (FeatureMapLayer)candidate;
+//                FeatureSource fs = layer.getFeatureSource();
+//                if(fs instanceof FeatureStore){
+//                    guiStart.setEnabled(true);
+//                }
+//            }
             }
         });
 

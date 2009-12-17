@@ -101,6 +101,11 @@ public class DataUtilities {
             return new FeatureCollectionSequence(id, cols);
         }
 
+        @Override
+        public boolean isWritable() {
+            return false;
+        }
+
         private class SequenceIterator implements FeatureIterator {
 
             private int currentCollection = -1;

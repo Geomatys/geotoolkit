@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.geotoolkit.data.FeatureStore;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.simple.SimpleFeature;
@@ -48,25 +48,29 @@ public class DeleteSelectionAction extends JFeaturePanelAction{
                 final FeatureMapLayer layer = panel.getTarget();
                 if(layer == null) return;
 
-                if(layer.getFeatureSource() instanceof FeatureStore){
-                    final FeatureStore<SimpleFeatureType,SimpleFeature> store =
-                            (FeatureStore<SimpleFeatureType, SimpleFeature>) layer.getFeatureSource();
-                    Filter fid = layer.getSelectionFilter();
-                    if(fid != null){
-
-                        int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
-                                MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
-                        if (JOptionPane.OK_OPTION == confirm) {
-
-                            try {
-                                store.removeFeatures(layer.getSelectionFilter());
-                            } catch (IOException ex) {
-                                Logger.getLogger(DeleteSelectionAction.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            panel.reset();
-                        }
-                    }
-                }
+//                try{
+//                    if(layer.getCollection().isWritable()){
+//                        final FeatureStore<SimpleFeatureType,SimpleFeature> store =
+//                                (FeatureStore<SimpleFeatureType, SimpleFeature>) layer.getFeatureSource();
+//                        Filter fid = layer.getSelectionFilter();
+//                        if(fid != null){
+//
+//                            int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
+//                                    MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
+//                            if (JOptionPane.OK_OPTION == confirm) {
+//
+//                                try {
+//                                    store.removeFeatures(layer.getSelectionFilter());
+//                                } catch (IOException ex) {
+//                                    Logger.getLogger(DeleteSelectionAction.class.getName()).log(Level.SEVERE, null, ex);
+//                                }
+//                                panel.reset();
+//                            }
+//                        }
+//                    }
+//                }catch(DataStoreException ex){
+//                    Logger.getLogger(DeleteSelectionAction.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
         });
     }

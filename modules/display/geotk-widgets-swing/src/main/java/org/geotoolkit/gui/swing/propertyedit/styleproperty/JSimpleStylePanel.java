@@ -19,11 +19,15 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.BorderLayout;
 
-import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import java.awt.FlowLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
@@ -40,12 +44,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.FlowLayout;
-import java.awt.event.ActionListener;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
+
+
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
 import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
@@ -142,7 +142,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
                 
             if(layer instanceof FeatureMapLayer){
                 final FeatureMapLayer featureLayer = (FeatureMapLayer) layer;
-                final Class val = featureLayer.getFeatureSource().getSchema().getGeometryDescriptor().getType().getBinding();
+                final Class val = featureLayer.getCollection().getSchema().getGeometryDescriptor().getType().getBinding();
 
                 if (val.equals(Polygon.class) || val.equals(MultiPolygon.class)) {
                     detail = new JPolygonSymbolizerPane();

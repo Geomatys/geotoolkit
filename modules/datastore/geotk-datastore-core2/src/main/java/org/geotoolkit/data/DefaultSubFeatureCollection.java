@@ -166,4 +166,13 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
         return type;
     }
 
+    @Override
+    public boolean isWritable() throws DataStoreException{
+        if(type.equals(original.getSchema())){
+            return original.isWritable();
+        }else{
+            return false;
+        }
+    }
+
 }

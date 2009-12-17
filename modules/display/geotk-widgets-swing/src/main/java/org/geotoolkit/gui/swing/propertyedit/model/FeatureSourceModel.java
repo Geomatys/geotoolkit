@@ -26,11 +26,8 @@ import javax.swing.table.DefaultTableModel;
 
 import org.jdesktop.swingx.JXTable;
 
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.collection.FeatureIterator;
-
-import org.geotoolkit.data.DefaultTransaction;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -78,14 +75,14 @@ public class FeatureSourceModel extends DefaultTableModel {
         columns.clear();
         features.clear();
 
-        FeatureType ft = ((FeatureMapLayer)layer).getFeatureSource().getSchema();
+        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getSchema();
 
         for(String name : query.getPropertyNames()){
             columns.add(ft.getDescriptor(name));
         }
         
         try {
-            FeatureIterator<SimpleFeature> fi = (FeatureIterator<SimpleFeature>)  ((FeatureMapLayer)layer).getFeatureSource().getFeatures(query).features();            
+            FeatureIterator<SimpleFeature> fi = (FeatureIterator<SimpleFeature>)  ((FeatureMapLayer)layer).getCollection().subCollection(query).iterator();
             while (fi.hasNext()) {
                 features.add(fi.next());
             }
@@ -97,7 +94,7 @@ public class FeatureSourceModel extends DefaultTableModel {
 
     public Query removeGeometryAttributs(Query query){
 
-        FeatureType ft = ((FeatureMapLayer)layer).getFeatureSource().getSchema();
+        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getSchema();
 
         String[] propNames = query.getPropertyNames();
 
@@ -170,35 +167,35 @@ public class FeatureSourceModel extends DefaultTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(columnIndex == 0) return;
 
-        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
-        if ( ((FeatureMapLayer)layer).getFeatureSource() instanceof FeatureStore) {
-
-            store = (FeatureStore<SimpleFeatureType, SimpleFeature>)  ((FeatureMapLayer)layer).getFeatureSource();
-            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
-
-
-            store.setTransaction(transaction);
-            FilterFactory ff = FactoryFinder.getFilterFactory(null);
-            Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));            
-            FeatureType schema = store.getSchema();
-            
-            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
-                        
-            try {
-                store.updateFeatures(NAME, aValue, filter);
-                transaction.commit();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                try {
-                    transaction.rollback();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            setQuery(query);
-
-        }
+//        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
+//        if ( ((FeatureMapLayer)layer).getFeatureSource() instanceof FeatureStore) {
+//
+//            store = (FeatureStore<SimpleFeatureType, SimpleFeature>)  ((FeatureMapLayer)layer).getFeatureSource();
+//            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
+//
+//
+//            store.setTransaction(transaction);
+//            FilterFactory ff = FactoryFinder.getFilterFactory(null);
+//            Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
+//            FeatureType schema = store.getSchema();
+//
+//            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
+//
+//            try {
+//                store.updateFeatures(NAME, aValue, filter);
+//                transaction.commit();
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//                try {
+//                    transaction.rollback();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            setQuery(query);
+//
+//        }
     }
 
 }

@@ -119,12 +119,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-postgis</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>net.java.dev.timingframework</groupId>
       <artifactId>timingframework</artifactId>
     </dependency>

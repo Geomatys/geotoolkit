@@ -39,6 +39,8 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
 
     Envelope getEnvelope() throws DataStoreException;
 
+    boolean isWritable() throws DataStoreException;
+
     FeatureCollection<F> subCollection(Query query) throws DataStoreException;
 
     /**

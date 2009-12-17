@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -45,11 +47,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.data.FeatureSource;
-import org.geotoolkit.data.FeatureStore;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.model.FeatureSourceModel;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -284,10 +286,14 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         if (target instanceof FeatureMapLayer) {
             layer = (FeatureMapLayer) target;
-            FeatureSource<SimpleFeatureType, SimpleFeature> source =
-                    (FeatureSource<SimpleFeatureType, SimpleFeature>) layer.getFeatureSource();
-
-            editable = (source instanceof FeatureStore);
+            FeatureCollection<SimpleFeature> source =
+                    (FeatureCollection<SimpleFeature>) layer.getCollection();
+            try {
+                editable = source.isWritable();
+            } catch (DataStoreException ex) {
+                Logger.getLogger(LayerFeaturePropertyPanel.class.getName()).log(Level.SEVERE, null, ex);
+                editable = false;
+            }
             jcb_edit.setEnabled(editable);
 
             FeatureSourceModel m = new FeatureSourceModel(tab_data, layer);

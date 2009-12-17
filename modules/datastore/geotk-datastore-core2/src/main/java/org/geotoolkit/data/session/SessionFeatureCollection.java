@@ -125,4 +125,9 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
         }
     }
 
+    @Override
+    public boolean isWritable() throws DataStoreException{
+        return session.getDataStore().isWriteable(query.getTypeName());
+    }
+
 }

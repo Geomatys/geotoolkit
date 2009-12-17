@@ -85,4 +85,9 @@ public class DefaultFeatureCollection<F extends Feature> extends AbstractFeature
         return features.removeAll(clctn);
     }
 
+    @Override
+    public boolean isWritable() {
+        return true;
+    }
+
 }

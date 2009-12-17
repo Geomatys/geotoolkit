@@ -48,7 +48,7 @@ public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
     @Override
     public void apply() {  
         if(layer !=null){
-            layer.setQuery(QueryBuilder.filtered(layer.getFeatureSource().getSchema().getName(), getFilter()));
+            layer.setQuery(QueryBuilder.filtered(layer.getCollection().getSchema().getName(), getFilter()));
         }
     }
 
