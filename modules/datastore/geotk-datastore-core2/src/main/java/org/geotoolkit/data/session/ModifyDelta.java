@@ -95,6 +95,15 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public long modify(Query query, long count) throws DataStoreException{
+
+        //doesnt work
+
+//        //we request only the features modified
+//        final QueryBuilder builder = new QueryBuilder(query);
+//        builder.setFilter(FF.and(builder.getFilter(),filter));
+//
+//        session.getFeatureIterator(builder.buildQuery());
+
         //todo
         return count;
     }

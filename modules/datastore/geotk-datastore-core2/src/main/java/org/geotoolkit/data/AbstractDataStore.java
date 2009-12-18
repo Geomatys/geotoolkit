@@ -78,19 +78,8 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public long getCount(Query query) throws DataStoreException {
-        long count = 0;
-
         final FeatureReader reader = getFeatureReader(query);
-        try{
-            while(reader.hasNext()){
-                reader.next();
-                count++;
-            }
-        }finally{
-            reader.close();
-        }
-
-        return count;
+        return DataUtilities.calculateCount(reader);
     }
 
     /**
@@ -101,27 +90,9 @@ public abstract class AbstractDataStore implements DataStore{
      * calculate envelope.
      */
     @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException {
-        BoundingBox env = null;
-
+    public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
         final FeatureReader reader = getFeatureReader(query);
-        try{
-            while(reader.hasNext()){
-                final Feature f = reader.next();
-                final BoundingBox bbox = f.getBounds();
-                if(!bbox.isEmpty()){
-                    if(env != null){
-                        env.include(bbox);
-                    }else{
-                        env = new DefaultBoundingBox(bbox, bbox.getCoordinateReferenceSystem());
-                    }
-                }
-            }
-        }finally{
-            reader.close();
-        }
-
-        return env;
+        return DataUtilities.calculateEnvelope(reader);
     }
 
     /**

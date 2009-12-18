@@ -19,11 +19,13 @@ package org.geotoolkit.data;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.query.SortByComparator;
+import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.sort.SortBy;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -35,6 +37,51 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class DataUtilities {
 
     private DataUtilities() {
+    }
+
+    public static long calculateCount(FeatureIterator reader) throws DataStoreRuntimeException{
+        long count = 0;
+
+        try{
+            while(reader.hasNext()){
+                reader.next();
+                count++;
+            }
+        }finally{
+            reader.close();
+        }
+
+        return count;
+    }
+
+    /**
+     * Iterate on the given iterator and calculate the envelope.
+     * @throws DataStoreRuntimeException
+     */
+    public static Envelope calculateEnvelope(FeatureIterator iterator) throws DataStoreRuntimeException{
+        if(iterator == null){
+            throw new NullPointerException("Iterator can not be null");
+        }
+        
+        BoundingBox env = null;
+
+        try{
+            while(iterator.hasNext()){
+                final Feature f = iterator.next();
+                final BoundingBox bbox = f.getBounds();
+                if(!bbox.isEmpty()){
+                    if(env != null){
+                        env.include(bbox);
+                    }else{
+                        env = new DefaultBoundingBox(bbox, bbox.getCoordinateReferenceSystem());
+                    }
+                }
+            }
+        }finally{
+            iterator.close();
+        }
+
+        return env;
     }
 
     public static FeatureCollection sequence(String id, FeatureCollection... collections) {
@@ -87,7 +134,6 @@ public class DataUtilities {
 
         return ite;
     }
-
 
     /**
      * Provide a collection that link several collections in one.
