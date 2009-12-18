@@ -18,13 +18,19 @@
 package org.geotoolkit.data.session;
 
 import java.util.logging.Logger;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.filter.FilterFactory2;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
 public abstract class AbstractDelta implements Delta{
+
+    protected static final FilterFactory2 FF = (FilterFactory2)
+            FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
     private static final Logger LOGGER = Logging.getLogger(AbstractDelta.class);
 

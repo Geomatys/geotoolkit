@@ -42,6 +42,7 @@ import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -143,6 +144,7 @@ public class SessionTest extends TestCase{
 
         assertEquals(store.getCount(query),3);
         assertEquals(session.getCount(query),3);
+        assertFalse(session.hasPendingChanges());
 
         //test an iterator------------------------------------------------------
         FeatureIterator reader = session.getFeatureIterator(QueryBuilder.sorted(name, new SortBy[]{FF.sort("string", SortOrder.ASCENDING)}));
@@ -163,7 +165,9 @@ public class SessionTest extends TestCase{
             reader.close();
         }
 
+        //----------------------------------------------------------------------
         //test adding new features----------------------------------------------
+        //----------------------------------------------------------------------
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) store.getSchema(name));
         sfb.set("string", "hop4");
         sfb.set("double", 4d);
@@ -178,6 +182,7 @@ public class SessionTest extends TestCase{
 
         assertEquals(store.getCount(query),3);
         assertEquals(session.getCount(query),4);
+        assertTrue(session.hasPendingChanges());
 
         reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
         try{
@@ -199,6 +204,7 @@ public class SessionTest extends TestCase{
 
         assertEquals(store.getCount(query),4);
         assertEquals(session.getCount(query),4);
+        assertFalse(session.hasPendingChanges());
 
         //make a more deep test to find our feature
         reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
@@ -228,6 +234,63 @@ public class SessionTest extends TestCase{
         }finally{
             reader.close();
         }
+
+        //----------------------------------------------------------------------
+        //test removing feature-------------------------------------------------
+        //----------------------------------------------------------------------
+
+        //check that the feature exist
+        reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("string"),"hop4");
+            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("date"),new Date(100L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
+        assertFalse(session.hasPendingChanges());
+
+        //remove the feature
+        session.remove(name, FF.equals(FF.literal("hop4"), FF.property("string")));
+
+        //check that the feature is removed in the session but not in the datastore
+        qb.reset();
+        qb.setTypeName(name);
+        query = qb.buildQuery();
+
+        assertEquals(store.getCount(query),4);
+        assertEquals(session.getCount(query),3);
+        assertTrue(session.hasPendingChanges());
+
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setFilter(FF.equals(FF.literal("hop4"), FF.property("string")));
+        query = qb.buildQuery();
+
+        assertEquals(store.getCount(query),1);
+        assertEquals(session.getCount(query),0);
+
+        //check that he new feature is available in the session and in the datastore
+        session.commit();
+
+        assertEquals(store.getCount(query),0);
+        assertEquals(session.getCount(query),0);
+        assertFalse(session.hasPendingChanges());
+
+        //sanity check, count everything
+        qb.reset();
+        qb.setTypeName(name);
+        query = qb.buildQuery();
+
+        assertEquals(store.getCount(query),3);
+        assertEquals(session.getCount(query),3);
+        assertFalse(session.hasPendingChanges());
 
 
     }

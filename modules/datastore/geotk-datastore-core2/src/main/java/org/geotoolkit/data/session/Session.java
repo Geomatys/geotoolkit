@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.session;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import org.geotoolkit.data.DataStore;
@@ -64,6 +63,11 @@ public interface Session {
     void remove(Name groupName, Filter filter) throws DataStoreException;
 
     /**
+     * Returns true if this session holds pending (that is, unsaved) changes; otherwise returns false. 
+     */
+    boolean hasPendingChanges();
+
+    /**
      * Apply all the changes made in this session on the datastore.
      *
      * @throws DataStoreException
@@ -78,7 +82,5 @@ public interface Session {
     long getCount(Query query) throws DataStoreException;
 
     Envelope getEnvelope(Query query) throws DataStoreException;
-
-    SessionDiff getDiff();
     
 }

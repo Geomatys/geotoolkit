@@ -18,16 +18,24 @@
 package org.geotoolkit.data.session;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.Id;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -36,6 +44,9 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class DefaultSession implements Session {
+
+    protected static final FilterFactory2 FF = (FilterFactory2)
+            FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
     private final DataStore store;
     private final DefaultSessionDiff diff;
@@ -70,11 +81,11 @@ public class DefaultSession implements Session {
      */
     @Override
     public FeatureIterator getFeatureIterator(Query query) throws DataStoreException {
-        for(final Delta alt : getDiff().alterations()){
+        for(final Delta alt : diff.getDeltas()){
             query = alt.modify(query);
         }
         FeatureIterator reader = store.getFeatureReader(query);
-        for(final Delta alt : getDiff().alterations()){
+        for(final Delta alt : diff.getDeltas()){
             reader = alt.modify(query,reader);
         }
         return reader;
@@ -84,7 +95,9 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public void add(Name groupName, Collection newFeatures) {
+    public void add(Name groupName, Collection newFeatures) throws DataStoreException {
+        //will raise an error if the name doesnt exist
+        store.getSchema(groupName);
         diff.add(new AddDelta(groupName, newFeatures));
     }
 
@@ -92,7 +105,7 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public void update(Name groupName, AttributeDescriptor[] type, Object[] value, Filter filter) {
+    public void update(Name groupName, AttributeDescriptor[] type, Object[] value, Filter filter) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
         //todo must add a new alteration
     }
@@ -101,9 +114,45 @@ public class DefaultSession implements Session {
      * {@inheritDoc }
      */
     @Override
-    public void remove(Name groupName, Filter filter) {
-        throw new UnsupportedOperationException("Not supported yet.");
-        //todo must add a new alteration
+    public void remove(Name groupName, Filter filter) throws DataStoreException {
+        //will raise an error if the name doesnt exist
+        store.getSchema(groupName);
+
+        final Id removed;
+
+        if(filter instanceof Id){
+            removed = (Id)filter;
+        }else{
+            final Set<Identifier> identifiers = new HashSet<Identifier>();
+            QueryBuilder qb = new QueryBuilder(groupName);
+            qb.setFilter(filter);
+            final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+            try{
+                while(ite.hasNext()){
+                    identifiers.add(ite.next().getIdentifier());
+                }
+            }finally{
+                ite.close();
+            }
+
+            if(identifiers.isEmpty()){
+                //no feature match this filter, no need to create to remove delta
+                return;
+            }else{
+                removed = FF.id(identifiers);
+            }
+        }
+
+        diff.add(new RemoveDelta(groupName, removed));
+        
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean hasPendingChanges() {
+        return diff.getDeltas().length != 0;
     }
 
     /**
@@ -111,11 +160,7 @@ public class DefaultSession implements Session {
      */
     @Override
     public void commit() throws DataStoreException {
-        //todo : must lock on the diff to avoid sync issues
-        for(final Delta alt : getDiff().alterations()){
-            alt.commit(store);
-            alt.dispose();
-        }
+        diff.commit(store);
     }
 
     /**
@@ -123,7 +168,7 @@ public class DefaultSession implements Session {
      */
     @Override
     public void rollback() {
-        diff.reset();
+        diff.rollback();
     }
 
     /**
@@ -131,11 +176,11 @@ public class DefaultSession implements Session {
      */
     @Override
     public long getCount(Query query) throws DataStoreException {
-        for(final Delta alt : getDiff().alterations()){
+        for(final Delta alt : diff.getDeltas()){
             query = alt.modify(query);
         }
         long count = store.getCount(query);
-        for(final Delta alt : getDiff().alterations()){
+        for(final Delta alt : diff.getDeltas()){
             count = alt.modify(query,count);
         }
         return count;
@@ -146,22 +191,14 @@ public class DefaultSession implements Session {
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException {
-        for(final Delta alt : getDiff().alterations()){
+        for(final Delta alt : diff.getDeltas()){
             query = alt.modify(query);
         }
         Envelope env = store.getEnvelope(query);
-        for(final Delta alt : getDiff().alterations()){
+        for(final Delta alt : diff.getDeltas()){
             env = alt.modify(query,env);
         }
         return env;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SessionDiff getDiff() {
-        return diff;
     }
 
 }

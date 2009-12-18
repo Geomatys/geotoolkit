@@ -76,8 +76,8 @@ class DefaultQuery implements Query {
                 null);
     }
 
-    DefaultQuery(final Name name, Filter filter, String[] attributs,
-            SortBy[] sort, CoordinateReferenceSystem crs, Integer startIndex, Integer MaxFeature,Hints hints){
+    DefaultQuery(final Name name, Filter filter, String[] attributs, SortBy[] sort,
+            CoordinateReferenceSystem crs, Integer startIndex, Integer MaxFeature,Hints hints){
 
         if(name == null){
             throw new NullPointerException("Type name can not be null");

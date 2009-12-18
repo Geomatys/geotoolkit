@@ -18,36 +18,50 @@
 package org.geotoolkit.data.session;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreException;
+
 /**
+ * Contain a list of all modification, ensure concurrency when accesing
+ * deltas and lock when commiting or reverting changes.
  *
  * @todo must be concurrent
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultSessionDiff implements SessionDiff{
+public class DefaultSessionDiff{
 
-    private final List<Delta> alterations = new ArrayList<Delta>();
+    private final List<Delta> deltas = new ArrayList<Delta>();
 
     /**
      * {@inheritDoc }
      */
-    @Override
-    public List<Delta> alterations() {
-        return Collections.unmodifiableList(alterations);
+    public Delta[] getDeltas() {
+        return deltas.toArray(new Delta[deltas.size()]);
     }
 
     public void add(Delta alt){
-        alterations.add(alt);
+        deltas.add(alt);
     }
 
-    public void reset(){
-        alterations.clear();
+    public void commit(DataStore store) throws DataStoreException{
+        //todo : must lock on the diff to avoid sync issues
+        for(final Delta alt : deltas){
+            alt.commit(store);
+            alt.dispose();
+            //todo must remove the alteration
+        }
+
+        deltas.clear();
+    }
+
+    public void rollback(){
+        deltas.clear();
     }
 
     public void remove(Delta alt){
-        alterations.remove(alt);
+        deltas.remove(alt);
     }
 
 }
