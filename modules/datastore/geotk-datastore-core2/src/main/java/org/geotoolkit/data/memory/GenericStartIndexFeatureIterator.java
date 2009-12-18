@@ -78,7 +78,7 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
     @Override
     public synchronized boolean hasNext() throws DataStoreRuntimeException {
         if(!translateDone){
-            for(int i=1;i<startIndex;i++){
+            for(int i=0;i<startIndex;i++){
                 if(iterator.hasNext()){
                     iterator.next();
                 }else{

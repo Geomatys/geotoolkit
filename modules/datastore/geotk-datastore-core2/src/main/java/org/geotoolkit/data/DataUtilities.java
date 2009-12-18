@@ -26,6 +26,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
+ * @author Jody Garnett, Refractions Research
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

@@ -23,8 +23,11 @@ import java.util.Collections;
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.QueryUtilities;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -55,6 +58,13 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
         this.query = query;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
+        return session.features(QueryUtilities.subQuery(this.query, query));
+    }
 
     /**
      * {@inheritDoc }

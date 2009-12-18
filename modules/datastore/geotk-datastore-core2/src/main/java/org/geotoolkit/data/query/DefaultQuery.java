@@ -45,7 +45,7 @@ class DefaultQuery implements Query {
     private final Name typeName;
     private final String[] properties;
     private final Integer maxFeatures;
-    private final Integer startIndex;
+    private final int startIndex;
     private final Filter filter;
     private final SortBy[] sortBy;
     private final Hints hints;
@@ -71,13 +71,13 @@ class DefaultQuery implements Query {
                 attributs,
                 null,
                 null,
-                null,
+                0,
                 null,
                 null);
     }
 
     DefaultQuery(final Name name, Filter filter, String[] attributs, SortBy[] sort,
-            CoordinateReferenceSystem crs, Integer startIndex, Integer MaxFeature,Hints hints){
+            CoordinateReferenceSystem crs, int startIndex, Integer MaxFeature,Hints hints){
 
         if(name == null){
             throw new NullPointerException("Type name can not be null");
@@ -145,7 +145,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public Integer getStartIndex() {
+    public int getStartIndex() {
         return this.startIndex;
     }
 
@@ -257,7 +257,7 @@ class DefaultQuery implements Query {
         if (this.maxFeatures != other.maxFeatures && (this.maxFeatures == null || !this.maxFeatures.equals(other.maxFeatures))) {
             return false;
         }
-        if (this.startIndex != other.startIndex && (this.startIndex == null || !this.startIndex.equals(other.startIndex))) {
+        if (this.startIndex != other.startIndex) {
             return false;
         }
         if (this.filter != other.filter && (this.filter == null || !this.filter.equals(other.filter))) {
@@ -284,7 +284,7 @@ class DefaultQuery implements Query {
         hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
         hash = 83 * hash + Arrays.deepHashCode(this.properties);
         hash = 83 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
-        hash = 83 * hash + (this.startIndex != null ? this.startIndex.hashCode() : 0);
+        hash = 83 * hash + this.startIndex;
         hash = 83 * hash + (this.filter != null ? this.filter.hashCode() : 0);
         hash = 83 * hash + Arrays.deepHashCode(this.sortBy);
         hash = 83 * hash + (this.hints != null ? this.hints.hashCode() : 0);

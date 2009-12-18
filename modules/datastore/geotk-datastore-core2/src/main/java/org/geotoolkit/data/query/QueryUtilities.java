@@ -1,6 +1,19 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.data.query;
@@ -8,14 +21,17 @@ package org.geotoolkit.data.query;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
  */
 public class QueryUtilities {
 
@@ -31,7 +47,70 @@ public class QueryUtilities {
                 && query.getFilter() == Filter.INCLUDE
                 && query.getMaxFeatures() == null
                 && query.getSortBy() == null
-                && query.getStartIndex() == null;
+                && query.getStartIndex() == 0;
+    }
+
+    /**
+     * Combine two queries in the way that the resulting query act
+     * as if it was a sub query result. 
+     * For exemple if the original query has a start index of 10 and the
+     * subquery a start index of 5, the resulting startIndex will be 15.
+     * The typename of the first query will override the one of the second.
+     * 
+     * @param original
+     * @param second
+     * @return sub query
+     */
+    public static Query subQuery(final Query original, final Query second){
+        if ( original==null || second==null ) {
+            throw new NullPointerException("Both query must not be null.");
+        }
+
+        final QueryBuilder qb = new QueryBuilder(original.getTypeName());
+
+        //use the more restrictive max features field---------------------------
+        Integer max = original.getMaxFeatures();
+        if(second.getMaxFeatures() != null){
+            if(max == null){
+                max = second.getMaxFeatures();
+            }else{
+                max = Math.min(max, second.getMaxFeatures());
+            }
+        }
+        qb.setMaxFeatures(max);
+
+        //join attributes names-------------------------------------------------
+        final String[] propNames = joinAttributes(
+                original.getPropertyNames(),
+                second.getPropertyNames());
+        qb.setProperties(propNames);
+
+        //use second crs over original crs--------------------------------------
+        if(second.getCoordinateSystemReproject() != null){
+            qb.setCRS(second.getCoordinateSystemReproject());
+        }else{
+            qb.setCRS(original.getCoordinateSystemReproject());
+        }
+
+        //join filters----------------------------------------------------------
+        Filter filter = original.getFilter();
+        Filter filter2 = second.getFilter();
+
+        if ( filter.equals(Filter.INCLUDE) ){
+            filter = filter2;
+        } else if ( !filter2.equals(Filter.INCLUDE) ){
+            filter = FF.and(filter, filter2);
+        }
+        qb.setFilter(filter);
+
+        //group start index ----------------------------------------------------
+        int start = original.getStartIndex() + second.getStartIndex();
+        qb.setStartIndex(start);
+
+        //hints of the second query
+        qb.setHints(second.getHints());
+
+        return qb.buildQuery();
     }
 
     /**
@@ -74,9 +153,8 @@ public class QueryUtilities {
      * </ul>
      * </p>
      *
-     * @param firstQuery Query against this DataStore
-     * @param secondQuery DOCUMENT ME!
-     * @param handle DOCUMENT ME!
+     * @param firstQuery first query
+     * @param secondQuery econd query
      *
      * @return Query restricted to the limits of definitionQuery
      *
@@ -84,9 +162,9 @@ public class QueryUtilities {
      * @throws IllegalArgumentException if the type names of both queries do
      *         not match
      */
-    public static Query mixQueries(final Query firstQuery, final Query secondQuery, final String handle) {
-        if ((firstQuery == null) || (secondQuery == null)) {
-            throw new NullPointerException("got a null query argument");
+    public static Query mixQueries(final Query firstQuery, final Query secondQuery) {
+        if (  firstQuery==null || secondQuery==null ) {
+            throw new NullPointerException("Both query must not be null.");
         }
 
         if ((firstQuery.getTypeName() != null) && (secondQuery.getTypeName() != null)) {
@@ -115,13 +193,8 @@ public class QueryUtilities {
         } else if ((filter2 != null) && !filter2.equals(Filter.INCLUDE)) {
             filter = FF.and(filter, filter2);
         }
-        Integer start = 0;
-        if (firstQuery.getStartIndex() != null) {
-            start = firstQuery.getStartIndex();
-        }
-        if (secondQuery.getStartIndex() != null) {
-            start += secondQuery.getStartIndex();
-        }
+
+        int start = firstQuery.getStartIndex() + secondQuery.getStartIndex();
         //build the mixed query
         final Name typeName = firstQuery.getTypeName() != null ?
             firstQuery.getTypeName() :
@@ -132,9 +205,7 @@ public class QueryUtilities {
         builder.setFilter(filter);
         builder.setMaxFeatures(maxFeatures);
         builder.setProperties(propNames);
-        if (start != 0) {
-            builder.setStartIndex(start);
-        }
+        builder.setStartIndex(start);
         
         return builder.buildQuery();
     }

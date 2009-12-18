@@ -35,18 +35,18 @@ import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
 /**
- * Delta which add a collection of features.
+ * Delta which modify a collection of features.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  * @todo make this concurrent
  */
-public class AddDelta extends AbstractDelta{
+public class ModifyDelta extends AbstractDelta{
 
     private final Name type;
     private final FeatureCollection<Feature> features;
 
-    public AddDelta(Name typeName, Collection<Feature> features){
+    public ModifyDelta(Name typeName, Collection<Feature> features){
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
         }

@@ -96,7 +96,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
         }
 
         //wrap start index -----------------------------------------------------
-        if(start != null && start >1){
+        if(start != null && start > 0){
             iterator = GenericStartIndexFeatureIterator.wrap(iterator, start);
         }
 

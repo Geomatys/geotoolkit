@@ -75,11 +75,10 @@ public interface Query {
     Name getTypeName();
 
     /**
-     * The Filter can be used to define constraints on a query.  If no Filter
-     * is present then the query is unconstrained and all feature instances
-     * should be retrieved.
+     * The Filter can be used to define constraints on a query.
+     * The default value is Filter.INCLUDE .
      *
-     * @return The filter that defines constraints on the query.
+     * @return The filter that defines constraints on the query, can not be null.
      */
     Filter getFilter();
 
@@ -145,7 +144,14 @@ public interface Query {
      */
     boolean retrieveAllProperties();
 
-    Integer getStartIndex();
+    /**
+     * Get the starting index. default value is 0.
+     * Index start counting from 0 so if startIndex == 1 then
+     * the first element should be skipped.
+     *
+     * @return starting index.
+     */
+    int getStartIndex();
 
     /**
      * The optional maxFeatures can be used to limit the number of features

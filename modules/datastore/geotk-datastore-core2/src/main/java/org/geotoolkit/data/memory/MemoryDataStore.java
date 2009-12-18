@@ -151,12 +151,9 @@ public class MemoryDataStore extends AbstractDataStore{
         }
 
         final Integer max = query.getMaxFeatures();
-        final Integer startIndex = query.getStartIndex();
+        final int startIndex = query.getStartIndex();
         final Filter filter = query.getFilter();
-
         long size = 0;
-
-
 
         //filter should never be null in the query
         if(filter == Filter.INCLUDE){
@@ -183,14 +180,8 @@ public class MemoryDataStore extends AbstractDataStore{
             size = count;
         }
 
-        //reduce by startIndex
-        if(startIndex != null && startIndex > 1){
-            if(size > startIndex-1){
-                size = size - (startIndex-1);
-            }else{
-                size = 0;
-            }
-        }
+        //reduce by startIndex, ensure we dont get under 0
+        size = Math.max(0, size - startIndex);
 
         return size;
     }

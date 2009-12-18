@@ -39,7 +39,7 @@ public class QueryBuilder {
     private String[] properties = null;
     private SortBy[] sortBy = null;
     private CoordinateReferenceSystem crs = null;
-    private Integer startIndex = null;
+    private int startIndex = 0;
     private Integer maxFeatures = null;
     private Hints hints = null;
 
@@ -60,7 +60,7 @@ public class QueryBuilder {
         properties = null;
         sortBy = null;
         crs = null;
-        startIndex = null;
+        startIndex = 0;
         maxFeatures = null;
         hints = null;
     }
@@ -108,11 +108,11 @@ public class QueryBuilder {
         this.sortBy = sortBy;
     }
 
-    public Integer getStartIndex() {
+    public int getStartIndex() {
         return startIndex;
     }
 
-    public void setStartIndex(Integer startIndex) {
+    public void setStartIndex(int startIndex) {
         this.startIndex = startIndex;
     }
 

@@ -19,10 +19,9 @@
 package org.geotoolkit.data.memory;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import java.io.IOException;
+
 import java.util.Date;
 import java.util.Set;
 import junit.framework.TestCase;
@@ -49,7 +48,6 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 /**
  *
@@ -524,7 +522,7 @@ public class MemoryDatastoreTest extends TestCase{
         //TEST start index -----------------------------------------------------
         qb.reset();
         qb.setTypeName(name);
-        qb.setStartIndex(2);
+        qb.setStartIndex(1);
         qb.setSortBy(new SortBy[]{FF.sort("date", SortOrder.DESCENDING)});
         query = qb.buildQuery();
 

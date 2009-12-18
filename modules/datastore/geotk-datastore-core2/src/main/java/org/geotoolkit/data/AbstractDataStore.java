@@ -18,10 +18,8 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 
+import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
@@ -191,7 +189,7 @@ public abstract class AbstractDataStore implements DataStore{
         }
 
         //wrap start index -----------------------------------------------------
-        if(start != null && start >1){
+        if(start != null && start > 0){
             reader = GenericStartIndexFeatureIterator.wrap(reader, start);
         }
         
