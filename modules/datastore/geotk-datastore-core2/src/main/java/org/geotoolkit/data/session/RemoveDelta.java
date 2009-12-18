@@ -40,7 +40,8 @@ public class RemoveDelta extends AbstractDelta{
     private final Name type;
     private final Id removedIds;
 
-    public RemoveDelta(Name typeName, Id filter){
+    public RemoveDelta(Session session, Name typeName, Id filter){
+        super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
         }

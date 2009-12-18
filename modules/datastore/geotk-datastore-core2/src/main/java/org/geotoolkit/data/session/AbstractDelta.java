@@ -34,6 +34,14 @@ public abstract class AbstractDelta implements Delta{
 
     private static final Logger LOGGER = Logging.getLogger(AbstractDelta.class);
 
+    protected final Session session;
+
+    public AbstractDelta(Session session){
+        if(session == null){
+            throw new NullPointerException("Session can not be null.");
+        }
+        this.session = session;
+    }
 
     protected Logger getLogger(){
         return LOGGER;

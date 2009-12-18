@@ -18,6 +18,7 @@
 package org.geotoolkit.data.session;
 
 import java.util.Collection;
+import java.util.Map;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
@@ -58,7 +59,7 @@ public interface Session {
 
     void add(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
-    void update(Name groupName, AttributeDescriptor[] type, Object[] value, Filter filter) throws DataStoreException;
+    void update(Name groupName, Filter filter, Map<AttributeDescriptor,Object> values) throws DataStoreException;
 
     void remove(Name groupName, Filter filter) throws DataStoreException;
 

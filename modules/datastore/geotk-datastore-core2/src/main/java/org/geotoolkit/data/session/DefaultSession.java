@@ -19,6 +19,7 @@ package org.geotoolkit.data.session;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.DataStore;
@@ -98,16 +99,49 @@ public class DefaultSession implements Session {
     public void add(Name groupName, Collection newFeatures) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getSchema(groupName);
-        diff.add(new AddDelta(groupName, newFeatures));
+        diff.add(new AddDelta(this, groupName, newFeatures));
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void update(Name groupName, AttributeDescriptor[] type, Object[] value, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
-        //todo must add a new alteration
+    public void update(Name groupName, Filter filter, Map<AttributeDescriptor,Object> values) throws DataStoreException {
+        //will raise an error if the name doesnt exist
+        store.getSchema(groupName);
+
+        if(values == null || values.isEmpty()){
+            //no modifications, no need to create a modify delta
+            //todo should we raise an error ?
+            return;
+        }
+
+        final Id modified;
+
+        if(filter instanceof Id){
+            modified = (Id)filter;
+        }else{
+            final Set<Identifier> identifiers = new HashSet<Identifier>();
+            QueryBuilder qb = new QueryBuilder(groupName);
+            qb.setFilter(filter);
+            final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+            try{
+                while(ite.hasNext()){
+                    identifiers.add(ite.next().getIdentifier());
+                }
+            }finally{
+                ite.close();
+            }
+
+            if(identifiers.isEmpty()){
+                //no feature match this filter, no need to create a modify delta
+                return;
+            }else{
+                modified = FF.id(identifiers);
+            }
+        }
+
+        diff.add(new ModifyDelta(this, groupName, modified, values));
     }
 
     /**
@@ -143,8 +177,7 @@ public class DefaultSession implements Session {
             }
         }
 
-        diff.add(new RemoveDelta(groupName, removed));
-        
+        diff.add(new RemoveDelta(this, groupName, removed));
     }
 
     /**

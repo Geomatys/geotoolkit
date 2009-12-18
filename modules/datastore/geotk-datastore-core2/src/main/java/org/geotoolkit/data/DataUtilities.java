@@ -16,17 +16,19 @@
  */
 package org.geotoolkit.data;
 
+import java.util.Comparator;
 import java.util.NoSuchElementException;
+import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
- * @author Jody Garnett, Refractions Research
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
@@ -48,6 +50,46 @@ public class DataUtilities {
     }
 
     /**
+     * Combine several FeatureIterator in one and merge them using the sort by orders.
+     * All given iterator must already be sorted.
+     *
+     * @param <F> extends Feature
+     * @param sorts : sorting orders
+     * @param iterators : iterators to combine
+     * @return FeatureIterator combining all others
+     */
+    public static <F extends Feature> FeatureIterator<F> combine(SortBy[] sorts, FeatureIterator<F> ... iterators){
+        return combine(new SortByComparator(sorts), iterators);
+    }
+
+    /**
+     * Combine several FeatureIterator in one and merge them using the comparator given.
+     * All given iterators must already be sorted.
+     *
+     * @param <F> extends Feature
+     * @param comparator : comparator
+     * @param iterators : iterators to combine
+     * @return FeatureIterator combining all others
+     */
+    public static <F extends Feature> FeatureIterator<F> combine(Comparator<? super F> comparator, FeatureIterator<F> ... iterators){
+        if(iterators == null || iterators.length < 2 || (iterators.length == 1 && iterators[0] == null)){
+            throw new IllegalArgumentException("There must be at least 2 non null iterators.");
+        }
+        if(comparator == null){
+            throw new NullPointerException("Comprator can not be null.");
+        }
+
+        FeatureIterator<F> ite = iterators[0];
+
+        for(int i=1; i<iterators.length; i++){
+            ite = new FeatureIteratorCombine(comparator, ite, iterators[i]);
+        }
+
+        return ite;
+    }
+
+
+    /**
      * Provide a collection that link several collections in one.
      * All collection are appended in the order they are given like a sequence.
      * This implementation doesn't copy the features, it will call each wraped
@@ -62,6 +104,11 @@ public class DataUtilities {
 
         private FeatureCollectionSequence(String id, FeatureCollection[] wrapped) {
             super(id, (SimpleFeatureType) wrapped[0].getSchema());
+
+            if(wrapped.length == 1){
+                throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");
+            }
+
             this.wrapped = wrapped;
         }
 
@@ -247,7 +294,6 @@ public class DataUtilities {
 
     }
 
-
     /**
      * Provide a way to sequence several featureReader in one.
      *
@@ -327,5 +373,105 @@ public class DataUtilities {
 
     }
 
+    /**
+     * Combine several FeatureIterator and merge them using the comparator given.
+     * All given iterator must already be ordered this same comparator, otherwise the results
+     * are unpredictable.
+     * 
+     * @param <F> extends Feature
+     */
+    private static class FeatureIteratorCombine<F extends Feature> implements FeatureIterator<F>{
+
+        private final FeatureIterator<F> ite1;
+        private final FeatureIterator<F> ite2;
+        private final Comparator<? super Feature> comparator;
+        private FeatureIterator<F> active = null;
+        private F ite1next = null;
+        private F ite2next = null;
+        private F next = null;
+
+        private FeatureIteratorCombine(Comparator<? super Feature> comparator, FeatureIterator<F> ite1, FeatureIterator<F> ite2){
+            if(ite1 == null || ite2 == null){
+                throw new NullPointerException("Iterators can not be empty or null");
+            }
+            if(comparator == null ){
+                throw new IllegalArgumentException("comparator can not be null or empty. use sequence if you have no comparator.");
+            }
+
+            this.comparator = comparator;
+            this.ite1 = ite1;
+            this.ite2 = ite2;
+        }
+
+        @Override
+        public F next() {
+            if(next == null){
+                hasNext();
+            }
+
+            if(next == null){
+                throw new NoSuchElementException("No more elements.");
+            }else{
+                F candidate = next;
+                next = null;
+                return candidate;
+            }
+        }
+
+        @Override
+        public void close() {
+            ite1.close();
+            ite2.close();
+        }
+
+        @Override
+        public boolean hasNext() {
+            if(next != null) return true;
+
+            if(ite1next == null && ite1.hasNext()){
+                ite1next = ite1.next();
+            }
+
+            if(ite2next == null && ite2.hasNext()){
+                ite2next = ite2.next();
+            }
+
+            if (ite1next != null && ite2next != null) {
+                
+                if(comparator.compare(ite1next, ite2next) <= 0){
+                    //ite1next is before
+                    next = ite1next;
+                    ite1next = null;
+                    active = ite1;
+                }else{
+                    next = ite2next;
+                    ite2next = null;
+                    active = ite2;
+                }
+                
+            } else if (ite1next == null) {
+                next = ite2next;
+                ite2next = null;
+                active = ite2;
+            } else if (ite2next == null) {
+                next = ite1next;
+                ite1next = null;
+                active = ite1;
+            } else {
+                next = null;
+                active = null;
+            } 
+            
+            return next != null;
+        }
+
+        @Override
+        public void remove() {
+            if(active != null){
+                active.remove();
+            }
+        }
+
+    }
 
 }

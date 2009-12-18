@@ -17,21 +17,21 @@
 
 package org.geotoolkit.data.session;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultFeatureCollection;
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.data.query.QueryBuilder;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -44,19 +44,24 @@ import org.opengis.geometry.Envelope;
 public class ModifyDelta extends AbstractDelta{
 
     private final Name type;
-    private final FeatureCollection<Feature> features;
+    private final Id filter;
+    private final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
 
-    public ModifyDelta(Name typeName, Collection<Feature> features){
+    public ModifyDelta(Session session, Name typeName, Id filter, Map<AttributeDescriptor,Object> values){
+        super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
         }
-        if(features == null || features.isEmpty()){
-            throw new IllegalArgumentException("Can not create an Add delta with no new features.");
+        if(filter == null){
+            throw new NullPointerException("Filter can not be null. Did you mean Filter.INCLUDE ?");
+        }
+        if(values == null || values.isEmpty()){
+            throw new IllegalArgumentException("Modified values can not be null or empty. A modify delta is useless in this case.");
         }
 
         this.type = typeName;
-        this.features = new DefaultFeatureCollection<Feature>(null, null, Feature.class);
-        this.features.addAll(features);
+        this.filter = filter;
+        this.values.putAll(values);
     }
 
     /**
@@ -64,8 +69,14 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public Query modify(Query query) {
-        //add doesnt modify a query
-        return query;
+        if(!query.getTypeName().equals(type)) return query;
+
+        //we exclude the modified features
+        //they will be handle in the other modified methods
+        final QueryBuilder builder = new QueryBuilder(query);
+        builder.setFilter(FF.and(builder.getFilter(),FF.not(filter)));
+
+        return builder.buildQuery();
     }
 
     /**
@@ -73,12 +84,10 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
-        if(!query.getTypeName().equals(type)) return reader;
 
-        //todo must handle properly sortOrder
-        final FeatureIterator affected = features.subCollection(query).iterator();
+        //todo must encapsulate
 
-        return DataUtilities.sequence(reader, affected);
+        return reader;
     }
 
     /**
@@ -86,11 +95,8 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public long modify(Query query, long count) throws DataStoreException{
-        if(!query.getTypeName().equals(type)) return count;
-
-        final int affected = features.subCollection(query).size();
-
-        return count + affected;
+        //todo
+        return count;
     }
 
     /**
@@ -98,13 +104,8 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public Envelope modify(Query query, Envelope env) throws DataStoreException {
-        if(!query.getTypeName().equals(type)) return env;
-
-        final Envelope affected = features.subCollection(query).getEnvelope();
-        final JTSEnvelope2D combine = new JTSEnvelope2D(env);
-        combine.expandToInclude(new JTSEnvelope2D(affected));
-
-        return combine;
+        //todo
+        return null;
     }
 
     /**
@@ -112,22 +113,19 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public void commit(DataStore store) throws DataStoreException {
-        final FeatureWriter writer = store.getFeatureWriterAppend(type);
+        final FeatureWriter writer = store.getFeatureWriter(type,filter);
 
         try{
-            for(final Feature f : features){
-                final Feature candidate = writer.next();
-
-                for(final Property property : f.getProperties()){
-                    candidate.getProperty(property.getName()).setValue(property.getValue());
+            while(writer.hasNext()){
+                final Feature f = writer.next();
+                for(final Entry<AttributeDescriptor,Object> entry : values.entrySet()){
+                    f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
                 }
-
                 writer.write();
             }
         }finally{
             writer.close();
         }
-
     }
 
     /**
@@ -135,7 +133,6 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public void dispose() {
-        features.clear();
     }
 
 }

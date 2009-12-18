@@ -25,12 +25,11 @@ import java.util.List;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.query.SortByComparator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
 
 /**
  * Basic support for a  FeatureIterator that will sort features using the given sort by
@@ -47,7 +46,7 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
         implements FeatureIterator<F> {
 
     protected final R iterator;
-    private final Comparator<F> comparator;
+    private final Comparator<Feature> comparator;
     protected List<F> ordered = null;
     protected int index = 0;
 
@@ -127,41 +126,6 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
         @Override
         public T getFeatureType() {
             return iterator.getFeatureType();
-        }
-
-    }
-
-    private static class SortByComparator<F extends Feature> implements Comparator<F>{
-
-        private final SortBy[] orders;
-
-        private SortByComparator(SortBy[] orders){
-            if(orders == null || orders.length == 0){
-                throw new IllegalArgumentException("SortBy array can not be null or empty.");
-            }
-
-            this.orders = orders;
-        }
-
-        @Override
-        public int compare(F f1, F f2) {
-
-            for(final SortBy order : orders){
-                final PropertyName property = order.getPropertyName();
-                final Comparable o1 = (Comparable) property.evaluate(f1);
-                final Comparable o2 = (Comparable) property.evaluate(f2);
-
-                final int result;
-                if(order.getSortOrder() == SortOrder.ASCENDING){
-                    result = o1.compareTo(o2);
-                }else{
-                    result = o2.compareTo(o1);
-                }
-
-                if(result != 0) return result;
-            }
-
-            return 0;
         }
 
     }

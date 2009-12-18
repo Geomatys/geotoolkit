@@ -46,7 +46,8 @@ public class AddDelta extends AbstractDelta{
     private final Name type;
     private final FeatureCollection<Feature> features;
 
-    public AddDelta(Name typeName, Collection<Feature> features){
+    public AddDelta(Session session, Name typeName, Collection<Feature> features){
+        super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
         }
@@ -75,10 +76,13 @@ public class AddDelta extends AbstractDelta{
     public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return reader;
 
-        //todo must handle properly sortOrder
         final FeatureIterator affected = features.subCollection(query).iterator();
 
-        return DataUtilities.sequence(reader, affected);
+        if(query.getSortBy() != null){
+            return DataUtilities.combine(query.getSortBy(), reader, affected);
+        }else{
+            return DataUtilities.sequence(reader, affected);
+        }
     }
 
     /**
