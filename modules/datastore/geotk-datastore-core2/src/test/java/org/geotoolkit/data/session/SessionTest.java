@@ -170,7 +170,7 @@ public class SessionTest extends TestCase{
         //----------------------------------------------------------------------
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) store.getSchema(name));
         sfb.set("string", "hop4");
-        sfb.set("double", 4d);
+        sfb.set("double", 2.5d);
         sfb.set("date", new Date(100L));
 
         session.add(name, Collections.singletonList(sfb.buildFeature("temporary")));
@@ -190,8 +190,34 @@ public class SessionTest extends TestCase{
             reader.hasNext();
             sf = (SimpleFeature) reader.next();
             assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("double"),2.5d);
             assertEquals(sf.getAttribute("date"),new Date(100L));
+
+            assertFalse(reader.hasNext());
+        }finally{
+            reader.close();
+        }
+
+        //check that the sorting order has been preserve within the session
+
+        reader = session.getFeatureIterator(QueryBuilder.sorted(name,new SortBy[]{FF.sort("double", SortOrder.ASCENDING)}));
+        try{
+            SimpleFeature sf;
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("double"),1d);
+
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("double"),2d);
+
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("double"),2.5d);
+
+            reader.hasNext();
+            sf = (SimpleFeature) reader.next();
+            assertEquals(sf.getAttribute("double"),3d);
 
             assertFalse(reader.hasNext());
         }finally{
@@ -213,7 +239,7 @@ public class SessionTest extends TestCase{
             reader.hasNext();
             sf = (SimpleFeature) reader.next();
             assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("double"),2.5d);
             assertEquals(sf.getAttribute("date"),new Date(100L));
 
             assertFalse(reader.hasNext());
@@ -227,7 +253,7 @@ public class SessionTest extends TestCase{
             reader.hasNext();
             sf = (SimpleFeature) reader.next();
             assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("double"),2.5d);
             assertEquals(sf.getAttribute("date"),new Date(100L));
 
             assertFalse(reader.hasNext());
@@ -246,7 +272,7 @@ public class SessionTest extends TestCase{
             reader.hasNext();
             sf = (SimpleFeature) reader.next();
             assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),4d);
+            assertEquals(sf.getAttribute("double"),2.5d);
             assertEquals(sf.getAttribute("date"),new Date(100L));
 
             assertFalse(reader.hasNext());
