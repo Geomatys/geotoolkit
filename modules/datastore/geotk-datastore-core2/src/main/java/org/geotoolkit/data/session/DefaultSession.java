@@ -152,7 +152,7 @@ public class DefaultSession implements Session {
      */
     @Override
     public boolean hasPendingChanges() {
-        return diff.getDeltas().length != 0;
+        return diff.getDeltas().size() != 0;
     }
 
     /**

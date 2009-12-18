@@ -19,9 +19,13 @@ package org.geotoolkit.data.session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  * Contain a list of all modification, ensure concurrency when accesing
@@ -33,35 +37,76 @@ import org.geotoolkit.data.DataStoreException;
 public class DefaultSessionDiff{
 
     private final List<Delta> deltas = new ArrayList<Delta>();
+    private List<Delta> readCopy = null;
+
+    private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
+    private final Lock readLock = rwlock.readLock();
+    private final Lock writeLock = rwlock.writeLock();
 
     /**
      * {@inheritDoc }
      */
-    public Delta[] getDeltas() {
-        return deltas.toArray(new Delta[deltas.size()]);
+    public List<Delta> getDeltas() {
+        readLock.lock();
+        try{
+            List<Delta> cp = readCopy;
+            if(cp != null){
+                return cp;
+            }
+        }finally{
+            readLock.unlock();
+        }
+        
+        /*
+         * Double-check: was a deprecated practice before Java 5.
+         * Is okay since Java 5 provided that the readCopy field
+         * is protected by the readlock.
+         */
+        writeLock.lock();
+        try{
+            List<Delta> cp = readCopy;
+            if(cp == null){
+                cp = UnmodifiableArrayList.wrap(deltas.toArray(new Delta[deltas.size()]));
+                readCopy = cp;
+            }
+            return cp;
+        }finally{
+            writeLock.unlock();
+        }
     }
 
     public void add(Delta alt){
-        deltas.add(alt);
+        writeLock.lock();
+        try{
+            deltas.add(alt);
+            readCopy = null;
+        }finally{
+            writeLock.unlock();
+        }
     }
 
     public void commit(DataStore store) throws DataStoreException{
-        //todo : must lock on the diff to avoid sync issues
-        for(final Delta alt : deltas){
-            alt.commit(store);
-            alt.dispose();
-            //todo must remove the alteration
+        writeLock.lock();
+        try{
+            for(final Delta alt : deltas){
+                alt.commit(store);
+                alt.dispose();
+            }
+            deltas.clear();
+            readCopy = null;
+        }finally{
+            writeLock.unlock();
         }
-
-        deltas.clear();
     }
 
     public void rollback(){
-        deltas.clear();
-    }
-
-    public void remove(Delta alt){
-        deltas.remove(alt);
+        writeLock.lock();
+        try{
+            deltas.clear();
+            readCopy = null;
+        }finally{
+            writeLock.unlock();
+        }
     }
 
 }
