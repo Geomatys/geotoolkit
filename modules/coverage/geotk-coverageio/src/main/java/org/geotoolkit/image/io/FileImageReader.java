@@ -186,19 +186,24 @@ public abstract class FileImageReader extends StreamImageReader {
     }
 
     /**
-     * Deletes the temporary file, if any.
+     * Closes the stream {@linkplain StreamImageReader#close() as documented in the super-class},
+     * then deletes the temporary file (if any).
      *
      * @throws IOException If an error occured while disposing resources.
      */
     @Override
     protected void close() throws IOException {
-        if (inputFile != null) {
-            if (isTemporary) {
-                TemporaryFile.delete(inputFile);
+        try {
+            super.close();
+        } finally {
+            final File file = inputFile;
+            if (file != null) {
+                inputFile = null;
+                if (isTemporary) {
+                    TemporaryFile.delete(file);
+                }
             }
-            inputFile = null;
+            isTemporary = false;
         }
-        isTemporary = false;
-        super.close();
     }
 }

@@ -44,8 +44,12 @@ import org.geotoolkit.io.LineFormat;
  */
 final class TestReader extends TextImageReader {
     /**
-     * The input stream to {@linkplain InputStream#reset reset} after
-     * {@linkplain InputStream#mark mark}.
+     * The input stream to {@linkplain InputStream#reset reset}, or {@code null} if none. This
+     * field may be assigned by {@link #getReader()}. If it is non-null, then the {@code reset()}
+     * method of this stream shall be invoked instead than {@link Reader#reset()}.
+     * <p>
+     * This stream will never be closed by this {@code TestReader} class, i.e. it should never
+     * be the same instance than {@link #closeOnReset}.
      */
     private InputStream marked;
 
@@ -130,12 +134,30 @@ final class TestReader extends TextImageReader {
                 return null;
             }
             stream.mark(readAheadLimit);
+            marked = stream;
         }
         final Reader reader = getInputStreamReader(stream);
         if (closeOnReset == stream) {
             closeOnReset = reader;
         }
         return reader;
+    }
+
+    /**
+     * Resets the stream to the marked position.
+     */
+    private void reset(final Reader reader) throws IOException {
+        final InputStream m = marked;
+        if (m != null) {
+            marked = null;
+            m.reset();
+            // Do not close the Reader, since we don't
+            // want to close the underlying InputStream.
+        } else if (reader != null && reader != closeOnReset) {
+            reader.reset();
+        } else {
+            super.close();
+        }
     }
 
     /**
@@ -182,12 +204,14 @@ final class TestReader extends TextImageReader {
         final char[] buffer = new char[readAheadLimit];
         readAheadLimit = input.read(buffer, 0, Math.min(readAheadLimit, 256));
         if (readAheadLimit < 0 || containsBinary(buffer, 0, readAheadLimit)) {
+            reset(input);
             return false;
         }
         if (true) { // Set to 'false' and we want to use only the abovec 256 characters.
             final int more = input.read(buffer, readAheadLimit, buffer.length - readAheadLimit);
             if (more >= 0) {
                 if (containsBinary(buffer, readAheadLimit, readAheadLimit + more)) {
+                    reset(input);
                     return false;
                 }
                 readAheadLimit += more;
@@ -217,10 +241,12 @@ scan:   while (lower < readAheadLimit) {
             // Try to parse a line.
             final String line = new String(buffer, lower, upper-lower);
             if (!isComment(line) && !parseLine(line)) {
+                reset(input);
                 return false;
             }
             lower = upper;
         }
+        reset(input);
         return isValidContent();
     }
 
@@ -326,19 +352,16 @@ scan:   while (lower < readAheadLimit) {
     }
 
     /**
-     * Closes the reader created by this class, or {@linkplain Reader#reset reset} the
-     * user's reader to its original position.
+     * Closes the reader created by this class.
      */
     @Override
     protected void close() throws IOException {
+        reset(null);
+        marked   = null;
         keywords = null;
-        parser = null;
-        rows = null;
+        parser   = null;
+        rows     = null;
         rowCount = 0;
-        if (marked != null) {
-            marked.reset();
-            marked = null;
-        }
         super.close();
     }
 }

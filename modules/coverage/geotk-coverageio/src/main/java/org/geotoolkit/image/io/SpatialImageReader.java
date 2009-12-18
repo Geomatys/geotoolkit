@@ -120,18 +120,9 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     }
 
     /**
-     * Clears the cache. This method is invoked when a new input is set or when the reader
-     * is disposed. Sub-classes may override this method if they have more cache elements,
-     * but should always invoke {@code super.clearCache()}.
-     *
-     * @todo For now we do not allow overriding. This is a hook for possible future development.
-     */
-    private void clearCache() {
-        metadata = null;
-    }
-
-    /**
-     * Sets the input source to use.
+     * Sets the input source to use. If this image reader is an instance of
+     * {@link StreamImageReader} or {@link MultiFileImageReader}, then their
+     * {@code close()} method is invoked before to set the new input.
      *
      * @param input           The input object to use for future decoding.
      * @param seekForwardOnly If {@code true}, images and metadata may only be read
@@ -140,7 +131,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      */
     @Override
     public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
-        clearCache();
+        closeSilently();
         super.setInput(input, seekForwardOnly, ignoreMetadata);
     }
 
@@ -162,6 +153,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      */
     protected void checkImageIndex(final int imageIndex) throws IOException, IndexOutOfBoundsException {
         final int numImages = getNumImages(false);
+        final int minIndex  = getMinIndex();
         if (imageIndex < minIndex || (imageIndex >= numImages && numImages >= 0)) {
             throw new IndexOutOfBoundsException(indexOutOfBounds(imageIndex, minIndex, numImages));
         }
@@ -208,7 +200,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      * @return The number of images, or -1 if {@code allowSearch}
      *         is false and a search would be required.
      *
-     * @throws IllegalStateException if the input source has not been set.
+     * @throws IllegalStateException if the {@linkplain #input input} source has not been set.
      * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
@@ -1007,9 +999,47 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     }
 
     /**
-     * To be overriden and made {@code protected} by {@link StreamImageReader} only.
+     * Invokes {@link #close} and log the exception if any. This method is invoked from
+     * methods that do not allow {@link IOException} to be thrown. Since we will not use
+     * the stream anymore after closing it, it should not be a big deal if an error occured.
+     */
+    final void closeSilently() {
+        try {
+            close();
+        } catch (IOException exception) {
+            Logging.unexpectedException(LOGGER, getClass(), "close", exception);
+        }
+    }
+
+    /**
+     * Invoked when a new input is set or when the reader is disposed. The default implementation
+     * clears the internal cache. Sub-classes can override this method if they have more resources
+     * to dispose, but should always invoke {@code super.close()}.
+     * <p>
+     * This method is overriden and given {@code protected} access by {@link StreamImageReader}
+     * and {@link MultiFileImageReader}. It is called "{@code close}" in order to match the
+     * purpose which appear in the public API of those classes.
+     *
+     * @throws IOException If an error occured while closing a stream (applicable to subclasses only).
      */
     void close() throws IOException {
-        clearCache();
+        metadata = null;
+    }
+
+    /*
+     * There is no need to override reset(), because the default ImageReader.reset()
+     * implementation invokes setInput(null, false, false), which in turn invokes our
+     * closeSilently() method.
+     */
+
+    /**
+     * Allows any resources held by this reader to be released. If an input stream were
+     * created by {@link StreamImageReader} or {@link MultiFileImageReader}, it will be
+     * {@linkplain StreamImageReader#close() closed} before to dispose this reader.
+     */
+    @Override
+    public void dispose() {
+        closeSilently();
+        super.dispose();
     }
 }

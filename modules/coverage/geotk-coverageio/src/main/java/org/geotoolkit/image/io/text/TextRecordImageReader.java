@@ -177,18 +177,6 @@ public class TextRecordImageReader extends TextImageReader {
     }
 
     /**
-     * Sets the input source. It should be one of the following object, in preference order:
-     * {@link java.io.File}, {@link java.net.URL}, {@link java.io.BufferedReader},
-     * {@link java.io.Reader}, {@link java.io.InputStream} or
-     * {@link javax.imageio.stream.ImageInputStream}.
-     */
-    @Override
-    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
-        clear();
-        super.setInput(input, seekForwardOnly, ignoreMetadata);
-    }
-
-    /**
      * Returns the number of bands available for the specified image. The default
      * implementation reads the image immediately and counts the number of columns
      * after the geodetic coordinate columns.
@@ -561,20 +549,13 @@ public class TextRecordImageReader extends TextImageReader {
     }
 
     /**
-     * Clears all data.
-     */
-    private void clear() {
-        data = null;
-        nextImageIndex = 0;
-    }
-
-    /**
-     * Restores the {@code TextRecordImageReader} to its initial state.
+     * {@inheritDoc}
      */
     @Override
-    public void reset() {
-        clear();
-        super.reset();
+    protected void close() throws IOException {
+        data = null;
+        nextImageIndex = 0;
+        super.close();
     }
 
 

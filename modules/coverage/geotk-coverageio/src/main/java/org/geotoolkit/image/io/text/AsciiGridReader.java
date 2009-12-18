@@ -243,15 +243,6 @@ public class AsciiGridReader extends TextImageReader {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
-        super.setInput(input, seekForwardOnly, ignoreMetadata);
-        headerValid = false;
-    }
-
-    /**
      * Reads the header, if it was not already read. If successful, then all the instance
      * variables declared in this class should be assigned to their final value.
      *
@@ -856,14 +847,30 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
     }
 
     /**
+     * Closes the input stream created by this reader as documented in the
+     * {@linkplain org.geotoolkit.image.io.StreamImageReader#close() super-class method}.
+     * If an input stream was created for reading the data from a RAW file, it is also closed.
+     */
+    @Override
+    protected void close() throws IOException {
+        headerValid = false;
+        super.close(); // First in order to make sure that it is always executed.
+        final ImageReader br = binaryReader;
+        if (br != null) {
+            br.reset();
+        }
+    }
+
+    /**
      * Allows any resources held by this reader to be released.
      */
     @Override
     public void dispose() {
         buffer = null;
-        if (binaryReader != null) {
-            binaryReader.dispose();
+        final ImageReader br = binaryReader;
+        if (br != null) {
             binaryReader = null;
+            br.dispose();
         }
         super.dispose();
     }

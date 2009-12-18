@@ -220,6 +220,15 @@ public class RawImageReader extends SpatialImageReader {
     }
 
     /**
+     * Returns {@code true} since random access is easy in uncompressed images.
+     */
+    @Override
+    public boolean isRandomAccessEasy(final int imageIndex) throws IOException {
+        checkImageIndex(imageIndex);
+        return true;
+    }
+
+    /**
      * Reads the image indexed by {@code imageIndex}.
      *
      * @param  imageIndex  The index of the image to be retrieved.

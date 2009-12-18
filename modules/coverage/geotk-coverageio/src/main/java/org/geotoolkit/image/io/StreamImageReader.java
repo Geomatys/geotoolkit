@@ -118,7 +118,6 @@ public abstract class StreamImageReader extends SpatialImageReader {
                          final boolean seekForwardOnly,
                          final boolean ignoreMetadata)
     {
-        closeSilently();
         super.setInput(input, seekForwardOnly, ignoreMetadata);
         if (input instanceof ImageInputStream) {
             try {
@@ -168,9 +167,9 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * <p>
      * This method creates a new {@linkplain InputStream input stream} only when first invoked.
      * All subsequent calls will return the same instance. Consequently, the returned stream
-     * should never be closed by the caller. It may be {@linkplain #close closed} automatically
-     * when {@link #setInput setInput(...)}, {@link #reset()} or {@link #dispose()} methods are
-     * invoked.
+     * should never be closed by the caller. It will be {@linkplain #close() closed} automatically
+     * (if the stream was not given directly by the user) when {@link #setInput setInput(...)},
+     * {@link #reset() reset()} or {@link #dispose() dispose()} methods are invoked.
      *
      * @return {@link #getInput()} as an {@link InputStream}. This input stream is usually
      *         not {@linkplain BufferedInputStream buffered}.
@@ -226,8 +225,9 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * <p>
      * This method creates a new channel only when first invoked. All subsequent calls will return
      * the same instance. Consequently, the returned channel should never be closed by the caller.
-     * It may be {@linkplain #close closed} automatically when {@link #setInput setInput(...)},
-     * {@link #reset()} or {@link #dispose()} methods are invoked.
+     * It will be {@linkplain #close() closed} automatically (if the channel was not given directly
+     * by the user) when {@link #setInput setInput(...)}, {@link #reset() reset()} or
+     * {@link #dispose() dispose()} methods are invoked.
      *
      * @return {@link #getInput()} as a {@link ReadableByteChannel}.
      * @throws IllegalStateException if the {@linkplain #input input} is not set.
@@ -260,10 +260,12 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * if the input stream is the {@linkplain #input input} instance given by the user rather
      * than a stream created by this class from a {@link File} or {@link URL} input.
      * <p>
-     * This method is invoked automatically by {@link #setInput(Object,boolean,boolean)
-     * setInput(...)}, {@link #reset}, {@link #dispose} or {@link #finalize} methods and
-     * doesn't need to be invoked explicitly. It has protected access only in order to
-     * allow overriding by subclasses.
+     * This method is invoked automatically by {@link #setInput(Object, boolean, boolean)
+     * setInput(...)}, {@link #reset() reset()}, {@link #dispose() dispose()} or
+     * {@link #finalize()} methods and doesn't need to be invoked explicitly.
+     * It has protected access only in order to allow overriding by subclasses.
+     * Overriding methods shall make sure that {@code super.close()} is invoked
+     * even if their own code fail.
      *
      * @throws IOException if an error occured while closing the stream.
      *
@@ -271,6 +273,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      */
     @Override
     protected void close() throws IOException {
+        super.close(); // Should be first.
         if (closeOnReset != null) {
             // Close the channel only if it was not supplied explicitly by the user.
             if (channel != null) {
@@ -281,42 +284,6 @@ public abstract class StreamImageReader extends SpatialImageReader {
         channel      = null;
         closeOnReset = null;
         stream       = null;
-        super.close();
-    }
-
-    /**
-     * Invokes {@link #close} and log the exception if any. This method is invoked from
-     * methods that do not allow {@link IOException} to be thrown. Since we will not use
-     * the stream anymore after closing it, it should not be a big deal if an error occured.
-     */
-    private void closeSilently() {
-        try {
-            close();
-        } catch (IOException exception) {
-            Logging.unexpectedException(LOGGER, getClass(), "close", exception);
-        }
-    }
-
-    /**
-     * Restores the {@code StreamImageReader} to its initial state. If an input stream were
-     * created by a previous call to {@link #getInputStream}, it will be {@linkplain #close
-     * closed} before to reset this reader.
-     */
-    @Override
-    public void reset() {
-        closeSilently();
-        super.reset();
-    }
-
-    /**
-     * Allows any resources held by this reader to be released. If an input stream were created
-     * by a previous call to {@link #getInputStream}, it will be {@linkplain #close closed}
-     * before to dispose this reader.
-     */
-    @Override
-    public void dispose() {
-        closeSilently();
-        super.dispose();
     }
 
     /**
