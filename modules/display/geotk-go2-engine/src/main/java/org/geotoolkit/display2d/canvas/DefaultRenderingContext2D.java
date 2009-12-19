@@ -22,6 +22,7 @@ import java.awt.Rectangle;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -173,6 +174,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     private double geoScale = 1;
 
+    private final Date[] temporalRange = new Date[2];
+    private final Double[] elevationRange = new Double[2];
+
+
 
     private Shape              paintingDisplayShape   = null;
     private Rectangle          paintingDisplaybounds  = null;
@@ -196,7 +201,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
-            final Shape canvasDisplayShape, final Shape canvasObjectiveShape ){
+            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, Date[] temporal, Double[] elevation){
         this.objectiveCRS       = canvas.getObjectiveCRS();
         this.displayCRS         = canvas.getDisplayCRS();
         this.objectiveToDisplay = objToDisp;
@@ -238,6 +243,23 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.paintingObjectiveBBox = new Envelope2D(objectiveCRS,paintingObjectiveBounds);
 
         geoScale = canvas.getController().getGeographicScale();
+
+        //set temporal and elevation range
+        if(temporal != null){
+            temporalRange[0] = temporal[0];
+            temporalRange[1] = temporal[1];
+        }else{
+            temporalRange[0] = null;
+            temporalRange[1] = null;
+        }
+        if(elevation != null){
+            elevationRange[0] = elevation[0];
+            elevationRange[1] = elevation[1];
+        }else{
+            elevationRange[0] = null;
+            elevationRange[1] = null;
+        }
+
     }
 
     public void initGraphic(final Graphics2D graphics){
@@ -380,7 +402,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
         context.initParameters(objectiveToDisplay, monitor,
                                paintingDisplayShape, paintingObjectiveShape,
-                               canvasDisplayShape, canvasObjectiveShape);
+                               canvasDisplayShape, canvasObjectiveShape,temporalRange,elevationRange);
         context.initGraphic(g2d);
         g2d.setRenderingHints(this.graphics.getRenderingHints());
         context.labelRenderer = getLabelRenderer(true);
@@ -565,6 +587,16 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public AffineTransform2D getDisplayToObjective() {
         return displayToObjective;
+    }
+
+    @Override
+    public Date[] getTemporalRange() {
+        return temporalRange;
+    }
+
+    @Override
+    public Double[] getElevationRange() {
+        return elevationRange;
     }
 
 }

@@ -182,7 +182,7 @@ public class FeatureSourceModel extends DefaultTableModel {
             Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));            
             FeatureType schema = store.getSchema();
             
-            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
+            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex));
                         
             try {
                 store.updateFeatures(NAME, aValue, filter);

@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.Color;
-import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.GraphicVisitor;
@@ -41,16 +38,16 @@ import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
-
+import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
@@ -159,7 +156,15 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             }
         }
 
-        context.initParameters(new AffineTransform2D(objToDisp), monitor, paintingDisplayShape, paintingObjectiveShape, canvasDisplayShape, canvasObjectShape);
+        context.initParameters(
+                new AffineTransform2D(objToDisp),
+                monitor,
+                paintingDisplayShape,
+                paintingObjectiveShape,
+                canvasDisplayShape,
+                canvasObjectShape,
+                getController().getTemporalRange(),
+                getController().getElevationRange());
         if(output != null) context.initGraphic(output);
         
         return context;

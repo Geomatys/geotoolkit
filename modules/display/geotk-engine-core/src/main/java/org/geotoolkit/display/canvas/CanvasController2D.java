@@ -191,9 +191,9 @@ public interface CanvasController2D extends CanvasController{
 
     // Elevation dimension -----------------------------------------------------
 
-    void setElevationRange(double min, double max, Unit<Length> unit);
+    void setElevationRange(Double min, Double max, Unit<Length> unit);
 
-    double[] getElevationRange();
+    Double[] getElevationRange();
 
     Unit<Length> getElevationUnit();
     

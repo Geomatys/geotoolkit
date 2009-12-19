@@ -21,6 +21,7 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +59,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
+import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -200,6 +202,42 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
             filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
         }
+
+
+        //concatenate with temporal range if needed
+        final Filter temporalFilter;
+        final Date[] temporal = context.getTemporalRange().clone();
+        final Expression[] layerRange = layer.getTemporalRange().clone();
+
+        if(temporal[0] == null){
+            temporal[0] = new Date(Long.MIN_VALUE);
+        }
+        if(temporal[1] == null){
+            temporal[1] = new Date(Long.MAX_VALUE);
+        }
+
+        if(layerRange[0] != null && layerRange[1] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerRange[0] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerRange[0], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerRange[1] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerRange[1], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else{
+            temporalFilter = Filter.INCLUDE;
+        }
+
+        if(temporalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,temporalFilter);
+        }
+
+
+
 
         final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
         final Set<String> copy = new HashSet<String>(attributs);

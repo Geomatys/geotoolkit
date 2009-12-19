@@ -30,6 +30,7 @@ import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -43,6 +44,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
 
     private final FeatureSource<SimpleFeatureType, SimpleFeature> featureSource;
+
+    private Expression height;
+    private Expression[] elevationRange;
+    private Expression[] temporalRange;
 
     /**
      * Creates a new instance of DefaultFeatureMapLayer
@@ -95,6 +100,46 @@ final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
         }
 
         return env;
+    }
+
+    @Override
+    public Expression getHeight() {
+        return height;
+    }
+
+    @Override
+    public void setHeight(Expression height) {
+        this.elevationRange = null;
+        this.height = height;
+    }
+
+    @Override
+    public Expression[] getElevationRange() {
+        if(elevationRange == null){
+            return new Expression[2];
+        }else{
+            return elevationRange.clone();
+        }
+    }
+
+    @Override
+    public void setElevationRange(Expression from, Expression to) {
+        height = null;
+        elevationRange = new Expression[]{from,to};
+    }
+
+    @Override
+    public Expression[] getTemporalRange() {
+        if(temporalRange == null){
+            return new Expression[2];
+        }else{
+            return temporalRange.clone();
+        }
+    }
+
+    @Override
+    public void setTemporalRange(Expression from, Expression to) {
+        temporalRange = new Expression[]{from,to};
     }
     
 
