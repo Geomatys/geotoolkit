@@ -31,7 +31,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-final class SelectionCheck extends JCheckBox {
+class SelectionCheck extends JCheckBox {
 
     private static final ImageIcon ICO_SELECT = IconBundle.getInstance().getIcon("16_select");
     private static final ImageIcon ICO_NOSELECT = IconBundle.getInstance().getIcon("16_noselect");
