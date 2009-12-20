@@ -160,6 +160,9 @@ public abstract class TileManager implements Serializable {
     /**
      * Returns the tiles dimension. Subclasses will override this method with a better
      * implementation.
+     * <p>
+     * {@link MosaicImageReader#getTileWidth(int)} (and the equivalent method for height)
+     * delegate to this method.
      *
      * @return The tiles dimension. <strong>Do not modify</strong> since it may be a direct
      *         reference to internal structures.
@@ -173,6 +176,8 @@ public abstract class TileManager implements Serializable {
     /**
      * Returns {@code true} if there is more than one tile. The default implementation returns
      * {@code true} in all cases.
+     * <p>
+     * {@link MosaicImageReader#isImageTiled(int)} delegates to this method.
      *
      * @return {@code true} if the image is tiled.
      * @throws IOException If an I/O operation was required and failed.

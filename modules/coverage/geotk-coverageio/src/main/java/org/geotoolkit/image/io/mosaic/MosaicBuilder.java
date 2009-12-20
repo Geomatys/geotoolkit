@@ -708,6 +708,7 @@ public class MosaicBuilder {
 
     /**
      * Creates tiles for the following cases:
+     * <p>
      * <ul>
      *   <li>covering a constant geographic region. The tile size will reduce as we progress into
      *       overviews levels. The {@link #minimumTileSize} value is the stop condition - no smaller
@@ -927,6 +928,22 @@ public class MosaicBuilder {
             this.inputIndex = inputIndex;
             this.policy = policy;
             listeners.addListenersTo(this);
+        }
+
+        /**
+         * Returns {@code true} if the writer is allows to cache the tiles for performance.
+         * This method is overriden in order to disallow caching if the subsampling is greater
+         * than (1,1). Caching every pixels in this case would be more costly than needed since
+         * we going the use only a small fraction of them.
+         */
+        @Override
+        protected boolean isCachingEnabled(ImageReader input, int inputIndex) throws IOException {
+            for (final Dimension subsampling : getSubsamplings()) {
+                if (subsampling.width == 1 && subsampling.height == 1) {
+                    return super.isCachingEnabled(input, inputIndex);
+                }
+            }
+            return false;
         }
 
         /**

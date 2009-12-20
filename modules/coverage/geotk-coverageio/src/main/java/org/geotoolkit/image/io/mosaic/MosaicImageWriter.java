@@ -1027,6 +1027,25 @@ search: for (final Tile tile : tiles) {
         if (input instanceof MosaicImageReader) {
             boolean compressed = false;
             for (final TileManager tiles : ((MosaicImageReader) input).getInput()) {
+                /*
+                 * If there is not enough disk space for holding the uncompressed files,
+                 * stops immediately the check: we can not cache the tiles.
+                 */
+                required += tiles.diskUsage() * bitPerPixels / Byte.SIZE;
+                if (required > available) {
+                    return false;
+                }
+                /*
+                 * If there is not enough memory for holding fully the largest tile,
+                 * stops immediately the check: we can not cache the tiles.
+                 */
+                if (tiles.largestTileArea() * bitPerPixels / Byte.SIZE > maxInputSize) {
+                    return false;
+                }
+                /*
+                 * Checks if there is at least one uncompressed tile. As soon as we have
+                 * found one such uncompressed file, we will not need to check anymore.
+                 */
                 if (!compressed) {
                     for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
                         if (Compressions.guessForFormat(spi) != 1) {
@@ -1034,10 +1053,6 @@ search: for (final Tile tile : tiles) {
                             break;
                         }
                     }
-                }
-                required += tiles.diskUsage() * bitPerPixels / Byte.SIZE;
-                if (required > available || tiles.largestTileArea() * bitPerPixels / Byte.SIZE > maxInputSize) {
-                    return false;
                 }
             }
             /*

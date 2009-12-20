@@ -144,7 +144,7 @@ public final class ExceptionMonitor {
          * Default width (in number of columns) of the component which displays
          * the exception message or trace.
          */
-        private static final int WIDTH = 40;
+        private static final int WIDTH = 80;
 
         /**
          * Minimum height (in pixels) of the dialog box when it also displays the trace.
