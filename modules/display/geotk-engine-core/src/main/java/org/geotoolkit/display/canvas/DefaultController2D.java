@@ -513,6 +513,8 @@ public class DefaultController2D implements CanvasController2D{
      */
     @Override
     public void setTemporalRange(Date startDate, Date endDate) {
+        Date[] old = this.dateRange;
+
         if(startDate == null){
             this.dateRange[0] = null;
         }else{
@@ -528,6 +530,8 @@ public class DefaultController2D implements CanvasController2D{
         if(autoRepaint){
             repaint();
         }
+
+        canvas.getPropertyListeners().firePropertyChange(TEMPORAL_PROPERTY, old.clone(), this.dateRange.clone());
 
     }
 

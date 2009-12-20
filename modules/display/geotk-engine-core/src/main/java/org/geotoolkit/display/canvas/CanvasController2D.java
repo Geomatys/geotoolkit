@@ -40,7 +40,9 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public interface CanvasController2D extends CanvasController{
-    
+
+    public static final String TEMPORAL_PROPERTY = "temporal";
+
     /**
      * Reinitializes the affine transform {@link #transform(java.awt.geom.AffineTransform)}
      * in order to cancel any zoom, rotation or translation.
