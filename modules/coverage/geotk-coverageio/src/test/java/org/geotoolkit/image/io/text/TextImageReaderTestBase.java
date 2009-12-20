@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import javax.imageio.ImageTypeSpecifier;
 
+import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.plugin.ImageReaderTestBase;
 
@@ -57,7 +58,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      * @throws IOException If an error occured while creating the format.
      */
     @Override
-    protected abstract TextImageReader createImageReader() throws IOException;
+    protected abstract SpatialImageReader createImageReader() throws IOException;
 
     /**
      * Tests the {@link TextImageReader.Spi#canDecodeInput(Object)}.
@@ -66,7 +67,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      */
     @Test
     public void testCanRead() throws IOException {
-        final TextImageReader reader = createImageReader();
+        final SpatialImageReader reader = createImageReader();
         assertTrue(reader.getOriginatingProvider().canDecodeInput(reader.getInput()));
         /*
          * Ensure that the above check did not caused the lost of data.
@@ -86,7 +87,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      */
     @Test
     public void testReadFile() throws IOException {
-        final TextImageReader reader = createImageReader();
+        final SpatialImageReader reader = createImageReader();
         final BufferedImage image = reader.read(0);
         reader.dispose();
         assertEquals(20, image.getWidth());
@@ -113,7 +114,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      */
     @Test
     public void testSubRegion() throws IOException {
-        final TextImageReader reader = createImageReader();
+        final SpatialImageReader reader = createImageReader();
         final SpatialImageReadParam param = reader.getDefaultReadParam();
         param.setSourceRegion(new Rectangle(5, 10, 10, 20));
         param.setSourceSubsampling(2, 3, 1, 2);
@@ -136,7 +137,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      */
     @Test
     public void testByteType() throws IOException {
-        final TextImageReader reader = createImageReader();
+        final SpatialImageReader reader = createImageReader();
         final SpatialImageReadParam param = reader.getDefaultReadParam();
         final byte[] RGB = new byte[256];
         for (int i=0; i<RGB.length; i++) {

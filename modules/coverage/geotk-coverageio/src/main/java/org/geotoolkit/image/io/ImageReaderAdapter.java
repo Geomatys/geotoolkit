@@ -33,9 +33,11 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.io.Formats;
@@ -435,7 +437,11 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns metadata associated with the input source as a whole. The default implementation
      * ensures that the {@linkplain #main} reader is initialized, then delegates to the
-     * {@linkplain #main} image reader if it is an instance of {@link SpatialMetadataReader}.
+     * {@linkplain #createMetadata(int)} method as documented in the
+     * {@linkplain SpatialImageReader#getStreamMetadata() super-class method}.
+     * <p>
+     * Subclasses should consider overriding the {@link #createMetadata(int)} method instead
+     * than this one.
      */
     @Override
     public SpatialMetadata getStreamMetadata() throws IOException {
@@ -448,8 +454,11 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns metadata associated with the given image. The default implementation ensures
      * (indirectly, though a call to {@link #getNumImages(boolean)}) that the {@linkplain #main}
-     * reader is initialized, then delegates to the {@linkplain #main} image reader if it is an
-     * instance of {@link SpatialMetadataReader}.
+     * reader is initialized, then delegates to the {@linkplain #createMetadata(int)} method as
+     * documented in the {@linkplain SpatialImageReader#getImageMetadata(int) super-class method}.
+     * <p>
+     * Subclasses should consider overriding the {@link #createMetadata(int)} method instead
+     * than this one.
      */
     @Override
     public SpatialMetadata getImageMetadata(final int imageIndex) throws IOException {
@@ -461,18 +470,24 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Creates a new stream or image metadata. This method is invoked by the public
      * {@link #getStreamMetadata()} and {@link #getImageMetadata(int)} methods. The
-     * default implementation delegates to the {@linkplain #main} reader if it is an
-     * instance of {@link SpatialImageReader}, or returns {@code null} otherwise.
+     * default implementation delegates to the corresponding method of the
+     * {@linkplain #main} reader, then wraps the result in a {@link SpatialMetadata}
+     * object if it is not-null. Otherwise this method returns {@code null}.
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
-        final SpatialMetadata metadata;
-        if (main instanceof SpatialImageReader) {
-            metadata = ((SpatialImageReader) main).createMetadata(imageIndex);
+        if (imageIndex >= 0) {
+            final IIOMetadata metadata = main.getImageMetadata(imageIndex);
+            if (metadata != null) {
+                return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, metadata);
+            }
         } else {
-            metadata = super.createMetadata(imageIndex);
+            final IIOMetadata metadata = main.getStreamMetadata();
+            if (metadata != null) {
+                return new SpatialMetadata(SpatialMetadataFormat.STREAM, this, metadata);
+            }
         }
-        return metadata;
+        return null;
     }
 
     /**

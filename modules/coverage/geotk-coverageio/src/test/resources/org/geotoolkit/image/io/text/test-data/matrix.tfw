@@ -1,0 +1,16 @@
+#
+# Test file for World File parsing.
+#
+# The values below do not provide an accurate localization of the matrix.txt file.
+# We are interrested only in testing the WorldFileReader capability to store those
+# information in the image metadata.
+#
+# Note that the extension of this matrix.tfw file could have been 'ttw' according
+# World File rules. The WorldFileReader should accept both.
+#
+1000
+0
+0
+-1000
+-10000
+21000

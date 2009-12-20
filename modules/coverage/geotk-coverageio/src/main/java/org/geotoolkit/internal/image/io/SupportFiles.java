@@ -18,14 +18,14 @@
 package org.geotoolkit.internal.image.io;
 
 import java.io.*;
+import javax.imageio.IIOException;
 import java.awt.geom.AffineTransform;
-
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.ContentFormatException;
-import org.geotoolkit.io.wkt.PrjFiles;
 
 
 
@@ -130,18 +130,49 @@ public final class SupportFiles {
     }
 
     /**
-     * Returns the TFW suffix for the given file. Actually {@code ".tfw"} is the default,
-     * but other prefix may be returned like {@code ".jgw"} for JPEG files. This method
-     * returns always the suffix in lower case.
+     * Returns a new file or URL equivalent to the given {@link String}, {@link File}, {@link URL}
+     * or {@link URI} argument, with its extension replaced by the given one. The given extension
+     * shall be all lowercase and without leading dot character.
+     * <p>
+     * The {@code "tfw"} extension is handled especially, in that {@code "tfw} will actually be
+     * used only as a fallback if no file exist with the extension for <cite>World File</cite>.
+     *
+     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @param  extension The new extension, in lower cases and without leading dot.
+     * @return The path with the new extension, or {@code null} if the given path was null.
+     * @throws IOException If the given object is not recognized, or attempt to replace it
+     *         extension does not result in a valid URL.
+     *
+     * @since 3.07
      */
-    private static String toSuffixTFW(final File file) {
-        final String name = file.getName().trim();
-        final int length = name.length();
-        final int separator = name.indexOf('.');
-        if (separator >= 0 && separator + 2 < length) {
+    public static Object changeExtension(Object path, String extension) throws IOException {
+        if (path != null) {
+            boolean isTFW = extension.equals("tfw");
+            if (isTFW) {
+                extension = toSuffixTFW(path);
+            }
+            if (path instanceof File) {
+                return toSupportFile((File) path, extension, isTFW);
+            }
+            path = IOUtilities.changeExtension(path, extension);
+            if (path == null) {
+                throw new IIOException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, Classes.getClass(path)));
+            }
+        }
+        return path;
+    }
+
+    /**
+     * Returns the TFW suffix for the given file, URL or URI.
+     * This method returns always the suffix in lower case.
+     */
+    private static String toSuffixTFW(final Object file) {
+        final String ext = IOUtilities.extension(file);
+        final int length = ext.length();
+        if (length >= 2) {
             return String.valueOf(new char[] {
-                Character.toLowerCase(name.charAt(separator + 1)),
-                Character.toLowerCase(name.charAt(length - 1)),
+                Character.toLowerCase(ext.charAt(0)),
+                Character.toLowerCase(ext.charAt(length - 1)),
                 'w'
             });
         }
@@ -160,9 +191,7 @@ public final class SupportFiles {
         String name = file.getName();
         final int s = name.lastIndexOf('.');
         if (s >= 0) {
-            if (!name.substring(s+1).endsWith("fw")) {
-                name = name.substring(0, s+1) + suffix;
-            }
+            name = name.substring(0, s+1) + suffix;
         } else {
             name = name + '.' + suffix;
         }
@@ -193,13 +222,29 @@ public final class SupportFiles {
             // Formats our own error message instead of the JSE one in order to localize it.
             throw new FileNotFoundException(Errors.format(Errors.Keys.FILE_DOES_NOT_EXIST_$1, file.getName()));
         }
-        final LineNumberReader in = new LineNumberReader(new InputStreamReader(new FileInputStream(file), ENCODING));
+        return parseTFW(new FileInputStream(file), file.getName());
+    }
+
+    /**
+     * Parses a TFW file and returns its content as an affine transform.
+     *
+     * @param  input The input stream of the file to parse. Will be closed by this method.
+     * @param  filename The name of the file being parsed. Used only for formatting error message.
+     *         Can be a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @return The TFW file content as an affine transform.
+     * @throws IOException If an error occured while parsing the file, including
+     *         errors while parsing the numbers.
+     *
+     * @since 3.07
+     */
+    public static AffineTransform parseTFW(final InputStream input, final Object filename) throws IOException {
+        final LineNumberReader in = new LineNumberReader(new InputStreamReader(input, ENCODING));
         final double[] m = new double[6];
         int count = 0;
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            if (line.length() != 0) {
+            if (line.length() != 0 && line.charAt(0) != '#') {
                 if (count >= m.length) {
                     in.close();
                     throw new ContentFormatException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
@@ -209,7 +254,7 @@ public final class SupportFiles {
                 } catch (NumberFormatException e) {
                     in.close();
                     throw new ContentFormatException(Errors.format(Errors.Keys.BAD_LINE_IN_FILE_$2,
-                            file.getName(), in.getLineNumber()), e);
+                            IOUtilities.name(filename), in.getLineNumber()), e);
                 }
             }
         }
@@ -218,18 +263,5 @@ public final class SupportFiles {
             throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
         }
         return new AffineTransform(m);
-    }
-
-    /**
-     * Parses a PRJ file and returns its content as a coordinate reference system.
-     *
-     * @param  file The file to parse. If it doesn't end with the {@code ".prj"} suffix,
-     *         then the file suffix will be replaced by {@code ".prj"}.
-     * @return The PRJ file content as a coordinate reference system.
-     * @throws IOException If an error occured while parsing the file, including
-     *         errors while parsing the WKT.
-     */
-    public static CoordinateReferenceSystem parsePRJ(File file) throws IOException {
-        return PrjFiles.read(toSupportFile(file, "prj", false));
     }
 }

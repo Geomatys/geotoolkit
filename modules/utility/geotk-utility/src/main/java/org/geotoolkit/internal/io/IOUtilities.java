@@ -158,6 +158,29 @@ public final class IOUtilities {
     }
 
     /**
+     * Returns the filename from a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     *
+     * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
+     * @return The filename in the given path.
+     *
+     * @since 3.07
+     */
+    public static String name(final Object path) {
+        if (path instanceof File) {
+            return ((File) path).getName();
+        }
+        final String name;
+        if (path instanceof URL) {
+            name = ((URL) path).getPath();
+        } else if (path instanceof URI) {
+            name = ((URI) path).getPath();
+        } else {
+            name = path.toString();
+        }
+        return name.substring(name.lastIndexOf('/') + 1);
+    }
+
+    /**
      * Returns the filename extension from a {@link String}, {@link File}, {@link URL} or
      * {@link URI}. If no extension is found, returns an empty string.
      *
@@ -195,7 +218,7 @@ public final class IOUtilities {
      * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.
      * @param  extension The new extension, without leading dot.
      * @return The path with the new extension, or {@code null} if the given object has
-     *         not been recognized.
+     *         not been recognized (including {@code null} path).
      * @throws MalformedURLException If the given object is an {@link URI} or {@link URL},
      *         and changing the extension does not result in a valid URL.
      *

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 
 import org.opengis.metadata.spatial.CellGeometry;
@@ -104,6 +106,50 @@ public final class GridDomainAccessor extends MetadataAccessor {
     }
 
     /**
+     * Sets the values of the {@code "SpatialRepresentation"} attributes.
+     *
+     * @param centerPoint  The value to assign to the {@code "centerPoint"}  attribute.
+     * @param cellGeometry The value to assign to the {@code "cellGeometry"} attribute.
+     * @param pointInPixel The value to assign to the {@code "pointInPixel"} attribute.
+     */
+    public void setSpatialRepresentation(final double[] centerPoint, final CellGeometry cellGeometry,
+            final PixelOrientation pointInPixel)
+    {
+        final MetadataAccessor accessor = new MetadataAccessor(
+                metadata, FORMAT_NAME, "SpatialRepresentation", null);
+        accessor.setAttribute("numberOfDimensions", centerPoint.length);
+        accessor.setAttribute("centerPoint",  centerPoint);
+        accessor.setAttribute("pointInPixel", pointInPixel);
+        accessor.setAttribute("cellGeometry", cellGeometry);
+    }
+
+    /**
+     * Convenience methods which set every attributes handled by this accessor.
+     * This method is the most generic one for the two-dimensional case.
+     *
+     * @param gridToCRS    The conversion from grid to CRS.
+     * @param bounds       The image bounds.
+     * @param cellGeometry The value to assign to the {@code "cellGeometry"} attribute.
+     * @param pointInPixel The value to assign to the {@code "pointInPixel"} attribute.
+     */
+    public void setAll(final AffineTransform gridToCRS, final Rectangle bounds,
+            final CellGeometry cellGeometry, final PixelOrientation pointInPixel)
+    {
+        setOrigin(gridToCRS.getTranslateX(), gridToCRS.getTranslateY());
+        addOffsetVector(gridToCRS.getScaleX(), gridToCRS.getShearY());
+        addOffsetVector(gridToCRS.getShearX(), gridToCRS.getScaleY());
+        setLimits(new int[] {bounds.x, bounds.y}, new int[] {bounds.x + bounds.width-1, bounds.y + bounds.height-1});
+        final double[] centerPoint = new double[] {bounds.getCenterX(), bounds.getCenterY()};
+        gridToCRS.transform(centerPoint, 0, centerPoint, 0, 1);
+        setSpatialRepresentation(centerPoint, cellGeometry, pointInPixel);
+    }
+
+    //
+    // Methods below this point are convenience specializations for the case
+    // where only the bounds are specified, instead than the affine transform.
+    //
+
+    /**
      * Checks the length of the given array against the expected value.
      * In case of mismatch, an {@link IllegalArgumentException} is thrown.
      */
@@ -129,16 +175,11 @@ public final class GridDomainAccessor extends MetadataAccessor {
     {
         final int crsDim = origin.length;
         checkDimension("bounds", bounds.length, crsDim);
-        final double[] center = new double[crsDim];
+        final double[] centerPoint = new double[crsDim];
         for (int i=0; i<crsDim; i++) {
-            center[i] = 0.5 * (origin[i] + bounds[i]);
+            centerPoint[i] = 0.5 * (origin[i] + bounds[i]);
         }
-        final MetadataAccessor accessor = new MetadataAccessor(
-                metadata, FORMAT_NAME, "SpatialRepresentation", null);
-        accessor.setAttribute("numberOfDimensions", crsDim);
-        accessor.setAttribute("centerPoint",  center);
-        accessor.setAttribute("pointInPixel", pointInPixel);
-        accessor.setAttribute("cellGeometry", cellGeometry);
+        setSpatialRepresentation(centerPoint, cellGeometry, pointInPixel);
     }
 
     /**
