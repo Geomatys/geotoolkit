@@ -19,17 +19,24 @@ package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.Component;
 import java.awt.Font;
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.gui.swing.style.JTextExpressionPane;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
+
+import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 
 /**
  * layer general information panel
@@ -57,20 +64,64 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     private void initComponents() {
 
 
+
+
+
         jLabel15 = new JLabel();
         gui_jtf_name = new JTextField();
+        paneTemp = new JPanel();
+        jLabel1 = new JLabel();
+        jLabel2 = new JLabel();
+        guiStartTemp = new JTextExpressionPane();
+        guiEndTemp = new JTextExpressionPane();
 
         jLabel15.setFont(jLabel15.getFont().deriveFont(jLabel15.getFont().getStyle() | Font.BOLD));
         jLabel15.setText(MessageBundle.getString("property_title")); // NOI18N
+        paneTemp.setBorder(BorderFactory.createTitledBorder(MessageBundle.getString("temporal_configuration"))); // NOI18N
+        jLabel1.setText(MessageBundle.getString("temporal_start")); // NOI18N
+        jLabel2.setText(MessageBundle.getString("temporal_end")); // NOI18N
+        GroupLayout paneTempLayout = new GroupLayout(paneTemp);
+        paneTemp.setLayout(paneTempLayout);
+        paneTempLayout.setHorizontalGroup(
+            paneTempLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(paneTempLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(paneTempLayout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(paneTempLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiStartTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(paneTempLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(guiEndTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        paneTempLayout.setVerticalGroup(
+            paneTempLayout.createParallelGroup(Alignment.LEADING)
+            .addGroup(paneTempLayout.createSequentialGroup()
+                .addGroup(paneTempLayout.createParallelGroup(Alignment.LEADING, false)
+                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiStartTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addGroup(paneTempLayout.createParallelGroup(Alignment.LEADING, false)
+                    .addComponent(jLabel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiEndTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel15)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(gui_jtf_name, GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                    .addComponent(paneTemp, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(gui_jtf_name, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -80,17 +131,33 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel15)
                     .addComponent(gui_jtf_name, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(paneTemp, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
     private void parse() {
+        guiStartTemp.setLayer(layer);
+        guiEndTemp.setLayer(layer);
+
         if (layer != null) {
             gui_jtf_name.setText(layer.getDescription().getTitle().toString());
-
 
         } else {
             gui_jtf_name.setText("");
         }
+
+        paneTemp.setVisible(layer instanceof FeatureMapLayer);
+
+        if(layer instanceof FeatureMapLayer){
+            Expression[] temp = ((FeatureMapLayer)layer).getTemporalRange();
+            guiStartTemp.parse(temp[0]);
+            guiEndTemp.parse(temp[1]);
+        }else{
+            guiStartTemp.parse(null);
+            guiEndTemp.parse(null);
+        }
+
     }
 
     @Override
@@ -109,6 +176,15 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
             layer.setDescription(FactoryFinder.getStyleFactory(null).description(
                     new SimpleInternationalString(gui_jtf_name.getText()),
                     new SimpleInternationalString("")));
+
+            if(layer instanceof FeatureMapLayer){
+                Expression exp1 = guiStartTemp.create();
+                Expression exp2 = guiEndTemp.create();
+                if(exp1 instanceof Literal && ((Literal)exp1).getValue().equals("") ) exp1 = null;
+                if(exp2 instanceof Literal && ((Literal)exp2).getValue().equals("") ) exp2 = null;
+                ((FeatureMapLayer)layer).setTemporalRange(exp1,exp2);
+            }
+
         }
     }
 
@@ -137,7 +213,12 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
         return this;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JTextExpressionPane guiEndTemp;
+    private JTextExpressionPane guiStartTemp;
     private JTextField gui_jtf_name;
+    private JLabel jLabel1;
     private JLabel jLabel15;
+    private JLabel jLabel2;
+    private JPanel paneTemp;
     // End of variables declaration//GEN-END:variables
 }
