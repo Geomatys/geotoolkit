@@ -33,7 +33,9 @@ import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -754,15 +756,39 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
 
 
     /**
-     * Service provider interface (SPI) for {@link ImageReaderAdapter}s. The constructor of
-     * this class initializes the {@link #inputTypes} field to the following values (note
-     * that this is <strong>not</strong> the usual
-     * {@link #STANDARD_INPUT_TYPE standard input type}):
-     *
-     * <blockquote>
-     * {@link String}, {@link File}, {@link URI}, {@link URL}.
-     * </blockquote>
-     *
+     * Service provider interface (SPI) for {@link ImageReaderAdapter}s. The constructor of this
+     * class initializes the {@link ImageReaderSpi#inputTypes} field to types that can represent
+     * a filename, like {@link File} or {@link URL} (see the table below for the complete list),
+     * rather than the usual {@linkplain #STANDARD_INPUT_TYPE standard input type}. The other
+     * fields ({@link #names names}, {@link #suffixes suffixes}, {@link #MIMETypes MIMETypes})
+     * are set to the same values than the wrapped provider. Because the names are the same by
+     * default, an ordering needs to be etablished between this provider and the wrapped one.
+     * By default this implementation conservatively gives precedence to the original provider.
+     * Subclasses shall override the {@link #onRegistration(ServiceRegistry, Class)} method if
+     * they want a different ordering.
+     * <p>
+     * The table below summarizes the initial values.
+     * Those values can be modified by subclass constructors.
+     * <p>
+     * <table border="1">
+     *   <tr bgcolor="lightblue">
+     *     <th>Field</th>
+     *     <th>Value</th>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #names}&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #suffixes}&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #MIMETypes}&nbsp;</td>
+     *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #inputTypes}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}&nbsp;</td>
+     * </tr>
+     * </table>
+     * <p>
      * It is up to subclass constructors to initialize all other instance variables
      * in order to provide working versions of every methods.
      *
@@ -774,7 +800,15 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * @since 3.07
      * @module
      */
-    protected static abstract class Spi extends ImageReaderSpi {
+    protected static abstract class Spi extends SpatialImageReader.Spi {
+        /**
+         * The {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} value
+         * in an array, for assignment to {@code extra[Stream|Image]MetadataFormatNames} fields.
+         */
+        static final String[] EXTRA_METADATA = {
+            SpatialMetadataFormat.FORMAT_NAME
+        };
+
         /**
          * List of legal input types for {@link StreamImageReader}.
          */
@@ -803,9 +837,9 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         private final boolean acceptOther;
 
         /**
-         * Constructs a quasi-blank {@code ImageReaderAdapter.Spi}. The {@link #inputTypes} field
-         * is initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is
-         * up to the subclass to initialize all other instance variables in order to provide working
+         * Creates an {@code ImageReaderAdapter.Spi} wrapping the given provider. The fields are
+         * initialized as documented in the <a href="#skip-navbar_top">class javadoc</a>. It is up
+         * to the subclass to initialize all other instance variables in order to provide working
          * versions of all methods.
          * <p>
          * For efficienty reasons, the {@code inputTypes} field is initialized to a shared array.
@@ -814,10 +848,21 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * @param main The provider of the readers to use for reading the image in the classical
          *        image format.
          */
-        protected Spi(ImageReaderSpi main) {
-            inputTypes = INPUT_TYPES;
+        protected Spi(final ImageReaderSpi main) {
             ensureNonNull("main", main);
-            this.main = main;
+            this.main  = main;
+            names      = main.getFormatNames();
+            suffixes   = main.getFileSuffixes();
+            MIMETypes  = main.getMIMETypes();
+            inputTypes = INPUT_TYPES;
+            supportsStandardStreamMetadataFormat = main.isStandardStreamMetadataFormatSupported();
+            supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
+            nativeStreamMetadataFormatClassName  = main.getNativeStreamMetadataFormatName();
+            nativeImageMetadataFormatClassName   = main.getNativeImageMetadataFormatName();
+            extraStreamMetadataFormatClassNames  = XArrays.concatenate(
+                    main.getExtraStreamMetadataFormatNames(), EXTRA_METADATA);
+            extraImageMetadataFormatClassNames  = XArrays.concatenate(
+                    main.getExtraImageMetadataFormatNames(), EXTRA_METADATA);
             boolean acceptStream = false;
             boolean acceptOther  = false;
             for (final Class<?> type : main.getInputTypes()) {
@@ -832,6 +877,18 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         }
 
         /**
+         * Creates an {@code ImageReaderAdapter.Spi} wrapping the default provider for the
+         * given format. This is a convenience constructor for {@link #Spi(ImageReaderSpi)}
+         * with a provider fetched from the given format name.
+         *
+         * @param  format The name of the provider to fetch.
+         * @throws IllegalArgumentException If no provider is found for the given format.
+         */
+        protected Spi(final String format) throws IllegalArgumentException {
+            this(Formats.getReaderByFormatName(format));
+        }
+
+        /**
          * Makes sure an argument is non-null.
          *
          * @param  name   Argument name.
@@ -842,6 +899,28 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             if (object == null) {
                 throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
+            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.STREAM;
+            }
+            return main.getStreamMetadataFormat(formatName);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
+            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.IMAGE;
+            }
+            return main.getStreamMetadataFormat(formatName);
         }
 
         /**
@@ -866,8 +945,8 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         /**
          * Returns {@code true} if the supplied source object appears to be of the format supported
          * by this reader. The default implementation checks if the given source is an instance of
-         * one of the {@link #inputTypes}, then delegates to the provider given at construction
-         * time. A temporary {@link ImageInputStream} is created if needed.
+         * one of the {@link ImageReaderSpi#inputTypes inputTypes}, then delegates to the provider
+         * given at construction time. A temporary {@link ImageInputStream} is created if needed.
          *
          * @param  source The input (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the file can be decoded.
@@ -892,6 +971,26 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                 }
             }
             return false;
+        }
+
+        /**
+         * A callback that will be called exactly once after the {@code Spi} class has been
+         * instantiated and registered in a {@code ServiceRegistry}. The default implementation
+         * conservatively gives precedence to the {@linkplain #main} provider, using the code
+         * below:
+         *
+         * {@preformat java
+         *     registry.setOrdering(category, main, this);
+         * }
+         *
+         * Subclasses should override this method if they want to specify a different ordering.
+         *
+         * @see ServiceRegistry#setOrdering(Class, Object, Object)
+         */
+        @Override
+        @SuppressWarnings({"unchecked","rawtypes"})
+        public void onRegistration(final ServiceRegistry registry, final Class<?> category) {
+            registry.setOrdering((Class) category, main, this);
         }
     }
 }

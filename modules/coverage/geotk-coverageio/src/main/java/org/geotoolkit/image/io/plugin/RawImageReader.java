@@ -457,7 +457,7 @@ public class RawImageReader extends SpatialImageReader {
      * @since 3.07 (derived from 2.0)
      * @module
      */
-    public static class Spi extends ImageReaderSpi implements SystemOverride {
+    public static class Spi extends SpatialImageReader.Spi implements SystemOverride {
         /**
          * Default list of file's extensions.
          */
@@ -485,6 +485,9 @@ public class RawImageReader extends SpatialImageReader {
             pluginClassName = "org.geotoolkit.image.io.plugin.RawImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            // This reader does not support any metadata.
+            nativeStreamMetadataFormatName = null;
+            nativeImageMetadataFormatName  = null;
         }
 
         /**

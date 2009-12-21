@@ -23,7 +23,6 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 
 import org.geotoolkit.util.Version;
@@ -46,7 +45,7 @@ public class NullImageWriter extends SpatialImageWriter {
      * @param provider The {@code ImageWriterSpi} that
      *        is constructing this object, or {@code null}.
      */
-    protected NullImageWriter(final ImageWriterSpi provider) {
+    protected NullImageWriter(final Spi provider) {
         super(provider);
     }
 
@@ -72,7 +71,7 @@ public class NullImageWriter extends SpatialImageWriter {
      *
      * @since 2.5
      */
-    public static class Spi extends ImageWriterSpi {
+    public static class Spi extends SpatialImageWriter.Spi {
         /**
          * Constructs a default {@code NullImageWriter.Spi}. This constructor
          * provides the following defaults:

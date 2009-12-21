@@ -383,8 +383,8 @@ public abstract class TextImageReader extends StreamImageReader {
      *     }
      * }
      *
-     * The other fields are initialized to the values listed below.
-     * Those values can also be modified by subclass constructors.
+     * The table below summarizes the initial values.
+     * Those values can be modified by subclass constructors.
      * <p>
      * <table border="1">
      *   <tr bgcolor="lightblue">
@@ -400,6 +400,21 @@ public abstract class TextImageReader extends StreamImageReader {
      *     <td>&nbsp;{@code "txt"}, {@code "TXT"},
      *               {@code "asc"}, {@code "ASC"},
      *               {@code "dat"}, {@code "DAT"}&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #charset}&nbsp;</td>
+     *     <td>&nbsp;{@code null} (stands for the
+     *         {@linkplain Charset#defaultCharset() platform default})&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #locale}&nbsp;</td>
+     *     <td>&nbsp;{@code null} (stands for the
+     *         {@linkplain Locale#getDefault() platform default})&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #padValue}&nbsp;</td>
+     *     <td>&nbsp;{@link Double#NaN} (stands for no pad-value)&nbsp;</td>
+     *   </tr><tr>
+     *     <td colspan="2" align="center">See
+     *     {@linkplain org.geotoolkit.image.io.SpatialImageReader.Spi super-class javadoc}
+     *     for remaining fields</td>
      * </tr>
      * </table>
      *

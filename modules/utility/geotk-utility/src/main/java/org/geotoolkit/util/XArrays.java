@@ -32,8 +32,8 @@ import org.geotoolkit.lang.Static;
  * methods provided in {@link Arrays} since Java 6, except that they do not copy anything if
  * the given array already has the requested length.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.04
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @see Arrays
  *
@@ -1021,7 +1021,8 @@ public final class XArrays {
      *
      * @param  array The array to search in. May be {@code null} and may contains null elements.
      * @param  value The value to search. May be {@code null}.
-     * @return {@code true} if the array contains the value.
+     * @return {@code true} if the array is non-null and contains the value (which may be null),
+     *         or {@code false} otherwise.
      */
     public static boolean contains(final Object[] array, final Object value) {
         if (array != null) {
@@ -1054,6 +1055,53 @@ public final class XArrays {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the concatenation of all given arrays. This method performs the following checks:
+     * <p>
+     * <ul>
+     *   <li>If the {@code arrays} argument is {@code null} or contains only {@code null}
+     *       elements, then this method returns {@code null}.</li>
+     *   <li>Otherwise if the {@code arrays} argument contains exactly one non-null array with
+     *       a length greater than zero, then that array is returned. It is not copied.</li>
+     *   <li>Otherwise a new array with a length equals to the sum of the length of every
+     *       non-null arrays is created, and the content of non-null arrays are appended
+     *       in the new array in declaration order.</li>
+     * </ul>
+     *
+     * @param <T>    The type of arrays.
+     * @param arrays The arrays to concatenate, or {@code null}.
+     * @return       The concatenation of all non-null arrays (may be a direct reference to one
+     *               of the given array if it can be returned with no change), or {@code null}.
+     *
+     * @since 3.07
+     */
+    public static <T> T[] concatenate(final T[]... arrays) {
+        T[] result = null;
+        if (arrays != null) {
+            int length = 0;
+            for (T[] array : arrays) {
+                if (array != null) {
+                    length += array.length;
+                }
+            }
+            int offset = 0;
+            for (T[] array : arrays) {
+                if (array != null) {
+                    if (result == null) {
+                        if (array.length == length) {
+                            return array;
+                        }
+                        result = Arrays.copyOf(array, length);
+                    } else {
+                        System.arraycopy(array, 0, result, offset, array.length);
+                    }
+                    offset += array.length;
+                }
+            }
+        }
+        return result;
     }
 
     /**

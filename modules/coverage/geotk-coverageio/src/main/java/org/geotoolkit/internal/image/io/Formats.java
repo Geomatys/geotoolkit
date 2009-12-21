@@ -28,6 +28,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageInputStreamSpi;
+import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.lang.Static;
@@ -177,27 +178,79 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
     }
 
     /**
-     * Returns the image reader provider for the given format name.
+     * Returns the image reader provider for the given format name. This method prefers
+     * standard readers instead than JAI ones, except for the TIFF format.
+     * <p>
+     * <b>NOTE:</b> The rule for preferring a reader are the some ones than the rules implemented
+     * by {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}. If the rule in
+     * the above methods are modified, the rules in this method shall be modified accordingly.
      *
-     * @param  format The format name to search, or {@code null}.
+     * @param  format The name of the provider to fetch, or {@code null}.
      * @return The reader provider for the given format, or {@code null} if {@code format} is null.
      * @throws IllegalArgumentException If no provider is found for the given format.
      */
     public static ImageReaderSpi getReaderByFormatName(String format) throws IllegalArgumentException {
-        ImageReaderSpi spi = null;
-        if (format != null) {
-            format = format.trim();
-            final IIORegistry registry = IIORegistry.getDefaultInstance();
-            final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true);
-            do {
-                if (!it.hasNext()) {
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.UNKNOW_IMAGE_FORMAT_$1, format));
-                }
-                spi = it.next();
-            } while (!XArrays.contains(spi.getFormatNames(), format));
+        if (format == null) {
+            return null;
         }
-        return spi;
+        format = format.trim();
+        ImageReaderSpi fallback = null;
+        final boolean preferJAI = format.equalsIgnoreCase("TIFF");
+        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true);
+        while (it.hasNext()) {
+            final ImageReaderSpi provider = it.next();
+            if (XArrays.contains(provider.getFormatNames(), format)) {
+                /*
+                 * NOTE: The following method uses the same rule for identifying JAI codecs.
+                 *       If we change the way to identify those codecs here, we should do the
+                 *       same for the other method.
+                 *
+                 * org.geotoolkit.image.jai.Registry.setNativeCodecAllowed(String, Class, boolean)
+                 */
+                if (provider.getClass().getName().startsWith("com.sun.media.") == preferJAI) {
+                    return provider;
+                }
+                if (fallback == null) {
+                    fallback = provider;
+                }
+            }
+        }
+        if (fallback != null) {
+            return fallback;
+        }
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_IMAGE_FORMAT_$1, format));
+    }
+
+    /**
+     * Returns the name of the given provider, or {@code null} if the name is unknown.
+     * If the provider declare many names, the longuest name is selected. If many names
+     * have the same length, the first one is selected.
+     *
+     * @param  provider The provider for which we want the name, or {@code null}.
+     * @return The name of the given provider, or {@code null} if none.
+     *
+     * @since 3.07
+     */
+    public static String getFormatName(final ImageReaderWriterSpi provider) {
+        String name = null;
+        if (provider != null) {
+            final String[] formats = provider.getFormatNames();
+            if (formats != null) {
+                int length = 0;
+                for (int i=0; i<formats.length; i++) {
+                    final String candidate = formats[i];
+                    if (candidate != null) {
+                        final int lg = candidate.length();
+                        if (lg > length) {
+                            length = lg;
+                            name = candidate;
+                        }
+                    }
+                }
+            }
+        }
+        return name;
     }
 
     /**

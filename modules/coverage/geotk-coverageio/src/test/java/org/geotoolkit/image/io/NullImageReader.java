@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
-import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -160,7 +159,7 @@ public class NullImageReader extends SpatialImageReader {
     /**
      * A dummy provider for the dummy reader.
      */
-    private static final class Spi extends ImageReaderSpi {
+    private static final class Spi extends SpatialImageReader.Spi {
         public Spi() {
             inputTypes = new Class<?>[] {String.class};
         }

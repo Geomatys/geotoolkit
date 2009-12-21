@@ -304,12 +304,21 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * Service provider interface (SPI) for {@link StreamImageReader}s. The constructor of
      * this class initializes the {@link #inputTypes} field to the value documented in the
      * {@link StreamImageReader} javadoc, which are:
-     *
-     * <blockquote>
-     * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
-     * {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}.
-     * </blockquote>
-     *
+     * <p>
+     * <table border="1">
+     *   <tr bgcolor="lightblue">
+     *     <th>Field</th>
+     *     <th>Value</th>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #inputTypes}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+     *               {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}&nbsp;</td>
+     *   </tr><tr>
+     *     <td colspan="2" align="center">See {@linkplain SpatialImageReader.Spi super-class javadoc}
+     *     for remaining fields</td>
+     * </tr>
+     * </table>
+     * <p>
      * It is up to subclass constructors to initialize all other instance variables
      * in order to provide working versions of every methods.
      *
@@ -321,7 +330,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @since 2.4
      * @module
      */
-    protected static abstract class Spi extends ImageReaderSpi {
+    protected static abstract class Spi extends SpatialImageReader.Spi {
         /**
          * List of legal input types for {@link StreamImageReader}.
          */

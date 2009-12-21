@@ -224,6 +224,13 @@ public final class Registry {
             final String[] formats = provider.getFormatNames();
             for (int i=0; i<formats.length; i++) {
                 if (formats[i].equalsIgnoreCase(format)) {
+                    /*
+                     * NOTE: The following method uses the same rule for identifying JAI codecs.
+                     *       If we change the way to identify those codecs here, we should do the
+                     *       same for the other method.
+                     *
+                     * org.geotoolkit.internal.image.io.Formats.getReaderByFormatName(String)
+                     */
                     if (provider.getClass().getName().startsWith("com.sun.media.")) {
                         codeclib = provider;
                     } else {
@@ -264,6 +271,12 @@ public final class Registry {
      */
     @Configuration
     public static synchronized void setDefaultCodecPreferences() {
+        /*
+         * NOTE: If the rules below are modified, then the rules in
+         *       the following method shall be modified accordingly:
+         *
+         * org.geotoolkit.internal.image.io.Formats.getReaderByFormatName(String)
+         */
         setNativeCodecAllowed("PNG",   ImageReaderSpi.class, false);
         setNativeCodecAllowed("PNG",   ImageWriterSpi.class, false);
         setNativeCodecAllowed("BMP",   ImageReaderSpi.class, false);

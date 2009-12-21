@@ -44,6 +44,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
 
 import static java.lang.Math.min;
@@ -801,7 +802,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @return The format name.
      */
     public String getFormatName() {
-        return toString(getImageReaderSpi());
+        return Formats.getFormatName(getImageReaderSpi());
     }
 
     /**
@@ -1386,31 +1387,6 @@ public class Tile implements Comparable<Tile>, Serializable {
     @Override
     public int hashCode() {
         return provider.hashCode() + Utilities.deepHashCode(input) + 31*imageIndex;
-    }
-
-    /**
-     * Returns the name of the given provider, for {@link #toString} purpose only.
-     * May returns {@code null} if the name is unknown.
-     */
-    static String toString(final ImageReaderSpi provider) {
-        String name = null;
-        if (provider != null) {
-            final String[] formats = provider.getFormatNames();
-            if (formats != null) {
-                int length = 0;
-                for (int i=0; i<formats.length; i++) {
-                    final String candidate = formats[i];
-                    if (candidate != null) {
-                        final int lg = candidate.length();
-                        if (lg > length) {
-                            length = lg;
-                            name = candidate;
-                        }
-                    }
-                }
-            }
-        }
-        return name;
     }
 
     /**

@@ -238,11 +238,21 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * Service provider interface (SPI) for {@link StreamImageWriter}s. The constructor of
      * this class initializes the {@link #outputTypes} field to the value documented in the
      * {@link StreamImageWriter} javadoc, which are:
-     *
-     * <blockquote>
-     * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
-     * {@link OutputStream}, {@link ImageOutputStream}, {@link WritableByteChannel}.
-     * </blockquote>
+     * <p>
+     * <table border="1">
+     *   <tr bgcolor="lightblue">
+     *     <th>Field</th>
+     *     <th>Value</th>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},
+     *               {@link OutputStream}, {@link ImageOutputStream}, {@link WritableByteChannel}&nbsp;</td>
+     *   </tr><tr>
+     *     <td colspan="2" align="center">See {@linkplain SpatialImageWriter.Spi super-class javadoc}
+     *     for remaining fields</td>
+     * </tr>
+     * </table>
+     * <p>
      *
      * It is up to subclass constructors to initialize all other instance variables
      * in order to provide working versions of every methods.
@@ -255,7 +265,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * @since 2.4
      * @module
      */
-    protected static abstract class Spi extends ImageWriterSpi {
+    protected static abstract class Spi extends SpatialImageWriter.Spi {
         /**
          * List of legal output types for {@link StreamImageWriter}.
          */

@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 import javax.imageio.ImageReader;
+import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ServiceRegistry;
 import java.awt.geom.AffineTransform;
 import java.awt.Rectangle;
 
@@ -32,8 +34,11 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.util.Version;
 
 
 /**
@@ -51,15 +56,15 @@ import org.geotoolkit.io.wkt.PrjFiles;
  *       constructor, which is <var>scaleX</var>, <var>shearY</var>, <var>shearX</var>,
  *       <var>scaleY</var>, <var>translateX</var>, <var>translateY</var>.
  *       This reader looks for a file having the following extensions, in preference order:</p>
- *       <ul>
+ *       <ol>
  *         <li>The first letter of the image file extension, followed by the last letter of
  *             the image file extension, followed by {@code 'w'}. Example: {@code "tfw"} for
  *             {@code "tiff"} images, and {@code "jgw"} for {@code "jpeg"} images.</li>
  *         <li>The extension of the image file with a {@code 'w'} appended.</li>
  *         <li>The {@code "tfw} extension.</li>
- *       </ul>
+ *       </ol>
  *   </li>
- *   <li><p>A text file containing the <cite>Coordinate Reference System</cite> (CRS
+ *   <li><p>A text file containing the <cite>Coordinate Reference System</cite> (CRS)
  *       definition in <cite>Well Known Text</cite> (WKT) syntax. This reader looks
  *       for a file having the {@code ".prj"} extension.</p></li>
  * </ul>
@@ -94,14 +99,14 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * extension is determined from the {@code keyword} argument, which can be:
      *
      * <ul>
-     *   <li><p>{@code "tfw"} for the <cite>World File</cite>. The extension of the input returned
-     *       by this method may be {@code "tfw"} (most common), {@code "jgw"}, {@code "pgw"} or
-     *       other depending on the {@linkplain #input input} extension and which file has been
-     *       determined to exist. See the <a href="#skip-navbar_top">class javadoc</a> for more
-     *       details.</p></li>
+     *   <li><p>{@code "tfw"} for the <cite>World File</cite>. The extension of the returned
+     *       input may be {@code "tfw"} (most common), {@code "jgw"}, {@code "pgw"} or other
+     *       depending on the extension of this reader {@linkplain #input input}, and depending
+     *       which file has been determined to exist. See the
+     *       <a href="#skip-navbar_top">class javadoc</a> for more details.</p></li>
      *
      *   <li><p>{@code "prj"} for the file of the <cite>Map Projection</cite>. The extension
-     *       of the input returned by this method is {@code "prj"}.</p></li>
+     *       of the returned input is {@code "prj"}.</p></li>
      * </ul>
      *
      * Subclasses can override this method for specifying a different <cite>World File</cite>
@@ -146,7 +151,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * <cite>Map Projection</cite> files.
      * <p>
      * The <cite>World File</cite> and <cite>Map Projection</cite> files are determined by calls
-     * to the {@link #getInput(String)} method. Subclasses can override the later if they want
+     * to the {@link #getInput(String)} method. Subclasses can override the laters if they want
      * to specify different files to be read.
      */
     @Override
@@ -184,12 +189,12 @@ public class WorldFileImageReader extends ImageReaderAdapter {
 
 
     /**
-     * Service provider interface (SPI) for {@link WorldFileImageReader}s. By default this
-     * provider declares the following input types:
-     *
-     * <blockquote>
-     * {@link String}, {@link File}, {@link URI}, {@link URL}.
-     * </blockquote>
+     * Service provider interface (SPI) for {@link WorldFileImageReader}s. This provider wraps
+     * an other provider (typically for the TIFF, JPEG or PNG formats), which shall be specified
+     * at construction time. The legal {@linkplain #inputTypes input types} are set to
+     * {@link String}, {@link File}, {@link URI} and {@link URL} in order to allow the image
+     * reader to infer the <cite>World File</cite> ({@code "tfw"}) and <cite>Map Projection</cite>
+     * ({@code "prj"}) files from the image input file.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
@@ -203,11 +208,25 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         /**
          * Creates a provider which will use the given format for reading pixel values.
          *
-         * @param main The provider of the readers to use for reading the image in the classical
-         *        image format.
+         * @param main The provider of the readers to use for reading the pixel values.
          */
         public Spi(final ImageReaderSpi main) {
             super(main);
+            pluginClassName = "org.geotoolkit.image.io.text.WorldFileImageReader";
+            vendorName      = "Geotoolkit.org";
+            version         = Version.GEOTOOLKIT.toString();
+        }
+
+        /**
+         * Creates a provider which will use the given format for reading pixel values.
+         * This is a convenience constructor for {@link #Spi(ImageReaderSpi)} with a
+         * provider fetched from the given format name.
+         *
+         * @param  format The name of the provider to use for reading the pixel values.
+         * @throws IllegalArgumentException If no provider is found for the given format.
+         */
+        public Spi(final String format) throws IllegalArgumentException {
+            this(Formats.getReaderByFormatName(format));
         }
 
         /**
@@ -215,12 +234,11 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          *
          * @param  locale The locale for which the return value should be localized.
          * @return A description of this service provider.
-         *
-         * @todo Not yet localized.
          */
         @Override
-        public String getDescription(Locale locale) {
-            return "World file";
+        public String getDescription(final Locale locale) {
+            return Vocabulary.getResources(locale).getString(
+                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_$2, 0, Formats.getFormatName(main));
         }
 
         /**

@@ -730,6 +730,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int IMAGE_CLASS_$1 = 133;
 
         /**
+         * {1} Image {0,choice,0#Reader|Writer} with World File
+         */
+        public static final int IMAGE_CODEC_WITH_WORLD_FILE_$2 = 309;
+
+        /**
          * Image list
          */
         public static final int IMAGE_LIST = 134;

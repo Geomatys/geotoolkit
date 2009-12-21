@@ -45,6 +45,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -1321,7 +1322,7 @@ public class MosaicImageReader extends ImageReader {
                     /*
                      * We are only logging - we are not going to read in this first pass.
                      */
-                    table.write(Tile.toString(tile.getImageReaderSpi()));
+                    table.write(Formats.getFormatName(tile.getImageReaderSpi()));
                     table.nextColumn();
                     table.write(tile.getInputName());
                     table.nextColumn();

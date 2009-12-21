@@ -39,13 +39,16 @@ import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.event.IIOReadWarningListener;
+import javax.imageio.metadata.IIOMetadataFormat;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
@@ -114,7 +117,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      *
      * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      */
-    protected SpatialImageReader(final ImageReaderSpi provider) {
+    protected SpatialImageReader(final Spi provider) {
         super(provider);
         availableLocales = Locales.getAvailableLocales();
     }
@@ -1041,5 +1044,103 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     public void dispose() {
         closeSilently();
         super.dispose();
+    }
+
+
+
+    /**
+     * Service provider interfaces (SPI) for {@link SpatialImageReader}s.
+     * This base class initializes fields to the values listed below:
+     * <p>
+     * <table border="1">
+     *   <tr bgcolor="lightblue">
+     *     <th>Field</th>
+     *     <th>Value</th>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #nativeStreamMetadataFormatName}&nbsp;</td>
+     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@link #nativeImageMetadataFormatName}&nbsp;</td>
+     *     <td>&nbsp;{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}&nbsp;</td>
+     * </tr>
+     * </table>
+     * <p>
+     * All other fields are left to their default values ({@code null} or {@code false}).
+     * Subclasses are responsible for initializing those fields.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.07
+     *
+     * @see SpatialImageWriter.Spi
+     *
+     * @since 3.07
+     * @module
+     */
+    protected abstract static class Spi extends ImageReaderSpi {
+        /**
+         * Initializes a default provider for {@link SpatialImageReader}s.
+         * <p>
+         * For efficienty reasons, the fields are initialized to a shared array.
+         * Subclasses can assign new arrays, but should not modify the default array content.
+         */
+        protected Spi() {
+            nativeStreamMetadataFormatName = SpatialMetadataFormat.FORMAT_NAME;
+            nativeImageMetadataFormatName  = SpatialMetadataFormat.FORMAT_NAME;
+        }
+
+        /**
+         * Returns {@code true} if this provider supports the {@linkplain SpatialMetadataFormat
+         * spatial metadata format}. This method checks if a native or extra metadata format
+         * named {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}
+         * is declared. This is the case by default unless sublcasses modified the values of
+         * the {@code xxxFormatName} fields.
+         *
+         * @param  stream {@code true} for testing stream metadata, or {@code false} for testing
+         *         image metadata.
+         * @return {@code true} if the provider declares to support the spatial metadata format.
+         */
+        final boolean isSpatialMetadataSupported(final boolean stream) {
+            final String   nativeFormat;
+            final String[] extraFormats;
+            if (stream) {
+                nativeFormat = nativeStreamMetadataFormatName;
+                extraFormats = extraStreamMetadataFormatNames;
+            } else {
+                nativeFormat = nativeImageMetadataFormatName;
+                extraFormats = extraImageMetadataFormatNames;
+            }
+            return SpatialMetadataFormat.FORMAT_NAME.equals(nativeFormat) ||
+                    XArrays.contains(extraFormats, SpatialMetadataFormat.FORMAT_NAME);
+        }
+
+        /**
+         * Returns a description of the stream metadata of the given name.
+         * If no description is available, then this method returns {@code null}.
+         *
+         * @param  formatName The desired stream metadata format.
+         * @return The stream metadata format of the given name.
+         */
+        @Override
+        public IIOMetadataFormat getStreamMetadataFormat(final String formatName) {
+            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.STREAM;
+            }
+            return super.getStreamMetadataFormat(formatName);
+        }
+
+        /**
+         * Returns a description of the image metadata of the given name.
+         * If no description is available, then this method returns {@code null}.
+         *
+         * @param  formatName The desired image metadata format.
+         * @return The image metadata format of the given name.
+         */
+        @Override
+        public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
+            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+                return SpatialMetadataFormat.IMAGE;
+            }
+            return super.getStreamMetadataFormat(formatName);
+        }
     }
 }
