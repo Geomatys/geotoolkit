@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wcs.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,24 +64,31 @@ public class RangeSetType extends AbstractDescriptionType {
     private String refSys;
     @XmlAttribute
     private String refSysLabel;
-    
-    //TODO add axisDescription
+
+    private List<AxisDescriptionType> axisDescription;
 
     /**
      * Empty constructor used by JAXB.
      */
     RangeSetType(){
     }
-    
+
+    public RangeSetType(List<MetadataLinkType> metadataLink, String name, String label, String description,
+            String semantic, String refSys, String refSysLabel)
+    {
+        this(metadataLink, name, label, description, semantic, refSys, refSysLabel, null);
+    }
+
     /**
      * Build a new range set.
      */
     public RangeSetType(List<MetadataLinkType> metadataLink, String name, String label, String description,
-            String semantic, String refSys, String refSysLabel){
+            String semantic, String refSys, String refSysLabel, List<AxisDescriptionType> axisDescription){
         super(metadataLink, name, label, description);
         this.semantic    = semantic;
         this.refSys      = refSys;
         this.refSysLabel = refSysLabel;
+        this.axisDescription = axisDescription;
     }
     
     /**
@@ -102,5 +111,15 @@ public class RangeSetType extends AbstractDescriptionType {
      */
     public String getRefSysLabel() {
         return refSysLabel;
+    }
+
+    /**
+     * Gets the axis description property.
+     */
+    public List<AxisDescriptionType> getAxisDescription() {
+        if (axisDescription == null) {
+            return new ArrayList<AxisDescriptionType>();
+        }
+        return Collections.unmodifiableList(axisDescription);
     }
 }

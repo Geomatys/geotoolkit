@@ -54,7 +54,11 @@ public class IntervalType extends ValueRangeType {
     public IntervalType() {}
 
     public IntervalType(final TypedLiteralType min, final TypedLiteralType max) {
-        super(min, max, "xs:double");
+        this(min, max, "xs:double");
+    }
+
+    public IntervalType(final TypedLiteralType min, final TypedLiteralType max, final String type) {
+        super(min, max, type);
     }
 
     /**
