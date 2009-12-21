@@ -41,6 +41,7 @@ import org.apache.lucene.index.IndexWriter.MaxFieldLength;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 
+import org.apache.lucene.store.SimpleFSDirectory;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
@@ -181,7 +182,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(String identifier) {
         try {
-            final IndexWriter writer = new IndexWriter(getFileDirectory(), analyzer, false, MaxFieldLength.UNLIMITED);
+            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), analyzer, false, MaxFieldLength.UNLIMITED);
 
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);

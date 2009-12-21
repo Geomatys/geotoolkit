@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.geometry.DirectPosition;
 
 
 /**
@@ -89,6 +90,18 @@ public class LineStringType
      */
     public LineStringType(CoordinatesType coordinates) {
         this.coordinates = coordinates;
+    }
+
+    /**
+     * Build a new LineString with the specified coordinates
+     */
+    public LineStringType(List<DirectPosition> positions) {
+        posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+        ObjectFactory factory = new ObjectFactory();
+        for (DirectPosition pos : positions) {
+            DirectPositionType position = new DirectPositionType(pos);
+            posOrPointPropertyOrPointRep.add(factory.createPos(position));
+        }
     }
 
     /**

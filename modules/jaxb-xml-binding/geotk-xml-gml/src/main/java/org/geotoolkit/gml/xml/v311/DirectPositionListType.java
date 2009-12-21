@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -59,13 +58,13 @@ public class DirectPositionListType {
     protected List<Double> value;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger count;
+    protected Integer count;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     protected String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected BigInteger srsDimension;
+    protected Integer srsDimension;
     @XmlAttribute
     protected List<String> axisLabels;
     @XmlAttribute
@@ -105,10 +104,10 @@ public class DirectPositionListType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getCount() {
+    public Integer getCount() {
         return count;
     }
 
@@ -117,10 +116,10 @@ public class DirectPositionListType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setCount(BigInteger value) {
+    public void setCount(Integer value) {
         this.count = value;
     }
 
@@ -153,10 +152,10 @@ public class DirectPositionListType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getSrsDimension() {
+    public Integer getSrsDimension() {
         return srsDimension;
     }
 
@@ -165,10 +164,10 @@ public class DirectPositionListType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setSrsDimension(BigInteger value) {
+    public void setSrsDimension(Integer value) {
         this.srsDimension = value;
     }
 

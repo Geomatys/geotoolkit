@@ -40,6 +40,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.SearchingException;
 import org.geotoolkit.lucene.filter.SerialChainFilter;
@@ -125,7 +127,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
      */
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
-        final IndexReader ireader = IndexReader.open(indexDirectory);
+        final IndexReader ireader = IndexReader.open(new SimpleFSDirectory(indexDirectory), true);
         searcher   = new IndexSearcher(ireader);
         LOGGER.info("Creating new Index Searcher with index directory:" + indexDirectory.getPath());
        
@@ -210,7 +212,7 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
-            final QueryParser parser = new QueryParser(field, analyzer);
+            final QueryParser parser = new QueryParser(Version.LUCENE_CURRENT, field, analyzer);
             parser.setDefaultOperator(Operator.AND);
 
             // we enable the leading wildcard mode if the first character of the query is a '*'
