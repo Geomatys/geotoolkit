@@ -20,6 +20,8 @@ package org.geotoolkit.data.session;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.FeatureIterator;
@@ -41,9 +43,11 @@ import org.junit.Test;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -319,7 +323,45 @@ public class SessionTest extends TestCase{
         assertFalse(session.hasPendingChanges());
 
 
-    }
+        //----------------------------------------------------------------------
+        //test modifying feature------------------------------------------------
+        //----------------------------------------------------------------------
+        final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+        values.put( ((SimpleFeatureType)store.getSchema(name)).getDescriptor("double"), 15d);
 
+        session.update(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
+
+        //check we have a modification
+        qb.reset();
+        qb.setTypeName(name);
+        query = qb.buildQuery();
+
+        assertEquals(store.getCount(query),3);
+        assertEquals(session.getCount(query),3);
+        assertTrue(session.hasPendingChanges());
+
+        //todo must handle count and envelope before testing more
+
+        //check the modification is visible only in the session
+//        qb.reset();
+//        qb.setTypeName(name);
+//        qb.setFilter(FF.equals(FF.property("double"), FF.literal(15d)));
+//        query = qb.buildQuery();
+//
+//        assertEquals(store.getCount(query),0);
+//        assertEquals(session.getCount(query),1);
+//        assertTrue(session.hasPendingChanges());
+
+        //check the modification is visible only in the session
+//        qb.reset();
+//        qb.setTypeName(name);
+//        qb.setFilter(FF.equals(FF.property("double"), FF.literal(2d)));
+//        query = qb.buildQuery();
+//
+//        assertEquals(store.getCount(query),1);
+//        assertEquals(session.getCount(query),0);
+//        assertTrue(session.hasPendingChanges());
+
+    }
 
 }

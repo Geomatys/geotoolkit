@@ -25,12 +25,15 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
+import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 
@@ -71,10 +74,11 @@ public class ModifyDelta extends AbstractDelta{
     public Query modify(Query query) {
         if(!query.getTypeName().equals(type)) return query;
 
-        //we exclude the modified features
-        //they will be handle in the other modified methods
+        //we always include the modified features
+        //they will be filtered at return time in the other modified methods
+        //todo we should modify this query for count and envelope
         final QueryBuilder builder = new QueryBuilder(query);
-        builder.setFilter(FF.and(builder.getFilter(),FF.not(filter)));
+        builder.setFilter(FF.or(builder.getFilter(),filter));
 
         return builder.buildQuery();
     }
@@ -85,9 +89,14 @@ public class ModifyDelta extends AbstractDelta{
     @Override
     public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
 
-        //todo must encapsulate
+        //modify the features that match the filter
+        final FeatureIterator modified = GenericModifyFeatureIterator.wrap(reader, filter, values);
 
-        return reader;
+        //ensure that the modified feature still match the original request
+        final Filter alterationFilter = FF.or(FF.not(filter), FF.and(filter, query.getFilter()));
+        final FeatureIterator secondCheck = GenericFilterFeatureIterator.wrap(modified, alterationFilter);
+
+        return secondCheck;
     }
 
     /**
@@ -95,16 +104,8 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public long modify(Query query, long count) throws DataStoreException{
-
-        //doesnt work
-
-//        //we request only the features modified
-//        final QueryBuilder builder = new QueryBuilder(query);
-//        builder.setFilter(FF.and(builder.getFilter(),filter));
-//
-//        session.getFeatureIterator(builder.buildQuery());
-
-        //todo
+        //todo must find a correct wayto alterate the count
+        //the send request should be modified
         return count;
     }
 
@@ -113,8 +114,9 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public Envelope modify(Query query, Envelope env) throws DataStoreException {
-        //todo
-        return null;
+        //todo must find a correct wayto alterate the envelope
+        //the send request should be modified
+        return env;
     }
 
     /**
