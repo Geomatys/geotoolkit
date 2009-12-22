@@ -110,7 +110,7 @@ public final class IOUtilities {
         } catch (URISyntaxException cause) {
             /*
              * Occurs only if the URL is not compliant with RFC 2396. Otherwise every URL
-             * should succeed, to a failure can actually be considered as a malformed URL.
+             * should succeed, so a failure can actually be considered as a malformed URL.
              */
             MalformedURLException e = new MalformedURLException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path));
@@ -118,13 +118,18 @@ public final class IOUtilities {
             throw e;
         }
         /*
-         * We really want to call the File constructor expecting an URI argument, not the
-         * constructor expecting a String argument, because the one for URI performs
-         * additional platform-specific parsing.
+         * We really want to call the File constructor expecting a URI argument,
+         * not the constructor expecting a String argument, because the one for
+         * the URI argument performs additional platform-specific parsing.
          */
         try {
             return new File(uri);
         } catch (IllegalArgumentException cause) {
+            /*
+             * Typically happen when the URI contains fragment that can not be represented
+             * in a File (e.g. a Query part), so it could be considered as if the URI with
+             * the fragment part can not represent an existing file.
+             */
             IOException e = new FileNotFoundException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path));
             e.initCause(cause);
             throw e;
@@ -155,6 +160,32 @@ public final class IOUtilities {
             return toFile(url, null);
         }
         return url;
+    }
+
+    /**
+     * Tries to convert the given path to a {@link File} object if possible, or returns
+     * the path unchanged otherwise. Conversion attempts are performed for paths of class
+     * {@link CharSequence}, {@link URL} or {@link URI}.
+     * <p>
+     * If a conversion from a {@link URL} object was necessary, then the URL is assumed
+     * to not be encoded.
+     *
+     * @param  path The path to convert to a {@link File} if possible.
+     * @return The path as a {@link File} if this conversion was possible.
+     * @throws IOException If an error occured while converting the path to a file.
+     *
+     * @since 3.07
+     */
+    public static Object tryToFile(Object path) throws IOException {
+        if (path instanceof CharSequence) {
+            path = toFileOrURL(path.toString());
+        } else if (path instanceof URL) {
+            final URL url = (URL) path;
+            if (url.getProtocol().equalsIgnoreCase("file")) {
+                path = toFile(url, null);
+            }
+        }
+        return path;
     }
 
     /**

@@ -53,13 +53,13 @@ import org.geotoolkit.util.XArrays;
  * like adding geographic information in {@link SpatialMetadata}.
  * <p>
  * The wrapped image reader is called the {@linkplain #main} reader. The input given to that
- * reader is determined by the {@link #createMainInput()} method - it may or may not be the
+ * reader is determined by the {@link #createInput(String)} method - it may or may not be the
  * same input than the one given to this {@code ImageReaderAdapter}. Most methods like
  * {@link #getWidth(int)}, {@link #getHeight(int)} and {@link #read(int)} delegate directly
  * to the main reader.
  * <p>
  * The amount of methods declared in this class is large, but the only new method is
- * {@link #createMainInput()}. All other methods override existing methods declared in
+ * {@link #createInput(String)}. All other methods override existing methods declared in
  * parent classes, mostly {@link ImageReader} and {@link SpatialImageReader}.
  *
  * {@section Example}
@@ -119,27 +119,56 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     }
 
     /**
-     * Returns the input to give to the {@linkplain #main} reader. This method is invoked at an
-     * arbitrary time after the {@link #setInput(Object, boolean, boolean) setInput} method, when
-     * the main reader needs to be used for the first time.
+     * Creates the input to give to the {@linkplain #main} reader, or to an other reader identified
+     * by the {@code readerID} argument. The default {@code ImageReaderAdapter} implementation
+     * invokes this method with a {@code readerID} argument value equals to {@code "main"} when
+     * the {@linkplain #main} reader needs to be used for the first time. This may happen at any
+     * time after the {@link #setInput(Object, boolean, boolean) setInput} method has been invoked.
+     * <p>
+     * The only {@code readerID} argument value accepted by the default implementation is
+     * {@code "main"}; any other argument value cause a {@code null} value to be returned.
+     * However subclasses can override this method for supporting more reader types. The
+     * table below summarizes a few types supported by this reader and different subclasses:
+     * <p>
+     * <table border="1">
+     *   <tr bgcolor="lightblue">
+     *     <th>Reader type</th>
+     *     <th>Defined by</th>
+     *     <th>Usage</th>
+     *   </tr><tr>
+     *     <td>&nbsp;{@code "main"}&nbsp;</td>
+     *     <td>&nbsp;{@code ImageReaderAdapter}&nbsp;</td>
+     *     <td>&nbsp;The input to be given to the {@linkplain #main} reader.&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@code "tfw"}&nbsp;</td>
+     *     <td>&nbsp;{@link org.geotoolkit.image.io.text.WorldFileImageReader}&nbsp;</td>
+     *     <td>&nbsp;The input for the <cite>World File</cite>.&nbsp;</td>
+     *   </tr><tr>
+     *     <td>&nbsp;{@code "prj"}&nbsp;</td>
+     *     <td>&nbsp;{@link org.geotoolkit.image.io.text.WorldFileImageReader}&nbsp;</td>
+     *     <td>&nbsp;The input for the <cite>Map Projection</cite> file.&nbsp;</td>
+     *   </tr>
+     * </table>
      * <p>
      * The default implementation first checks if the {@linkplain #main} reader can accept directly
      * the {@linkplain #input input} of this reader. If so, then that input is returned with no
      * change. Otherwise the input is wrapped in an {@linkplain ImageInputStream}, which is
      * returned. The input stream assigned to the {@linkplain #main} reader will be closed by
      * the {@link #close()} method.
-     * <p>
-     * Subclasses can override this method if they want to handle other kind of inputs.
      *
+     * @param  readerID Identifier of the reader for which an input is needed.
      * @return The input to give to the {@linkplain #main} reader, or {@code null} if this
      *         method can not create such input.
      * @throws IllegalStateException if the {@linkplain #input input} source has not been set.
      * @throws IOException If an error occured while creating the input for the main reader.
      */
-    protected Object createMainInput() throws IllegalStateException, IOException {
+    protected Object createInput(final String readerID) throws IllegalStateException, IOException {
         final Object input = this.input;
         if (input == null) {
             throw new IllegalStateException(getErrorResources().getString(Errors.Keys.NO_IMAGE_INPUT));
+        }
+        if (!"main".equalsIgnoreCase(readerID)) {
+            return null;
         }
         if (inputTypes != null) {
             for (final Class<?> type : inputTypes) {
@@ -156,7 +185,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      */
     private void ensureInputInitialized() throws IOException {
         if (main.getInput() == null) {
-            final Object mainInput = createMainInput();
+            final Object mainInput = createInput("main");
             if (mainInput == null) {
                 throw new IIOException(getErrorResources().getString(
                         Errors.Keys.UNKNOW_TYPE_$1, input.getClass()));
@@ -712,7 +741,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     }
 
     /**
-     * Closes the input stream created by {@link #createMainInput()}. This method does nothing
+     * Closes the input stream created by {@link #createInput(String)}. This method does nothing
      * if the input used by the {@linkplain #main} reader is the one given by the user to the
      * {@link #setInput(Object, boolean, boolean) setInput} method. Otherwise, if the input of
      * the main reader is an instance of {@link ImageInputStream} or {@link Closeable}, then it
@@ -723,7 +752,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * {@link #finalize()} methods and doesn't need to be invoked explicitly.
      * It has protected access only in order to allow overriding by subclasses.
      * Overriding methods shall make sure that {@code super.close()} is invoked
-     * even if their own code fail.
+     * even in case of failure.
      *
      * @throws IOException if an error occured while closing the stream.
      */
@@ -885,7 +914,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * @throws IllegalArgumentException If no provider is found for the given format.
          */
         protected Spi(final String format) throws IllegalArgumentException {
-            this(Formats.getReaderByFormatName(format));
+            this(Formats.getReaderByFormatName(format, Spi.class));
         }
 
         /**
@@ -968,6 +997,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                             in.close();
                         }
                     }
+                    break;
                 }
             }
             return false;

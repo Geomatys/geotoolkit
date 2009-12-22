@@ -28,6 +28,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
 import javax.media.jai.registry.RenderedRegistryMode;
+import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
@@ -218,7 +219,7 @@ public final class Registry {
     {
         T standard = null;
         T codeclib = null;
-        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        final ServiceRegistry registry = IIORegistry.getDefaultInstance();
         for (final Iterator<T> it = registry.getServiceProviders(category, false); it.hasNext();) {
             final T provider = it.next();
             final String[] formats = provider.getFormatNames();
@@ -266,6 +267,9 @@ public final class Registry {
      * If this method is to be invoked for a graphical application, it is recommanded to
      * invoke this method <strong>after</strong> the {@linkplain java.awt.Window} has been
      * created but before it is made visible.
+     *
+     * @see org.geotoolkit.image.io.text.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)
+     * @see org.geotoolkit.image.io.text.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)
      *
      * @since 3.00
      */

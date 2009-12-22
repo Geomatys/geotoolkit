@@ -297,7 +297,7 @@ public class MosaicBuilder {
      */
     public void setTileReaderSpi(final String format) throws IllegalArgumentException {
         // No need to synchronize.
-        setTileReaderSpi(Formats.getReaderByFormatName(format));
+        setTileReaderSpi(Formats.getReaderByFormatName(format, null));
     }
 
     /**

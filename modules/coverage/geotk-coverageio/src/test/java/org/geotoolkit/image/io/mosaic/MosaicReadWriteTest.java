@@ -109,7 +109,7 @@ public final class MosaicReadWriteTest {
     @Before
     public void setupSourceMosaic() throws IOException {
         Registry.setDefaultCodecPreferences();
-        final ImageReaderSpi spi = Formats.getReaderByFormatName("png");
+        final ImageReaderSpi spi = Formats.getReaderByFormatName("png", null);
         final TileManager[] managers = TileManagerFactory.DEFAULT.create(new Tile[] {
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "A1.png"), 0, new Rectangle(0*S, 0, S, S)),
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "B1.png"), 0, new Rectangle(1*S, 0, S, S)),

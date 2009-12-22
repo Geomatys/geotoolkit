@@ -18,6 +18,8 @@
 package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.image.jai.Registry;
+import org.geotoolkit.image.io.text.WorldFileImageReader;
 
 import org.junit.*;
 import static org.junit.Assume.*;
@@ -32,6 +34,15 @@ import static org.junit.Assume.*;
  * @since 3.00
  */
 public final class ImageFileChooserTest extends SwingBase<ImageFileChooser> {
+    /**
+     * Ensures that the Geotk plugins are registered.
+     */
+    @BeforeClass
+    public static void setDefaultCodecPreferences() {
+        Registry.setDefaultCodecPreferences();
+        WorldFileImageReader.Spi.registerDefaults(null);
+    }
+
     /**
      * Constructs the test case.
      */

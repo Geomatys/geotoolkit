@@ -915,7 +915,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     /**
      * Modifies the given {@code srcRegion} before reading an image which is vertically flipped.
      * This is a helper method for handling file formats where the <var>y</var> pixel ordinates
-     * are increasing upward, while the Image I/O API expect <var>y</var> pixel ordinates
+     * are increasing upward, while the Image I/O API expects <var>y</var> pixel ordinates to be
      * increasing downward. This method applies the following modification:
      *
      * {@preformat java
@@ -923,7 +923,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      * }
      *
      * plus an additional small <var>y</var> translation for taking subsampling in account,
-     * if the given {@code param} are not null.
+     * if the given {@code param} is not null.
      * <p>
      * This method should be invoked right after {@link #computeRegions computeRegions}
      * as in the example below:

@@ -179,17 +179,21 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
 
     /**
      * Returns the image reader provider for the given format name. This method prefers
-     * standard readers instead than JAI ones, except for the TIFF format.
+     * standard readers instead than JAI ones, except for the TIFF format for which the
+     * JAI reader is preferred.
      * <p>
      * <b>NOTE:</b> The rule for preferring a reader are the some ones than the rules implemented
      * by {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}. If the rule in
      * the above methods are modified, the rules in this method shall be modified accordingly.
      *
      * @param  format The name of the provider to fetch, or {@code null}.
+     * @param  exclude Base class of readers to exclude, or {@code null} if none.
      * @return The reader provider for the given format, or {@code null} if {@code format} is null.
      * @throws IllegalArgumentException If no provider is found for the given format.
      */
-    public static ImageReaderSpi getReaderByFormatName(String format) throws IllegalArgumentException {
+    public static ImageReaderSpi getReaderByFormatName(String format,
+            final Class<? extends ImageReaderSpi> exclude) throws IllegalArgumentException
+    {
         if (format == null) {
             return null;
         }
@@ -200,6 +204,9 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
         final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true);
         while (it.hasNext()) {
             final ImageReaderSpi provider = it.next();
+            if (exclude != null && exclude.isInstance(provider)) {
+                continue;
+            }
             if (XArrays.contains(provider.getFormatNames(), format)) {
                 /*
                  * NOTE: The following method uses the same rule for identifying JAI codecs.
@@ -224,8 +231,9 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
 
     /**
      * Returns the name of the given provider, or {@code null} if the name is unknown.
-     * If the provider declare many names, the longuest name is selected. If many names
-     * have the same length, the first one is selected.
+     * If the provider declares many names, the longuest name is selected. If many names
+     * have the same length, the first one having at least one upper-case character is
+     * selected. This allows this method to return {@code "PNG"} instead than {@code "png"}.
      *
      * @param  provider The provider for which we want the name, or {@code null}.
      * @return The name of the given provider, or {@code null} if none.
@@ -233,6 +241,7 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
      * @since 3.07
      */
     public static String getFormatName(final ImageReaderWriterSpi provider) {
+        boolean hasUpperCase = false;
         String name = null;
         if (provider != null) {
             final String[] formats = provider.getFormatNames();
@@ -245,12 +254,29 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
                         if (lg > length) {
                             length = lg;
                             name = candidate;
+                            hasUpperCase = hasUpperCase(name);
+                        } else if (!hasUpperCase && lg == length && hasUpperCase(candidate)) {
+                            hasUpperCase = true;
+                            name = candidate;
                         }
                     }
                 }
             }
         }
         return name;
+    }
+
+    /**
+     * Returns {@code true} if the given string has at least one upper-case character.
+     */
+    private static boolean hasUpperCase(final String name) {
+        for (int i=name.length(); --i>=0;) {
+            final char c = name.charAt(i);
+            if (Character.toUpperCase(c) == c) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

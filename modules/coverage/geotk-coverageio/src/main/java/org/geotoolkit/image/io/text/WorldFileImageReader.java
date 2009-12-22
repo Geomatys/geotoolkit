@@ -37,8 +37,10 @@ import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -51,7 +53,7 @@ import org.geotoolkit.util.Version;
  * <ul>
  *   <li><p>A text file containing the coefficients of the affine transform mapping pixel
  *       coordinates to geodesic coordinates. The reader expects one coefficient per line,
- *       is the same order than the one expected by the
+ *       in the same order than the one expected by the
  *       {@link AffineTransform#AffineTransform(double[]) AffineTransform(double[])}
  *       constructor, which is <var>scaleX</var>, <var>shearY</var>, <var>shearX</var>,
  *       <var>scaleY</var>, <var>translateX</var>, <var>translateY</var>.
@@ -83,6 +85,13 @@ import org.geotoolkit.util.Version;
  */
 public class WorldFileImageReader extends ImageReaderAdapter {
     /**
+     * {@code true} if the attempt to replace the {@linkplain #input} by a {@link File}
+     * has been done. We try to use a {@link File} because it allows us to check if the
+     * file exists. Only one attempt will be performed for a new input.
+     */
+    private boolean inputReplaced;
+
+    /**
      * Constructs a new image reader.
      *
      * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
@@ -93,49 +102,65 @@ public class WorldFileImageReader extends ImageReaderAdapter {
     }
 
     /**
-     * Returns the input for the file identified by the given keyword. This method returns an
-     * input which is typically a {@link File} or {@link java.net.URL} having the same name
-     * than the {@linkplain #input input} of this reader, but a different extension. The new
-     * extension is determined from the {@code keyword} argument, which can be:
+     * Creates the input to be given to the reader identified by the given argument. If the
+     * {@code readerID} argument is {@code "main"} (ignoring case), then this method delegates
+     * to the {@linkplain ImageReaderAdapter#createInput(String) super-class method}. Otherwise
+     * this method returns an input which is typically a {@link File} or {@link java.net.URL}
+     * having the same name than the {@linkplain #input input} of this reader, but a different
+     * extension. The new extension is determined from the {@code readerID} argument, which can
+     * be:
      *
      * <ul>
      *   <li><p>{@code "tfw"} for the <cite>World File</cite>. The extension of the returned
      *       input may be {@code "tfw"} (most common), {@code "jgw"}, {@code "pgw"} or other
-     *       depending on the extension of this reader {@linkplain #input input}, and depending
-     *       which file has been determined to exist. See the
+     *       suffix depending on the extension of this reader {@linkplain #input input}, and
+     *       depending which file has been determined to exist. See the
      *       <a href="#skip-navbar_top">class javadoc</a> for more details.</p></li>
      *
-     *   <li><p>{@code "prj"} for the file of the <cite>Map Projection</cite>. The extension
+     *   <li><p>{@code "prj"} for <cite>Map Projection</cite> file. The extension
      *       of the returned input is {@code "prj"}.</p></li>
      * </ul>
      *
-     * Subclasses can override this method for specifying a different <cite>World File</cite>
-     * ({@code "tfw"}) or <cite>Map Projection</cite> ({@code "prj"}) input. They can also
-     * invoke this method with other keywords than the two above-cited ones, in which case
-     * this method uses the given keyword as the extension of the returned input. However
-     * the default {@code WorldFileImageReader} implementation uses only {@code "tfw"} and
-     * {@code "prj"}.
+     * Subclasses can override this method for specifying a different main ({@code "main"}),
+     * <cite>World File</cite> ({@code "tfw"}) or <cite>Map Projection</cite> ({@code "prj"})
+     * input. They can also invoke this method with other identifiers than the three above-cited
+     * ones, in which case this method uses the given identifier as the extension of the returned
+     * input. However the default {@code WorldFileImageReader} implementation uses only
+     * {@code "main"}, {@code "tfw"} and {@code "prj"}.
      *
-     * @param  keyword {@code "tfw"} for getting the <cite>World File</cite> input, or
-     *         {@code "prj"} for getting the <cite>Map Projection</cite> input. Other
-     *         keywords are allowed but subclass-specific.
+     * @param  readerID {@code "main"} for the {@linkplain #main main} input,
+     *         {@code "tfw"} for the <cite>World File</cite> input, or
+     *         {@code "prj"} for the <cite>Map Projection</cite> input. Other
+     *         identifiers are allowed but subclass-specific.
      * @return The given kind of input typically as a {@link File} or {@link java.net.URL}
-     *         object, or {@code null} if there is no input for the given keyword.
-     * @throws IOException If an error occured while trying to determine the input.
+     *         object, or {@code null} if there is no input for the given identifier.
+     * @throws IOException If an error occured while creating the input.
      */
-    protected Object getInput(final String keyword) throws IOException {
-        return SupportFiles.changeExtension(input, keyword);
+    @Override
+    protected Object createInput(final String readerID) throws IOException {
+        if ("main".equalsIgnoreCase(readerID)) {
+            return super.createInput(readerID);
+        }
+        return SupportFiles.changeExtension(input, readerID);
     }
 
     /**
-     * Invokes {@link #getInput(String)} and verifies if the returned file exists.
+     * Invokes {@link #createInput(String)} and verifies if the returned file exists.
      * If it does not exist, then returns {@code null}.
      *
      * @todo Current implementation checks only {@link File} object.
      *       We should check URL as well.
      */
     private Object getVerifiedInput(final String part) throws IOException {
-        Object in = getInput(part);
+        /*
+         * Replaces the input by a File object if possible,
+         * for allowing us to check if the file exists.
+         */
+        if (!inputReplaced) {
+            input = IOUtilities.tryToFile(input);
+            inputReplaced = true;
+        }
+        Object in = createInput(part);
         if (in instanceof File) {
             if (!((File) in).isFile()) {
                 in = null;
@@ -151,8 +176,9 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * <cite>Map Projection</cite> files.
      * <p>
      * The <cite>World File</cite> and <cite>Map Projection</cite> files are determined by calls
-     * to the {@link #getInput(String)} method. Subclasses can override the laters if they want
-     * to specify different files to be read.
+     * to the {@link #createInput(String)} method with {@code "tfw"} and {@code "prj"} argument
+     * values. Subclasses can override the later method if they want to specify different files
+     * to be read.
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
@@ -184,6 +210,16 @@ public class WorldFileImageReader extends ImageReaderAdapter {
             }
         }
         return metadata;
+    }
+
+    /**
+     * Closes the input streams created by this reader. This method is automatically
+     * invoked when a new input is set, or when the reader is reset or disposed.
+     */
+    @Override
+    protected void close() throws IOException {
+        inputReplaced = false;
+        super.close();
     }
 
 
@@ -226,7 +262,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          * @throws IllegalArgumentException If no provider is found for the given format.
          */
         public Spi(final String format) throws IllegalArgumentException {
-            this(Formats.getReaderByFormatName(format));
+            this(Formats.getReaderByFormatName(format, Spi.class));
         }
 
         /**
@@ -242,6 +278,39 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         }
 
         /**
+         * Checks if the TFW or PRJ file exists for the given input. If we can not determine
+         * the file existence, conservatively returns {@code false}. This happen typically if
+         * the input is a URL. By returning {@code false} in the later case, we prevent the
+         * world file reader to be selected, but it also avoid the risk of getting an
+         * {@link IOException} when the reader will attempt to open a connection for the
+         * PRJ or TFW URLs.
+         */
+        private static boolean exists(final Object input, final String readerID) throws IOException {
+            final Object derived = SupportFiles.changeExtension(input, readerID);
+            if (derived instanceof File) {
+                return ((File) derived).isFile();
+            }
+            return false;
+        }
+
+        /**
+         * Returns {@code true} if the supplied source object appears to be of the format supported
+         * by this reader. The default implementation checks
+         *
+         * @param  source The input (typically a {@link File}) to be decoded.
+         * @return {@code true} if it is likely that the file can be decoded.
+         * @throws IOException If an error occured while reading the file.
+         */
+        @Override
+        public boolean canDecodeInput(Object source) throws IOException {
+            source = IOUtilities.tryToFile(source);
+            if (!exists(source, "tfw") && !exists(source, "prj")) {
+                return false;
+            }
+            return super.canDecodeInput(source);
+        }
+
+        /**
          * Creates a new <cite>World File</cite> reader. The extension is given to the
          * {@linkplain #main main} provider.
          *
@@ -253,5 +322,83 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         public ImageReader createReaderInstance(final Object extension) throws IOException {
             return new WorldFileImageReader(this, main.createReaderInstance(extension));
         }
+
+        /**
+         * Registers a default set of <cite>World File</cite> formats. Current implementation
+         * registers the TIFF, JPEG, PNG, GIF and BMP formats, but this list can be augmented
+         * in any future Geotk version.
+         *
+         * @param registry The registry where to register the formats, or {@code null} for
+         *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
+         *
+         * @see org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()
+         */
+        @Configuration
+        public static void registerDefaults(ServiceRegistry registry) {
+            if (registry == null) {
+                registry = IIORegistry.getDefaultInstance();
+            }
+            for (int index=0; ;index++) {
+                final Spi provider;
+                try {
+                    switch (index) {
+                        case 0: provider = new TIFF(); break;
+                        case 1: provider = new JPEG(); break;
+                        case 2: provider = new PNG (); break;
+                        case 3: provider = new GIF (); break;
+                        case 4: provider = new BMP (); break;
+                        default: return;
+                    }
+                } catch (RuntimeException e) {
+                    /*
+                     * If we failed to register a plugin, this is not really a big deal.
+                     * This format will not be available, but it will not prevent the
+                     * rest of the application to work.
+                     */
+                    Logging.unexpectedException(Logging.getLogger("org.geotoolkit.image.io"),
+                            Spi.class, "registerDefaults", e);
+                    continue;
+                }
+                registry.registerServiceProvider(provider, ImageReaderSpi.class);
+            }
+        }
+
+        /**
+         * Unregisters the providers registered by {@link #registerDefaults(ServiceRegistry)}.
+         *
+         * @param registry The registry from which to unregister the formats, or {@code null}
+         *        for the {@linkplain IIORegistry#getDefaultInstance() default registry}.
+         */
+        @Configuration
+        public static void unregisterDefaults(ServiceRegistry registry) {
+            if (registry == null) {
+                registry = IIORegistry.getDefaultInstance();
+            }
+            for (int index=0; ;index++) {
+                final Class<? extends Spi> type;
+                switch (index) {
+                    case 0: type = TIFF.class; break;
+                    case 1: type = JPEG.class; break;
+                    case 2: type = PNG .class; break;
+                    case 3: type = GIF .class; break;
+                    case 4: type = BMP .class; break;
+                    default: return;
+                }
+                final Spi provider = registry.getServiceProviderByClass(type);
+                if (provider != null) {
+                    registry.deregisterServiceProvider(provider, ImageReaderSpi.class);
+                }
+            }
+        }
     }
+
+    /**
+     * Providers for common formats. Each provider needs to be a different class because
+     * {@link ServiceRegistry} allows the registration of only one instance of each class.
+     */
+    private static final class TIFF extends Spi {TIFF() {super("TIFF");}}
+    private static final class JPEG extends Spi {JPEG() {super("JPEG");}}
+    private static final class PNG  extends Spi { PNG() {super("PNG" );}}
+    private static final class GIF  extends Spi { GIF() {super("GIF" );}}
+    private static final class BMP  extends Spi { BMP() {super("BMP" );}}
 }
