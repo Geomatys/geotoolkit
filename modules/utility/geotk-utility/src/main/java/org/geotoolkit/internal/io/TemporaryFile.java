@@ -85,7 +85,8 @@ public final class TemporaryFile extends PhantomReference<File> {
      * Creates a new temporary file and register it immediately for deletion on JVM shutdown.
      *
      * @param  prefix    The prefix string to be used in generating the file's name.
-     * @param  suffix    The suffix string to be used in generating the file's name.
+     * @param  suffix    The suffix string to be used in generating the file's name
+     *                   (usually with a leading dot), or {@code null} for {@code ".tmp"}.
      * @param  directory The directory in which the file is to be created, or {@code null}.
      * @return The temporary file.
      * @throws IOException If the file can not be created.

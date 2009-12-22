@@ -42,54 +42,83 @@ import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
- * A set of static methods for fetching an {@link ImageReader} or an {@link ImageWriter} for
- * a given input or output. The methods provided in this class serve a similar purpose than
- * the following methods provided in the standard JDK:
+ * Extensions to the set of static methods provided in the standard {@link ImageIO} class.
+ * The methods defined in this {@code XImageIO} class fetch an {@link ImageReader} or an
+ * {@link ImageWriter} for a given input, output, suffix, format name or mime type. They
+ * are equivalent in purpose to the methods defined in {@code ImageIO} except that:
  * <p>
  * <ul>
- *   <li>{@link ImageIO#getImageReaders(Object)}</li>
- *   <li>{@link ImageIO#getImageWriters(Object)}</li>
- *   <li>{@link ImageIO#getImageReadersBySuffix(String)}</li>
- *   <li>{@link ImageIO#getImageWritersBySuffix(String)}</li>
- *   <li>{@link ImageIO#getImageReadersByFormatName(String)}</li>
- *   <li>{@link ImageIO#getImageWritersByFormatName(String)}</li>
- *   <li>{@link ImageIO#getImageReadersByMIMEType(String)}</li>
- *   <li>{@link ImageIO#getImageWritersByMIMEType(String)}</li>
+ *   <li>The methods in this class return a single {@code ImageReader} or {@code ImageWriter}
+ *       instead than an iterator, and thrown an {@link IIOException} if no reader or writer
+ *       is found.</li>
+ *   <li>The methods in this class accept an optional input or output argument, in order to
+ *       check if the reader or writer can use that argument.</li>
+ *   <li>The methods in this class automatically create an {@linkplain ImageInputStream image input}
+ *       or {@linkplain ImageOutputStream output stream} if the reader or writer require such stream.</li>
  * </ul>
  * <p>
- * The differences between the methods in this class and the methods in the JDK are:
- * <p>
- * <ul>
- *   <li>All methods accepts an input/output argument, which is used for checking if the plugin
- *       can accept that input/output.</li>
- *   <li>The methods first check if a reader/writer accepts directly the given input/output.
- *       If none are found then the input/ouput is wrapped in an image input/output stream
- *       and checked again.</li>
- *   <li>The methods return a singleton instead than an iterator, for convenience.</li>
- *   <li>The input/output of the returned reader/writer is already set to the value given
- *       in argument, or to the image stream if such a stream has been created. It is the
- *       caller responsability to close the stream.</li>
- * </ul>
- * <p>
- * The raison why attempt to use directly the given input/output is made before to create a new
- * image stream is that some plugins can not work with streams. This include plugins which depend
- * on external (sometime native) libraries (like HDF), or plugins which need the name of the file
- * (like {@link org.geotoolkit.image.io.text.WorldFileImageReader}).
+ * For example, the standard Java API provides the following method:
  *
- * {@section Usage example}
- * The following example reads a PNG image. Because we use an input of type {@link java.io.File} instead
- * than {@link ImageInputStream}, the {@link org.geotoolkit.image.io.text.WorldFileImageReader} can
- * be used. Consequently the metadata associated with the PNG image will contains geolocalization
- * information, providing that a {@code ".pgw"} file was found with the PNG file.
+ * <blockquote>
+ * {@link ImageIO#getImageReadersBySuffix(String)} with <var>suffix</var> argument
+ * </blockquote>
+ *
+ * while this class provides the following equivalent API:
+ *
+ * <blockquote>
+ * {@link #getReaderBySuffix(String, Object, Boolean, Boolean)} with <var>suffix</var>,
+ * <var>input</var>, <var>seekForwardOnly</var> and <var>ignoreMetadata</var> arguments.
+ * </blockquote>
+ *
+ * The raison why the methods in this class expect an optional input or output argument is that
+ * the standard Image I/O Java library expects every {@linkplain ImageReader image readers} and
+ * {@linkplain ImageWriter writers} to accept an {@linkplain ImageInputStream image input} or
+ * {@linkplain ImageOutputStream output stream}, while some plugins used in the Geotk library
+ * can not work with streams. For example plugins which depend on native libraries (e.g. the HDF
+ * format) can typically accept only a filename as input, since the file will be open in C/C++
+ * code. Some other plugins like {@link org.geotoolkit.image.io.text.WorldFileImageReader} require
+ * the filename because they need to open many files, instead than reading a single stream.
+ * Consequently if the user want to read an image in a {@link java.io.File}, it is preferable to
+ * check in an {@code ImageReader} accepts directly a {@code File} input before to open the file
+ * in a {@code ImageInputStream}.
+ *
+ * {@section How the input/output is defined in the returned reader/writer}
+ * The {@link ImageReader} and {@link ImageWriter} returned by the methods in this class will have
+ * their input or output set. This is different than the standard {@code ImageIO} API (which returns
+ * unitialized readers or writers) and is done that way because the input or output may be different
+ * than the one specified by the caller if it was necessary to create an {@link ImageInputStream} or
+ * {@link ImageOutputStream}. If such stream has been created, then it is the caller responsability
+ * to close it after usage. The {@link #close(ImageReader)} and {@link #close(ImageWriter)}
+ * convenience methods can be used for this purpose.
+ * <p>
+ * The output in the returned image writer is defined by a call to the
+ * {@link ImageWriter#setOutput(Object)} method. The input in the returned
+ * image reader is defined by a call to the {@link ImageReader#setInput(Object)},
+ * {@link ImageReader#setInput(Object, boolean) setInput(Object, boolean)} or
+ * {@link ImageReader#setInput(Object, boolean, boolean) setInput(Object, boolean, boolean)}
+ * method depending on whatever the {@code seekForwardOnly} and {@code ignoreMetadata} arguments
+ * are non-null or not. For example if those two {@link Boolean} arguments are null, then the
+ * {@code setInput(Object)} flavor is invoked, which is usually equivalent to having set the
+ * two boolean argument to {@code false} but could have been overriden by the plugin.
+ *
+ * {@section Example}
+ * The following example reads a TIFF image. Because we use an input of type {@link java.io.File}
+ * instead than {@link ImageInputStream}, the {@link org.geotoolkit.image.io.text.WorldFileImageReader}
+ * can be used. Consequently the metadata associated with the TIFF image can contain geolocalization
+ * information if a {@code ".tfw"} file was found with the {@code ".tiff"} file.
  *
  * {@preformat java
- *     File          input    = new File("my_image.png");
- *     ImageReader   reader   = ImageFormats.getReaderBySuffix(input, true, null);
+ *     File          input    = new File("my_image.tiff");
+ *     ImageReader   reader   = XImageIO.getReaderBySuffix(input, true, null);
  *     IIOMetadata   metadata = reader.getImageMetadata(0);
  *     BufferedImage image    = reader.read(0);
- *     ImageFormats.close(reader);
+ *     XImageIO.close(reader);
  *     reader.dispose();
  * }
+ *
+ * {@section Mandatory and optional arguments}
+ * Every methods defined in this class expect exactly one mandatory argument, which is always
+ * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
@@ -98,7 +127,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * @module
  */
 @Static
-public final class ImageFormats {
+public final class XImageIO {
     /**
      * Used in {@code switch} statements for selecting the method to invoke
      * for choosing an image reader or writer.
@@ -108,7 +137,7 @@ public final class ImageFormats {
     /**
      * Do not allow instantiation of this class.
      */
-    private ImageFormats() {
+    private XImageIO() {
     }
 
     /**
@@ -279,30 +308,29 @@ public final class ImageFormats {
     }
 
     /**
-     * Creates a new reader for the given input. If a reader is found, its input will be set
-     * as in the code below before the reader is returned by this method:
+     * Creates a new reader for the given input. The {@code input} argument is mandatory and will be
+     * used for initializing the reader by a call to one of the {@link ImageReader#setInput(Object)}
+     * methods. The method invoked depends on whatever the {@code seekForwardOnly} and
+     * {@code ignoreMetadata} parameters are null or non-null.
      *
-     * {@preformat java
-     *     reader.setInput(input, seekForwardOnly, ignoreMetadata);
-     * }
-     *
-     * The {@code seekForwardOnly} and {@code ignoreMetadata} parameters are used only if they
-     * are non-null, otherwise the plugin-dependent default is used.
-     *
-     * @param  input The mandatory input to be given to the new reader instance.
-     * @param  seekForwardOnly If {@code true}, images and metadata may only be read in ascending
-     *         order from the input source. If {@code false}, they may be read in any order. If
-     *         {@code null}, this parameter is not given to the reader which is free to use a
-     *         plugin-dependent default (usually {@code false}).
-     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. If {@code false},
-     *         metadata will be parsed. If {@code null}, this parameter is not given to the reader
-     *         which is free to use a plugin-dependent default (usually {@code false}).
+     * @param input
+     *          The mandatory input to be given to the new reader instance.
+     * @param seekForwardOnly
+     *          Optional parameter to be given (if non-null) to the {@link #setInput(Object, boolean)
+     *          setInput} method: if {@code true}, images and metadata may only be read in ascending
+     *          order from the input source. If {@code false}, they may be read in any order. If
+     *          {@code null}, this parameter is not given to the reader which is free to use a
+     *          plugin-dependent default (usually {@code false}).
+     * @param ignoreMetadata
+     *          Optional parameter to be given (if non-null) to the {@link #setInput(Object, boolean,
+     *          boolean) setInput} method: if {@code true}, metadata may be ignored during reads. If
+     *          {@code false}, metadata will be parsed. If {@code null}, this parameter is not given
+     *          to the reader which is free to use a plugin-dependent default (usually {@code false}).
      * @return The new image reader instance with its input initialized.
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageReaders(Object)
-     * @see ImageReader#setInput(Object, boolean, boolean)
      */
     public static ImageReader getReader(final Object input,
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
@@ -312,31 +340,21 @@ public final class ImageFormats {
     }
 
     /**
-     * Creates a new reader for the given input, considering only the readers that claim to
-     * decode files having the suffix found in the input. If a reader is found and the given input
-     * is non-null, then the reader will be initialized to the given input as in the code below:
+     * Creates a new reader for the given input, considering only the readers that claim to decode
+     * files having the suffix found in the input. The {@code input} argument is mandatory and will
+     * be used for initializing the reader as documented in the {@link #getReader getReader(...)}
+     * method.
      *
-     * {@preformat java
-     *     reader.setInput(input, seekForwardOnly, ignoreMetadata);
-     * }
-     *
-     * The {@code seekForwardOnly} and {@code ignoreMetadata} parameters are used only if they
-     * are non-null, otherwise the plugin-dependent default is used.
-     *
-     * @param  input The input to be given to the new reader instance.
-     * @param  seekForwardOnly If {@code true}, images and metadata may only be read in ascending
-     *         order from the input source. If {@code false}, they may be read in any order. If
-     *         {@code null}, this parameter is not given to the reader which is free to use a
-     *         plugin-dependent default (usually {@code false}).
-     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. If {@code false},
-     *         metadata will be parsed. If {@code null}, this parameter is not given to the reader
-     *         which is free to use a plugin-dependent default (usually {@code false}).
+     * @param  input The mandatory input to be given to the new reader instance.
+     * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean) setInput} method.
+     * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized.
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageReadersBySuffix(String)
-     * @see ImageReader#setInput(Object, boolean, boolean)
      */
     public static ImageReader getReaderBySuffix(final Object input,
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
@@ -346,32 +364,22 @@ public final class ImageFormats {
     }
 
     /**
-     * Creates a new reader for the given input, considering only the readers that claim to
-     * decode files having the given suffix. If a reader is found and the given input is non-null,
-     * then the reader will be initialized to the given input as in the code below:
-     *
-     * {@preformat java
-     *     reader.setInput(input, seekForwardOnly, ignoreMetadata);
-     * }
-     *
-     * The {@code seekForwardOnly} and {@code ignoreMetadata} parameters are used only if they
-     * are non-null, otherwise the plugin-dependent default is used.
+     * Creates a new reader for the given optional input, considering only the readers that claim
+     * to decode files having the given suffix. Only the {@code suffix} argument is mandatory. The
+     * other ones are optional and will be used (if non-null) for initializing the reader as
+     * documented in the {@link #getReader getReader(...)} method.
      *
      * @param  suffix The file suffix for which we want a reader.
      * @param  input An optional input to be given to the new reader instance, or {@code null} if none.
-     * @param  seekForwardOnly If {@code true}, images and metadata may only be read in ascending
-     *         order from the input source. If {@code false}, they may be read in any order. If
-     *         {@code null}, this parameter is not given to the reader which is free to use a
-     *         plugin-dependent default (usually {@code false}).
-     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. If {@code false},
-     *         metadata will be parsed. If {@code null}, this parameter is not given to the reader
-     *         which is free to use a plugin-dependent default (usually {@code false}).
-     * @return The new image reader instance with its input initialized.
+     * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean) setInput} method.
+     * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     * @return The new image reader instance with its input initialized (if {@code input} is not null).
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageReadersBySuffix(String)
-     * @see ImageReader#setInput(Object, boolean, boolean)
      */
     public static ImageReader getReaderBySuffix(final String suffix, final Object input,
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
@@ -381,32 +389,22 @@ public final class ImageFormats {
     }
 
     /**
-     * Creates a new reader for the given input, considering only the readers of the given format
-     * name. If a reader is found and the given input is non-null, then the reader will be
-     * initialized to the given input as in the code below:
-     *
-     * {@preformat java
-     *     reader.setInput(input, seekForwardOnly, ignoreMetadata);
-     * }
-     *
-     * The {@code seekForwardOnly} and {@code ignoreMetadata} parameters are used only if they
-     * are non-null, otherwise the plugin-dependent default is used.
+     * Creates a new reader for the given optional input, considering only the readers of the given
+     * format name. Only the {@code name} argument is mandatory. The other ones are optional and
+     * will be used (if non-null) for initializing the reader as documented in the
+     * {@link #getReader getReader(...)} method.
      *
      * @param  name The name of the format looked for.
      * @param  input An optional input to be given to the new reader instance, or {@code null} if none.
-     * @param  seekForwardOnly If {@code true}, images and metadata may only be read in ascending
-     *         order from the input source. If {@code false}, they may be read in any order. If
-     *         {@code null}, this parameter is not given to the reader which is free to use a
-     *         plugin-dependent default (usually {@code false}).
-     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. If {@code false},
-     *         metadata will be parsed. If {@code null}, this parameter is not given to the reader
-     *         which is free to use a plugin-dependent default (usually {@code false}).
-     * @return The new image reader instance with its input initialized.
+     * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean) setInput} method.
+     * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     * @return The new image reader instance with its input initialized (if {@code input} is not null).
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageReadersByFormatName(String)
-     * @see ImageReader#setInput(Object, boolean, boolean)
      */
     public static ImageReader getReaderByFormatName(final String name, final Object input,
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
@@ -416,32 +414,22 @@ public final class ImageFormats {
     }
 
     /**
-     * Creates a new reader for the given input, considering only the readers for the given
-     * MIME type. If a reader is found and the given input is non-null, then the reader will
-     * be initialized to the given input as in the code below:
-     *
-     * {@preformat java
-     *     reader.setInput(input, seekForwardOnly, ignoreMetadata);
-     * }
-     *
-     * The {@code seekForwardOnly} and {@code ignoreMetadata} parameters are used only if they
-     * are non-null, otherwise the plugin-dependent default is used.
+     * Creates a new reader for the given optional input, considering only the readers for the
+     * given MIME type. Only the {@code mime} argument is mandatory. The other ones are optional
+     * and will be used (if non-null) for initializing the reader as documented in the
+     * {@link #getReader getReader(...)} method.
      *
      * @param  mime The MIME type of the format looked for.
      * @param  input An optional input to be given to the new reader instance, or {@code null} if none.
-     * @param  seekForwardOnly If {@code true}, images and metadata may only be read in ascending
-     *         order from the input source. If {@code false}, they may be read in any order. If
-     *         {@code null}, this parameter is not given to the reader which is free to use a
-     *         plugin-dependent default (usually {@code false}).
-     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. If {@code false},
-     *         metadata will be parsed. If {@code null}, this parameter is not given to the reader
-     *         which is free to use a plugin-dependent default (usually {@code false}).
-     * @return The new image reader instance with its input initialized.
+     * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean) setInput} method.
+     * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
+     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     * @return The new image reader instance with its input initialized (if {@code input} is not null).
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageReadersByMIMEType(String)
-     * @see ImageReader#setInput(Object, boolean, boolean)
      */
     public static ImageReader getReaderByMIMEType(final String mime, final Object input,
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
@@ -457,7 +445,10 @@ public final class ImageFormats {
      * @throws IOException If an error occured while closing the stream.
      */
     public static void close(final ImageReader reader) throws IOException {
-        close(reader.getInput());
+        ensureNonNull("reader", reader);
+        final Object input = reader.getInput();
+        reader.reset();
+        close(input);
     }
 
     /**
@@ -557,7 +548,6 @@ public final class ImageFormats {
      *         while creating it.
      *
      * @see ImageIO#getImageWritersBySuffix(String)
-     * @see ImageWriter#setOutput(Object)
      */
     public static ImageWriter getWriterBySuffix(final Object output, final RenderedImage image)
             throws IOException
@@ -575,12 +565,11 @@ public final class ImageFormats {
      * @param  suffix The file suffix for which we want a writer.
      * @param  output An optional output to be given to the new writer instance, or {@code null} if none.
      * @param  image  The image to encode, or {@code null} if unknown.
-     * @return The new image writer instance with its output initialized.
+     * @return The new image writer instance with its output initialized (if {@code output} is not null).
      * @throws IOException If no suitable image writer has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageWritersBySuffix(String)
-     * @see ImageWriter#setOutput(Object)
      */
     public static ImageWriter getWriterBySuffix(final String suffix, final Object output,
             final RenderedImage image) throws IOException
@@ -598,12 +587,11 @@ public final class ImageFormats {
      * @param  name The format name for which we want a writer.
      * @param  output An optional output to be given to the new writer instance, or {@code null} if none.
      * @param  image  The image to encode, or {@code null} if unknown.
-     * @return The new image writer instance with its output initialized.
+     * @return The new image writer instance with its output initialized (if {@code output} is not null).
      * @throws IOException If no suitable image writer has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageWritersByFormatName(String)
-     * @see ImageWriter#setOutput(Object)
      */
     public static ImageWriter getWriterByFormatName(final String name, final Object output,
             final RenderedImage image) throws IOException
@@ -621,12 +609,11 @@ public final class ImageFormats {
      * @param  mime   The MIME type for which we want a writer.
      * @param  output An optional output to be given to the new writer instance, or {@code null} if none.
      * @param  image  The image to encode, or {@code null} if unknown.
-     * @return The new image writer instance with its output initialized.
+     * @return The new image writer instance with its output initialized (if {@code output} is not null).
      * @throws IOException If no suitable image writer has been found, or if an error occured
      *         while creating it.
      *
      * @see ImageIO#getImageWritersByMIMEType(String)
-     * @see ImageWriter#setOutput(Object)
      */
     public static ImageWriter getWriterByMIMEType(final String mime, final Object output,
             final RenderedImage image) throws IOException
@@ -642,6 +629,9 @@ public final class ImageFormats {
      * @throws IOException If an error occured while closing the stream.
      */
     public static void close(final ImageWriter writer) throws IOException {
-        close(writer.getOutput());
+        ensureNonNull("writer", writer);
+        final Object output = writer.getOutput();
+        writer.reset();
+        close(output);
     }
 }

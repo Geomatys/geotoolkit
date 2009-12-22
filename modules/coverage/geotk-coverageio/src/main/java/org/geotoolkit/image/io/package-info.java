@@ -26,6 +26,11 @@
  * Concrete implementations are provided in the {@linkplain org.geotoolkit.image.io.plugin plugin}
  * sub-package for binary image formats, and in the {@linkplain org.geotoolkit.image.io.text text}
  * sub-package for ASCII (or other text encoding) image formats.
+ * <p>
+ * The {@link org.geotoolkit.image.io.XImageIO} class provides static methods completing the ones
+ * provided in the standard {@link javax.imageio.ImageIO} class. Those methods consider the input
+ * or output type before to select an image reader or writer, because not every plugins can accept
+ * the standard types (image input or output stream) defined by the Java Image I/O specification.
  *
  * {@section Conversion of sample values}
  * Spatial image formats often contain geophysical values (e.g. temperatures in Celsius degrees,
