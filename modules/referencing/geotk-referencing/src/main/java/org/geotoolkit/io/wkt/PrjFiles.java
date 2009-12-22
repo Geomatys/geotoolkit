@@ -19,6 +19,9 @@ package org.geotoolkit.io.wkt;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -31,17 +34,19 @@ import org.geotoolkit.io.ContentFormatException;
 
 /**
  * Parses and formats PRJ files. Those files usually have the {@code ".prj"} suffix and contain
- * the definition of exactly one Coordinate Reference System in WKT format. This class allows
- * the definition to span many lines, but the common practice is to provide the full WKT string
- * on a single line.
+ * the definition of exactly one <cite>Coordinate Reference System</cite> (CRS) in <cite>Well
+ * Known Text</cite> (WKT) format. This class allows the definition to span many lines, but the
+ * common practice is to provide the full WKT string on a single line.
  * <p>
  * If the definition is not a valid WKT string (during reads), or if a CRS can not be formatted as
  * a WKT (during writes), then the methods in this class throw a {@link ContentFormatException}.
  * This is a subclass of {@link IOException} and consequently does not require a <code>try &hellip;
  * catch</code> block different than the one for normal I/O operations.
+ * <p>
+ * Every files are expected to use the ISO-8859-1 (a.k.a. ISO-LATIN-1) encoding.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.07
  *
  * @since 3.05
  * @module
@@ -81,6 +86,26 @@ public final class PrjFiles {
      */
     public static CoordinateReferenceSystem read(final URL file) throws ContentFormatException, IOException {
         return read(file.openStream(), true);
+    }
+
+    /**
+     * Parses a PRJ file from a channel and returns its content as a coordinate reference system.
+     * The given channel is not closed by this method, unless the {@code close} argument is set to
+     * {@code true}. The later case allows this method to close the channel sooner than what could
+     * be achieved if the channel was closed by the caller: before the WKT parsing begin.
+     *
+     * @param  in The channel to read.
+     * @param  close Whatever this method should close the channel.
+     * @return The PRJ file content as a coordinate reference system.
+     * @throws ContentFormatException If the content of the PRJ file is an invalid WKT.
+     * @throws IOException If the parsing failed for an other raison.
+     *
+     * @since 3.07
+     */
+    public static CoordinateReferenceSystem read(final ReadableByteChannel in, final boolean close)
+            throws ContentFormatException, IOException
+    {
+        return read(Channels.newInputStream(in), close);
     }
 
     /**
@@ -183,6 +208,23 @@ public final class PrjFiles {
         out.write(wkt);
         out.write('\n'); // Use Unix EOL for cross-platform consistency.
         out.close();
+    }
+
+    /**
+     * Formats a coordinate reference system as a PRJ file in the given channel. The channel
+     * is <strong>not</strong> closed by this method. It is caller responsability to close it.
+     *
+     * @param  crs The PRJ file content as a coordinate reference system.
+     * @param  out The channel where to write.
+     * @throws ContentFormatException if the given CRS is not formattable as a WKT.
+     * @throws IOException If an other error occured while writing the file.
+     *
+     * @since 3.07
+     */
+    public static void write(final CoordinateReferenceSystem crs, final WritableByteChannel out)
+            throws ContentFormatException, IOException
+    {
+        write(crs, Channels.newOutputStream(out));
     }
 
     /**
