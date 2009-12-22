@@ -43,6 +43,7 @@ import org.geotoolkit.gml.xml.v311.MultiGeometryType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonPatchArrayPropertyType;
 import org.geotoolkit.gml.xml.v311.PolygonPatchType;
+import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.gml.xml.v311.RingType;
 import org.geotoolkit.gml.xml.v311.SurfaceInterpolationType;
@@ -134,6 +135,31 @@ public class GMLUtilities {
 
             return gmlLine;
 
+       } else if (geometry instanceof Polygon) {
+           Polygon polygon          = (Polygon) geometry;
+           SurfaceBoundary boundary = polygon.getBoundary();
+           Ring exterior            = boundary.getExterior();
+
+           List<CurvePropertyType> curves = new ArrayList<CurvePropertyType>();
+           for (Primitive p : exterior.getElements()) {
+               curves.add(new CurvePropertyType((CurveType) getGMLFromISO(p)));
+           }
+           RingType gmlExterior = new RingType();
+           gmlExterior.getCurveMember().addAll(curves);
+
+           List<Ring> interiors = boundary.getInteriors();
+           List<RingType> gmlInteriors = new ArrayList<RingType>();
+           for (Ring interior : interiors) {
+               List<CurvePropertyType> intcurves = new ArrayList<CurvePropertyType>();
+               for (Primitive p : interior.getElements()) {
+                   intcurves.add(new CurvePropertyType((CurveType) getGMLFromISO(p)));
+               }
+               RingType gmlinterior = new RingType();
+               gmlinterior.getCurveMember().addAll(intcurves);
+               gmlInteriors.add(gmlinterior);
+           }
+           PolygonType gmlPolygon = new PolygonType(gmlExterior, gmlInteriors);
+           return gmlPolygon;
        } else if (geometry instanceof PolyhedralSurface) {
            PolyhedralSurface polySurface = (PolyhedralSurface) geometry;
            List<PolygonPatchType> gmlPatches = new ArrayList<PolygonPatchType>();
