@@ -61,7 +61,7 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      *
      * @throws IOException
      */
-    public DataStore createDataStore(URL url) throws IOException;
+    public DataStore createDataStore(URL url) throws DataStoreException;
 
     /**
      * The typeName represented by the provided url.
@@ -74,5 +74,5 @@ public interface FileDataStoreFactory extends DataStoreFactory {
      *
      * @throws IOException
      */
-    public String getTypeName(URL url) throws IOException;
+    public String getTypeName(URL url) throws DataStoreException;
 }

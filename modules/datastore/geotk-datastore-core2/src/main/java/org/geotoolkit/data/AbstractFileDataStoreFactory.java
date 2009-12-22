@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 
@@ -77,7 +76,7 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(URL url) throws IOException {
+    public DataStore createDataStore(URL url) throws DataStoreException {
         return createDataStore(Collections.singletonMap(URLP.getName().toString(), url));
     }
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,22 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.data.shapefile.index;
 
-package org.geotoolkit.data;
-
-import org.opengis.filter.identity.FeatureId;
+import org.geotoolkit.data.shapefile.ShpFileType;
 
 /**
- * Generator of Feature id for datastores.
- *
- * @author Johann Sorel (Geomatys)
- * @module pending
+ * Enumerates the different types of Shapefile geometry indices there are.
+ * 
+ * @author jesse
  */
-public interface FeatureIDGenerator {
-
+public enum IndexType {
     /**
-     * Generate and return a unique feature id.
+     * Don't use indexing
      */
-    FeatureId next();
+    NONE(null),
+    /**
+     * The same index as mapserver. Its the most reliable and is the default
+     */
+    QIX(ShpFileType.QIX);
 
+    public final ShpFileType shpFileType;
+
+    private IndexType(ShpFileType shpFileType) {
+        this.shpFileType = shpFileType;
+    }
 }

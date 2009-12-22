@@ -165,7 +165,7 @@ public interface DataStoreFactory {
     /**
      * @see DataStoreFactory#createDataStore(org.opengis.parameter.ParameterValueGroup)
      */
-    DataStore createDataStore(Map<String, ? extends Serializable> params) throws IOException;
+    DataStore createDataStore(Map<String, ? extends Serializable> params) throws DataStoreException;
 
     /**
      * Construct a live DataStore using the connection parameters provided.
@@ -203,10 +203,10 @@ public interface DataStoreFactory {
      * @throws IOException if there were any problems setting up (creating or
      *         connecting) the datasource.
      */
-    DataStore createDataStore(ParameterValueGroup params) throws IOException;
+    DataStore createDataStore(ParameterValueGroup params) throws DataStoreException;
 
-    DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws IOException;
+    DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws DataStoreException;
 
-    DataStore createNewDataStore(ParameterValueGroup params) throws IOException;
+    DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException;
 
 }

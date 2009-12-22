@@ -15,12 +15,11 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.memory;
+package org.geotoolkit.data;
 
 import java.util.concurrent.atomic.AtomicLong;
-import org.geotoolkit.data.FeatureIDGenerator;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.opengis.filter.identity.FeatureId;
+
+import org.opengis.feature.type.FeatureType;
 
 /**
  * Simple implementation of a feature id generator which
@@ -29,15 +28,25 @@ import org.opengis.filter.identity.FeatureId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MemoryFeatureIDGenerator implements FeatureIDGenerator{
+public class DefaultFeatureIDReader implements FeatureIDReader{
 
     private final String base;
     private final AtomicLong inc = new AtomicLong();
-    
+
+    /**
+     * This constructor will use the local part of the type as a
+     * base string for ids.
+     *
+     * @param type the featuretype
+     */
+    public DefaultFeatureIDReader(FeatureType type){
+        this(type.getName().getLocalPart());
+    }
+
     /**
      * @param base string use as start element of the generated ids
      */
-    public MemoryFeatureIDGenerator(String base){
+    public DefaultFeatureIDReader(String base){
         if(base == null) throw new NullPointerException("Base string can not ben ull.");
         this.base = base+"_";
     }
@@ -46,8 +55,23 @@ public class MemoryFeatureIDGenerator implements FeatureIDGenerator{
      * {@inheritDoc }
      */
     @Override
-    public FeatureId next() {
-        return new DefaultFeatureId(base+inc.incrementAndGet());
+    public String next() {
+        return base+inc.incrementAndGet();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean hasNext(){
+        return true;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void close(){
     }
 
 }

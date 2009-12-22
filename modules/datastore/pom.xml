@@ -97,6 +97,7 @@
     <module>geotk-datastore-core</module>
     <module>geotk-datastore-core2</module>
     <module>geotk-shapefile</module>
+    <module>geotk-shapefile2</module>
     <module>geotk-wfs</module>
     <module>geotk-jdbc</module>
     <module>geotk-om</module>

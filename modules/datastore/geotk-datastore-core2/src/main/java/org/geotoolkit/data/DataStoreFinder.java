@@ -72,7 +72,7 @@ public final class DataStoreFinder{
      * This is a utility method that will redirect to getDataStore(java.util.Map)
      */
     public static synchronized DataStore getDataStore(
-            String key, Serializable value) throws IOException{
+            String key, Serializable value) throws DataStoreException{
         return getDataStore(Collections.singletonMap(key, value));
     }
 
@@ -94,11 +94,11 @@ public final class DataStoreFinder{
      *             to the specified resource without errors.
      */
     public static synchronized DataStore getDataStore(
-            Map<String, Serializable> params) throws IOException {
+            Map<String, Serializable> params) throws DataStoreException {
         final Iterator<DataStoreFactory> ps = getAvailableDataStores();
 
 
-        IOException canProcessButNotAvailable = null;
+        DataStoreException canProcessButNotAvailable = null;
         while (ps.hasNext()) {
             final DataStoreFactory fac = (DataStoreFactory) ps.next();
             boolean canProcess = false;
@@ -123,12 +123,12 @@ public final class DataStoreFinder{
                 if (isAvailable) {
                     try {
                         return fac.createDataStore(params);
-                    } catch (IOException couldNotConnect) {
+                    } catch (DataStoreException couldNotConnect) {
                         canProcessButNotAvailable = couldNotConnect;
                         LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
                     }
                 } else {
-                    canProcessButNotAvailable = new IOException(
+                    canProcessButNotAvailable = new DataStoreException(
                             fac.getDisplayName() + " should be used, but is not availble. Have you installed the required drivers or jar files?");
                     LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but is not availble", canProcessButNotAvailable);
                 }

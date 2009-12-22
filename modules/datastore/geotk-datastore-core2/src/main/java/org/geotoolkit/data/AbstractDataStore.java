@@ -18,6 +18,7 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -31,15 +32,13 @@ import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.util.logging.Logging;
 
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -51,6 +50,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class AbstractDataStore implements DataStore{
 
+    private static final Logger LOGGER = Logging.getLogger(AbstractDataStore.class);
+
+    protected Logger getLogger(){
+        return LOGGER;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -61,6 +66,8 @@ public abstract class AbstractDataStore implements DataStore{
 
     /**
      * {@inheritDoc }
+     *
+     * This implementation will always return false.
      */
     @Override
     public boolean isWriteable(Name typeName) throws DataStoreException {
@@ -93,6 +100,22 @@ public abstract class AbstractDataStore implements DataStore{
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateEnvelope(reader);
+    }
+
+    /**
+     * {@inheritDoc }
+     *
+     * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
+     */
+    @Override
+    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
+        final FeatureWriter writer = getFeatureWriter(typeName,Filter.INCLUDE);
+
+        while (writer.hasNext()) {
+            writer.next(); // skip to the end to switch in append mode
+        }
+
+        return writer;
     }
 
     /**
@@ -199,7 +222,16 @@ public abstract class AbstractDataStore implements DataStore{
         return reader;
     }
 
-
+    /**
+     * Wrap a feature writer with a Filter.
+     * This method can be used when the datastore implementation is not
+     * intelligent enough to handle filtering.
+     *
+     * @param writer featureWriter to filter
+     * @param filter filter to use for hiding feature while iterating
+     * @return Filtered FeatureWriter
+     * @throws DataStoreException
+     */
     protected FeatureWriter handleRemaining(FeatureWriter writer, Filter filter) throws DataStoreException{
 
         //wrap filter ----------------------------------------------------------

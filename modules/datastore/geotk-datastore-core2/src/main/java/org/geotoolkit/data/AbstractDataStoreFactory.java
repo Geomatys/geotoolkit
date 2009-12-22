@@ -77,11 +77,11 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(Map<String, ? extends Serializable> params) throws IOException {
+    public DataStore createDataStore(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
             return createDataStore(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
-            throw new IOException(ex);
+            throw new DataStoreException(ex);
         }
     }
 
@@ -89,11 +89,11 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws IOException {
+    public DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
             return createNewDataStore(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
-            throw new IOException(ex);
+            throw new DataStoreException(ex);
         }
     }
 

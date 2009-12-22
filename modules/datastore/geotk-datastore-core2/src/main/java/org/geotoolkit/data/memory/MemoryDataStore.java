@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.memory;
 
+import org.geotoolkit.data.DefaultFeatureIDReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,7 +30,7 @@ import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.AbstractFeatureWriterAppend;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.FeatureIDGenerator;
+import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -51,7 +52,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
     private final Map<Name,FeatureType> types = new HashMap<Name, FeatureType>();
     private final Map<Name,List<Feature>> features = new HashMap<Name, List<Feature>>();
-    private final Map<Name,FeatureIDGenerator> idGenerators = new HashMap<Name, FeatureIDGenerator>();
+    private final Map<Name,FeatureIDReader> idGenerators = new HashMap<Name, FeatureIDReader>();
     private Set<Name> nameCache = null;
 
     /**
@@ -97,7 +98,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
         types.put(name, featureType);
         features.put(name, new ArrayList<Feature>());
-        idGenerators.put(name, new MemoryFeatureIDGenerator(name.getLocalPart()));
+        idGenerators.put(name, new DefaultFeatureIDReader(name.getLocalPart()));
 
         //clear name cache
         nameCache = null;
@@ -236,7 +237,7 @@ public class MemoryDataStore extends AbstractDataStore{
     private class MemoryFeatureWriterAppend<T extends FeatureType, F extends Feature> extends AbstractFeatureWriterAppend<T,F>{
 
         private final SimpleFeatureBuilder builder;
-        private final FeatureIDGenerator idGenerator;
+        private final FeatureIDReader idGenerator;
         private final Name name;
         private F currentFeature = null;
 
@@ -249,7 +250,11 @@ public class MemoryDataStore extends AbstractDataStore{
 
         @Override
         public F next() throws DataStoreRuntimeException {
-            currentFeature = (F) builder.buildFeature(idGenerator.next().getID());
+            try {
+                currentFeature = (F) builder.buildFeature(idGenerator.next());
+            } catch (DataStoreException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
             return currentFeature;
         }
 
