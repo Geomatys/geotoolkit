@@ -33,7 +33,7 @@ import java.util.StringTokenizer;
  */
 public final class SQLBuilder {
     /**
-     * The database dialect. This is used for a few database-dependant syntax.
+     * The database dialect. This is used for a few database-dependent syntax.
      */
     private final Dialect dialect;
 

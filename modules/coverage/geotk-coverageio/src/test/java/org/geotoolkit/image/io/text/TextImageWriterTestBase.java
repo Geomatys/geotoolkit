@@ -108,7 +108,7 @@ public abstract class TextImageWriterTestBase {
 
     /**
      * Creates the image writer using the {@link Locale#CANADA}.
-     * This arbitrary locale is fixed in order to keep the build locale-independant.
+     * This arbitrary locale is fixed in order to keep the build locale-independent.
      *
      * @return The reader to test.
      * @throws IOException If an error occured while creating the format.

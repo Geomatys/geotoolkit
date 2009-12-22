@@ -360,7 +360,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * ({@link #lineSeparator}).
      * <p>
      * By default the {@code charset}, {@code locale} and {@code lineSeparator} fields are
-     * initialized to {@code null}, which stands for the platform-dependant defaults. If a
+     * initialized to {@code null}, which stands for the platform-dependent defaults. If a
      * subclass wants to fix the encoding and locale to some format-specific values, it shall
      * specify those values at construction time as in the example below:
      *

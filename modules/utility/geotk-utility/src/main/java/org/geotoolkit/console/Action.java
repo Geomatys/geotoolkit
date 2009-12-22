@@ -29,7 +29,7 @@ import java.lang.annotation.RetentionPolicy;
  * {@linkplain Option option} matches the {@linkplain #name name}. This annotation contains
  * non-localized informations like the name. This annotation does not contain the description to
  * be printed when the user ask for {@linkplain CommandLine#help help} because such description
- * is local-dependant. The description must be provided in a {@linkplain java.util.Properties
+ * is local-dependent. The description must be provided in a {@linkplain java.util.Properties
  * properties} file under the following rules:
  * <p>
  * <ul>

@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Descriptions;
 
 /**
  * An image encoder for matrix of floating-point numbers. The sample values are formatted by an
- * {@link NumberFormat} instance. Consequently the format is locale-dependant, unless the locale
+ * {@link NumberFormat} instance. Consequently the format is locale-dependent, unless the locale
  * is explicitly specified either in the <cite>Service Provider Interface</cite> ({@link Spi#locale})
  * or by overriding the {@link #getDataLocale(ImageWriteParam)} method.
  * <p>

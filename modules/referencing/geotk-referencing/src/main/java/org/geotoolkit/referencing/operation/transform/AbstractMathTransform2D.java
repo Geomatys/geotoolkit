@@ -348,7 +348,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
 
         /**
          * Returns a hash code value for this object. This value is
-         * implementation-dependant and may change in any future version.
+         * implementation-dependent and may change in any future version.
          */
         @Override
         public int hashCode() {

@@ -95,7 +95,7 @@ import static java.lang.Math.max;
  *     <blockquote><font size=2>
  *     <b>NOTE 1:</b> The semantic assumes that overviews are produced by subsampling, not by
  *     interpolation or pixel averaging. The later are not prohibed, but doing so introduce
- *     some subsampling-dependant variations in images produced by {@link MosaicImageReader},
+ *     some subsampling-dependent variations in images produced by {@link MosaicImageReader},
  *     which would not be what we would expect from a strictly compliant {@link ImageReader}.
  *     <br><br>
  *     <b>NOTE 2:</b> Tile {@linkplain #getLocation location} and {@linkplain #getRegion region}

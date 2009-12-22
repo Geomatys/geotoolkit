@@ -370,7 +370,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * pixel values ({@link #padValue}).
      * <p>
      * By default the {@code charset} and {@code locale} fields are initialized to {@code null},
-     * which stands for the platform-dependant character encoding and locale. In addition the
+     * which stands for the platform-dependent character encoding and locale. In addition the
      * {@code padValue} is set to {@link Double#NaN}, which means that there is no pad value. If
      * a subclass wants to fix the encoding, locale and pad value to some format-specific values,
      * it shall specify those values at construction time as in the example below:
@@ -451,7 +451,7 @@ public abstract class TextImageReader extends StreamImageReader {
 
         /**
          * Character encoding, or {@code null} for the default. This field is initially
-         * {@code null}, which means to use the platform-dependant encoding. Subclasses
+         * {@code null}, which means to use the platform-dependent encoding. Subclasses
          * shall set a non-null value if the files to be decoded use some specific character
          * encoding.
          *

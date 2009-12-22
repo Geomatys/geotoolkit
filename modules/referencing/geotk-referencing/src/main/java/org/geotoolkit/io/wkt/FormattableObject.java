@@ -143,7 +143,7 @@ public class FormattableObject implements Formattable {
      * This is a convenience method for debugging purpose only.
      *
      * {@note We don't use the standard error stream (the stream used by logging) because it
-     *        is independant of the stream used by the console.}
+     *        is independent of the stream used by the console.}
      *
      * @since 3.00
      */

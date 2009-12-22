@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  * Annotates a field to be assigned from values given on the command line. This annotation
  * contains non-localized informations like the name or whatever the option is mandatory.
  * This annotation does not contain the description to be printed when the user ask for
- * {@linkplain CommandLine#help help} because such description is local-dependant. The
+ * {@linkplain CommandLine#help help} because such description is local-dependent. The
  * description must be provided in a {@linkplain java.util.Properties properties} file
  * under the following rules:
  * <p>

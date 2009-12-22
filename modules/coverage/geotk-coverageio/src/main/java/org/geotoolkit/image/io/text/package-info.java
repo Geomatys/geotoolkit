@@ -21,7 +21,7 @@
  * ASCII files. The {@link java.nio.charset.Charset} used for decoding/encoding streams, and
  * the {@link java.util.Locale} used for parsing/formatting numbers, are plugin-specific.
  * Some plugins use the {@linkplain java.util.Locale#getDefault() system default}, which
- * make them locale-dependant (see the table below).
+ * make them locale-dependent (see the table below).
  * <p>
  * The <code>geotk-coverageio.jar</code> file declares service providers for the following formats:
  * <p>

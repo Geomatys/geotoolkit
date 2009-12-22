@@ -210,7 +210,7 @@ public class ImageWorker extends ImageInspector {
      * already uses an {@code IndexColorModel}, then this method does nothing. Otherwise this method
      * performs an Error Diffusion or an Ordered Dither operation according the value of the
      * {@link #COLOR_QUANTIZATION} rendering hint. If this hint is not provided, then the selected
-     * method is implementation-dependant and may vary in future versions.
+     * method is implementation-dependent and may vary in future versions.
      * <p>
      * The current implementation performs its work on the RGB color space only.
      *

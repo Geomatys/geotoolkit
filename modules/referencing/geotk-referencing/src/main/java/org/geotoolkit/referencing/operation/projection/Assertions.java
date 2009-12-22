@@ -30,7 +30,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
 /**
  * Static methods for assertions. This is used only when Java 1.4 assertions are enabled.
  * A projected point is compared with the inverse transform and an exception is thrown if
- * the distance is over some projection-dependant threshold.
+ * the distance is over some projection-dependent threshold.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

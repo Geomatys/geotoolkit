@@ -395,7 +395,7 @@ public final class WKTFormatTest {
          * Formats using GeoTiff identifiers. We should get different strings in PROJECTION[...]
          * and PARAMETER[...] elements, but the other ones (especially DATUM[...]) are unchanged.
          * The changes in UNIT[...] and AXIS[...] are related to the way those objects are built
-         * and are independants of the Citation argument.
+         * and are independents of the Citation argument.
          */
         assertMultilinesEquals(decodeQuotes(
             "PROJCS[“OSGB 1936 / British National Grid”,\n" +

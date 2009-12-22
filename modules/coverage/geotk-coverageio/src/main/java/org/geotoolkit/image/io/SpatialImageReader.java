@@ -913,13 +913,20 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     }
 
     /**
-     * Flips the source region vertically. This method should be invoked straight after
-     * {@link #computeRegions computeRegions} when the image to be read will be flipped
-     * vertically, for example when the {@linkplain java.awt.image.Raster raster} sample
-     * values are filled in a "{@code for (y=ymax-1; y>=ymin; y--)}" loop instead of
-     * "{@code for (y=ymin; y<ymax; y++)}".
+     * Modifies the given {@code srcRegion} before reading an image which is vertically flipped.
+     * This is a helper method for handling file formats where the <var>y</var> pixel ordinates
+     * are increasing upward, while the Image I/O API expect <var>y</var> pixel ordinates
+     * increasing downward. This method applies the following modification:
+     *
+     * {@preformat java
+     *     srcRegion.y = srcHeight - (srcRegion.y + srcRegion.height);
+     * }
+     *
+     * plus an additional small <var>y</var> translation for taking subsampling in account,
+     * if the given {@code param} are not null.
      * <p>
-     * This method should be invoked as in the example below:
+     * This method should be invoked right after {@link #computeRegions computeRegions}
+     * as in the example below:
      *
      * {@preformat java
      *     computeRegions(param, srcWidth, srcHeight, image, srcRegion, destRegion);
@@ -937,7 +944,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
         srcRegion.y = srcHeight - (srcRegion.y + srcRegion.height);
         /*
          * After the flip performed by the above line, we still have 'spaceLeft' pixels left for
-         * a downward translation.  We usually don't need to care about if, except if the source
+         * a downward translation.  We usually don't need to care about it, except if the source
          * region is very close to the bottom of the source image,  in which case the correction
          * computed below may be greater than the space left.
          *

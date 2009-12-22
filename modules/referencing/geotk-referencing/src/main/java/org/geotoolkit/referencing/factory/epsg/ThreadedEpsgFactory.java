@@ -263,7 +263,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * This method returns a URL using the JavaDB driver, connecting to the database in the
      * installation directory specified by the setup program in the
      * <a href="http://www.geotoolkit.org/modules/utility/geotk-setup">geotk-setup</a> module.
-     * If this setup program has not been run, then a platform-dependant location relative
+     * If this setup program has not been run, then a platform-dependent location relative
      * to the user home directory is returned.
      * <p>
      * If no database exists in the above-cited directory, then a new EPSG database will be

@@ -231,7 +231,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *
      * @param  scope The {@linkplain AbstractName#scope scope} of the generic name to
      *         be created, or {@code null} for a global namespace.
-     * @param  name The qualified name, as a sequence of names separated by a scope-dependant
+     * @param  name The qualified name, as a sequence of names separated by a scope-dependent
      *         separator.
      * @return A name parsed from the given string.
      */

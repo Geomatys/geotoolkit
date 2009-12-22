@@ -61,7 +61,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * value {@link Graduation#getMaximum}.
  * <p>
  * Note the line's coordinates (<var>x<sub>1</sub></var>,<var>y<sub>1</sub></var>) and
- * (<var>x<sub>2</sub></var>,<var>y<sub>2</sub></var>) are completly independant of graduation
+ * (<var>x<sub>2</sub></var>,<var>y<sub>2</sub></var>) are completly independent of graduation
  * minimal and maximal values. Line's coordinates should be expressed in some units convenient
  * for rendering, as pixels or point (1/72 of inch). On the opposite, graduation can have any
  * arbitrary units, which is given by {@link Graduation#getUnit}. The

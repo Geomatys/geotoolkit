@@ -167,7 +167,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
     }
 
     /**
-     * Returns a locale-independant string representation of this local name.
+     * Returns a locale-independent string representation of this local name.
      * This string does not include the scope, which is consistent with the
      * {@linkplain #getParsedNames parsed names} definition.
      */

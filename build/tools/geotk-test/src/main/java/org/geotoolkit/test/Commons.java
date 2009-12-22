@@ -49,7 +49,7 @@ public final class Commons {
     /**
      * Asserts that two strings are equal, ignoring the differences in EOL characters.
      * The comparisons is performed one a line-by-line basis. For each line, leading
-     * and trailing spaces are ignored in order to make the comparison independant of
+     * and trailing spaces are ignored in order to make the comparison independent of
      * indentation.
      *
      * @param expected The expected string.
@@ -62,7 +62,7 @@ public final class Commons {
     /**
      * Asserts that two strings are equal, ignoring the differences in EOL characters.
      * The comparisons is performed one a line-by-line basis. For each line, leading
-     * and trailing spaces are ignored in order to make the comparison independant of
+     * and trailing spaces are ignored in order to make the comparison independent of
      * indentation.
      *
      * @param message  The message to print in case of failure, or {@code null} if none.

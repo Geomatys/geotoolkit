@@ -202,7 +202,7 @@ final class ColorModelFactory {
         int code = 962745549 + (numBands*37 + visibleBand)*37 + categoryCount;
         for (int i=0; i<categoryCount; i++) {
             code += categories[i].hashCode();
-            // Better be independant of categories order.
+            // Better be independent of categories order.
         }
         return code;
     }

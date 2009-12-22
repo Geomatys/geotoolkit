@@ -569,7 +569,7 @@ public abstract class InteractiveConsole implements Runnable {
     }
 
     /**
-     * Parses a sequence of numbers separated by a locale-dependant number separator.
+     * Parses a sequence of numbers separated by a locale-dependent number separator.
      * Those sequences are typically (but are not restricted to) ordinate values in a
      * single coordinate. Example:
      *

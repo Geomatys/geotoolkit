@@ -601,7 +601,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * <p>
      * When assertions are enabled, the referencing framework will perform the above comparisons.
      * If the distance found is greater than the distance returned by this method plus some
-     * (implementation dependant) epsilon value, then a {@link ProjectionException} will be
+     * (implementation dependent) epsilon value, then a {@link ProjectionException} will be
      * thrown.
      * <p>
      * The default implementation returns {@link Double#NaN} in all case. Subclasses
@@ -1156,7 +1156,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
 
         /**
          * Returns a hash code value for this object. This value is
-         * implementation-dependant and may change in any future version.
+         * implementation-dependent and may change in any future version.
          */
         @Override
         public int hashCode() {

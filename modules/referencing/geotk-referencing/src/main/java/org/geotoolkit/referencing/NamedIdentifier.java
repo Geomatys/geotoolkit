@@ -349,7 +349,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
 
     /**
      * Returns a string representation of this generic name. This string representation
-     * is local-independant. It contains all elements listed by {@link #getParsedNames}
+     * is local-independent. It contains all elements listed by {@link #getParsedNames}
      * separated by an arbitrary character (usually {@code :} or {@code /}).
      */
     @Override

@@ -176,8 +176,8 @@ public class Line implements Cloneable, Serializable {
      * href="http://shakti.cc.trincoll.edu/~palladin/courses/ENGR431/statistics/node9.html">Linear
      * Regression Curve Fitting</a>.
      *
-     * @param x Vector of <var>x</var> values (independant variable).
-     * @param y Vector of <var>y</var> values (dependant variable).
+     * @param x Vector of <var>x</var> values (independent variable).
+     * @param y Vector of <var>y</var> values (dependent variable).
      * @return Estimation of the correlation coefficient. The closer
      *         this coefficient is to 1, the better the fit.
      *

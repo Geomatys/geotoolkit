@@ -1050,7 +1050,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * the target coordinates calculated by the two math transforms. This behavior is specified
      * as a boolean argument instead if a threashold floating point value because of the
      * heterogenous nature of math transform parameters accross different implementations.
-     * How small is "small" is implementation dependant.
+     * How small is "small" is implementation dependent.
      *
      * @param  object The object to compare with this transform for equivalence.
      * @param  strict If {@code true}, the two transforms must compute exactly the same target
