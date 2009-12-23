@@ -32,10 +32,10 @@ import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.data.shapefile.index.IndexType;
+import org.geotoolkit.data.shapefile.indexed.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.data.shapefile.index.IndexedShapefileDataStore;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 
 import org.opengis.feature.type.Name;
 import org.opengis.metadata.quality.ConformanceResult;

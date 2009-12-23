@@ -46,13 +46,22 @@ public class AddDelta extends AbstractDelta{
     private final Name type;
     private final FeatureCollection<Feature> features;
 
+    /**
+     *
+     * @param session
+     * @param typeName
+     * @param features : can be empty, even so it would be useless,
+     * We do not check the size since this collection may be relying on
+     * a datastore which may be slow or changing with time.
+     * this features from the given collection will be copied.
+     */
     public AddDelta(Session session, Name typeName, Collection<Feature> features){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
         }
-        if(features == null || features.isEmpty()){
-            throw new IllegalArgumentException("Can not create an Add delta with no new features.");
+        if(features == null){
+            throw new IllegalArgumentException("Can not create an Add delta with no collection.");
         }
 
         this.type = typeName;
@@ -122,10 +131,13 @@ public class AddDelta extends AbstractDelta{
             for(final Feature f : features){
                 final Feature candidate = writer.next();
 
-                for(final Property property : f.getProperties()){
+                System.out.println("------------------------------------");
+                for(Property property : f.getProperties()){
+                    System.out.println(property.getName() + "\t\t" + property.getValue());
                     candidate.getProperty(property.getName()).setValue(property.getValue());
+                    property = candidate.getProperty(property.getName());
+                    System.out.println("->" +property.getName() + "\t\t" + property.getValue());
                 }
-
                 writer.write();
             }
         }finally{

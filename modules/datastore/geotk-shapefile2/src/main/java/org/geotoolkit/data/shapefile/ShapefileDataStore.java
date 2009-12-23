@@ -24,14 +24,17 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.io.FileWriter;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,25 +45,34 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.DefaultFeatureIDReader;
 import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shp.ShapeType;
+import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
+import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -70,6 +82,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
@@ -84,10 +97,61 @@ public class ShapefileDataStore extends AbstractDataStore{
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
 
     protected final ShpFiles shpFiles;
-    protected final Name name;
-    protected final SimpleFeatureType schema;
+    protected final String namespace;
     protected final boolean useMemoryMappedBuffer;
     protected final Charset dbfCharset;
+    private Name name;
+    private SimpleFeatureType schema;
+
+
+    /**
+     * Creates a new instance of ShapefileDataStore.
+     *
+     * @param url The URL of the shp file to use for this DataSource.
+     *
+     * @throws NullPointerException DOCUMENT ME!
+     * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
+     */
+    public ShapefileDataStore(URL url) throws DataStoreException,MalformedURLException {
+        this(url, false, DEFAULT_STRING_CHARSET);
+    }
+
+    public ShapefileDataStore(URL url, boolean useMemoryMappedBuffer)
+            throws DataStoreException,MalformedURLException {
+        this(url, useMemoryMappedBuffer, DEFAULT_STRING_CHARSET);
+    }
+
+    public ShapefileDataStore(URL url, boolean useMemoryMappedBuffer, Charset dbfCharset)
+            throws DataStoreException,MalformedURLException {
+        this(url, null, false, dbfCharset);
+    }
+
+    /**
+     * this sets the datastore's namespace during construction (so the schema -
+     * FeatureType - will have the correct value) You can call this with
+     * namespace = null, but I suggest you give it an actual namespace.
+     *
+     * @param url
+     * @param namespace
+     */
+    public ShapefileDataStore(URL url, URI namespace)
+            throws DataStoreException,MalformedURLException {
+        this(url, namespace, false, DEFAULT_STRING_CHARSET);
+    }
+
+    /**
+     * this sets the datastore's namespace during construction (so the schema -
+     * FeatureType - will have the correct value) You can call this with
+     * namespace = null, but I suggest you give it an actual namespace.
+     *
+     * @param url
+     * @param namespace
+     * @param useMemoryMapped
+     */
+    public ShapefileDataStore(URL url, URI namespace, boolean useMemoryMapped)
+            throws DataStoreException,MalformedURLException {
+        this(url, namespace, useMemoryMapped, DEFAULT_STRING_CHARSET);
+    }
 
     /**
      * This sets the datastore's namespace during construction (so the schema -
@@ -110,14 +174,34 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         if(namespace != null){
+            this.namespace = namespace.toString();
+        }else{
+            this.namespace = null;
+        }
+
+        this.dbfCharset = dbfCharset;
+    }
+
+    public Name getName() throws DataStoreException{
+        checkTypeExist();
+        return name;
+    }
+
+    public SimpleFeatureType getSchema() throws DataStoreException{
+        checkTypeExist();
+        return schema;
+    }
+
+    private void checkTypeExist() throws DataStoreException{
+        if(name != null && schema != null) return;
+
+        if(namespace != null){
             this.schema = buildSchema(namespace.toString());
         }else{
             this.schema = buildSchema(null);
         }
-        
-        this.name = schema.getName();
 
-        this.dbfCharset = dbfCharset;
+        this.name = schema.getName();
     }
 
     /**
@@ -125,7 +209,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     @Override
     public Set<Name> getNames() throws DataStoreException {
-        return Collections.singleton(this.name);
+        return Collections.singleton(getName());
     }
 
     /**
@@ -133,7 +217,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureType getSchema(Name typeName) throws DataStoreException {
-        typeCheck(name);
+        typeCheck(typeName);
 
         return schema;
     }
@@ -144,6 +228,64 @@ public class ShapefileDataStore extends AbstractDataStore{
     @Override
     public Object getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Gets the bounding box of the file represented by this data store as a
+     * whole (that is, off all of the features in the shapefile)
+     *
+     * @return The bounding box of the datasource or null if unknown and too
+     *         expensive for the method to calculate.
+     * @throws DataSourceException DOCUMENT ME!
+     */
+    @Override
+    public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
+
+        if(QueryUtilities.queryAll(query)){
+
+            // This is way quick!!!
+            ReadableByteChannel in = null;
+
+            try {
+                final ByteBuffer buffer = ByteBuffer.allocate(100);
+
+                in = shpFiles.getReadChannel(SHP, "Shapefile Datastore's getBounds Method");
+                try {
+                    in.read(buffer);
+                    buffer.flip();
+
+                    final ShapefileHeader header = ShapefileHeader.read(buffer, true);
+                    final JTSEnvelope2D bounds = new JTSEnvelope2D(schema.getCoordinateReferenceSystem());
+                    bounds.include(header.minX(), header.minY());
+                    bounds.include(header.minX(), header.minY());
+
+                    final com.vividsolutions.jts.geom.Envelope env =
+                            new com.vividsolutions.jts.geom.Envelope(header.minX(), header.maxX(), header.minY(), header.maxY());
+
+                    if (schema != null) {
+                        return new JTSEnvelope2D(env, schema.getCoordinateReferenceSystem());
+                    }
+                    return new JTSEnvelope2D(env, null);
+                } finally {
+                    in.close();
+                }
+
+            } catch (IOException ioe) {
+                // What now? This seems arbitrarily appropriate !
+                throw new DataStoreException("Problem getting Bbox", ioe);
+            } finally {
+                try {
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException ioe) {
+                    // do nothing
+                }
+            }
+        }else{
+            return super.getEnvelope(query);
+        }
+
     }
 
     /**
@@ -198,24 +340,16 @@ public class ShapefileDataStore extends AbstractDataStore{
         final ShapefileAttributeReader attReader = getAttributesReader(true);
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
         try {
-            featureReader = createFeatureReader(name.getLocalPart(), attReader, schema);
+            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema);
 
         } catch (Exception e) {
             featureReader = GenericEmptyFeatureIterator.createReader(schema);
         }
         try {
-            return new ShapefileFeatureWriter(name.getLocalPart(), shpFiles, attReader, featureReader, dbfCharset);
+            return new ShapefileFeatureWriter(typeName.getLocalPart(), shpFiles, attReader, featureReader, dbfCharset);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -223,11 +357,118 @@ public class ShapefileDataStore extends AbstractDataStore{
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * {@inheritDoc }
+     * Set the FeatureType of this DataStore. This method will delete any
+     * existing local resources or throw an IOException if the DataStore is
+     * remote.
+     *
+     * @param featureType The desired FeatureType.
+     * @throws DataStoreException If the DataStore is remote.
+     *
+     * @todo must synchronize this properly
      */
     @Override
     public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Can not create shapefile schema.");
+        if (!shpFiles.isLocal()) {
+            throw new DataStoreException("Cannot create FeatureType on remote shapefile");
+        }
+
+        if(typeName == null){
+            throw new DataStoreException("Type name can not be null.");
+        }
+
+        if(!(featureType instanceof SimpleFeatureType)){
+            throw new DataStoreException("Feature type must not be null and must be a simple feature type.");
+        }
+
+        if(!featureType.getName().equals(typeName)){
+            throw new DataStoreException("Shapefile datastore can only hold typename same as feature type name.");
+        }
+
+
+        //delete the files
+        shpFiles.delete();
+
+        //update schema and name
+        name = typeName;
+        schema = (SimpleFeatureType) featureType;
+
+        CoordinateReferenceSystem crs = featureType.getGeometryDescriptor().getCoordinateReferenceSystem();
+        final Class<?> geomType = featureType.getGeometryDescriptor().getType().getBinding();
+        final ShapeType shapeType =ShapeType.findBestGeometryType(geomType);
+
+        if(shapeType == ShapeType.UNDEFINED){
+            throw new DataStoreException("Cannot create a shapefile whose geometry type is "+ geomType);
+        }
+
+        try{
+            final StorageFile shpStoragefile = shpFiles.getStorageFile(SHP);
+            final StorageFile shxStoragefile = shpFiles.getStorageFile(SHX);
+            final StorageFile dbfStoragefile = shpFiles.getStorageFile(DBF);
+            final StorageFile prjStoragefile = shpFiles.getStorageFile(PRJ);
+
+            final FileChannel shpChannel = shpStoragefile.getWriteChannel();
+            final FileChannel shxChannel = shxStoragefile.getWriteChannel();
+
+            final ShapefileWriter writer = new ShapefileWriter(shpChannel, shxChannel);
+            try {
+                // try to get the domain first
+                final org.opengis.geometry.Envelope domain = CRS.getEnvelope(crs);
+                if (domain != null) {
+                    writer.writeHeaders(new JTSEnvelope2D(domain), shapeType, 0, 100);
+                } else {
+                    // try to reproject the single overall envelope keeping poles out of the way
+                    final JTSEnvelope2D env = new JTSEnvelope2D(-179, 179, -89, 89, DefaultGeographicCRS.WGS84);
+                    JTSEnvelope2D transformedBounds;
+                    if (crs != null) {
+                        try {
+                            transformedBounds = env.transform(crs, true);
+                        } catch (Throwable t) {
+                            if (getLogger().isLoggable(Level.WARNING)) {
+                                getLogger().log(Level.WARNING, t.getLocalizedMessage(), t);
+                            }
+                            transformedBounds = env;
+                            crs = null;
+                        }
+                    } else {
+                        transformedBounds = env;
+                    }
+
+                    writer.writeHeaders(transformedBounds, shapeType, 0, 100);
+                }
+            } finally {
+                writer.close();
+                assert !shpChannel.isOpen();
+                assert !shxChannel.isOpen();
+            }
+
+            final DbaseFileHeader dbfheader = createDbaseHeader(schema);
+            dbfheader.setNumRecords(0);
+
+            final WritableByteChannel dbfChannel = dbfStoragefile.getWriteChannel();
+            try {
+                dbfheader.writeHeader(dbfChannel);
+            } finally {
+                dbfChannel.close();
+            }
+
+            if (crs != null) {
+                // .prj files should have no carriage returns in them, this messes up
+                // ESRI's ArcXXX software, so we'll be compatible
+                final String s = crs.toWKT().replaceAll("\n", "").replaceAll("  ", "");
+                final FileWriter prjWriter = new FileWriter(prjStoragefile.getFile());
+                try {
+                    prjWriter.write(s);
+                } finally {
+                    prjWriter.close();
+                }
+            } else {
+                getLogger().warning("PRJ file not generated for null CoordinateReferenceSystem");
+            }
+
+            StorageFile.replaceOriginals(shpStoragefile, shxStoragefile, dbfStoragefile, prjStoragefile);
+        }catch(IOException ex){
+            throw new DataStoreException(ex);
+        }
     }
 
     /**
@@ -251,8 +492,8 @@ public class ShapefileDataStore extends AbstractDataStore{
     ////////////////////////////////////////////////////////////////////////////
 
     public void typeCheck(Name candidate) throws DataStoreException{
-        if(!this.name.equals(name)){
-            throw new DataStoreException("Type name : " + candidate +" don't exist in this datastore, available names are : " + name);
+        if(!getName().equals(candidate)){
+            throw new DataStoreException("Type name : " + candidate +" don't exist in this datastore, available names are : " + getName());
         }
     }
 

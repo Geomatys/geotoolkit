@@ -38,6 +38,14 @@ public interface DataStore {
 
     Session createSession();
 
+    /**
+     * Convinient way to aquiere all names by ignoring the namespaces.
+     * 
+     * @return String array
+     * @throws DataStoreException
+     */
+    String[] getTypeNames() throws DataStoreException;
+
     Set<Name> getNames() throws DataStoreException;
 
     void createSchema(Name typeName, FeatureType featureType) throws DataStoreException;
@@ -45,6 +53,16 @@ public interface DataStore {
     void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException;
 
     void deleteSchema(Name typeName) throws DataStoreException;
+
+    /**
+     * Convinient way to aquiere a schema by ignoring the namespace.
+     * This should return the first schema which localpart name match the
+     * given typeName.
+     * 
+     * @return FeatureType
+     * @throws DataStoreException
+     */
+    FeatureType getSchema(String typeName) throws DataStoreException;
 
     FeatureType getSchema(Name typeName) throws DataStoreException;
 

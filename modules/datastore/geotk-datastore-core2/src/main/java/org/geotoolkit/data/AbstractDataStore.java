@@ -17,7 +17,8 @@
 
 package org.geotoolkit.data;
 
-import java.io.IOException;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -62,6 +63,35 @@ public abstract class AbstractDataStore implements DataStore{
     @Override
     public Session createSession() {
         return new DefaultSession(this);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String[] getTypeNames() throws DataStoreException {
+        final Set<Name> names = getNames();
+        final Iterator<Name> ite = names.iterator();
+        final String[] locals = new String[names.size()];
+        int i=0;
+        while(ite.hasNext()){
+            locals[i] = ite.next().getLocalPart();
+            i++;
+        }
+        return locals;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureType getSchema(String typeName) throws DataStoreException {
+        for(final Name n : getNames()){
+            if(n.getLocalPart().equals(typeName)){
+                return getSchema(n);
+            }
+        }
+        throw new DataStoreException("Schema : " + typeName + "doesnt exist in this datastore.");
     }
 
     /**
