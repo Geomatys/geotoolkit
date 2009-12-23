@@ -43,9 +43,12 @@ import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
-
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.SimpleFSDirectory;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
@@ -96,12 +99,13 @@ public class LuceneTest {
                 f.delete();
             }
         }
-        IndexWriter writer = new IndexWriter(directory, new KeywordAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
+        Directory FSDirectory = new SimpleFSDirectory(directory);
+        IndexWriter writer = new IndexWriter(FSDirectory, new KeywordAnalyzer(), IndexWriter.MaxFieldLength.UNLIMITED);
         fillTestData(writer);
         writer.commit();
         writer.close();
 
-        IndexReader reader = IndexReader.open(directory);
+        IndexReader reader = IndexReader.open(FSDirectory);
         searcher = new IndexSearcher(reader);
         //create a term query to search against all documents
         simpleQuery = new TermQuery(new Term("metafile", "doc"));
@@ -2778,7 +2782,7 @@ public class LuceneTest {
         
         //we perform a lucene query
         Analyzer analyzer    = new KeywordAnalyzer();
-        QueryParser parser  = new QueryParser("metafile", analyzer);
+        QueryParser parser  = new QueryParser(org.apache.lucene.util.Version.LUCENE_CURRENT, "metafile", analyzer);
         Query query         = parser.parse("name:point*");
         
         docs = searcher.search(query, bboxQuery.getSpatialFilter(), 15);
@@ -2806,8 +2810,8 @@ public class LuceneTest {
          */ 
         
         //we perform two lucene query
-        analyzer    = new KeywordAnalyzer();
-        parser  = new QueryParser("metafile", analyzer);
+        analyzer      = new KeywordAnalyzer();
+        parser        = new QueryParser(org.apache.lucene.util.Version.LUCENE_CURRENT, "metafile", analyzer);
         query         = parser.parse("name:point*");
         
         TopDocs hits1 = searcher.search(query, 15);
@@ -2855,7 +2859,7 @@ public class LuceneTest {
         
         //we perform two lucene query
         analyzer                = new KeywordAnalyzer();
-        parser                  = new QueryParser("metafile", analyzer);
+        parser                  = new QueryParser(org.apache.lucene.util.Version.LUCENE_CURRENT, "metafile", analyzer);
         Query query1            = parser.parse("name:point*");
         Query query2            = parser.parse("name:box*");
 

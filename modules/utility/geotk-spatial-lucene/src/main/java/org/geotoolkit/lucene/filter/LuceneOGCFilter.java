@@ -28,6 +28,7 @@ import org.apache.lucene.index.TermDocs;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.DocIdSetIterator;
 
+import org.apache.lucene.util.DocIdBitSet;
 import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.PropertyName;
@@ -70,9 +71,9 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
      * {@inheritDoc }
      */
     @Override
-    public BitSet bits(IndexReader reader) throws IOException {
+    public DocIdSet getDocIdSet(IndexReader reader) throws IOException {
 
-        BitSet set = new BitSet(reader.maxDoc());
+        DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
 
         final TermDocs termDocs;
         termDocs = reader.termDocs();
@@ -83,7 +84,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
             final Document doc = reader.document(docId,GEOMETRY_FIELD_SELECTOR);
 
             if(filter.evaluate(doc)){
-                set.set(docId);
+                set.getBitSet().set(docId);
             }
         }
 
@@ -119,26 +120,30 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         }
 
         @Override
-        public int doc() {
+        public int docID() {
             return termDocs.doc();
         }
 
         @Override
-        public boolean next() throws IOException {
+        public int nextDoc() throws IOException {
             while (termDocs.next()){
                 final int docId = termDocs.doc();
                 final Document doc = reader.document(docId,GEOMETRY_FIELD_SELECTOR);
 
                 if(filter.evaluate(doc)){
-                    return true;
+                    return docId;
                 }
             }
-            return false;
+            return -1;
         }
 
         @Override
-        public boolean skipTo(int skip) throws IOException {
-            return termDocs.skipTo(skip);
+        public int advance(int i) throws IOException {
+            boolean skip =  termDocs.skipTo(i);
+            if (!skip)
+                return -1;
+            else
+                return termDocs.doc();
         }
 
     }

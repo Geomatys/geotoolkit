@@ -23,6 +23,7 @@ import java.util.BitSet;
 import java.util.List;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.util.DocIdBitSet;
 
@@ -72,12 +73,12 @@ public class SerialChainFilter extends Filter {
      * @see org.apache.lucene.search.Filter#bits(org.apache.lucene.index.IndexReader)
      */
     @Override
-    public BitSet bits(IndexReader reader) throws CorruptIndexException, IOException {
+    public  DocIdSet getDocIdSet(IndexReader reader) throws CorruptIndexException, IOException {
 
         final int chainSize  = chain.size();
         final int actionSize = actionType.length;
 
-        final BitSet bits    = chain.get(0).bits(reader);
+        final BitSet bits    = ((DocIdBitSet)chain.get(0).getDocIdSet(reader)).getBitSet();
 
         //if there is only an operand not we don't enter the loop
         int j = 0;
@@ -96,7 +97,7 @@ public class SerialChainFilter extends Filter {
                 action = DEFAULT;
             }
 
-            final BitSet nextFilterResponse = chain.get(i).bits(reader);
+            final BitSet nextFilterResponse = ((DocIdBitSet)chain.get(i).getDocIdSet(reader)).getBitSet();
 
             //if the next operator is NOT we have to process the action before the current operand
             if (j < actionSize && actionType[j] == NOT) {
@@ -122,7 +123,7 @@ public class SerialChainFilter extends Filter {
             }
 
         }
-        return bits;
+        return new DocIdBitSet(bits);
     }
 
       /**
