@@ -53,14 +53,29 @@ import javax.xml.bind.annotation.XmlType;
     "exterior",
     "interior"
 })
-public class PolygonType
-    extends AbstractSurfaceType
-{
+public class PolygonType extends AbstractSurfaceType {
 
     @XmlElementRef(name = "exterior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<AbstractRingPropertyType> exterior;
+    private JAXBElement<AbstractRingPropertyType> exterior;
     @XmlElementRef(name = "interior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<AbstractRingPropertyType>> interior;
+    private List<JAXBElement<AbstractRingPropertyType>> interior;
+
+    public PolygonType() {
+
+    }
+    
+    public PolygonType(AbstractRingType exterior, List<? extends AbstractRingType> interiors) {
+        ObjectFactory factory = new ObjectFactory();
+        if (exterior != null) {
+            this.exterior = factory.createExterior(new AbstractRingPropertyType(exterior));
+        }
+        if (interiors != null) {
+            this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+            for (AbstractRingType inte : interiors) {
+                this.interior.add(factory.createInterior(new AbstractRingPropertyType(inte)));
+            }
+        }
+    }
 
     /**
      * Gets the value of the exterior property.

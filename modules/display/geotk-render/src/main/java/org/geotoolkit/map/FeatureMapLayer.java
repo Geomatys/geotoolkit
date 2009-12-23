@@ -22,6 +22,7 @@ import org.geotoolkit.data.query.Query;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.Id;
+import org.opengis.filter.expression.Expression;
 
 /**
  * MapLayer holding Features.
@@ -77,5 +78,17 @@ public interface FeatureMapLayer extends MapLayer{
      * @param filter Id
      */
     void setSelectionFilter(Id filter);
+
+    Expression getHeight();
+
+    void setHeight(Expression height);
+
+    Expression[] getElevationRange();
+
+    void setElevationRange(Expression from, Expression to);
+
+    Expression[] getTemporalRange();
+
+    void setTemporalRange(Expression from, Expression to);
 
 }

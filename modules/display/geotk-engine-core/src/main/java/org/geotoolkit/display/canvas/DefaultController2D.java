@@ -32,14 +32,13 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -67,7 +66,7 @@ public class DefaultController2D implements CanvasController2D{
     private boolean autoRepaint = false;
 
     private final Date[] dateRange = new Date[2];
-    private final double[] elevationRange = new double[]{Double.NEGATIVE_INFINITY,Double.POSITIVE_INFINITY};
+    private final Double[] elevationRange = new Double[2];
     private Unit<Length> elevationUnit = SI.METRE;
     
     public DefaultController2D(ReferencedCanvas2D canvas){
@@ -514,6 +513,8 @@ public class DefaultController2D implements CanvasController2D{
      */
     @Override
     public void setTemporalRange(Date startDate, Date endDate) {
+        Date[] old = this.dateRange;
+
         if(startDate == null){
             this.dateRange[0] = null;
         }else{
@@ -525,6 +526,13 @@ public class DefaultController2D implements CanvasController2D{
         }else{
             this.dateRange[1] = new Date(endDate.getTime());
         }
+
+        if(autoRepaint){
+            repaint();
+        }
+
+        canvas.getPropertyListeners().firePropertyChange(TEMPORAL_PROPERTY, old.clone(), this.dateRange.clone());
+
     }
 
     /**
@@ -553,7 +561,7 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public void setElevationRange(double min, double max, Unit<Length> unit) {
+    public void setElevationRange(Double min, Double max, Unit<Length> unit) {
         this.elevationRange[0] = min;
         this.elevationRange[1] = max;
         this.elevationUnit = unit;
@@ -563,7 +571,7 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public double[] getElevationRange() {
+    public Double[] getElevationRange() {
         return elevationRange.clone();
     }
 

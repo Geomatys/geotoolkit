@@ -23,6 +23,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
         
 import org.apache.lucene.store.RAMDirectory;
+import org.apache.lucene.util.Version;
 
 /**
  *
@@ -52,7 +53,7 @@ public abstract class IndexLucene {
      * Creates a new Lucene Index.
      */
     public IndexLucene() {
-        analyzer = new StandardAnalyzer();
+        analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
     }
 
     /**
@@ -60,7 +61,7 @@ public abstract class IndexLucene {
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null)
-            this.analyzer = new StandardAnalyzer();
+            this.analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
         else
             this.analyzer = analyzer;
     }

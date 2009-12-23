@@ -78,6 +78,9 @@ public class JCoordinateBar extends JToolBar {
     private final JCRSButton guiCRS = new JCRSButton();
     private final JProgressBar guiPainting = new JProgressBar();
     private final JToggleButton guiTemporal = new JToggleButton(ICON_TEMPORAL);
+    
+    private final JPanel paneTemp = new JPanel(new BorderLayout());
+    private final JMapAnimatingPane guiAnimatingPane = new JMapAnimatingPane();
     private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
     public JCoordinateBar() {
@@ -89,7 +92,10 @@ public class JCoordinateBar extends JToolBar {
         final JPanel bottom = new JPanel(new GridBagLayout());
         bottom.setOpaque(false);
         add(BorderLayout.SOUTH,bottom);
-        add(BorderLayout.CENTER,guiTimeLine);
+        add(BorderLayout.CENTER,paneTemp);
+
+        paneTemp.add(BorderLayout.WEST,guiAnimatingPane);
+        paneTemp.add(BorderLayout.CENTER,guiTimeLine);
 
 
         guiAxis.setSelected(true);
@@ -140,11 +146,11 @@ public class JCoordinateBar extends JToolBar {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                guiTimeLine.setVisible(guiTemporal.isSelected());
+                paneTemp.setVisible(guiTemporal.isSelected());
             }
         });
 
-        guiTimeLine.setVisible(false);
+        paneTemp.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -180,6 +186,7 @@ public class JCoordinateBar extends JToolBar {
     public void setMap(Map2D map) {
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
+        guiAnimatingPane.setMap(map);
         
         if(this.map != null){
             this.map.getComponent().removeMouseMotionListener(listener);

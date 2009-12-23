@@ -19,7 +19,6 @@ package org.geotoolkit.gml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +43,7 @@ import org.geotoolkit.gml.xml.v311.MultiGeometryType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonPatchArrayPropertyType;
 import org.geotoolkit.gml.xml.v311.PolygonPatchType;
+import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
 import org.geotoolkit.gml.xml.v311.RingType;
 import org.geotoolkit.gml.xml.v311.SurfaceInterpolationType;
@@ -51,6 +51,7 @@ import org.geotoolkit.gml.xml.v311.SurfaceInterpolationType;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.aggregate.MultiPrimitive;
+import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Polygon;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
@@ -122,6 +123,43 @@ public class GMLUtilities {
             CurveType gmlCurve = new CurveType(gmlSegments);
             return gmlCurve;
 
+       } else if (geometry instanceof LineString) {
+            LineString line = (LineString) geometry;
+
+            PointArray array = line.getSamplePoints();
+            List<DirectPosition> positions = new ArrayList<DirectPosition>();
+            for (int i =0; i < array.size(); i++) {
+                positions.add(array.getDirectPosition(i, null));
+            }
+            LineStringType gmlLine = new LineStringType(positions);
+
+            return gmlLine;
+
+       } else if (geometry instanceof Polygon) {
+           Polygon polygon          = (Polygon) geometry;
+           SurfaceBoundary boundary = polygon.getBoundary();
+           Ring exterior            = boundary.getExterior();
+
+           List<CurvePropertyType> curves = new ArrayList<CurvePropertyType>();
+           for (Primitive p : exterior.getElements()) {
+               curves.add(new CurvePropertyType((CurveType) getGMLFromISO(p)));
+           }
+           RingType gmlExterior = new RingType();
+           gmlExterior.getCurveMember().addAll(curves);
+
+           List<Ring> interiors = boundary.getInteriors();
+           List<RingType> gmlInteriors = new ArrayList<RingType>();
+           for (Ring interior : interiors) {
+               List<CurvePropertyType> intcurves = new ArrayList<CurvePropertyType>();
+               for (Primitive p : interior.getElements()) {
+                   intcurves.add(new CurvePropertyType((CurveType) getGMLFromISO(p)));
+               }
+               RingType gmlinterior = new RingType();
+               gmlinterior.getCurveMember().addAll(intcurves);
+               gmlInteriors.add(gmlinterior);
+           }
+           PolygonType gmlPolygon = new PolygonType(gmlExterior, gmlInteriors);
+           return gmlPolygon;
        } else if (geometry instanceof PolyhedralSurface) {
            PolyhedralSurface polySurface = (PolyhedralSurface) geometry;
            List<PolygonPatchType> gmlPatches = new ArrayList<PolygonPatchType>();
@@ -249,7 +287,7 @@ public class GMLUtilities {
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
      * @throws org.opengis.referencing.FactoryException
      */
-    public static LineString toJTS(LineStringType gmlLine) throws NoSuchAuthorityCodeException, FactoryException {
+    public static com.vividsolutions.jts.geom.LineString toJTS(LineStringType gmlLine) throws NoSuchAuthorityCodeException, FactoryException {
         final String crsName = gmlLine.getSrsName();
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
@@ -267,7 +305,7 @@ public class GMLUtilities {
         double y2 = Double.parseDouble(s);
 
         final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
-        final LineString ls = GF.createLineString(new Coordinate[]{
+        final com.vividsolutions.jts.geom.LineString ls = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
             new Coordinate(x2,y2)
         });

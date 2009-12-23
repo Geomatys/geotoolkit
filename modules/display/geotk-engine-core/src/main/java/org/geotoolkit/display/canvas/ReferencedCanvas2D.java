@@ -24,6 +24,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
+import java.beans.PropertyChangeSupport;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.measure.unit.Unit;
@@ -481,4 +482,8 @@ public abstract class ReferencedCanvas2D extends ReferencedCanvas {
 
     public abstract Image getSnapShot();
 
+    PropertyChangeSupport getPropertyListeners() {
+        return propertyListeners;
+    }
+    
 }

@@ -19,6 +19,7 @@ package org.geotoolkit.display.canvas;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.Date;
 
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.factory.Hints;
@@ -163,5 +164,9 @@ public interface RenderingContext {
      * @return CanvasMonitor, can not be null.
      */
     CanvasMonitor getMonitor();
-    
+
+    Date[] getTemporalRange();
+
+    Double[] getElevationRange();
+
 }

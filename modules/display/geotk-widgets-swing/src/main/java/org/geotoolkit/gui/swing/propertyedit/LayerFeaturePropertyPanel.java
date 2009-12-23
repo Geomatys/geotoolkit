@@ -24,7 +24,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
@@ -64,6 +68,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.LayerListener;
+import org.jdesktop.swingx.table.DatePickerCellEditor;
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -117,6 +122,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.setHighlighters(new Highlighter[]{HighlighterFactory.createAlternateStriping(Color.white, HighlighterFactory.QUICKSILVER, 5)});
         tab_data.setShowGrid(true, true);
         tab_data.setGridColor(Color.GRAY.brighter());
+
+        tab_data.setDefaultEditor(Date.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
+        tab_data.setDefaultEditor(java.sql.Date.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
+        tab_data.setDefaultEditor(Time.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
+        tab_data.setDefaultEditor(Timestamp.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
 
         SwingUtilities.invokeLater(new Runnable() {
 

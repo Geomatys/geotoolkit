@@ -25,10 +25,13 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -40,7 +43,7 @@ import org.geotoolkit.gui.swing.timeline.JTimeLine;
  *
  * @author Johann Sorel (Puzzle-GIS)
  */
-public class JMapTimeLine extends JTimeLine{
+public class JMapTimeLine extends JTimeLine implements PropertyChangeListener{
 
     private static final Color MAIN = new Color(0f,0.3f,0.6f,1f);
     private static final Color SECOND = new Color(0f,0.3f,0.6f,0.4f);
@@ -231,7 +234,13 @@ public class JMapTimeLine extends JTimeLine{
     }
 
     public void setMap(Map2D map) {
+        if(this.map != null){
+            this.map.getCanvas().removePropertyChangeListener(this);
+        }
         this.map = map;
+        if(map != null){
+            this.map.getCanvas().addPropertyChangeListener(this);
+        }
         repaint();
     }
 
@@ -377,6 +386,13 @@ public class JMapTimeLine extends JTimeLine{
             super.mouseDragged(e);
         }
         
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if(evt.getPropertyName().equals(CanvasController2D.TEMPORAL_PROPERTY)){
+            repaint();
+        }
     }
 
 

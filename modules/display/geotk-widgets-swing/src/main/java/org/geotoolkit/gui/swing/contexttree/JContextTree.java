@@ -17,11 +17,10 @@
  */
 package org.geotoolkit.gui.swing.contexttree;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -52,8 +51,6 @@ import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -338,32 +335,19 @@ public class JContextTree extends JScrollPane {
 
     private class ContextCellRenderer extends DefaultTreeCellRenderer implements TreeCellEditor {
 
-        private final progressivePane panel = new progressivePane();
-        private final JLabel lbl = new JLabel();
-        private final JPanel east = new JPanel(new GridLayout(1, 2));
-        private final JTextField field = new JTextField();
+        private final JPanel panel = new JPanel(new GridBagLayout());
+        private final GridBagConstraints gc = new GridBagConstraints();
+        private final JLabel icon = new JLabel();
         private final JCheckBox visibleCheck = new VisibleCheck();
         private final JCheckBox selectCheck = new SelectionCheck();
-        private final Border defaultBorder;
-        private final Border largeBorder;
-        private final Font defaultFont;
-        private final Font derivedFont;
+        private final JLabel label = new JLabel();
+        private final JTextField field = new JTextField();
+
         private Object value = null;
 
         public ContextCellRenderer() {
             field.setOpaque(false);
-            field.setBorder(null);
-            east.add(visibleCheck);
-            east.add(selectCheck);
-            east.setOpaque(false);
-            visibleCheck.setSelected(true);
-            panel.add(BorderLayout.WEST, lbl);
-            panel.add(BorderLayout.EAST, east);
-            panel.setOpaque(false);
-            defaultFont = lbl.getFont();
-            derivedFont = defaultFont.deriveFont(defaultFont.getStyle() | Font.BOLD);
-            defaultBorder = lbl.getBorder();
-            largeBorder = new EmptyBorder(3, 1, 6, 0);
+            field.setPreferredSize(new Dimension(140,field.getPreferredSize().height));
 
             visibleCheck.addActionListener(new ActionListener() {
 
@@ -385,69 +369,90 @@ public class JContextTree extends JScrollPane {
                 }
             });
 
+            panel.setOpaque(false);
         }
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object obj, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
-            if (node != null) {
-                obj = node.getUserObject();
-            }
-
-            panel.remove(field);
-            panel.remove(lbl);
-            panel.add(BorderLayout.CENTER, lbl);
-
-            if (obj instanceof MapContext) {
-                MapContext context = (MapContext) obj;
-                this.lbl.setIcon(null);
-                this.lbl.setBorder(largeBorder);
-                this.lbl.setText(context.getDescription().getTitle().toString());
-                this.lbl.setFont(defaultFont);
-                panel.remove(east);
-            } else if (obj instanceof MapLayer) {
-                MapLayer layer = (MapLayer) obj;
-                this.lbl.setIcon((layer.isVisible()) ? ICON_LAYER_VISIBLE : ICON_LAYER_UNVISIBLE);
-                this.lbl.setBorder(defaultBorder);
-                this.lbl.setText(layer.getDescription().getTitle().toString());
-                this.lbl.setFont(derivedFont);
-                this.visibleCheck.setSelected(layer.isVisible());
-                this.selectCheck.setSelected(layer.isSelectable());
-                panel.add(BorderLayout.EAST, east);
-            } else if(obj instanceof Rule){
-                Rule rule = (Rule) obj;
-                BufferedImage img = new BufferedImage(30, 24, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(rule, new Rectangle(30, 24), img.createGraphics());
-                this.lbl.setIcon(new ImageIcon(img));
-                this.lbl.setBorder(defaultBorder);
-                this.lbl.setText(rule.getDescription().getTitle().toString());
-                this.lbl.setFont(defaultFont);
-                panel.remove(east);
-            }else {
-                this.lbl.setBorder(defaultBorder);
-                this.lbl.setIcon(null);
-                this.lbl.setText("-");
-                this.lbl.setFont(defaultFont);
-                panel.remove(east);
-            }
-            panel.revalidate();
-            return panel;
+            return getComponent(obj, false);
         }
 
         @Override
         public Component getTreeCellEditorComponent(JTree tree, Object obj, boolean isSelected, boolean expanded, boolean leaf, int row) {
-            getTreeCellRendererComponent(tree, obj, selected, expanded, leaf, row, hasFocus);
+            return getComponent(obj, true);
+        }
 
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
-            value = node.getUserObject();
+        private Component getComponent(Object obj, boolean edition){
+            final DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
+            if (node != null) obj = node.getUserObject();
+            value = obj;
 
-            panel.remove(field);
-            panel.remove(lbl);
-            panel.add(BorderLayout.CENTER, field);
-            panel.add(BorderLayout.WEST, lbl);
-            field.setText(lbl.getText());
-            lbl.setText(" ");
+            panel.removeAll();
 
+            if (obj instanceof MapContext) {
+                final MapContext context = (MapContext) obj;
+
+                gc.weightx = 1;
+                gc.weighty = 1;
+                gc.gridx = 0;
+
+                if(edition){
+                    this.field.setText(context.getDescription().getTitle().toString());
+                    panel.add(field,gc);
+                }else{
+                    this.label.setText(context.getDescription().getTitle().toString());
+                    panel.add(label,gc);
+                }
+                
+            } else if (obj instanceof MapLayer) {
+                final MapLayer layer = (MapLayer) obj;
+
+                gc.weightx = 0;
+                gc.weighty = 1;
+                gc.gridx = 0;
+//                this.icon.setIcon((layer.isVisible()) ? ICON_LAYER_VISIBLE : ICON_LAYER_UNVISIBLE);
+//                panel.add(icon,gc);
+                gc.gridx = 1;
+                this.visibleCheck.setSelected(layer.isVisible());
+                panel.add(visibleCheck,gc);
+                gc.gridx = 2;
+                this.selectCheck.setSelected(layer.isSelectable());
+                panel.add(selectCheck,gc);
+
+                gc.weightx = 1;
+                gc.weighty = 1;
+                gc.gridx = 3;
+                if(edition){
+                    this.field.setText(layer.getDescription().getTitle().toString());
+                    panel.add(field,gc);
+                }else{
+                    this.label.setText(layer.getDescription().getTitle().toString());
+                    panel.add(label,gc);
+                }
+
+            } else if(obj instanceof Rule){
+                final Rule rule = (Rule) obj;
+                final BufferedImage img = new BufferedImage(30, 24, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(rule, new Rectangle(30, 24), img.createGraphics());
+
+                gc.weightx = 0;
+                gc.weighty = 1;
+                gc.gridx = 0;
+                this.icon.setIcon(new ImageIcon(img));
+                panel.add(icon,gc);
+
+                gc.weightx = 1;
+                gc.weighty = 1;
+                gc.gridx = 1;
+                this.label.setText(rule.getDescription().getTitle().toString());
+                panel.add(label,gc);
+            }else {
+                gc.weightx = 1;
+                gc.weighty = 1;
+                this.label.setText("-");
+                panel.add(label,gc);
+            }
+            panel.revalidate();
             return panel;
         }
 
@@ -620,30 +625,4 @@ public class JContextTree extends JScrollPane {
         }
     }
 
-    private class progressivePane extends JPanel {
-
-        public progressivePane() {
-            super(new BorderLayout());
-        }
-
-        @Override
-        public void setBounds(final int x, final int y, int width, final int height) {
-            int preferredWidth = getPreferredSize().width;
-//                int viewWidth = tree.getParent().getWidth() -x;
-            int viewWidth = tree.getWidth() - x;
-            width = (preferredWidth > viewWidth) ? preferredWidth : viewWidth;
-
-            super.setBounds(x, y, width, height);
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            Rectangle parent = tree.getParent().getBounds();
-            parent.x = 0;
-            parent.y = 0;
-            parent.width -= progressivePane.this.getX();
-            g.setClip(parent);
-            super.paintComponent(g);
-        }
-    };
 }

@@ -13,6 +13,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.List;
 
+import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -24,6 +25,8 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoin
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.complex.Complex;
+import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.ParamForPoint;
 import org.opengis.geometry.coordinate.PointArray;
@@ -32,6 +35,8 @@ import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.CurveBoundary;
 import org.opengis.geometry.primitive.CurveInterpolation;
 import org.opengis.geometry.primitive.CurveSegment;
+import org.opengis.geometry.primitive.OrientablePrimitive;
+import org.opengis.geometry.primitive.Primitive;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -44,7 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public class JTSLineString extends AbstractJTSGenericCurve
-	implements LineString, JTSGeometry {
+	implements LineString, JTSGeometry, Primitive {
 
     /**
      * Points comprising this geometry.
@@ -349,5 +354,25 @@ public class JTSLineString extends AbstractJTSGenericCurve
         int hash = 5;
         hash = 37 * hash + (this.controlPoints != null ? this.controlPoints.hashCode() : 0);
         return hash;
+    }
+
+    public Set<Primitive> getContainedPrimitives() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<Primitive> getContainingPrimitives() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Set<Complex> getComplexes() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Composite getComposite() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public OrientablePrimitive[] getProxy() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
