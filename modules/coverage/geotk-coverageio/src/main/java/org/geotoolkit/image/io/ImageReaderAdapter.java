@@ -790,11 +790,12 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * a filename, like {@link File} or {@link URL} (see the table below for the complete list),
      * rather than the usual {@linkplain #STANDARD_INPUT_TYPE standard input type}. The other
      * fields ({@link #names names}, {@link #suffixes suffixes}, {@link #MIMETypes MIMETypes})
-     * are set to the same values than the wrapped provider. Because the names are the same by
-     * default, an ordering needs to be etablished between this provider and the wrapped one.
-     * By default this implementation conservatively gives precedence to the original provider.
-     * Subclasses shall override the {@link #onRegistration(ServiceRegistry, Class)} method if
-     * they want a different ordering.
+     * are set to the same values than the wrapped provider.
+     * <p>
+     * Because the names are the same by default, an ordering needs to be etablished between this
+     * provider and the wrapped one. By default this implementation conservatively gives precedence
+     * to the original provider. Subclasses shall override the
+     * {@link #onRegistration(ServiceRegistry, Class)} method if they want a different ordering.
      * <p>
      * The table below summarizes the initial values.
      * Those values can be modified by subclass constructors.
@@ -874,8 +875,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * For efficienty reasons, the {@code inputTypes} field is initialized to a shared array.
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
-         * @param main The provider of the readers to use for reading the image in the classical
-         *        image format.
+         * @param main The provider of the readers to use for reading the pixel values.
          */
         protected Spi(final ImageReaderSpi main) {
             ensureNonNull("main", main);
@@ -906,11 +906,11 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         }
 
         /**
-         * Creates an {@code ImageReaderAdapter.Spi} wrapping the default provider for the
-         * given format. This is a convenience constructor for {@link #Spi(ImageReaderSpi)}
-         * with a provider fetched from the given format name.
+         * Creates a provider which will use the given format for reading pixel values.
+         * This is a convenience constructor for the above constructor with a provider
+         * fetched from the given format name.
          *
-         * @param  format The name of the provider to fetch.
+         * @param  format The name of the provider to use for reading the pixel values.
          * @throws IllegalArgumentException If no provider is found for the given format.
          */
         protected Spi(final String format) throws IllegalArgumentException {

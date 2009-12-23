@@ -32,6 +32,18 @@
  * or output type before to select an image reader or writer, because not every plugins can accept
  * the standard types (image input or output stream) defined by the Java Image I/O specification.
  *
+ * {@section System initialization}
+ * While not mandatory, it is recommanded to invoke the following methods exactly once before
+ * to use the Geotk library. Those methods are not invoked automatically in order to let users
+ * control their application configuration.
+ * <p>
+ * <ol>
+ *   <li>Invoke some AWT method first; see {@code setDefaultCodecPreferences()} below for explanation.</li>
+ *   <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
+ *   <li>{@link org.geotoolkit.image.io.text.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
+ *   <li>{@link org.geotoolkit.image.io.text.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
+ * </ol>
+ *
  * {@section Conversion of sample values}
  * Spatial image formats often contain geophysical values (e.g. temperatures in Celsius degrees,
  * elevation in metres, etc.) better represented as floating point numbers than integers. Those
@@ -59,3 +71,5 @@
  * @module
  */
 package org.geotoolkit.image.io;
+
+import javax.imageio.spi.ServiceRegistry; // For javadoc

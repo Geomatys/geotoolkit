@@ -49,12 +49,14 @@ import org.geotoolkit.internal.io.IOUtilities;
  * <p>
  * <ul>
  *   <li>The methods in this class return a single {@code ImageReader} or {@code ImageWriter}
- *       instead than an iterator, and thrown an {@link IIOException} if no reader or writer
+ *       instead than an iterator, and throw an {@link IIOException} if no reader or writer
  *       is found.</li>
  *   <li>The methods in this class accept an optional input or output argument, in order to
- *       check if the reader or writer can use that argument.</li>
+ *       check if the reader or writer can use directly that argument before to create an
+ *       input or output stream.</li>
  *   <li>The methods in this class automatically create an {@linkplain ImageInputStream image input}
- *       or {@linkplain ImageOutputStream output stream} if the reader or writer require such stream.</li>
+ *       or {@linkplain ImageOutputStream output stream} if the reader or writer requires such
+ *       stream.</li>
  * </ul>
  * <p>
  * For example, the standard Java API provides the following method:
@@ -78,9 +80,9 @@ import org.geotoolkit.internal.io.IOUtilities;
  * format) can typically accept only a filename as input, since the file will be open in C/C++
  * code. Some other plugins like {@link org.geotoolkit.image.io.text.WorldFileImageReader} require
  * the filename because they need to open many files, instead than reading a single stream.
- * Consequently if the user want to read an image in a {@link java.io.File}, it is preferable to
- * check in an {@code ImageReader} accepts directly a {@code File} input before to open the file
- * in a {@code ImageInputStream}.
+ * Consequently if the user wants to read an image in a {@link java.io.File}, it is preferable to
+ * check if an {@code ImageReader} accepts directly a {@code File} input before to open the file
+ * in an {@code ImageInputStream}.
  *
  * {@section How the input/output is defined in the returned reader/writer}
  * The {@link ImageReader} and {@link ImageWriter} returned by the methods in this class will have
@@ -98,18 +100,18 @@ import org.geotoolkit.internal.io.IOUtilities;
  * {@link ImageReader#setInput(Object, boolean, boolean) setInput(Object, boolean, boolean)}
  * method depending on whatever the {@code seekForwardOnly} and {@code ignoreMetadata} arguments
  * are non-null or not. For example if those two {@link Boolean} arguments are null, then the
- * {@code setInput(Object)} flavor is invoked, which is usually equivalent to having set the
- * two boolean argument to {@code false} but could have been overriden by the plugin.
+ * {@code setInput(Object)} flavor is invoked. This is usually equivalent to setting the two
+ * boolean argument to {@code false}, but this behavior could have been overriden by the plugin.
  *
  * {@section Example}
  * The following example reads a TIFF image. Because we use an input of type {@link java.io.File}
  * instead than {@link ImageInputStream}, the {@link org.geotoolkit.image.io.text.WorldFileImageReader}
  * can be used. Consequently the metadata associated with the TIFF image can contain geolocalization
- * information if a {@code ".tfw"} file was found with the {@code ".tiff"} file.
+ * information if a {@code ".tfw"} file was found together with the {@code ".tiff"} file.
  *
  * {@preformat java
  *     File          input    = new File("my_image.tiff");
- *     ImageReader   reader   = XImageIO.getReaderBySuffix(input, true, null);
+ *     ImageReader   reader   = XImageIO.getReaderBySuffix(input, true, false);
  *     IIOMetadata   metadata = reader.getImageMetadata(0);
  *     BufferedImage image    = reader.read(0);
  *     XImageIO.close(reader);
@@ -316,16 +318,18 @@ public final class XImageIO {
      * @param input
      *          The mandatory input to be given to the new reader instance.
      * @param seekForwardOnly
-     *          Optional parameter to be given (if non-null) to the {@link #setInput(Object, boolean)
-     *          setInput} method: if {@code true}, images and metadata may only be read in ascending
-     *          order from the input source. If {@code false}, they may be read in any order. If
-     *          {@code null}, this parameter is not given to the reader which is free to use a
-     *          plugin-dependent default (usually {@code false}).
+     *          Optional parameter to be given (if non-null) to the
+     *          {@link ImageReader#setInput(Object, boolean) setInput} method: if {@code true},
+     *          images and metadata may only be read in ascending order from the input source.
+     *          If {@code false}, they may be read in any order. If {@code null}, this parameter
+     *          is not given to the reader which is free to use a plugin-dependent default
+     *          (usually {@code false}).
      * @param ignoreMetadata
-     *          Optional parameter to be given (if non-null) to the {@link #setInput(Object, boolean,
-     *          boolean) setInput} method: if {@code true}, metadata may be ignored during reads. If
-     *          {@code false}, metadata will be parsed. If {@code null}, this parameter is not given
-     *          to the reader which is free to use a plugin-dependent default (usually {@code false}).
+     *          Optional parameter to be given (if non-null) to the
+     *          {@link ImageReader#setInput(Object, boolean, boolean) setInput} method:
+     *          if {@code true}, metadata may be ignored during reads. If {@code false}, metadata
+     *          will be parsed. If {@code null}, this parameter is not given to the reader which
+     *          is free to use a plugin-dependent default (usually {@code false}).
      * @return The new image reader instance with its input initialized.
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
@@ -347,9 +351,9 @@ public final class XImageIO {
      *
      * @param  input The mandatory input to be given to the new reader instance.
      * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean) setInput} method.
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized.
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
@@ -372,9 +376,9 @@ public final class XImageIO {
      * @param  suffix The file suffix for which we want a reader.
      * @param  input An optional input to be given to the new reader instance, or {@code null} if none.
      * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean) setInput} method.
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized (if {@code input} is not null).
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
@@ -397,9 +401,9 @@ public final class XImageIO {
      * @param  name The name of the format looked for.
      * @param  input An optional input to be given to the new reader instance, or {@code null} if none.
      * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean) setInput} method.
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized (if {@code input} is not null).
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.
@@ -422,9 +426,9 @@ public final class XImageIO {
      * @param  mime The MIME type of the format looked for.
      * @param  input An optional input to be given to the new reader instance, or {@code null} if none.
      * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean) setInput} method.
      * @param  ignoreMetadata Optional parameter to be given (if non-null) to the
-     *         {@link #setInput(Object, boolean, boolean) setInput} method.
+     *         {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      * @return The new image reader instance with its input initialized (if {@code input} is not null).
      * @throws IOException If no suitable image reader has been found, or if an error occured
      *         while creating it.

@@ -227,10 +227,18 @@ public class WorldFileImageReader extends ImageReaderAdapter {
     /**
      * Service provider interface (SPI) for {@link WorldFileImageReader}s. This provider wraps
      * an other provider (typically for the TIFF, JPEG or PNG formats), which shall be specified
-     * at construction time. The legal {@linkplain #inputTypes input types} are set to
-     * {@link String}, {@link File}, {@link URI} and {@link URL} in order to allow the image
-     * reader to infer the <cite>World File</cite> ({@code "tfw"}) and <cite>Map Projection</cite>
-     * ({@code "prj"}) files from the image input file.
+     * at construction time. The legal {@linkplain #inputTypes input types} are {@link String},
+     * {@link File}, {@link java.net.URI} and {@link java.net.URL} in order to allow the image
+     * reader to infer the <cite>World File</cite> ({@code ".tfw"}) and <cite>Map Projection</cite>
+     * ({@code ".prj"}) files from the image input file.
+     *
+     * {@section Plugins registration}
+     * At the difference of other {@code ImageReader} plugins, the {@code WorldFileImageReader}
+     * plugin is not automatically registered in the JVM. This is because there is many plugins
+     * to register (one instance of this {@code Spi} class for each format to wrap), and because
+     * attempts to get the wrapper {@code ImageReader} while {@link IIORegistry} is scanning the
+     * classpath for services cause an infinite loop. To enable the <cite>World File</cite> plugins,
+     * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.07
@@ -255,8 +263,8 @@ public class WorldFileImageReader extends ImageReaderAdapter {
 
         /**
          * Creates a provider which will use the given format for reading pixel values.
-         * This is a convenience constructor for {@link #Spi(ImageReaderSpi)} with a
-         * provider fetched from the given format name.
+         * This is a convenience constructor for the above constructor with a provider
+         * fetched from the given format name.
          *
          * @param  format The name of the provider to use for reading the pixel values.
          * @throws IllegalArgumentException If no provider is found for the given format.
@@ -295,7 +303,9 @@ public class WorldFileImageReader extends ImageReaderAdapter {
 
         /**
          * Returns {@code true} if the supplied source object appears to be of the format supported
-         * by this reader. The default implementation checks
+         * by this reader. The default implementation checks if at least one of the {@code ".tfw}
+         * (actual extension may vary) or {@code ".prj"} file is presents, then delegates to the
+         * {@linkplain ImageReaderAdapter.Spi#canDecodeInput(Object) super-class method}.
          *
          * @param  source The input (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the file can be decoded.
@@ -311,8 +321,8 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         }
 
         /**
-         * Creates a new <cite>World File</cite> reader. The extension is given to the
-         * {@linkplain #main main} provider.
+         * Creates a new <cite>World File</cite> reader. The {@code extension} argument
+         * is forwarded to the {@linkplain #main main} provider with no change.
          *
          * @param  extension A plug-in specific extension object, or {@code null}.
          * @return A new reader.
@@ -324,9 +334,14 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         }
 
         /**
-         * Registers a default set of <cite>World File</cite> formats. Current implementation
-         * registers the TIFF, JPEG, PNG, GIF and BMP formats, but this list can be augmented
-         * in any future Geotk version.
+         * Registers a default set of <cite>World File</cite> formats. This method shall be
+         * invoked exactly once by client application before to use Image I/O library if they
+         * wish to decode <cite>World File</cite> images. See the
+         * <a href="../package-summary.html#package_description">package description</a>
+         * for more information.
+         * <p>
+         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF and BMP
+         * formats, but this list can be augmented in any future Geotk version.
          *
          * @param registry The registry where to register the formats, or {@code null} for
          *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
@@ -355,7 +370,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                      * This format will not be available, but it will not prevent the
                      * rest of the application to work.
                      */
-                    Logging.unexpectedException(Logging.getLogger("org.geotoolkit.image.io"),
+                    Logging.recoverableException(Logging.getLogger("org.geotoolkit.image.io"),
                             Spi.class, "registerDefaults", e);
                     continue;
                 }

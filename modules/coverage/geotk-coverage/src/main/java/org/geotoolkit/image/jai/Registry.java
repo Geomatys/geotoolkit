@@ -46,7 +46,7 @@ import org.geotoolkit.internal.image.jai.*;
  * Also provides convenience methods for setting the preferred order between standard and JAI
  * {@link javax.imageio.ImageReader}/{@link javax.imageio.ImageWriter}.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00
  *
  * @since 2.2
@@ -118,12 +118,12 @@ public final class Registry {
      * an image with float data type, bilinear interpolation and an {@link javax.media.jai.ImageLayout}
      * rendering hint cause an exception in medialib native code. Disabling the native acceleration
      * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.
-     * <p>
-     * <strong>Implementation note:</strong> the current implementation assumes that factories for
-     * native implementations are declared in the {@code com.sun.media.jai.mlib} package, while
-     * factories for pure java implementations are declared in the {@code com.sun.media.jai.opimage}
-     * package. It work for Sun's 1.1.2 implementation, but may change in future versions. If this
-     * method doesn't recognize the package, it does nothing.
+     *
+     * {@note The current implementation assumes that factories for native implementations are
+     * declared in the <code>com.sun.media.jai.mlib</code> package, while factories for pure Java
+     * implementations are declared in the <code>com.sun.media.jai.opimage</code> package. It works
+     * for Sun's 1.1.2 implementation, but may change in future versions. If this method doesn't
+     * recognize the package, it does nothing.}
      *
      * @param operation The operation name (e.g. {@code "Affine"}).
      * @param allowed {@code false} to disallow native acceleration.
@@ -268,8 +268,7 @@ public final class Registry {
      * invoke this method <strong>after</strong> the {@linkplain java.awt.Window} has been
      * created but before it is made visible.
      *
-     * @see org.geotoolkit.image.io.text.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)
-     * @see org.geotoolkit.image.io.text.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)
+     * @see org.geotoolkit.image.io
      *
      * @since 3.00
      */
