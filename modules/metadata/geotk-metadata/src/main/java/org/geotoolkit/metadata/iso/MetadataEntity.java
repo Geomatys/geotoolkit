@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
@@ -111,7 +111,7 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
      * @level advanced
      */
     protected static <E> Collection<E> xmlOptional(final Collection<E> elements) {
-        if (elements != null && elements.isEmpty() && XmlUtilities.marshalling()) {
+        if (elements != null && elements.isEmpty() && MarshalContext.isMarshalling()) {
             return null;
         }
         return elements;

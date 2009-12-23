@@ -71,29 +71,10 @@ public class ObjectConverters {
     public static final ObjectConverters DEFAULT = new ObjectConverters();
 
     /**
-     * The {@link ObjectConverters} to use for the ungoing (un)marshalling process.
-     */
-    static final ThreadLocal<ObjectConverters> CURRENT = new ThreadLocal<ObjectConverters>();
-
-    /**
      * Creates a default {@code ObjectConverters}. This is for subclasses only,
      * since new instances are useful only if at least one method is overriden.
      */
     protected ObjectConverters() {
-    }
-
-    /**
-     * Returns the converters to use for the ungoing (un)marshalling process.
-     * This method is typically invoked in JAXB adapters only.
-     *
-     * @return The converters to use for the ungoing (un)marshalling process,
-     *         or {@link #DEFAULT} if no (un)marshalling process is under way.
-     *
-     * @level advanced
-     */
-    public static ObjectConverters current() {
-        final ObjectConverters converters = CURRENT.get();
-        return (converters != null) ? converters : DEFAULT;
     }
 
     /**

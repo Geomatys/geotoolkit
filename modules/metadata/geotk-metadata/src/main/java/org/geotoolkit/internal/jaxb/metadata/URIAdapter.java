@@ -24,7 +24,7 @@ import java.net.MalformedURLException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.geotoolkit.xml.ObjectConverters;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -70,7 +70,7 @@ public final class URIAdapter extends XmlAdapter<URIAdapter, URI> {
      */
     @Override
     public URI unmarshal(final URIAdapter value) throws URISyntaxException {
-        return (value != null) ? ObjectConverters.current().toURI(value.url) : null;
+        return (value != null) ? MarshalContext.converters().toURI(value.url) : null;
     }
 
     /**
@@ -85,7 +85,7 @@ public final class URIAdapter extends XmlAdapter<URIAdapter, URI> {
     @Override
     public URIAdapter marshal(final URI value) throws MalformedURLException, IllegalArgumentException {
         if (value != null) {
-            final URL url = ObjectConverters.current().toURL(value);
+            final URL url = MarshalContext.converters().toURL(value);
             if (url != null) {
                 return new URIAdapter(url);
             }

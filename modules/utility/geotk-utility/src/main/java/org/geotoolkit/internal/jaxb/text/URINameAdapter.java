@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import org.geotoolkit.xml.ObjectConverters;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -67,7 +67,7 @@ public final class URINameAdapter extends XmlAdapter<URINameAdapter, URI> {
      */
     @Override
     public URI unmarshal(final URINameAdapter value) throws URISyntaxException {
-        return (value != null) ? ObjectConverters.current().toURI(value.uri) : null;
+        return (value != null) ? MarshalContext.converters().toURI(value.uri) : null;
     }
 
     /**

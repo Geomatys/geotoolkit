@@ -26,6 +26,8 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
+import org.geotoolkit.internal.jaxb.MarshalContext;
+
 
 /**
  * Base class of {@link PooledMarshaller} and {@link PooledUnmarshaller}.
@@ -249,30 +251,20 @@ abstract class Pooled implements Catching {
 
     /**
      * Must be invoked by subclasses before a {@code try} block performing a (un)marshalling
-     * operation. Must be followed by a call to {@link #finish()} in a {@code finally} block.
+     * operation. Must be followed by a call to {@code finish()} in a {@code finally} block.
      *
      * {@preformat java
-     *     begin();
+     *     MarshalProcess ctx = begin();
      *     try {
      *         ...
      *     } finally {
-     *         finish();
+     *         ctx.finish();
      *     }
      * }
      *
      * @since 3.07
      */
-    protected void begin() {
-        ObjectConverters.CURRENT.set(converters);
-    }
-
-    /**
-     * Must be invoked by subclasses in a {@code finally} block after a (un)marshalling
-     * operation. Must be preceded by a call to {@link #begin()} before the {@code try} block.
-     *
-     * @since 3.07
-     */
-    protected void finish() {
-        ObjectConverters.CURRENT.remove();
+    final MarshalContext begin() {
+        return MarshalContext.begin(converters);
     }
 }
