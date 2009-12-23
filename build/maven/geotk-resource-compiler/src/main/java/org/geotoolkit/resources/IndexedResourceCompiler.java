@@ -571,7 +571,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
         }
         in.close();
         /*
-         * Now writes the results to disk, overwritting the original file.
+         * Now writes the results to disk, overwriting the original file.
          */
         final Writer out = new ExpandedTabWriter(new OutputStreamWriter(new FileOutputStream(file), JAVA_ENCODING));
         out.write(buffer.toString());

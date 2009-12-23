@@ -243,7 +243,7 @@ public final class CacheTest {
             assertEquals(key*key, value);
             afterGC.add(key);
         }
-        assertTrue("Number of entries should not increase while we are not writting in the cache.",
+        assertTrue("Number of entries should not increase while we are not writing in the cache.",
                 afterGC.count() <= beforeGC.count());
         if (VERBOSE) {
             System.out.println("Statistics on the keys before garbage collection:");

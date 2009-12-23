@@ -79,7 +79,7 @@ public class MosaicController implements IIOParamController {
      * creates parameters for tile readers} if not already done, then delegates the activation to
      * their controllers. It returns {@code true} only if activation succeed for every tile readers.
      * <p>
-     * When writting, the default implementation {@linkplain MosaicImageWriteParam#getTileParameters
+     * When writing, the default implementation {@linkplain MosaicImageWriteParam#getTileParameters
      * creates parameters for tile writers} if not already done, then delegates the activation to
      * their controllers. It returns {@code true} only if activation succeed for every tile writers.
      *

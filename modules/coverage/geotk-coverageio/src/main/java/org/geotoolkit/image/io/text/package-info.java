@@ -55,7 +55,7 @@
  *     <td>{@link org.geotoolkit.image.io.text.WorldFileImageWriter}</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>Require {@linkplain org.geotoolkit.image.io.text.WorldFileImageReader#registerDefaults
+ *     <td>Require {@linkplain org.geotoolkit.image.io.text.WorldFileImageReader.Spi#registerDefaults
  *         explicit registration}</td>
  *   </tr>
  * </table>

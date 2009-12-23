@@ -231,7 +231,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
             w.write(sqlFactory.getBackingStoreDescription());
             w.flush();
         } catch (IOException e) {
-            // Should never happen, since we are writting to a PrintWriter.
+            // Should never happen, since we are writing to a PrintWriter.
             throw new AssertionError(e);
         }
         out.println();
@@ -302,7 +302,7 @@ public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRS
             try {
                 writer.flush();
             } catch (IOException e) {
-                // Should not happen, since we are writting to a PrintWriter
+                // Should not happen, since we are writing to a PrintWriter
                 throw new AssertionError(e);
             }
         }

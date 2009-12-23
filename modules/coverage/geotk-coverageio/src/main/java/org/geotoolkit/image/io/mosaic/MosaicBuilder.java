@@ -57,7 +57,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  * builder can also write the tiles to disk from an initially untiled image. For example in
  * order to create a mosaic for a set of tiles of size 256&times;256 pixels, with overviews
  * having pixels twice (2), 3 and 4 times the width and height of original pixels and for
- * writting the tiles in the {@code "output"} directory, use the following:
+ * writing the tiles in the {@code "output"} directory, use the following:
  *
  * {@preformat java
  *     Object originalMosaic = ...; // May be a File, URL, list of Tiles, etc.
@@ -244,7 +244,7 @@ public class MosaicBuilder {
     /**
      * Returns the tile directory, or {@code null} for current directory. This is the directory
      * where {@link #writeFromInput(Object, MosaicImageWriteParam) writeFromInput} methods will
-     * write the new tiles, if writting tiles is allowed. This is also the directory where the
+     * write the new tiles, if writing tiles is allowed. This is also the directory where the
      * {@code TileManager} created by the above methods will read the tiles back.
      * <p>
      * The directory may be either relative or absolute. The default value is {@code null}.
@@ -634,7 +634,7 @@ public class MosaicBuilder {
 
     /**
      * Implementation of {@link #createTileManager()} with a given input. This method is not
-     * public because it expects an argument controlling the behavior of tile writting, while
+     * public because it expects an argument controlling the behavior of tile writing, while
      * this method actually does not write anything to disk. The policy is used in order to
      * determine whatever this method should skip empty tiles or not. Skipping empty tiles are
      * usually performed when reading the original untiled image, because we know only at that
@@ -1056,7 +1056,7 @@ public class MosaicBuilder {
      * @param  param The parameter to be given to {@link MosaicImageWriter}, or {@code null}
      *         for the default parameters.
      * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
-     * @throws IOException if an error occured while reading the untiled image or while writting
+     * @throws IOException if an error occured while reading the untiled image or while writing
      *         the tiles to disk.
      *
      * @since 3.01
@@ -1080,7 +1080,7 @@ public class MosaicBuilder {
      * @param  param The parameter to be given to {@link MosaicImageWriter}, or {@code null}
      *         for the default parameters.
      * @return The tiles, or {@code null} if the process has been aborted while writing tiles.
-     * @throws IOException if an error occured while reading the untiled image or while writting
+     * @throws IOException if an error occured while reading the untiled image or while writing
      *         the tiles to disk.
      *
      * @since 3.01

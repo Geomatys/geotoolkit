@@ -299,8 +299,8 @@ public class ImagePane extends ZoomPane {
 
     /**
      * Shows or hide the progress bar. This method should be invoked with the value {@code true}
-     * before to invoke {@link #setProgress(float)}, and invoked again with the value
-     * {@code false} when the operation is completed. This will not be done automatically.
+     * before to invoke {@link #setProgress(int)}, and invoked again with the value {@code false}
+     * when the operation is completed. This will not be done automatically.
      *
      * @param visible {@code true} for showing the progress pane, or {@code false} for hiding it.
      *

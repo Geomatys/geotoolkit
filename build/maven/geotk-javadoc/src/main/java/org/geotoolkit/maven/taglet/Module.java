@@ -60,7 +60,7 @@ public final class Module implements Taglet {
     private static final String MAVEN_REPOSITORY_BASE_URL = "http://maven.geotoolkit.org/";
 
     /**
-     * Temporary variable for a tag under writting.
+     * Temporary variable for a tag under writing.
      */
     private String root, group, module;
 

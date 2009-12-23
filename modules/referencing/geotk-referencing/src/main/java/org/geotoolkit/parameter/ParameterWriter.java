@@ -109,7 +109,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
     private boolean colorEnabled;
 
     /**
-     * Creates a new formatter writting parameters to the default output stream.
+     * Creates a new formatter writing parameters to the default output stream.
      */
     public ParameterWriter() {
         this(standardOutput());
@@ -129,7 +129,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
     }
 
     /**
-     * Creates a new formatter writting parameters to the specified output writer.
+     * Creates a new formatter writing parameters to the specified output writer.
      *
      * @param out Where to write the parameters.
      */
@@ -152,7 +152,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
         try {
             writer.format(operation);
         } catch (IOException exception) {
-            // Should never happen, since we are writting to System.out.
+            // Should never happen, since we are writing to System.out.
             throw new AssertionError(exception);
         }
     }
@@ -172,7 +172,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
         try {
             writer.format(descriptor);
         } catch (IOException exception) {
-            // Should never happen, since we are writting to System.out.
+            // Should never happen, since we are writing to System.out.
             throw new AssertionError(exception);
         }
     }
@@ -192,7 +192,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
         try {
             writer.format(values);
         } catch (IOException exception) {
-            // Should never happen, since we are writting to System.out.
+            // Should never happen, since we are writing to System.out.
             throw new AssertionError(exception);
         }
     }

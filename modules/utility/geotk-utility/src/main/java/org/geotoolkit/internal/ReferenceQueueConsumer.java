@@ -66,7 +66,7 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
     public final void run() {
         // The reference queue should never be null.  However some strange cases (maybe caused
         // by an anormal JVM state) have been reported on the mailing list. In such case, stop
-        // the daemon instead of writting 50 Mb of log messages.
+        // the daemon instead of writing 50 Mb of log messages.
         ReferenceQueue<T> queue;
         while ((queue = this.queue) != null) {
             final Reference<? extends T> ref;

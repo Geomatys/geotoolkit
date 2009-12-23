@@ -558,7 +558,7 @@ public class ColorRamp extends JComponent {
         Rectangle2D labelBounds = null;
         if (labelVisibles && graduation!=null) {
             /*
-             * Prepares graduation writting. First, computes the color ramp width in pixels.
+             * Prepares graduation writing. First, computes the color ramp width in pixels.
              * Then, computes the coefficients for conversion of graduation values to pixel
              * coordinates.
              */

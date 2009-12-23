@@ -76,7 +76,7 @@ public final class MetadataMarshallingTest {
      *
      * @throws JAXBException If an error occured during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException Should never happen since we are writting to a buffer.
+     * @throws IOException Should never happen since we are writing to a buffer.
      */
     @Test
     public void testMetadata() throws JAXBException, IOException {
@@ -250,7 +250,7 @@ public final class MetadataMarshallingTest {
      *
      * @throws JAXBException If an error occured during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException Should never happen since we are writting to a buffer.
+     * @throws IOException Should never happen since we are writing to a buffer.
      *
      * @since 3.07
      */

@@ -667,7 +667,7 @@ public class MosaicImageWriter extends ImageWriter {
             assert !tiles.contains(imageTile) : imageTile;
         }
         /*
-         * At this point, every tiles have been submitted for writting. Wait for the write
+         * At this point, every tiles have been submitted for writing. Wait for the write
          * operations to complete. The remaining ImageWriter instances will be disposed by
          * the caller.
          */

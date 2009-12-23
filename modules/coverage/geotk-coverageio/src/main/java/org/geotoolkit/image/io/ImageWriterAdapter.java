@@ -66,7 +66,7 @@ import org.geotoolkit.util.XArrays;
  *   <li>{@link #createOutput(String)}</li>
  *   <li>{@link #initialize()}</li>
  *   <li>{@link #writeStreamMetadata(IIOMetadata)}</li>
- *   <li>{@link #writeImageMetadata(IIOMetadata, int)}</li>
+ *   <li>{@link #writeImageMetadata(IIOMetadata, int, ImageWriteParam)}</li>
  * </ul>
  * <p>
  * All other methods override existing methods declared in parent classes, mostly
@@ -249,8 +249,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * The default implementation returns the union of the metadata formats declared by the
      * {@linkplain #main} writer, and the Geotk {@link SpatialMetadataFormat#IMAGE IMAGE} format.
      * <p>
-     * Subclasses can override the {@link #writeImageMetadata(IIOMetadata,int)} method
-     * for writing those metadata to the output.
+     * Subclasses can override the {@link #writeImageMetadata(IIOMetadata, int, ImageWriteParam)}
+     * method for writing those metadata to the output.
      */
     @Override
     public SpatialMetadata getDefaultImageMetadata(final ImageTypeSpecifier imageType,
@@ -304,8 +304,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      *       {@linkplain #initialize() initialized}</li>
      *   <li>Invokes {@link #writeStreamMetadata(IIOMetadata)} with the given
      *       {@code streamMetadata} argument.</li>
-     *   <li>Invokes {@link #writeImageMetadata(IIOMetadata,int)} with the metadata
-     *       obtained from the {@code image} argument.</li>
+     *   <li>Invokes {@link #writeImageMetadata(IIOMetadata, int, ImageWriteParam)}
+     *       with the metadata obtained from the {@code image} argument.</li>
      *   <li>Delegates the writing of pixel values to the {@linkplain #main} writer.</li>
      * </ol>
      */
@@ -363,8 +363,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * The default implementation performs the following steps:
      * <p>
      * <ol>
-     *   <li>Invokes {@link #writeImageMetadata(IIOMetadata,int)} with
-     *       the metadata obtained from the {@code image} argument.</li>
+     *   <li>Invokes {@link #writeImageMetadata(IIOMetadata, int, ImageWriteParam)}
+     *       with the metadata obtained from the {@code image} argument.</li>
      *   <li>Delegates to the {@linkplain #main} writer.</li>
      * </ol>
      */

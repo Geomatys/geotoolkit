@@ -36,7 +36,7 @@ import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
- * A formatter writting log messages on a single line. Compared to {@link SimpleFormatter}, this
+ * A formatter writing log messages on a single line. Compared to {@link SimpleFormatter}, this
  * formatter uses only one line per message instead of two. For example a message formatted by
  * {@code MonolineFormatter} looks like:
  *
@@ -165,7 +165,7 @@ public class MonolineFormatter extends Formatter {
     private String bodyLineSeparator = lineSeparator;
 
     /**
-     * The minimum amount of characters to use for writting logging level before the message.
+     * The minimum amount of characters to use for writing logging level before the message.
      * If the logging level is shorter, remaining characters will be padded with spaces. This
      * is used in order to align the messages.
      */
@@ -261,8 +261,8 @@ loop:   for (int i=0; ; i++) {
             System.err.println(exception);
         }
         /*
-         * Applies the default set of colors only if the handler is writting to the console.
-         * Note that we do not check for a non-null System.console() because we are writting
+         * Applies the default set of colors only if the handler is writing to the console.
+         * Note that we do not check for a non-null System.console() because we are writing
          * to System.err, which may be the console even when System.console() returns null.
          * Even in the case where System.err is redirected to a file, this is typically for
          * printing in an other console (e.g. using the Unix "tail" command).
@@ -281,7 +281,7 @@ loop:   for (int i=0; ; i++) {
     /**
      * Returns the format for displaying ellapsed time. This is the pattern specified
      * to the last call to {@link #setTimeFormat}, or the patten specified in the
-     * {@code org.geotoolkit.MonolineFormater.time} property in the
+     * {@code org.geotoolkit.util.logging.MonolineFormatter.time} property in the
      * {@code jre/lib/logging.properties} file.
      *
      * @return The time pattern, or {@code null} if time is not formatted.
@@ -312,7 +312,7 @@ loop:   for (int i=0; ; i++) {
     /**
      * Returns the format for displaying the source. This is the pattern specified
      * to the last call to {@link #setSourceFormat}, or the patten specified in the
-     * {@code org.geotoolkit.MonolineFormater.source} property in the
+     * {@code org.geotoolkit.util.logging.MonolineFormatter.source} property in the
      * {@code jre/lib/logging.properties} file.
      *
      * @return The source pattern, or {@code null} if source is not formatted.
@@ -357,7 +357,7 @@ loop:   for (int i=0; ; i++) {
 
     /**
      * Returns the color used for the given level. By default there is no color for any level.
-     * Colors should be used only if this formatter is associated to a {@link Handler} writting
+     * Colors should be used only if this formatter is associated to a {@link Handler} writing
      * to an ANSI X3.64 compatible terminal.
      *
      * @param  level The level for which to get the color.
@@ -371,7 +371,7 @@ loop:   for (int i=0; ; i++) {
 
     /**
      * Sets the color to use for the given level. This method should be invoked only if this
-     * formatter is associated to a {@link Handler} writting to an ANSI X3.64 compatible terminal.
+     * formatter is associated to a {@link Handler} writing to an ANSI X3.64 compatible terminal.
      *
      * @param level The level for which to set a new color.
      * @param color The new color, or {@code null} if none.
@@ -522,7 +522,7 @@ loop:   for (int i=0; ; i++) {
             writer.write('\n');
             writer.flush();
         } catch (IOException exception) {
-            // Should never happen, since we are writting into a StringBuffer.
+            // Should never happen, since we are writing into a StringBuffer.
             throw new AssertionError(exception);
         }
         if (colors && !emphase) {

@@ -385,7 +385,7 @@ public final class Trees {
      * @param  tree          The tree to format.
      * @param  buffer        Where to format the tree.
      * @param  lineSeparator The line separator, or {@code null} for the system default.
-     * @throws IOException if an error occured while writting in the given buffer.
+     * @throws IOException if an error occured while writing in the given buffer.
      *
      * @since 2.5
      */
@@ -407,7 +407,7 @@ public final class Trees {
      * @param  node          The root node of the tree to format.
      * @param  buffer        Where to format the tree.
      * @param  lineSeparator The line separator, or {@code null} for the system default.
-     * @throws IOException if an error occured while writting in the given buffer.
+     * @throws IOException if an error occured while writing in the given buffer.
      *
      * @since 2.5
      */
@@ -435,7 +435,7 @@ public final class Trees {
         try {
             format(tree, root, buffer, 0, new boolean[64], lineSeparator);
         } catch (IOException e) {
-            // Should never happen when writting into a StringBuilder.
+            // Should never happen when writing into a StringBuilder.
             throw new AssertionError(e);
         }
         return buffer.toString();

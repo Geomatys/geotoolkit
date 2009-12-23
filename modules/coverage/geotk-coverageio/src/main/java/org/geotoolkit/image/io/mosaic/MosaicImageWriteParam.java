@@ -110,7 +110,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      * Returns whatever existings {@linkplain File files} should be skipped or overwritten.
      * The default value is {@link TileWritingPolicy#OVERWRITE OVERWRITE}.
      *
-     * @return The policy to apply when writting tiles.
+     * @return The policy to apply when writing tiles.
      */
     public TileWritingPolicy getTileWritingPolicy() {
         return policy;
@@ -120,11 +120,11 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      * Sets whatever existings {@linkplain File files} should be skipped. The default behavior
      * is to {@linkplain TileWritingPolicy#OVERWRITE overwrite} every files inconditionnaly.
      * Settings the policy to {@link TileWritingPolicy#WRITE_NEWS_ONLY WRITE_NEWS_ONLY} may
-     * speedup {@link MosaicImageWriter} when the process of writting tiles is started again
+     * speedup {@link MosaicImageWriter} when the process of writing tiles is started again
      * after a previous partial failure, by skipping the tiles that were successfully generated
      * in the previous run.
      *
-     * @param policy The policy to apply when writting tiles.
+     * @param policy The policy to apply when writing tiles.
      */
     public void setTileWritingPolicy(final TileWritingPolicy policy) {
         Tile.ensureNonNull("policy", policy);

@@ -165,7 +165,7 @@ public final class Factories {
      * @param  registries Where the factories are registered.
      * @param  out The output stream where to format the list.
      * @param  locale The locale for the list, or {@code null}.
-     * @throws IOException if an error occurs while writting to {@code out}.
+     * @throws IOException if an error occurs while writing to {@code out}.
      *
      * @see FactoryFinder#listProviders
      *

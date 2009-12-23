@@ -140,7 +140,7 @@ public final class Packer implements FilenameFilter {
         /*
          * Opens all input JAR files in read-only mode, and create the initially empty output JAR
          * file. We need to open all input files in order to check for duplicate entries before we
-         * start the writting process. Files in the META-INF/services directory need to be merged.
+         * start the writing process. Files in the META-INF/services directory need to be merged.
          */
         for (final Map.Entry<String,PackOutput> entry : outputs.entrySet()) {
             final String name = entry.getKey();

@@ -232,7 +232,7 @@ public class ReferencingConsole extends InteractiveConsole {
         try {
             parser.printDefinitions(out);
         } catch (IOException e) {
-            // Should never happen since we are writting to a PrintWriter.
+            // Should never happen since we are writing to a PrintWriter.
             throw new IOError(e);
         }
     }
@@ -511,7 +511,7 @@ public class ReferencingConsole extends InteractiveConsole {
      * This helper method is for use by {@link #printPts}.
      *
      * @param  point The point to print, or {@code null} if none.
-     * @throws IOException if an error occured while writting to the output stream.
+     * @throws IOException if an error occured while writing to the output stream.
      */
     private void print(final DirectPosition point, final TableWriter table) throws IOException {
         if (point != null) {

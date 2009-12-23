@@ -289,7 +289,7 @@ public class TableWriter extends FilterWriter {
      * @param horizontalBorder -1 for left border, +1 for right border,  0 for center.
      * @param verticalBorder   -1 for top  border, +1 for bottom border, 0 for center.
      * @param horizontalChar   Character to use for horizontal line.
-     * @throws IOException     if the writting operation failed.
+     * @throws IOException     if the writing operation failed.
      */
     private void writeBorder(final Writer out,
                              final int horizontalBorder,

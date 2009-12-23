@@ -42,7 +42,7 @@ import org.geotoolkit.resources.Vocabulary;
  */
 final class CoverageParameterWriter extends ParameterWriter {
     /**
-     * Creates a new formatter writting parameters to the specified output stream.
+     * Creates a new formatter writing parameters to the specified output stream.
      */
     public CoverageParameterWriter(final Writer out) {
         super(out);

@@ -100,7 +100,7 @@ final class EpsgDataPack extends ScriptRunner {
 
     /**
      * "Executes" the given SQL statement. In the context of this {@code EpsgDataPack} class,
-     * executing a SQL statement means compacting it and writting it to the output file.
+     * executing a SQL statement means compacting it and writing it to the output file.
      *
      * @param  sql The SQL statement to compact.
      * @return The number of rows added.

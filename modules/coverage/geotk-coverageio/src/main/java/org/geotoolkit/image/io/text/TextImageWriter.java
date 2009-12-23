@@ -151,7 +151,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * can override this method if they want to specify the line separator in some other way.
      *
      * @param  parameters The write parameters, or {@code null} for the defaults.
-     * @return The line separator to use for writting the image.
+     * @return The line separator to use for writing the image.
      *
      * @see Spi#lineSeparator
      */

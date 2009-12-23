@@ -74,7 +74,7 @@ public final class DatumMarshallingTest {
      * and writes it in a temporary buffer.
      *
      * @throws JAXBException If an error occured during the marshalling process.
-     * @throws IOException Should never happen since we are writting to a buffer.
+     * @throws IOException Should never happen since we are writing to a buffer.
      */
     @Test
     public void testMarshalling() throws JAXBException, IOException {

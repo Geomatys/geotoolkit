@@ -294,9 +294,9 @@ public final class Units {
     }
 
     /**
-     * Parses the given symbol. This method is similar to {@link Unit#valueOf(String)}, but hands
-     * especially a few symbols found in WKT parsing or in XML files. The list of symbols handled
-     * especially is implementation-dependent and may change in future Geotk versions.
+     * Parses the given symbol. This method is similar to {@link Unit#valueOf(CharSequence)}, but
+     * hands especially a few symbols found in WKT parsing or in XML files. The list of symbols
+     * handled especially is implementation-dependent and may change in future Geotk versions.
      *
      * @param  uom The symbol to parse, or {@code null}.
      * @return The parsed symbol, or {@code null} if {@code uom} was null.

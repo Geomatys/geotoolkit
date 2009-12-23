@@ -124,7 +124,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
 
     /**
      * Sets the input source to use. If this image reader is an instance of
-     * {@link StreamImageReader} or {@link MultiFileImageReader}, then their
+     * {@link StreamImageReader} or {@link ImageReaderAdapter}, then their
      * {@code close()} method is invoked before to set the new input.
      *
      * @param input           The input object to use for future decoding.

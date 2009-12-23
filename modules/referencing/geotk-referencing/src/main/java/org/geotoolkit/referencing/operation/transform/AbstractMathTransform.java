@@ -306,7 +306,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * strategy} depending on the argument value.
      * <p>
      * The source and destination may overlap. Consequently, implementors must read all source
-     * ordinate values before to start writting the transformed ordinates in the destination
+     * ordinate values before to start writing the transformed ordinates in the destination
      * array.
      *
      * {@note This method has protected access rather than public in the hope to encourage users
@@ -487,7 +487,7 @@ public abstract class AbstractMathTransform extends FormattableObject
             bufferSize = numBufferedPts * dimLargest;
         }
         /*
-         * We need to check if writting the transformed coordinates in the same array than the source
+         * We need to check if writing the transformed coordinates in the same array than the source
          * coordinates will cause an overlapping problem. However we can consider the whole buffer as
          * if it was a single coordinate with a very large dimension. Doing so increase the chances
          * that IterationStrategy.suggest(...) doesn't require us an other buffer  (hint: the -1 in

@@ -36,7 +36,7 @@
  *
  * <a name="accessor-types">{@section Attributes accessor}</a>
  * This package uses {@link org.geotoolkit.image.io.metadata.MetadataAccessor} for reading and
- * writting attribute values. That accessor provides parsing and formatting convenience methods
+ * writing attribute values. That accessor provides parsing and formatting convenience methods
  * for the following attribute types. Note that this restriction applies to attributes only;
  * {@linkplain javax.imageio.metadata.IIOMetadataNode#getUserObject() user object} attached
  * to elements can be of any type.

@@ -188,7 +188,7 @@ final class FactoryPrinter implements Comparator<Class<?>> {
         try {
             list(out, null);
         } catch (IOException e) {
-            // Should never happen since we are writting to a StringWriter,
+            // Should never happen since we are writing to a StringWriter,
             throw new AssertionError(e);
         }
         return out.toString();

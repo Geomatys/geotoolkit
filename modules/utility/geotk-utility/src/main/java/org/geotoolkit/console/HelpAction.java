@@ -325,7 +325,7 @@ final class HelpAction {
      * @param  table   The table to write to.
      * @param  title   The title to print before the arguments.
      * @param  options The optional or mandatory arguments to list.
-     * @throws IOException if an error occurs while writting to the output stream.
+     * @throws IOException if an error occurs while writing to the output stream.
      */
     private void print(final TableWriter table, String title,
             final Collection<Map.Entry<String,String>> options) throws IOException

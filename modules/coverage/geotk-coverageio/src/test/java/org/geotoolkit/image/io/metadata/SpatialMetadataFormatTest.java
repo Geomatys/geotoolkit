@@ -410,7 +410,7 @@ public final class SpatialMetadataFormatTest {
      * Tests the {@link SpatialMetadataFormat#toString()} method.
      * This is also used for producing the tree to copy in the javadoc.
      *
-     * @throws IOException If an I/O error occured while writting the tree to disk.
+     * @throws IOException If an I/O error occured while writing the tree to disk.
      *         This is normally not enabled.
      */
     @Test

@@ -152,7 +152,7 @@ final class PackOutput implements Closeable {
     }
 
     /**
-     * Opens the given JAR file for writting
+     * Opens the given JAR file for writing
      *
      * @param  file The file to open.
      * @throws IOException if the file can't be open.
@@ -181,7 +181,7 @@ final class PackOutput implements Closeable {
     }
 
     /**
-     * Begins writting a new JAR entry.
+     * Begins writing a new JAR entry.
      *
      * @param  entry The new entry to write.
      * @return {@code true} if the entry is ready to write, or {@code false} if it should be skipped.
@@ -203,7 +203,7 @@ final class PackOutput implements Closeable {
      *
      * @param  buffer The buffer containing the bytes to write.
      * @param  n The number of bytes to write.
-     * @throws IOException if an exception occured while writting the bytes.
+     * @throws IOException if an exception occured while writing the bytes.
      */
     void write(final byte[] buffer, final int n) throws IOException {
         out.write(buffer, 0, n);

@@ -508,7 +508,7 @@ public class Statistics implements Cloneable, Serializable {
         try {
             writeTable(out, header, statistics, locale);
         } catch (IOException e) {
-            // Should never happen since we are writting to System.out.
+            // Should never happen since we are writing to System.out.
             throw new AssertionError(e);
         }
     }
@@ -520,7 +520,7 @@ public class Statistics implements Cloneable, Serializable {
      * @param  header     The column headers in the table, or {@code null} if none.
      * @param  statistics The statistics to format.
      * @param  locale     The locale, or {@code null} for the default locale.
-     * @throws IOException if an error occured while writting to {@code out}.
+     * @throws IOException if an error occured while writing to {@code out}.
      *
      * @since 3.00
      */

@@ -141,7 +141,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *     String firstAxisName = accessor.getAttribute("name");
  * }
  *
- * {@section Example adding childs and writting attributes}
+ * {@section Example adding childs and writing attributes}
  * The example below uses the same accessor than above, but this time for adding a new
  * child under the {@code "CoordinateSystem"} node:
  *

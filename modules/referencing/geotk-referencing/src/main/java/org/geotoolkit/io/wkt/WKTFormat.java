@@ -330,7 +330,7 @@ public class WKTFormat extends Format {
      * does nothing if the definitions map is empty.
      *
      * @param  out writer The output stream where to write the table.
-     * @throws IOException if an error occured while writting to the output stream.
+     * @throws IOException if an error occured while writing to the output stream.
      */
     public void printDefinitions(final Writer out) throws IOException {
         if (definitions != null && !definitions.isEmpty()) {
@@ -514,7 +514,7 @@ public class WKTFormat extends Format {
      * @param  out The output stream.
      * @param  err The error stream.
      * @throws IOException if an error occured while reading from the input stream
-     *         or writting to the output stream.
+     *         or writing to the output stream.
      */
     public void reformat(final Reader in, final Writer out, final PrintWriter err)
             throws IOException

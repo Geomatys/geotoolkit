@@ -307,7 +307,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          * Returns {@code true} if the supplied source object appears to be of the format supported
          * by this reader. The default implementation checks if at least one of the {@code ".tfw}
          * (actual extension may vary) or {@code ".prj"} file is presents, then delegates to the
-         * {@linkplain ImageReaderAdapter.Spi#canDecodeInput(Object) super-class method}.
+         * super-class method.
          *
          * @param  source The input (typically a {@link File}) to be decoded.
          * @return {@code true} if it is likely that the file can be decoded.
