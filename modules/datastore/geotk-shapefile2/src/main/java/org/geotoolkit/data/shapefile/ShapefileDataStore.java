@@ -31,12 +31,14 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
@@ -49,6 +51,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
+import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -307,19 +310,20 @@ public class ShapefileDataStore extends AbstractDataStore{
         final DbaseFileReader dbf = openDbfReader();
 
         CoordinateReferenceSystem crs = null;
-        InputStream prjStream = null;
+        ReadableByteChannel channel = null;
+
         try{
-             prjStream = shpFiles.getInputStream(PRJ, new Object());
-            crs = PrjFiles.read(prjStream, true);
+            channel = shpFiles.getReadChannel(PRJ, new Object());
+            crs = PrjFiles.read(channel, true);
         }catch(IOException ex){
-            //there might not be any prj file
             crs = null;
         }finally{
-            if(prjStream!= null){
+            //todo replace by ARM in JDK 1.7
+            if(channel!= null){
                 try {
-                    prjStream.close();
+                    channel.close();
                 } catch (IOException ex) {
-                    //we tryed
+                    getLogger().log(Level.WARNING, "failed to close pro channel.",ex);
                 }
             }
         }
@@ -379,7 +383,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             }
             return attributes;
         } finally {
-
+            //todo replace by ARM in JDK 1.7
             try {
                 if (dbf != null) {
                     dbf.close();
@@ -401,10 +405,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * Returns the attribute reader, allowing for a pure shapefile reader, or a
      * combined dbf/shp reader.
      *
-     * @param readDbf -
-     *                if true, the dbf fill will be opened and read
-     *
-     *
+     * @param readDbf - if true, the dbf fill will be opened and read
      * @throws IOException
      */
     protected ShapefileAttributeReader getAttributesReader(boolean readDbf)
@@ -466,6 +467,28 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
     }
 
+    /**
+     * Convenience method for opening an index file.
+     *
+     * @return An IndexFile
+     * @throws IOException
+     */
+    protected IndexFile openIndexFile() throws IOException {
+        if (shpFiles.get(SHX) == null) {
+            return null;
+        }
+
+        if (shpFiles.isLocal() && !shpFiles.exists(SHX)) {
+            return null;
+        }
+
+        try {
+            return new IndexFile(shpFiles, this.useMemoryMappedBuffer);
+        } catch (IOException e) {
+            // could happen if shx file does not exist remotely
+            return null;
+        }
+    }
 
     /**
      * Attempt to create a DbaseFileHeader for the FeatureType. Note, we cannot

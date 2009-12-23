@@ -35,6 +35,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.data.shapefile.index.IndexType;
 
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.shapefile.index.IndexedShapefileDataStore;
 
 import org.opengis.feature.type.Name;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -138,7 +139,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
         DefaultConformanceResult result = new DefaultConformanceResult();
         try {
             ShapefileDataStore.class.getName();
-//            IndexedShapefileDataStore.class.getName(); ////////////////////////////////////////////////////////
+            IndexedShapefileDataStore.class.getName();
             Geometry.class.getName();
             result.setPass(true);
         } catch (Exception e) {
@@ -212,15 +213,14 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
             }
         }
 
-        try {
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//            if (createIndex) {
-//                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
-//            } else if (treeIndex != IndexType.NONE) {
-//                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
-//            } else {
+        try {            
+            if (createIndex) {
+                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, createIndex, IndexType.QIX, dbfCharset);
+            } else if (treeIndex != IndexType.NONE) {
+                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, false, treeIndex, dbfCharset);
+            } else {
                 return new ShapefileDataStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
-//            }
+            }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Url for shapefile malformed: " + url, mue);
         }
@@ -264,12 +264,11 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
         final boolean createIndex = isCreateSpatialIndex.booleanValue() && isLocal;
 
         try {
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//            if (createIndex) {
-//                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
-//            } else {
+            if (createIndex) {
+                return new IndexedShapefileDataStore(url, namespace, useMemoryMappedBuffer, true, IndexType.QIX, dbfCharset);
+            } else {
                 return new ShapefileDataStore(url, namespace, useMemoryMappedBuffer, dbfCharset);
-//            }
+            }
         } catch (MalformedURLException mue) {
             throw new DataStoreException("Url for shapefile malformed: " + url, mue);
         }

@@ -14,21 +14,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.indexed;
+package org.geotoolkit.data.shapefile.index;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.geotoolkit.data.shapefile.FileWriter;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
-import org.geotoolkit.index.Data;
-import org.geotoolkit.index.DataDefinition;
 import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.QuadTree;
@@ -36,8 +34,6 @@ import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.quadtree.fs.IndexHeader;
 import org.geotoolkit.index.rtree.PageStore;
-import org.geotoolkit.index.rtree.RTree;
-import org.geotoolkit.index.rtree.cachefs.FileSystemPageStore;
 import org.geotoolkit.util.NullProgressListener;
 
 import org.opengis.util.ProgressListener;
@@ -50,83 +46,14 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @module pending
  */
-public class ShapeFileIndexer implements FileWriter {
+public class ShapeFileIndexer {
     private IndexType idxType;
     private int max = 50;
     private int min = 25;
     private short split = PageStore.SPLIT_QUADRATIC;
     private String byteOrder;
-
     private ShpFiles shpFiles;
 
-    public static void main(String[] args) throws IOException {
-        if ((args.length < 1) || (((args.length - 1) % 2) != 0)) {
-            usage();
-        }
-
-        long start = System.currentTimeMillis();
-
-        ShapeFileIndexer idx = new ShapeFileIndexer();
-
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-t")) {
-                idx.setIdxType(IndexType.valueOf(args[++i]));
-            } else if (args[i].equals("-M")) {
-                idx.setMax(Integer.parseInt(args[++i]));
-            } else if (args[i].equals("-m")) {
-                idx.setMin(Integer.parseInt(args[++i]));
-            } else if (args[i].equals("-s")) {
-                idx.setSplit(Short.parseShort(args[++i]));
-            } else if (args[i].equals("-b")) {
-                idx.setByteOrder(args[++i]);
-            } else {
-                if (!args[i].toLowerCase().endsWith(".shp")) {
-                    System.out.println("File extension must be '.shp'");
-                    System.exit(1);
-                }
-
-                idx.setShapeFileName(new ShpFiles(args[i]));
-            }
-        }
-
-        try {
-            System.out.print("Indexing ");
-
-            int cnt = idx.index(true, new NullProgressListener());
-            System.out.println();
-            System.out.print(cnt + " features indexed ");
-            System.out.println("in " + (System.currentTimeMillis() - start)
-                    + "ms.");
-            System.out.println();
-        } catch (Exception e) {
-            e.printStackTrace();
-            usage();
-            System.exit(1);
-        }
-    }
-
-    private static void usage() {
-        System.out.println("Usage: ShapeFileIndexer " + "-t <QIX | GRX> "
-                + "[-M <max entries per node>] "
-                + "[-m <min entries per node>] " + "[-s <split algorithm>] "
-                + "[-b <byte order NL | NM>] " + "<shape file>");
-
-        System.out.println();
-
-        System.out.println("Options:");
-        System.out.println("\t-t Index type: RTREE or QUADTREE");
-        System.out.println();
-        System.out.println("Following options apllies only to RTREE:");
-        System.out.println("\t-M maximum number of entries per node");
-        System.out.println("\t-m minimum number of entries per node");
-        System.out.println("\t-s split algorithm to use");
-        System.out.println();
-        System.out.println("Following options apllies only to QUADTREE:");
-        System.out.println("\t-b byte order to use: NL = LSB; "
-                + "NM = MSB (default)");
-
-        System.exit(1);
-    }
 
     /**
      * Index the shapefile denoted by setShapeFileName(String fileName) If when
@@ -168,59 +95,21 @@ public class ShapeFileIndexer implements FileWriter {
             reader = new ShapefileReader(shpFiles, true, false);
 
             switch (idxType) {
-            case EXPERIMENTAL_UNSUPPORTED_GRX:
-                cnt = this.buildRTree(reader, treeFile, verbose);
-                break;
             case QIX:
                 cnt = this.buildQuadTree(reader, treeFile, verbose);
                 break;
-
             default:
-                throw new IllegalArgumentException(
-                        "NONE is not a legal index choice");
+                throw new IllegalArgumentException("NONE is not a legal index choice");
             }
-        } finally {
+        } catch(DataStoreException ex){
+            //do nothing
+        }finally {
             if (reader != null)
                 reader.close();
         }
 
         // Final index file
         storage.replaceOriginal();
-
-        return cnt;
-    }
-
-    private int buildRTree(ShapefileReader reader, File rtreeFile,
-            boolean verbose) throws TreeException, LockTimeoutException,
-            IOException {
-        DataDefinition keyDef = new DataDefinition("US-ASCII");
-        keyDef.addField(Integer.class);
-        keyDef.addField(Long.class);
-
-        FileSystemPageStore fps = new FileSystemPageStore(rtreeFile, keyDef,
-                this.max, this.min, this.split);
-        RTree rtree = new RTree(fps);
-
-        Record record = null;
-        Data data = null;
-
-        int cnt = 0;
-
-        while (reader.hasNext()) {
-            record = reader.nextRecord();
-            data = new Data(keyDef);
-            data.addValue(new Integer(++cnt));
-            data.addValue(new Long(record.offset()));
-
-            rtree.insert(new Envelope(record.minX, record.maxX, record.minY,
-                    record.maxY), data);
-
-            if (verbose && ((cnt % 500) == 0)) {
-                System.out.print('.');
-            }
-        }
-
-        rtree.close();
 
         return cnt;
     }
@@ -320,14 +209,81 @@ public class ShapeFileIndexer implements FileWriter {
     /**
      * DOCUMENT ME!
      * 
-     * @param byteOrder
-     *                The byteOrder to set.
+     * @param byteOrder The byteOrder to set.
      */
     public void setByteOrder(String byteOrder) {
         this.byteOrder = byteOrder;
     }
 
-    public String id() {
-        return getClass().getName();
+
+    public static void main(String[] args) throws IOException {
+        if ((args.length < 1) || (((args.length - 1) % 2) != 0)) {
+            usage();
+        }
+
+        long start = System.currentTimeMillis();
+
+        ShapeFileIndexer idx = new ShapeFileIndexer();
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals("-t")) {
+                idx.setIdxType(IndexType.valueOf(args[++i]));
+            } else if (args[i].equals("-M")) {
+                idx.setMax(Integer.parseInt(args[++i]));
+            } else if (args[i].equals("-m")) {
+                idx.setMin(Integer.parseInt(args[++i]));
+            } else if (args[i].equals("-s")) {
+                idx.setSplit(Short.parseShort(args[++i]));
+            } else if (args[i].equals("-b")) {
+                idx.setByteOrder(args[++i]);
+            } else {
+                if (!args[i].toLowerCase().endsWith(".shp")) {
+                    System.out.println("File extension must be '.shp'");
+                    System.exit(1);
+                }
+
+                idx.setShapeFileName(new ShpFiles(args[i]));
+            }
+        }
+
+        try {
+            System.out.print("Indexing ");
+
+            int cnt = idx.index(true, new NullProgressListener());
+            System.out.println();
+            System.out.print(cnt + " features indexed ");
+            System.out.println("in " + (System.currentTimeMillis() - start)
+                    + "ms.");
+            System.out.println();
+        } catch (Exception e) {
+            e.printStackTrace();
+            usage();
+            System.exit(1);
+        }
     }
+
+    private static void usage() {
+        System.out.println("Usage: ShapeFileIndexer " + "-t <QIX | GRX> "
+                + "[-M <max entries per node>] "
+                + "[-m <min entries per node>] " + "[-s <split algorithm>] "
+                + "[-b <byte order NL | NM>] " + "<shape file>");
+
+        System.out.println();
+
+        System.out.println("Options:");
+        System.out.println("\t-t Index type: RTREE or QUADTREE");
+        System.out.println();
+        System.out.println("Following options apllies only to RTREE:");
+        System.out.println("\t-M maximum number of entries per node");
+        System.out.println("\t-m minimum number of entries per node");
+        System.out.println("\t-s split algorithm to use");
+        System.out.println();
+        System.out.println("Following options apllies only to QUADTREE:");
+        System.out.println("\t-b byte order to use: NL = LSB; "
+                + "NM = MSB (default)");
+
+        System.exit(1);
+    }
+
+
 }

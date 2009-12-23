@@ -19,31 +19,39 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 
 /**
- * A ReadableByteChannel that delegates all calls to the underlying
- * ReadableByteChannel but for {@link #close()} it also calls
+ * A WritableByteChannel that delegates all calls to the underlying
+ * WritableByteChannel but for {@link #close()} it also calls
  * ShapefileFiles.unlock method to release the lock on the URL.
  * 
  * @author jesse
  * @module pending
  */
-public class ReadableByteChannelDecorator implements ReadableByteChannel {
+public class UnlockWritableByteChannell implements WritableByteChannel {
 
-    private final ReadableByteChannel wrapped;
+    private final WritableByteChannel wrapped;
     private final ShpFiles shapefileFiles;
     private final URL url;
     private final Object requestor;
     private boolean closed;
 
-    public ReadableByteChannelDecorator(ReadableByteChannel newChannel,
+    public UnlockWritableByteChannell(WritableByteChannel newChannel,
             ShpFiles shapefileFiles, URL url, Object requestor) {
         this.wrapped = newChannel;
         this.shapefileFiles = shapefileFiles;
         this.url = url;
         this.requestor = requestor;
-        this.closed = false;
+        closed = false;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int write(ByteBuffer src) throws IOException {
+        return wrapped.write(src);
     }
 
     /**
@@ -56,7 +64,7 @@ public class ReadableByteChannelDecorator implements ReadableByteChannel {
         } finally {
             if (!closed) {
                 closed = true;
-                shapefileFiles.unlockRead(url, requestor);
+                shapefileFiles.unlockWrite(url, requestor);
             }
         }
     }
@@ -67,14 +75,6 @@ public class ReadableByteChannelDecorator implements ReadableByteChannel {
     @Override
     public boolean isOpen() {
         return wrapped.isOpen();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int read(ByteBuffer dst) throws IOException {
-        return wrapped.read(dst);
     }
 
 }

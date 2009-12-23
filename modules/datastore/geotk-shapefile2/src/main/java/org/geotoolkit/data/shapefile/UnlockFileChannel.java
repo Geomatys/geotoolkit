@@ -33,7 +33,7 @@ import java.nio.channels.WritableByteChannel;
  * @author jesse
  * @module pending
  */
-public class FileChannelDecorator extends FileChannel implements ReadableByteChannel {
+public class UnlockFileChannel extends FileChannel implements ReadableByteChannel {
 
     private final FileChannel wrapped;
     private final ShpFiles shapefileFiles;
@@ -42,7 +42,7 @@ public class FileChannelDecorator extends FileChannel implements ReadableByteCha
     private final boolean write;
     private boolean closed;
 
-    public FileChannelDecorator(FileChannel channel, ShpFiles shapefileFiles,
+    public UnlockFileChannel(FileChannel channel, ShpFiles shapefileFiles,
             URL url, Object holder, boolean write) {
         this.wrapped = channel;
         this.shapefileFiles = shapefileFiles;

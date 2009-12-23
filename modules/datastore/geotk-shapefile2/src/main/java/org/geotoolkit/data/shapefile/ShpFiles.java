@@ -773,12 +773,12 @@ public class ShpFiles {
                 }
 
                 RandomAccessFile raf = new RandomAccessFile(file, "r");
-                channel = new FileChannelDecorator(raf.getChannel(), this, url,
+                channel = new UnlockFileChannel(raf.getChannel(), this, url,
                         requestor,false);
 
             } else {
                 InputStream in = url.openConnection().getInputStream();
-                channel = new ReadableByteChannelDecorator(Channels
+                channel = new UnlockReadableByteChannel(Channels
                         .newChannel(in), this, url, requestor);
             }
         } catch (Throwable e) {
@@ -830,14 +830,14 @@ public class ShpFiles {
                 File file = NIOUtilities.urlToFile(url);
 
                 RandomAccessFile raf = new RandomAccessFile(file, "rw");
-                channel = new FileChannelDecorator(raf.getChannel(), this, url,
+                channel = new UnlockFileChannel(raf.getChannel(), this, url,
                         requestor,true);
 
                 ((FileChannel) channel).lock();
 
             } else {
                 OutputStream out = url.openConnection().getOutputStream();
-                channel = new WritableByteChannelDecorator(Channels
+                channel = new UnlockWritableByteChannell(Channels
                         .newChannel(out), this, url, requestor);
             }
 
