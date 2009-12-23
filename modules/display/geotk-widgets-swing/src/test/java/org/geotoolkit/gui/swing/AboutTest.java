@@ -18,17 +18,32 @@
 package org.geotoolkit.gui.swing;
 
 import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.image.jai.Registry;
+import org.geotoolkit.image.io.text.WorldFileImageReader;
+import org.geotoolkit.image.io.text.WorldFileImageWriter;
+
+import org.junit.*;
 
 
 /**
  * Tests the {@link About} dialog.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.07
  *
  * @since 2.0
  */
 public final class AboutTest extends SwingBase<About> {
+    /**
+     * Ensures that the Geotk plugins are registered.
+     */
+    @BeforeClass
+    public static void setDefaultCodecPreferences() {
+        Registry.setDefaultCodecPreferences();
+        WorldFileImageReader.Spi.registerDefaults(null);
+        WorldFileImageWriter.Spi.registerDefaults(null);
+    }
+
     /**
      * Constructs the test case.
      */

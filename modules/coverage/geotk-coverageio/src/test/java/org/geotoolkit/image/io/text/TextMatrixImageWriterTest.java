@@ -19,6 +19,8 @@ package org.geotoolkit.image.io.text;
 
 import java.util.Locale;
 import java.util.Iterator;
+import java.text.NumberFormat;
+import java.text.FieldPosition;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -51,6 +53,30 @@ public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
         spi.locale  = Locale.CANADA;
         spi.charset = Charset.forName("UTF-8");
         return new TextMatrixImageWriter(spi);
+    }
+
+    /**
+     * Tests the number format.
+     *
+     * @throws IOException Should never happen.
+     */
+    @Test
+    public void testCreateNumberFormat() throws IOException {
+        final IIOImage image = createImage(false);
+        final TextImageWriter writer = createImageWriter();
+        assertEquals(Locale.CANADA, writer.getDataLocale(null));
+
+        final NumberFormat format = writer.createNumberFormat(image, null);
+        assertEquals(2, format.getMinimumFractionDigits());
+        assertEquals(2, format.getMaximumFractionDigits());
+        assertEquals(1, format.getMinimumIntegerDigits());
+        assertEquals( "0.12", format.format( 0.1216));
+        assertEquals("-0.30", format.format(-0.2978));
+
+        final FieldPosition pos = writer.getExpectedFractionPosition(format);
+        assertEquals("Field type", NumberFormat.FRACTION_FIELD, pos.getField());
+        assertEquals("Fraction width", 2, pos.getEndIndex() - pos.getBeginIndex());
+        assertEquals("Total width (including sign)", 6, pos.getEndIndex());
     }
 
     /**

@@ -60,13 +60,15 @@ public final class XImageIOTest {
         XImageIO.close(reader);
         reader.dispose();
 
-        final File tmp = TemporaryFile.createTempFile("Test", ".png", null);
-        final ImageWriter writer = XImageIO.getWriterBySuffix(tmp, image);
-        writer.write(image);
-        XImageIO.close(writer);
-        writer.dispose();
-
-        assertTrue("The created file should not be empty.", tmp.length() > 0);
-        TemporaryFile.delete(tmp);
+        final File tmp = TemporaryFile.createTempFile("TEST", ".png", null);
+        try {
+            final ImageWriter writer = XImageIO.getWriterBySuffix(tmp, image);
+            writer.write(image);
+            XImageIO.close(writer);
+            writer.dispose();
+            assertTrue("The created file should not be empty.", tmp.length() > 0);
+        } finally {
+            TemporaryFile.delete(tmp);
+        }
     }
 }

@@ -147,7 +147,7 @@ public abstract class FileImageReader extends StreamImageReader {
                 suffix = suffixes[0];
             }
         }
-        inputFile = TemporaryFile.createTempFile("Image", suffix, null);
+        inputFile = TemporaryFile.createTempFile("FIR", suffix, null);
         isTemporary = true;
         /*
          * Copy the content of the specified input stream to the temporary file.

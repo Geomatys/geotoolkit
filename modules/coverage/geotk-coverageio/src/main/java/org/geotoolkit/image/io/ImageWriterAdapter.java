@@ -109,7 +109,18 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     private final boolean acceptStream;
 
     /**
-     * Constructs a new image writer.
+     * Constructs a new image writer. The provider argument is mandatory for this constructor.
+     * If the provider is unknown, use the next constructor below instead.
+     *
+     * @param  provider The {@link ImageWriterSpi} that is constructing this object.
+     * @throws IOException If an error occured while creating the {@linkplain #main} writer.
+     */
+    protected ImageWriterAdapter(final Spi provider) throws IOException {
+        this(provider, provider.createWriterInstance());
+    }
+
+    /**
+     * Constructs a new image writer wrapping the given writer.
      *
      * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      * @param main The writer to use for writing the pixel values.

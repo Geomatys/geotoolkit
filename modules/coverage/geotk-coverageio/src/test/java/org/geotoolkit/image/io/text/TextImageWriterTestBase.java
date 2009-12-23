@@ -19,8 +19,6 @@ package org.geotoolkit.image.io.text;
 
 import java.util.Locale;
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.text.FieldPosition;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
@@ -29,13 +27,11 @@ import javax.imageio.IIOImage;
 import javax.imageio.metadata.IIOMetadata;
 
 import org.geotoolkit.image.io.PaletteFactory;
+import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-
-import org.junit.*;
-import static org.junit.Assert.*;
 
 
 /**
@@ -113,29 +109,5 @@ public abstract class TextImageWriterTestBase {
      * @return The reader to test.
      * @throws IOException If an error occured while creating the format.
      */
-    protected abstract TextImageWriter createImageWriter() throws IOException;
-
-    /**
-     * Tests the number format.
-     *
-     * @throws IOException Should never happen.
-     */
-    @Test
-    public void testCreateNumberFormat() throws IOException {
-        final IIOImage image = createImage(false);
-        final TextImageWriter writer = createImageWriter();
-        assertEquals(Locale.CANADA, writer.getDataLocale(null));
-
-        final NumberFormat format = writer.createNumberFormat(image, null);
-        assertEquals(2, format.getMinimumFractionDigits());
-        assertEquals(2, format.getMaximumFractionDigits());
-        assertEquals(1, format.getMinimumIntegerDigits());
-        assertEquals( "0.12", format.format( 0.1216));
-        assertEquals("-0.30", format.format(-0.2978));
-
-        final FieldPosition pos = writer.getExpectedFractionPosition(format);
-        assertEquals("Field type", NumberFormat.FRACTION_FIELD, pos.getField());
-        assertEquals("Fraction width", 2, pos.getEndIndex() - pos.getBeginIndex());
-        assertEquals("Total width (including sign)", 6, pos.getEndIndex());
-    }
+    protected abstract SpatialImageWriter createImageWriter() throws IOException;
 }

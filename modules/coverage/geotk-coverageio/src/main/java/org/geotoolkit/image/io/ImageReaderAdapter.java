@@ -105,7 +105,18 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     private final boolean acceptStream;
 
     /**
-     * Constructs a new image reader.
+     * Constructs a new image reader. The provider argument is mandatory for this constructor.
+     * If the provider is unknown, use the next constructor below instead.
+     *
+     * @param  provider The {@link ImageReaderSpi} that is constructing this object.
+     * @throws IOException If an error occured while creating the {@linkplain #main} reader.
+     */
+    protected ImageReaderAdapter(final Spi provider) throws IOException {
+        this(provider, provider.createReaderInstance());
+    }
+
+    /**
+     * Constructs a new image reader wrapping the given reader.
      *
      * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
      * @param main The reader to use for reading the pixel values.

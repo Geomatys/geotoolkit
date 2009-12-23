@@ -73,7 +73,18 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class WorldFileImageWriter extends ImageWriterAdapter {
     /**
-     * Constructs a new image writer.
+     * Constructs a new image writer. The provider argument is mandatory for this constructor.
+     * If the provider is unknown, use the next constructor below instead.
+     *
+     * @param  provider The {@link ImageWriterSpi} that is constructing this object.
+     * @throws IOException If an error occured while creating the {@linkplain #main main} writer.
+     */
+    public WorldFileImageWriter(final Spi provider) throws IOException {
+        super(provider);
+    }
+
+    /**
+     * Constructs a new image writer wrapping the given writer.
      *
      * @param provider The {@link ImageWriterSpi} that is constructing this object, or {@code null}.
      * @param main The writer to use for writing the pixel values.
@@ -239,8 +250,8 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          * <a href="../package-summary.html#package_description">package description</a>
          * for more information.
          * <p>
-         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF and BMP
-         * formats, but this list can be augmented in any future Geotk version.
+         * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF, BMP
+         * and matrix formats, but this list can be augmented in any future Geotk version.
          *
          * @param registry The registry where to register the formats, or {@code null} for
          *        the {@linkplain IIORegistry#getDefaultInstance() default registry}.
@@ -261,6 +272,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                         case 2: provider = new PNG (); break;
                         case 3: provider = new GIF (); break;
                         case 4: provider = new BMP (); break;
+                        case 5: provider = new TXT (); break;
                         default: return;
                     }
                 } catch (RuntimeException e) {
@@ -296,6 +308,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                     case 2: type = PNG .class; break;
                     case 3: type = GIF .class; break;
                     case 4: type = BMP .class; break;
+                    case 5: type = TXT .class; break;
                     default: return;
                 }
                 final Spi provider = registry.getServiceProviderByClass(type);
@@ -310,9 +323,10 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    private static final class TIFF extends Spi {TIFF() {super("TIFF");}}
-    private static final class JPEG extends Spi {JPEG() {super("JPEG");}}
-    private static final class PNG  extends Spi { PNG() {super("PNG" );}}
-    private static final class GIF  extends Spi { GIF() {super("GIF" );}}
-    private static final class BMP  extends Spi { BMP() {super("BMP" );}}
+    private static final class TIFF extends Spi {TIFF() {super("TIFF"  );}}
+    private static final class JPEG extends Spi {JPEG() {super("JPEG"  );}}
+    private static final class PNG  extends Spi { PNG() {super("PNG"   );}}
+    private static final class GIF  extends Spi { GIF() {super("GIF"   );}}
+    private static final class BMP  extends Spi { BMP() {super("BMP"   );}}
+    private static final class TXT  extends Spi { TXT() {super("matrix");}}
 }

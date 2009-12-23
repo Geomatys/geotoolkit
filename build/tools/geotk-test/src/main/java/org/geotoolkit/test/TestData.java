@@ -59,9 +59,9 @@ import java.util.zip.ZipFile;
  * cases that uses it.
  *
  * @author James McGill (Leeds)
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.04
+ * @version 3.07
  *
  * @since 2.4
  */
@@ -102,7 +102,7 @@ public class TestData implements Runnable {
      * exists.
      *
      * @param  caller Calling class or object used to locate {@code test-data}.
-     * @param  name resource name in {@code test-data} directory.
+     * @param  name Resource name in {@code test-data} directory.
      * @return URL or {@code null} if the named test-data could not be found.
      *
      * @see #url
@@ -191,7 +191,7 @@ public class TestData implements Runnable {
      * It is the caller responsability to close this stream after usage.
      *
      * @param  caller Calling class or object used to locate {@code test-data}.
-     * @param  name of test data to load.
+     * @param  name Filename of test data to load.
      * @return The input stream.
      * @throws FileNotFoundException if the resource is not found.
      * @throws IOException if an error occurs during an input operation.
@@ -211,7 +211,7 @@ public class TestData implements Runnable {
      * usage.
      *
      * @param  caller The class of the object associated with named data.
-     * @param  name of test data to load.
+     * @param  name Filename of test data to load.
      * @return The buffered reader.
      * @throws FileNotFoundException if the resource is not found.
      * @throws IOException if an error occurs during an input operation.
@@ -229,7 +229,7 @@ public class TestData implements Runnable {
      * chanel after usage.
      *
      * @param  caller The class of the object associated with named data.
-     * @param  name of test data to load.
+     * @param  name Filename of test data to load.
      * @return The chanel.
      * @throws FileNotFoundException if the resource is not found.
      * @throws IOException if an error occurs during an input operation.
@@ -248,18 +248,61 @@ public class TestData implements Runnable {
     }
 
     /**
-     * Reads the given resources as a text file, assuming a UTF-8 encoding.
+     * Reads the given resource as a text file, assuming a UTF-8 encoding.
      * The returned text uses always the Unix style of EOL.
      *
      * @param  caller The class of the object associated with named data.
-     * @param  name of test data to load.
+     * @param  name Filename of test data to load.
      * @return The loaded test data as a text.
      * @throws IOException if an error occurs during an input operation.
      *
      * @since 3.04
      */
     public static String readText(final Object caller, final String name) throws IOException {
-        final LineNumberReader in = openReader(caller, name);
+        return read(openReader(caller, name));
+    }
+
+    /**
+     * Reads the given file as a text file, assuming a UTF-8 encoding.
+     * The returned text uses always the Unix style of EOL.
+     *
+     * @param  file of test data to load.
+     * @return The loaded test data as a text.
+     * @throws IOException if an error occurs during an input operation.
+     *
+     * @since 3.07
+     */
+    public static String readText(final File file) throws IOException {
+        return readText(file, ENCODING);
+    }
+
+    /**
+     * Reads the given file as a text file, assuming a ISO-LATIN-1 encoding.
+     * The returned text uses always the Unix style of EOL.
+     *
+     * @param  file of test data to load.
+     * @return The loaded test data as a text.
+     * @throws IOException if an error occurs during an input operation.
+     *
+     * @since 3.07
+     */
+    public static String readLatinText(final File file) throws IOException {
+        return readText(file, "ISO-8859-1");
+    }
+
+    /**
+     * Reads the given file as a text file, assuming the given encoding.
+     * The returned text uses always the Unix style of EOL.
+     */
+    private static String readText(final File file, final String encoding) throws IOException {
+        return read(new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding)));
+    }
+
+    /**
+     * Reads the given stream as a text. The returned text uses always the Unix style of EOL.
+     * The given stream is closed by this method.
+     */
+    private static String read(final BufferedReader in) throws IOException {
         final StringBuilder buffer = new StringBuilder();
         String line;
         while ((line = in.readLine()) != null) {

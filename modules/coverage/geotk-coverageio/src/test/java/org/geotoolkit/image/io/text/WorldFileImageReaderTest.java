@@ -50,8 +50,8 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
         main.padValue = -9999;
         main.locale   = Locale.CANADA;
         main.charset  = Charset.forName("UTF-8");
-        final WorldFileImageReader.Spi provider = new WorldFileImageReader.Spi(main);
-        final WorldFileImageReader reader = (WorldFileImageReader) provider.createReaderInstance();
+        final WorldFileImageReader.Spi spi = new WorldFileImageReader.Spi(main);
+        final WorldFileImageReader reader = new WorldFileImageReader(spi);
         reader.setInput(TestData.file(this, "matrix.txt"));
         return reader;
     }
