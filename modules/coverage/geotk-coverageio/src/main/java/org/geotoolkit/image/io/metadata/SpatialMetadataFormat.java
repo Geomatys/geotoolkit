@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.metadata;
 
-import java.util.Date;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.Map;
@@ -32,32 +31,42 @@ import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.opengis.util.CodeList;
-import org.opengis.util.RecordType;
 import org.opengis.annotation.Obligation;
 
-// We use a lot of different metadata interfaces in this class.
-// It is a bit too tedious to declare all of them.
-import org.opengis.metadata.*;
-import org.opengis.metadata.extent.*;
-import org.opengis.metadata.spatial.*;
-import org.opengis.metadata.quality.*;
-import org.opengis.metadata.lineage.*;
-import org.opengis.metadata.content.*;
-import org.opengis.metadata.citation.*;
-import org.opengis.metadata.constraint.*;
-import org.opengis.metadata.acquisition.*;
-import org.opengis.metadata.maintenance.*;
-import org.opengis.metadata.distribution.*;
-import org.opengis.metadata.identification.*;
-
-import org.opengis.coverage.grid.GridCell;
-import org.opengis.coverage.grid.GridPoint;
+// All imports in the block below are for javadoc only.
+import org.opengis.metadata.Identifier;
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.acquisition.EnvironmentalRecord;
+import org.opengis.metadata.acquisition.Instrument;
+import org.opengis.metadata.acquisition.Objective;
+import org.opengis.metadata.acquisition.Platform;
+import org.opengis.metadata.citation.Citation;
+import org.opengis.metadata.content.Band;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.content.RangeDimension;
+import org.opengis.metadata.content.RangeElementDescription;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.identification.Keywords;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.extent.Extent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.VerticalExtent;
+import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.quality.Element;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.datum.Datum;
+import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.PrimeMeridian;
+import org.opengis.referencing.operation.Projection;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.coverage.grid.GridCoordinates;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.primitive.Point;
-import org.opengis.util.InternationalString;
 
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
@@ -113,7 +122,7 @@ import org.geotoolkit.resources.Errors;
 <blockquote><table border="1" cellpadding="12">
 <tr bgcolor="lightblue"><th>Stream metadata</th><th>Image metadata</th></tr>
 <tr><td nowrap valign="top" width="50%">
-<pre>geotk-coverageio_3.06
+<pre>geotk-coverageio_3.07
 ├───<b>DiscoveryMetadata</b> : {@linkplain DataIdentification}
 │   ├───citation
 │   ├───abstract
@@ -172,7 +181,7 @@ import org.geotoolkit.resources.Errors;
         ├───evaluationProcedure
         └───date</pre>
 </td><td nowrap valign="top" width="50%">
-<pre>geotk-coverageio_3.06
+<pre>geotk-coverageio_3.07
 ├───<b>ImageDescription</b> : {@linkplain ImageDescription}
 │   ├───contentType
 │   ├───illuminationElevationAngle
@@ -225,13 +234,47 @@ import org.geotoolkit.resources.Errors;
     │   ├───low
     │   └───high
     ├───origin
-    └───OffsetVectors
-        └───OffsetVector
-            └───values</pre>
+    ├───OffsetVectors
+    │   └───OffsetVector
+    │       └───values
+    └───<b>CRS</b> : {@linkplain CoordinateReferenceSystem}
+        ├───name
+        ├───type
+        ├───<b>CoordinateSystem</b> : {@linkplain CoordinateSystem}
+        │   ├───name
+        │   ├───type
+        │   ├───dimension
+        │   └───Axes
+        │       └───<b>CoordinateSystemAxis</b> : {@linkplain CoordinateSystemAxis}
+        │           ├───name
+        │           ├───direction
+        │           ├───minimumValue
+        │           ├───maximumValue
+        │           ├───rangeMeaning
+        │           └───unit
+        ├───<b>Datum</b> : {@linkplain Datum}
+        │   ├───name
+        │   ├───type
+        │   ├───<b>Ellipsoid</b> : {@linkplain Ellipsoid}
+        │   │   ├───name
+        │   │   ├───axisUnit
+        │   │   ├───semiMajorAxis
+        │   │   ├───semiMinorAxis
+        │   │   └───inverseFlattening
+        │   └───<b>PrimeMeridian</b> : {@linkplain PrimeMeridian}
+        │       ├───name
+        │       ├───greenwichLongitude
+        │       └───angularUnit
+        └───<b>Projection</b> : {@linkplain Projection}
+            ├───name
+            └───Parameters : {@linkplain ParameterValueGroup}
+                └───ParameterValue : {@linkplain ParameterValue}
+                    ├───name
+                    └───value</pre>
 </tr></table></blockquote>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @see SpatialMetadata
  *
@@ -245,7 +288,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * version number provided in this constant is set to the last Geotk version when this
      * format has been modified, and may change in any future version.
      */
-    public static final String FORMAT_NAME = "geotk-coverageio_3.06";
+    public static final String FORMAT_NAME = "geotk-coverageio_3.07";
 
     /**
      * The name of the single attribute to declare for node that contains array.
@@ -272,14 +315,15 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * format that apply to file as a whole, which may contain more than one image. The
      * tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
-     * @see #addTreeForStream()
+     * @see PredefinedMetadataFormat#addTreeForStream(String)
      *
      * @since 3.05
      */
     public static final SpatialMetadataFormat STREAM;
     static {
-        STREAM = new SpatialMetadataFormat(FORMAT_NAME);
-        STREAM.addTreeForStream();
+        final PredefinedMetadataFormat p = new PredefinedMetadataFormat(FORMAT_NAME);
+        p.addTreeForStream(null);
+        STREAM = p;
     }
 
     /**
@@ -287,14 +331,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * is the metadata format that apply to a particular image in a file.
      * The tree structure is documented in the <a href="#default-formats">class javadoc</a>.
      *
-     * @see #addTreeForImage()
+     * @see PredefinedMetadataFormat#addTreeForImage(String)
      *
      * @since 3.05
      */
     public static final SpatialMetadataFormat IMAGE;
     static {
-        IMAGE = new SpatialMetadataFormat(FORMAT_NAME);
-        IMAGE.addTreeForImage();
+        final PredefinedMetadataFormat p = new PredefinedMetadataFormat(FORMAT_NAME);
+        p.addTreeForImage(null);
+        p.addTreeForCRS("RectifiedGridDomain");
+        IMAGE = p;
     }
 
     /**
@@ -337,163 +383,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         if (object == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
-    }
-
-    /**
-     * Adds the tree structure for <cite>stream</cite> metadata. The default implementation
-     * adds the tree structure documented in the "<cite>Stream metadata</cite>" column of the
-     * <a href="#default-formats">class javadoc</a>.
-     *
-     * @see #STREAM
-     *
-     * @since 3.05
-     */
-    protected void addTreeForStream() {
-        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(20);
-        /*
-         * Metadata excluded because they are redundant with standard API.
-         */
-        substitution.put(Format.class,                    null);  // Redundant with ImageReaderWriterSpi.
-        substitution.put(Locale.class,                    null);  // Specified in ImageReader.getLocale().
-        substitution.put(CharacterSet.class,              null);  // Fixed to Unicode in java.lang.String.
-        substitution.put(BrowseGraphic.class,             null);  // Redundant with Image I/O Thumbnails.
-        substitution.put(SpatialRepresentationType.class, null);  // Fixed to "grid" for Image I/O.
-        /*
-         * Metadata excluded because we are not interrested in (at this time). Their
-         * inclusion introduce large sub-trees that would need to be simplified.  We
-         * may revisit some of those exclusion in a future version, when we get more
-         * experience about what are needed.
-         */
-        substitution.put(Usage.class,                  null);  // MD_DataIdentification.resourceSpecificUsage
-        substitution.put(ResponsibleParty.class,       null);  // MD_DataIdentification.pointOfContact
-        substitution.put(Constraints.class,            null);  // MD_DataIdentification.resourceConstraints
-        substitution.put(MaintenanceInformation.class, null);  // MD_DataIdentification.resourceMaintenance
-        substitution.put(AggregateInformation.class,   null);  // MD_DataIdentification.aggregationInfo
-        substitution.put(Plan.class,                   null);  // MI_AcquisitionInformation.acquisitionPlan
-        substitution.put(Objective.class,              null);  // MI_AcquisitionInformation.objective
-        substitution.put(Operation.class,              null);  // MI_AcquisitionInformation.operation
-        substitution.put(Requirement.class,            null);  // MI_AcquisitionInformation.acquisitionRequirement
-        substitution.put(Scope.class,                  null);  // DQ_DataQuality.scope
-        substitution.put(Lineage.class,                null);  // DQ_DataQuality.lineage
-        substitution.put(Result.class,                 null);  // DQ_DataQuality.report.result
-        /*
-         * Metadata excluded because not yet implemented.
-         */
-        substitution.put(TemporalExtent.class, null);
-        /*
-         * Metadata simplification, where elements are replaced by attributes. The simplification
-         * is especially important for Citation because they appear in many different places with
-         * the same name ("citation"),  while Image I/O does not allow many element nodes to have
-         * the same name (this is not strictly forbidden, but the getter methods return information
-         * only about the first occurence of the given name. Note however that having the same name
-         * under different element node is not an issue for attributes). In addition, the Citation
-         * sub-tree is very large and we don't want to allow the tree to growth that big.
-         */
-        substitution.put(Citation.class,   String.class);
-        substitution.put(Citation[].class, String.class);
-        substitution.put(Identifier.class, String.class);
-        /*
-         * Metadata excluded because they introduce circularity or because
-         * they appear more than once (we shall not declare two nodes with
-         * the same name in Image I/O). Some will be added by hand later.
-         */
-        substitution.put(Instrument.class, null);  // MI_AcquisitionInformation.instrument
-        /*
-         * Collections replaced by singletons, because only one
-         * instance is enough for the purpose of stream metadata.
-         */
-        substitution.put(Extent[].class,           Extent.class);            // MD_DataIdentification.extent
-        substitution.put(GeographicExtent[].class, GeographicExtent.class);  // MD_DataIdentification.extent.geographicElement
-        substitution.put(VerticalExtent[].class,   VerticalExtent.class);    // MD_DataIdentification.extent.verticalElement
-        substitution.put(Resolution[].class,       Resolution.class);        // MD_DataIdentification.spatialResolution
-        substitution.put(Platform[].class,         Platform.class);          // MI_AcquisitionInformation.platform
-        substitution.put(Element[].class,          Element.class);           // DQ_DataQuality.report
-        substitution.put(Date[].class,             Date.class);              // DQ_DataQuality.report.dateTime
-        /*
-         * Since this set of metadata is about gridded data,
-         * replace the generic interfaces by specialized ones.
-         */
-        substitution.put(Identification.class,        DataIdentification.class);
-        substitution.put(SpatialRepresentation.class, GridSpatialRepresentation.class);
-        substitution.put(GeographicExtent.class,      GeographicBoundingBox.class);
-        /*
-         * Build the tree.
-         */
-        final String root = getRootName();
-        final MetadataStandard standard = MetadataStandard.ISO_19115;
-        addTree(standard, DataIdentification.class,     "DiscoveryMetadata",   root, substitution);
-        addTree(standard, AcquisitionInformation.class, "AcquisitionMetadata", root, substitution);
-        addTree(standard, DataQuality.class,            "QualityMetadata",     root, substitution);
-        removeAttribute("EquivalentScale", "doubleValue");
-        /*
-         * Add by hand a node in the place where it would have been added if we didn't
-         * excluded it. We do this addition because Instruments appear in two places,
-         * while we want only the occurence that appear under the "Platform" node.
-         */
-        substitution.put(Platform.class, null);
-        substitution.remove(Identifier.class); // Allow full expansion.
-        addTree(standard, Instrument[].class, "Instruments", "Platform", substitution);
-        mapName("Instruments", "getCitations", "citation");
-    }
-
-    /**
-     * Adds the tree structure for <cite>image</cite> metadata. The default implementation
-     * adds the tree structure documented in the "<cite>Image metadata</cite>" column of the
-     * <a href="#default-formats">class javadoc</a>.
-     *
-     * @see #IMAGE
-     *
-     * @since 3.05
-     */
-    protected void addTreeForImage() {
-        final Map<Class<?>,Class<?>> substitution = new HashMap<Class<?>,Class<?>>(4);
-        substitution.put(Citation.class,       String.class);   // MD_ImageDescription.xxxCode
-        substitution.put(RecordType.class,     null);           // MD_CoverageDescription.attributeDescription
-        substitution.put(RangeDimension.class, Band.class);     // MD_CoverageDescription.dimension
-        /*
-         * Adds the "ImageDescription" node derived from ISO 19115.
-         * The 'fillSampleValues' attribute is a Geotk extension.
-         */
-        final String root = getRootName();
-        MetadataStandard standard = MetadataStandard.ISO_19115;
-        addTree(standard, ImageDescription.class, "ImageDescription", root, substitution);
-        addAttribute("Dimension", "validSampleValues", DATATYPE_STRING, false, null);
-        addAttribute("Dimension", "fillSampleValues",  DATATYPE_DOUBLE, false, 0, Integer.MAX_VALUE);
-        addObjectValue("Dimension", SampleDimension.class, true, null); // Replace Band.class.
-        /*
-         * Adds the "SpatialRepresentation" node derived from ISO 19115.
-         * We ommit the information about spatial-temporal axis properties (the Dimension object)
-         * because it is redundant with the information provided in the CRS and offset vectors.
-         */
-        substitution.put(Dimension.class,           null);  // GridSpatialRepresentation.axisDimensionProperties
-        substitution.put(Point.class,     double[].class);  // MD_Georectified.centerPoint
-        substitution.put(GCP.class,                 null);  // MD_Georectified.checkPoint
-        substitution.put(Boolean.TYPE,              null);  // MD_Georectified.checkPointAvailability
-        substitution.put(InternationalString.class, null);  // MD_Georectified.various descriptions...
-        addTree(standard, Georectified.class, "SpatialRepresentation", root, substitution);
-        removeAttribute("SpatialRepresentation", "cornerPoints");
-        /*
-         * Adds the "RectifiedGridDomain" node derived from ISO 19123.
-         */
-        substitution.put(String.class,          null); // CV_Grid.axisNames
-        substitution.put(GridCell.class,        null); // CV_Grid.cell
-        substitution.put(GridPoint.class,       null); // CV_Grid.intersection
-        substitution.put(GridEnvelope.class,    null); // CV_Grid.extent (will be added later)
-        substitution.put(GridCoordinates.class, int[].class);    // CV_GridEnvelope.low/high
-        substitution.put(DirectPosition.class,  double[].class); // CV_RectifiedGrid.origin
-        standard = MetadataStandard.ISO_19123;
-        addTree(standard, RectifiedGrid.class, "RectifiedGridDomain", root, substitution);
-        /*
-         * Following is part of ISO 19123 and "GML in JPEG 2000" specifications,
-         * but under different names. We use the "GML in JPEG 2000" names.
-         */
-        addTree(standard, GridEnvelope.class, "Limits", "RectifiedGridDomain", substitution);
-        removeAttribute("Limits",              "dimension"); // Redundant with the one in RectifiedGridDomain.
-        removeAttribute("RectifiedGridDomain", "dimension"); // Redundant with the one in SpatialRepresentation.
-        /*
-         * There is no public API for this functionality at this time...
-         */
-        mapName("RectifiedGridDomain", "getExtent", "Limits");
     }
 
     /**
@@ -638,7 +527,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         if (CodeList.class.isAssignableFrom(type)) {
             @SuppressWarnings("unchecked")
             final Class<CodeList<?>> codeType = (Class<CodeList<?>>) type;
-            final List<String> codes = Arrays.asList(CodeLists.identifiers(codeType));
+            final List<String> codes = Arrays.asList(getCodeList(codeType));
             addAttribute(parentName, elementName, DATATYPE_STRING, mandatory, null, codes);
             return elementName;
         }
@@ -787,6 +676,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          */
         addElement(elementName, parentName, childPolicy);
         addObjectValue(elementName, type, false, null);
+        addCustomAttributes(elementName, type);
         standards.put(elementName, standard);
         for (final Map.Entry<String,Class<?>> entry : propertyTypes.entrySet()) {
             String childName = entry.getKey();
@@ -859,6 +749,23 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
+     * Returns the code list identifiers. This is a hook for overriding by subclasses.
+     */
+    String[] getCodeList(final Class<CodeList<?>> codeType) {
+        return CodeLists.identifiers(codeType);
+    }
+
+    /**
+     * Invoked when a metadata element is about to be added to the tree. This is a hook for adding
+     * custom attributes which may not be in the UML or excluded for the {@code addTree}. The main
+     * attributes of interest are {@code "name"} and {@code "type"} for referencing objects.
+     * <p>
+     * The default implementation does nothing.
+     */
+    void addCustomAttributes(final String elementName, final Class<?> type) {
+    }
+
+    /**
      * Remembers the name of child element or attribute for the given method.
      * This information is required by {@link MetadataProxy}.
      *
@@ -868,7 +775,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @throws IllegalArgumentException If the parent element doesn't exist, or if the given method
      *         is already defined for the given parent.
      */
-    private void mapName(final String parentName, final String methodName, final String elementName)
+    final void mapName(final String parentName, final String methodName, final String elementName)
             throws IllegalArgumentException
     {
         // Actually 'methodName' is the only parameter which has not been verified
