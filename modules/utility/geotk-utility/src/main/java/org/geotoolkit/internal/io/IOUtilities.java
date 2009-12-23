@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import javax.imageio.stream.ImageInputStream;
 import static java.lang.Character.isLetter;
 
 import org.geotoolkit.lang.Static;
@@ -304,10 +305,7 @@ public final class IOUtilities {
         if (path instanceof File) {
             return new FileInputStream((File) path);
         }
-        if (path instanceof URL) {
-            return ((URL) path).openStream();
-        }
-        return ((URI) path).toURL().openStream();
+        return ((path instanceof URI) ? ((URI) path).toURL() : ((URL) path)).openStream();
     }
 
     /**
@@ -321,6 +319,48 @@ public final class IOUtilities {
      */
     public static LineNumberReader openLatin(final Object path) throws IOException, ClassCastException {
         return new LineNumberReader(new InputStreamReader(open(path), "ISO-8859-1"));
+    }
+
+    /**
+     * Opens an output stream from the given {@link String}, {@link File}, {@link URL} or
+     * {@link URI}.
+     *
+     * @param  path The file to open,
+     * @return The output stream for the given file.
+     * @throws IOException If an error occured while opening the given file.
+     * @throws ClassCastException If the given object is not a known type.
+     *
+     * @since 3.07
+     */
+    public static OutputStream openWrite(Object path) throws IOException, ClassCastException {
+        if (path instanceof CharSequence) {
+            path = toFileOrURL(path.toString());
+        }
+        if (path instanceof File) {
+            return new FileOutputStream((File) path);
+        }
+        return ((path instanceof URI) ? ((URI) path).toURL() : ((URL) path)).openConnection().getOutputStream();
+    }
+
+    /**
+     * Closes the given stream if it is closeable, or do nothing otherwise. Closeable
+     * objects are any instance of {@link Closeable} or {@link ImageInputStream}.
+     * <p>
+     * <b>Note:</b> {@code ImageInputStream} does not extend {@code Closeable}, which is
+     * why it needs a particular check. Note also that {@code ImageOutputStream} extends
+     * {@code ImageInputStream}, and consequently doesn't need to be checked explicitly.
+     *
+     * @param  stream The object to close if it is closeable.
+     * @throws IOException If an error occured while closing the stream.
+     *
+     * @since 3.07
+     */
+    public static void close(final Object stream) throws IOException {
+        if (stream instanceof Closeable) {
+            ((Closeable) stream).close();
+        } else if (stream instanceof ImageInputStream) {
+            ((ImageInputStream) stream).close();
+        }
     }
 
     /**

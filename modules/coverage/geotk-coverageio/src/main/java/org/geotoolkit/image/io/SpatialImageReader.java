@@ -1009,7 +1009,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     }
 
     /**
-     * Invokes {@link #close} and log the exception if any. This method is invoked from
+     * Invokes {@link #close} and logs the exception if any. This method is invoked from
      * methods that do not allow {@link IOException} to be thrown. Since we will not use
      * the stream anymore after closing it, it should not be a big deal if an error occured.
      */
@@ -1027,7 +1027,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      * to dispose, but should always invoke {@code super.close()}.
      * <p>
      * This method is overriden and given {@code protected} access by {@link StreamImageReader}
-     * and {@link MultiFileImageReader}. It is called "{@code close}" in order to match the
+     * and {@link ImageReaderAdapter}. It is called "{@code close}" in order to match the
      * purpose which appear in the public API of those classes.
      *
      * @throws IOException If an error occured while closing a stream (applicable to subclasses only).
@@ -1044,7 +1044,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
 
     /**
      * Allows any resources held by this reader to be released. If an input stream were
-     * created by {@link StreamImageReader} or {@link MultiFileImageReader}, it will be
+     * created by {@link StreamImageReader} or {@link ImageReaderAdapter}, it will be
      * {@linkplain StreamImageReader#close() closed} before to dispose this reader.
      */
     @Override

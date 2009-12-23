@@ -170,8 +170,11 @@ public final class SupportFiles {
     /**
      * Returns the TFW suffix for the given file, URL or URI.
      * This method returns always the suffix in lower case.
+     *
+     * @param  file The file for which we want to change the suffix.
+     * @return The TFW suffix of the given file.
      */
-    private static String toSuffixTFW(final Object file) {
+    public static String toSuffixTFW(final Object file) {
         final String ext = IOUtilities.extension(file);
         final int length = ext.length();
         if (length >= 2) {
@@ -201,7 +204,18 @@ public final class SupportFiles {
             name = name + '.' + suffix;
         }
         file = new File(file.getParent(), name);
-        final BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ENCODING));
+        writeTFW(new FileOutputStream(file), tr);
+    }
+
+    /**
+     * Writes the given affine transform as a TFW file.
+     *
+     * @param  stream The output stream where to write. This stream will be closed by this method.
+     * @param  tr The affine transform to write.
+     * @throws IOException if an error occured while writing the file.
+     */
+    public static void writeTFW(final OutputStream stream, final AffineTransform tr) throws IOException {
+        final BufferedWriter out = new BufferedWriter(new OutputStreamWriter(stream, ENCODING));
         final double[] matrix = new double[6];
         tr.getMatrix(matrix);
         for (int i=0; i<matrix.length; i++) {

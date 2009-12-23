@@ -33,6 +33,7 @@ import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.RenderedImage;
+import org.geotoolkit.internal.image.io.Formats;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
@@ -637,5 +638,29 @@ public final class XImageIO {
         final Object output = writer.getOutput();
         writer.reset();
         close(output);
+    }
+
+    /**
+     * Returns the image reader provider for the given format name.
+     *
+     * @param  format The name of the provider to fetch.
+     * @return The reader provider for the given format.
+     * @throws IllegalArgumentException If no provider is found for the given format.
+     */
+    public static ImageReaderSpi getReaderSpiByFormatName(final String format) {
+        ensureNonNull("format", format);
+        return Formats.getReaderByFormatName(format, null);
+    }
+
+    /**
+     * Returns the image writer provider for the given format name.
+     *
+     * @param  format The name of the provider to fetch.
+     * @return The reader provider for the given format.
+     * @throws IllegalArgumentException If no provider is found for the given format.
+     */
+    public static ImageWriterSpi getWriterSpiByFormatName(final String format) {
+        ensureNonNull("format", format);
+        return Formats.getWriterByFormatName(format, null);
     }
 }

@@ -50,6 +50,13 @@
  *     <td>{@code "records"}</td>
  *     <td>text/plain</td>
  *     <td>Locale sensitive</td>
+ *   </tr><tr>
+ *     <td>{@link org.geotoolkit.image.io.text.WorldFileImageReader}</td>
+ *     <td>{@link org.geotoolkit.image.io.text.WorldFileImageWriter}</td>
+ *     <td>&nbsp;</td>
+ *     <td>&nbsp;</td>
+ *     <td>Require {@linkplain org.geotoolkit.image.io.text.WorldFileImageReader#registerDefaults
+ *         explicit registration}</td>
  *   </tr>
  * </table>
  * <p>

@@ -37,11 +37,15 @@ import javax.imageio.spi.ServiceRegistry;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.event.IIOReadUpdateListener;
+import javax.imageio.event.IIOReadWarningListener;
+import javax.imageio.event.IIOReadProgressListener;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.XArrays;
@@ -58,9 +62,10 @@ import org.geotoolkit.util.XArrays;
  * {@link #getWidth(int)}, {@link #getHeight(int)} and {@link #read(int)} delegate directly
  * to the main reader.
  * <p>
- * The amount of methods declared in this class is large, but the only new method is
- * {@link #createInput(String)}. All other methods override existing methods declared in
- * parent classes, mostly {@link ImageReader} and {@link SpatialImageReader}.
+ * The amount of methods declared in this class is large, but the only new methods are
+ * {@link #createInput(String)} and {@linkplain #initialize()}. All other methods override
+ * existing methods declared in parent classes, mostly {@link ImageReader} and
+ * {@link SpatialImageReader}.
  *
  * {@section Example}
  * The <cite>World File</cite> format is composed of a classical image file (usually with the
@@ -84,18 +89,18 @@ import org.geotoolkit.util.XArrays;
 @Decorator(ImageReader.class)
 public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
-     * The reader to use for reading the image in the classical image format.
+     * The reader to use for reading the pixel values.
      */
     protected final ImageReader main;
 
     /**
-     * The input types accepted by the {@linkplain #main} provider which are also
-     * accepted by this provider, or {@code null} if none.
+     * The input types accepted by both the {@linkplain #main} reader and this reader.
      */
     private final Class<?>[] inputTypes;
 
     /**
      * {@code true} if the {@link #main} reader accepts inputs of kind {@link ImageInputStream}.
+     * If the input types are unspecified, then this field is {@code null}.
      */
     private final boolean acceptStream;
 
@@ -103,14 +108,14 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * Constructs a new image reader.
      *
      * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
-     * @param main The reader to use for reading the image in the classical image format.
+     * @param main The reader to use for reading the pixel values.
      */
     protected ImageReaderAdapter(final Spi provider, final ImageReader main) {
         super(provider);
         this.main = main;
         Spi.ensureNonNull("main", main);
         if (provider != null) {
-            inputTypes   = provider.getMainInputTypes();
+            inputTypes   = provider.getMainTypes();
             acceptStream = provider.acceptStream;
         } else {
             inputTypes   = null;
@@ -126,7 +131,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * time after the {@link #setInput(Object, boolean, boolean) setInput} method has been invoked.
      * <p>
      * The only {@code readerID} argument value accepted by the default implementation is
-     * {@code "main"}; any other argument value cause a {@code null} value to be returned.
+     * {@code "main"}; any other argument value causes a {@code null} value to be returned.
      * However subclasses can override this method for supporting more reader types. The
      * table below summarizes a few types supported by this reader and different subclasses:
      * <p>
@@ -150,17 +155,19 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      *   </tr>
      * </table>
      * <p>
-     * The default implementation first checks if the {@linkplain #main} reader can accept directly
+     * The default implementation first checks if the {@linkplain #main} reader accepts directly
      * the {@linkplain #input input} of this reader. If so, then that input is returned with no
      * change. Otherwise the input is wrapped in an {@linkplain ImageInputStream}, which is
      * returned. The input stream assigned to the {@linkplain #main} reader will be closed by
      * the {@link #close()} method.
      *
      * @param  readerID Identifier of the reader for which an input is needed.
-     * @return The input to give to the {@linkplain #main} reader, or {@code null} if this
+     * @return The input to give to the identified reader, or {@code null} if this
      *         method can not create such input.
      * @throws IllegalStateException if the {@linkplain #input input} source has not been set.
-     * @throws IOException If an error occured while creating the input for the main reader.
+     * @throws IOException If an error occured while creating the input for the reader.
+     *
+     * @see ImageWriterAdapter#createOutput(String)
      */
     protected Object createInput(final String readerID) throws IllegalStateException, IOException {
         final Object input = this.input;
@@ -181,9 +188,22 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     }
 
     /**
+     * Invoked automatically when the {@linkplain #main} reader has been given a new input.
+     * When this method is invoked, the main reader input has already been set to the value
+     * returned by <code>{@linkplain #createInput(String) createInput}("main")</code>.
+     * <p>
+     * The default implementation does nothing. Subclasses can override this method
+     * for performing additional initialization.
+     *
+     * @throws IOException If an error occured while initializing the main reader.
+     */
+    protected void initialize() throws IOException {
+    }
+
+    /**
      * Ensures that the input of the {@linkplain #main} reader is initialized.
      */
-    private void ensureInputInitialized() throws IOException {
+    private void ensureInitialized() throws IOException {
         if (main.getInput() == null) {
             final Object mainInput = createInput("main");
             if (mainInput == null) {
@@ -191,6 +211,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                         Errors.Keys.UNKNOW_TYPE_$1, input.getClass()));
             }
             main.setInput(mainInput, seekForwardOnly, ignoreMetadata);
+            initialize();
         }
         sync();
     }
@@ -205,11 +226,11 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the number of images available from the current input source.
      * The default implementation ensures that the {@linkplain #main} reader
-     * has its input set, then delegates to that reader.
+     * has been {@linkplain #initialize() initialized}, then delegates to that reader.
      */
     @Override
     public int getNumImages(final boolean allowSearch) throws IllegalStateException, IOException {
-        ensureInputInitialized();
+        ensureInitialized();
         final int n = main.getNumImages(allowSearch);
         sync();
         return n;
@@ -476,7 +497,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      */
     @Override
     public SpatialMetadata getStreamMetadata() throws IOException {
-        ensureInputInitialized();
+        ensureInitialized();
         final SpatialMetadata metadata = super.getStreamMetadata();
         sync();
         return metadata;
@@ -711,8 +732,92 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     }
 
     /**
+     * Adds the given listener to the list of registered warning listeners.
+     * Thie listener is added both to this reader and to the {@linkplain #main} reader.
+     */
+    @Override
+    public void addIIOReadWarningListener(final IIOReadWarningListener listener) {
+        super.addIIOReadWarningListener(listener);
+        main .addIIOReadWarningListener(listener);
+    }
+
+    /**
+     * Removes the given listener from the list of registered warning listeners.
+     */
+    @Override
+    public void removeIIOReadWarningListener(final IIOReadWarningListener listener) {
+        super.removeIIOReadWarningListener(listener);
+        main .removeIIOReadWarningListener(listener);
+    }
+
+    /**
+     * Removes all currently registered warning listeners.
+     */
+    @Override
+    public void removeAllIIOReadWarningListeners() {
+        super.removeAllIIOReadWarningListeners();
+        main .removeAllIIOReadWarningListeners();
+    }
+
+    /**
+     * Adds the given listener to the list of registered progress listeners. This method
+     * adds the listener only to the {@linkplain #main} reader, not to this reader, in
+     * order to ensure that progress methods are invoked only once.
+     */
+    @Override
+    public void addIIOReadProgressListener(final IIOReadProgressListener listener) {
+        main.addIIOReadProgressListener(listener);
+    }
+
+    /**
+     * Removes the given listener from the list of registered progress listeners.
+     */
+    @Override
+    public void removeIIOReadProgressListener(final IIOReadProgressListener listener) {
+        super.removeIIOReadProgressListener(listener); // As a safety.
+        main .removeIIOReadProgressListener(listener);
+    }
+
+    /**
+     * Removes all currently registered progress listeners.
+     */
+    @Override
+    public void removeAllIIOReadProgressListeners() {
+        super.removeAllIIOReadProgressListeners(); // As a safety.
+        main .removeAllIIOReadProgressListeners();
+    }
+
+    /**
+     * Adds the given listener to the list of registered update listeners. This method
+     * adds the listener only to the {@linkplain #main} reader, not to this reader, in
+     * order to ensure that update methods are invoked only once.
+     */
+    @Override
+    public void addIIOReadUpdateListener(final IIOReadUpdateListener listener) {
+        main.addIIOReadUpdateListener(listener);
+    }
+
+    /**
+     * Removes the given listener from the list of registered update listeners.
+     */
+    @Override
+    public void removeIIOReadUpdateListener(final IIOReadUpdateListener listener) {
+        super.removeIIOReadUpdateListener(listener); // As a safety.
+        main .removeIIOReadUpdateListener(listener);
+    }
+
+    /**
+     * Removes all currently registered update listeners.
+     */
+    @Override
+    public void removeAllIIOReadUpdateListeners() {
+        super.removeAllIIOReadUpdateListeners(); // As a safety.
+        main .removeAllIIOReadUpdateListeners();
+    }
+
+    /**
      * Requests that any current read operation be aborted. The default implementation delegates
-     * to both the {@linkplain #main} reader and the super-class method.
+     * to both the {@linkplain #main} reader and to the super-class method.
      */
     @Override
     public void abort() {
@@ -722,7 +827,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
 
     /**
      * Restores the {@code ImageReader} to its initial state. The default implementation
-     * delegates to both the {@linkplain #main} reader and the super-class method.
+     * delegates to both the {@linkplain #main} reader and to the super-class method.
      */
     @Override
     public void reset() {
@@ -732,7 +837,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
 
     /**
      * Allows any resources held by this object to be released. The default implementation
-     * delegates to both the {@linkplain #main} reader and the super-class method.
+     * delegates to both the {@linkplain #main} reader and to the super-class method.
      */
     @Override
     public void dispose() {
@@ -762,11 +867,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         final Object mainInput = main.getInput();
         main.setInput(null);
         if (mainInput != null && mainInput != input) {
-            if (mainInput instanceof ImageInputStream) {
-                ((ImageInputStream) mainInput).close();
-            } else if (mainInput instanceof Closeable) {
-                ((Closeable) mainInput).close();
-            }
+            IOUtilities.close(mainInput);
         }
         sync();
     }
@@ -840,9 +941,10 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         };
 
         /**
-         * List of legal input types for {@link StreamImageReader}.
+         * List of legal input and output types for {@link ImageReaderAdapter}
+         * and {@link ImageWriterAdapter}.
          */
-        private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
+        static final Class<?>[] TYPES = new Class<?>[] {
             File.class,
             URI.class,
             URL.class,
@@ -850,7 +952,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         };
 
         /**
-         * The provider of the readers to use for reading the image in the classical image format.
+         * The provider of the readers to use for reading the pixel values.
          * This is the provider specified at the construction time.
          */
         protected final ImageReaderSpi main;
@@ -883,7 +985,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             names      = main.getFormatNames();
             suffixes   = main.getFileSuffixes();
             MIMETypes  = main.getMIMETypes();
-            inputTypes = INPUT_TYPES;
+            inputTypes = TYPES;
             supportsStandardStreamMetadataFormat = main.isStandardStreamMetadataFormatSupported();
             supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
             nativeStreamMetadataFormatClassName  = main.getNativeStreamMetadataFormatName();
@@ -946,22 +1048,29 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          */
         @Override
         public IIOMetadataFormat getImageMetadataFormat(final String formatName) {
-            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(true)) {
+            if (SpatialMetadataFormat.FORMAT_NAME.equals(formatName) && isSpatialMetadataSupported(false)) {
                 return SpatialMetadataFormat.IMAGE;
             }
-            return main.getStreamMetadataFormat(formatName);
+            return main.getImageMetadataFormat(formatName);
         }
 
         /**
          * Returns the input types accepted by the {@linkplain #main} provider which are also
          * accepted by this provider, or {@code null} if none.
          */
-        final Class<?>[] getMainInputTypes() {
-            final Class<?>[] types = main.getInputTypes();
+        final Class<?>[] getMainTypes() {
+            return getMainTypes(inputTypes, main.getInputTypes());
+        }
+
+        /**
+         * Implementation of {@link #getMainTypes()}. The {@code types} argument must be a copy
+         * of the main types array, because it will be modified in-place.
+         */
+        static Class<?>[] getMainTypes(final Class<?>[] adapterTypes, final Class<?>[] types) {
             int count = 0;
             for (int i=0; i<types.length; i++) {
                 final Class<?> mainType = types[i];
-                for (final Class<?> thisType : inputTypes) {
+                for (final Class<?> thisType : adapterTypes) {
                     if (mainType.isAssignableFrom(thisType)) {
                         types[count++] = mainType;
                         break;

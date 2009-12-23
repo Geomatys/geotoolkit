@@ -78,7 +78,7 @@ import org.geotoolkit.util.logging.Logging;
  * @version 3.07
  *
  * @see <a href="http://en.wikipedia.org/wiki/World_file">World File Format Description</a>
- * @see WorldFileWriter
+ * @see WorldFileImageWriter
  *
  * @since 3.07
  * @module
@@ -95,7 +95,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * Constructs a new image reader.
      *
      * @param provider The {@link ImageReaderSpi} that is constructing this object, or {@code null}.
-     * @param main The reader to use for reading the image in the classical image format.
+     * @param main The reader to use for reading the pixel values.
      */
     public WorldFileImageReader(final Spi provider, final ImageReader main) {
         super(provider, main);
@@ -135,6 +135,8 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * @return The given kind of input typically as a {@link File} or {@link java.net.URL}
      *         object, or {@code null} if there is no input for the given identifier.
      * @throws IOException If an error occured while creating the input.
+     *
+     * @see WorldFileImageWriter#createOutput(String)
      */
     @Override
     protected Object createInput(final String readerID) throws IOException {
@@ -236,7 +238,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * At the difference of other {@code ImageReader} plugins, the {@code WorldFileImageReader}
      * plugin is not automatically registered in the JVM. This is because there is many plugins
      * to register (one instance of this {@code Spi} class for each format to wrap), and because
-     * attempts to get the wrapper {@code ImageReader} while {@link IIORegistry} is scanning the
+     * attempts to get an {@code ImageReader} to wrap while {@link IIORegistry} is scanning the
      * classpath for services cause an infinite loop. To enable the <cite>World File</cite> plugins,
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *

@@ -77,13 +77,13 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
      * Index of the image in process of being written. This convenience index is reset to 0
      * by {@link #close} method.
      */
-    private int imageIndex = 0;
+    int imageIndex;
 
     /**
      * Index of the ithumbnail in process of being written. This convenience index
      * is reset to 0 by {@link #close} method.
      */
-    private int thumbnailIndex = 0;
+    private int thumbnailIndex;
 
     /**
      * Constructs a {@code SpatialImageWriter}.
@@ -101,8 +101,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
      */
     @Override
     public void setOutput(final Object output) {
-        imageIndex = 0;
-        thumbnailIndex = 0;
+        closeSilently();
         super.setOutput(output);
     }
 
@@ -460,11 +459,49 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
     }
 
     /**
-     * To be overriden and made {@code protected} by {@link StreamImageWriter} only.
+     * Invokes {@link #close} and logs the exception if any. This method is invoked from
+     * methods that do not allow {@link IOException} to be thrown. Since we will not use
+     * the stream anymore after closing it, it should not be a big deal if an error occured.
+     */
+    final void closeSilently() {
+        try {
+            close();
+        } catch (IOException exception) {
+            Logging.unexpectedException(LOGGER, getClass(), "close", exception);
+        }
+    }
+
+    /**
+     * Invoked when a new output is set or when the writer is disposed. The default implementation
+     * clears the internal cache. Sub-classes can override this method if they have more resources
+     * to dispose, but should always invoke {@code super.close()}.
+     * <p>
+     * This method is overriden and given {@code protected} access by {@link StreamImageWriter}
+     * and {@link ImageWriterAdapter}. It is called "{@code close}" in order to match the
+     * purpose which appear in the public API of those classes.
+     *
+     * @throws IOException If an error occured while closing a stream (applicable to subclasses only).
      */
     void close() throws IOException {
         imageIndex = 0;
         thumbnailIndex = 0;
+    }
+
+    /*
+     * There is no need to override reset(), because the default ImageReader.reset()
+     * implementation invokes setInput(null, false, false), which in turn invokes our
+     * closeSilently() method.
+     */
+
+    /**
+     * Allows any resources held by this writer to be released. If an output stream were
+     * created by {@link StreamImageWriter} or {@link ImageWriterAdapter}, it will be
+     * {@linkplain StreamImageWriter#close() closed} before to dispose this reader.
+     */
+    @Override
+    public void dispose() {
+        closeSilently();
+        super.dispose();
     }
 
 

@@ -28,7 +28,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -179,6 +178,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      */
     @Override
     protected void close() throws IOException {
+        super.close();
         if (closeOnReset != null) {
             closeOnReset.close();
         }
@@ -188,46 +188,13 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
     }
 
     /**
-     * Invokes {@link #close} and log the exception if any. This method is invoked from
-     * methods that do not allow {@link IOException} to be thrown. Since we will not use
-     * the stream anymore after closing it, it should not be a big deal if an error occured.
-     */
-    private void closeSilently() {
-        try {
-            close();
-        } catch (IOException exception) {
-            Logging.unexpectedException(LOGGER, getClass(), "close", exception);
-        }
-    }
-
-    /**
-     * Restores the {@code StreamImageWriter} to its initial state. If an output stream were
-     * created by a previous call to {@link #getOutputStream}, it will be {@linkplain #close
-     * closed} before to reset this writer.
-     */
-    @Override
-    public void reset() {
-        closeSilently();
-        super.reset();
-    }
-
-    /**
-     * Allows any resources held by this writer to be released. If an output stream were created
-     * by a previous call to {@link #getOutputStream}, it will be {@linkplain #close closed}
-     * before to dispose this writer.
-     */
-    @Override
-    public void dispose() {
-        closeSilently();
-        super.dispose();
-    }
-
-    /**
-     * Closes the streams. This method is automatically invoked by the garbage collector.
+     * Invokes the {@link #close()} method when this writer is garbage-collected.
+     * Note that this will actually close the stream only if it has been created
+     * by this writer, rather than supplied by the user.
      */
     @Override
     protected void finalize() throws Throwable {
-        close();
+        closeSilently();
         super.finalize();
     }
 

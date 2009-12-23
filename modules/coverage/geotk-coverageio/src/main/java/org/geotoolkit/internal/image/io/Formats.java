@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
@@ -182,7 +183,7 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
      * standard readers instead than JAI ones, except for the TIFF format for which the
      * JAI reader is preferred.
      * <p>
-     * <b>NOTE:</b> The rule for preferring a reader are the some ones than the rules implemented
+     * <b>NOTE:</b> The rule for preferring a reader are the same ones than the rules implemented
      * by {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}. If the rule in
      * the above methods are modified, the rules in this method shall be modified accordingly.
      *
@@ -191,19 +192,49 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
      * @return The reader provider for the given format, or {@code null} if {@code format} is null.
      * @throws IllegalArgumentException If no provider is found for the given format.
      */
-    public static ImageReaderSpi getReaderByFormatName(String format,
+    public static ImageReaderSpi getReaderByFormatName(final String format,
             final Class<? extends ImageReaderSpi> exclude) throws IllegalArgumentException
+    {
+        return getByFormatName(ImageReaderSpi.class, format, exclude);
+    }
+
+    /**
+     * Returns the image writer provider for the given format name. This method prefers
+     * standard writers instead than JAI ones, except for the TIFF format for which the
+     * JAI writer is preferred.
+     * <p>
+     * <b>NOTE:</b> The rule for preferring a writer are the same ones than the rules implemented
+     * by {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}. If the rule in
+     * the above methods are modified, the rules in this method shall be modified accordingly.
+     *
+     * @param  format The name of the provider to fetch, or {@code null}.
+     * @param  exclude Base class of writers to exclude, or {@code null} if none.
+     * @return The writer provider for the given format, or {@code null} if {@code format} is null.
+     * @throws IllegalArgumentException If no provider is found for the given format.
+     */
+    public static ImageWriterSpi getWriterByFormatName(final String format,
+            final Class<? extends ImageWriterSpi> exclude) throws IllegalArgumentException
+    {
+        return getByFormatName(ImageWriterSpi.class, format, exclude);
+    }
+
+    /**
+     * Implementation of {@link #getReaderByFormatName} and {@link #getWriterByFormatName}.
+     */
+    private static <T extends ImageReaderWriterSpi> T getByFormatName(
+            final Class<T> type, String format, final Class<? extends T> exclude)
+            throws IllegalArgumentException
     {
         if (format == null) {
             return null;
         }
         format = format.trim();
-        ImageReaderSpi fallback = null;
+        T fallback = null;
         final boolean preferJAI = format.equalsIgnoreCase("TIFF");
         final IIORegistry registry = IIORegistry.getDefaultInstance();
-        final Iterator<ImageReaderSpi> it=registry.getServiceProviders(ImageReaderSpi.class, true);
+        final Iterator<T> it=registry.getServiceProviders(type, true);
         while (it.hasNext()) {
-            final ImageReaderSpi provider = it.next();
+            final T provider = it.next();
             if (exclude != null && exclude.isInstance(provider)) {
                 continue;
             }
