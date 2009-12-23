@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -40,6 +41,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
@@ -50,6 +52,7 @@ import org.opengis.geometry.BoundingBox;
  *
  * @author Justin
  * @author Andrea Aime
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public final class DefaultSimpleFeature implements SimpleFeature {
@@ -400,7 +403,7 @@ public final class DefaultSimpleFeature implements SimpleFeature {
             final int index = idx;
             AttributeDescriptor descriptor = featureType.getDescriptor(index);
             if (descriptor instanceof GeometryDescriptor) {
-                return new DefaultGeometryAttribute(values[index], (GeometryDescriptor) descriptor, null);
+                return new GeometryAttribut(index);
             } else {
                 return new Attribute(index);
             }
@@ -662,5 +665,48 @@ public final class DefaultSimpleFeature implements SimpleFeature {
         public void validate() {
             FeatureValidationUtilities.validate(getDescriptor(), values[index]);
         }
+    }
+
+    private class GeometryAttribut extends Attribute implements GeometryAttribute{
+
+        /**
+         * bounds, derived
+         */
+        protected BoundingBox bounds;
+
+        GeometryAttribut(int index){
+            super(index);
+        }
+
+        @Override
+        public GeometryType getType() {
+            return getDescriptor().getType();
+        }
+
+        @Override
+        public GeometryDescriptor getDescriptor() {
+            return (GeometryDescriptor) super.getDescriptor();
+        }
+
+        @Override
+        public BoundingBox getBounds() {
+            if (bounds == null) {
+                final JTSEnvelope2D bbox = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
+                final Geometry geom = (Geometry) getValue();
+                if (geom != null) {
+                    bbox.expandToInclude(geom.getEnvelopeInternal());
+                } else {
+                    bbox.setToNull();
+                }
+                bounds = bbox;
+            }
+            return bounds;
+        }
+
+        @Override
+        public void setBounds(BoundingBox bbox) {
+            bounds = bbox;
+        }
+
     }
 }
