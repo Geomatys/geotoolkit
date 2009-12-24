@@ -195,7 +195,7 @@ public class BoundingBoxType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder('[').append(this.getClass().getSimpleName()).append("]:").append('\n');
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]:").append('\n');
         if (crs != null)
             s.append("CRS:").append(crs).append('\n');
         if (dimensions != null) {

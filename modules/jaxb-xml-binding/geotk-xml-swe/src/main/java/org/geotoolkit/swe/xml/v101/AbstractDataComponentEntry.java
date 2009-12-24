@@ -157,7 +157,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder('[').append(this.getClass().getName()).append("]\n");
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getName()).append("]\n");
         if (id != null) {
             s.append("id =").append(id);
         }

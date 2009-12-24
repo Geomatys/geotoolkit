@@ -192,7 +192,7 @@ public class OnlineResourceType extends AbstractOnlineResourceType {
      */
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder('[').append(this.getClass().getSimpleName()).append(']');
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
        
         if(actuate != null) {
             s.append("actuate=").append(actuate).append('\n');

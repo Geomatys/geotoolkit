@@ -711,7 +711,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']');
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getName()).append(']');
         sb.append('\n');
         if (coordinateReferenceSystem != null)
             sb.append("crs: ").append(coordinateReferenceSystem).append('\n');
