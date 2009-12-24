@@ -20,7 +20,9 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.RecordType;
@@ -244,7 +246,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         substitution.put(GridCoordinates.class, int[].class);    // CV_GridEnvelope.low/high
         substitution.put(DirectPosition.class,  double[].class); // CV_RectifiedGrid.origin
         standard = MetadataStandard.ISO_19123;
-        addTree(standard, RectifiedGrid.class, "RectifiedGridDomain", addToElement, substitution);
+        addIncompleteTree(standard, RectifiedGrid.class, "RectifiedGridDomain", addToElement, substitution);
         /*
          * Following is part of ISO 19123 and "GML in JPEG 2000" specifications,
          * but under different names. We use the "GML in JPEG 2000" names.
@@ -281,15 +283,22 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         substitution.put(Boolean.TYPE,              null);  // CD_Ellipsoid.isIvfDefinitive
         /*
          * Assume that the CRS will be geodetic CRS.
+         * After the tree has been added, we will generalize the declared types.
          */
         substitution.put(Datum.class, GeodeticDatum.class);
         MetadataStandard standard = MetadataStandard.ISO_19111;
-        addTree(standard, SingleCRS.class, "CRS", addToElement, substitution);
+        final Set<Class<?>> incomplete = new HashSet<Class<?>>(4);
+        incomplete.add(CoordinateReferenceSystem.class);
+        incomplete.add(CoordinateSystem.class);
+        incomplete.add(GeodeticDatum.class);
+        addTree(standard, SingleCRS.class, "CoordinateReferenceSystem", addToElement, false, substitution, incomplete);
+        addObjectValue("CoordinateReferenceSystem", CoordinateReferenceSystem.class, true, null);
+        addObjectValue("Datum", Datum.class, true, null);
         /*
          * We need to add the axes explicitly, because the method signature is
          * CoordinateSystem.getAxis(int) which is not recognized by our reflection API.
          */
-        addTree(standard, CoordinateSystemAxis[].class, "Axes", "CoordinateSystem", substitution);
+        addTree(standard, CoordinateSystemAxis[].class, "Axes", "CoordinateSystem", true, substitution);
         /*
          * Add projection parameters.
          */
@@ -298,7 +307,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         substitution.put(PositionalAccuracy.class,        null);
         substitution.put(CoordinateReferenceSystem.class, null);
         substitution.put(ParameterValueGroup.class,       null);
-        addTree(standard, Projection.class, "Projection", "CRS", substitution);
+        addIncompleteTree(standard, Conversion.class, "Projection", "CoordinateReferenceSystem", substitution);
         /*
          * Adds the parameter manually, because they are not in the ISO 19111 package
          * (so the MetadataStandard.ISO_19111 doesn't known them) and because we want

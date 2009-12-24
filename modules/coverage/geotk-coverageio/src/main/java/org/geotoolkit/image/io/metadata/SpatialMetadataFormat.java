@@ -64,7 +64,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PrimeMeridian;
-import org.opengis.referencing.operation.Projection;
+import org.opengis.referencing.operation.Conversion;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
 
@@ -237,7 +237,7 @@ import org.geotoolkit.resources.Errors;
     ├───OffsetVectors
     │   └───OffsetVector
     │       └───values
-    └───<b>CRS</b> : {@linkplain CoordinateReferenceSystem}
+    └───<b>CoordinateReferenceSystem</b> : {@linkplain CoordinateReferenceSystem}
         ├───name
         ├───type
         ├───<b>CoordinateSystem</b> : {@linkplain CoordinateSystem}
@@ -265,7 +265,7 @@ import org.geotoolkit.resources.Errors;
         │       ├───name
         │       ├───greenwichLongitude
         │       └───angularUnit
-        └───<b>Projection</b> : {@linkplain Projection}
+        └───<b>Projection</b> : {@linkplain Conversion}
             ├───name
             └───Parameters : {@linkplain ParameterValueGroup}
                 └───ParameterValue : {@linkplain ParameterValue}
@@ -454,7 +454,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param parentName    The name of the parent node to where to add the child.
      * @param substitution  The map of children types to substitute by other types, or {@code null}.
      */
-    protected void addTree(final MetadataStandard standard, Class<?> type,
+    protected void addTree(final MetadataStandard standard, final Class<?> type,
             final String elementName, final String parentName,
             final Map<Class<?>,Class<?>> substitution)
     {
@@ -462,6 +462,49 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         ensureNonNull("type",        type);
         ensureNonNull("elementName", elementName);
         ensureNonNull("parentName",  parentName);
+        addTree(standard, type, elementName, parentName, false, substitution);
+    }
+
+    /**
+     * Like the previous {@code addTree} method above, but with some additional options.
+     * This method is not yet public because we are waiting to gain more experience in
+     * order to see if more parameters need to be added.
+     *
+     * @param mandatory {@code true} if the element should be mandatory, or {@code false}
+     *        if optional.
+     */
+    final void addTree(final MetadataStandard standard, final Class<?> type,
+            final String elementName, final String parentName, final boolean mandatory,
+            final Map<Class<?>,Class<?>> substitution)
+    {
+        final Set<Class<?>> incomplete = Collections.<Class<?>>emptySet();
+        addTree(standard, type, elementName, parentName, mandatory, substitution, incomplete);
+    }
+
+    /**
+     * Adds a tree for an element that we plan to complete manually later.
+     * This method uses a more conservative algorithm for choosing the child policy.
+     */
+    final void addIncompleteTree(final MetadataStandard standard, final Class<?> type,
+            final String elementName, final String parentName,
+            final Map<Class<?>,Class<?>> substitution)
+    {
+        addTree(standard, type, elementName, parentName, false, substitution, null);
+    }
+
+    /**
+     * Implementation of the above {@code addTree} method with additional arguments.
+     * Not public because the API may change as we get more experience.
+     *
+     * @param mandatory {@code true} if the element to add is mandatory.
+     * @param incomplete Set of types that we plan to complete manually later. The method will
+     *        use a more conservative policy for determining the child policy of those types.
+     *        A {@code null} value means that every types are incomplete.
+     */
+    final void addTree(final MetadataStandard standard, Class<?> type,
+            final String elementName, final String parentName, final boolean mandatory,
+            final Map<Class<?>,Class<?>> substitution, final Set<Class<?>> incomplete)
+    {
         final Set<Class<?>> exclude = new HashSet<Class<?>>();
         if (substitution != null) {
             for (final Map.Entry<Class<?>,Class<?>> entry : substitution.entrySet()) {
@@ -488,7 +531,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 identifier = elementName;
             }
         }
-        addTree(standard, type, identifier, elementName, parentName, 0, max, null, exclude, substitution);
+        addTree(standard, type, identifier, elementName, parentName,
+                mandatory ? 1 : 0, max, null, exclude, substitution, incomplete);
     }
 
     /**
@@ -505,15 +549,16 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param maxOccurence Maximal occurence of the element or attribute in the parent node.
      * @param restriction  The restriction on the valid values, or {@code null} if none.
      * @param exclude      The attribute types to exclude. This set will be modified.
-     * @param substitution The classes to substitute by other classes.
-     *        This user-supplied map applies only on childs and is not modified.
+     * @param substitution The classes to substitute by other classes. Applies only to childs.
+     * @param incomplete   Set of types that we plan to complete manually later, or {@code null} for all.
      * @return The {@code elementName}, or a modified version of it if that method
      *         modified the case, or {@code null} if it has not been added.
      */
     private String addTree(final MetadataStandard standard, final Class<?> type,
             String identifier, String elementName, String parentName,
             final int minOccurence, final int maxOccurence, final ValueRestriction restriction,
-            final Set<Class<?>> exclude, final Map<Class<?>,Class<?>> substitution)
+            final Set<Class<?>> exclude, final Map<Class<?>,Class<?>> substitution,
+            final Set<Class<?>> incomplete)
     {
         if (maxOccurence == 0) {
             return null;
@@ -635,8 +680,15 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         propertyTypes = standard.asTypeMap       (type, TypeValuePolicy.PROPERTY_TYPE,  NAME_POLICY);
         elementTypes  = standard.asTypeMap       (type, TypeValuePolicy.ELEMENT_TYPE,   NAME_POLICY);
         restrictions  = standard.asRestrictionMap(type, NullValuePolicy.NON_NULL,       NAME_POLICY);
+        final boolean isComplete = incomplete != null && !incomplete.contains(type);
         for (final Map.Entry<String,Class<?>> entry : elementTypes.entrySet()) {
             final Class<?> candidate = entry.getValue();
+            if (isComplete && exclude.contains(candidate)) {
+                // If the caller does not plan to complete manually the tree after this method,
+                // then the excluded types should not be considered when determining the child
+                // policy. Note that a null 'incomplete' map means that every types are incomplete.
+                continue;
+            }
             if (standard.isMetadata(candidate) && !CodeList.class.isAssignableFrom(candidate)) {
                 final ValueRestriction vr = restrictions.get(entry.getKey());
                 if (vr != null) {
@@ -736,7 +788,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
              */
             if (exclude.add(childType)) {
                 childName = addTree(standard, childType, identifiers.get(childName),
-                        childName, elementName, min, max, vr, exclude, substitution);
+                        childName, elementName, min, max, vr, exclude, substitution, incomplete);
                 if (!exclude.remove(childType)) {
                     throw new AssertionError(childType);
                 }
@@ -750,6 +802,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
 
     /**
      * Returns the code list identifiers. This is a hook for overriding by subclasses.
+     * {@link PredefinedMetadataFormat} will override this method for modifying a code
+     * inherited from a legacy OGC specification.
      */
     String[] getCodeList(final Class<CodeList<?>> codeType) {
         return CodeLists.identifiers(codeType);
