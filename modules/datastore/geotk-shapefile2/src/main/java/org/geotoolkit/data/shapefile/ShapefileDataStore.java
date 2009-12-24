@@ -491,12 +491,6 @@ public class ShapefileDataStore extends AbstractDataStore{
     // utils ///////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public void typeCheck(Name candidate) throws DataStoreException{
-        if(!getName().equals(candidate)){
-            throw new DataStoreException("Type name : " + candidate +" don't exist in this datastore, available names are : " + getName());
-        }
-    }
-
     /**
      * Obtain the FeatureType of the given name. ShapefileDataStore contains
      * only one FeatureType.

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -158,6 +159,26 @@ public abstract class AbstractDataStore implements DataStore{
     ////////////////////////////////////////////////////////////////////////////
     // useful methods for datastore that doesn't implement all query parameters/
     ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Convinient method to check that the given type name exist.
+     * Will raise a datastore exception if the name do not exist in this datastore.
+     * @param candidate Name to test.
+     * @throws DataStoreException if name do not exist.
+     */
+    protected void typeCheck(Name candidate) throws DataStoreException{
+
+        final Collection<Name> names = getNames();
+        if(!names.contains(candidate)){
+            final StringBuilder sb = new StringBuilder("Type name : ");
+            sb.append(candidate);
+            sb.append(" do not exist in this datastore, available names are : ");
+            for(final Name n : names){
+                sb.append(n).append(", ");
+            }
+            throw new DataStoreException(sb.toString());
+        }
+    }
 
     /**
      * Wrap a feature reader with a query.

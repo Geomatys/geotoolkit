@@ -3,7 +3,7 @@
         Maven Project Configuration File                                        
                                                                                 
         The Geotoolkit Project                                                    
-            http://www.geotoolkit.org/                                                     
+            http://www.geotoolkit.org/                                                         
      ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>datastore</artifactId>
+    <artifactId>geotk-jdbc</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,9 +22,13 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-jdbc</artifactId>
-  <packaging>pom</packaging>
-  <name>DataStore JDBC</name>
+  <artifactId>geotk-jdbc-core2</artifactId>
+  <packaging>jar</packaging>
+  <name>DataStore JDBC Core2 (Revision)</name>
+
+  <description>
+	DataStore support for JDBC based data stores.
+  </description>
 
 
   <!-- =========================================================== -->
@@ -43,9 +47,42 @@
     </developer>
   </developers>
 
-  <modules>
-    <module>geotk-jdbc-core</module>
-    <module>geotk-jdbc-core2</module>
-    <module>geotk-jdbc-postgis</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-datastore-core2</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-filter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
