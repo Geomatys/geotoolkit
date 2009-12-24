@@ -126,24 +126,8 @@ public class AddDelta extends AbstractDelta{
     @Override
     public void commit(DataStore store) throws DataStoreException {
         final FeatureWriter writer = store.getFeatureWriterAppend(type);
-
-        try{
-            for(final Feature f : features){
-                final Feature candidate = writer.next();
-
-                System.out.println("------------------------------------");
-                for(Property property : f.getProperties()){
-                    System.out.println(property.getName() + "\t\t" + property.getValue());
-                    candidate.getProperty(property.getName()).setValue(property.getValue());
-                    property = candidate.getProperty(property.getName());
-                    System.out.println("->" +property.getName() + "\t\t" + property.getValue());
-                }
-                writer.write();
-            }
-        }finally{
-            writer.close();
-        }
-
+        DataUtilities.write(writer, features);
+        features.clear();
     }
 
     /**

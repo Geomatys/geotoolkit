@@ -619,7 +619,10 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             featureReader = GenericEmptyFeatureIterator.createReader(getSchema());
         }
         try {
-            return new IndexedShapefileFeatureWriter(typeName.getLocalPart(), shpFiles, attReader, featureReader, this, dbfCharset);
+            FeatureWriter<SimpleFeatureType, SimpleFeature> writer = new IndexedShapefileFeatureWriter(
+                    typeName.getLocalPart(), shpFiles, attReader, featureReader, this, dbfCharset);
+            writer = handleRemaining(writer, filter);
+            return writer;
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }

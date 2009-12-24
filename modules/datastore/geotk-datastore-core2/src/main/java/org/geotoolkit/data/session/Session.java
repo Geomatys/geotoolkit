@@ -59,6 +59,12 @@ public interface Session {
 
     void add(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
+    /**
+     * Convinient method to update a single attribut.
+     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     */
+    void update(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
+
     void update(Name groupName, Filter filter, Map<AttributeDescriptor,Object> values) throws DataStoreException;
 
     void remove(Name groupName, Filter filter) throws DataStoreException;

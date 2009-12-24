@@ -16,14 +16,18 @@
  */
 package org.geotoolkit.data;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
@@ -39,6 +43,32 @@ public class DataUtilities {
     private DataUtilities() {
     }
 
+    public static List<FeatureId> write(FeatureWriter writer, FeatureCollection<? extends Feature> collection)
+            throws DataStoreRuntimeException{
+        final List<FeatureId> ids = new ArrayList<FeatureId>();
+
+        try{
+            for(final Feature f : collection){
+                final Feature candidate = writer.next();
+
+                for(Property property : f.getProperties()){
+                    candidate.getProperty(property.getName()).setValue(property.getValue());
+                    property = candidate.getProperty(property.getName());
+                }
+                writer.write();
+                ids.add(candidate.getIdentifier());
+            }
+        }finally{
+            writer.close();
+        }
+
+        return ids;
+    }
+
+    /**
+     * Iterate on the given iterator and calculate count.
+     * @throws DataStoreRuntimeException
+     */
     public static long calculateCount(FeatureIterator reader) throws DataStoreRuntimeException{
         long count = 0;
 

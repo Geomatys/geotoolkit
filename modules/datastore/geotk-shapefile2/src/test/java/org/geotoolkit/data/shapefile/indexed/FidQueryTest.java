@@ -46,6 +46,8 @@ import org.opengis.filter.spatial.BBOX;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.util.Map.Entry;
+import org.geotoolkit.data.DataUtilities;
 
 public class FidQueryTest extends FIDTestCase {
     public  FidQueryTest(  ) throws IOException {
@@ -67,8 +69,7 @@ public class FidQueryTest extends FIDTestCase {
         super.setUp();
 
         URL url = backshp.toURI().toURL();
-        ds = new IndexedShapefileDataStore(url, null, false, true,
-                IndexType.QIX);
+        ds = new IndexedShapefileDataStore(url, null, false, true, IndexType.QIX);
         numFeatures = 0;
         name = ds.getNames().iterator().next();
         session = ds.createSession();
@@ -90,152 +91,147 @@ public class FidQueryTest extends FIDTestCase {
     }
 
     public void testGetByFID() throws Exception {
-
         assertFidsMatch();
-
     }
 
     public void testAddFeature() throws Exception {
-//        SimpleFeature feature = fids.values().iterator().next();
-//        SimpleFeatureType schema = (SimpleFeatureType) ds.getSchema(ds.getTypeNames()[0]);
-//
-//        SimpleFeatureBuilder build = new SimpleFeatureBuilder(schema);
-//        GeometryFactory gf = new GeometryFactory();
-//        build.add(gf.createPoint((new Coordinate(0, 0))));
-//        build.add(new Long(0));
-//        build.add(new Long(0));
-//        build.add("Hey");
-//        SimpleFeature newFeature = build.buildFeature(null);
-//        FeatureCollection<SimpleFeature> collection = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
-//        collection.add(newFeature);
-//
-//        List<FeatureId> newFids = session.addcollection);
-//        assertEquals(1, newFids.size());
-//        // this.assertFidsMatch();
-//
-//
-//        FeatureId id = newFids.iterator().next();
-//        String fid = id.getID();
-//        Filter filter = fac.id(Collections.singleton(id));
-//
-//        final QueryBuilder builder = new QueryBuilder();
-//        builder.setTypeName(schema.getName());
-//        builder.setFilter(filter);
-//        Query query = builder.buildQuery();
-//
-//
-//        FeatureIterator<SimpleFeature> features = featureStore.getFeatures(query).features();
-//        try {
-//            feature = features.next();
-//            for (int i = 0; i < schema.getAttributeCount(); i++) {
-//                Object value = feature.getAttribute(i);
-//                Object newValue = newFeature.getAttribute(i);
-//
-//                if (value instanceof Geometry) {
-//                    assertTrue(((Geometry) newValue).equals((Geometry) value));
-//                } else {
-//                    assertEquals(newValue, value);
-//                }
-//            }
-//            assertFalse(features.hasNext());
-//        } finally {
-//            if (features != null)
-//                features.close();
-//        }
+        SimpleFeature feature = fids.values().iterator().next();
+        SimpleFeatureType schema = (SimpleFeatureType) ds.getSchema(ds.getTypeNames()[0]);
+
+        SimpleFeatureBuilder build = new SimpleFeatureBuilder(schema);
+        GeometryFactory gf = new GeometryFactory();
+        build.add(gf.createPoint((new Coordinate(0, 0))));
+        build.add(new Long(0));
+        build.add(new Long(0));
+        build.add("Hey");
+        SimpleFeature newFeature = build.buildFeature(null);
+        FeatureCollection<SimpleFeature> collection = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
+        collection.add(newFeature);
+
+        List<FeatureId> newFids = DataUtilities.write(ds.getFeatureWriterAppend(name), collection);
+        assertEquals(1, newFids.size());
+        // this.assertFidsMatch();
+
+
+        FeatureId id = newFids.iterator().next();
+        Filter filter = fac.id(Collections.singleton(id));
+
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(schema.getName());
+        builder.setFilter(filter);
+        Query query = builder.buildQuery();
+
+
+        FeatureIterator<SimpleFeature> features = ds.getFeatureReader(query);
+        try {
+            feature = features.next();
+            for (int i = 0; i < schema.getAttributeCount(); i++) {
+                Object value = feature.getAttribute(i);
+                Object newValue = newFeature.getAttribute(i);
+
+                if (value instanceof Geometry) {
+                    assertTrue(((Geometry) newValue).equals((Geometry) value));
+                } else {
+                    assertEquals(newValue, value);
+                }
+            }
+            assertFalse(features.hasNext());
+        } finally {
+            if (features != null)
+                features.close();
+        }
     }
 
     public void testModifyFeature() throws Exception {
-//        SimpleFeature feature = this.fids.values().iterator().next();
-//        int newId = 237594123;
-//
-//        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-//
-//        Id createFidFilter = ff.id(Collections.singleton(ff.featureId(feature
-//                .getID())));
-//
-//        SimpleFeatureType schema = feature.getFeatureType();
-//        featureStore.updateFeatures(schema.getDescriptor("ID"), new Integer(
-//                newId), createFidFilter);
-//
-//        FeatureIterator<SimpleFeature> features = featureStore.getFeatures(createFidFilter).features();
-//
-//        try {
-//            assertFalse(feature.equals(features.next()));
-//        } finally {
-//            if (features != null) {
-//                features.close();
-//            }
-//        }
-//        feature.setAttribute("ID", new Integer(newId));
-//        this.assertFidsMatch();
+        final SimpleFeature feature = this.fids.values().iterator().next();
+        final int newId = 237594123;
+
+        final Id createFidFilter = fac.id(Collections.singleton(feature.getIdentifier()));
+
+        final SimpleFeatureType schema = feature.getFeatureType();
+        session.update(schema.getName(),createFidFilter,schema.getDescriptor("ID"), new Integer(newId));
+        session.commit();
+
+        FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.filtered(name, createFidFilter));
+
+        try {
+            assertFalse(feature.equals(features.next()));
+        } finally {
+            if (features != null) {
+                features.close();
+            }
+        }
+        feature.setAttribute("ID", new Integer(newId));
+        this.assertFidsMatch();
     }
 
     public void testDeleteFeature() throws Exception {
-//        FeatureIterator<SimpleFeature> features = featureStore.getFeatures().features();
-//        SimpleFeature feature;
-//        try {
-//            feature = features.next();
-//        } finally {
-//            if (features != null)
-//                features.close();
-//        }
-//        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-//        Id createFidFilter = ff.id(Collections.singleton(ff.featureId(feature.getID())));
-//
-//        featureStore.removeFeatures(createFidFilter);
-//        fids.remove(feature.getID());
-//
-//        assertEquals(fids.size(), featureStore.getCount(QueryBuilder.all(featureStore.getName())));
-//
-//        features = featureStore.getFeatures(createFidFilter).features();
-//        try {
-//            assertFalse(features.hasNext());
-//        } finally {
-//            if (features != null)
-//                features.close();
-//        }
-//
-//        this.assertFidsMatch();
+        FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(name));
+        SimpleFeature feature;
+        try {
+            feature = features.next();
+        } finally {
+            if (features != null)
+                features.close();
+        }
+
+        Id createFidFilter = fac.id(Collections.singleton(feature.getIdentifier()));
+
+        session.remove(name,createFidFilter);
+        session.commit();
+        fids.remove(feature.getID());
+
+        assertEquals(fids.size(), ds.getCount(QueryBuilder.all(name)));
+
+        features = ds.getFeatureReader(QueryBuilder.filtered(name, createFidFilter));
+        try {
+            assertFalse(features.hasNext());
+        } finally {
+            if (features != null)
+                features.close();
+        }
+
+        this.assertFidsMatch();
 
     }
 
     public void testFIDBBoxQuery() throws Exception {
-//        FeatureIterator<SimpleFeature> features = featureStore.getFeatures().features();
-//        SimpleFeature feature;
-//        try {
-//            feature = features.next();
-//            feature = features.next();
-//            feature = features.next();
-//        } finally {
-//            if (features != null)
-//                features.close();
-//        }
-//        // FilterFactory factory = FilterFactoryFinder.createFilterFactory();
-//        // BBoxExpression bb =
-//        // factory.createBBoxExpression(feature.getBounds());
-//        //
-//        // GeometryFilter bboxFilter =
-//        // factory.createGeometryFilter(FilterType.GEOMETRY_INTERSECTS);
-//        // bboxFilter.addRightGeometry(bb);
-//        //
-//        // String geom = ds.getSchema().getDefaultGeometry().getLocalName();
-//        //
-//        // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
-//
-//        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-//        BBOX bbox = ff.bbox(ff.property(""), feature.getBounds());
-//
-//        features = featureStore.getFeatures(bbox).features();
-//
-//        try {
-//            while (features.hasNext()) {
-//                SimpleFeature newFeature = features.next();
-//                assertEquals(newFeature, fids.get(newFeature.getID()));
-//            }
-//        } finally {
-//            if (features != null)
-//                features.close();
-//        }
+        FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.all(name));
+        SimpleFeature feature;
+        try {
+            feature = features.next();
+            feature = features.next();
+            feature = features.next();
+        } finally {
+            if (features != null)
+                features.close();
+        }
+        // FilterFactory factory = FilterFactoryFinder.createFilterFactory();
+        // BBoxExpression bb =
+        // factory.createBBoxExpression(feature.getBounds());
+        //
+        // GeometryFilter bboxFilter =
+        // factory.createGeometryFilter(FilterType.GEOMETRY_INTERSECTS);
+        // bboxFilter.addRightGeometry(bb);
+        //
+        // String geom = ds.getSchema().getDefaultGeometry().getLocalName();
+        //
+        // bboxFilter.addLeftGeometry(factory.createAttributeExpression(geom));
+
+        FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
+        BBOX bbox = ff.bbox(ff.property(""), feature.getBounds());
+
+        features = ds.getFeatureReader(QueryBuilder.filtered(name, bbox));
+
+        try {
+            while (features.hasNext()) {
+                SimpleFeature newFeature = features.next();
+                assertEquals(newFeature, fids.get(newFeature.getID()));
+            }
+        } finally {
+            if (features != null)
+                features.close();
+        }
     }
 
     private void assertFidsMatch() throws IOException, DataStoreException {
@@ -244,9 +240,9 @@ public class FidQueryTest extends FIDTestCase {
 
         int i = 0;
 
-        for (Iterator iter = fids.entrySet().iterator(); iter.hasNext();) {
+        for (Iterator<Entry<String,SimpleFeature>> iter = fids.entrySet().iterator(); iter.hasNext();) {
             i++;
-            Map.Entry entry = (Map.Entry) iter.next();
+            Entry<String,SimpleFeature> entry = iter.next();
             String fid = (String) entry.getKey();
             FeatureId id = fac.featureId(fid);
             Filter filter = fac.id(Collections.singleton(id));
