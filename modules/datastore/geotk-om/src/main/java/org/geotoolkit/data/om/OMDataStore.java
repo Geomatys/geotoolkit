@@ -287,6 +287,7 @@ public class OMDataStore extends AbstractDataStore {
         FeatureIterator<SimpleFeature> iterator                = fc.features();
         int count = 0;
         while (iterator.hasNext()) {
+            iterator.next();
             count++;
         }
         return count;

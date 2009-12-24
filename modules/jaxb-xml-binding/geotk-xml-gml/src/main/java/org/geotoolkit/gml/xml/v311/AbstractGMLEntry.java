@@ -201,7 +201,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']').append('\n');
+        final StringBuilder sb = new StringBuilder('[').append(this.getClass().getSimpleName()).append(']').append('\n');
         if (id != null)
             sb.append("id:").append(id).append('\n');
         if (name != null)
