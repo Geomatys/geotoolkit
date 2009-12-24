@@ -23,6 +23,7 @@ import java.net.MalformedURLException;
 import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.ShapeTestData;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.shapefile.AbstractTestCaseSupport;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -31,6 +32,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
+import org.opengis.feature.type.Name;
 
 /**
  * @version $Id: ShapefileRTreeReadWriteTest.java 27228 2007-09-29 20:24:08Z
@@ -78,72 +81,68 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     }
 
     public void testWriteTwice() throws Exception {
-//        copyShapefiles("shapes/stream.shp");
-//        IndexedShapefileDataStore s1 = new IndexedShapefileDataStore(ShapeTestData
-//                .url(ShapeTestData.class, "shapes/stream.shp"));
-//        String typeName = s1.getTypeNames()[0];
-//        FeatureSource<SimpleFeatureType, SimpleFeature> source = s1.getFeatureSource(typeName);
-//        SimpleFeatureType type = source.getSchema();
-//        FeatureCollection<SimpleFeatureType, SimpleFeature> one = source.getFeatures();
-//
-//
-//        doubleWrite(type, one, getTempFile(), false);
-//        doubleWrite(type, one, getTempFile(), true);
-//
-//        s1.dispose();
+        copyShapefiles("shapes/stream.shp");
+        IndexedShapefileDataStore s1 = new IndexedShapefileDataStore(ShapeTestData
+                .url(ShapeTestData.class, "shapes/stream.shp"));
+        Name typeName = s1.getName();
+        SimpleFeatureType type = s1.getSchema();
+        FeatureCollection<SimpleFeature> one = s1.createSession().features(QueryBuilder.all(typeName));
+
+
+        doubleWrite(type, one, getTempFile(), false);
+        doubleWrite(type, one, getTempFile(), true);
+
+        s1.dispose();
     }
 
     private void doubleWrite(SimpleFeatureType type, FeatureCollection<SimpleFeature> one,
-            File tmp, boolean memorymapped) throws IOException, MalformedURLException {
-//        IndexedShapefileDataStore s;
-//        s = new IndexedShapefileDataStore(tmp.toURL(),
-//                memorymapped, true);
-//
-//        s.createSchema(type);
-//        FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore<SimpleFeatureType, SimpleFeature>) s.getFeatureSource(type
-//                .getTypeName());
-//
-//        store.addFeatures(one);
-//        store.addFeatures(one);
-//
-//        s = new IndexedShapefileDataStore(tmp.toURL());
-//        assertEquals(one.size() * 2, store.getCount(QueryBuilder.all(store.getName())));
+            File tmp, boolean memorymapped) throws IOException, MalformedURLException, DataStoreException {
+        IndexedShapefileDataStore s;
+        s = new IndexedShapefileDataStore(tmp.toURL(), memorymapped, true);
+
+        s.createSchema(type.getName(),type);
+
+        Session session = s.createSession();
+        session.add(type.getName(),one);
+        session.add(type.getName(),one);
+        session.commit();
+
+        s = new IndexedShapefileDataStore(tmp.toURL());
+        assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
     }
 
     void test(String f) throws Exception {
-//        File file = copyShapefiles(f); // Work on File rather than URL from JAR.
-//        IndexedShapefileDataStore s = new IndexedShapefileDataStore(file.toURI().toURL());
-//        String typeName = s.getTypeNames()[0];
-//        FeatureSource<SimpleFeatureType, SimpleFeature> source = s.getFeatureSource(typeName);
-//        SimpleFeatureType type = source.getSchema();
-//        FeatureCollection<SimpleFeatureType, SimpleFeature> one = source.getFeatures();
-//
-//        test(type, one, getTempFile(), false);
-//        test(type, one, getTempFile(), true);
-//
-//        s.dispose();
+        File file = copyShapefiles(f); // Work on File rather than URL from JAR.
+        IndexedShapefileDataStore s = new IndexedShapefileDataStore(file.toURI().toURL());
+        SimpleFeatureType type = s.getSchema();
+        FeatureCollection<SimpleFeature> one = s.createSession().features(QueryBuilder.all(type.getName()));
+
+        test(type, one, getTempFile(), false);
+        test(type, one, getTempFile(), true);
+
+        s.dispose();
     }
 
     private void test(SimpleFeatureType type, FeatureCollection<SimpleFeature> one, File tmp, boolean memorymapped)
             throws IOException, MalformedURLException, Exception {
-//        IndexedShapefileDataStore s;
-//        String typeName;
-//        s = (IndexedShapefileDataStore) new IndexedShapefileDataStore(tmp.toURL(),
-//                memorymapped, true);
-//
-//        s.createSchema(type);
-//
-//        FeatureStore<SimpleFeatureType, SimpleFeature> store = (FeatureStore<SimpleFeatureType, SimpleFeature>) s.getFeatureSource(type
-//                .getTypeName());
-//        store.addFeatures(one);
-//
-//        s = new IndexedShapefileDataStore(tmp.toURL());
-//        typeName = s.getTypeNames()[0];
-//
-//        FeatureCollection<SimpleFeatureType, SimpleFeature> two = s.getFeatureSource(typeName).getFeatures();
-//
-//        compare(one.features(), two.features());
-//        s.dispose();
+        IndexedShapefileDataStore s;
+        Name typeName;
+        s = (IndexedShapefileDataStore) new IndexedShapefileDataStore(tmp.toURL(),
+                memorymapped, true);
+
+        s.createSchema(type.getName(),type);
+
+        Session session = s.createSession();
+        session.add(s.getName(),one);
+        session.commit();
+
+        s = new IndexedShapefileDataStore(tmp.toURL());
+        typeName = s.getName();
+
+        FeatureCollection<SimpleFeature> two = s.createSession().features(QueryBuilder.all(typeName));
+
+        compare(one.iterator(), two.iterator());
+        s.dispose();
     }
 
     static void compare(FeatureIterator<SimpleFeature> fs1, FeatureIterator<SimpleFeature> fs2)
