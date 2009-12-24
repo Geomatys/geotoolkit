@@ -17,6 +17,7 @@
 package org.geotoolkit.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -43,6 +44,35 @@ public class DataUtilities {
     private DataUtilities() {
     }
 
+    public static FeatureCollection collection(Feature[] features){
+        final FeatureCollection col = new DefaultFeatureCollection("", null, Feature.class);
+        for(Feature f : features){
+            col.add(f);
+        }
+        return col;
+    }
+
+    /**
+     * Convinient method to create a featurecollection from a collection of features.
+     * @param type
+     * @param features
+     * @return FeatureCollection
+     */
+    public static FeatureCollection collection(FeatureType type, Collection<? extends Feature> features){
+        final FeatureCollection col = new DefaultFeatureCollection("", type, Feature.class);
+        col.addAll(features);
+        return col;
+    }
+
+    /**
+     * Write the features from the given collection and return the list of generated FeatureID
+     * send by the writer.
+     * 
+     * @param writer
+     * @param collection
+     * @return List of generated FeatureId
+     * @throws DataStoreRuntimeException
+     */
     public static List<FeatureId> write(FeatureWriter writer, FeatureCollection<? extends Feature> collection)
             throws DataStoreRuntimeException{
         final List<FeatureId> ids = new ArrayList<FeatureId>();

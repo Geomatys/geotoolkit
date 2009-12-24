@@ -85,6 +85,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.data.query.QueryBuilder;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -262,8 +263,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 newSchema = FeatureTypeUtilities.createSubType(getSchema(), propertyNames);
             }
 
-            return createFeatureReader(typeName, getAttributesReader(readDbf,
+            FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
                     readGeometry, query.getFilter()), newSchema);
+
+            reader = handleRemaining(reader, QueryBuilder.filtered(query.getTypeName(), query.getFilter()));
+            return reader;
+
         } catch (IOException se) {
             throw new DataStoreException("Error creating reader", se);
         }
