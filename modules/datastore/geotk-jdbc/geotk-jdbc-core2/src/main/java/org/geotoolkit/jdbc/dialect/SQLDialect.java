@@ -92,6 +92,90 @@ import org.geotoolkit.factory.HintsPending;
 public interface SQLDialect {
 
     /**
+     * The sql type to java type mappings that the datastore uses when reading
+     * and writing objects to and from the database.
+     * <p>
+     * These mappings are derived from {@link SQLDialect#registerSqlTypeToClassMappings(java.util.Map)}
+     * </p>
+     * @return The mappings, never <code>null</code>.
+     */
+    Map<Integer, Class<?>> getSqlTypeToClassMappings();
+
+    /**
+     * The sql type name to java type mappings that the dialect uses when
+     * reading and writing objects to and from the database.
+     * <p>
+     * These mappings are derived from {@link SQLDialect#registerSqlTypeNameToClassMappings(Map)}
+     * </p>
+     *
+     * @return The mappings, never <code>null<code>.
+     */
+    Map<String, Class<?>> getSqlTypeNameToClassMappings();
+
+    /**
+     * The java type to sql type mappings that the datastore uses when reading
+     * and writing objects to and from the database.
+     * <p>
+     * These mappings are derived from {@link SQLDialect#registerClassToSqlMappings(Map)}
+     * </p>
+     * @return The mappings, never <code>null</code>.
+     */
+    Map<Class<?>, Integer> getClassToSqlTypeMappings();
+
+    /**
+     * Returns any ovverides which map integer constants for database types (from {@link Types})
+     * to database type names.
+     * <p>
+     * This method will return an empty map when there are no overrides.
+     * </p>
+     */
+    Map<Integer, String> getSqlTypeToSqlTypeNameOverrides();
+
+    /**
+     * Returns the java type mapped to the specified sql type.
+     * <p>
+     * If there is no such type mapped to <tt>sqlType</tt>, <code>null</code>
+     * is returned.
+     * </p>
+     * @param sqlType The integer constant for the sql type from {@link Types}.
+     *
+     * @return The mapped java class, or <code>null</code>. if no such mapping exists.
+     */
+    Class<?> getMapping(final int sqlType);
+
+    /**
+     * Returns the java type mapped to the specified sql type name.
+     * <p>
+     * If there is no such type mapped to <tt>sqlTypeName</tt>, <code>null</code>
+     * is returned.
+     * </p>
+     * @param sqlTypeName The name of the sql type.
+     *
+     * @return The mapped java class, or <code>null</code>. if no such mapping exists.
+     */
+    Class<?> getMapping(final String sqlTypeName);
+
+    /**
+     * Returns the sql type mapped to the specified java type.
+     * <p>
+     * If there is no such type mapped to <tt>clazz</tt>, <code>Types.OTHER</code>
+     * is returned.
+     * </p>
+     * @param clazz The java class.
+     *
+     * @return The mapped sql type from {@link Types}, Types.OTHER if no such
+     * mapping exists.
+     */
+    Integer getMapping(final Class<?> clazz);
+
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+
+    /**
      * Initializes a newly created database connection.
      * <p>
      * Subclasses should override this method if there is some additional action

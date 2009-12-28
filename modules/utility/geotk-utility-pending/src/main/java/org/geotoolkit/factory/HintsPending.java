@@ -78,27 +78,6 @@ public final class HintsPending extends Hints {
      */
     public static final Key GEOMETRY_SIMPLIFICATION = new Key(Double.class);
 
-
-    ////////////////////////////////////////////////////////////////////////
-    ////////                                                        ////////
-    ////////                      Data stores                       ////////
-    ////////                                                        ////////
-    ////////////////////////////////////////////////////////////////////////
-
-    /**
-     * The maximum number of associations traversed in a datastore query.
-     * <p>
-     * This maps directly to the {@code traversalXlinkDepth} parameter in a WFS query.
-     */
-    public static final Hints.Key ASSOCIATION_TRAVERSAL_DEPTH = new Key(Integer.class);
-
-    /**
-     * The name of a property to traverse in a datastore query.
-     * <p>
-     * This maps directly to a {@code xlinkPropertyName} in a WFS query.
-     */
-    public static final Hints.Key ASSOCIATION_PROPERTY = new Key("org.opengis.filter.expression.PropertyName");
-
     private HintsPending(){}
 
 }

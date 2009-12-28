@@ -39,6 +39,7 @@ import org.opengis.filter.capability.GeometryOperand;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.util.HashMap;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
@@ -165,6 +166,125 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     protected AbstractSQLDialect(final JDBCDataStore dataStore) {
         this.dataStore = dataStore;
     }
+
+
+
+
+
+    /**
+     * sql type to java class mappings
+     */
+    private HashMap<Integer, Class<?>> sqlTypeToClassMappings;
+    /**
+     * sql type name to java class mappings
+     */
+    private HashMap<String, Class<?>> sqlTypeNameToClassMappings;
+    /**
+     * java class to sql type mappings;
+     */
+    private HashMap<Class<?>, Integer> classToSqlTypeMappings;
+    /**
+     * sql type to sql type name overrides
+     */
+    private HashMap<Integer, String> sqlTypeToSqlTypeNameOverrides;
+
+
+
+
+
+
+
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<Integer, Class<?>> getSqlTypeToClassMappings() {
+        if (sqlTypeToClassMappings == null) {
+            sqlTypeToClassMappings = new HashMap<Integer, Class<?>>();
+            registerSqlTypeToClassMappings(sqlTypeToClassMappings);
+        }
+
+        return sqlTypeToClassMappings;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String, Class<?>> getSqlTypeNameToClassMappings() {
+        if (sqlTypeNameToClassMappings == null) {
+            sqlTypeNameToClassMappings = new HashMap<String, Class<?>>();
+            registerSqlTypeNameToClassMappings(sqlTypeNameToClassMappings);
+        }
+
+        return sqlTypeNameToClassMappings;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<Class<?>, Integer> getClassToSqlTypeMappings() {
+        if (classToSqlTypeMappings == null) {
+            classToSqlTypeMappings = new HashMap<Class<?>, Integer>();
+            registerClassToSqlMappings(classToSqlTypeMappings);
+        }
+
+        return classToSqlTypeMappings;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<Integer, String> getSqlTypeToSqlTypeNameOverrides() {
+        if (sqlTypeToSqlTypeNameOverrides == null) {
+            sqlTypeToSqlTypeNameOverrides = new HashMap<Integer, String>();
+            registerSqlTypeToSqlTypeNameOverrides(sqlTypeToSqlTypeNameOverrides);
+        }
+
+        return sqlTypeToSqlTypeNameOverrides;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Class<?> getMapping(final int sqlType) {
+        return getSqlTypeToClassMappings().get(sqlType);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Class<?> getMapping(final String sqlTypeName) {
+        return getSqlTypeNameToClassMappings().get(sqlTypeName);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Integer getMapping(final Class<?> clazz) {
+        Integer mapping = getClassToSqlTypeMappings().get(clazz);
+
+        if (mapping == null) {
+            mapping = Types.OTHER;
+            LOGGER.warning("No mapping for " + clazz.getName());
+        }
+
+        return mapping;
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
 
     /**
      * {@inheritDoc }

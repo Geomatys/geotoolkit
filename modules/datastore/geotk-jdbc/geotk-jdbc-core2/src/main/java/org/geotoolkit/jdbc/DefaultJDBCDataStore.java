@@ -26,10 +26,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -40,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -676,15 +677,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
 
     /**
-     * Creates a new instance of a filter to sql encoder.
-     * <p>
-     * The <tt>featureType</tt> may be null but it is not recommended. Such a
-     * case where this may neccessary is when a literal needs to be encoded in
-     * isolation.
-     * </p>
+     * {@inheritDoc }
      */
-    protected FilterToSQL createFilterToSQL(final SimpleFeatureType featureType) {
-        return initializeFilterToSQL(((BasicSQLDialect) dialect).createFilterToSQL(), featureType);
+    @Override
+    public FilterToSQL createFilterToSQL(final FeatureType featureType) {
+        return initializeFilterToSQL(((BasicSQLDialect) dialect).createFilterToSQL(), (SimpleFeatureType)featureType);
     }
 
     /**
@@ -1369,6 +1366,123 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
 
+    /**
+     * Helper method for determining what the sql type names are for a set of
+     * classes.
+     * <p>
+     * This method uses a combination of dialect mappings and database metadata
+     * to determine which sql types map to the specified classes.
+     * </p>
+     */
+    private String[] getSQLTypeNames(final Class[] classes, final Connection cx)
+            throws SQLException {
+        //figure out what the sql types are corresponding to the feature type
+        // attributes
+        final int[] sqlTypes = new int[classes.length];
+        final String[] sqlTypeNames = new String[sqlTypes.length];
+
+        for (int i = 0; i < classes.length; i++) {
+            final Class clazz = classes[i];
+            Integer sqlType = dialect.getMapping(clazz);
+
+            if (sqlType == null) {
+                getLogger().warning("No sql type mapping for: " + clazz);
+                sqlType = Types.OTHER;
+            }
+
+            sqlTypes[i] = sqlType;
+
+            //if this a geometric type, get the name from teh dialect
+            //if ( attributeType instanceof GeometryDescriptor ) {
+            if (Geometry.class.isAssignableFrom(clazz)) {
+                String sqlTypeName = dialect.getGeometryTypeName(sqlType);
+
+                if (sqlTypeName != null) {
+                    sqlTypeNames[i] = sqlTypeName;
+                }
+            }
+
+            //check the overrides
+            final String sqlTypeName = dialect.getSqlTypeToSqlTypeNameOverrides().get(sqlType);
+            if (sqlTypeName != null) {
+                sqlTypeNames[i] = sqlTypeName;
+            }
+
+        }
+
+        //figure out the type names that correspond to the sql types from
+        // the database metadata
+        final DatabaseMetaData metaData = cx.getMetaData();
+
+        /*
+         *      <LI><B>TYPE_NAME</B> String => Type name
+         *        <LI><B>DATA_TYPE</B> int => SQL data type from java.sql.Types
+         *        <LI><B>PRECISION</B> int => maximum precision
+         *        <LI><B>LITERAL_PREFIX</B> String => prefix used to quote a literal
+         *      (may be <code>null</code>)
+         *        <LI><B>LITERAL_SUFFIX</B> String => suffix used to quote a literal
+        (may be <code>null</code>)
+         *        <LI><B>CREATE_PARAMS</B> String => parameters used in creating
+         *      the type (may be <code>null</code>)
+         *        <LI><B>NULLABLE</B> short => can you use NULL for this type.
+         *      <UL>
+         *      <LI> typeNoNulls - does not allow NULL values
+         *      <LI> typeNullable - allows NULL values
+         *      <LI> typeNullableUnknown - nullability unknown
+         *      </UL>
+         *        <LI><B>CASE_SENSITIVE</B> boolean=> is it case sensitive.
+         *        <LI><B>SEARCHABLE</B> short => can you use "WHERE" based on this type:
+         *      <UL>
+         *      <LI> typePredNone - No support
+         *      <LI> typePredChar - Only supported with WHERE .. LIKE
+         *      <LI> typePredBasic - Supported except for WHERE .. LIKE
+         *      <LI> typeSearchable - Supported for all WHERE ..
+         *      </UL>
+         *        <LI><B>UNSIGNED_ATTRIBUTE</B> boolean => is it unsigned.
+         *        <LI><B>FIXED_PREC_SCALE</B> boolean => can it be a money value.
+         *        <LI><B>AUTO_INCREMENT</B> boolean => can it be used for an
+         *      auto-increment value.
+         *        <LI><B>LOCAL_TYPE_NAME</B> String => localized version of type name
+         *      (may be <code>null</code>)
+         *        <LI><B>MINIMUM_SCALE</B> short => minimum scale supported
+         *        <LI><B>MAXIMUM_SCALE</B> short => maximum scale supported
+         *        <LI><B>SQL_DATA_TYPE</B> int => unused
+         *        <LI><B>SQL_DATETIME_SUB</B> int => unused
+         *        <LI><B>NUM_PREC_RADIX</B> int => usually 2 or 10
+         */
+        final ResultSet types = metaData.getTypeInfo();
+
+        try {
+            while (types.next()) {
+                final int sqlType = types.getInt("DATA_TYPE");
+                final String sqlTypeName = types.getString("TYPE_NAME");
+
+                for (int i = 0; i < sqlTypes.length; i++) {
+                    //check if we already have the type name from the dialect
+                    if (sqlTypeNames[i] != null) {
+                        continue;
+                    }
+
+                    if (sqlType == sqlTypes[i]) {
+                        sqlTypeNames[i] = sqlTypeName;
+                    }
+                }
+            }
+        } finally {
+            closeSafe(types);
+        }
+
+        // apply the overrides specified by the dialect
+        final Map<Integer, String> overrides = dialect.getSqlTypeToSqlTypeNameOverrides();
+        for (int i = 0; i < sqlTypes.length; i++) {
+            final String override = overrides.get(sqlTypes[i]);
+            if (override != null) {
+                sqlTypeNames[i] = override;
+            }
+        }
+
+        return sqlTypeNames;
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // other utils /////////////////////////////////////////////////////////////
@@ -1573,7 +1687,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * Encodes a feature id from a primary key and result set values.
      */
     protected String encodeFID(final PrimaryKey pkey, final ResultSet rs)
-            throws SQLException, IOException{
+            throws SQLException{
         // no pk columns
         if (pkey.getColumns().isEmpty()) {
             return SimpleFeatureBuilder.createDefaultFeatureId();

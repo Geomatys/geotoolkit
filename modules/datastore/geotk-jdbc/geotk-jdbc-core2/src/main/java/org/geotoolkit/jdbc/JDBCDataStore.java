@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.FeatureFactory;
@@ -156,5 +157,15 @@ public interface JDBCDataStore extends DataStore {
      * @param fetchSize
      */
     void setFetchSize(final int fetchSize);
+
+    /**
+     * Creates a new instance of a filter to sql encoder.
+     * <p>
+     * The <tt>featureType</tt> may be null but it is not recommended. Such a
+     * case where this may neccessary is when a literal needs to be encoded in
+     * isolation.
+     * </p>
+     */
+    FilterToSQL createFilterToSQL(final FeatureType featureType);
 
 }

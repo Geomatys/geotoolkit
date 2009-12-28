@@ -103,7 +103,7 @@ public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
             final int column, final Connection cx) throws SQLException{
         
         //get the sql type
-        final Integer sqlType = dataStore.getMapping( binding );
+        final Integer sqlType = getMapping( binding );
         
         //handl null case
         if ( value == null ) {
