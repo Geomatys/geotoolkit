@@ -17,21 +17,21 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.fid.PrimaryKey;
-import org.geotoolkit.jdbc.dialect.SQLDialect;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+
+import com.vividsolutions.jts.geom.GeometryFactory;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.jdbc.fid.PrimaryKey;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
 
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.FeatureType;

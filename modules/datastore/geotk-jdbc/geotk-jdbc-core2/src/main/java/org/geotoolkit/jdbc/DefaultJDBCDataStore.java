@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.jdbc;
 
+import java.util.logging.Logger;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.jdbc.fid.PrimaryKeyFIDValidator;
@@ -28,6 +29,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -38,6 +41,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,6 +106,12 @@ import static org.geotoolkit.jdbc.MetaDataConstants.*;
  * @module pending
  */
 public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
+
+    /**
+     * writer flags
+     */
+    protected final int WRITER_ADD = 0x01<<0;
+    protected final int WRITER_UPDATE = 0x01<<1;
 
     private final Map<Name,FeatureType> names = new HashMap<Name, FeatureType>();
     private final Map<Name,PrimaryKey> primaryKeys = new HashMap<Name, PrimaryKey>();
@@ -589,8 +599,101 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            return getFeatureWriterInternal(QueryBuilder.filtered(typeName, filter), WRITER_ADD | WRITER_UPDATE);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
+
+    @Override
+    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
+        try {
+            return getFeatureWriterInternal(QueryBuilder.filtered(typeName, Filter.EXCLUDE), WRITER_ADD);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+
+    private FeatureWriter getFeatureWriterInternal(Query query, int flags) throws DataStoreException, IOException {
+        typeCheck(query.getTypeName());
+        final SimpleFeatureType type = (SimpleFeatureType) getSchema(query.getTypeName());
+
+        if (flags == 0) {
+            throw new IllegalArgumentException( "no write flags set" );
+        }
+
+        //get connection from current state
+        Connection cx = null;
+
+        Filter postFilter;
+        //check for update only case
+        FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
+        try {
+            cx = createConnection();
+            //check for insert only
+            if ( (flags | WRITER_ADD) == WRITER_ADD ) {
+                final QueryBuilder builder = new QueryBuilder(query);
+                builder.setFilter(Filter.EXCLUDE);
+                Query queryNone = builder.buildQuery();
+                if ( getDialect() instanceof PreparedStatementSQLDialect ) {
+                    PreparedStatement ps = selectSQLPS(type, queryNone, cx);
+                    return new JDBCInsertFeatureWriter( ps, cx, this, query.getTypeName(), type, query.getHints() );
+                }
+                else {
+                    //build up a statement for the content, inserting only so we dont want
+                    // the query to return any data ==> Filter.EXCLUDE
+                    String sql = selectSQL(type, queryNone);
+                    getLogger().fine(sql);
+
+                    return new JDBCInsertFeatureWriter( sql, cx, this, query.getTypeName(), type, query.getHints() );
+                }
+            }
+
+            //split the filter
+            Filter[] split = splitFilter(query.getFilter(),type);
+            Filter preFilter = split[0];
+            postFilter = split[1];
+
+            // build up a statement for the content
+            final QueryBuilder builder = new QueryBuilder(query);
+            builder.setFilter(preFilter);
+            final Query preQuery = builder.buildQuery();
+
+            if(getDialect() instanceof PreparedStatementSQLDialect) {
+                PreparedStatement ps = selectSQLPS(type, preQuery, cx);
+                if ( (flags | WRITER_UPDATE) == WRITER_UPDATE ) {
+                    writer = new JDBCUpdateFeatureWriter(ps, cx, this, query.getTypeName(), type, query.getHints() );
+                } else {
+                    //update insert case
+                    writer = new JDBCUpdateInsertFeatureWriter(ps, cx, this, query.getTypeName(), type, query.getPropertyNames(), query.getHints() );
+                }
+            } else {
+                String sql = selectSQL(type, preQuery);
+                getLogger().fine(sql);
+
+                if ( (flags | WRITER_UPDATE) == WRITER_UPDATE ) {
+                    writer = new JDBCUpdateFeatureWriter( sql, cx, this, query.getTypeName(), type, query.getHints() );
+                } else {
+                    //update insert case
+                    writer = new JDBCUpdateInsertFeatureWriter( sql, cx, this, query.getTypeName(), type, query.getHints() );
+                }
+            }
+
+        } catch (SQLException e) {
+            // close the connection
+            closeSafe(cx);
+            // now we can safely rethrow the exception
+            throw (DataStoreException) new DataStoreException().initCause(e);
+        }
+
+        //check for post filter and wrap accordingly
+        if ( postFilter != null && postFilter != Filter.INCLUDE ) {
+            writer = GenericFilterFeatureIterator.wrap(writer, postFilter);
+        }
+        return writer;
+    }
+
 
     /**
      * {@inheritDoc }
@@ -841,6 +944,158 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             }
         } catch (SQLException e) {
             throw (DataStoreException) new DataStoreException("Error occured calculating bounds").initCause(e);
+        }
+    }
+
+    /**
+     * Inserts a new feature into the database for a particular feature type / table.
+     */
+    protected void insert(final SimpleFeature feature, final SimpleFeatureType featureType,
+            final Connection cx) throws DataStoreException {
+        insert(Collections.singletonList(feature), featureType, cx);
+    }
+
+    /**
+     * Inserts a collection of new features into the database for a particular
+     * feature type / table.
+     */
+    protected void insert(final Collection features, final SimpleFeatureType featureType,
+            final Connection cx) throws DataStoreException {
+        final PrimaryKey key = getPrimaryKey(featureType);
+
+        // we do this in a synchronized block because we need to do two queries,
+        // first to figure out what the id will be, then the insert statement
+        synchronized (this) {
+            Statement st = null;
+            try {
+                if (!(dialect instanceof PreparedStatementSQLDialect)) {
+                    st = cx.createStatement();
+                }
+
+                //figure out what the next fid will be
+                final List<Object> nextKeyValues = getNextValues(key, cx);
+
+                for (Iterator f = features.iterator(); f.hasNext();) {
+                    final SimpleFeature feature = (SimpleFeature) f.next();
+
+                    if (dialect instanceof PreparedStatementSQLDialect) {
+                        final PreparedStatement ps = insertSQLPS(featureType, feature, nextKeyValues, cx);
+                        try {
+                            ps.execute();
+                        } finally {
+                            closeSafe(ps);
+                        }
+                    } else {
+                        String sql = insertSQL(featureType, feature, nextKeyValues, cx);
+                        getLogger().log(Level.FINE, "Inserting new feature: {0}", sql);
+
+                        //TODO: execute in batch to improve performance?
+                        st.execute(sql);
+                    }
+
+                    //report the feature id as user data since we cant set the fid
+                    String fid = featureType.getTypeName() + "." + encodeFID(nextKeyValues);
+                    feature.getUserData().put("fid", fid);
+                }
+
+            //st.executeBatch();
+            } catch (SQLException e) {
+                throw (DataStoreException) new DataStoreException("Error inserting features").initCause(e);
+            } catch (IOException e) {
+                throw (DataStoreException) new DataStoreException("Error inserting features").initCause(e);
+            }finally {
+                closeSafe(st);
+            }
+        }
+    }
+
+    /**
+     * Updates an existing feature(s) in the database for a particular feature type / table.
+     */
+    protected void update(final SimpleFeatureType featureType, final List<AttributeDescriptor> attributes,
+            final List<Object> values, final Filter filter, final Connection cx) throws DataStoreException{
+        update(featureType, attributes.toArray(new AttributeDescriptor[attributes.size()]),
+                values.toArray(new Object[values.size()]), filter, cx);
+    }
+
+    /**
+     * Updates an existing feature(s) in the database for a particular feature type / table.
+     */
+    protected void update(final SimpleFeatureType featureType, final AttributeDescriptor[] attributes,
+            final Object[] values, final Filter filter, final Connection cx) throws DataStoreException
+    {
+        if ((attributes == null) || (attributes.length == 0)) {
+            getLogger().warning("Update called with no attributes, doing nothing.");
+
+            return;
+        }
+
+        if (dialect instanceof PreparedStatementSQLDialect) {
+            try {
+                final PreparedStatement ps = updateSQLPS(featureType, attributes, values, filter, cx);
+                try {
+                    ps.execute();
+                }
+                finally {
+                    closeSafe( ps );
+                }
+            }catch (SQLException e) {
+                throw (DataStoreException) new DataStoreException("Error occured updating features").initCause(e);
+            }catch (IOException e) {
+                throw (DataStoreException) new DataStoreException("Error occured updating features").initCause(e);
+            }
+        } else {
+            try {
+                final String sql = updateSQL(featureType, attributes, values, filter);
+                getLogger().log(Level.FINE, "Updating feature: {0}", sql);
+
+                final Statement st = cx.createStatement();
+
+                try {
+                    st.execute(sql);
+                } finally {
+                    closeSafe(st);
+                }
+            } catch (SQLException e) {
+                throw (DataStoreException) new DataStoreException("Error occured updating features").initCause(e);
+            } catch (IOException e) {
+                throw (DataStoreException) new DataStoreException("Error occured updating features").initCause(e);
+            }
+        }
+    }
+
+    /**
+     * Deletes an existing feature in the database for a particular feature type / fid.
+     */
+    protected void delete(final SimpleFeatureType featureType, final String fid,
+            final Connection cx) throws IOException
+    {
+        final Filter filter = filterFactory.id(Collections.singleton(filterFactory.featureId(fid)));
+        delete(featureType, filter, cx);
+    }
+
+    /**
+     * Deletes an existing feature(s) in the database for a particular feature type / table.
+     */
+    protected void delete(final SimpleFeatureType featureType, final Filter filter, final Connection cx)
+            throws IOException {
+
+        Statement st = null;
+        try {
+            if (dialect instanceof PreparedStatementSQLDialect) {
+                st = deleteSQLPS(featureType, filter, cx);
+                ((PreparedStatement) st).execute();
+            } else {
+                final String sql = deleteSQL(featureType, filter);
+                getLogger().log(Level.FINE, "Removing feature(s): {0}", sql);
+
+                st = cx.createStatement();
+                st.execute(sql);
+            }
+        } catch (SQLException e) {
+            throw (IOException) new IOException("Error occured calculating bounds").initCause(e);
+        } finally {
+            closeSafe(st);
         }
     }
 
@@ -1812,6 +2067,434 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         return sqlTypeNames;
     }
 
+
+    /**
+     * Generates a 'DELETE FROM' sql statement.
+     */
+    protected String deleteSQL(final SimpleFeatureType featureType, final Filter filter) throws SQLException {
+        final StringBuilder sql = new StringBuilder("DELETE FROM ");
+        encodeTableName(featureType.getTypeName(), sql);
+
+        if (filter != null && !Filter.INCLUDE.equals(filter)) {
+            //encode filter
+            try {
+                final FilterToSQL toSQL = createFilterToSQL(featureType);
+                sql.append(" ").append(toSQL.encodeToString(filter));
+            } catch (FilterToSQLException e) {
+                throw new SQLException(e);
+            }
+        }
+
+        return sql.toString();
+    }
+
+    /**
+     * Generates a 'DELETE FROM' prepared statement.
+     */
+    protected PreparedStatement deleteSQLPS(final SimpleFeatureType featureType, final Filter filter,
+                                            final Connection cx) throws SQLException {
+        final StringBuilder sql = new StringBuilder("DELETE FROM ");
+        encodeTableName(featureType.getTypeName(), sql);
+
+        PreparedFilterToSQL toSQL = null;
+        if (filter != null && !Filter.INCLUDE.equals(filter)) {
+            //encode filter
+            try {
+                toSQL = createPreparedFilterToSQL(featureType);
+                sql.append(" ").append(toSQL.encodeToString(filter));
+            } catch (FilterToSQLException e) {
+                throw new SQLException(e);
+            }
+        }
+
+        getLogger().fine(sql.toString());
+        final PreparedStatement ps = cx.prepareStatement(sql.toString());
+
+        if (toSQL != null) {
+            setPreparedFilterValues(ps, toSQL, 0, cx);
+        }
+
+        return ps;
+    }
+
+    /**
+     * Generates a 'INSERT INFO' sql statement.
+     * @throws IOException
+     */
+    protected String insertSQL(final SimpleFeatureType featureType, final SimpleFeature feature,
+                               final List keyValues, final Connection cx) throws DataStoreException{
+        final BasicSQLDialect dialect = (BasicSQLDialect) getDialect();
+
+        final StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO ");
+        encodeTableName(featureType.getTypeName(), sql);
+
+        //column names
+        sql.append(" ( ");
+
+        for (int i = 0; i < featureType.getAttributeCount(); i++) {
+            dialect.encodeColumnName(featureType.getDescriptor(i).getLocalName(), sql);
+            sql.append(",");
+        }
+
+        //primary key values
+        final PrimaryKey key = getPrimaryKey(featureType);
+
+        for (PrimaryKeyColumn col : key.getColumns()) {
+            //only include if its non auto generating
+            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
+                dialect.encodeColumnName(col.getName(), sql);
+                sql.append(",");
+            }
+        }
+        sql.setLength(sql.length() - 1);
+
+        //values
+        sql.append(" ) VALUES ( ");
+
+        for (int i = 0; i < featureType.getAttributeCount(); i++) {
+            final AttributeDescriptor att = featureType.getDescriptor(i);
+            final Class binding = att.getType().getBinding();
+
+            final Object value = feature.getAttribute(att.getLocalName());
+
+            if (value == null) {
+                if (!att.isNillable()) {
+                    //TODO: throw an exception
+                }
+
+                sql.append("null");
+            } else {
+                if (Geometry.class.isAssignableFrom(binding)) {
+                    final Geometry g = (Geometry) value;
+                    final int srid = getGeometrySRID(g, att);
+                    try {
+                        dialect.encodeGeometryValue(g, srid, sql);
+                    } catch (IOException ex) {
+                        throw new DataStoreException(ex);
+                    }
+                } else {
+                    dialect.encodeValue(value, binding, sql);
+                }
+            }
+
+            sql.append(",");
+        }
+        for (int i = 0; i < key.getColumns().size(); i++) {
+            final PrimaryKeyColumn col = key.getColumns().get(i);
+
+            //only include if its non auto generating
+            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
+                    final Object value = keyValues.get(i);
+                    dialect.encodeValue(value, col.getType(), sql);
+                    sql.append(",");
+            }
+        }
+        sql.setLength(sql.length() - 1);
+
+        sql.append(")");
+
+        return sql.toString();
+    }
+
+    /**
+     * Generates a 'INSERT INFO' prepared statement.
+     */
+    protected PreparedStatement insertSQLPS(final SimpleFeatureType featureType, final SimpleFeature feature,
+            final List keyValues, final Connection cx) throws IOException, SQLException, DataStoreException{
+        final PreparedStatementSQLDialect dialect = (PreparedStatementSQLDialect) getDialect();
+
+        final StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO ");
+        encodeTableName(featureType.getTypeName(), sql);
+
+        // column names
+        sql.append(" ( ");
+
+        for (int i = 0; i < featureType.getAttributeCount(); i++) {
+            dialect.encodeColumnName(featureType.getDescriptor(i).getLocalName(), sql);
+            sql.append(",");
+        }
+
+        // primary key values
+        final PrimaryKey key = getPrimaryKey(featureType);
+
+        for (PrimaryKeyColumn col : key.getColumns()) {
+            //only include if its non auto generating
+            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
+                dialect.encodeColumnName(col.getName(), sql);
+                sql.append(",");
+            }
+        }
+        sql.setLength(sql.length() - 1);
+
+        // values
+        sql.append(" ) VALUES ( ");
+        for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
+            // geometries might need special treatment, delegate to the dialect
+            if (att instanceof GeometryDescriptor) {
+                final Geometry geometry = (Geometry) feature.getAttribute(att.getName());
+                dialect.prepareGeometryValue(geometry, getDescriptorSRID(att), att.getType().getBinding(), sql);
+            } else {
+                sql.append("?");
+            }
+            sql.append(",");
+        }
+        for (PrimaryKeyColumn col : key.getColumns()) {
+            //only include if its non auto generating
+            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
+                sql.append("?").append(",");
+            }
+        }
+
+        sql.setLength(sql.length() - 1);
+        sql.append(")");
+        getLogger().log(Level.FINE, "Inserting new feature with ps: {0}", sql);
+
+        //create the prepared statement
+        final PreparedStatement ps = cx.prepareStatement(sql.toString());
+
+        //set the attribute values
+        for (int i = 0; i < featureType.getAttributeCount(); i++) {
+            final AttributeDescriptor att = featureType.getDescriptor(i);
+            final Class binding = att.getType().getBinding();
+
+            final Object value = feature.getAttribute(att.getLocalName());
+            if (value == null) {
+                if (!att.isNillable()) {
+                    //TODO: throw an exception
+                }
+            }
+
+            if (Geometry.class.isAssignableFrom(binding)) {
+                final Geometry g = (Geometry) value;
+                final int srid = getGeometrySRID(g, att);
+                dialect.setGeometryValue(g, srid, binding, ps, i + 1);
+            } else {
+                dialect.setValue(value, binding, ps, i + 1, cx);
+            }
+            if (getLogger().isLoggable(Level.FINE)) {
+                getLogger().fine((i + 1) + " = " + value);
+            }
+        }
+
+        //set the key values
+        int i = featureType.getAttributeCount();
+        for (int j = 0; j < key.getColumns().size(); j++) {
+            final PrimaryKeyColumn col = key.getColumns().get(j);
+            //only include if its non auto generating
+            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
+                //get the next value for the column
+                //Object value = getNextValue( col, key, cx );
+                final Object value = keyValues.get(j);
+                dialect.setValue(value, col.getType(), ps, i + 1, cx);
+                i++;
+                if (getLogger().isLoggable(Level.FINE)) {
+                    getLogger().fine((i) + " = " + value);
+                }
+            }
+        }
+
+        return ps;
+    }
+
+    /**
+     * Generates an 'UPDATE' sql statement.
+     */
+    protected String updateSQL(final SimpleFeatureType featureType, final AttributeDescriptor[] attributes,
+            final Object[] values, final Filter filter) throws IOException, SQLException{
+        final BasicSQLDialect dialect = (BasicSQLDialect) getDialect();
+
+        final StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE ");
+        encodeTableName(featureType.getTypeName(), sql);
+
+        sql.append(" SET ");
+
+        for (int i = 0; i < attributes.length; i++) {
+            dialect.encodeColumnName(attributes[i].getLocalName(), sql);
+            sql.append(" = ");
+
+            if (Geometry.class.isAssignableFrom(attributes[i].getType().getBinding())) {
+                    final Geometry g = (Geometry) values[i];
+                    final int srid = getGeometrySRID(g, attributes[i]);
+                    dialect.encodeGeometryValue(g, srid, sql);
+            } else {
+                dialect.encodeValue(values[i], attributes[i].getType().getBinding(), sql);
+            }
+
+            sql.append(",");
+        }
+
+        sql.setLength(sql.length() - 1);
+        sql.append(" ");
+
+        if (filter != null && !Filter.INCLUDE.equals(filter)) {
+            //encode filter
+            try {
+                final FilterToSQL toSQL = createFilterToSQL(featureType);
+                sql.append(" ").append(toSQL.encodeToString(filter));
+            } catch (FilterToSQLException e) {
+                throw new SQLException(e);
+            }
+        }
+
+        return sql.toString();
+    }
+
+    /**
+     * Generates an 'UPDATE' prepared statement.
+     */
+    protected PreparedStatement updateSQLPS(final SimpleFeatureType featureType,
+            final AttributeDescriptor[] attributes, final Object[] values, final Filter filter,
+            final Connection cx) throws IOException, SQLException
+    {
+        final PreparedStatementSQLDialect dialect = (PreparedStatementSQLDialect) getDialect();
+
+        final StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE ");
+        encodeTableName(featureType.getTypeName(), sql);
+
+        sql.append(" SET ");
+
+        for (int i = 0; i < attributes.length; i++) {
+            final AttributeDescriptor att = attributes[i];
+            dialect.encodeColumnName(att.getLocalName(), sql);
+            sql.append(" = ");
+
+            // geometries might need special treatment, delegate to the dialect
+            if (attributes[i] instanceof GeometryDescriptor) {
+                final Geometry geometry = (Geometry) values[i];
+                final Class<?> binding = att.getType().getBinding();
+                dialect.prepareGeometryValue(geometry, getDescriptorSRID(att), binding, sql);
+            } else {
+                sql.append("?");
+            }
+            sql.append(",");
+        }
+        sql.setLength(sql.length() - 1);
+        sql.append(" ");
+
+        PreparedFilterToSQL toSQL = null;
+        if (filter != null && !Filter.INCLUDE.equals(filter)) {
+            //encode filter
+            try {
+                toSQL = createPreparedFilterToSQL(featureType);
+                sql.append(" ").append(toSQL.encodeToString(filter));
+            } catch (FilterToSQLException e) {
+                throw new SQLException(e);
+            }
+        }
+
+        final PreparedStatement ps = cx.prepareStatement(sql.toString());
+        getLogger().log(Level.FINE, "Updating features with prepared statement: {0}", sql);
+
+        int i = 0;
+        for (; i < attributes.length; i++) {
+            final AttributeDescriptor att = attributes[i];
+            final Class binding = att.getType().getBinding();
+            if (Geometry.class.isAssignableFrom(binding)) {
+                final Geometry g = (Geometry) values[i];
+                dialect.setGeometryValue(g, getDescriptorSRID(att), binding, ps, i + 1);
+            } else {
+                dialect.setValue(values[i], binding, ps, i + 1, cx);
+            }
+            if (getLogger().isLoggable(Level.FINE)) {
+                getLogger().fine((i + 1) + " = " + values[i]);
+            }
+        }
+
+        if (toSQL != null) {
+            setPreparedFilterValues(ps, toSQL, i, cx);
+        //for ( int j = 0; j < toSQL.getLiteralValues().size(); j++, i++)  {
+        //    Object value = toSQL.getLiteralValues().get( j );
+        //    Class binding = toSQL.getLiteralTypes().get( j );
+        //
+        //    dialect.setValue( value, binding, ps, i+1, cx );
+        //    if ( getLogger().isLoggable( Level.FINE ) ) {
+        //        getLogger().fine( (i+1) + " = " + value );
+        //}
+        }
+
+        return ps;
+    }
+
+    /**
+     * Gets the next value of a primary key.
+     */
+    protected List<Object> getNextValues(final PrimaryKey pkey, final Connection cx) throws SQLException, IOException {
+        final ArrayList<Object> next = new ArrayList<Object>();
+        for (PrimaryKeyColumn col : pkey.getColumns()) {
+            next.add(getNextValue(col, pkey, cx));
+        }
+        return next;
+    }
+
+    /**
+     * Gets the next value for the column of a primary key.
+     */
+    protected Object getNextValue(final PrimaryKeyColumn col, final PrimaryKey pkey, final Connection cx) throws SQLException, IOException {
+        Object next = null;
+
+        if (col instanceof AutoGeneratedPrimaryKeyColumn) {
+            next = dialect.getNextAutoGeneratedValue(databaseSchema, pkey.getTableName(), col.getName(), cx);
+        } else if (col instanceof SequencedPrimaryKeyColumn) {
+            final String sequenceName = ((SequencedPrimaryKeyColumn) col).getSequenceName();
+            next = dialect.getNextSequenceValue(databaseSchema, sequenceName, cx);
+        } else {
+            //try to calculate
+            final Class t = col.getType();
+
+            //is the column numeric?
+            if (Number.class.isAssignableFrom(t)) {
+                //is the column integral?
+                if (t == Short.class || t == Integer.class || t == Long.class || BigInteger.class.isAssignableFrom(t) ||
+                                                                                 BigDecimal.class.isAssignableFrom(t))
+                {
+
+                    final StringBuilder sql = new StringBuilder();
+                    sql.append("SELECT MAX(");
+                    dialect.encodeColumnName(col.getName(), sql);
+                    sql.append(") + 1 FROM ");
+                    encodeTableName(pkey.getTableName(), sql);
+
+                    getLogger().log(Level.FINE, "Getting next FID: {0}", sql);
+
+                    final Statement st = cx.createStatement();
+                    try {
+                        final ResultSet rs = st.executeQuery(sql.toString());
+                        try {
+                            rs.next();
+                            next = rs.getObject(1);
+
+                            if (next == null) {
+                                //this probably means there was no data in the table, set to 1
+                                //TODO: probably better to do a count to check... but if this
+                                // value already exists the db will throw an error when it tries
+                                // to insert
+                                next = 1;
+                            }
+                        } finally {
+                            closeSafe(rs);
+                        }
+                    } finally {
+                        closeSafe(st);
+                    }
+                }
+            } else if (CharSequence.class.isAssignableFrom(t)) {
+                //generate a random string
+                next = SimpleFeatureBuilder.createDefaultFeatureId();
+            }
+
+            if (next == null) {
+                throw new IOException("Cannot generate key value for column of type: " + t.getName());
+            }
+        }
+
+        return next;
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////
     // other utils /////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -1977,12 +2660,49 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         dialect.encodeGeometryColumn(gatt, srid, sql);
     }
 
+
+    /**
+     * Looks up the geometry srs by trying a number of heuristics. Returns -1 if all attempts
+     * at guessing the srid failed.
+     */
+    protected static int getGeometrySRID(final Geometry g, final AttributeDescriptor descriptor) {
+        int srid = getDescriptorSRID(descriptor);
+
+        if (g == null) {
+            return srid;
+        }
+
+        // check for srid in the jts geometry then
+        if (srid <= 0 && g.getSRID() > 0) {
+            srid = g.getSRID();
+        }
+
+        // check if the geometry has anything
+        if (srid <= 0) {
+            // check for crs object
+            final CoordinateReferenceSystem crs = (CoordinateReferenceSystem) g.getUserData();
+
+            if (crs != null) {
+                try {
+                    final Integer candidate = CRS.lookupEpsgCode(crs, false);
+                    if (candidate != null) {
+                        srid = candidate;
+                    }
+                } catch (Exception e) {
+                    // ok, we tried...
+                }
+            }
+        }
+
+        return srid;
+    }
+
     /**
      * Extracts the eventual native SRID user property from the descriptor,
      * returns -1 if not found
      * @param descriptor
      */
-    protected int getDescriptorSRID(final AttributeDescriptor descriptor) {
+    protected static int getDescriptorSRID(final AttributeDescriptor descriptor) {
         int srid = -1;
 
         // check if we have stored the native srid in the descriptor (we should)
@@ -2036,7 +2756,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     public String encodeFID(final List<Object> keyValues) {
-        final StringBuffer fid = new StringBuffer();
+        final StringBuilder fid = new StringBuilder();
         for (Object o : keyValues) {
             fid.append(o).append(".");
         }
