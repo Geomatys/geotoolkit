@@ -16,11 +16,16 @@
  */
 package org.geotoolkit.jdbc;
 
+import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
 import java.io.IOException;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
+import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
@@ -29,9 +34,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
@@ -125,16 +127,20 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         // namespace
         final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
-        final JDBCDataStore dataStore = new JDBCDataStore(namespace);
+        final JDBCDataStore dataStore = new DefaultJDBCDataStore(namespace);
 
         // dialect
         final SQLDialect dialect = createSQLDialect(dataStore);
-        dataStore.setSQLDialect(dialect);
+        dataStore.setDialect(dialect);
 
         // datasource
         // check if the DATASOURCE parameter was supplied, it takes precendence
         final DataSource ds = (DataSource) params.parameter(DATASOURCE.getName().toString()).getValue();
-        dataStore.setDataSource((ds != null) ? ds : createDataSource(params, dialect));
+        try {
+            dataStore.setDataSource((ds != null) ? ds : createDataSource(params, dialect));
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
 
         // fetch size
         Integer fetchSize = (Integer) params.parameter(FETCHSIZE.getName().toString()).getValue();
@@ -179,7 +185,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
      *
      */
     protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, ParameterValueGroup params)
-        throws IOException{
+        throws DataStoreException{
         return dataStore;
     }
 

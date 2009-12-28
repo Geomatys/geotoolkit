@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,31 +14,23 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.jdbc;
 
-package org.geotoolkit.data;
+import java.util.ArrayList;
+
 
 /**
- * Exception used in DataStores, extends Exception.
+ * Primary key for tables which do not have a primary key.
+ * <p>
+ * New key values are generated "from thin air" and are not persistent.
+ * </p>
+ * @author Justin Deoliveira, The Open Planning Project
  *
- * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DataStoreException extends Exception{
+public class NullPrimaryKey extends PrimaryKey {
 
-    public DataStoreException(){
-        super();
+    public NullPrimaryKey(final String tableName) {
+        super(tableName, new ArrayList());
     }
-
-    public DataStoreException(String message){
-        super(message);
-    }
-
-    public DataStoreException(String message, Throwable th){
-        super(message, th);
-    }
-
-    public DataStoreException(Throwable th){
-        super(th);
-    }
-
 }

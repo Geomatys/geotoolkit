@@ -26,6 +26,10 @@ package org.geotoolkit.data;
  */
 public class DataStoreRuntimeException extends RuntimeException{
 
+    public DataStoreRuntimeException(){
+        super();
+    }
+
     public DataStoreRuntimeException(String message){
         super(message);
     }

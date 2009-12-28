@@ -14,50 +14,27 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc;
+package org.geotoolkit.jdbc.dialect;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.sql.DatabaseMetaData;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.filter.capability.GeometryOperand;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
-import org.geotoolkit.filter.capability.DefaultComparisonOperators;
-import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.geotoolkit.filter.capability.DefaultFunctionName;
-import org.geotoolkit.filter.capability.DefaultFunctions;
-import org.geotoolkit.filter.capability.DefaultIdCapabilities;
-import org.geotoolkit.filter.capability.DefaultOperator;
-import org.geotoolkit.filter.capability.DefaultScalarCapabilities;
-import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
-import org.geotoolkit.filter.capability.DefaultSpatialOperator;
-import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 
 
 /**
@@ -112,61 +89,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperators;
  *
  * @module pending
  */
-public abstract class SQLDialect {
-    protected static final Logger LOGGER = Logging.getLogger(SQLDialect.class);
-
-    /**
-     * The basic filter capabilities all databases should have
-     */
-    public static final DefaultFilterCapabilities BASE_DBMS_CAPABILITIES;
-    static {
-        final DefaultIdCapabilities idCaps = new DefaultIdCapabilities(true, true);
-
-        final DefaultOperator[] ops = new DefaultOperator[]{
-            new DefaultOperator("and"),
-            new DefaultOperator("or"),
-            new DefaultOperator("not")
-        };
-        final DefaultComparisonOperators compOps = new DefaultComparisonOperators(ops);
-        final String obj = "obj";
-        final DefaultFunctionName[] functionNames = new DefaultFunctionName[] {
-            new DefaultFunctionName("equals", Collections.singletonList(obj), 0),
-            new DefaultFunctionName("greaterThan", Collections.singletonList(obj), 0),
-            new DefaultFunctionName("greaterThanEqual", Collections.singletonList(obj), 0),
-            new DefaultFunctionName("lessThan", Collections.singletonList(obj), 0),
-            new DefaultFunctionName("lessThanEqual", Collections.singletonList(obj), 0),
-            new DefaultFunctionName("notEquals", Collections.singletonList(obj), 0)
-        };
-        final DefaultFunctions functions = new DefaultFunctions(functionNames);
-        final DefaultArithmeticOperators arithmOps = new DefaultArithmeticOperators(true, functions);
-        final DefaultScalarCapabilities scalCaps = new DefaultScalarCapabilities(true, compOps, arithmOps);
-
-        final DefaultSpatialOperator[] spatialOp = new DefaultSpatialOperator[] {
-            new DefaultSpatialOperator("include", new GeometryOperand[] {
-                GeometryOperand.Envelope, GeometryOperand.Polygon, GeometryOperand.Point
-            })
-        };
-        final DefaultSpatialOperators spatialOps = new DefaultSpatialOperators(spatialOp);
-        final GeometryOperand[] geomOperands = new GeometryOperand[] {
-            GeometryOperand.Envelope, GeometryOperand.Polygon, GeometryOperand.Point
-        };
-        final DefaultSpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(geomOperands, spatialOps);
-
-        BASE_DBMS_CAPABILITIES = new DefaultFilterCapabilities(null, idCaps, spatialCaps, scalCaps);
-    }
-
-    /**
-     * The datastore using the dialect
-     */
-    protected final JDBCDataStore dataStore;
-
-    /**
-     * Creates the dialect.
-     * @param dataStore The dataStore using the dialect.
-     */
-    protected SQLDialect(final JDBCDataStore dataStore) {
-        this.dataStore = dataStore;
-    }
+public interface SQLDialect {
 
     /**
      * Initializes a newly created database connection.
@@ -177,9 +100,8 @@ public abstract class SQLDialect {
      * </p>
      * @param cx The new database connection.
      */
-    public void initializeConnection(final Connection cx) throws SQLException {
+    void initializeConnection(final Connection cx) throws SQLException;
 
-    }
     /**
      * Determines if the specified table should be included in those published
      * by the datastore.
@@ -198,11 +120,8 @@ public abstract class SQLDialect {
      * @param cx Database connection.
      *
      */
-    public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
-            throws SQLException
-    {
-        return true;
-    }
+    boolean includeTable(final String schemaName, final String tableName, final Connection cx)
+            throws SQLException;
 
     /**
      * Registers the sql type name to java type mappings that the dialect uses when
@@ -213,9 +132,7 @@ public abstract class SQLDialect {
      * implementation provides the following mappings:
      * </p>
      */
-    public void registerSqlTypeNameToClassMappings(final Map<String, Class<?>> mappings) {
-        //TODO: do the normal types
-    }
+    void registerSqlTypeNameToClassMappings(final Map<String, Class<?>> mappings);
 
     /**
      * Determines the class mapping for a particular column of a table.
@@ -235,9 +152,7 @@ public abstract class SQLDialect {
      * @param cx The connection used to retrieve the metadata
      * @return The class mapped to the to column, or <code>null</code>.
      */
-    public Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException {
-        return null;
-    }
+    Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException;
 
     /**
      * Registers the sql type to java type mappings that the dialect uses when
@@ -249,33 +164,7 @@ public abstract class SQLDialect {
      * </p>
      *
      */
-    public void registerSqlTypeToClassMappings(final Map<Integer, Class<?>> mappings) {
-        mappings.put(Types.VARCHAR, String.class);
-        mappings.put(Types.CHAR, String.class);
-        mappings.put(Types.LONGVARCHAR, String.class);
-
-        mappings.put(Types.BIT, Boolean.class);
-        mappings.put(Types.BOOLEAN, Boolean.class);
-
-        mappings.put(Types.TINYINT, Short.class);
-        mappings.put(Types.SMALLINT, Short.class);
-
-        mappings.put(Types.INTEGER, Integer.class);
-        mappings.put(Types.BIGINT, Long.class);
-
-        mappings.put(Types.REAL, Float.class);
-        mappings.put(Types.FLOAT, Double.class);
-        mappings.put(Types.DOUBLE, Double.class);
-
-        mappings.put(Types.DECIMAL, BigDecimal.class);
-        mappings.put(Types.NUMERIC, BigDecimal.class);
-
-        mappings.put(Types.DATE, Date.class);
-        mappings.put(Types.TIME, Time.class);
-        mappings.put(Types.TIMESTAMP, Timestamp.class);
-
-        //subclasses should extend to provide additional
-    }
+    void registerSqlTypeToClassMappings(final Map<Integer, Class<?>> mappings);
 
     /**
      * Registers the java type to sql type mappings that the datastore uses when
@@ -286,28 +175,7 @@ public abstract class SQLDialect {
      * implementation provides the following mappings:
      * </p>
      */
-    public void registerClassToSqlMappings(final Map<Class<?>, Integer> mappings) {
-        mappings.put(String.class, Types.VARCHAR);
-
-        mappings.put(Boolean.class, Types.BOOLEAN);
-
-        mappings.put(Short.class, Types.SMALLINT);
-
-        mappings.put(Integer.class, Types.INTEGER);
-        mappings.put(Long.class, Types.BIGINT);
-
-        mappings.put(Float.class, Types.REAL);
-        mappings.put(Double.class, Types.DOUBLE);
-
-        mappings.put(BigDecimal.class, Types.NUMERIC);
-
-        mappings.put(Date.class, Types.DATE);
-        mappings.put(Time.class, Types.TIME);
-        mappings.put(java.util.Date.class, Types.TIMESTAMP);
-        mappings.put(Timestamp.class, Types.TIMESTAMP);
-
-        //subclasses should extend and provide additional
-    }
+    void registerClassToSqlMappings(final Map<Class<?>, Integer> mappings);
 
     /**
      * Registers any overrides that should occur when mapping an integer sql type
@@ -321,8 +189,7 @@ public abstract class SQLDialect {
      * </ul>
      * </p>
      */
-    public void registerSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
-    }
+    void registerSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides);
 
     /**
      * Returns the string used to escape names.
@@ -336,16 +203,7 @@ public abstract class SQLDialect {
      * must override to provide a different espcape.
      * </p>
      */
-    public String getNameEscape() {
-        return "\"";
-    }
-
-    /**
-     * Quick accessor for {@link #getNameEscape()}.
-     */
-    protected final String ne() {
-        return getNameEscape();
-    }
+    String getNameEscape();
 
     /**
      * Encodes the name of a column in an SQL statement.
@@ -355,9 +213,7 @@ public abstract class SQLDialect {
      * and instead override {@link #getNameEscape()}.
      * </p>
      */
-    public void encodeColumnName(final String raw, final StringBuilder sql) {
-        sql.append(ne()).append(raw).append(ne());
-    }
+    void encodeColumnName(final String raw, final StringBuilder sql);
 
     /**
      * Encodes the type of a column in an SQL CREATE TABLE statement.
@@ -373,9 +229,7 @@ public abstract class SQLDialect {
      * @param sqlTypeName
      * @param sql
      */
-    public void encodeColumnType(final String sqlTypeName, final StringBuilder sql) {
-        sql.append(sqlTypeName);
-    }
+    void encodeColumnType(final String sqlTypeName, final StringBuilder sql);
 
     /**
      * Encodes the alias of a column in an sql query.
@@ -384,10 +238,7 @@ public abstract class SQLDialect {
      * Subclasses should override to provide a different syntax.
      * </p>
      */
-    public void encodeColumnAlias(final String raw, final StringBuilder sql) {
-        sql.append(" as ");
-        encodeColumnName(raw, sql);
-    }
+    void encodeColumnAlias(final String raw, final StringBuilder sql);
 
     /**
      * Encodes the alias of a table in an sql query.
@@ -396,10 +247,7 @@ public abstract class SQLDialect {
      * Subclasses should override to provide a different syntax.
      * </p>
      */
-    public void encodeTableAlias(final String raw, final StringBuilder sql) {
-        sql.append(" as ");
-        encodeColumnName(raw, sql);
-    }
+    void encodeTableAlias(final String raw, final StringBuilder sql);
 
     /**
      * Encodes the name of a table in an SQL statement.
@@ -409,9 +257,7 @@ public abstract class SQLDialect {
      * and instead override {@link #getNameEscape()}.
      * </p>
      */
-    public void encodeTableName(final String raw, final StringBuilder sql) {
-        sql.append(ne()).append(raw).append(ne());
-    }
+    void encodeTableName(final String raw, final StringBuilder sql);
 
     /**
      * Encodes the name of a schema in an SQL statement.
@@ -421,9 +267,7 @@ public abstract class SQLDialect {
      * and instead override {@link #getNameEscape()}.
      * </p>
      */
-    public void encodeSchemaName(final String raw, final StringBuilder sql) {
-        sql.append(ne()).append(raw).append(ne());
-    }
+    void encodeSchemaName(final String raw, final StringBuilder sql);
 
     /**
      * Returns the name of a geometric type based on its integer constant.
@@ -435,9 +279,7 @@ public abstract class SQLDialect {
      * override.
      * </p>
      */
-    public String getGeometryTypeName(final Integer type) {
-        return null;
-    }
+    String getGeometryTypeName(final Integer type);
 
     /**
      * Returns the spatial reference system identifier (srid) for a particular
@@ -456,11 +298,8 @@ public abstract class SQLDialect {
      * @param columnName The column name, never <code>null</code>
      * @param cx The database connection.
      */
-    public Integer getGeometrySRID(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException
-    {
-        return null;
-    }
+    Integer getGeometrySRID(final String schemaName, final String tableName,
+            final String columnName, final Connection cx) throws SQLException;
 
     /**
      * Turns the specified srid into a {@link CoordinateReferenceSystem}, or returns <code>null</code> if not possible.
@@ -475,16 +314,7 @@ public abstract class SQLDialect {
      * @param srid
      * @return CoordinateReferenceSystem
      */
-    public CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException {
-        try {
-            return CRS.decode("EPSG:" + srid);
-        } catch(Exception e) {
-            if(LOGGER.isLoggable(Level.FINE)) {
-                LOGGER.log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
-            }
-            return null;
-        }
-    }
+    CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException;
 
     /**
      * Encodes the spatial extent function of a geometry column in a SELECT statement.
@@ -494,7 +324,7 @@ public abstract class SQLDialect {
      * </p>
      * @param tableName
      */
-    public abstract void encodeGeometryEnvelope(final String tableName, final String geometryColumn, final StringBuilder sql);
+    void encodeGeometryEnvelope(final String tableName, final String geometryColumn, final StringBuilder sql);
 
     /**
      * Decodes the result of a spatial extent function in a SELECT statement.
@@ -512,7 +342,7 @@ public abstract class SQLDialect {
      * @param column Index into the result set which points at the spatial extent value.
      * @param cx The database connection.
      */
-    public abstract Envelope decodeGeometryEnvelope(final ResultSet rs, final int column, final Connection cx)
+    Envelope decodeGeometryEnvelope(final ResultSet rs, final int column, final Connection cx)
         throws SQLException, IOException;
 
     /**
@@ -542,9 +372,7 @@ public abstract class SQLDialect {
      * wrapping function, subclasses must override.
      * </p>
      */
-    public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql) {
-        encodeColumnName(gatt.getLocalName(), sql);
-    }
+    void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql);
 
     /**
      * Encodes a generalized geometry using a DB provided SQL function if available
@@ -566,13 +394,8 @@ public abstract class SQLDialect {
      * <p>
      *
      */
-
-    public void encodeGeometryColumnGeneralized(final GeometryDescriptor gatt, final int srid,
-                                                final StringBuilder sql, final Double distance)
-    {
-        throw new UnsupportedOperationException("Geometry generalization not supported");
-    }
-
+    void encodeGeometryColumnGeneralized(final GeometryDescriptor gatt, final int srid,
+                                                final StringBuilder sql, final Double distance);
 
     /**
      *
@@ -581,12 +404,8 @@ public abstract class SQLDialect {
      * Only called if {@link HintsPending#GEOMETRY_SIMPLIFICATION is supported}
      * @see #encodeGeometryColumnGeneralized(org.opengis.feature.type.GeometryDescriptor, int, java.lang.StringBuilder, java.lang.Double)
      */
-    public void encodeGeometryColumnSimplified(final GeometryDescriptor gatt, final int srid,
-                                               final StringBuilder sql, final Double distance)
-    {
-        throw new UnsupportedOperationException("Geometry simplification not supported");
-    }
-
+    void encodeGeometryColumnSimplified(final GeometryDescriptor gatt, final int srid,
+                                               final StringBuilder sql, final Double distance);
 
     /**
      * Decodes a geometry value from the result of a query.
@@ -615,7 +434,7 @@ public abstract class SQLDialect {
      * objects.
      * </p>
      */
-    public abstract Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
+    Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
         final String column, final GeometryFactory factory, final Connection cx) throws IOException, SQLException;
 
     /**
@@ -629,12 +448,8 @@ public abstract class SQLDialect {
      * @see #decodeGeometryValue(org.opengis.feature.type.GeometryDescriptor, java.sql.ResultSet,
      * java.lang.String, com.vividsolutions.jts.geom.GeometryFactory, java.sql.Connection).
      */
-    public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
-        final int column, final GeometryFactory factory, final Connection cx ) throws IOException, SQLException {
-
-        final String columnName = rs.getMetaData().getColumnName( column );
-        return decodeGeometryValue(descriptor, rs, columnName, factory, cx);
-    }
+    Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
+        final int column, final GeometryFactory factory, final Connection cx ) throws IOException, SQLException;
 
     /**
      * Encodes the primary key definition in a CREATE TABLE statement.
@@ -650,10 +465,7 @@ public abstract class SQLDialect {
      * </p>
      *
      */
-    public void encodePrimaryKey(final String column, final StringBuilder sql) {
-        encodeColumnName( column, sql );
-        sql.append( " INTEGER PRIMARY KEY" );
-    }
+    void encodePrimaryKey(final String column, final StringBuilder sql);
 
     /**
      * Encodes anything post a column in a CREATE TABLE statement.
@@ -663,9 +475,7 @@ public abstract class SQLDialect {
      * </p>
      * @param att The attribute corresponding to the column.
      */
-    public void encodePostColumnCreateTable(final AttributeDescriptor att, final StringBuilder sql) {
-
-    }
+    void encodePostColumnCreateTable(final AttributeDescriptor att, final StringBuilder sql);
 
     /**
      * Encodes anything post a CREATE TABLE statement.
@@ -675,8 +485,7 @@ public abstract class SQLDialect {
      * need be.
      * </p>
      */
-    public void encodePostCreateTable(final String tableName, final StringBuilder sql) {
-    }
+    void encodePostCreateTable(final String tableName, final StringBuilder sql);
 
     /**
      * Callback to execute any additional sql statements post a create table
@@ -706,10 +515,8 @@ public abstract class SQLDialect {
      * @param cx Database connection.
      *
      */
-    public void postCreateTable(final String schemaName, final SimpleFeatureType featureType,
-                                final Connection cx) throws SQLException
-    {
-    }
+    void postCreateTable(final String schemaName, final SimpleFeatureType featureType,
+                                final Connection cx) throws SQLException;
 
     /**
      * Obtains the next value of the primary key of a column.
@@ -732,11 +539,8 @@ public abstract class SQLDialect {
      *
      * @return The next value of the column, or <code>null</code>.
      */
-    public Object getNextAutoGeneratedValue(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException
-    {
-        return null;
-    }
+    Object getNextAutoGeneratedValue(final String schemaName, final String tableName,
+            final String columnName, final Connection cx) throws SQLException;
 
     /**
      * Determines the name of the sequence (if any) which is used to increment
@@ -755,11 +559,8 @@ public abstract class SQLDialect {
      * @param cx The database connection.
      *
      */
-    public String getSequenceForColumn(final String schemaName, final String tableName, final String columnName,
-            final Connection cx) throws SQLException
-    {
-        return null;
-    }
+    String getSequenceForColumn(final String schemaName, final String tableName, final String columnName,
+            final Connection cx) throws SQLException;
 
     /**
      * Obtains the next value of a sequence, incrementing the sequence to the next state in the
@@ -782,20 +583,15 @@ public abstract class SQLDialect {
      *
      * @return The next value of the sequence, or <code>null</code>.
      */
-    public Object getNextSequenceValue(final String schemaName, final String sequenceName, final Connection cx)
-            throws SQLException
-    {
-        return null;
-    }
+    Object getNextSequenceValue(final String schemaName, final String sequenceName, final Connection cx)
+            throws SQLException;
 
     /**
      * Returns true if this dialect can encode both {@linkplain Query#getStartIndex()}
      * and {@linkplain Query#getMaxFeatures()} into native SQL.
      * @return boolean
      */
-    public boolean isLimitOffsetSupported() {
-        return false;
-    }
+    boolean isLimitOffsetSupported();
 
     /**
      * Alters the query provided so that limit and offset are natively dealt with. This might mean
@@ -804,21 +600,6 @@ public abstract class SQLDialect {
      * @param limit
      * @param offset
      */
-    public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
-        throw new UnsupportedOperationException("Override this method when isLimitOffsetSupported returns true");
-    }
-    /**
-     * Add hints to the JDBC Feature Source. A subclass
-     * can override
-     *
-     * possible hints (but not limited to)
-     *
-     * {@link HintsPending#GEOMETRY_GENERALIZATION}
-     * {@link HintsPending#GEOMETRY_SIMPLIFICATION}
-     *
-     * @param hints
-     */
-    protected void addSupportedHints(final Set<Hints.Key> hints) {
-    }
-
+    void applyLimitOffset(final StringBuilder sql, final int limit, final int offset);
+    
 }

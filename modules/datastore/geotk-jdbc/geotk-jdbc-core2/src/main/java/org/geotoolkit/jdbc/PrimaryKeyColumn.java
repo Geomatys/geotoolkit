@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,31 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.jdbc;
 
-package org.geotoolkit.data;
 
 /**
- * Exception used in DataStores, extends Exception.
+ * Represents a column in a primary key.
  *
- * @author Johann Sorel (Geomatys)
+ * @author Justin Deoliveira, OpenGEO
  * @module pending
  */
-public class DataStoreException extends Exception{
+public abstract class PrimaryKeyColumn {
 
-    public DataStoreException(){
-        super();
+    final String name;
+
+    final Class type;
+
+    protected PrimaryKeyColumn(final String name, final Class type) {
+        this.name = name;
+        this.type = type;
     }
 
-    public DataStoreException(String message){
-        super(message);
+    public String getName() {
+        return name;
     }
 
-    public DataStoreException(String message, Throwable th){
-        super(message, th);
+    public Class getType() {
+        return type;
     }
-
-    public DataStoreException(Throwable th){
-        super(th);
-    }
-
 }

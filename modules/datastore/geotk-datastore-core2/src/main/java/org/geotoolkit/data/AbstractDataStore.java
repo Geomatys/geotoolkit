@@ -52,10 +52,17 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public abstract class AbstractDataStore implements DataStore{
 
-    private static final Logger LOGGER = Logging.getLogger(AbstractDataStore.class);
+    /**
+     * Static variables refering to GML model.
+     */
+    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_NAME = "name";
+    public static final String GML_DESCRIPTION = "description";
+
+    private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     protected Logger getLogger(){
-        return LOGGER;
+        return Logger;
     }
 
     /**

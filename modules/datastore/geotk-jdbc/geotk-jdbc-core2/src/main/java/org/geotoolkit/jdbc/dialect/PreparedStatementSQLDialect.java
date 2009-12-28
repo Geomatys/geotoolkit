@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc;
+package org.geotoolkit.jdbc.dialect;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -26,6 +26,8 @@ import java.sql.Timestamp;
 import java.sql.Types;
 
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.PreparedFilterToSQL;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -37,7 +39,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @module pending
  */
-public abstract class PreparedStatementSQLDialect extends SQLDialect {
+public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
 
     protected PreparedStatementSQLDialect(JDBCDataStore dataStore) {
         super(dataStore);
@@ -98,8 +100,7 @@ public abstract class PreparedStatementSQLDialect extends SQLDialect {
      * @throws SQLException
      */
     public void setValue(Object value, final Class binding, final PreparedStatement ps,
-            final int column, final Connection cx) throws SQLException
-    {
+            final int column, final Connection cx) throws SQLException{
         
         //get the sql type
         final Integer sqlType = dataStore.getMapping( binding );
