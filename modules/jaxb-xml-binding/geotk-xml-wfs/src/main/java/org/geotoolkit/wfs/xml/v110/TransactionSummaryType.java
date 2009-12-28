@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -57,21 +56,31 @@ import javax.xml.bind.annotation.XmlType;
 public class TransactionSummaryType {
 
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalInserted;
+    private Integer totalInserted;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalUpdated;
+    private Integer totalUpdated;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalDeleted;
+    private Integer totalDeleted;
+
+    public TransactionSummaryType() {
+
+    }
+
+    public TransactionSummaryType(Integer totalInserted, Integer totalUpdated, Integer totalDeleted) {
+        this.totalDeleted  = totalDeleted;
+        this.totalInserted = totalInserted;
+        this.totalUpdated  = totalUpdated;
+    }
 
     /**
      * Gets the value of the totalInserted property.
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTotalInserted() {
+    public Integer getTotalInserted() {
         return totalInserted;
     }
 
@@ -80,10 +89,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTotalInserted(BigInteger value) {
+    public void setTotalInserted(Integer value) {
         this.totalInserted = value;
     }
 
@@ -92,10 +101,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTotalUpdated() {
+    public Integer getTotalUpdated() {
         return totalUpdated;
     }
 
@@ -104,10 +113,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTotalUpdated(BigInteger value) {
+    public void setTotalUpdated(Integer value) {
         this.totalUpdated = value;
     }
 
@@ -116,10 +125,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTotalDeleted() {
+    public Integer getTotalDeleted() {
         return totalDeleted;
     }
 
@@ -128,10 +137,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTotalDeleted(BigInteger value) {
+    public void setTotalDeleted(Integer value) {
         this.totalDeleted = value;
     }
 

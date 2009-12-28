@@ -25,10 +25,8 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *             The response for a transaction request that was successfully
- *             completed. If the transaction failed for any reason, an
- *             exception report is returned instead.
+ * The response for a transaction request that was successfully completed.
+ * If the transaction failed for any reason, an exception report is returned instead.
  *          
  * 
  * <p>Java class for TransactionResponseType complex type.
@@ -70,6 +68,17 @@ public class TransactionResponseType {
     private InsertResultsType insertResults;
     @XmlAttribute(required = true)
     private String version;
+
+    public TransactionResponseType() {
+
+    }
+
+    public TransactionResponseType(TransactionSummaryType transactionSummary, TransactionResultsType transactionResults, InsertResultsType insertResults, String version) {
+        this.transactionSummary = transactionSummary;
+        this.transactionResults = transactionResults;
+        this.insertResults      = insertResults;
+        this.version            = version;
+    }
 
     /**
      * Gets the value of the transactionSummary property.
