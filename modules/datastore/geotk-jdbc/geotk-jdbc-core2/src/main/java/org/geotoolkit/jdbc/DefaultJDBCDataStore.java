@@ -104,7 +104,7 @@ import static org.geotoolkit.jdbc.MetaDataConstants.*;
 public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
     private final Map<Name,FeatureType> names = new HashMap<Name, FeatureType>();
-    private final Map<FeatureType,PrimaryKey> primaryKeys = new HashMap<FeatureType, PrimaryKey>();
+    private final Map<Name,PrimaryKey> primaryKeys = new HashMap<Name, PrimaryKey>();
     private Set<Name> nameCache = null;
 
     DefaultJDBCDataStore(String namespace){
@@ -119,7 +119,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         if(nameCache == null){
             visitTables();
         }
-        return primaryKeys.get(type);
+        return primaryKeys.get(type.getName());
     }
 
     /**
@@ -193,7 +193,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                     final SimpleFeatureType sft = buildFeatureType(name);
                     final PrimaryKey pkey = getPrimaryKey(name);
                     names.put(name, sft);
-                    primaryKeys.put(sft, pkey);
+                    primaryKeys.put(name, pkey);
                 }
             } finally {
                 closeSafe(tables);

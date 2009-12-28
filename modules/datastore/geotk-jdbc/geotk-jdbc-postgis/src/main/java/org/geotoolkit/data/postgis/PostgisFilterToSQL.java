@@ -90,11 +90,16 @@ public class PostgisFilterToSQL extends FilterToSQL {
             final FilterFactory ff = FactoryFinder.getFilterFactory(null);
             final GeometryFactory gf = new GeometryFactory();
             final Coordinate[] coords = new Coordinate[5];
-            coords[0] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
-            coords[1] = new Coordinate(env.getMinimum(0), env.getMaximum(1));
-            coords[2] = new Coordinate(env.getMaximum(0), env.getMaximum(1));
-            coords[3] = new Coordinate(env.getMaximum(0), env.getMinimum(1));
-            coords[4] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
+            double minx = checkInfinites(env.getMinimum(0));
+            double maxx = checkInfinites(env.getMaximum(0));
+            double miny = checkInfinites(env.getMinimum(1));
+            double maxy = checkInfinites(env.getMaximum(1));
+
+            coords[0] = new Coordinate(minx,miny);
+            coords[1] = new Coordinate(minx,maxy);
+            coords[2] = new Coordinate(maxx,maxy);
+            coords[3] = new Coordinate(maxx,miny);
+            coords[4] = new Coordinate(minx,miny);
             final LinearRing ring = gf.createLinearRing(coords);
             final Geometry geom = gf.createPolygon(ring, new LinearRing[0]);
             geometry = ff.literal(geom);
@@ -148,6 +153,16 @@ public class PostgisFilterToSQL extends FilterToSQL {
         helper.out = out;
         return helper.visitBinarySpatialOperator(filter, property, geometry,
                 swapped, extraData);
+    }
+
+    private double checkInfinites(double candidate){
+        if(candidate == Double.NEGATIVE_INFINITY){
+            return Double.MIN_VALUE;
+        }else if(candidate == Double.POSITIVE_INFINITY){
+            return Double.MAX_VALUE;
+        }else{
+            return candidate;
+        }
     }
 
 }
