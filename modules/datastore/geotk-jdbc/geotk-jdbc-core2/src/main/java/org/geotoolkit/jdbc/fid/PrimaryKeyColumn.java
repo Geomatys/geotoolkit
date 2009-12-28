@@ -14,38 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc;
-
-import java.util.List;
+package org.geotoolkit.jdbc.fid;
 
 
 /**
- * Primary key of a table.
+ * Represents a column in a primary key.
  *
- * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
+ * @author Justin Deoliveira, OpenGEO
  * @module pending
  */
-public class PrimaryKey {
-    /**
-     * The columns making up the primary key.
-     */
-    private final List<PrimaryKeyColumn> columns;
+public abstract class PrimaryKeyColumn {
 
-    /**
-     * Table name.
-     */
-    private final String tableName;
+    final String name;
 
-    public PrimaryKey(final String tableName, final List<PrimaryKeyColumn> columns) {
-        this.tableName = tableName;
-        this.columns = columns;
+    final Class type;
+
+    protected PrimaryKeyColumn(final String name, final Class type) {
+        this.name = name;
+        this.type = type;
     }
 
-    public List<PrimaryKeyColumn> getColumns() {
-        return columns;
+    public String getName() {
+        return name;
     }
 
-    public String getTableName() {
-        return tableName;
+    public Class getType() {
+        return type;
     }
 }

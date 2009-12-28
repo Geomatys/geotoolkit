@@ -17,8 +17,13 @@
  */
 package org.geotoolkit.jdbc;
 
+import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -42,36 +47,10 @@ import org.opengis.geometry.Envelope;
  */
 public interface JDBCDataStore extends DataStore {
 
-
     /**
      * The native SRID associated to a certain descriptor
      */
     public static final String JDBC_NATIVE_SRID = "nativeSRID";
-    /**
-     * name of table to use to store geometries when {@link #associations}
-     * is set.
-     */
-    public static final String GEOMETRY_TABLE = "geometry";
-    /**
-     * name of table to use to store multi geometries made up of non-multi
-     * geometries when {@link #associations} is set.
-     */
-    public static final String MULTI_GEOMETRY_TABLE = "multi_geometry";
-    /**
-     * name of table to use to store geometry associations when {@link #associations}
-     * is set.
-     */
-    public static final String GEOMETRY_ASSOCIATION_TABLE = "geometry_associations";
-    /**
-     * name of table to use to store feature relationships (information about
-     * associations) when {@link #associations} is set.
-     */
-    public static final String FEATURE_RELATIONSHIP_TABLE = "feature_relationships";
-    /**
-     * name of table to use to store feature associations when {@link #associations}
-     * is set.
-     */
-    public static final String FEATURE_ASSOCIATION_TABLE = "feature_associations";
     /**
      * The envelope returned when bounds is called against a geometryless feature type
      */
@@ -167,5 +146,44 @@ public interface JDBCDataStore extends DataStore {
      * </p>
      */
     FilterToSQL createFilterToSQL(final FeatureType featureType);
+
+
+    //todo should live here or not ? ///////////////////////////////////////////
+
+    /**
+     * Creates a new connection.
+     * Callers of this method should close the connection when done with it.
+     */
+    Connection createConnection() throws SQLException;
+
+    /**
+     * Utility method for closing a result set.
+     * <p>
+     * This method closed the result set "safely" in that it never throws an
+     * exception. Any exceptions that do occur are logged at {@link Level#FINER}.
+     * </p>
+     * @param rs The result set to close.
+     */
+    void closeSafe(final ResultSet rs);
+
+    /**
+     * Utility method for closing a statement.
+     * <p>
+     * This method closed the statement"safely" in that it never throws an
+     * exception. Any exceptions that do occur are logged at {@link Level#FINER}.
+     * </p>
+     * @param st The statement to close.
+     */
+    void closeSafe(final Statement st);
+
+    /**
+     * Utility method for closing a connection.
+     * <p>
+     * This method closed the connection "safely" in that it never throws an
+     * exception. Any exceptions that do occur are logged at {@link Level#FINER}.
+     * </p>
+     * @param cx The connection to close.
+     */
+    void closeSafe(final Connection cx);
 
 }

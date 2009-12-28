@@ -22,14 +22,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.geotoolkit.data.DataSourceException;
-
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
+import org.geotoolkit.data.DataStoreException;
 
 
 /**
@@ -72,7 +71,7 @@ public class WKBAttributeIO {
             inStream.setBytes(wkbBytes);
             return wkbr.read(inStream);
         } catch (ParseException e) {
-            throw new DataSourceException("An exception occurred while parsing WKB data", e);
+            throw new IOException("An exception occurred while parsing WKB data", e);
         }
     }
 
@@ -84,7 +83,7 @@ public class WKBAttributeIO {
             }
             return wkb2Geometry(Base64.decode(bytes));
         } catch (SQLException e) {
-            throw new DataSourceException("SQL exception occurred while reading the geometry.", e);
+            throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
     }
 
@@ -96,7 +95,7 @@ public class WKBAttributeIO {
             }
             return wkb2Geometry(Base64.decode(bytes));
         } catch (SQLException e) {
-            throw new DataSourceException("SQL exception occurred while reading the geometry.", e);
+            throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
     }
 
@@ -110,7 +109,7 @@ public class WKBAttributeIO {
                 ps.setBytes(position, new WKBWriter().write((Geometry)value));
             }
         } catch (SQLException e) {
-            throw new DataSourceException("SQL exception occurred while reading the geometry.", e);
+            throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
 
     }

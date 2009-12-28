@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.jdbc;
 
+import org.geotoolkit.jdbc.fid.PrimaryKey;
+import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -254,9 +256,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             final int attributeCount = featureType.getAttributeCount();
             for(int i = 0; i < attributeCount; i++) {
                 final AttributeDescriptor type = featureType.getDescriptor(i);
-
-                //figure out if any referenced attributes should be resolved
-                boolean resolve = false;
 
                 try {
                     Object value = null;

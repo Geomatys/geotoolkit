@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotoolkit.jdbc.BasicSQLDialect;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -51,6 +50,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
+import org.geotoolkit.jdbc.dialect.BasicSQLDialect;
 
 public class PostGISDialect extends BasicSQLDialect {
 
@@ -153,7 +153,7 @@ public class PostGISDialect extends BasicSQLDialect {
 
     @Override
     public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid,
-                                     final StringBuffer sql){
+                                     final StringBuilder sql){
         final CoordinateReferenceSystem crs = gatt.getCoordinateReferenceSystem();
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
         sql.append("encode(");
@@ -171,7 +171,7 @@ public class PostGISDialect extends BasicSQLDialect {
 
     @Override
     public void encodeGeometryEnvelope(final String tableName, final String geometryColumn,
-            final StringBuffer sql){
+            final StringBuilder sql){
         if (estimatedExtentsEnabled) {
             sql.append("estimated_extent(");
             sql.append("'" + tableName + "','" + geometryColumn + "'))));");
@@ -238,7 +238,7 @@ public class PostGISDialect extends BasicSQLDialect {
         // TODO: add the support code needed to infer from the first geometry
         // if (gType == null) {
         // // no geometry_columns entry, try grabbing a feature
-        // StringBuffer sql = new StringBuffer();
+        // StringBuilder sql = new StringBuilder();
         // sql.append("SELECT encode(AsBinary(force_2d(\"");
         // sql.append(columnName);
         // sql.append("\"), 'XDR'),'base64') FROM \"");
@@ -302,7 +302,7 @@ public class PostGISDialect extends BasicSQLDialect {
 
         // TODO: implement inference from the first feature
         // try asking the first feature for its srid
-        // sql = new StringBuffer();
+        // sql = new StringBuilder();
         // sql.append("SELECT SRID(\"");
         // sql.append(geometryColumnName);
         // sql.append("\") FROM \"");
@@ -434,7 +434,7 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public void encodePrimaryKey(final String column, final StringBuffer sql) {
+    public void encodePrimaryKey(final String column, final StringBuilder sql) {
         encodeColumnName(column, sql);
         sql.append(" SERIAL PRIMARY KEY");
     }
@@ -567,7 +567,7 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public void encodeGeometryValue(Geometry value, final int srid, final StringBuffer sql) throws IOException {
+    public void encodeGeometryValue(Geometry value, final int srid, final StringBuilder sql) throws IOException {
         if (value == null) {
             sql.append("NULL");
         } else {
@@ -593,7 +593,7 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public void applyLimitOffset(final StringBuffer sql, final int limit, final int offset) {
+    public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
         if (limit > 0 && limit < Integer.MAX_VALUE) {
             sql.append(" LIMIT ").append(limit);
             if (offset > 0) {

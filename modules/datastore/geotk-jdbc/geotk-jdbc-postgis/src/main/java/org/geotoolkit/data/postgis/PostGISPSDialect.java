@@ -26,7 +26,6 @@ import java.util.Map;
 
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.PreparedFilterToSQL;
-import org.geotoolkit.jdbc.PreparedStatementSQLDialect;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
@@ -35,6 +34,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.io.WKBWriter;
+import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 
 public class PostGISPSDialect extends PreparedStatementSQLDialect {
 
@@ -62,20 +62,20 @@ public class PostGISPSDialect extends PreparedStatementSQLDialect {
 
     @Override
     public void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid,
-            final StringBuffer sql)
+            final StringBuilder sql)
     {
         delegate.encodeGeometryColumn(gatt, srid, sql);
     }
 
     @Override
     public void encodeGeometryEnvelope(final String tableName, final String geometryColumn,
-            final StringBuffer sql)
+            final StringBuilder sql)
     {
         delegate.encodeGeometryEnvelope(tableName, geometryColumn, sql);
     }
 
     @Override
-    public void encodePrimaryKey(final String column, final StringBuffer sql)
+    public void encodePrimaryKey(final String column, final StringBuilder sql)
     {
         delegate.encodePrimaryKey(column, sql);
     }
@@ -154,7 +154,7 @@ public class PostGISPSDialect extends PreparedStatementSQLDialect {
 
     @Override
     public void prepareGeometryValue(final Geometry g, final int srid, final Class binding,
-            final StringBuffer sql)
+            final StringBuilder sql)
     {
         if (g != null) {
             sql.append("GeomFromWKB(?, " + srid + ")");
@@ -193,7 +193,7 @@ public class PostGISPSDialect extends PreparedStatementSQLDialect {
     }
 
     @Override
-    public void applyLimitOffset(final StringBuffer sql, final int limit, final int offset) {
+    public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
         delegate.applyLimitOffset(sql, limit, offset);
     }
 }

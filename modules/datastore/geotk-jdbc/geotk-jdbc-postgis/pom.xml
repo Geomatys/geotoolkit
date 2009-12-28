@@ -50,19 +50,12 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-core</artifactId>
+      <artifactId>geotk-jdbc-core2</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-core</artifactId>
-      <version>${project.version}</version>
-      <classifier>tests</classifier>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

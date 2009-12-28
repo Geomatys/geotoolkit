@@ -18,14 +18,13 @@ package org.geotoolkit.data.postgis;
 
 import java.io.IOException;
 
-import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCDataStoreFactory;
-import org.geotoolkit.jdbc.SQLDialect;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -90,17 +89,17 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
 
     @Override
     protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, final ParameterValueGroup params)
-        throws IOException {
+        throws DataStoreException {
 
         // setup loose bbox
-        final PostGISDialect dialect = (PostGISDialect) dataStore.getSQLDialect();
+        final PostGISDialect dialect = (PostGISDialect) dataStore.getDialect();
         final Boolean loose = (Boolean) params.parameter(LOOSEBBOX.getName().toString()).getValue();
         dialect.setLooseBBOXEnabled(loose == null || Boolean.TRUE.equals(loose));
 
         // setup the ps dialect if need be
         final Boolean usePs = (Boolean) params.parameter(PREPARED_STATEMENTS.getName().toString()).getValue();
         if(Boolean.TRUE.equals(usePs)) {
-            dataStore.setSQLDialect(new PostGISPSDialect(dataStore, dialect));
+            dataStore.setDialect(new PostGISPSDialect(dataStore, dialect));
         }
 
         return dataStore;

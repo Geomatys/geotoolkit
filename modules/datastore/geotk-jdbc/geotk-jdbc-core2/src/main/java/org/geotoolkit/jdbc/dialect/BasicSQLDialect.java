@@ -45,7 +45,7 @@ public abstract class BasicSQLDialect extends AbstractSQLDialect {
      * </p>
      *
      */
-    public void encodeValue(final Object value, final Class type, final StringBuffer sql) {
+    public void encodeValue(final Object value, final Class type, final StringBuilder sql) {
 
         //turn the value into a literal and use FilterToSQL to encode it
         final Literal literal = dataStore.getFilterFactory().literal(value);
@@ -79,7 +79,7 @@ public abstract class BasicSQLDialect extends AbstractSQLDialect {
      *  of the geometry, or 0 if not known.
      * </p>
      */
-    public abstract void encodeGeometryValue(final Geometry value, final int srid, final StringBuffer sql)
+    public abstract void encodeGeometryValue(final Geometry value, final int srid, final StringBuilder sql)
         throws IOException;
 
     /**

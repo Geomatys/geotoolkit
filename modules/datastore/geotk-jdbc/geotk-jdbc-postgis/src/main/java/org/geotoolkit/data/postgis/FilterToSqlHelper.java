@@ -26,7 +26,8 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
-import org.geotoolkit.jdbc.SQLDialect;
+import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperator;
@@ -74,7 +75,7 @@ class FilterToSqlHelper {
         final SpatialOperator operatorWithin     = new DefaultSpatialOperator(Within.NAME    , operandEnvelope);
 
         final List<SpatialOperator> spatialOptsList = new ArrayList<SpatialOperator>();
-        spatialOptsList.addAll(SQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getSpatialOperators().getOperators());
+        spatialOptsList.addAll(AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getSpatialOperators().getOperators());
         spatialOptsList.add(operatorBBOX);
         spatialOptsList.add(operatorBeyond);
         spatialOptsList.add(operatorContains);
@@ -89,12 +90,12 @@ class FilterToSqlHelper {
 
         final SpatialOperators spatialOpts = new DefaultSpatialOperators(spatialOptsList.toArray(new SpatialOperator[]{}));
         final SpatialCapabilities spatialCaps = new DefaultSpatialCapabilities(
-                SQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getGeometryOperands().toArray(new GeometryOperand[]{}),
+                AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getSpatialCapabilities().getGeometryOperands().toArray(new GeometryOperand[]{}),
                 spatialOpts);
-        return new DefaultFilterCapabilities(SQLDialect.BASE_DBMS_CAPABILITIES.getVersion(),
-                                             SQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities(),
+        return new DefaultFilterCapabilities(AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getVersion(),
+                                             AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getIdCapabilities(),
                                              spatialCaps,
-                                             SQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities());
+                                             AbstractSQLDialect.BASE_DBMS_CAPABILITIES.getScalarCapabilities());
     }
 
     protected Object visitBinarySpatialOperator(final BinarySpatialOperator filter,
