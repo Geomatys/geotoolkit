@@ -45,6 +45,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Generic tests for datastore. 
+ * Tests schemas names and readers with queries.
  *
  * @author Johann Sorel (Geomatys)
  */
