@@ -38,6 +38,7 @@ import javax.xml.stream.events.XMLEvent;
 
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -128,15 +129,20 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                     StartElement startEvent = event.asStartElement();
                     Name name               = Utils.getNameFromQname(startEvent.getName());
                     Attribute id            = startEvent.getAttributeByName(new QName("http://www.opengis.net/gml", "id"));
-                    
+                    StringBuilder expectedFeatureType = new StringBuilder();
+
                     if (name.getLocalPart().equals("FeatureCollection")) {
                         return readFeatureCollection(eventReader, id.getValue());
 
-                    } else if (featureType.getName().equals(name)) {
-                        return readFeature(eventReader, id.getValue());
                     } else {
+                        for (FeatureType ft : featureTypes) {
+                            if (ft.getName().equals(name)) {
+                                return readFeature(eventReader, id.getValue(), ft);
+                            }
+                            expectedFeatureType.append(ft.getName()).append('\n');
+                        }
                         throw new IllegalArgumentException("The xml does not describte the same type of feature: \n " +
-                                                           "Expected: " + featureType.getName() + '\n'                  +
+                                                           "Expected: " + expectedFeatureType.toString()      + '\n'  +
                                                            "But was: "  + name);
                     }
                 }
@@ -154,8 +160,8 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
      * @param id the extracted id of the feature.
      * @return A simpleFeature object.
      */
-    private SimpleFeature readFeature(XMLEventReader eventReader, String id) {
-        builder.reset();
+    private SimpleFeature readFeature(XMLEventReader eventReader, String id, FeatureType featureType) {
+        SimpleFeatureBuilder builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
         String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
             while (eventReader.hasNext()) {
@@ -229,7 +235,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
      * @return A feature Collection.
      */
     private FeatureCollection readFeatureCollection(XMLEventReader eventReader, String id) {
-        FeatureCollection collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) featureType);
+        FeatureCollection collection = null;
         try {
              while (eventReader.hasNext()) {
                 XMLEvent event = eventReader.nextEvent();
@@ -250,13 +256,25 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                         JTSEnvelope2D bounds = readBounds(eventReader, srsName);
                         
 
-                    } else if (featureType.getName().equals(name)) {
-                        SimpleFeature feature = readFeature(eventReader, fid.getValue());
-                        collection.add(feature);
-                    } else {
-                        throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
-                                                           "Expected: " + featureType.getName() + '\n'                  +
-                                                           "But was: "  + name);
+                    }  else {
+                        boolean find = false;
+                        StringBuilder expectedFeatureType = new StringBuilder();
+                        for (FeatureType ft : featureTypes) {
+                            if (ft.getName().equals(name)) {
+                                if (collection == null) {
+                                    collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) ft);
+                                }
+                                collection.add(readFeature(eventReader, fid.getValue(), ft));
+                                find = true;
+                            }
+                            expectedFeatureType.append(ft.getName()).append('\n');
+                        }
+
+                        if (!find) {
+                            throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
+                                                               "Expected: " + expectedFeatureType.toString()     + '\n'  +
+                                                               "But was: "  + name);
+                        }
                     }
                 }
              }

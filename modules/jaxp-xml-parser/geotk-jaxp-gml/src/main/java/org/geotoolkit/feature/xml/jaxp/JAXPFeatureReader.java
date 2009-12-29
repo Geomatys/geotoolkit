@@ -17,15 +17,15 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -45,15 +45,18 @@ public abstract class JAXPFeatureReader implements XmlFeatureReader {
         }
     }
 
-    protected FeatureType featureType;
+    protected List<FeatureType> featureTypes;
 
-    protected SimpleFeatureBuilder builder;
-
-    protected final Unmarshaller unmarshaller;
+   protected final Unmarshaller unmarshaller;
 
     public JAXPFeatureReader(FeatureType featureType) throws JAXBException {
-         this.builder      = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-         this.featureType  = featureType;
+         this.featureTypes = Arrays.asList(featureType);
+         this.unmarshaller = marshallpool.acquireUnmarshaller();
+
+    }
+
+    public JAXPFeatureReader(List<FeatureType> featureTypes) throws JAXBException {
+         this.featureTypes = featureTypes;
          this.unmarshaller = marshallpool.acquireUnmarshaller();
 
     }
@@ -63,8 +66,7 @@ public abstract class JAXPFeatureReader implements XmlFeatureReader {
      */
     @Override
     public void setFeatureType(FeatureType featureType) {
-        this.featureType = featureType;
-        this.builder     = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
+        this.featureTypes = Arrays.asList(featureType);
     }
 
     @Override

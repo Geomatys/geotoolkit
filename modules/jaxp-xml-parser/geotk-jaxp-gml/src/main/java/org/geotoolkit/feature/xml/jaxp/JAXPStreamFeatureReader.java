@@ -37,6 +37,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import org.geotoolkit.data.FeatureCollectionUtilities;
 import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -57,6 +58,10 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
         super(featureType);
     }
 
+    public JAXPStreamFeatureReader(List<FeatureType> featureTypes) throws JAXBException {
+        super(featureTypes);
+    }
+
     @Override
     public Object read(String xml)  {
         try {
@@ -66,7 +71,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
             XMLStreamReader streamReader = XMLfactory.createXMLStreamReader(new StringReader(xml));
             return read(streamReader);
         } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream initializing the event Reader: " + ex.getMessage());
+            LOGGER.severe("XMl stream initializing the stream reader: " + ex.getMessage());
         }
         return null;
     }
@@ -80,7 +85,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
             XMLStreamReader streamReader = XMLfactory.createXMLStreamReader(in);
             return read(streamReader);
         } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream initializing the event Reader: " + ex.getMessage());
+            LOGGER.severe("XMl stream initializing the stream reader: " + ex.getMessage());
         }
         return null;
     }
@@ -94,7 +99,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
             XMLStreamReader streamReader = XMLfactory.createXMLStreamReader(reader);
             return read(streamReader);
         } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream initializing the event Reader: " + ex.getMessage());
+            LOGGER.severe("XMl stream initializing the stream reader: " + ex.getMessage());
         }
         return null;
     }
@@ -116,17 +121,27 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                     
                     Name name  = Utils.getNameFromQname(streamReader.getName());
                     String id  = streamReader.getAttributeValue(0);
+                    StringBuilder expectedFeatureType = new StringBuilder();
 
                     if (name.getLocalPart().equals("FeatureCollection")) {
                         return readFeatureCollection(streamReader, id);
 
-                    } else if (featureType.getName().equals(name)) {
-                        return readFeature(streamReader, id);
+                    } else if (name.getLocalPart().equals("Transaction")) {
+                        return extractFeatureFromTransaction(streamReader);
+
                     } else {
-                        throw new IllegalArgumentException("The xml does not describte the same type of feature: \n " +
-                                                           "Expected: " + featureType.getName() + '\n'                  +
-                                                           "But was: "  + name);
+                        for (FeatureType ft : featureTypes) {
+                            if (ft.getName().equals(name)) {
+                                return readFeature(streamReader, id, ft);
+                            }
+                            expectedFeatureType.append(name).append('\n');
+                        }
                     }
+
+                    throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
+                                                       "Expected: " + expectedFeatureType.toString() + '\n'                  +
+                                                       "But was: "  + name);
+                    
                 }
             }
         } catch (XMLStreamException ex) {
@@ -136,7 +151,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
     }
 
     private Object readFeatureCollection(XMLStreamReader streamReader, String id) {
-        FeatureCollection collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) featureType);
+        FeatureCollection collection = null;
         try {
             while (streamReader.hasNext()) {
                 int event = streamReader.next();
@@ -165,13 +180,25 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                         }
                         JTSEnvelope2D bounds = readBounds(streamReader, srsName);
 
-
-                    } else if (featureType.getName().equals(name)) {
-                        collection.add(readFeature(streamReader, fid));
                     } else {
-                        throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
-                                                           "Expected: " + featureType.getName() + '\n'                  +
-                                                           "But was: "  + name);
+                        boolean find = false;
+                        StringBuilder expectedFeatureType = new StringBuilder();
+                        for (FeatureType ft : featureTypes) {
+                            if (ft.getName().equals(name)) {
+                                if (collection == null) {
+                                    collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) ft);
+                                }
+                                collection.add(readFeature(streamReader, fid, ft));
+                                find = true;
+                            }
+                            expectedFeatureType.append(ft.getName()).append('\n');
+                        }
+                        
+                        if (!find) {
+                            throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
+                                                               "Expected: " + expectedFeatureType.toString()     + '\n'  +
+                                                               "But was: "  + name);
+                        }
                     }
                 }
             }
@@ -182,8 +209,8 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
         return null;
     }
 
-    private SimpleFeature readFeature(XMLStreamReader streamReader, String id) {
-        builder.reset();
+    private SimpleFeature readFeature(XMLStreamReader streamReader, String id, FeatureType featureType) {
+        SimpleFeatureBuilder builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
         String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
             int nbAttribute            = 0;
@@ -195,8 +222,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
                 if (event == XMLEvent.START_ELEMENT) {
                     nbAttribute++;
-                    QName q                 = streamReader.getName();
-
+                    QName q              = streamReader.getName();
                     String nameAttribute = streamReader.getAttributeValue(null, "name");
                     /*
                      * Read a property
@@ -278,6 +304,8 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                     QName q             = streamReader.getName();
                     if (q.getLocalPart().equals("featureMember")) {
                         break;
+                    } else if (Utils.getNameFromQname(q).equals(featureType.getName())) {
+                        break;
                     }
                 }
             }
@@ -291,6 +319,55 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
         return null;
     }
 
+    private List<SimpleFeature> extractFeatureFromTransaction(XMLStreamReader streamReader) {
+        List<SimpleFeature> features = new ArrayList<SimpleFeature>();
+        try {
+            boolean insert = false;
+            while (streamReader.hasNext()) {
+                int event = streamReader.next();
+
+                if (event == XMLEvent.END_ELEMENT) {
+                    Name name  = Utils.getNameFromQname(streamReader.getName());
+                    if (name.getLocalPart().equals("Insert")) {
+                        insert = false;
+                    }
+
+
+                //we are looking for the root mark
+                } else if (event == XMLEvent.START_ELEMENT) {
+                    Name name  = Utils.getNameFromQname(streamReader.getName());
+
+                    if (name.getLocalPart().equals("Insert")) {
+                        insert = true;
+                        continue;
+
+                    } else if (insert) {
+
+                        boolean find = false;
+                        StringBuilder expectedFeatureType = new StringBuilder();
+                        for (FeatureType ft : featureTypes) {
+                            if (ft.getName().equals(name)) {
+                                features.add(readFeature(streamReader, "", ft));
+                                find = true;
+                            }
+                            expectedFeatureType.append(ft.getName()).append('\n');
+                        }
+
+                        if (!find) {
+                            throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
+                                                               "Expected: " + expectedFeatureType.toString()     + '\n'  +
+                                                               "But was: "  + name);
+                        }
+                    }
+                }
+            }
+            return features;
+        } catch (XMLStreamException ex) {
+            LOGGER.severe("XMl stream exception while reading the feature: " + ex.getMessage());
+        }
+        return null;
+    }
+    
     /**
      * Extract An envelope from the BoundedBy XML mark of a feature collection.
      *
