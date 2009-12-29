@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.geotoolkit.data.AbstractDataStoreTests;
+import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureWriter;
@@ -43,13 +43,13 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultMemoryDataStoreTest extends AbstractDataStoreTests{
+public class MemoryReadingTest extends AbstractReadingTests{
 
     private final MemoryDataStore store = new MemoryDataStore();
     private final Set<Name> names = new HashSet<Name>();
     private final List<ExpectedResult> expecteds = new ArrayList<ExpectedResult>();
 
-    public DefaultMemoryDataStoreTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
+    public MemoryReadingTest() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
         final GeometryFactory gf = new GeometryFactory();
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
 

@@ -45,12 +45,12 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Generic tests for datastore. 
+ * Generic reading tests for datastore.
  * Tests schemas names and readers with queries.
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDataStoreTests extends TestCase{
+public abstract class AbstractReadingTests extends TestCase{
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
