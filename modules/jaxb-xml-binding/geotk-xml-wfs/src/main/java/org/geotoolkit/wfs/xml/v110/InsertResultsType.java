@@ -59,6 +59,14 @@ public class InsertResultsType {
     @XmlElement(name = "Feature", required = true)
     private List<InsertedFeatureType> feature;
 
+    public InsertResultsType() {
+
+    }
+
+    public InsertResultsType(List<InsertedFeatureType> feature) {
+        this.feature = feature;
+    }
+
     /**
      * Gets the value of the feature property.
      */

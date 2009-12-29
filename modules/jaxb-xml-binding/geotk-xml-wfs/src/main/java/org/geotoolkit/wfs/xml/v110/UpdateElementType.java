@@ -74,6 +74,17 @@ public class UpdateElementType {
     @XmlSchemaType(name = "anyURI")
     private String srsName;
 
+    public UpdateElementType() {
+
+    }
+
+    public UpdateElementType(List<PropertyType> property, FilterType filter, QName typeName, String srsName) {
+        this.property = property;
+        this.filter   = filter;
+        this.typeName = typeName;
+        this.srsName  = srsName;
+    }
+    
     /**
      * Changing or updating a feature instance means that the current value of one or more properties of
      * the feature are replaced with new values.  

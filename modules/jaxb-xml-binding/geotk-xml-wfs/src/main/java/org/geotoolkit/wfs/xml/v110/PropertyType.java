@@ -56,6 +56,15 @@ public class PropertyType {
     @XmlElement(name = "Value")
     private Object value;
 
+    public PropertyType() {
+
+    }
+
+    public PropertyType(QName name, Object value) {
+        this.name  = name;
+        this.value = value;
+    }
+
     /**
      * Gets the value of the name property.
      */
