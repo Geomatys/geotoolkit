@@ -41,10 +41,12 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 
@@ -211,7 +213,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
     private SimpleFeature readFeature(XMLStreamReader streamReader, String id, FeatureType featureType) {
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
-        String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
+        //String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
             int nbAttribute            = 0;
             Map<QName, Object> values  = new HashMap<QName, Object>();
@@ -224,17 +226,37 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                     nbAttribute++;
                     QName q              = streamReader.getName();
                     String nameAttribute = streamReader.getAttributeValue(null, "name");
-                    /*
-                     * Read a property
-                     */
-                    if (!q.getLocalPart().equals(geometryName)) {
+                    
 
                         if (streamReader.next() == XMLEvent.CHARACTERS) {
 
                             String content           = streamReader.getText();
                             PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q));
                             if (pdesc != null) {
-                                
+
+                                if (pdesc instanceof GeometryDescriptor) {
+                                    event = streamReader.next();
+                                    while (event != XMLEvent.START_ELEMENT) {
+                                        event = streamReader.next();
+                                    }
+
+                                    try {
+                                        JTSGeometry isoGeom;
+                                        Object geometry = ((JAXBElement) unmarshaller.unmarshal(streamReader)).getValue();
+                                        if (geometry instanceof JTSGeometry) {
+                                            isoGeom = (JTSGeometry) geometry;
+                                        } else if (geometry instanceof PolygonType) {
+                                            isoGeom = ((PolygonType)geometry).getJTSPolygon();
+                                        } else {
+                                            throw new IllegalArgumentException("unexpected geometry type:" + geometry);
+                                        }
+                                        Geometry jtsGeom = isoGeom.getJTSGeometry();
+                                        values.put(q, jtsGeom);
+                                    } catch (JAXBException ex) {
+                                        LOGGER.severe("JAXB exception while reading the feature geometry: " + ex.getMessage());
+                                        ex.printStackTrace();
+                                    }
+                                } else {
                                 Class propertyType = pdesc.getType().getBinding();
                                 Object previous    = values.get(q);
 
@@ -262,7 +284,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                                     values.put(q, multipleValue);
                                 }
                                 
-                            
+                                }
                             // Unknow property launch an exception
                             } else {
                                 StringBuilder exp = new StringBuilder("expected ones are:").append('\n');
@@ -271,28 +293,12 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                                 }
                                 throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart() + '\n' + exp.toString());
                             }
+
                         } else {
                             LOGGER.severe("unexpected event");
                         }
 
-                    /*
-                     * Reading Geometry property with JAXB
-                     */
-                    } else {
-                        event = streamReader.next();
-                        while (event != XMLEvent.START_ELEMENT) {
-                            event = streamReader.next();
-                        }
-                        
-                        try {
-                            JTSGeometry isoGeom = (JTSGeometry) ((JAXBElement)unmarshaller.unmarshal(streamReader)).getValue();
-                            Geometry jtsGeom = isoGeom.getJTSGeometry();
-                            builder.set(geometryName, jtsGeom);
-                        } catch (JAXBException ex) {
-                            LOGGER.severe("JAXB exception while reading the feature geometry: " + ex.getMessage());
-                            ex.printStackTrace();
-                        }
-                    }
+                    
 
                     // we fill  the builder with the properties
                     for (Entry<QName, Object> entry : values.entrySet()) {
