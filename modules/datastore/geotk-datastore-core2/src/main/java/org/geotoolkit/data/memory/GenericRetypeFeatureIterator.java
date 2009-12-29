@@ -174,6 +174,10 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * Wrap a FeatureReader with a new featuretype.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(FeatureReader<T,F> reader, FeatureType mask){
+        if(mask.equals(reader.getFeatureType())){
+            //same type mapping, no need to wrap it
+            return reader;
+        }
         return new GenericRetypeFeatureReader(reader, mask);
     }
 

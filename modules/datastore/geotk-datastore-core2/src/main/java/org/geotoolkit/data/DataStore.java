@@ -35,8 +35,18 @@ import org.opengis.geometry.Envelope;
  */
 public interface DataStore {
 
-
-    Session createSession();
+    /**
+     * Create a session, that session may be synchrone or asynchrone.
+     * If you choose it to be synchrone, every changes made in the session are directly
+     * send to the datastore.
+     * If you choose asynchrone mode then all changes will be send
+     * only on a call to commit().
+     * Commit and rollback has no effect on a synchrone session.
+     *
+     * @param asynchrone : true if you want a session that pushes changes only on commit
+     * @return Session
+     */
+    Session createSession(boolean asynchrone);
 
     /**
      * Convinient way to aquiere all names by ignoring the namespaces.

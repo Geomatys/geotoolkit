@@ -45,6 +45,15 @@ public interface Session {
 
     DataStore getDataStore();
 
+    /**
+     * Check if the session is asynchrone.
+     * If it is asynchrone then a call to commit is necessary to push all
+     * changes to the datastore.
+     * 
+     * @return true if this session is asynchrone
+     */
+    boolean isAsynchrone();
+
     FeatureCollection features(Query query);
 
     /**

@@ -49,7 +49,7 @@ public abstract class JDBCForeignKeyTest extends JDBCTestSupport {
     }
 
     public void testGetFeatures() throws Exception {
-        Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
+        Hints hints = new Hints(JDBCFeatureReader.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
         Query query = QueryBuilder.all(dataStore.getSchema("fk").getName());
  //       query.setHints(hints);
@@ -73,7 +73,7 @@ public abstract class JDBCForeignKeyTest extends JDBCTestSupport {
     }
 
     public void testGetFeaturesWithZeroDepth() throws Exception {
-        Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(0));
+        Hints hints = new Hints(JDBCFeatureReader.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(0));
 
         Query query = QueryBuilder.all(dataStore.getSchema("fk").getName());
   //      query.setHints(hints);

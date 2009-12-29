@@ -69,8 +69,8 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public Session createSession() {
-        return new DefaultSession(this);
+    public Session createSession(boolean async) {
+        return new DefaultSession(this, async);
     }
 
     /**

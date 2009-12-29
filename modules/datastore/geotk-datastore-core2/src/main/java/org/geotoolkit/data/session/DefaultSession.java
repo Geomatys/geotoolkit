@@ -51,14 +51,16 @@ public class DefaultSession extends AbstractSession {
 
     private final DataStore store;
     private final DefaultSessionDiff diff;
+    private final boolean async;
 
-    public DefaultSession(DataStore store){
+    public DefaultSession(DataStore store, boolean async){
         if(store == null){
             throw new NullPointerException("DataStore can not be null.");
         }
 
         this.store = store;
         this.diff = new DefaultSessionDiff();
+        this.async = async;
     }
 
     /**
@@ -67,6 +69,14 @@ public class DefaultSession extends AbstractSession {
     @Override
     public DataStore getDataStore() {
         return store;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isAsynchrone() {
+        return async;
     }
 
     /**
@@ -99,7 +109,7 @@ public class DefaultSession extends AbstractSession {
     public void add(Name groupName, Collection newFeatures) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getSchema(groupName);
-        diff.add(new AddDelta(this, groupName, newFeatures));
+        addDelta(new AddDelta(this, groupName, newFeatures));
     }
 
     /**
@@ -141,7 +151,7 @@ public class DefaultSession extends AbstractSession {
             }
         }
 
-        diff.add(new ModifyDelta(this, groupName, modified, values));
+        addDelta(new ModifyDelta(this, groupName, modified, values));
     }
 
     /**
@@ -177,8 +187,18 @@ public class DefaultSession extends AbstractSession {
             }
         }
 
-        diff.add(new RemoveDelta(this, groupName, removed));
+        addDelta(new RemoveDelta(this, groupName, removed));
     }
+
+    private void addDelta(Delta delta) throws DataStoreException{
+        if(async){
+            diff.add(delta);
+        }else{
+            delta.commit(store);
+            delta.dispose();
+        }
+    }
+
 
     /**
      * {@inheritDoc }

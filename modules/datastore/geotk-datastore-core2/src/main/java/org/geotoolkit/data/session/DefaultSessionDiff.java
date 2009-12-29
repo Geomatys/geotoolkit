@@ -43,6 +43,10 @@ public class DefaultSessionDiff{
     private final Lock readLock = rwlock.readLock();
     private final Lock writeLock = rwlock.writeLock();
 
+
+    public DefaultSessionDiff(){
+    }
+
     /**
      * {@inheritDoc }
      */

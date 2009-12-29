@@ -17,16 +17,9 @@
  */
 package org.geotoolkit.jdbc;
 
-import java.util.logging.Logger;
-import org.geotoolkit.jdbc.fid.PrimaryKey;
-import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
-import org.geotoolkit.jdbc.fid.PrimaryKeyFIDValidator;
-import org.geotoolkit.jdbc.fid.NullPrimaryKey;
-import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
-import org.geotoolkit.jdbc.dialect.SQLDialect;
-import org.geotoolkit.jdbc.dialect.BasicSQLDialect;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -51,6 +44,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.jdbc.fid.PrimaryKey;
+import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
+import org.geotoolkit.jdbc.fid.PrimaryKeyFIDValidator;
+import org.geotoolkit.jdbc.fid.NullPrimaryKey;
+import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.jdbc.dialect.BasicSQLDialect;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;

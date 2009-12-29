@@ -138,8 +138,8 @@ public class SessionTest extends TestCase{
         final QueryBuilder qb = new QueryBuilder();
         Query query;
         
-
-        final Session session = store.createSession();
+        //create an asynchrone session
+        final Session session = store.createSession(true);
 
 
         //test simple reader with no modification ------------------------------

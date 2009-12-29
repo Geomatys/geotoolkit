@@ -72,6 +72,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.Hints.Key;
 import org.geotoolkit.feature.DefaultName;
 
 
@@ -83,6 +84,21 @@ import org.geotoolkit.feature.DefaultName;
  * @module pending
  */
 public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
+
+    /**
+     * The maximum number of associations traversed in a datastore query.
+     * <p>
+     * This maps directly to the {@code traversalXlinkDepth} parameter in a WFS query.
+     */
+    public static final Hints.Key ASSOCIATION_TRAVERSAL_DEPTH = new Key(Integer.class);
+
+    /**
+     * The name of a property to traverse in a datastore query.
+     * <p>
+     * This maps directly to a {@code xlinkPropertyName} in a WFS query.
+     */
+    public static final Hints.Key ASSOCIATION_PROPERTY = new Key("org.opengis.filter.expression.PropertyName");
+
     protected static final Logger LOGGER = Logging.getLogger(JDBCFeatureReader.class);
 
     /**
@@ -279,14 +295,14 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
             // check for the association traversal depth hint, if not > 0 dont
             // resolve the associated feature or geometry
-            Integer depth = (Integer) hints.get(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH);
+            Integer depth = (Integer) hints.get(ASSOCIATION_TRAVERSAL_DEPTH);
 
             if (depth == null) {
                 depth = new Integer(0);
             }
 
             final PropertyName associationPropertyName =
-                (PropertyName) hints.get(HintsPending.ASSOCIATION_PROPERTY);
+                (PropertyName) hints.get(ASSOCIATION_PROPERTY);
 
             // round up attributes
             // List attributes = new ArrayList();
@@ -588,7 +604,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                                     // use the value as an the identifier in a query against
                                     // the referenced type
 
-                                    final Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH,
+                                    final Hints hints = new Hints(ASSOCIATION_TRAVERSAL_DEPTH,
                                             new Integer(depth.intValue() - 1));
                                    // query.setHints(hints);
 

@@ -43,7 +43,7 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
     }
 
     public void testGetFeatureNoAssociation() throws Exception {
-        Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
+        Hints hints = new Hints(JDBCFeatureReader.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
         Query query = QueryBuilder.all(dataStore.getSchema("ga").getName());
   //      query.setHints(hints);
@@ -66,7 +66,7 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
     }
 
     public void testGetFeatureWithAssociation() throws Exception {
-        Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
+        Hints hints = new Hints(JDBCFeatureReader.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
         Query query = QueryBuilder.all(dataStore.getSchema("ga").getName());
  //       query.setHints(hints);
@@ -115,7 +115,7 @@ public abstract class JDBCGeometryAssociationTestSupport extends JDBCTestSupport
     }
 
     public void testMultiGeometryAssociation() throws Exception {
-        Hints hints = new Hints(HintsPending.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
+        Hints hints = new Hints(JDBCFeatureReader.ASSOCIATION_TRAVERSAL_DEPTH, new Integer(1));
 
         Query query = QueryBuilder.all(dataStore.getSchema("ga").getName());
   //      query.setHints(hints);
