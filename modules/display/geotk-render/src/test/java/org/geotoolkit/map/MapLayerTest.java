@@ -91,7 +91,7 @@ public class MapLayerTest extends TestCase{
 
         DataStore ds = new MemoryDataStore();
         ds.createSchema(name,type);
-        FeatureCollection<SimpleFeature> fs = ds.createSession().features(QueryBuilder.all(name));
+        FeatureCollection<SimpleFeature> fs = ds.createSession(true).features(QueryBuilder.all(name));
 
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());

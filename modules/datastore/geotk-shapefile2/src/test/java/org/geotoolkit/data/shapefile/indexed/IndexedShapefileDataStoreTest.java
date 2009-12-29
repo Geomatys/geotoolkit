@@ -104,9 +104,9 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final FeatureCollection<SimpleFeature> features;
         if(q == null){
-            features = s.createSession().features(QueryBuilder.all(s.getName()));
+            features = s.createSession(true).features(QueryBuilder.all(s.getName()));
         }else{
-            features = s.createSession().features(q);
+            features = s.createSession(true).features(q);
         }
 
         s.dispose();
@@ -121,9 +121,9 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final FeatureCollection<SimpleFeature> features;
         if(q == null){
-            features = s.createSession().features(QueryBuilder.all(s.getName()));
+            features = s.createSession(true).features(QueryBuilder.all(s.getName()));
         }else{
-            features = s.createSession().features(q);
+            features = s.createSession(true).features(q);
         }
 
         s.dispose();
@@ -132,7 +132,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection<SimpleFeature> loadFeatures(IndexedShapefileDataStore s)
             throws Exception {
-        return s.createSession().features(QueryBuilder.all(s.getName()));
+        return s.createSession(true).features(QueryBuilder.all(s.getName()));
     }
 
     public void testLoad() throws Exception {
@@ -191,7 +191,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(ShapeTestData
                 .url(STATE_POP), null, true, true, treeType);
         Name typeName = s.getName();
-        FeatureCollection<SimpleFeature> all = s.createSession().features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> all = s.createSession(true).features(QueryBuilder.all(typeName));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());
         s.dispose();
@@ -254,7 +254,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         File shpFile = copyShapefiles(STATE_POP);
         URL url = shpFile.toURL();
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.NONE);
-        FeatureCollection<SimpleFeature> features = ds.createSession().features(QueryBuilder.all(ds.getName()));
+        FeatureCollection<SimpleFeature> features = ds.createSession(true).features(QueryBuilder.all(ds.getName()));
         FeatureIterator<SimpleFeature> indexIter = features.iterator();
 
         Set<String> expectedFids = new HashSet<String>();
@@ -308,8 +308,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
-        features = indexedDS.createSession().features(QueryBuilder.filtered(indexedDS.getName(),filter));
-        FeatureCollection<SimpleFeature> features2 = baselineDS.createSession().features(QueryBuilder.filtered(baselineDS.getName(),filter));
+        features = indexedDS.createSession(true).features(QueryBuilder.filtered(indexedDS.getName(),filter));
+        FeatureCollection<SimpleFeature> features2 = baselineDS.createSession(true).features(QueryBuilder.filtered(baselineDS.getName(),filter));
 
         FeatureIterator<SimpleFeature> baselineIter = features2.iterator();
         indexIter = features.iterator();
@@ -518,7 +518,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testTestTransaction() throws Exception {
         final IndexedShapefileDataStore sds = createDataStore();
         final long idx = sds.getCount(QueryBuilder.all(sds.getName()));
-        final Session session = sds.createSession();
+        final Session session = sds.createSession(true);
 
         SimpleFeature[] newFeatures1 = new SimpleFeature[1];
         SimpleFeature[] newFeatures2 = new SimpleFeature[2];
@@ -734,7 +734,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
      */
     public void testWipesOutInvalidFidsFromFilters() throws Exception {
         final IndexedShapefileDataStore ds = createDataStore();
-        final Session session = ds.createSession();
+        final Session session = ds.createSession(true);
 
         final String validFid1, validFid2, invalidFid1, invalidFid2;
         {

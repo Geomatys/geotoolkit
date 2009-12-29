@@ -96,14 +96,14 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         builder.setTypeName(s.getName());
         query = builder.buildQuery();
 
-        return s.createSession().features(query);
+        return s.createSession(true).features(query);
     }
 
     protected FeatureCollection<SimpleFeature> loadLocalFeaturesM2() throws IOException, DataStoreException {
         String target = "jar:file:/C:/Documents and Settings/jgarnett/.m2/repository/org/geotoolkit/gt2-sample-data/2.4-SNAPSHOT/gt2-sample-data-2.4-SNAPSHOT.jar!/org/geotoolkit/test-data/shapes/statepop.shp";
         URL url = new URL(target);
         ShapefileDataStore s = new ShapefileDataStore(url);
-        return s.createSession().features(QueryBuilder.all(s.getName()));
+        return s.createSession(true).features(QueryBuilder.all(s.getName()));
     }
 
     protected FeatureCollection<SimpleFeature> loadFeatures(String resource, Charset charset, Query q) throws Exception {
@@ -112,16 +112,16 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStore s = new ShapefileDataStore(url, false, charset);
 
         if(q == null){
-            return s.createSession().features(QueryBuilder.all(s.getName()));
+            return s.createSession(true).features(QueryBuilder.all(s.getName()));
         }else{
-            return s.createSession().features(q);
+            return s.createSession(true).features(q);
         }
 
     }
 
     protected FeatureCollection<SimpleFeature> loadFeatures(ShapefileDataStore s)
             throws Exception {
-        return s.createSession().features(QueryBuilder.all(s.getName()));
+        return s.createSession(true).features(QueryBuilder.all(s.getName()));
     }
 
     public void testLoad() throws Exception {
@@ -191,7 +191,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection<SimpleFeature> features = loadFeatures(STATE_POP, QueryBuilder.all(new DefaultName("statepop")));
         ShapefileDataStore s = new ShapefileDataStore(ShapeTestData.url(STATE_POP));
         String typeName = s.getTypeNames()[0];
-        FeatureCollection<SimpleFeature> all = s.createSession().features(QueryBuilder.all(s.getName()));
+        FeatureCollection<SimpleFeature> all = s.createSession(true).features(QueryBuilder.all(s.getName()));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());
     }

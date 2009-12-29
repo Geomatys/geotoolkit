@@ -99,7 +99,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         DataStore s1 = createDataStore(fac, ShapeTestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         Name typeName = s1.getNames().iterator().next();
         SimpleFeatureType type = (SimpleFeatureType) s1.getSchema(typeName);
-        FeatureCollection<SimpleFeature> one = s1.createSession().features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> one = s1.createSession(true).features(QueryBuilder.all(typeName));
 
         ShapefileDataStoreFactory maker = new ShapefileDataStoreFactory();
 
@@ -125,7 +125,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         s.createSchema(type.getName(),type);
 
-        Session session = s.createSession();
+        Session session = s.createSession(true);
         session.add(type.getName(),one);
         session.add(type.getName(),one);
         session.commit();
@@ -141,7 +141,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         DataStore s = createDataStore(new ShapefileDataStoreFactory(), ShapeTestData.url(f), true);
         Name typeName = s.getNames().iterator().next();
         SimpleFeatureType type = (SimpleFeatureType) s.getSchema(typeName);
-        FeatureCollection<SimpleFeature> one = s.createSession().features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> one = s.createSession(true).features(QueryBuilder.all(typeName));
 
         ShapefileDataStoreFactory maker = new ShapefileDataStoreFactory();
         test(type, one, getTempFile(), maker, false);
@@ -156,14 +156,14 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         s.createSchema(type.getName(),type);
 
-        Session session = s.createSession();
+        Session session = s.createSession(true);
         session.add(type.getName(),one);
         session.commit();
 
         s = createDataStore(new ShapefileDataStoreFactory(), tmp.toURL(), true);
         Name typeName = s.getNames().iterator().next();
 
-        FeatureCollection<SimpleFeature> two = s.createSession().features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> two = s.createSession(true).features(QueryBuilder.all(typeName));
 
         compare(one.iterator(), two.iterator());
     }

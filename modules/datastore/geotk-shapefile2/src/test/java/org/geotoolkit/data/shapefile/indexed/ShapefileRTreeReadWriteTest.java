@@ -86,7 +86,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
                 .url(ShapeTestData.class, "shapes/stream.shp"));
         Name typeName = s1.getName();
         SimpleFeatureType type = s1.getSchema();
-        FeatureCollection<SimpleFeature> one = s1.createSession().features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> one = s1.createSession(true).features(QueryBuilder.all(typeName));
 
 
         doubleWrite(type, one, getTempFile(), false);
@@ -102,7 +102,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
 
         s.createSchema(type.getName(),type);
 
-        Session session = s.createSession();
+        Session session = s.createSession(true);
         session.add(type.getName(),one);
         session.add(type.getName(),one);
         session.commit();
@@ -115,7 +115,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         File file = copyShapefiles(f); // Work on File rather than URL from JAR.
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(file.toURI().toURL());
         SimpleFeatureType type = s.getSchema();
-        FeatureCollection<SimpleFeature> one = s.createSession().features(QueryBuilder.all(type.getName()));
+        FeatureCollection<SimpleFeature> one = s.createSession(true).features(QueryBuilder.all(type.getName()));
 
         test(type, one, getTempFile(), false);
         test(type, one, getTempFile(), true);
@@ -132,14 +132,14 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
 
         s.createSchema(type.getName(),type);
 
-        Session session = s.createSession();
+        Session session = s.createSession(true);
         session.add(s.getName(),one);
         session.commit();
 
         s = new IndexedShapefileDataStore(tmp.toURL());
         typeName = s.getName();
 
-        FeatureCollection<SimpleFeature> two = s.createSession().features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> two = s.createSession(true).features(QueryBuilder.all(typeName));
 
         compare(one.iterator(), two.iterator());
         s.dispose();
