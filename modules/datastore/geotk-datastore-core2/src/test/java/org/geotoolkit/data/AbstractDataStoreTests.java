@@ -17,8 +17,10 @@
 
 package org.geotoolkit.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -408,15 +410,96 @@ public abstract class AbstractDataStoreTests extends TestCase{
         }
 
         //start ----------------------------------------------------------------
-        //todo
+        if(candidate.size > 1){
+            qb.reset();
+            qb.setTypeName(candidate.name);
+            query = qb.buildQuery();
+
+            List<FeatureId> ids = new ArrayList<FeatureId>();
+            ite = store.getFeatureReader(query);
+            try{
+                while(ite.hasNext()){
+                    ids.add(ite.next().getIdentifier());
+                }
+            }finally{
+                ite.close();
+            }
+
+            qb.reset();
+            qb.setTypeName(candidate.name);
+            //skip the first element
+            qb.setStartIndex(1);
+            query = qb.buildQuery();
+
+            ite = store.getFeatureReader(query);
+            try{
+                int i = 1;
+                while(ite.hasNext()){
+                    assertEquals(ite.next().getIdentifier(), ids.get(i));
+                    i++;
+                }
+            }finally{
+                ite.close();
+            }
+        }
 
 
         //max ------------------------------------------------------------------
-        //todo
+        if(candidate.size > 1){
+            qb.reset();
+            qb.setTypeName(candidate.name);
+            //skip the first element
+            qb.setMaxFeatures(1);
+            query = qb.buildQuery();
+
+            int i = 0;
+            ite = store.getFeatureReader(query);
+            try{
+                while(ite.hasNext()){
+                    ite.next();
+                    i++;
+                }
+            }finally{
+                ite.close();
+            }
+
+            assertEquals(1, i);
+        }
         
         //filter ---------------------------------------------------------------
-        //todo
+        //filters are tested more deeply in the filter module
+        //we just make a few tests here for sanity check
+        //todo should we make more deep tests ?
 
+
+        Set<FeatureId> ids = new HashSet<FeatureId>();
+        ite = store.getFeatureReader(QueryBuilder.fids(candidate.name));
+        try{
+            //peek only one on two ids
+            boolean oneOnTwo = true;
+            while(ite.hasNext()){
+                if(oneOnTwo){
+                    ids.add(ite.next().getIdentifier());
+                }
+                oneOnTwo = !oneOnTwo;
+            }
+        }finally{
+            ite.close();
+        }
+
+
+        Set<FeatureId> remaining = new HashSet<FeatureId>(ids);
+        ite = store.getFeatureReader(QueryBuilder.filtered(candidate.name,FF.id(ids)));
+
+        try{
+            while(ite.hasNext()){
+                remaining.remove(ite.next().getIdentifier());
+            }
+        }finally{
+            ite.close();
+        }
+
+         assertTrue(remaining.isEmpty() );
 
     }
 
