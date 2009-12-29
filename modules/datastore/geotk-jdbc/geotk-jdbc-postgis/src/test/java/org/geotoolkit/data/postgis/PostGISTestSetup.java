@@ -28,7 +28,7 @@ public class PostGISTestSetup extends JDBCTestSetup {
         super.setUpDataStore(dataStore);
         
         // the unit tests assume a non loose behaviour
-        ((PostGISDialect) dataStore.getSQLDialect()).setLooseBBOXEnabled(false);
+        ((PostGISDialect) dataStore.getDialect()).setLooseBBOXEnabled(false);
         
         // let's work with the most common schema please
         dataStore.setDatabaseSchema("public");

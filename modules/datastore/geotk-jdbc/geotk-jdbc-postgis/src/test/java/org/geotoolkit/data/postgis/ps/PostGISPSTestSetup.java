@@ -32,9 +32,9 @@ public class PostGISPSTestSetup extends PostGISTestSetup {
         super.setUpDataStore(dataStore);
         
         // for this test we need a PS based dialect
-        PostGISPSDialect dialect = new PostGISPSDialect(dataStore, (PostGISDialect) dataStore.getSQLDialect());
+        PostGISPSDialect dialect = new PostGISPSDialect(dataStore, (PostGISDialect) dataStore.getDialect());
         dialect.setLooseBBOXEnabled(false);
-        dataStore.setSQLDialect(dialect);
+        dataStore.setDialect(dialect);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.geotoolkit.data.postgis;
 
 import org.geotoolkit.jdbc.JDBCDataStoreAPITest;
 import org.geotoolkit.jdbc.JDBCDataStoreAPITestSetup;
+import org.junit.Test;
 
 
 public class PostgisDataStoreAPITest extends JDBCDataStoreAPITest {
@@ -27,7 +28,7 @@ public class PostgisDataStoreAPITest extends JDBCDataStoreAPITest {
         return new PostgisDataStoreAPITestSetup(new PostGISTestSetup());
     }
 
-    @Override
+    @Test
     public void testGetFeatureWriterConcurrency() throws Exception {
         // postgis will lock indefinitely, won't throw an exception
     }
