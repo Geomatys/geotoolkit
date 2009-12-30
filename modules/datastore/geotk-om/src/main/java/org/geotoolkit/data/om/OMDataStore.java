@@ -35,8 +35,10 @@ import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.collection.FeatureCollection;
 import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.concurrent.Transaction;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -70,10 +72,10 @@ public class OMDataStore extends AbstractDataStore {
 
     private PreparedStatement getAllSamplingPoint;
 
-    private static final Name DESC     = new DefaultName("http://www.opengis.net/gml", "description");
-    private static final Name NAME     = new DefaultName("http://www.opengis.net/gml", "name");
-    private static final Name SAMPLED  = new DefaultName("http://www.opengis.net/sampling/1.0", "sampledFeature");
-    private static final Name POSITION = new DefaultName("http://www.opengis.net/sampling/1.0", "position");
+    protected static final Name DESC     = new DefaultName("http://www.opengis.net/gml", "description");
+    protected static final Name NAME     = new DefaultName("http://www.opengis.net/gml", "name");
+    protected static final Name SAMPLED  = new DefaultName("http://www.opengis.net/sampling/1.0", "sampledFeature");
+    protected static final Name POSITION = new DefaultName("http://www.opengis.net/sampling/1.0", "position");
 
     private static final GeometryFactory GF = new GeometryFactory();
 
@@ -81,7 +83,7 @@ public class OMDataStore extends AbstractDataStore {
 
     public OMDataStore(Connection connection) {
         //not transactional for the moment
-        super(false);
+        super(true);
         this.connection = connection;
         try {
             defaultCRS = CRS.decode("EPSG:27582");
@@ -307,6 +309,12 @@ public class OMDataStore extends AbstractDataStore {
     @Override
     public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
         throw new IOException("Schema update not supported.");
+    }
+
+    @Override
+    protected FeatureWriter<SimpleFeatureType, SimpleFeature> createFeatureWriter(String typeName, Transaction transaction) throws IOException {
+        SimpleFeatureType ft = types.get(SAMPLINGPOINT);
+        return new OMFeatureWriter(ft, connection);
     }
 
 }

@@ -192,11 +192,7 @@ public class UpdateElementType {
      *     
      */
     public String getInputFormat() {
-        if (inputFormat == null) {
-            return "x-application/gml:3";
-        } else {
-            return inputFormat;
-        }
+        return inputFormat;
     }
 
     /**
