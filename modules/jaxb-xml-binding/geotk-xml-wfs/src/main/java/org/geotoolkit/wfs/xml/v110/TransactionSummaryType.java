@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -144,4 +145,44 @@ public class TransactionSummaryType {
         this.totalDeleted = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TransactionSummaryType]\n");
+        if (totalDeleted != null) {
+           sb.append("totalDeleted: ").append(totalDeleted).append('\n');
+        }
+        if (totalInserted != null) {
+           sb.append("totalInserted: ").append(totalInserted).append('\n');
+        }
+        if (totalUpdated != null) {
+            sb.append("totalUpdated: ").append(totalUpdated ).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionSummaryType) {
+            final TransactionSummaryType that = (TransactionSummaryType) object;
+            return Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
+                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.totalInserted != null ? this.totalInserted.hashCode() : 0);
+        hash = 59 * hash + (this.totalUpdated != null ? this.totalUpdated.hashCode() : 0);
+        hash = 59 * hash + (this.totalDeleted != null ? this.totalDeleted.hashCode() : 0);
+        return hash;
+    }
 }

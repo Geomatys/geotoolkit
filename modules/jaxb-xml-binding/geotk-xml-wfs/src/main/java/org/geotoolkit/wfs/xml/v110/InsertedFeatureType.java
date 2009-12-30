@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FeatureIdType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -112,4 +113,42 @@ public class InsertedFeatureType {
         this.handle = value;
     }
 
+     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[InsertedFeatureType]\n");
+        if (featureId != null) {
+           sb.append("featureId: ").append('\n');
+           for (FeatureIdType a : featureId) {
+                sb.append(a).append('\n');
+           }
+        }
+        if (handle != null) {
+           sb.append("handle: ").append(handle).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof InsertedFeatureType) {
+            final InsertedFeatureType that = (InsertedFeatureType) object;
+            return Utilities.equals(this.featureId,  that.featureId) &&
+                   Utilities.equals(this.handle,     that.handle);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 59 * hash + (this.featureId != null ? this.featureId.hashCode() : 0);
+        hash = 59 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        return hash;
+    }
 }

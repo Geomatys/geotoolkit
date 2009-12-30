@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -65,6 +66,40 @@ public class TransactionResultsType {
             action = new ArrayList<ActionType>();
         }
         return this.action;
+    }
+
+     @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TransactionResultsType]\n");
+        if (action != null) {
+           sb.append("action: ").append('\n');
+           for (ActionType a : action) {
+                sb.append(a).append('\n');
+           }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionResultsType) {
+            final TransactionResultsType that = (TransactionResultsType) object;
+            return Utilities.equals(this.action,   that.action);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + (this.action != null ? this.action.hashCode() : 0);
+        return hash;
     }
 
 }
