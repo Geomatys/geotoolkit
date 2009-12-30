@@ -132,6 +132,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         return primaryKeys.get(type.getName());
     }
 
+    @Override
+    public boolean isWriteable(Name typeName) throws DataStoreException {
+        PrimaryKey key = getPrimaryKey(getSchema(typeName));
+        return key != null && !(key instanceof NullPrimaryKey);
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -619,7 +625,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     private FeatureWriter getFeatureWriterInternal(Query query, int flags) throws DataStoreException, IOException {
-        typeCheck(query.getTypeName());
+        PrimaryKey key = getPrimaryKey(getSchema(query.getTypeName()));
+
+        if(key == null){
+            throw new DataStoreException("Type "+ query.getTypeName() + " is not writeable.");
+        }
+
         final SimpleFeatureType type = (SimpleFeatureType) getSchema(query.getTypeName());
 
         if (flags == 0) {

@@ -154,7 +154,7 @@ public abstract class JDBCPrimaryKeyTest extends JDBCTestSupport {
         assertEquals( 1, features.size() );
     }
     
-    public void testNullPrimaryKey() throws Exception {
+    public void testNullPrimaryKey() throws DataStoreException {
         assertFalse( dataStore.isWriteable(nsname("nokey")));
     }
 }

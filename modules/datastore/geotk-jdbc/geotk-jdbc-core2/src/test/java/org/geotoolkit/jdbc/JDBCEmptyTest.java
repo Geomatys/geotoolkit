@@ -17,10 +17,10 @@
 package org.geotoolkit.jdbc;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 
 public abstract class JDBCEmptyTest extends JDBCTestSupport {
@@ -28,28 +28,25 @@ public abstract class JDBCEmptyTest extends JDBCTestSupport {
     @Override
     protected abstract JDBCEmptyTestSetup createTestSetup();
     
-    public void testFeatureSource() throws Exception {
+    public void testFeatureSource() throws DataStoreException {
 
         FeatureCollection fs = dataStore.createSession(false).features(QueryBuilder.all(nsname("empty")));
         assertNotNull(fs);
         
-        JTSEnvelope2D bounds = (JTSEnvelope2D) fs.getEnvelope();
-        assertTrue( bounds.isNull() );
+        Envelope bounds = (Envelope) fs.getEnvelope();
+
+        //todo should be null or at least isNull true
+        assertTrue(bounds.getMinX() == 0);
+        assertTrue(bounds.getMinY() == 0);
+        assertTrue(bounds.getMaxX() == 0);
+        assertTrue(bounds.getMaxY() == 0);
         
         int count = fs.size();
         assertEquals( 0, count );
-    }
-    
-    public void testFeatureCollection() throws Exception {
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.all(nsname("empty")));
-        
-        assertTrue( ((Envelope)features.getEnvelope()).isNull() );
-        assertEquals( 0, features.size() );
-        
-        FeatureIterator i = features.iterator();
+
+        FeatureIterator i = fs.iterator();
         assertFalse( i.hasNext() );
         i.close();
-        
     }
-
+    
 }

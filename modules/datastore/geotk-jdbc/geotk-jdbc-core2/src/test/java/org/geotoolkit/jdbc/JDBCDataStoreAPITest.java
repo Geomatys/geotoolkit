@@ -928,7 +928,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         Number n = (Number)features.next().getAttribute(aname("id"));
         assertEquals(5, n.intValue());
         features.close();
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Modif1");
     }
 
     public void testGetFeatureStoreModifyFeatures2() throws DataStoreException {
@@ -949,7 +948,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         assertTrue(features.hasNext());
         assertEquals("changed", features.next().getAttribute(aname("name")));
         features.close();
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Modif2");
     }
 
     /**
@@ -967,7 +965,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         AttributeDescriptor name = td.roadType.getDescriptor(aname("name"));
         session.update(typename,filter,Collections.singletonMap(name, "changed"));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Modif3");
     }
 
     public void testGetFeatureStoreRemoveFeatures() throws Exception {
@@ -977,7 +974,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         session.remove(typename,td.rd1Filter);
         assertEquals(0, session.features(QueryBuilder.filtered(typename, td.rd1Filter)).size());
         assertEquals(td.roadFeatures.length - 1, session.features(QueryBuilder.all(typename)).size());
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Remove1");
     }
 
     public void testGetFeatureStoreRemoveAllFeatures() throws Exception {
@@ -986,7 +982,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         session.remove(typename,Filter.INCLUDE);
         assertEquals(0, session.features(QueryBuilder.all(typename)).size());
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Remove2");
     }
 
     public void testGetFeatureStoreAddFeatures() throws Exception {
@@ -995,7 +990,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         session.add(typename,Collections.singleton(td.newRoad));
         assertEquals(td.roadFeatures.length + 1, count(tname("road")));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Add1");
     }
 
     public void testGetFeatureStoreSetFeatures()
@@ -1009,7 +1003,6 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         session.add(typename, Collections.singleton(td.newRoad));
 
         assertEquals(1, count(tname("road")));
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Set3");
     }
 
 
