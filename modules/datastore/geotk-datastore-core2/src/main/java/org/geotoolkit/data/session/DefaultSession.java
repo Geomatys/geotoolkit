@@ -116,7 +116,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void update(Name groupName, Filter filter, Map<AttributeDescriptor,Object> values) throws DataStoreException {
+    public void update(Name groupName, Filter filter, Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getSchema(groupName);
 

@@ -74,7 +74,7 @@ public interface Session {
      */
     void update(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
 
-    void update(Name groupName, Filter filter, Map<AttributeDescriptor,Object> values) throws DataStoreException;
+    void update(Name groupName, Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
 
     void remove(Name groupName, Filter filter) throws DataStoreException;
 

@@ -50,7 +50,7 @@ public class ModifyDelta extends AbstractDelta{
     private final Id filter;
     private final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
 
-    public ModifyDelta(Session session, Name typeName, Id filter, Map<AttributeDescriptor,Object> values){
+    public ModifyDelta(Session session, Name typeName, Id filter, Map<? extends AttributeDescriptor,? extends Object> values){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
