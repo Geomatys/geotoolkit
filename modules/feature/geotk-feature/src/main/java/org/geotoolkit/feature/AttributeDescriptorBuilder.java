@@ -88,7 +88,7 @@ public class AttributeDescriptorBuilder {
     private final FeatureTypeFactory factory;
 
     private Name name = null;
-    private int minOccurs = 1;
+    private Integer minOccurs = 1;
     private int maxOccurs = 1;
     /**
      * True if value is allowed to be null.
@@ -177,6 +177,9 @@ public class AttributeDescriptorBuilder {
     }
 
     public int getMinOccurs() {
+        if (minOccurs == null) {
+            return isNillable ? 0 : 1;
+        }
         return minOccurs;
     }
 
@@ -240,10 +243,10 @@ public class AttributeDescriptorBuilder {
         final AttributeDescriptor descriptor;
         if(type instanceof GeometryType){
             descriptor = factory.createGeometryDescriptor(
-                (GeometryType)type, name, minOccurs, maxOccurs, isNillable, defaultValue);
+                (GeometryType)type, name, getMinOccurs(), maxOccurs, isNillable, defaultValue);
         }else{
             descriptor = factory.createAttributeDescriptor(
-                type, name, minOccurs, maxOccurs, isNillable, defaultValue);
+                type, name, getMinOccurs(), maxOccurs, isNillable, defaultValue);
         }
 
         // set the user data

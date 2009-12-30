@@ -19,33 +19,15 @@ package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.AbstractList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import java.util.Map.Entry;
-import org.geotoolkit.feature.DefaultGeometryAttribute;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.geotoolkit.feature.FeatureValidationUtilities;
-import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.identity.FeatureId;
-import org.opengis.filter.identity.Identifier;
-import org.opengis.geometry.BoundingBox;
 
 /**
  * An implementation of {@link SimpleFeature} geared towards speed and backed by an Object[].
@@ -55,7 +37,7 @@ import org.opengis.geometry.BoundingBox;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class DefaultSimpleFeature implements SimpleFeature {
+public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
     private final FeatureId id;
 
@@ -125,7 +107,8 @@ public final class DefaultSimpleFeature implements SimpleFeature {
      * Used by builder to copy more efficiently all values
      * @return Object[] of all values
      */
-    Object[] getValues() {
+    @Override
+    protected Object[] getValues() {
         return values;
     }
 
@@ -141,325 +124,8 @@ public final class DefaultSimpleFeature implements SimpleFeature {
      * {@inheritDoc }
      */
     @Override
-    public String getID() {
-        return id.getID();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getAttribute(final int index) throws IndexOutOfBoundsException {
-        return values[index];
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getAttribute(final String name) {
-        Integer idx = index.get(name);
-        if (idx != null) {
-            return getAttribute(idx);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getAttribute(final Name name) {
-        return getAttribute(name.getLocalPart());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int getAttributeCount() {
-        return values.length;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<Object> getAttributes() {
-        return UnmodifiableArrayList.wrap(values);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getDefaultGeometry() {
-        // should be specified in the index as the default key (null)
-        final Integer indexGeom = index.get(null);
-
-        Object defaultGeometry = indexGeom != null ? values[indexGeom] : null;
-
-        // not found? do we have a default geometry at all?
-        if (defaultGeometry == null) {
-            final GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
-            if (geometryDescriptor != null) {
-                final Integer defaultGeomIndex = index.get(geometryDescriptor.getName().getLocalPart());
-                defaultGeometry = getAttribute(defaultGeomIndex.intValue());
-            }
-        }
-//        // not found? Ok, let's do a lookup then...
-//        if ( defaultGeometry == null ) {
-//            for ( Object o : values ) {
-//                if ( o instanceof Geometry ) {
-//                    defaultGeometry = o;
-//                    break;
-//                }
-//            }
-//        }
-
-        return defaultGeometry;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public SimpleFeatureType getFeatureType() {
-        return featureType;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public SimpleFeatureType getType() {
         return featureType;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setAttribute(final int index, final Object value) throws IndexOutOfBoundsException {
-        // first do conversion
-        final Object converted = Converters.convert(value, featureType.getDescriptor(index).getType().getBinding());
-        // if necessary, validation too
-        if (validating) {
-            FeatureValidationUtilities.validate(featureType.getDescriptor(index), converted);
-        }
-        // finally set the value into the feature
-        values[index] = converted;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setAttribute(final String name, final Object value) {
-        final Integer idx = index.get(name);
-        if (idx == null) {
-            throw new SimpleIllegalAttributeException("Unknown attribute " + name);
-        }
-        setAttribute(idx, value);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setAttribute(final Name name, final Object value) {
-        setAttribute(name.getLocalPart(), value);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setAttributes(final List<Object> values) {
-        for (int i = 0; i < this.values.length; i++) {
-            this.values[i] = values.get(i);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setAttributes(final Object[] values) {
-        for (int i = 0; i < this.values.length; i++) {
-            this.values[i] = values[i];
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setDefaultGeometry(final Object geometry) {
-        Integer geometryIndex = index.get(null);
-        if (geometryIndex != null) {
-            setAttribute(geometryIndex, geometry);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BoundingBox getBounds() {
-        //TODO: cache this value
-        final JTSEnvelope2D bounds = new JTSEnvelope2D(featureType.getCoordinateReferenceSystem());
-        for (Object o : values) {
-            if (o instanceof Geometry) {
-                final Geometry g = (Geometry) o;
-                //TODO: check userData for crs... and ensure its of the same
-                // crs as the feature type
-                if (bounds.isNull()) {
-                    bounds.init(g.getEnvelopeInternal());
-                } else {
-                    bounds.expandToInclude(g.getEnvelopeInternal());
-                }
-            }
-        }
-
-        return bounds;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public GeometryAttribute getDefaultGeometryProperty() {
-        final GeometryDescriptor geometryDescriptor = featureType.getGeometryDescriptor();
-        GeometryAttribute geometryAttribute = null;
-        if (geometryDescriptor != null) {
-            Object defaultGeometry = getDefaultGeometry();
-            geometryAttribute = new DefaultGeometryAttribute(defaultGeometry, geometryDescriptor, null);
-        }
-        return geometryAttribute;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setDefaultGeometryProperty(final GeometryAttribute geometryAttribute) {
-        if (geometryAttribute != null) {
-            setDefaultGeometry(geometryAttribute.getValue());
-        } else {
-            setDefaultGeometry(null);
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<Property> getProperties() {
-        return new AttributeList();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<Property> getProperties(final Name name) {
-        return getProperties(name.getLocalPart());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<Property> getProperties(final String name) {
-        final Integer idx = index.get(name);
-        if (idx != null) {
-            // cast temporarily to a plain collection to avoid type problems with generics
-            Collection c = Collections.singleton(new Attribute(idx));
-            return c;
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Property getProperty(final Name name) {
-        return getProperty(name.getLocalPart());
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Property getProperty(final String name) {
-        final Integer idx = index.get(name);
-        if (idx == null) {
-            return null;
-        } else {
-            final int index = idx;
-            AttributeDescriptor descriptor = featureType.getDescriptor(index);
-            if (descriptor instanceof GeometryDescriptor) {
-                return new GeometryAttribut(index);
-            } else {
-                return new Attribute(index);
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Collection<? extends Property> getValue() {
-        return getProperties();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setValue(final Collection<Property> values) {
-        int i = 0;
-        for (Property p : values) {
-            this.values[i] = p.getValue();
-            i++;
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setValue(final Object newValue) {
-        setValue((Collection<Property>) newValue);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public AttributeDescriptor getDescriptor() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Name getName() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isNillable() {
-        return true;
     }
 
     /**
@@ -569,144 +235,22 @@ public final class DefaultSimpleFeature implements SimpleFeature {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public void validate() {
-        for (int i = 0; i < values.length; i++) {
-            AttributeDescriptor descriptor = featureType.getDescriptor(i);
-            FeatureValidationUtilities.validate(descriptor, values[i]);
-        }
+    protected boolean isValidating() {
+        return validating;
     }
 
-    /**
-     * Live collection backed directly on the value array
-     */
-    class AttributeList extends AbstractList<Property> {
-
-        @Override
-        public Attribute get(int index) {
-            return new Attribute(index);
-        }
-
-        @Override
-        public Attribute set(int index, Property element) {
-            values[index] = element.getValue();
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return values.length;
-        }
+    @Override
+    protected Map<String, Integer> getIndex() {
+        return index;
     }
 
-    /**
-     * Attribute that delegates directly to the value array
-     */
-    private class Attribute implements org.opengis.feature.Attribute {
-
-        private final int index;
-
-        Attribute(int index) {
-            this.index = index;
+    @Override
+    protected Map<Object, Object>[] getAttributUserData() {
+        if(attributeUserData == null){
+            attributeUserData = new HashMap[values.length];
         }
-
-        @Override
-        public Identifier getIdentifier() {
-            return null;
-        }
-
-        @Override
-        public AttributeDescriptor getDescriptor() {
-            return featureType.getDescriptor(index);
-        }
-
-        @Override
-        public AttributeType getType() {
-            return featureType.getType(index);
-        }
-
-        @Override
-        public Name getName() {
-            return getDescriptor().getName();
-        }
-
-        @Override
-        public Map<Object, Object> getUserData() {
-            // lazily create the user data holder
-            if (attributeUserData == null) {
-                attributeUserData = new HashMap[values.length];
-            }
-            // lazily create the attribute user data
-            if (attributeUserData[index] == null) {
-                attributeUserData[index] = new HashMap<Object, Object>();
-            }
-            return attributeUserData[index];
-        }
-
-        @Override
-        public Object getValue() {
-            return values[index];
-        }
-
-        @Override
-        public boolean isNillable() {
-            return getDescriptor().isNillable();
-        }
-
-        @Override
-        public void setValue(Object newValue) {
-            values[index] = newValue;
-        }
-
-        @Override
-        public void validate() {
-            FeatureValidationUtilities.validate(getDescriptor(), values[index]);
-        }
+        return attributeUserData;
     }
 
-    private class GeometryAttribut extends Attribute implements GeometryAttribute{
-
-        /**
-         * bounds, derived
-         */
-        protected BoundingBox bounds;
-
-        GeometryAttribut(int index){
-            super(index);
-        }
-
-        @Override
-        public GeometryType getType() {
-            return getDescriptor().getType();
-        }
-
-        @Override
-        public GeometryDescriptor getDescriptor() {
-            return (GeometryDescriptor) super.getDescriptor();
-        }
-
-        @Override
-        public BoundingBox getBounds() {
-            if (bounds == null) {
-                final JTSEnvelope2D bbox = new JTSEnvelope2D(getType().getCoordinateReferenceSystem());
-                final Geometry geom = (Geometry) getValue();
-                if (geom != null) {
-                    bbox.expandToInclude(geom.getEnvelopeInternal());
-                } else {
-                    bbox.setToNull();
-                }
-                bounds = bbox;
-            }
-            return bounds;
-        }
-
-        @Override
-        public void setBounds(BoundingBox bbox) {
-            bounds = bbox;
-        }
-
-    }
 }

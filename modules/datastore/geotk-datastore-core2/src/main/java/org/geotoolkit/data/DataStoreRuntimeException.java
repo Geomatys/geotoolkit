@@ -42,4 +42,9 @@ public class DataStoreRuntimeException extends RuntimeException{
         super(th);
     }
 
+    public DataStoreRuntimeException(Exception th){
+        super(th.getMessage());
+        initCause(th);
+    }
+
 }

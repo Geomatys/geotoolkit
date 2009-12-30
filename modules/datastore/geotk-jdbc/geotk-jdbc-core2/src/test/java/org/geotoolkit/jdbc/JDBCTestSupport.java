@@ -216,7 +216,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * the datastore had to perform in order to actually manage the type (change in names case, for example)
      */
     protected void assertAttributesEqual(AttributeDescriptor expected, AttributeDescriptor actual) {
-        assertEquals(aname(expected.getName()), actual.getName());
+        assertEquals(aname(expected.getName()).getLocalPart(), actual.getName().getLocalPart()); //ignore namespace
         assertEquals(expected.getMinOccurs(), actual.getMinOccurs());
         assertEquals(expected.getMaxOccurs(), actual.getMaxOccurs());
         assertEquals(expected.isNillable(), actual.isNillable());

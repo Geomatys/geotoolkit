@@ -19,6 +19,8 @@ package org.geotoolkit.data.session;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreException;
@@ -26,11 +28,13 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.factory.FactoryFinder;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Id;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -138,6 +142,90 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public boolean isWritable() throws DataStoreException{
         return session.getDataStore().isWriteable(query.getTypeName());
+    }
+
+    @Override
+    public boolean remove(Object o) throws DataStoreRuntimeException{
+        final boolean writable;
+        try {
+            writable = isWritable();
+        } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
+
+        if(writable){
+            if(o instanceof Feature){
+                Id filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(((Feature)o).getIdentifier()));
+                try {
+                    session.remove(query.getTypeName(), filter);
+                    return true;
+                } catch (DataStoreException ex) {
+                    throw new DataStoreRuntimeException(ex);
+                }
+            }else{
+                //trying to remove an object which is not a feature
+                //it has no effect
+                //should we be strict and raise an error ? or log it ?
+            }
+
+        }else{
+            throw new DataStoreRuntimeException("this collection is readable only");
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> clctn) {
+        final boolean writable;
+        try {
+            writable = isWritable();
+        } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
+
+        if(writable){
+            final Set<Identifier> ids = new HashSet<Identifier>();
+
+            for(Object o : clctn){
+                if(o instanceof Feature){
+                    ids.add(((Feature)o).getIdentifier());
+                }
+            }
+
+            if(!ids.isEmpty()){
+                Id filter = FactoryFinder.getFilterFactory(null).id(ids);
+                try {
+                    session.remove(query.getTypeName(), filter);
+                    return true;
+                } catch (DataStoreException ex) {
+                    throw new DataStoreRuntimeException(ex);
+                }
+            }
+
+        }else{
+            throw new DataStoreRuntimeException("this collection is readable only");
+        }
+        return false;
+    }
+
+    @Override
+    public void clear() {
+        final boolean writable;
+        try {
+            writable = isWritable();
+        } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
+
+        if(writable){
+            try {
+                session.remove(query.getTypeName(), query.getFilter());
+            } catch (DataStoreException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+        }else{
+            throw new DataStoreRuntimeException("this collection is readable only");
+        }
     }
 
 }

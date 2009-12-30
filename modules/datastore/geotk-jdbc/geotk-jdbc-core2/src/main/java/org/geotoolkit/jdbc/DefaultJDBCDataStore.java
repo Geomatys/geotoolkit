@@ -325,6 +325,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                     if ( MD_NOT_NULL.equalsIgnoreCase( columns.getString(MD_IS_NULLABLE) ) ) {
                         adb.setNillable(false);
                         adb.setMinOccurs(1);
+                    }else{
+                        adb.setNillable(true);
+                        adb.setMinOccurs(0);
                     }
 
                     //determine if this attribute is a geometry or not

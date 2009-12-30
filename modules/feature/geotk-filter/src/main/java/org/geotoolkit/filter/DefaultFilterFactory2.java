@@ -493,7 +493,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public PropertyName property(Name name) {
-        return property(name.getURI());
+        return property(name.getLocalPart());
     }
 
     /**

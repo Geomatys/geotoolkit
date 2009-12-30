@@ -373,6 +373,8 @@ public class SimpleFeatureTypeBuilder {
         attributeDescriptorBuilder.reset();
         attributeDescriptorBuilder.setName(name);
         attributeDescriptorBuilder.setType(type);
+        attributeDescriptorBuilder.setMinOccurs(0);
+        attributeDescriptorBuilder.setMinOccurs(1);
         final AttributeDescriptor descriptor = attributeDescriptorBuilder.buildDescriptor();
 
         add(descriptor);

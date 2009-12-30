@@ -41,4 +41,9 @@ public class DataStoreException extends Exception{
         super(th);
     }
 
+    public DataStoreException(Exception th){
+        super(th.getMessage());
+        initCause(th);
+    }
+
 }

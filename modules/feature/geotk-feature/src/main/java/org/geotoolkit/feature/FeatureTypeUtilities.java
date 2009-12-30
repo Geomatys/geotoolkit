@@ -408,7 +408,7 @@ public class FeatureTypeUtilities {
                 types[i] = types[i].substring(1);
             }
 
-            attributeType = createAttribute(types[i]);
+            attributeType = createAttribute(namespace,types[i]);
             tb.add(attributeType);
 
             if (defaultGeometry) {
@@ -463,7 +463,7 @@ public class FeatureTypeUtilities {
      *
      * @throws SchemaException If typeSpect could not be interpreted
      */
-    static AttributeDescriptor createAttribute(final String typeSpec) throws SchemaException {
+    static AttributeDescriptor createAttribute(final String namespace, final String typeSpec) throws SchemaException {
         final int split = typeSpec.indexOf(':');
 
         final String name;
@@ -518,13 +518,13 @@ public class FeatureTypeUtilities {
 
             final Class clazz = type(type);
             if (Geometry.class.isAssignableFrom(clazz)) {
-                final GeometryType at = new DefaultGeometryType(new DefaultName(name), clazz, crs, false, false,
+                final GeometryType at = new DefaultGeometryType(new DefaultName(namespace,name), clazz, crs, false, false,
                                                                 Collections.EMPTY_LIST, null, null);
-                return new DefaultGeometryDescriptor(at, new DefaultName(name), 0, 1, nillable, null);
+                return new DefaultGeometryDescriptor(at, new DefaultName(namespace,name), 0, 1, nillable, null);
             } else {
-                final AttributeType at = new DefaultAttributeType(new DefaultName(name), clazz, false, false,
+                final AttributeType at = new DefaultAttributeType(new DefaultName(namespace,name), clazz, false, false,
                                                                   Collections.EMPTY_LIST, null, null);
-                return new DefaultAttributeDescriptor(at, new DefaultName(name), 0, 1, nillable, null);
+                return new DefaultAttributeDescriptor(at, new DefaultName(namespace,name), 0, 1, nillable, null);
             }
         } catch (ClassNotFoundException e) {
             throw new SchemaException("Could not type " + name + " as:" + type, e);

@@ -81,9 +81,16 @@ public class PostgisFilterToSQL extends FilterToSQL {
             throw new NullPointerException(
                     "Filter to be encoded cannot be null");
 
-        final PropertyName property = (PropertyName) filter.getExpression1();
-        Literal geometry = (Literal) filter.getExpression2();
-
+        final PropertyName property;
+        Literal geometry;
+        if(filter.getExpression1() instanceof PropertyName){
+            property = (PropertyName) filter.getExpression1();
+            geometry = (Literal) filter.getExpression2();
+        }else{
+            property = (PropertyName) filter.getExpression2();
+            geometry = (Literal) filter.getExpression1();
+        }
+        
         final Object obj = geometry.getValue();
         if (obj instanceof Envelope) {
             final Envelope env = (Envelope) obj;

@@ -58,6 +58,7 @@ import org.opengis.geometry.BoundingBox;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.feature.simple.AbstractSimpleFeature;
 
 
 /**
@@ -369,7 +370,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     /**
      * Feature wrapper around a result set.
      */
-    protected class ResultSetFeature implements SimpleFeature {
+    protected class ResultSetFeature extends AbstractSimpleFeature {
         /**
          * result set
          */
@@ -411,6 +412,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
          * user data
          */
         HashMap<Object, Object> userData = new HashMap<Object, Object>();
+
+        /**
+         * The set of user data attached to each attribute (lazily created)
+         */
+        private Map<Object, Object>[] attributeUserData;
 
         ResultSetFeature(final ResultSet rs, final Connection cx) throws SQLException, DataStoreException {
             this.rs = rs;
@@ -480,11 +486,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
 
         @Override
-        public SimpleFeatureType getFeatureType() {
-            return featureType;
-        }
-
-        @Override
         public SimpleFeatureType getType() {
             return featureType;
         }
@@ -492,10 +493,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         @Override
         public FeatureId getIdentifier() {
         	return fid;
-        }
-        @Override
-        public String getID() {
-            return fid.getID();
         }
 
         public void setID(final String id) {
@@ -613,20 +610,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             columnNames=null;
         }
 
-        @Override
-        public List<Object> getAttributes() {
-            throw new UnsupportedOperationException();
-        }
 
         @Override
         public Object getDefaultGeometry() {
             final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();
             return getAttribute(geomDesc.getName());
-        }
-
-        @Override
-        public void setAttributes(Object[] object) {
-            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -646,76 +634,35 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
 
         @Override
-        public GeometryAttribute getDefaultGeometryProperty() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setDefaultGeometryProperty(GeometryAttribute defaultGeometry) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Collection<Property> getProperties() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Collection<Property> getProperties(Name name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Collection<Property> getProperties(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Property getProperty(Name name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Property getProperty(String name) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Collection<?extends Property> getValue() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setValue(Collection<Property> value) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public AttributeDescriptor getDescriptor() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Name getName() {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
         public Map<Object, Object> getUserData() {
             return userData;
         }
 
         @Override
-        public boolean isNillable() {
-            throw new UnsupportedOperationException();
+        public void validate() {
         }
 
         @Override
-        public void setValue(Object value) {
-            throw new UnsupportedOperationException();
+        protected boolean isValidating() {
+            return false;
         }
+
         @Override
-        public void validate() {
+        protected Map<String, Integer> getIndex() {
+            return index;
+        }
+
+        @Override
+        protected Object[] getValues() {
+            return values;
+        }
+
+        @Override
+        protected Map<Object, Object>[] getAttributUserData() {
+            if(attributeUserData == null){
+                attributeUserData = new HashMap[values.length];
+            }
+            return attributeUserData;
         }
     }
 

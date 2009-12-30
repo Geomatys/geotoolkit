@@ -46,6 +46,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 
@@ -74,7 +75,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     public void testCreateSchema() throws Exception {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
-        builder.add(aname("geometry"), Geometry.class);
+        builder.add(aname("geometry"), Geometry.class, CRS.decode("EPSG:4326"));
         builder.add(aname("intProperty"), Integer.class);
         builder.add(aname("dateProperty"), Date.class);
 
@@ -190,7 +191,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
             AttributeDescriptor att1 = e.getDescriptor( i );
             AttributeDescriptor att2 = a.getDescriptor( i );
             
-            assertEquals( att1.getName(), att2.getName() );
+            assertEquals( att1.getName().getLocalPart(), att2.getName().getLocalPart() ); //test only local part
             assertEquals( att1.getMinOccurs(), att2.getMinOccurs() );
             assertEquals( att1.getMaxOccurs(), att2.getMaxOccurs() );
             assertEquals( att1.isNillable(), att2.isNillable() );
