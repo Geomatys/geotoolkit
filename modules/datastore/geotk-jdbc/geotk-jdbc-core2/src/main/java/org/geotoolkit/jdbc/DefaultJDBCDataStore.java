@@ -2795,7 +2795,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
             //copy over to avoid array store exception
             //values = new ArrayList(split.length);
-            values = Arrays.asList(split);
+
+            //can not do this or it will be a typed list which will raise errors a bit later.
+            //values = Arrays.asList(split);
+            values = new ArrayList(split.length);
+            for(Object o : split) values.add(o);
         } else {
             //single value case
             values = new ArrayList();
