@@ -115,7 +115,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement(required = true, namespace= "http://www.isotc211.org/2005/srv")
-    public GenericName getServiceType() {
+    public synchronized GenericName getServiceType() {
         return serviceType;
     }
 
@@ -123,7 +123,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Sets the value of the serviceType property.
      * 
      */
-    public void setServiceType(GenericName value) {
+    public synchronized void setServiceType(GenericName value) {
         this.serviceType = value;
     }
 
@@ -133,11 +133,11 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     */
     @XmlJavaTypeAdapter(StringAdapter.class)
     @XmlElement
-    public Collection<String> getServiceTypeVersion() {
+    public synchronized Collection<String> getServiceTypeVersion() {
         return serviceTypeVersion = nonNullCollection(serviceTypeVersion, String.class);
     }
 
-     public void setServiceTypeVersion(Collection<? extends String> serviceTypeVersion) {
+     public synchronized void setServiceTypeVersion(Collection<? extends String> serviceTypeVersion) {
          this.serviceTypeVersion = copyCollection(serviceTypeVersion, this.serviceTypeVersion, String.class);
      }
     /**
@@ -145,14 +145,14 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement
-    public StandardOrderProcess getAccessProperties() {
+    public synchronized StandardOrderProcess getAccessProperties() {
         return accessProperties;
     }
 
     /**
      * Sets the value of the accessProperties property.
     */
-    public void setAccessProperties(StandardOrderProcess value) {
+    public synchronized void setAccessProperties(StandardOrderProcess value) {
         this.accessProperties = value;
     }
 
@@ -161,7 +161,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement
-    public Constraints getRestrictions() {
+    public synchronized Constraints getRestrictions() {
         return restrictions;
     }
 
@@ -169,7 +169,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Sets the value of the restrictions property.
      * 
     */
-    public void setRestrictions(Constraints value) {
+    public synchronized void setRestrictions(Constraints value) {
         this.restrictions = value;
     }
 
@@ -178,11 +178,11 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement
-    public  Collection<Extent> getExtent() {
+    public synchronized Collection<Extent> getExtent() {
         return extent = nonNullCollection(extent, Extent.class);
     }
     
-    public void setExtent(Collection<? extends Extent> extent) {
+    public synchronized void setExtent(Collection<? extends Extent> extent) {
         extent = copyCollection(extent, this.extent, Extent.class);
     }
 
@@ -191,11 +191,11 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement
-    public Collection<CoupledResource> getCoupledResource() {
+    public synchronized Collection<CoupledResource> getCoupledResource() {
         return coupledResource = nonNullCollection(coupledResource, CoupledResource.class);
     }
     
-    public void setCoupledResource(Collection<? extends CoupledResource> coupledResource) {
+    public synchronized void setCoupledResource(Collection<? extends CoupledResource> coupledResource) {
         this.coupledResource = copyCollection(coupledResource, this.coupledResource, CoupledResource.class);
     }
 
@@ -205,7 +205,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      */
     @XmlJavaTypeAdapter(CouplingTypeAdapter.class)
     @XmlElement(required = true)
-    public CouplingType getCouplingType() {
+    public synchronized CouplingType getCouplingType() {
         return couplingType;
     }
 
@@ -213,7 +213,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Sets the value of the couplingType property.
      * 
     */
-    public void setCouplingType(CouplingType value) {
+    public synchronized void setCouplingType(CouplingType value) {
         this.couplingType = value;
     }
 
@@ -222,11 +222,11 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement(required = true)
-    public Collection<OperationMetadata> getContainsOperations() {
+    public synchronized Collection<OperationMetadata> getContainsOperations() {
         return containsOperations = nonNullCollection(containsOperations, OperationMetadata.class);
     }
     
-    public void setContainsOperations(Collection<? extends OperationMetadata> containsOperations) {
+    public synchronized void setContainsOperations(Collection<? extends OperationMetadata> containsOperations) {
         this.containsOperations = copyCollection(containsOperations, this.containsOperations, OperationMetadata.class);
     }
     
@@ -236,7 +236,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * 
      */
     @XmlElement
-    public Collection<DataIdentification> getOperatesOn() {
+    public synchronized Collection<DataIdentification> getOperatesOn() {
         return operatesOn = nonNullCollection(operatesOn, DataIdentification.class);
     }
     
@@ -247,16 +247,17 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     
     @Deprecated
     @XmlElement
-    public Collection<ServiceProvider> getProvider() {
+    public synchronized Collection<ServiceProvider> getProvider() {
         return provider = nonNullCollection(provider, ServiceProvider.class);
     }
     
     @Deprecated
-    public void setProvider(Collection<? extends ServiceProvider> provider) {
+    public synchronized void setProvider(Collection<? extends ServiceProvider> provider) {
         this.provider = copyCollection(provider, this.provider, ServiceProvider.class);
     }
     
-    public MetadataStandard getStandard() {
+    @Override
+    public synchronized MetadataStandard getStandard() {
         return MetadataStandard.ISO_19119;
     }
     
