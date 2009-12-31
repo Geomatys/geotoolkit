@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.postgis;
 
+import java.io.IOException;
+
 import static org.geotoolkit.data.postgis.PostgisNGDataStoreFactory.PORT;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.DATABASE;
 import static org.geotoolkit.jdbc.JDBCDataStoreFactory.DBTYPE;
@@ -30,6 +32,7 @@ import java.util.Properties;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.JDBCTestSetup;
 import org.geotoolkit.jdbc.JDBCTestSupport;
+import org.geotoolkit.data.DataStoreException;
 
 
 public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
@@ -39,7 +42,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         return new PostGISTestSetup();
     }
     
-    public void testCreateConnection() throws Exception {
+    public void testCreateConnection() throws DataStoreException, IOException {
         PostgisNGDataStoreFactory factory = new PostgisNGDataStoreFactory();
         
         Properties db = new Properties();
@@ -47,7 +50,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
         Map params = new HashMap();
         params.put(HOST.getName().toString(), db.getProperty(HOST.getName().toString()));
         params.put(DATABASE.getName().toString(), db.getProperty(DATABASE.getName().toString()));
-        params.put(PORT.getName().toString(), db.getProperty(PORT.getName().toString()));
+        params.put(PORT.getName().toString(), Integer.valueOf(db.getProperty(PORT.getName().toString())));
         params.put(USER.getName().toString(), db.getProperty(USER.getName().toString()));
         params.put(PASSWD.getName().toString(), db.getProperty(PASSWD.getName().toString()));
         

@@ -375,6 +375,7 @@ public class SimpleFeatureTypeBuilder {
         attributeDescriptorBuilder.setType(type);
         attributeDescriptorBuilder.setMinOccurs(0);
         attributeDescriptorBuilder.setMinOccurs(1);
+        attributeDescriptorBuilder.setNillable(true);
         final AttributeDescriptor descriptor = attributeDescriptorBuilder.buildDescriptor();
 
         add(descriptor);

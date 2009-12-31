@@ -134,7 +134,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         builder.add(adb.buildDescriptor());
 
         atb.reset();
-        adb.setName(aname("stringProperty"));
+        atb.setName(aname("stringProperty"));
         atb.setBinding(String.class);
         atb.setLength(5);
         adb.reset();
@@ -200,7 +200,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
             AttributeType t1 = att1.getType();
             AttributeType t2 = att2.getType();
             
-            assertEquals( t1.getName(), t2.getName() );
+            assertEquals( t1.getName().getLocalPart(), t2.getName().getLocalPart() ); //test only local part
             assertEquals( t1.getDescription(), t2.getDescription() );
             assertEquals( t1.getRestrictions(), t2.getRestrictions() );
             

@@ -213,20 +213,17 @@ public class PreparedFilterToSQL extends FilterToSQL {
         if (filter == null) {
             throw new NullPointerException("Filter to be encoded cannot be null");
         }
-        if (!(filter instanceof BinaryComparisonOperator)) {
-            throw new IllegalArgumentException("This filter is not a binary comparison, " +
-                    "can't do SDO relate against it: " + filter.getClass());
-        }
+
         // extract the property name and the geometry literal
         final PropertyName property;
         final Literal geometry;
-        final BinaryComparisonOperator op = (BinaryComparisonOperator) filter;
-        if (op.getExpression1() instanceof PropertyName && op.getExpression2() instanceof Literal) {
-            property = (PropertyName) op.getExpression1();
-            geometry = (Literal) op.getExpression2();
-        } else if (op.getExpression2() instanceof PropertyName && op.getExpression1() instanceof Literal) {
-            property = (PropertyName) op.getExpression2();
-            geometry = (Literal) op.getExpression1();
+                
+        if (filter.getExpression1() instanceof PropertyName && filter.getExpression2() instanceof Literal) {
+            property = (PropertyName) filter.getExpression1();
+            geometry = (Literal) filter.getExpression2();
+        } else if (filter.getExpression2() instanceof PropertyName && filter.getExpression1() instanceof Literal) {
+            property = (PropertyName) filter.getExpression2();
+            geometry = (Literal) filter.getExpression1();
         } else {
             throw new IllegalArgumentException("Can only encode spatial filters that do " +
                     "compare a property name and a geometry");

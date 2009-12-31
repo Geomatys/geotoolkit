@@ -625,9 +625,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     private FeatureWriter getFeatureWriterInternal(Query query, int flags) throws DataStoreException, IOException {
-        PrimaryKey key = getPrimaryKey(getSchema(query.getTypeName()));
-
-        if(key == null){
+        
+        if(!isWriteable(query.getTypeName())){
             throw new DataStoreException("Type "+ query.getTypeName() + " is not writeable.");
         }
 

@@ -34,11 +34,14 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.Name;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.referencing.CRS;
 
 
 /**
@@ -243,8 +246,29 @@ public abstract class JDBCTestSupport extends TestCase {
     		return true;
     	
     	if (crs1==null ) return false;
-    		
-    	return crs1.equals(crs2); 
+
+        if(crs1.equals(crs2)) return true;
+
+        if(CRS.equalsIgnoreMetadata(crs1, crs2)) return true;
+
+        try {
+            if (CRS.equalsIgnoreMetadata(crs1, CRS.decode("EPSG:4326")) && CRS.equalsIgnoreMetadata(crs2, CRS.decode("CRS:84"))) {
+                //lazy test, axis invertion but still the same projection
+                return true;
+            }
+
+            if (CRS.equalsIgnoreMetadata(crs2, CRS.decode("EPSG:4326")) && CRS.equalsIgnoreMetadata(crs1, CRS.decode("CRS:84"))) {
+                //lazy test, axis invertion but still the same projection
+                return true;
+            }
+
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    	return false;
    	}
 
 	protected boolean areReferencedEnvelopesEuqal(JTSEnvelope2D e1, JTSEnvelope2D e2) {
