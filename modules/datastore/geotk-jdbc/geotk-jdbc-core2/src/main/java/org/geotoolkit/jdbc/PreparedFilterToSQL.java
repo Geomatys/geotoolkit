@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.jdbc;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import java.io.IOException;
 import java.io.Writer;
@@ -35,6 +36,11 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BinarySpatialOperator;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.factory.FactoryFinder;
+import org.opengis.geometry.Envelope;
 
 /**
  * Extension of FilterToSQL intended for use with prepared statements.
@@ -216,7 +222,7 @@ public class PreparedFilterToSQL extends FilterToSQL {
 
         // extract the property name and the geometry literal
         final PropertyName property;
-        final Literal geometry;
+        Literal geometry;
                 
         if (filter.getExpression1() instanceof PropertyName && filter.getExpression2() instanceof Literal) {
             property = (PropertyName) filter.getExpression1();
@@ -227,6 +233,21 @@ public class PreparedFilterToSQL extends FilterToSQL {
         } else {
             throw new IllegalArgumentException("Can only encode spatial filters that do " +
                     "compare a property name and a geometry");
+        }
+
+        // if we have an envelope as geometry, we must change it to a polygon
+        if(geometry.getValue() instanceof Envelope){
+            Envelope env = (Envelope) geometry.getValue();
+            GeometryFactory gf = new GeometryFactory();
+            LinearRing ring = gf.createLinearRing(new Coordinate[]{
+                new Coordinate(env.getMinimum(0), env.getMinimum(1)),
+                new Coordinate(env.getMinimum(0), env.getMaximum(1)),
+                new Coordinate(env.getMaximum(0), env.getMaximum(1)),
+                new Coordinate(env.getMaximum(0), env.getMinimum(1)),
+                new Coordinate(env.getMinimum(0), env.getMinimum(1)),
+            });
+            Polygon poly = gf.createPolygon(ring, new LinearRing[0]);
+            geometry = FactoryFinder.getFilterFactory(null).literal(poly);
         }
 
         // handle native srid
