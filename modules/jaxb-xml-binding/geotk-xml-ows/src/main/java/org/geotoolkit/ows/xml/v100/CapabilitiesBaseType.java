@@ -185,7 +185,7 @@ public class CapabilitiesBaseType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder('[').append(this.getClass().getSimpleName()).append(']');
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
 
         if (operationsMetadata != null)
             s.append("operations metadata:").append(operationsMetadata).append('\n');

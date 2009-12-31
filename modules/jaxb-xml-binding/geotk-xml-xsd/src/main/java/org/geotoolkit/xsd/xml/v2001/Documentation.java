@@ -168,7 +168,7 @@ public class Documentation {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder('[').append(getClass().getSimpleName()).append('\n');
+        StringBuilder sb = new StringBuilder("[").append(getClass().getSimpleName()).append('\n');
         if (source != null) {
             sb.append("source:").append(source).append('\n');
         }

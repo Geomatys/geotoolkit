@@ -219,7 +219,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder('[').append(this.getClass().getName()).append(']').append('\n');
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getName()).append(']').append('\n');
         if (id != null) {
             sb.append("id:").append(id).append('\n');
         }

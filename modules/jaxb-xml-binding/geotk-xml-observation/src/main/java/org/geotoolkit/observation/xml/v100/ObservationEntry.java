@@ -544,7 +544,7 @@ public class ObservationEntry implements Observation {
      */
     @Override
     public String toString() {
-        StringBuilder s    = new StringBuilder('[').append(this.getClass().getSimpleName()).append(']');
+        StringBuilder s    = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
         char lineSeparator = '\n';
         s.append(lineSeparator);
         s.append("name = ").append(name);

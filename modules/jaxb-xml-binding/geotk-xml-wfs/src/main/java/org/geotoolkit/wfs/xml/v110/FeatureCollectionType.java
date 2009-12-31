@@ -145,4 +145,18 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType {
         this.numberOfFeatures = value;
     }
 
+     @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (lockId != null) {
+            s.append("lockId:").append(lockId).append('\n');
+        }
+        if (numberOfFeatures != null) {
+            s.append("numberOfFeatures:").append(numberOfFeatures).append('\n');
+        }
+        if (timeStamp != null) {
+            s.append("timeStamp:").append(timeStamp).append('\n');
+        }
+        return s.toString();
+     }
 }

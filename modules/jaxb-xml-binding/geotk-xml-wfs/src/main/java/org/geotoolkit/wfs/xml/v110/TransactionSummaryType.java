@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -57,21 +57,31 @@ import javax.xml.bind.annotation.XmlType;
 public class TransactionSummaryType {
 
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalInserted;
+    private Integer totalInserted;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalUpdated;
+    private Integer totalUpdated;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalDeleted;
+    private Integer totalDeleted;
+
+    public TransactionSummaryType() {
+
+    }
+
+    public TransactionSummaryType(Integer totalInserted, Integer totalUpdated, Integer totalDeleted) {
+        this.totalDeleted  = totalDeleted;
+        this.totalInserted = totalInserted;
+        this.totalUpdated  = totalUpdated;
+    }
 
     /**
      * Gets the value of the totalInserted property.
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTotalInserted() {
+    public Integer getTotalInserted() {
         return totalInserted;
     }
 
@@ -80,10 +90,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTotalInserted(BigInteger value) {
+    public void setTotalInserted(Integer value) {
         this.totalInserted = value;
     }
 
@@ -92,10 +102,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTotalUpdated() {
+    public Integer getTotalUpdated() {
         return totalUpdated;
     }
 
@@ -104,10 +114,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTotalUpdated(BigInteger value) {
+    public void setTotalUpdated(Integer value) {
         this.totalUpdated = value;
     }
 
@@ -116,10 +126,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getTotalDeleted() {
+    public Integer getTotalDeleted() {
         return totalDeleted;
     }
 
@@ -128,11 +138,51 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setTotalDeleted(BigInteger value) {
+    public void setTotalDeleted(Integer value) {
         this.totalDeleted = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TransactionSummaryType]\n");
+        if (totalDeleted != null) {
+           sb.append("totalDeleted: ").append(totalDeleted).append('\n');
+        }
+        if (totalInserted != null) {
+           sb.append("totalInserted: ").append(totalInserted).append('\n');
+        }
+        if (totalUpdated != null) {
+            sb.append("totalUpdated: ").append(totalUpdated ).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionSummaryType) {
+            final TransactionSummaryType that = (TransactionSummaryType) object;
+            return Utilities.equals(this.totalDeleted,   that.totalDeleted)  &&
+                   Utilities.equals(this.totalInserted,  that.totalInserted) &&
+                   Utilities.equals(this.totalUpdated,   that.totalUpdated);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.totalInserted != null ? this.totalInserted.hashCode() : 0);
+        hash = 59 * hash + (this.totalUpdated != null ? this.totalUpdated.hashCode() : 0);
+        hash = 59 * hash + (this.totalDeleted != null ? this.totalDeleted.hashCode() : 0);
+        return hash;
+    }
 }

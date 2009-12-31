@@ -124,7 +124,7 @@ public class BinaryTemporalOpType extends TemporalOpsType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder('[').append(this.getClass().getSimpleName()).append("]\n");
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
         if (propertyName != null)  {
             sb.append("propertyName:").append(propertyName).append('\n');
         }

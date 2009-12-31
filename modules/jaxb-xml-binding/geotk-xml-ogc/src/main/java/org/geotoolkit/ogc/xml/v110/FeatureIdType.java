@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.opengis.feature.Feature;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.identity.FeatureId;
 
 
@@ -83,5 +83,36 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
 
     public boolean matches(Object feature) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[FeatureIdType]\n");
+        if (fid != null) {
+           sb.append("fid: ").append(fid).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FeatureIdType) {
+            final FeatureIdType that = (FeatureIdType) object;
+            return Utilities.equals(this.fid,  that.fid);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.fid != null ? this.fid.hashCode() : 0);
+        return hash;
     }
 }

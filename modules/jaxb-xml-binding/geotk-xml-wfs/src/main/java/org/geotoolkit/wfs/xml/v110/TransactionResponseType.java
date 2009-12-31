@@ -22,13 +22,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
- *             The response for a transaction request that was successfully
- *             completed. If the transaction failed for any reason, an
- *             exception report is returned instead.
+ * The response for a transaction request that was successfully completed.
+ * If the transaction failed for any reason, an exception report is returned instead.
  *          
  * 
  * <p>Java class for TransactionResponseType complex type.
@@ -70,6 +69,17 @@ public class TransactionResponseType {
     private InsertResultsType insertResults;
     @XmlAttribute(required = true)
     private String version;
+
+    public TransactionResponseType() {
+
+    }
+
+    public TransactionResponseType(TransactionSummaryType transactionSummary, TransactionResultsType transactionResults, InsertResultsType insertResults, String version) {
+        this.transactionSummary = transactionSummary;
+        this.transactionResults = transactionResults;
+        this.insertResults      = insertResults;
+        this.version            = version;
+    }
 
     /**
      * Gets the value of the transactionSummary property.
@@ -171,4 +181,49 @@ public class TransactionResponseType {
         this.version = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TransactionResponseType]\n");
+        if (version != null) {
+           sb.append("version: ").append(version).append('\n');
+        }
+        if (transactionSummary != null) {
+           sb.append("transactionSummary: ").append(transactionSummary).append('\n');
+        }
+        if (transactionResults != null) {
+            sb.append("transactionResults: ").append(transactionResults).append('\n');
+        }
+        if (insertResults != null) {
+            sb.append("insertResults: ").append(insertResults).append('\n');
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionResponseType) {
+            final TransactionResponseType that = (TransactionResponseType) object;
+            return Utilities.equals(this.insertResults,      that.insertResults)        &&
+                   Utilities.equals(this.transactionResults, that.transactionResults)   &&
+                   Utilities.equals(this.transactionSummary, that.transactionSummary)   &&
+                   Utilities.equals(this.version,            that.version) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.transactionSummary != null ? this.transactionSummary.hashCode() : 0);
+        hash = 19 * hash + (this.transactionResults != null ? this.transactionResults.hashCode() : 0);
+        hash = 19 * hash + (this.insertResults != null ? this.insertResults.hashCode() : 0);
+        hash = 19 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
 }

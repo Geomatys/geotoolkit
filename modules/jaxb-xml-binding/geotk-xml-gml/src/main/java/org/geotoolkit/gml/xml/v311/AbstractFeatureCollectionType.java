@@ -94,4 +94,19 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
         this.featureMembers = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (featureMember != null && featureMember.size() > 0) {
+            s.append("featureMember:").append('\n');
+            for (FeaturePropertyType fp : featureMember) {
+                s.append(fp).append('\n');
+            }
+        }
+        if (featureMembers != null) {
+            s.append("featureMembers:").append(featureMembers).append('\n');
+        }
+        return s.toString();
+    }
+
 }

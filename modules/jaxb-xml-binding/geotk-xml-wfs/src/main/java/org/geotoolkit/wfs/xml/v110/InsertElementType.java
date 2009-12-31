@@ -18,14 +18,12 @@ package org.geotoolkit.wfs.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 
 
 
@@ -63,8 +61,8 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 })
 public class InsertElementType {
 
-    @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    private List<JAXBElement<? extends AbstractFeatureEntry>> feature;
+    @XmlAnyElement(lax = true)
+    private List<Object> feature;
     @XmlAttribute
     private IdentifierGenerationOptionType idgen;
     @XmlAttribute
@@ -75,12 +73,25 @@ public class InsertElementType {
     @XmlSchemaType(name = "anyURI")
     private String srsName;
 
+    public InsertElementType() {
+
+    }
+
+    public InsertElementType(Object feature) {
+         this.feature = new ArrayList<Object>();
+         this.feature.add(feature);
+    }
+
+    public InsertElementType(List<Object> feature) {
+         this.feature = feature;
+    }
+
     /**
      * Gets the value of the feature property.
      */
-    public List<JAXBElement<? extends AbstractFeatureEntry>> getFeature() {
+    public List<Object> getFeature() {
         if (feature == null) {
-            feature = new ArrayList<JAXBElement<? extends AbstractFeatureEntry>>();
+            feature = new ArrayList<Object>();
         }
         return this.feature;
     }
