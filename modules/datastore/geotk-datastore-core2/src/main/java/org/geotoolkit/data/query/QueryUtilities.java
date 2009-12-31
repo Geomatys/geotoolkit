@@ -80,7 +80,7 @@ public class QueryUtilities {
         qb.setMaxFeatures(max);
 
         //join attributes names-------------------------------------------------
-        final String[] propNames = joinAttributes(
+        final String[] propNames = retainAttributes(
                 original.getPropertyNames(),
                 second.getPropertyNames());
         qb.setProperties(propNames);
@@ -251,5 +251,37 @@ public class QueryUtilities {
 
         return propNames;
     }
+
+    /**
+     * Creates a set of attribute names from the two input lists of names,
+     * while keep only the attributs from the second list
+     */
+    private static String[] retainAttributes(final String[] atts1, final String[] atts2) {
+        if (atts1 == null && atts2 == null) {
+            return null;
+        }
+
+        if(atts1 == null){
+            return atts2;
+        }
+        if(atts2 == null){
+            return atts1;
+        }
+
+
+        final List atts = new LinkedList();
+
+        for (int i = 0; i < atts2.length; i++) {
+            if (Arrays.binarySearch(atts1, atts2[i]) >= 0) {
+                atts.add(atts2[i]);
+            }
+        }
+
+        final String[] propNames = new String[atts.size()];
+        atts.toArray(propNames);
+
+        return propNames;
+    }
+
 
 }

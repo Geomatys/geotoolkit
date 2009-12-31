@@ -636,22 +636,24 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         assertEquals(1, count(writer));
     }
 
-    public void testGetFeatureWriterInvalidFilter() {
-        FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
-
-        FilterFactory ff = FactoryFinder.getFilterFactory(null);
-        PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
-
-        // make sure a complaint related to the invalid filter is thrown here
-        try {
-            writer= dataStore.getFeatureWriter(nsname("river"), f);
-            writer.close();
-            fail("This query should have failed, it contains an invalid filter");
-        } catch(Exception e) {
-            // fine
-        }
-
-    }
+    // filters wont raise errors on invalide attributs, while return false but not errors.
+//
+//    public void testGetFeatureWriterInvalidFilter() {
+//        FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
+//
+//        FilterFactory ff = FactoryFinder.getFilterFactory(null);
+//        PropertyIsEqualTo f = ff.equals(ff.property("invalidAttribute"), ff.literal(5));
+//
+//        // make sure a complaint related to the invalid filter is thrown here
+//        try {
+//            writer= dataStore.getFeatureWriter(nsname("river"), f);
+//            writer.close();
+//            fail("This query should have failed, it contains an invalid filter");
+//        } catch(Exception e) {
+//            // fine
+//        }
+//
+//    }
 
 //    This kind of test is obsolete since we don't have transaction anymore.
 //    The session system being independant from the datastore this behavior is guarantee.

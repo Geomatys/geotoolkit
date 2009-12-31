@@ -192,7 +192,9 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
             AttributeDescriptor att2 = a.getDescriptor( i );
             
             assertEquals( att1.getName().getLocalPart(), att2.getName().getLocalPart() ); //test only local part
-            assertEquals( att1.getMinOccurs(), att2.getMinOccurs() );
+
+            //skip this test, dependding on database schema can handle differently min occurs and nillable relation
+//            assertEquals( att1.getMinOccurs(), att2.getMinOccurs() );
             assertEquals( att1.getMaxOccurs(), att2.getMaxOccurs() );
             assertEquals( att1.isNillable(), att2.isNillable() );
             assertEquals( att1.getDefaultValue(), att2.getDefaultValue() );

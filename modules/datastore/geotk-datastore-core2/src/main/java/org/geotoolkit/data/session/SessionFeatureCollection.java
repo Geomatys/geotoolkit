@@ -30,8 +30,11 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.feature.SchemaException;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -76,8 +79,11 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public FeatureType getSchema() throws DataStoreRuntimeException{
         try {
-            return session.getDataStore().getSchema(query.getTypeName());
+            FeatureType ft = session.getDataStore().getSchema(query.getTypeName());
+            return FeatureTypeUtilities.createSubType((SimpleFeatureType) ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
         } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (SchemaException ex) {
             throw new DataStoreRuntimeException(ex);
         }
     }
