@@ -182,6 +182,11 @@ public class ShapefileDataStore extends AbstractDataStore{
         this.dbfCharset = dbfCharset;
     }
 
+    @Override
+    public boolean isWriteable(Name typeName) throws DataStoreException {
+        return shpFiles.isLocal();
+    }
+
     public Name getName() throws DataStoreException{
         checkTypeExist();
         return name;

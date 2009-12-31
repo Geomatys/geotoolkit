@@ -21,8 +21,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.table.DefaultTableModel;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.jdesktop.swingx.JXTable;
 
@@ -167,35 +171,27 @@ public class FeatureSourceModel extends DefaultTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if(columnIndex == 0) return;
 
-//        final FeatureStore<SimpleFeatureType, SimpleFeature> store;
-//        if ( ((FeatureMapLayer)layer).getFeatureSource() instanceof FeatureStore) {
-//
-//            store = (FeatureStore<SimpleFeatureType, SimpleFeature>)  ((FeatureMapLayer)layer).getFeatureSource();
-//            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
-//
-//
-//            store.setTransaction(transaction);
-//            FilterFactory ff = FactoryFinder.getFilterFactory(null);
-//            Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
-//            FeatureType schema = store.getSchema();
-//
-//            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
-//
-//            try {
-//                store.updateFeatures(NAME, aValue, filter);
-//                transaction.commit();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//                try {
-//                    transaction.rollback();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            setQuery(query);
-//
-//        }
+        FeatureCollection collection = ((FeatureMapLayer)layer).getCollection();
+
+        if (collection.isWritable()) {
+
+            FilterFactory ff = FactoryFinder.getFilterFactory(null);
+            Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
+            FeatureType schema = collection.getSchema();
+
+            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
+
+            try {
+                collection.update(filter, NAME, aValue);
+                if(collection.getSession() != null){
+                    collection.getSession().commit();
+                }
+            } catch (DataStoreException ex) {
+                ex.printStackTrace();
+            }
+
+            setQuery(query);
+        }
     }
 
 }

@@ -18,13 +18,16 @@
 package org.geotoolkit.data;
 
 import java.util.AbstractCollection;
+import java.util.Collections;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 
@@ -122,6 +125,11 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         }
 
         return (int) count;
+    }
+
+    @Override
+    public void update(Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException {
+        update(filter, Collections.singletonMap(desc, value));
     }
 
     /**

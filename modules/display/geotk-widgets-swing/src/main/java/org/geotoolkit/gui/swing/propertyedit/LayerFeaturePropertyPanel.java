@@ -298,12 +298,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             layer = (FeatureMapLayer) target;
             FeatureCollection<SimpleFeature> source =
                     (FeatureCollection<SimpleFeature>) layer.getCollection();
-            try {
-                editable = source.isWritable();
-            } catch (DataStoreException ex) {
-                Logger.getLogger(LayerFeaturePropertyPanel.class.getName()).log(Level.SEVERE, null, ex);
-                editable = false;
-            }
+            editable = source.isWritable();
+            
             jcb_edit.setEnabled(editable);
 
             FeatureSourceModel m = new FeatureSourceModel(tab_data, layer);

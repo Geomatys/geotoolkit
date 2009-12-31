@@ -20,7 +20,10 @@ package org.geotoolkit.data.session;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreException;
@@ -35,7 +38,9 @@ import org.geotoolkit.feature.SchemaException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
@@ -63,6 +68,14 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
         }
         this.session = session;
         this.query = query;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Session getSession() {
+        return session;
     }
 
     /**
@@ -146,20 +159,19 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException{
-        return session.getDataStore().isWriteable(query.getTypeName());
+    public boolean isWritable(){
+        try {
+            return session.getDataStore().isWriteable(query.getTypeName());
+        } catch (DataStoreException ex) {
+            Logger.getLogger(SessionFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     @Override
     public boolean remove(Object o) throws DataStoreRuntimeException{
-        final boolean writable;
-        try {
-            writable = isWritable();
-        } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
-        }
 
-        if(writable){
+        if(isWritable()){
             if(o instanceof Feature){
                 Id filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(((Feature)o).getIdentifier()));
                 try {
@@ -183,13 +195,8 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public boolean removeAll(Collection<?> clctn) {
         final boolean writable;
-        try {
-            writable = isWritable();
-        } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
-        }
 
-        if(writable){
+        if(isWritable()){
             final Set<Identifier> ids = new HashSet<Identifier>();
 
             for(Object o : clctn){
@@ -216,14 +223,8 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
 
     @Override
     public void clear() {
-        final boolean writable;
-        try {
-            writable = isWritable();
-        } catch (DataStoreException ex) {
-            throw new DataStoreRuntimeException(ex);
-        }
 
-        if(writable){
+        if(isWritable()){
             try {
                 session.remove(query.getTypeName(), query.getFilter());
             } catch (DataStoreException ex) {
@@ -231,6 +232,30 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
             }
         }else{
             throw new DataStoreRuntimeException("this collection is readable only");
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+        if(filter == Filter.INCLUDE){
+            session.update(query.getTypeName(),query.getFilter(),values);
+        }else{
+            session.update(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter),values);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void remove(Filter filter) throws DataStoreException {
+        if(filter == Filter.INCLUDE){
+            session.remove(query.getTypeName(),query.getFilter());
+        }else{
+            session.remove(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter));
         }
     }
 

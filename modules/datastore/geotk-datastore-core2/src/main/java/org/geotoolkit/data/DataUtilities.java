@@ -20,14 +20,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.query.SortByComparator;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.BoundingBox;
@@ -258,6 +262,25 @@ public class DataUtilities {
         @Override
         public boolean isWritable() {
             return false;
+        }
+
+        @Override
+        public void update(Filter filter, Map values) throws DataStoreException {
+            for(FeatureCollection c : wrapped){
+                c.update(filter, values);
+            }
+        }
+
+        @Override
+        public void remove(Filter filter) throws DataStoreException {
+            for(FeatureCollection c : wrapped){
+                c.remove(filter);
+            }
+        }
+
+        @Override
+        public Session getSession() {
+            return null;
         }
 
         private class SequenceIterator implements FeatureIterator {

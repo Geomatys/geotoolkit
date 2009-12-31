@@ -17,14 +17,21 @@
 
 package org.geotoolkit.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Filter;
 
 /**
  *
@@ -33,7 +40,7 @@ import org.opengis.feature.type.FeatureType;
  */
 public class DefaultFeatureCollection<F extends Feature> extends AbstractFeatureCollection<F>{
 
-    private final Collection<F> features;
+    private final List<F> features;
 
     public DefaultFeatureCollection(String id, FeatureType type, Class<F> featureClass){
         super(id,type);
@@ -58,6 +65,11 @@ public class DefaultFeatureCollection<F extends Feature> extends AbstractFeature
             }
         };
 
+    }
+
+    @Override
+    public Session getSession() {
+        return null;
     }
 
     @Override
@@ -88,6 +100,28 @@ public class DefaultFeatureCollection<F extends Feature> extends AbstractFeature
     @Override
     public boolean isWritable() {
         return true;
+    }
+
+    @Override
+    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+        for(Feature f : features){
+            if(filter.evaluate(f)){
+                for(Entry<? extends AttributeDescriptor, ? extends Object> e : values.entrySet()){
+                    f.getProperty(e.getKey().getLocalName()).setValue(e.getValue());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void remove(Filter filter) throws DataStoreException {
+        final List toRemove = new ArrayList();
+        for(Feature f : features){
+            if(filter.evaluate(f)){
+                toRemove.add(f);
+            }
+        }
+        removeAll(toRemove);
     }
 
 }

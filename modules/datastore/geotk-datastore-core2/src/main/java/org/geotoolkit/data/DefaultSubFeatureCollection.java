@@ -18,6 +18,7 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -28,11 +29,14 @@ import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
@@ -167,12 +171,35 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
     }
 
     @Override
-    public boolean isWritable() throws DataStoreException{
+    public boolean isWritable(){
         if(type.equals(original.getSchema())){
             return original.isWritable();
         }else{
             return false;
         }
+    }
+
+    @Override
+    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+        if(filter == Filter.INCLUDE){
+            original.update(query.getFilter(),values);
+        }else{
+            original.update(FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter),values);
+        }
+    }
+
+    @Override
+    public void remove(Filter filter) throws DataStoreException {
+        if(filter == Filter.INCLUDE){
+            original.remove(query.getFilter());
+        }else{
+            original.remove(FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter));
+        }
+    }
+
+    @Override
+    public Session getSession() {
+        return original.getSession();
     }
 
 }

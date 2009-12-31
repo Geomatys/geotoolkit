@@ -33,12 +33,14 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.FeatureCollection;
@@ -684,117 +686,92 @@ public class EditionHelper {
 
     public void sourceAddGeometry(Geometry geom) {
 
-//        final FeatureMapLayer editionLayer = handler.getEditedLayer();
-//        final Map2D map = handler.getMap();
-//
-//        if (editionLayer != null) {
-//
-//            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getSchema();
-//            final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = FeatureCollectionUtilities.createCollection();
-//            final Object[] values = new Object[featureType.getAttributeCount()];
-//            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
-//            final CoordinateReferenceSystem dataCrs = editionLayer.getFeatureSource().getSchema().getCoordinateReferenceSystem();
-//
-//            try {
-//                geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
-//            } catch (Exception ex) {
-//                LOGGER.log(Level.SEVERE, null, ex);
-//            }
-//
-//            final List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
-//            for (int i = 0,  n = lst.size(); i < n; i++) {
-//                final AttributeDescriptor desc = lst.get(i);
-//
-//                if (desc.equals(geomAttribut)) {
-//                    values[i] = geom;
-//                } else {
-//                    values[i] = desc.getDefaultValue();
-//                }
-//                if(values[i] == null){
-//                    values[i] = FeatureUtilities.defaultValue(desc.getType().getBinding());
-//                }
-//            }
-//
-//            SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
-//            sf = JFeatureAttributPane.configure(sf);
-//            collection.add(sf);
-//
-////            DefaultTransaction transaction = null;
-////            Transaction oldTransaction = null;
-//            FeatureStore<SimpleFeatureType, SimpleFeature> store = null;
-//            try {
-//                // Create the DefaultTransaction Object
-////                transaction = new DefaultTransaction();
-//
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//
-//                // Then set the transaction for that FeatureStore
-////                oldTransaction = store.getTransaction();
-////                store.setTransaction(transaction);
-//
-//                store.addFeatures(collection);
-////                transaction.commit();
-//            } catch (Exception eek) {
-//                eek.printStackTrace();
-//                try {
-//                    store.getTransaction().rollback();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            } finally {
-////                transaction.close();
-////                store.setTransaction(oldTransaction);
-//            }
-//
-//            map.getCanvas().getController().repaint();
-//        }
+        final FeatureMapLayer editionLayer = handler.getEditedLayer();
+        final Map2D map = handler.getMap();
+
+        if (editionLayer != null) {
+
+            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getSchema();
+            final Collection collection = new ArrayList();
+            final Object[] values = new Object[featureType.getAttributeCount()];
+            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+            final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
+
+            try {
+                geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
+            }
+
+            final List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
+            for (int i = 0,  n = lst.size(); i < n; i++) {
+                final AttributeDescriptor desc = lst.get(i);
+
+                if (desc.equals(geomAttribut)) {
+                    values[i] = geom;
+                } else {
+                    values[i] = desc.getDefaultValue();
+                }
+                if(values[i] == null){
+                    values[i] = FeatureUtilities.defaultValue(desc.getType().getBinding());
+                }
+            }
+
+            SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
+            sf = JFeatureAttributPane.configure(sf);
+            collection.add(sf);
+
+            if(editionLayer.getCollection().isWritable()){
+                try {
+                    editionLayer.getCollection().addAll(collection);
+
+                    if(editionLayer.getCollection().getSession() != null){
+                        editionLayer.getCollection().getSession().commit();
+                    }
+                } catch (Exception eek) {
+                    eek.printStackTrace();
+                }
+            }
+
+            map.getCanvas().getController().repaint();
+        }
 
     }
 
     public void sourceModifyFeature(SimpleFeature feature, Geometry geo){
 
-//        final String ID = feature.getID();
-//
-//        if (geo == null || ID == null) {
-//            throw new NullPointerException();
-//        }
-//
-//        final FeatureMapLayer editionLayer = handler.getEditedLayer();
-//        final Map2D map = handler.getMap();
-//
-//        if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
-//
-//            FeatureStore<SimpleFeatureType, SimpleFeature> store;
-//
-//            String name = editionLayer.getFeatureSource().getName().getLocalPart();
-//            try {
-//                //GR question: why not just editionLayer.getFeatureSource()?
-//                FeatureSource<SimpleFeatureType, SimpleFeature> source = ((DataStore) editionLayer.getFeatureSource().getDataStore()).getFeatureSource(name);
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) source;
-//            } catch (IOException e) {
-//                store = (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//            }
-//
-////            final FeatureStore<SimpleFeatureType, SimpleFeature> store =
-////                    (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//
-//            final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-//
-//            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getFeatureSource().getSchema();
-//            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
-//            final CoordinateReferenceSystem dataCrs = store.getSchema().getCoordinateReferenceSystem();
-//
-//            try {
-//                final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
-//                store.updateFeatures(geomAttribut, geom, filter);
-//                store.getTransaction().commit();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            } finally {
-//                map.getCanvas().getController().repaint();
-//            }
-//
-//        }
+        final String ID = feature.getID();
+
+        if (geo == null || ID == null) {
+            throw new NullPointerException();
+        }
+
+        final FeatureMapLayer editionLayer = handler.getEditedLayer();
+        final Map2D map = handler.getMap();
+
+        if (editionLayer != null && editionLayer.getCollection().isWritable()) {
+
+            final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
+            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getSchema();
+            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+            final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
+
+            try {
+                final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+                
+                editionLayer.getCollection().update(filter, geomAttribut,geom);
+
+                if(editionLayer.getCollection().getSession() != null){
+                    editionLayer.getCollection().getSession().commit();
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                map.getCanvas().getController().repaint();
+            }
+
+        }
 
     }
 
@@ -804,39 +781,30 @@ public class EditionHelper {
 
     public void sourceRemoveFeature(final String ID) {
 
-//        if (ID == null) {
-//            throw new NullPointerException();
-//        }
-//
-//        final FeatureMapLayer editionLayer = handler.getEditedLayer();
-//        final Map2D map = handler.getMap();
-//
-//        if (editionLayer != null && editionLayer.getFeatureSource() instanceof FeatureStore) {
-//            final FeatureStore<SimpleFeatureType, SimpleFeature> store =
-//                    (FeatureStore<SimpleFeatureType, SimpleFeature>) editionLayer.getFeatureSource();
-//
-//            DefaultTransaction transaction = new DefaultTransaction("trans_maj");
-//
-//            store.setTransaction(transaction);
-//            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-//
-//            try {
-//                store.removeFeatures(filter);
-//                transaction.commit();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//                try {
-//                    transaction.rollback();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            } finally {
-//                transaction.close();
-//                store.setTransaction(Transaction.AUTO_COMMIT);
-//            }
-//
-//            map.getCanvas().getController().repaint();
-//        }
+        if (ID == null) {
+            throw new NullPointerException();
+        }
+
+        final FeatureMapLayer editionLayer = handler.getEditedLayer();
+        final Map2D map = handler.getMap();
+
+        if (editionLayer != null && editionLayer.getCollection().isWritable()) {
+
+            Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
+
+            try {
+                editionLayer.getCollection().remove(filter);
+
+                if(editionLayer.getCollection().getSession() != null){
+                    editionLayer.getCollection().getSession().commit();
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            map.getCanvas().getController().repaint();
+        }
 
     }
 
