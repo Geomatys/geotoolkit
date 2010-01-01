@@ -71,18 +71,71 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
         assertNotNull(metadata);
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
-            "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“-10000.0 21000.0”\n" +
-            "│   ├───OffsetVectors\n" +
-            "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“1000.0 0.0”\n" +
-            "│   │   └───OffsetVector\n" +
-            "│   │       └───values=“0.0 -1000.0”\n" +
-            "│   └───Limits\n" +
-            "│       ├───low=“0 0”\n" +
-            "│       └───high=“19 41”\n" +
-            "└───SpatialRepresentation\n" +
-            "    ├───numberOfDimensions=“2”\n" +
-            "    └───centerPoint=“0.0 0.0”\n"), metadata.toString());
+                "├───RectifiedGridDomain\n" +
+                "│   ├───origin=“-10000.0 21000.0”\n" +
+                "│   ├───OffsetVectors\n" +
+                "│   │   ├───OffsetVector\n" +
+                "│   │   │   └───values=“1000.0 0.0”\n" +
+                "│   │   └───OffsetVector\n" +
+                "│   │       └───values=“0.0 -1000.0”\n" +
+                "│   └───Limits\n" +
+                "│       ├───low=“0 0”\n" +
+                "│       └───high=“19 41”\n" +
+                "├───SpatialRepresentation\n" +
+                "│   ├───numberOfDimensions=“2”\n" +
+                "│   └───centerPoint=“0.0 0.0”\n" +
+                "└───CoordinateReferenceSystem\n" +
+                "    ├───name=“WGS 84 / World Mercator”\n" +
+                "    ├───type=“projected”\n" +
+                "    ├───Datum\n" +
+                "    │   ├───name=“World Geodetic System 1984”\n" +
+                "    │   ├───type=“geodetic”\n" +
+                "    │   ├───Ellipsoid\n" +
+                "    │   │   ├───name=“WGS 84”\n" +
+                "    │   │   ├───axisUnit=“m”\n" +
+                "    │   │   ├───semiMajorAxis=“6378137.0”\n" +
+                "    │   │   └───inverseFlattening=“298.257223563”\n" +
+                "    │   └───PrimeMeridian\n" +
+                "    │       ├───name=“Greenwich”\n" +
+                "    │       ├───greenwichLongitude=“0.0”\n" +
+                "    │       └───angularUnit=“deg”\n" +
+                "    ├───CoordinateSystem\n" +
+                "    │   ├───name=“WGS 84 / World Mercator”\n" +
+                "    │   ├───type=“cartesian”\n" +
+                "    │   ├───dimension=“2”\n" +
+                "    │   └───Axes\n" +
+                "    │       ├───CoordinateSystemAxis\n" +
+                "    │       │   ├───name=“x”\n" +
+                "    │       │   ├───direction=“east”\n" +
+                "    │       │   └───unit=“m”\n" +
+                "    │       └───CoordinateSystemAxis\n" +
+                "    │           ├───name=“y”\n" +
+                "    │           ├───direction=“north”\n" +
+                "    │           └───unit=“m”\n" +
+                "    └───Conversion\n" +
+                "        ├───name=“WGS 84 / World Mercator”\n" +
+                "        ├───method=“Mercator_1SP”\n" +
+                "        └───Parameters\n" +
+                "            ├───ParameterValue\n" +
+                "            │   ├───name=“semi_major”\n" +
+                "            │   └───value=“6378137.0”\n" +
+                "            ├───ParameterValue\n" +
+                "            │   ├───name=“semi_minor”\n" +
+                "            │   └───value=“6356752.314245179”\n" +
+                "            ├───ParameterValue\n" +
+                "            │   ├───name=“latitude_of_origin”\n" +
+                "            │   └───value=“0.0”\n" +
+                "            ├───ParameterValue\n" +
+                "            │   ├───name=“central_meridian”\n" +
+                "            │   └───value=“0.0”\n" +
+                "            ├───ParameterValue\n" +
+                "            │   ├───name=“scale_factor”\n" +
+                "            │   └───value=“1.0”\n" +
+                "            ├───ParameterValue\n" +
+                "            │   ├───name=“false_easting”\n" +
+                "            │   └───value=“0.0”\n" +
+                "            └───ParameterValue\n" +
+                "                ├───name=“false_northing”\n" +
+                "                └───value=“0.0”"), metadata.toString());
     }
 }

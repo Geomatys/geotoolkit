@@ -265,8 +265,9 @@ import org.geotoolkit.resources.Errors;
         │       ├───name
         │       ├───greenwichLongitude
         │       └───angularUnit
-        └───<b>Projection</b> : {@linkplain Conversion}
+        └───<b>Conversion</b> : {@linkplain Conversion}
             ├───name
+            ├───method
             └───Parameters : {@linkplain ParameterValueGroup}
                 └───ParameterValue : {@linkplain ParameterValue}
                     ├───name
@@ -776,7 +777,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 if (replacement != null) {
                     childType = replacement;
                     replacement = childType.getComponentType();
-                    if (childType.isArray()) {
+                    if (replacement != null) {
                         max = Integer.MAX_VALUE;
                         childType = replacement;
                     }

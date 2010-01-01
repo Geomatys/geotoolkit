@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -60,7 +61,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.internal.image.io.MetadataEnum;
 
 
 /**
@@ -300,20 +301,23 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
          */
         addTree(standard, CoordinateSystemAxis[].class, "Axes", "CoordinateSystem", true, substitution);
         /*
-         * Add projection parameters.
+         * Add conversion parameters. Note that the operation method will be replaced by a String
+         * later. We can not replace it by a String now since Strings are excluded because of the
+         * toWKT() method.
          */
         substitution.put(MathTransform.class,             null);
         substitution.put(OperationMethod.class,           null);
         substitution.put(PositionalAccuracy.class,        null);
         substitution.put(CoordinateReferenceSystem.class, null);
         substitution.put(ParameterValueGroup.class,       null);
-        addIncompleteTree(standard, Conversion.class, "Projection", "CoordinateReferenceSystem", substitution);
+        addIncompleteTree(standard, Conversion.class, "Conversion", "CoordinateReferenceSystem", substitution);
+        addAttribute("Conversion", "method", DATATYPE_STRING, true, null);
         /*
          * Adds the parameter manually, because they are not in the ISO 19111 package
          * (so the MetadataStandard.ISO_19111 doesn't known them) and because we want
          * a simple (name, value) pair, instead than the parameter descriptor.
          */
-        addElement    ("Parameters",     "Projection", 0, Integer.MAX_VALUE);
+        addElement    ("Parameters",     "Conversion", 0, Integer.MAX_VALUE);
         addElement    ("ParameterValue", "Parameters", CHILD_POLICY_EMPTY);
         addAttribute  ("ParameterValue", "name",       DATATYPE_STRING, true, null);
         addAttribute  ("ParameterValue", "value",      DATATYPE_DOUBLE, true, null);
@@ -346,16 +350,16 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         if (IdentifiedObject.class.isAssignableFrom(type)) {
             addAttribute(elementName, "name", DATATYPE_STRING, true, null);
         }
-        final String[] types;
+        final List<String> types;
         if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
-            types = new String[] {"geographic", "projected"};
+            types = MetadataEnum.CRS_TYPES;
         } else if (CoordinateSystem.class.isAssignableFrom(type)) {
-            types = new String[] {"ellipsoidal", "cartesian"};
+            types = MetadataEnum.CS_TYPES;
         } else if (Datum.class.isAssignableFrom(type)) {
-            types = new String[] {"engineering", "geodetic", "image", "temporal", "vertical"};
+            types = MetadataEnum.DATUM_TYPES;
         } else {
             return;
         }
-        addAttribute(elementName, "type", DATATYPE_STRING, true, null, UnmodifiableArrayList.wrap(types));
+        addAttribute(elementName, "type", DATATYPE_STRING, true, null, types);
     }
 }

@@ -32,6 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.CRSAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
@@ -219,7 +220,9 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                     final int height = getHeight(imageIndex);
                     new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height), null, null);
                 }
-                // TODO: Store the projection.
+                if (crs != null) {
+                    new CRSAccessor(metadata).setCRS(crs);
+                }
             }
         }
         return metadata;

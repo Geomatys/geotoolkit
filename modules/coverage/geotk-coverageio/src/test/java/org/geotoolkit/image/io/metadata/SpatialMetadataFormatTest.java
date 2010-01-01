@@ -39,12 +39,15 @@ import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.parameter.ParameterValue;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PrimeMeridian;
+import org.opengis.referencing.operation.Conversion;
 
 import org.junit.*;
 
@@ -325,6 +328,18 @@ public final class SpatialMetadataFormatTest {
         assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("PrimeMeridian", "name"));
         assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("PrimeMeridian", "greenwichLongitude"));
         assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("PrimeMeridian", "greenwichLongitude"));
+        assertEquals(Conversion.class,                f.getObjectClass           ("Conversion"));
+        assertEquals(CHILD_POLICY_SOME,               f.getChildPolicy           ("Conversion"));
+        assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("Conversion", "method"));
+        assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("Conversion", "method"));
+        assertEquals(ParameterValueGroup.class,       f.getObjectClass           ("Parameters"));
+        assertEquals(CHILD_POLICY_REPEAT,             f.getChildPolicy           ("Parameters"));
+        assertEquals(ParameterValue.class,            f.getObjectClass           ("ParameterValue"));
+        assertEquals(CHILD_POLICY_EMPTY,              f.getChildPolicy           ("ParameterValue"));
+        assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("ParameterValue", "name"));
+        assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("ParameterValue", "name"));
+        assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("ParameterValue", "value"));
+        assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("ParameterValue", "value"));
     }
 
     /**
