@@ -91,6 +91,40 @@ public final class MetadataEnum {
     };
 
     /**
+     * Returns the interface for the given name of the type.
+     *
+     * @param  <T>      The compile-time class of {@code baseType}.
+     * @param  baseType The base interface {@link CoordinateReferenceSystem},
+     *                  {@link CoordinateSystem} or {@link Datum}.
+     * @param  name     The name of the type for which the interface is wanted.
+     * @return The interface for the given name, or {@code null} if unknown.
+     */
+    public static <T extends IdentifiedObject> Class<? extends T> getInterface(
+            final Class<T> baseType, final String name)
+    {
+        final Class<? extends IdentifiedObject>[] types;
+        final List<String> names;
+        if (baseType.equals(CoordinateReferenceSystem.class)) {
+            types = CRS_INTERFACES;
+            names = CRS_TYPES;
+        } else if (baseType.equals(CoordinateSystem.class)) {
+            types = CS_INTERFACES;
+            names = CS_TYPES;
+        } else if (baseType.equals(Datum.class)) {
+            types = DATUM_INTERFACES;
+            names = DATUM_TYPES;
+        } else {
+            throw new IllegalArgumentException(baseType.getName());
+        }
+        for (int i=0; i<types.length; i++) {
+            if (name.equalsIgnoreCase(names.get(i))) {
+                return types[i].asSubclass(baseType);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the name of the type for the given identified object.
      *
      * @param object The object for which the name of the type is wanted.

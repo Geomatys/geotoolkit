@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.image.io;
 
 import javax.imageio.metadata.IIOMetadata;
-import javax.measure.unit.Unit;
 
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
@@ -51,6 +50,8 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
  *
+ * @see CRSBuilder
+ *
  * @since 3.07
  * @module
  */
@@ -76,8 +77,7 @@ public final class CRSAccessor extends MetadataAccessor {
     }
 
     /**
-     * Same as {@link #setName}, but uses the given attribute name instead
-     * than {@code "name"}.
+     * Same as {@link #setName}, but uses the given attribute name instead than {@code "name"}.
      *
      * @param object    The object from which to fetch the name.
      * @param scoped    {@code true} if the name should contains the authority prefix.
@@ -115,10 +115,7 @@ public final class CRSAccessor extends MetadataAccessor {
             if (ellipsoid != null) {
                 final MetadataAccessor child = new MetadataAccessor(accessor, "Ellipsoid", null);
                 setName(ellipsoid, child);
-                final Unit<?> unit = ellipsoid.getAxisUnit();
-                if (unit != null) {
-                    child.setAttribute("axisUnit", unit.toString());
-                }
+                child.setAttribute("axisUnit", ellipsoid.getAxisUnit());
                 child.setAttribute("semiMajorAxis", ellipsoid.getSemiMajorAxis());
                 if (ellipsoid.isIvfDefinitive()) {
                     child.setAttribute("inverseFlattening", ellipsoid.getInverseFlattening());
@@ -131,10 +128,7 @@ public final class CRSAccessor extends MetadataAccessor {
                 final MetadataAccessor child = new MetadataAccessor(accessor, "PrimeMeridian", null);
                 setName(pm, child);
                 child.setAttribute("greenwichLongitude", pm.getGreenwichLongitude());
-                final Unit<?> unit = pm.getAngularUnit();
-                if (unit != null) {
-                    child.setAttribute("angularUnit", unit.toString());
-                }
+                child.setAttribute("angularUnit", pm.getAngularUnit());
             }
         }
     }
@@ -155,6 +149,7 @@ public final class CRSAccessor extends MetadataAccessor {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             axes.selectChild(axes.appendChild());
             setName(axis, axes);
+            axes.setAttribute("axisAbbrev", axis.getAbbreviation());
             axes.setAttribute("direction", axis.getDirection());
             boolean hasRangeMeaning = false;
             double value = axis.getMinimumValue();
@@ -170,10 +165,7 @@ public final class CRSAccessor extends MetadataAccessor {
             if (hasRangeMeaning) {
                 axes.setAttribute("rangeMeaning", axis.getRangeMeaning());
             }
-            final Unit<?> unit = axis.getUnit();
-            if (unit != null) {
-                axes.setAttribute("unit", unit.toString());
-            }
+            axes.setAttribute("unit", axis.getUnit());
         }
     }
 

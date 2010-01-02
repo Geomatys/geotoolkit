@@ -36,6 +36,8 @@ import javax.imageio.ImageReader; // For javadoc
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -48,6 +50,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
@@ -168,7 +171,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @since 2.5
  * @module
  */
-public class MetadataAccessor {
+public class MetadataAccessor implements Localized {
     /**
      * The separator between names in a node path.
      */
@@ -1250,6 +1253,39 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Returns an attribute as a unit for the {@linkplain #selectChild selected element},
+     * or {@code null} if none. If the attribute can't be parsed as a unit of the given
+     * quantity, then this method logs a warning and returns {@code null}.
+     *
+     * @param  <Q> The compile-time type of the {@code quantity} argument.
+     * @param  attribute The attribute to fetch (e.g. {@code "axisUnit"}).
+     * @param  quantity The quantity of the unit to be returned, or {@code null} for any.
+     * @return The attribute value, or {@code null} if none or unparseable.
+     *
+     * @see #setAttribute(String, Unit)
+     *
+     * @since 3.07
+     */
+    @SuppressWarnings("unchecked")
+    public <Q extends Quantity> Unit<Q> getAttributeAsUnit(final String attribute, final Class<Q> quantity) {
+        String value = getAttribute(attribute);
+        if (value != null) try {
+            final Unit<?> unit = Units.valueOf(value);
+            if (quantity == null) {
+                return (Unit<Q>) unit;
+            }
+            try {
+                return unit.asType(quantity);
+            } catch (ClassCastException e) {
+                warning("getAttributeAsUnit", Errors.Keys.INCOMPATIBLE_UNIT_$1, unit);
+            }
+        } catch (IllegalArgumentException e) {
+            warning(MetadataAccessor.class, "getAttributeAsUnit", e);
+        }
+        return null;
+    }
+
+    /**
      * Returns an attribute as a citation for the {@linkplain #selectChild selected element},
      * or {@code null} if none.
      *
@@ -1623,6 +1659,20 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
+     * Sets the attribute to the specified unit value.
+     *
+     * @param attribute The attribute name.
+     * @param value The attribute value.
+     *
+     * @see #getAttributeAsUnit(String, Class)
+     *
+     * @since 3.07
+     */
+    public void setAttribute(final String attribute, final Unit<?> value) {
+        setAttribute(attribute, (value != null) ? value.toString() : null);
+    }
+
+    /**
      * Sets the attribute to the specified citation value,
      * or remove the attribute if the value is null.
      *
@@ -1654,9 +1704,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     final void warning(final String method, final int key, final Object value) {
         if (!Level.OFF.equals(warningLevel)) {
-            final Locale locale = (metadata instanceof Localized) ?
-                    ((Localized) metadata).getLocale() : Locale.getDefault();
-            final LogRecord record = Errors.getResources(locale).getLogRecord(warningLevel, key, value);
+            final LogRecord record = Errors.getResources(getLocale()).getLogRecord(warningLevel, key, value);
             record.setSourceClassName(MetadataAccessor.class.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
@@ -1781,6 +1829,20 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     @Deprecated
     public Level setWarningsLevel(final Level level) {
         return setWarningLevel(level);
+    }
+
+    /**
+     * Returns the locale to use for formatting warnings and error messages.
+     * This method delegates to {@link SpatialMetadata#getLocale()} if possible,
+     * or returns {@code null} otherwise.
+     *
+     * @return The locale to use for formatting the warnings, or {@code null}.
+     *
+     * @since 3.07
+     */
+    @Override
+    public Locale getLocale() {
+        return (metadata instanceof Localized) ? ((Localized) metadata).getLocale() : null;
     }
 
     /**

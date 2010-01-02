@@ -106,10 +106,12 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "    │   └───Axes\n" +
                 "    │       ├───CoordinateSystemAxis\n" +
                 "    │       │   ├───name=“x”\n" +
+                "    │       │   ├───axisAbbrev=“x”\n" +
                 "    │       │   ├───direction=“east”\n" +
                 "    │       │   └───unit=“m”\n" +
                 "    │       └───CoordinateSystemAxis\n" +
                 "    │           ├───name=“y”\n" +
+                "    │           ├───axisAbbrev=“y”\n" +
                 "    │           ├───direction=“north”\n" +
                 "    │           └───unit=“m”\n" +
                 "    └───Conversion\n" +

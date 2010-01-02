@@ -257,6 +257,7 @@ import org.geotoolkit.resources.Errors;
         │   ├───type
         │   ├───<b>Ellipsoid</b> : {@linkplain Ellipsoid}
         │   │   ├───name
+        │   │   ├───axisAbbrev
         │   │   ├───axisUnit
         │   │   ├───semiMajorAxis
         │   │   ├───semiMinorAxis

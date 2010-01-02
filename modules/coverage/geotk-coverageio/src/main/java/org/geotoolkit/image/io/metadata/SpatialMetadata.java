@@ -470,7 +470,7 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * default. The default implementation delegates to {@link ImageReader#getLocale} or
      * {@link ImageWriter#getLocale} if possible, or returns {@code null} otherwise.
      *
-     * @return The locale for formatting messages.
+     * @return The locale for formatting messages, or {@code null}.
      */
     @Override
     public Locale getLocale() {

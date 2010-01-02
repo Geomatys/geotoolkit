@@ -96,6 +96,7 @@ public final class CRSAccessorTest {
             "        └───Axes\n" +
             "            ├───CoordinateSystemAxis\n" +
             "            │   ├───name=“Geodetic longitude”\n" +
+            "            │   ├───axisAbbrev=“λ”\n" +
             "            │   ├───direction=“east”\n" +
             "            │   ├───minimumValue=“-180.0”\n" +
             "            │   ├───maximumValue=“180.0”\n" +
@@ -103,6 +104,7 @@ public final class CRSAccessorTest {
             "            │   └───unit=“deg”\n" +
             "            └───CoordinateSystemAxis\n" +
             "                ├───name=“Geodetic latitude”\n" +
+            "                ├───axisAbbrev=“φ”\n" +
             "                ├───direction=“north”\n" +
             "                ├───minimumValue=“-90.0”\n" +
             "                ├───maximumValue=“90.0”\n" +
@@ -144,10 +146,12 @@ public final class CRSAccessorTest {
                 "    │   └───Axes\n" +
                 "    │       ├───CoordinateSystemAxis\n" +
                 "    │       │   ├───name=“Easting”\n" +
+                "    │       │   ├───axisAbbrev=“E”\n" +
                 "    │       │   ├───direction=“east”\n" +
                 "    │       │   └───unit=“m”\n" +
                 "    │       └───CoordinateSystemAxis\n" +
                 "    │           ├───name=“Northing”\n" +
+                "    │           ├───axisAbbrev=“N”\n" +
                 "    │           ├───direction=“north”\n" +
                 "    │           └───unit=“m”\n" +
                 "    └───Conversion\n" +

@@ -350,6 +350,9 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         if (IdentifiedObject.class.isAssignableFrom(type)) {
             addAttribute(elementName, "name", DATATYPE_STRING, true, null);
         }
+        if (CoordinateSystemAxis.class.isAssignableFrom(type)) {
+            addAttribute(elementName, "axisAbbrev", DATATYPE_STRING, true, null);
+        }
         final List<String> types;
         if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
             types = MetadataEnum.CRS_TYPES;
