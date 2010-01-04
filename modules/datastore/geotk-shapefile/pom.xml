@@ -15,10 +15,10 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>geotk-shapefile2</artifactId>
+    <artifactId>geotk-shapefile</artifactId>
     <packaging>jar</packaging>
-    <name>Datastore Shapefile2</name>
-    <description>Datastore shapefile2</description>
+    <name>Datastore Shapefile</name>
+    <description>Datastore shapefile</description>
     <licenses>
         <license>
             <name>Lesser General Public License (LGPL)</name>
