@@ -17,7 +17,7 @@
 
 package org.geotoolkit.data.memory;
 
-import org.geotoolkit.data.DefaultFeatureIDReader;
+import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +26,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.geotoolkit.data.DefaultFeatureIDReader;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.AbstractFeatureWriterAppend;
 import org.geotoolkit.data.DataStoreException;
@@ -41,7 +42,9 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 
 /**
  * @todo : make this concurrent
@@ -185,6 +188,31 @@ public class MemoryDataStore extends AbstractDataStore{
         size = Math.max(0, size - startIndex);
 
         return size;
+    }
+
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        handleUpdateWithFeatureWriter(groupName, filter, values);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+        handleRemoveWithFeatureWriter(groupName, filter);
     }
 
     /**

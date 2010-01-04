@@ -18,14 +18,20 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -56,6 +62,11 @@ public interface DataStore {
      */
     String[] getTypeNames() throws DataStoreException;
 
+    /**
+     * Get a collection of all available names.
+     * @return Set<Name> , never null, but can be empty.
+     * @throws DataStoreException
+     */
     Set<Name> getNames() throws DataStoreException;
 
     void createSchema(Name typeName, FeatureType featureType) throws DataStoreException;
@@ -74,8 +85,23 @@ public interface DataStore {
      */
     FeatureType getSchema(String typeName) throws DataStoreException;
 
+    /**
+     * Get the feature type for the give name.
+     *
+     * @param typeName name of the searched type
+     * @return FeatureType type for the given name
+     * @throws DataStoreException if typeName doesnt exist or datastore internal error.
+     */
     FeatureType getSchema(Name typeName) throws DataStoreException;
 
+    /**
+     * Ask if the given type is editable. if true you can
+     * get use the modification methods for this type.
+     *
+     * @param typeName name of the searched type
+     * @return true if the type features can be edited.
+     * @throws DataStoreException if typeName doesnt exist or datastore internal error.
+     */
     boolean isWriteable(Name typeName) throws DataStoreException;
 
     /**
@@ -89,6 +115,13 @@ public interface DataStore {
      */
     Object getQueryCapabilities();
 
+    /**
+     * Get the number of features that match the query.
+     *
+     * @param query the count query.
+     * @return number of features that match the query
+     * @throws DataStoreException
+     */
     long getCount(Query query) throws DataStoreException;
 
     /**
@@ -100,6 +133,18 @@ public interface DataStore {
      */
     Envelope getEnvelope(Query query) throws DataStoreException;
 
+    List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
+
+    /**
+     * Convinient method to update a single attribut.
+     * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     */
+    void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException;
+
+    void updateFeatures(Name groupName, Filter filter, Map< ? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException;
+
+    void removeFeatures(Name groupName, Filter filter) throws DataStoreException;
+    
     FeatureReader getFeatureReader(Query query) throws DataStoreException;
 
     FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException;

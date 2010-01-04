@@ -20,7 +20,6 @@ package org.geotoolkit.data.session;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 
@@ -98,17 +97,7 @@ public class RemoveDelta extends AbstractDelta{
      */
     @Override
     public void commit(DataStore store) throws DataStoreException {
-        final FeatureWriter writer = store.getFeatureWriter(type,removedIds);
-
-        try{
-            while(writer.hasNext()){
-                writer.next();
-                writer.remove();
-            }
-        }finally{
-            writer.close();
-        }
-
+        store.removeFeatures(type, removedIds);
     }
 
     /**

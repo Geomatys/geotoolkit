@@ -18,11 +18,16 @@
 package org.geotoolkit.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.memory.GenericFeatureWriter;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
@@ -35,11 +40,15 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -105,13 +114,21 @@ public abstract class AbstractDataStore implements DataStore{
     /**
      * {@inheritDoc }
      *
-     * This implementation will always return false.
+     * This implementation will try to aquiere a writer and return true if it
+     * succeed.
      */
     @Override
     public boolean isWriteable(Name typeName) throws DataStoreException {
         //while raise an error if type doesnt exist
         getSchema(typeName);
-        return false;
+
+        try{
+            getFeatureWriter(typeName, Filter.EXCLUDE);
+            return true;
+        }catch(Exception ex){
+            //catch anything, don't log it
+            return false;
+        }
     }
 
     /**
@@ -138,6 +155,17 @@ public abstract class AbstractDataStore implements DataStore{
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateEnvelope(reader);
+    }
+
+    /**
+     * {@inheritDoc }
+     *
+     * This implementation fallback on
+     * @see  #updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     */
+    @Override
+    public void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException {
+        updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
     /**
@@ -303,6 +331,92 @@ public abstract class AbstractDataStore implements DataStore{
         }
 
         return writer;
+    }
+
+    /**
+     * Convinient method to handle adding features operation by using the
+     * FeatureWriter.
+     *
+     * @param groupName
+     * @param newFeatures
+     * @return list of ids of the features added.
+     * @throws DataStoreException
+     */
+    protected List<FeatureId> handleAddWithFeatureWriter(Name groupName, Collection<? extends Feature> newFeatures)
+            throws DataStoreException{
+        try{
+            return DataUtilities.write(getFeatureWriterAppend(groupName), newFeatures);
+        }catch(DataStoreRuntimeException ex){
+            throw new DataStoreException(ex);
+        }
+    }
+
+    /**
+     * Convinient method to handle adding features operation by using the
+     * FeatureWriter.
+     *
+     * @param groupName
+     * @param filter
+     * @param values
+     * @throws DataStoreException
+     */
+    protected void handleUpdateWithFeatureWriter(Name groupName, Filter filter,
+            Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+
+        final FeatureWriter writer = getFeatureWriter(groupName,filter);
+
+        try{
+            while(writer.hasNext()){
+                final Feature f = writer.next();
+                for(final Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
+                    f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
+                }
+                writer.write();
+            }
+        } catch(DataStoreRuntimeException ex){
+            throw new DataStoreException(ex);
+        } finally{
+            writer.close();
+        }
+    }
+
+    /**
+     * Convinient method to handle adding features operation by using the
+     * FeatureWriter.
+     * 
+     * @param groupName
+     * @param filter
+     * @throws DataStoreException
+     */
+    protected void handleRemoveWithFeatureWriter(Name groupName, Filter filter) throws DataStoreException {
+        final FeatureWriter writer = getFeatureWriter(groupName,filter);
+
+        try{
+            while(writer.hasNext()){
+                writer.next();
+                writer.remove();
+            }
+        } catch(DataStoreRuntimeException ex){
+            throw new DataStoreException(ex);
+        } finally{
+            writer.close();
+        }
+    }
+
+    /**
+     * Convinient method to handle modification operation by using the
+     * add, remove, update methods.
+     *
+     * @param groupName
+     * @param filter
+     * @throws DataStoreException
+     */
+    protected FeatureWriter handleWriter(Name groupName, Filter filter) throws DataStoreException {
+        return GenericFeatureWriter.wrap(this, groupName, filter);
+    }
+
+    protected FeatureWriter handleWriterAppend(Name groupName) throws DataStoreException {
+        return GenericFeatureWriter.wrapAppend(this, groupName);
     }
 
 }

@@ -37,9 +37,11 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -63,7 +65,6 @@ import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
@@ -74,6 +75,7 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -81,7 +83,9 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -291,6 +295,30 @@ public class ShapefileDataStore extends AbstractDataStore{
             return super.getEnvelope(query);
         }
 
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        handleUpdateWithFeatureWriter(groupName, filter, values);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+        handleRemoveWithFeatureWriter(groupName, filter);
     }
 
     /**

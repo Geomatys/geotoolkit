@@ -22,14 +22,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -77,7 +78,7 @@ public class DataUtilities {
      * @return List of generated FeatureId
      * @throws DataStoreRuntimeException
      */
-    public static List<FeatureId> write(FeatureWriter writer, FeatureCollection<? extends Feature> collection)
+    public static List<FeatureId> write(FeatureWriter writer, Collection<? extends Feature> collection)
             throws DataStoreRuntimeException{
         final List<FeatureId> ids = new ArrayList<FeatureId>();
 

@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -67,7 +68,9 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -355,6 +358,21 @@ public class WFSDataStore extends AbstractDataStore{
     @Override
     public Object getQueryCapabilities() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        return handleAddWithFeatureWriter(groupName, newFeatures);
+    }
+
+    @Override
+    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        handleUpdateWithFeatureWriter(groupName, filter, values);
+    }
+
+    @Override
+    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+        handleWriterAppend(groupName);
     }
 
 

@@ -19,18 +19,15 @@ package org.geotoolkit.data.session;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 
-import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -124,19 +121,7 @@ public class ModifyDelta extends AbstractDelta{
      */
     @Override
     public void commit(DataStore store) throws DataStoreException {
-        final FeatureWriter writer = store.getFeatureWriter(type,filter);
-
-        try{
-            while(writer.hasNext()){
-                final Feature f = writer.next();
-                for(final Entry<AttributeDescriptor,Object> entry : values.entrySet()){
-                    f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
-                }
-                writer.write();
-            }
-        }finally{
-            writer.close();
-        }
+        store.updateFeatures(type, filter, values);
     }
 
     /**
