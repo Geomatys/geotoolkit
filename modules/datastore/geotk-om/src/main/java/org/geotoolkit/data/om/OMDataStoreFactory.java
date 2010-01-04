@@ -23,12 +23,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.AbstractDataStoreFactory;
-import org.geotoolkit.data.DataStore;
 
+import org.geotoolkit.data.AbstractDataStoreFactory;
+import org.geotoolkit.data.DataSourceException;
+import org.geotoolkit.data.DataStore;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -120,7 +122,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createDataStore(ParameterValueGroup params) throws IOException {
+    public DataStore createDataStore(ParameterValueGroup params) throws DataSt {
         String dburl = getJDBCUrl(params);
         DefaultDataSource ds  = new DefaultDataSource(dburl);
         final String user     = (String) params.parameter(USER.getName().toString()).getValue();
@@ -136,7 +138,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(ParameterValueGroup params) throws IOException {
+    public DataStore createNewDataStore(ParameterValueGroup params) throws DataSourceException {
         return createDataStore(params);
     }
 

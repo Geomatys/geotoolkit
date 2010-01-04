@@ -50,7 +50,7 @@
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-core2</artifactId>
+      <artifactId>geotk-jdbc-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -59,7 +59,7 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
-      <artifactId>geotk-jdbc-core2</artifactId>
+      <artifactId>geotk-jdbc-core</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>

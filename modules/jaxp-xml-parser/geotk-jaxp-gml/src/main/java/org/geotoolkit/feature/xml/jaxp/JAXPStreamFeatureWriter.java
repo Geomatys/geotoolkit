@@ -28,8 +28,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -41,6 +42,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 
@@ -250,6 +252,8 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -263,6 +267,8 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -278,11 +284,13 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
         return null;
     }
 
-    private void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter) {
+    private void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter) throws DataStoreException {
         try {
             // the XML header
             streamWriter.writeStartDocument("UTF-8", "1.0");
@@ -312,10 +320,10 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
              /*
              * The boundedby part
              */
-            writeBounds(featureCollection.getBounds(), streamWriter);
+            writeBounds(featureCollection.getEnvelope(), streamWriter);
             
             // we write each feature member of the collection
-            FeatureIterator iterator =featureCollection.features();
+            FeatureIterator iterator =featureCollection.iterator();
             while (iterator.hasNext()) {
                 final SimpleFeature f = (SimpleFeature) iterator.next();
 
@@ -336,7 +344,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
         }
     }
 
-    private void writeBounds(JTSEnvelope2D bounds, XMLStreamWriter streamWriter) throws XMLStreamException {
+    private void writeBounds(Envelope bounds, XMLStreamWriter streamWriter) throws XMLStreamException {
         if (bounds != null) {
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {

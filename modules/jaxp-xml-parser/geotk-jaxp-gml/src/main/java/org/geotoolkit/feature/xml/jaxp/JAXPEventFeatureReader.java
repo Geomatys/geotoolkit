@@ -34,10 +34,9 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.geotoolkit.data.DefaultFeatureCollection;
 
-
-import org.geotoolkit.data.FeatureCollectionUtilities;
-import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
@@ -262,7 +261,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                         for (FeatureType ft : featureTypes) {
                             if (ft.getName().equals(name)) {
                                 if (collection == null) {
-                                    collection = FeatureCollectionUtilities.createCollection(id, (SimpleFeatureType) ft);
+                                    collection = new DefaultFeatureCollection(id, ft, null);
                                 }
                                 collection.add(readFeature(eventReader, fid.getValue(), ft));
                                 find = true;

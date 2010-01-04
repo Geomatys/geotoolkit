@@ -45,7 +45,6 @@
 
   <modules>
     <module>geotk-jdbc-core</module>
-    <module>geotk-jdbc-core2</module>
     <module>geotk-jdbc-postgis</module>
   </modules>
 </project>

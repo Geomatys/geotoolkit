@@ -32,8 +32,9 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -45,6 +46,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 
@@ -226,6 +228,8 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -243,6 +247,8 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
 
@@ -262,11 +268,13 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             return sw.toString();
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
+        } catch (DataStoreException ex) {
+            LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
         return null;
     }
 
-    private void writeFeatureCollection(FeatureCollection featureCollection, XMLEventWriter eventWriter) {
+    private void writeFeatureCollection(FeatureCollection featureCollection, XMLEventWriter eventWriter) throws DataStoreException {
         try {
             
             // the XML header
@@ -296,11 +304,11 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             /*
              * The boundedby part
              */
-            writeBounds(featureCollection.getBounds(), eventWriter);
+            writeBounds(featureCollection.getEnvelope(), eventWriter);
 
             // we write each feature member of the collection
             QName memberName = new QName("http://www.opengis.net/gml", "featureMember", "gml");
-            FeatureIterator iterator =featureCollection.features();
+            FeatureIterator iterator =featureCollection.iterator();
             while (iterator.hasNext()) {
                 final SimpleFeature f = (SimpleFeature) iterator.next();
 
@@ -320,7 +328,7 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
         }
     }
 
-    private void writeBounds(JTSEnvelope2D bounds, XMLEventWriter eventWriter) throws XMLStreamException {
+    private void writeBounds(Envelope bounds, XMLEventWriter eventWriter) throws XMLStreamException {
         if (bounds != null) {
             String srsName = null;
             if (bounds.getCoordinateReferenceSystem() != null) {
