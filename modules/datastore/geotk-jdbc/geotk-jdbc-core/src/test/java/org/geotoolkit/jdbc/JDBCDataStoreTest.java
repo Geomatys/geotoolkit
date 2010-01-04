@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
@@ -219,7 +218,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
     
     public void testGetFeatureSource() throws Exception {
-        FeatureCollection<SimpleFeature> featureSource = dataStore.createSession(false).features(QueryBuilder.all(nsname("ft1")));
+        FeatureCollection<SimpleFeature> featureSource = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
         assertNotNull(featureSource);
     }
 
@@ -305,7 +304,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         FilterFactory ff = dataStore.getFilterFactory();
 
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(100));
-        FeatureCollection<SimpleFeature> features = dataStore.createSession(false).features(
+        FeatureCollection<SimpleFeature> features = dataStore.createSession(false).getFeatureCollection(
                 QueryBuilder.filtered(nsname("ft1"), f));
         assertEquals(0, features.size());
 
@@ -322,7 +321,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         writer.close();
 
         f = ff.equals(ff.property(aname("intProperty")), ff.literal(100));
-        features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("ft1"), f));
+        features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("ft1"), f));
         assertEquals(1, features.size());
     }
 
@@ -338,7 +337,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         writer.close();
 
         FeatureCollection<SimpleFeature> features = dataStore.
-                createSession(false).features(QueryBuilder.all(nsname("ft1")));
+                createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
         assertEquals(6, features.size());
     }
 }

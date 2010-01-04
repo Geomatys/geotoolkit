@@ -55,7 +55,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     }
     
     public void testReadFeatures() throws Exception {
-        FeatureCollection fc = dataStore.createSession(false).features(QueryBuilder.all(nsname(LAKE)));
+        FeatureCollection fc = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(LAKE)));
         assertEquals(1, fc.size());
         FeatureIterator<SimpleFeature> fr = fc.iterator();
         assertTrue(fr.hasNext());

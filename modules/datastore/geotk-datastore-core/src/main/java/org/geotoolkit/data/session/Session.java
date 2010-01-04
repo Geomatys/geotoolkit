@@ -54,7 +54,7 @@ public interface Session {
      */
     boolean isAsynchrone();
 
-    FeatureCollection features(Query query);
+    FeatureCollection getFeatureCollection(Query query);
 
     /**
      * Get a feature iterator that can be used only for reading.
@@ -66,17 +66,17 @@ public interface Session {
      */
     FeatureIterator getFeatureIterator(Query query) throws DataStoreException;
 
-    void add(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
+    void addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
     /**
      * Convinient method to update a single attribut.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
-    void update(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
+    void updateFeatures(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
 
-    void update(Name groupName, Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
+    void updateFeatures(Name groupName, Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
 
-    void remove(Name groupName, Filter filter) throws DataStoreException;
+    void removeFeatures(Name groupName, Filter filter) throws DataStoreException;
 
     /**
      * Returns true if this session holds pending (that is, unsaved) changes; otherwise returns false. 

@@ -37,8 +37,8 @@ public abstract class AbstractSession implements Session{
      * @see  #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     @Override
-    public void update(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException {
-        update(groupName, filter, Collections.singletonMap(desc, value));
+    public void updateFeatures(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException {
+        updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
 }

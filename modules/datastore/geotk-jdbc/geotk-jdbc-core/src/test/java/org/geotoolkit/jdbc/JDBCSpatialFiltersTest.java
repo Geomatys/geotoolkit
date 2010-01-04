@@ -82,7 +82,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         // should match only "r2"
         BBOX bbox = ff.bbox(aname("geom"), 2, 3, 4, 5, "EPSG:4326");
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),bbox));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),bbox));
         checkSingleResult(features, "r2");
     }
     
@@ -90,7 +90,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         FilterFactory ff = FactoryFinder.getFilterFactory(null);
         // should match only "r2"
         BBOX bbox = ff.bbox("", 2, 3, 4, 5, "EPSG:4326");
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),bbox));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),bbox));
         checkSingleResult(features, "r2");
     }
 
@@ -102,7 +102,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
         LineString ls = gf.createLineString(sf.create(new double[] { 2, 3, 4, 3 }, 2));
         Crosses cs = ff.crosses(ff.property(aname("geom")), ff.literal(ls));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),cs));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),cs));
         checkSingleResult(features, "r2");
     }
 
@@ -114,7 +114,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
         LineString ls = gf.createLineString(sf.create(new double[] { 2, 1, 2, 3 }, 2));
         Intersects is = ff.intersects(ff.property(aname("geom")), ff.literal(ls));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),is));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),is));
         checkSingleResult(features, "r1");
     }
 
@@ -126,7 +126,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
         LineString ls = gf.createLinearRing(sf.create(new double[] { 2, 1, 2, 3, 0, 3, 2, 1}, 2));
         Intersects is = ff.intersects(ff.property(aname("geom")), ff.literal(ls));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),is));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),is));
         checkSingleResult(features, "r1");
     }
 
@@ -138,7 +138,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         PackedCoordinateSequenceFactory sf = new PackedCoordinateSequenceFactory();
         LineString ls = gf.createLineString(sf.create(new double[] { 1, 1, 1, 3 }, 2));
         Touches is = ff.touches(ff.property(aname("geom")), ff.literal(ls));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),is));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),is));
         checkSingleResult(features, "r1");
     }
 
@@ -152,7 +152,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
                 2, -1 }, 2));
         Polygon polygon = gf.createPolygon(shell, null);
         Contains cs = ff.contains(ff.literal(polygon), ff.property(aname("geom")));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),cs));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),cs));
         checkSingleResult(features, "r2");
     }
 
@@ -171,7 +171,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
                 2, -1 }, 2));
         Polygon polygon = gf.createPolygon(shell, null);
         Within wt = ff.within(ff.property(aname("geom")), ff.literal(polygon));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),wt));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),wt));
         checkSingleResult(features, "r2");
     }
 
@@ -185,7 +185,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
                 4, -1 }, 2));
         Polygon polygon = gf.createPolygon(shell, null);
         Disjoint dj = ff.disjoint(ff.property(aname("geom")), ff.literal(polygon));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),dj));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),dj));
         checkSingleResult(features, "r2");
     }
 
@@ -196,7 +196,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         GeometryFactory gf = new GeometryFactory();
         Geometry g = gf.createGeometry((Geometry) td.roadFeatures[2].getDefaultGeometry());
         Equals cs = ff.equal(ff.literal(g), ff.property(aname("geom")));
-        FeatureCollection features = dataStore.createSession(false).features(QueryBuilder.filtered(nsname("road"),cs));
+        FeatureCollection features = dataStore.createSession(false).getFeatureCollection(QueryBuilder.filtered(nsname("road"),cs));
         checkSingleResult(features, "r3");
     }
 

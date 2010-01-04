@@ -42,7 +42,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
-        collection = dataStore.createSession(false).features(QueryBuilder.all(nsname("ft1")));
+        collection = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("ft1")));
     }
 
     public void testIterator() throws Exception {

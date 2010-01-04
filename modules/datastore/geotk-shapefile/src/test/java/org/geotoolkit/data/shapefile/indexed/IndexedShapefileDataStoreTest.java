@@ -104,9 +104,9 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final FeatureCollection<SimpleFeature> features;
         if(q == null){
-            features = s.createSession(true).features(QueryBuilder.all(s.getName()));
+            features = s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
         }else{
-            features = s.createSession(true).features(q);
+            features = s.createSession(true).getFeatureCollection(q);
         }
 
         s.dispose();
@@ -121,9 +121,9 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         final FeatureCollection<SimpleFeature> features;
         if(q == null){
-            features = s.createSession(true).features(QueryBuilder.all(s.getName()));
+            features = s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
         }else{
-            features = s.createSession(true).features(q);
+            features = s.createSession(true).getFeatureCollection(q);
         }
 
         s.dispose();
@@ -132,7 +132,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection<SimpleFeature> loadFeatures(IndexedShapefileDataStore s)
             throws Exception {
-        return s.createSession(true).features(QueryBuilder.all(s.getName()));
+        return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
 
     public void testLoad() throws Exception {
@@ -191,7 +191,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(ShapeTestData
                 .url(STATE_POP), null, true, true, treeType);
         Name typeName = s.getName();
-        FeatureCollection<SimpleFeature> all = s.createSession(true).features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> all = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         assertEquals(features.getEnvelope(), all.getEnvelope());
         s.dispose();
@@ -254,7 +254,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         File shpFile = copyShapefiles(STATE_POP);
         URL url = shpFile.toURL();
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(url, null, true, true, IndexType.NONE);
-        FeatureCollection<SimpleFeature> features = ds.createSession(true).features(QueryBuilder.all(ds.getName()));
+        FeatureCollection<SimpleFeature> features = ds.createSession(true).getFeatureCollection(QueryBuilder.all(ds.getName()));
         FeatureIterator<SimpleFeature> indexIter = features.iterator();
 
         Set<String> expectedFids = new HashSet<String>();
@@ -308,8 +308,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
-        features = indexedDS.createSession(true).features(QueryBuilder.filtered(indexedDS.getName(),filter));
-        FeatureCollection<SimpleFeature> features2 = baselineDS.createSession(true).features(QueryBuilder.filtered(baselineDS.getName(),filter));
+        features = indexedDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(indexedDS.getName(),filter));
+        FeatureCollection<SimpleFeature> features2 = baselineDS.createSession(true).getFeatureCollection(QueryBuilder.filtered(baselineDS.getName(),filter));
 
         FeatureIterator<SimpleFeature> baselineIter = features2.iterator();
         indexIter = features.iterator();
@@ -530,8 +530,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         newFeatures2[1] = FeatureTypeUtilities.template(sds.getSchema());
         newFeatures2[1].setDefaultGeometry(fac.createPoint(new Coordinate(0, 0)));
 
-        session.add(sds.getName(),DataUtilities.collection(newFeatures1));
-        session.add(sds.getName(),DataUtilities.collection(newFeatures2));
+        session.addFeatures(sds.getName(),DataUtilities.collection(newFeatures1));
+        session.addFeatures(sds.getName(),DataUtilities.collection(newFeatures2));
         session.commit();
         assertEquals(idx + 3, sds.getCount(QueryBuilder.all(sds.getName())));
         sds.dispose();
@@ -760,13 +760,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         assertEquals(2, count(ds, typeName, fidFilter));
 
-        session.update(ds.getName(),fidFilter,attribute, "modified");
+        session.updateFeatures(ds.getName(),fidFilter,attribute, "modified");
         session.commit();
         Filter modifiedFilter = ff.equals(ff.property("f"), ff.literal("modified"));
         assertEquals(2, count(ds, typeName, modifiedFilter));
 
         final long initialCount = ds.getCount(QueryBuilder.all(ds.getName()));
-        session.remove(ds.getName(),fidFilter);
+        session.removeFeatures(ds.getName(),fidFilter);
         session.commit();
         final long afterCount = ds.getCount(QueryBuilder.all(ds.getName()));
         assertEquals(initialCount - 2, afterCount);

@@ -177,7 +177,7 @@ public class SessionTest extends TestCase{
         sfb.set("double", 2.5d);
         sfb.set("date", new Date(100L));
 
-        session.add(name, Collections.singletonList(sfb.buildFeature("temporary")));
+        session.addFeatures(name, Collections.singletonList(sfb.buildFeature("temporary")));
 
         //check that he new feature is available in the session but not in the datastore
         qb.reset();
@@ -287,7 +287,7 @@ public class SessionTest extends TestCase{
         assertFalse(session.hasPendingChanges());
 
         //remove the feature
-        session.remove(name, FF.equals(FF.literal("hop4"), FF.property("string")));
+        session.removeFeatures(name, FF.equals(FF.literal("hop4"), FF.property("string")));
 
         //check that the feature is removed in the session but not in the datastore
         qb.reset();
@@ -329,7 +329,7 @@ public class SessionTest extends TestCase{
         final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
         values.put( ((SimpleFeatureType)store.getSchema(name)).getDescriptor("double"), 15d);
 
-        session.update(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
+        session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 
         //check we have a modification
         qb.reset();

@@ -30,7 +30,7 @@ public abstract class JDBCEmptyTest extends JDBCTestSupport {
     
     public void testFeatureSource() throws DataStoreException {
 
-        FeatureCollection fs = dataStore.createSession(false).features(QueryBuilder.all(nsname("empty")));
+        FeatureCollection fs = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("empty")));
         assertNotNull(fs);
         
         Envelope bounds = (Envelope) fs.getEnvelope();

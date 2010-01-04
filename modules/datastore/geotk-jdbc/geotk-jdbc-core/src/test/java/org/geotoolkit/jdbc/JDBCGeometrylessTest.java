@@ -59,7 +59,7 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     }
     
     public void testReadFeatures() throws Exception {
-        FeatureCollection fc = dataStore.createSession(false).features(QueryBuilder.all(nsname(PERSON)));
+        FeatureCollection fc = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(PERSON)));
         assertEquals(2, fc.size());
         FeatureIterator<SimpleFeature> fr = fc.iterator();
         assertTrue(fr.hasNext());

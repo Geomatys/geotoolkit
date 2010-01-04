@@ -83,7 +83,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
      */
     @Override
     public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
-        return session.features(QueryUtilities.subQuery(this.query, query));
+        return session.getFeatureCollection(QueryUtilities.subQuery(this.query, query));
     }
 
     /**
@@ -151,7 +151,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public boolean addAll(Collection<? extends Feature> clctn) {
         try {
-            session.add(query.getTypeName(), clctn);
+            session.addFeatures(query.getTypeName(), clctn);
             return true;
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
@@ -175,7 +175,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
             if(o instanceof Feature){
                 Id filter = FactoryFinder.getFilterFactory(null).id(Collections.singleton(((Feature)o).getIdentifier()));
                 try {
-                    session.remove(query.getTypeName(), filter);
+                    session.removeFeatures(query.getTypeName(), filter);
                     return true;
                 } catch (DataStoreException ex) {
                     throw new DataStoreRuntimeException(ex);
@@ -208,7 +208,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
             if(!ids.isEmpty()){
                 Id filter = FactoryFinder.getFilterFactory(null).id(ids);
                 try {
-                    session.remove(query.getTypeName(), filter);
+                    session.removeFeatures(query.getTypeName(), filter);
                     return true;
                 } catch (DataStoreException ex) {
                     throw new DataStoreRuntimeException(ex);
@@ -226,7 +226,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
 
         if(isWritable()){
             try {
-                session.remove(query.getTypeName(), query.getFilter());
+                session.removeFeatures(query.getTypeName(), query.getFilter());
             } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);
             }
@@ -241,9 +241,9 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         if(filter == Filter.INCLUDE){
-            session.update(query.getTypeName(),query.getFilter(),values);
+            session.updateFeatures(query.getTypeName(),query.getFilter(),values);
         }else{
-            session.update(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter),values);
+            session.updateFeatures(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter),values);
         }
     }
 
@@ -253,9 +253,9 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public void remove(Filter filter) throws DataStoreException {
         if(filter == Filter.INCLUDE){
-            session.remove(query.getTypeName(),query.getFilter());
+            session.removeFeatures(query.getTypeName(),query.getFilter());
         }else{
-            session.remove(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter));
+            session.removeFeatures(query.getTypeName(),FactoryFinder.getFilterFactory(null).and(query.getFilter(), filter));
         }
     }
 

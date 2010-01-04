@@ -83,7 +83,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection features(Query query) {
+    public FeatureCollection getFeatureCollection(Query query) {
         return new SessionFeatureCollection(this, "id", query);
     }
 
@@ -106,7 +106,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void add(Name groupName, Collection newFeatures) throws DataStoreException {
+    public void addFeatures(Name groupName, Collection newFeatures) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getSchema(groupName);
         addDelta(new AddDelta(this, groupName, newFeatures));
@@ -116,7 +116,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void update(Name groupName, Filter filter, Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+    public void updateFeatures(Name groupName, Filter filter, Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getSchema(groupName);
 
@@ -158,7 +158,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void remove(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getSchema(groupName);
 

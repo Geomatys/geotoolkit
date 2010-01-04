@@ -149,7 +149,7 @@ public class FidQueryTest extends FIDTestCase {
         final Id createFidFilter = fac.id(Collections.singleton(feature.getIdentifier()));
 
         final SimpleFeatureType schema = feature.getFeatureType();
-        session.update(schema.getName(),createFidFilter,schema.getDescriptor("ID"), new Integer(newId));
+        session.updateFeatures(schema.getName(),createFidFilter,schema.getDescriptor("ID"), new Integer(newId));
         session.commit();
 
         FeatureIterator<SimpleFeature> features = ds.getFeatureReader(QueryBuilder.filtered(name, createFidFilter));
@@ -177,7 +177,7 @@ public class FidQueryTest extends FIDTestCase {
 
         Id createFidFilter = fac.id(Collections.singleton(feature.getIdentifier()));
 
-        session.remove(name,createFidFilter);
+        session.removeFeatures(name,createFidFilter);
         session.commit();
         fids.remove(feature.getID());
 

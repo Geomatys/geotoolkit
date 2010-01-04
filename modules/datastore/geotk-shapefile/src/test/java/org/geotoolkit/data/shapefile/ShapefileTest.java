@@ -150,12 +150,12 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         Name typeName = type.getName();
 
         Session session = s.createSession(true);
-        session.add(typeName,features);
+        session.addFeatures(typeName,features);
         session.commit();
 
         s = new ShapefileDataStore(tmpFile.toURL());
         typeName = s.getNames().iterator().next();
-        FeatureCollection<SimpleFeature> fc = s.createSession(true).features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> fc = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileReadWriteTest.compare(features, fc);
     }

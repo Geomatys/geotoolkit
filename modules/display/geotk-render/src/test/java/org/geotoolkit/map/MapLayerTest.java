@@ -5,7 +5,6 @@
 
 package org.geotoolkit.map;
 
-import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.DataStore;
@@ -91,7 +90,7 @@ public class MapLayerTest extends TestCase{
 
         DataStore ds = new MemoryDataStore();
         ds.createSchema(name,type);
-        FeatureCollection<SimpleFeature> fs = ds.createSession(true).features(QueryBuilder.all(name));
+        FeatureCollection<SimpleFeature> fs = ds.createSession(true).getFeatureCollection(QueryBuilder.all(name));
 
 
         FeatureMapLayer layer = MapBuilder.createFeatureLayer(fs, new DefaultStyleFactory().style());

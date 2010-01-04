@@ -44,14 +44,9 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.data.DefaultFeatureCollection;
-import org.geotoolkit.data.DefaultSubFeatureCollection;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.Feature;
-import org.opengis.filter.Filter;
 
 /**
  * Tests the ability of the datastore to cope with 3D data
@@ -109,7 +104,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
     }
 
     public void testReadPoint() throws Exception {
-        FeatureCollection fc = dataStore.createSession(false).features(QueryBuilder.all(nsname(POINT3D)));
+        FeatureCollection fc = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(POINT3D)));
         FeatureIterator<SimpleFeature> fr = fc.iterator();
         assertTrue(fr.hasNext());
         Point p = (Point) fr.next().getDefaultGeometry();
@@ -118,7 +113,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
     }
 
     public void testReadLine() throws Exception {
-        FeatureCollection fc = dataStore.createSession(false).features(QueryBuilder.all(nsname(LINE3D)));
+        FeatureCollection fc = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname(LINE3D)));
         FeatureIterator<SimpleFeature> fr = fc.iterator();
         assertTrue(fr.hasNext());
         LineString ls = (LineString) fr.next().getDefaultGeometry();

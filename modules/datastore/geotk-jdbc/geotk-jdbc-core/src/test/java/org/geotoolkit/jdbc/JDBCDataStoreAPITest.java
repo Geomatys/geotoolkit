@@ -827,7 +827,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     public void testGetFeatureSourceRoad() throws Exception {
         Name name = nsname("road");
         SimpleFeatureType sft = (SimpleFeatureType) dataStore.getSchema(name);
-        FeatureCollection<SimpleFeature> road = dataStore.createSession(false).features(QueryBuilder.all(name));
+        FeatureCollection<SimpleFeature> road = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(name));
 
         assertFeatureTypesEqual(td.roadType, sft);
 
@@ -896,7 +896,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
     public void testGetFeatureSourceRiver()
         throws NoSuchElementException, IOException, Exception {
 
-        FeatureCollection<SimpleFeature> all = dataStore.createSession(false).features(QueryBuilder.all(nsname("river")));
+        FeatureCollection<SimpleFeature> all = dataStore.createSession(false).getFeatureCollection(QueryBuilder.all(nsname("river")));
         assertFeatureTypesEqual(td.riverType, (SimpleFeatureType) all.getSchema());
         assertEquals(2, all.size());
 
@@ -922,9 +922,9 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         // rd1Filter = factory.createFidFilter( roadFeatures[0].getID() );
         Object changed = new Integer(5);
         AttributeDescriptor name = td.roadType.getDescriptor(aname("id"));
-        session.update(typename, td.rd1Filter, name, changed);
+        session.updateFeatures(typename, td.rd1Filter, name, changed);
 
-        FeatureCollection<SimpleFeature> results = session.features(QueryBuilder.filtered(typename, td.rd1Filter));
+        FeatureCollection<SimpleFeature> results = session.getFeatureCollection(QueryBuilder.filtered(typename, td.rd1Filter));
         FeatureIterator<SimpleFeature> features = results.iterator();
         assertTrue(features.hasNext());
         Number n = (Number)features.next().getAttribute(aname("id"));
@@ -943,9 +943,9 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
                         td.roadFeatures[0].getID())));
 
         AttributeDescriptor name = td.roadType.getDescriptor(aname("name"));
-        session.update(typename,rd1Filter, Collections.singletonMap(name,"changed") );
+        session.updateFeatures(typename,rd1Filter, Collections.singletonMap(name,"changed") );
 
-        FeatureCollection<SimpleFeature> results = session.features(QueryBuilder.filtered(typename, td.rd1Filter));
+        FeatureCollection<SimpleFeature> results = session.getFeatureCollection(QueryBuilder.filtered(typename, td.rd1Filter));
         FeatureIterator<SimpleFeature> features = results.iterator();
         assertTrue(features.hasNext());
         assertEquals("changed", features.next().getAttribute(aname("name")));
@@ -966,31 +966,31 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         PropertyIsEqualTo filter = ff.equals(ff.property(aname("name")), ff.literal("r1"));
 
         AttributeDescriptor name = td.roadType.getDescriptor(aname("name"));
-        session.update(typename,filter,Collections.singletonMap(name, "changed"));
+        session.updateFeatures(typename,filter,Collections.singletonMap(name, "changed"));
     }
 
     public void testGetFeatureStoreRemoveFeatures() throws Exception {
         Session session = dataStore.createSession(false);
         Name typename = nsname("road");
 
-        session.remove(typename,td.rd1Filter);
-        assertEquals(0, session.features(QueryBuilder.filtered(typename, td.rd1Filter)).size());
-        assertEquals(td.roadFeatures.length - 1, session.features(QueryBuilder.all(typename)).size());
+        session.removeFeatures(typename,td.rd1Filter);
+        assertEquals(0, session.getFeatureCollection(QueryBuilder.filtered(typename, td.rd1Filter)).size());
+        assertEquals(td.roadFeatures.length - 1, session.getFeatureCollection(QueryBuilder.all(typename)).size());
     }
 
     public void testGetFeatureStoreRemoveAllFeatures() throws Exception {
         Session session = dataStore.createSession(false);
         Name typename = nsname("road");
 
-        session.remove(typename,Filter.INCLUDE);
-        assertEquals(0, session.features(QueryBuilder.all(typename)).size());
+        session.removeFeatures(typename,Filter.INCLUDE);
+        assertEquals(0, session.getFeatureCollection(QueryBuilder.all(typename)).size());
     }
 
     public void testGetFeatureStoreAddFeatures() throws Exception {
         Session session = dataStore.createSession(false);
         Name typename = nsname("road");
 
-        session.add(typename,Collections.singleton(td.newRoad));
+        session.addFeatures(typename,Collections.singleton(td.newRoad));
         assertEquals(td.roadFeatures.length + 1, count(tname("road")));
     }
 
@@ -1001,8 +1001,8 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         assertEquals(3, count(tname("road")));
 
-        session.remove(typename, Filter.INCLUDE);
-        session.add(typename, Collections.singleton(td.newRoad));
+        session.removeFeatures(typename, Filter.INCLUDE);
+        session.addFeatures(typename, Collections.singleton(td.newRoad));
 
         assertEquals(1, count(tname("road")));
     }

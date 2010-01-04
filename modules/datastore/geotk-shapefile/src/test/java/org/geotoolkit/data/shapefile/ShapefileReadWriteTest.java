@@ -186,7 +186,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         Name typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
         SimpleFeatureType type = (SimpleFeatureType) s.getSchema(typeName);
-        FeatureCollection<SimpleFeature> one = session.features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> one = session.getFeatureCollection(QueryBuilder.all(typeName));
         File tmp = getTempFile();
 
         ShapefileDataStoreFactory maker = new ShapefileDataStoreFactory();
@@ -215,10 +215,10 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         FeatureWriter writer = shapefile.getFeatureWriterAppend(typeName);
 
         Session session = shapefile.createSession(true);
-        session.add(typeName, original);
+        session.addFeatures(typeName, original);
         session.commit();
         
-        FeatureCollection<SimpleFeature> copy = session.features(QueryBuilder.all(typeName));
+        FeatureCollection<SimpleFeature> copy = session.getFeatureCollection(QueryBuilder.all(typeName));
         compare(original, copy);
 
         if (true) {
@@ -229,7 +229,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             else
                 review = new ShapefileDataStore(tmp.toURL(), tmp.toURI(), memorymapped, charset);
             typeName = review.getNames().iterator().next();
-            FeatureCollection<SimpleFeature> again = review.createSession(true).features(QueryBuilder.all(typeName));
+            FeatureCollection<SimpleFeature> again = review.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
             compare(copy, again);
             compare(original, again);
