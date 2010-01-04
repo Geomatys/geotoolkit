@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.geotoolkit.factory.Factory;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.Parameters;
 
@@ -118,6 +119,15 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         return result.pass();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ConformanceResult availability() {
+        DefaultConformanceResult result =  new DefaultConformanceResult();
+        result.setPass(true);
+        return result;
+    }
 
     protected ParameterValueGroup toParameterValueGroup(Map<String, ? extends Serializable> params) throws InvalidParameterValueException{
         final ParameterDescriptorGroup desc = getParametersDescriptor();

@@ -20,11 +20,14 @@ package org.geotoolkit.data.memory;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 
 /**
@@ -37,9 +40,10 @@ import org.opengis.filter.Filter;
 public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
         implements FeatureIterator<F> {
 
+
     protected final R iterator;
     protected final Filter filter;
-    protected final Map<AttributeDescriptor,Object> values;
+    protected final Map<PropertyDescriptor,Object> values;
     protected F nextFeature = null;
 
     /**
@@ -47,7 +51,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      *
      * @param iterator FeatureReader to modify
      */
-    private GenericModifyFeatureIterator(final R iterator, Filter filter, Map<AttributeDescriptor,Object> newValues) {
+    private GenericModifyFeatureIterator(final R iterator, Filter filter, Map<PropertyDescriptor,Object> newValues) {
         this.iterator = iterator;
         this.filter = filter;
         this.values = newValues;
@@ -66,18 +70,14 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      */
     @Override
     public F next() throws DataStoreRuntimeException {
-        if(nextFeature == null){
-            hasNext();
-        }
-
-        if(nextFeature == null){
-            throw new NoSuchElementException("No more elements in this iterator");
-        }else{
-            final F candidate = nextFeature;
+        if (hasNext()) {
+            // hasNext() ensures that next != null
+            final F f = nextFeature;
             nextFeature = null;
-            return candidate;
+            return f;
+        } else {
+            throw new NoSuchElementException("No such Feature exsists");
         }
-
     }
 
     /**
@@ -88,16 +88,16 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
         if(nextFeature != null) return true;
 
         if(iterator.hasNext()){
-            final F candidate = iterator.next();
+            F candidate = iterator.next();
             if(filter.evaluate(candidate)){
+                candidate = (F) SimpleFeatureBuilder.copy((SimpleFeature) candidate);
                 //must modify this feature
-                for(final Entry<AttributeDescriptor,Object> entry : values.entrySet()){
+                for(final Entry<PropertyDescriptor,Object> entry : values.entrySet()){
                     candidate.getProperty(entry.getKey().getName()).setValue(entry.getValue());
                 }
-            }else{
-                //no modification needed
-                nextFeature = candidate;
             }
+
+            nextFeature = candidate;
         }
 
         return nextFeature != null;
@@ -115,7 +115,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureIterator with a modifiycation set
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, Filter filter, Map<AttributeDescriptor,Object> values){
+    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values){
         return new GenericModifyFeatureIterator(reader, filter, values);
     }
 
