@@ -22,9 +22,9 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-datastore-core2</artifactId>
+  <artifactId>geotk-datastore-core</artifactId>
   <packaging>jar</packaging>
-  <name>DataStore Core2 (Revision)</name>
+  <name>DataStore Core</name>
 
 
   <!-- =========================================================== -->

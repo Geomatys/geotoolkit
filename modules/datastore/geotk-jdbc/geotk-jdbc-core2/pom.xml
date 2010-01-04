@@ -22,9 +22,9 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-jdbc-core2</artifactId>
+  <artifactId>geotk-jdbc-core</artifactId>
   <packaging>jar</packaging>
-  <name>DataStore JDBC Core2 (Revision)</name>
+  <name>DataStore JDBC Core</name>
 
   <description>
 	DataStore support for JDBC based data stores.
