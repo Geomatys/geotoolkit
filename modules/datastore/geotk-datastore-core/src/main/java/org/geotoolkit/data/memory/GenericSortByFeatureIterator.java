@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -79,9 +80,13 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
     @Override
     public F next() throws DataStoreRuntimeException {
         sort();
-        F c = ordered.get(index);
-        index++;
-        return c;
+        try{
+            F c = ordered.get(index);
+            index++;
+            return c;
+        }catch(IndexOutOfBoundsException ex){
+            throw new NoSuchElementException("No more elements.");
+        }
     }
 
     /**

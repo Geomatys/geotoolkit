@@ -32,6 +32,9 @@ import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
+import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
+import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -44,6 +47,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
 
 /**
  * Tests of the different iterators.
@@ -266,23 +271,50 @@ public class GenericIteratorTest extends TestCase{
     }
 
     @Test
-    public void testReprojectIterator(){
-    }
-
-    @Test
-    public void testRetypeIterator(){
-    }
-
-    @Test
     public void testSortByIterator(){
+        SortBy[] sorts = new SortBy[]{
+            FF.sort("att_string", SortOrder.ASCENDING)
+        };
+
+        FeatureIterator ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
+        assertEquals(3, DataUtilities.calculateCount(ite));
+
+
+        ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
+        assertEquals(ite.next().getIdentifier().getID(),"id3");
+        assertEquals(ite.next().getIdentifier().getID(),"id1");
+        assertEquals(ite.next().getIdentifier().getID(),"id2");
+
+        try{
+            ite.next();
+            fail("Should have raise a no such element exception.");
+        }catch(NoSuchElementException ex){
+            //ok
+        }
+
+        ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
+        testIterationOnNext(ite, 3);
     }
 
     @Test
     public void testStartIndexIterator(){
-    }
+        FeatureIterator ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 0);
+        assertEquals(3, DataUtilities.calculateCount(ite));
 
-    @Test
-    public void testWrapIterator(){
+        ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 1);
+        assertEquals(2, DataUtilities.calculateCount(ite));
+
+        ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 2);
+        assertEquals(ite.next().getIdentifier().getID(),"id3");
+        try{
+            ite.next();
+            fail("Should have raise a no such element exception.");
+        }catch(NoSuchElementException ex){
+            //ok
+        }
+
+        ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 1);
+        testIterationOnNext(ite, 2);
     }
 
 }

@@ -39,6 +39,7 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
 
     protected final R iterator;
     protected final int startIndex;
+    protected F nextFeature = null;
     private boolean translateDone = false;
 
     /**
@@ -58,9 +59,12 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
     @Override
     public F next() throws DataStoreRuntimeException {
         if (hasNext()) {
-            return iterator.next();
+            // hasNext() ensures that next != null
+            final F f = nextFeature;
+            nextFeature = null;
+            return f;
         } else {
-            throw new NoSuchElementException("No such Feature exists");
+            throw new NoSuchElementException("No more features.");
         }
     }
 
@@ -77,6 +81,8 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
      */
     @Override
     public synchronized boolean hasNext() throws DataStoreRuntimeException {
+        if(nextFeature != null) return true;
+
         if(!translateDone){
             for(int i=0;i<startIndex;i++){
                 if(iterator.hasNext()){
@@ -88,7 +94,11 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
             translateDone = true;
         }
 
-        return iterator.hasNext();
+        if(iterator.hasNext()){
+            nextFeature = iterator.next();
+        }
+
+        return nextFeature != null;
     }
 
     /**
