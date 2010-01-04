@@ -26,20 +26,25 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.FeatureCollectionUtilities;
+import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
-import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.data.store.EmptyFeatureCollection;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -54,6 +59,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
+import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -84,12 +90,10 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<String,String> prefixes = new HashMap<String, String>();
 
     private Request lastRequest = null;
-    private SoftReference<FeatureCollection<SimpleFeatureType,SimpleFeature>> lastCollection = null;
+    private SoftReference<FeatureCollection<SimpleFeature>> lastCollection = null;
 
 
     public WFSDataStore(URI serverURI) throws MalformedURLException{
-        //not transactional for the moment
-        super(false);
 
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
         this.capabilities = server.getCapabilities();
@@ -176,34 +180,59 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
-        return Collections.unmodifiableMap(types);
+    public Set<Name> getNames() throws DataStoreException {
+        return new HashSet<Name>(types.keySet());
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
+    public FeatureType getSchema(Name typeName) throws DataStoreException {
+        FeatureType ft = types.get(typeName);
+
+        if(ft == null){
+            throw new DataStoreException("Type : "+ typeName + " doesn't exist in this datastore.");
+        }
+
+        return ft;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureReader<SimpleFeatureType,SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         //will raise an error if typename in unknowned
-        final SimpleFeatureType sft = getSchema(name);
+        final SimpleFeatureType sft = (SimpleFeatureType) getSchema(name);
 
         final QName q = new QName(name.getNamespaceURI(), name.getLocalPart(), prefixes.get(name.getNamespaceURI()));
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = requestFeature(q,query);
+        final FeatureCollection<SimpleFeature> collection;
+        try {
+            collection = requestFeature(q, query);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
 
         if(collection == null){
-            return DataUtilities.wrapToReader(sft, new EmptyFeatureCollection(sft).features());
+            return GenericEmptyFeatureIterator.createReader(sft);
         }else{
-            return DataUtilities.wrapToReader(sft, collection.features());
+            return GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
         }
     }
 
+
+    @Override
+    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
-    protected JTSEnvelope2D getBounds(Query query) throws IOException {
+    public JTSEnvelope2D getEnvelope(Query query) throws DataStoreException {
         final Name typeName = query.getTypeName();
 
         for(Name n : typeNames){
@@ -212,7 +241,7 @@ public class WFSDataStore extends AbstractDataStore{
             }
         }
 
-        throw new IOException("Type name : "+ typeName +"is unknowned is this datastore");
+        throw new DataStoreException("Type name : "+ typeName +"is unknowned is this datastore");
     }
 
     private SimpleFeatureType requestType(QName typeName) throws IOException{
@@ -233,7 +262,7 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
-    private FeatureCollection<SimpleFeatureType,SimpleFeature> requestFeature(QName typeName, Query query) throws IOException {
+    private FeatureCollection<SimpleFeature> requestFeature(QName typeName, Query query) throws IOException {
         final Name name = new DefaultName(typeName);
         final SimpleFeatureType sft = types.get(name);
 
@@ -258,7 +287,7 @@ public class WFSDataStore extends AbstractDataStore{
         }
 
         if(request.equals(lastRequest)){
-            FeatureCollection<SimpleFeatureType,SimpleFeature> col = lastCollection.get();
+            FeatureCollection<SimpleFeature> col = lastCollection.get();
             if(col != null){
                 return col;
             }
@@ -275,15 +304,15 @@ public class WFSDataStore extends AbstractDataStore{
 
             if(result instanceof SimpleFeature){
                 final SimpleFeature sf = (SimpleFeature) result;
-                final FeatureCollection<SimpleFeatureType,SimpleFeature> col = FeatureCollectionUtilities.createCollection("id", sft);
+                final FeatureCollection<SimpleFeature> col = new DefaultFeatureCollection<SimpleFeature>("id", sft, SimpleFeature.class);
                 col.add(sf);
 
-                lastCollection = new SoftReference<FeatureCollection<SimpleFeatureType, SimpleFeature>>(col);
+                lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
 
                 return col;
             }else if(result instanceof FeatureCollection){
-                final FeatureCollection<SimpleFeatureType,SimpleFeature> col = (FeatureCollection<SimpleFeatureType, SimpleFeature>) result;
-                lastCollection = new SoftReference<FeatureCollection<SimpleFeatureType, SimpleFeature>>(col);
+                final FeatureCollection<SimpleFeature> col = (FeatureCollection<SimpleFeature>) result;
+                lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
                 return col;
             }else{
                 throw new IOException("unexpected type : " + result);
@@ -303,24 +332,30 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    protected int getCount(Query query) throws IOException {
-        return -1;
+    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Schema creation not supported.");
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(SimpleFeatureType featureType) throws IOException {
-        throw new IOException("Schema creation not supported.");
+    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Schema update not supported.");
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
-        throw new IOException("Schema update not supported.");
+    public void deleteSchema(Name typeName) throws DataStoreException {
+        throw new DataStoreException("Schema deletion not supported.");
     }
+
+    @Override
+    public Object getQueryCapabilities() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 
 }

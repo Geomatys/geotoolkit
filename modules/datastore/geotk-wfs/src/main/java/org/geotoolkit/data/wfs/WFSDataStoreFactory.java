@@ -17,17 +17,17 @@
 
 package org.geotoolkit.data.wfs;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
 
 import java.net.URI;
 import java.util.WeakHashMap;
+
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
-
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -72,13 +72,17 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public synchronized WFSDataStore createDataStore(ParameterValueGroup params) throws IOException {
+    public synchronized WFSDataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
         final URI serverURI = (URI) params.parameter(SERVER_URI.getName().getCode()).getValue();
 
         WFSDataStore store = STORES.get(serverURI);
 
         if(store == null){
-            store = new WFSDataStore(serverURI);
+            try {
+                store = new WFSDataStore(serverURI);
+            } catch (MalformedURLException ex) {
+                throw new DataStoreException(ex);
+            }
             STORES.put(serverURI, store);
         }
 
@@ -89,8 +93,8 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(ParameterValueGroup params) throws IOException {
-        throw new IOException("Can not create any new WFS DataStore");
+    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+        throw new DataStoreException("Can not create any new WFS DataStore");
     }
 
 }

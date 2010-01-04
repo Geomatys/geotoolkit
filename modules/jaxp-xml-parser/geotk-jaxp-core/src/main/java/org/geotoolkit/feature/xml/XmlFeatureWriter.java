@@ -18,7 +18,7 @@ package org.geotoolkit.feature.xml;
 
 import java.io.Writer;
 import java.io.OutputStream;
-import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
 import org.opengis.feature.simple.SimpleFeature;
 
 /**

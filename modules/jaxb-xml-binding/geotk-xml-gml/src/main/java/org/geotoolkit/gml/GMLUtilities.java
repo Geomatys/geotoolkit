@@ -25,7 +25,7 @@ import java.util.List;
 
 import java.util.StringTokenizer;
 import javax.xml.bind.JAXBException;
-import org.geotoolkit.data.collection.FeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
