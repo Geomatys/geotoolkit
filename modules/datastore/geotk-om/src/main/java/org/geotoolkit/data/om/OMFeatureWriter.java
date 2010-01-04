@@ -18,7 +18,6 @@
 package org.geotoolkit.data.om;
 
 import com.vividsolutions.jts.geom.Point;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.referencing.CRS;
@@ -71,7 +71,7 @@ public class OMFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleF
         return featureType;
     }
 
-    public SimpleFeature next() throws IOException {
+    public SimpleFeature next() throws DataStoreRuntimeException {
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
         String identifier = "sampling-point-";
         try {
@@ -88,11 +88,11 @@ public class OMFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleF
         return feature;
     }
 
-    public void remove() throws IOException {
+    public void remove() throws DataStoreRuntimeException {
         featureList.remove(featureList.size() - 1);
     }
 
-    public void write() throws IOException {
+    public void write() throws DataStoreRuntimeException {
         try {
             for (SimpleFeature feature : featureList) {
                 writeSamplingPoint.setString(1, feature.getID());
@@ -132,11 +132,11 @@ public class OMFeatureWriter implements FeatureWriter<SimpleFeatureType, SimpleF
         }
     }
 
-    public boolean hasNext() throws IOException {
+    public boolean hasNext() throws DataStoreRuntimeException {
         return false;
     }
 
-    public void close() throws IOException {
+    public void close() throws DataStoreRuntimeException {
         
     }
 

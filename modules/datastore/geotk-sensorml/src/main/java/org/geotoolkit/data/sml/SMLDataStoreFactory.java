@@ -25,12 +25,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataStoreException;
 
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
@@ -120,23 +120,25 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createDataStore(ParameterValueGroup params) throws IOException {
-        DefaultDataSource ds  = new DefaultDataSource(getJDBCUrl(params));
-        final String user     = (String) params.parameter(USER.getName().toString()).getValue();
-        final String pass     = (String) params.parameter(PASSWD.getName().toString()).getValue();
+    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
         try {
+            DefaultDataSource ds  = new DefaultDataSource(getJDBCUrl(params));
+            final String user     = (String) params.parameter(USER.getName().toString()).getValue();
+            final String pass     = (String) params.parameter(PASSWD.getName().toString()).getValue();
             Connection connection = ds.getConnection(user, pass);
             SMLDataStore datastore = new SMLDataStore(connection);
             return datastore;
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "SQL Exception while creating ML datastore", ex);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
         return null;
     }
 
     @Override
-    public DataStore<SimpleFeatureType, SimpleFeature> createNewDataStore(ParameterValueGroup params) throws IOException {
-        return createDataStore(params);
+    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
@@ -154,4 +156,7 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
     }
    
 
+    public ConformanceResult availability() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

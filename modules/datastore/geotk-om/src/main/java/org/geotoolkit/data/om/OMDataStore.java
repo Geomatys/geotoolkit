@@ -26,19 +26,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
-import org.geotoolkit.data.collection.FeatureCollection;
-import org.geotoolkit.data.collection.FeatureIterator;
-import org.geotoolkit.data.concurrent.Transaction;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -47,12 +49,16 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.CRS;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.filter.Filter;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -82,8 +88,7 @@ public class OMDataStore extends AbstractDataStore {
     private CoordinateReferenceSystem defaultCRS;
 
     public OMDataStore(Connection connection) {
-        //not transactional for the moment
-        super(true);
+        super();
         this.connection = connection;
         try {
             defaultCRS = CRS.decode("EPSG:27582");
@@ -167,24 +172,22 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    protected Map<Name, SimpleFeatureType> getTypes() throws IOException {
-        return Collections.unmodifiableMap(types);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws IOException {
-        final Name name = query.getTypeName();
-        final SimpleFeatureType sft = types.get(name);
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
-        return DataUtilities.wrapToReader(sft, collection.features());
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
+        try {
+            final Name name = query.getTypeName();
+            final SimpleFeatureType sft = types.get(name);
+            final FeatureCollection<SimpleFeature> collection = getFeatureCollection(sft, name.getLocalPart());
+            FeatureReader fr = GenericWrapFeatureIterator.wrapToReader(collection.iterator(), sft);
+            fr = handleRemaining(fr, query);
+            return fr;
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
     
-   private FeatureCollection<SimpleFeatureType,SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
+   private FeatureCollection<SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
         
-        final FeatureCollection<SimpleFeatureType,SimpleFeature> collection = new DefaultFeatureCollection(typeName + "-collection", sft);
+        final FeatureCollection<SimpleFeature> collection = new DefaultFeatureCollection(typeName + "-collection", sft, SimpleFeature.class);
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
         try {
             ResultSet result = getAllSamplingPoint.executeQuery();
@@ -244,77 +247,50 @@ public class OMDataStore extends AbstractDataStore {
 
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    protected JTSEnvelope2D getBounds(Query query) throws IOException {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> fc = getFeatureSource(query.getTypeName()).getFeatures(query);
-        FeatureIterator<SimpleFeature> iterator                = fc.features();
-        
-        int count = 0;
-        double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE, maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
-        while (iterator.hasNext()) {
-            SimpleFeature sf = iterator.next();
-            count++;
-            Point p = (Point) sf.getAttribute(POSITION);
-            if (p.getX() > maxx) {
-                maxx = p.getX();
-            }
-            if (p.getX() < minx) {
-                minx = p.getX();
-            }
-            if (p.getY() > maxy) {
-                maxy = p.getY();
-            }
-            if (p.getY() < miny) {
-                miny = p.getY();
-            }
-        }
-        JTSEnvelope2D bounds;
-        if (count > 0) {
-            bounds = new JTSEnvelope2D(minx, maxx, miny, maxy, defaultCRS);
-        } else {
-            bounds = new JTSEnvelope2D(defaultCRS);
-        }
-        return bounds;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    protected int getCount(Query query) throws IOException {
-        FeatureCollection<SimpleFeatureType, SimpleFeature> fc = getFeatureSource(query.getTypeName()).getFeatures(query);
-        FeatureIterator<SimpleFeature> iterator                = fc.features();
-        int count = 0;
-        while (iterator.hasNext()) {
-            iterator.next();
-            count++;
-        }
-        return count;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void createSchema(SimpleFeatureType featureType) throws IOException {
-        throw new IOException("Schema creation not supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateSchema(Name typeName, SimpleFeatureType featureType) throws IOException {
-        throw new IOException("Schema update not supported.");
-    }
-
-    @Override
-    protected FeatureWriter<SimpleFeatureType, SimpleFeature> createFeatureWriter(String typeName, Transaction transaction) throws IOException {
+    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
         SimpleFeatureType ft = types.get(SAMPLINGPOINT);
         return new OMFeatureWriter(ft, connection);
+    }
+
+    public Set<Name> getNames() throws DataStoreException {
+        return types.keySet();
+    }
+
+    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        types.put(typeName, (SimpleFeatureType) featureType);
+    }
+
+    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        types.put(typeName, (SimpleFeatureType) featureType);
+    }
+
+    public void deleteSchema(Name typeName) throws DataStoreException {
+        types.remove(typeName);
+    }
+
+    public FeatureType getSchema(Name typeName) throws DataStoreException {
+        return types.get(typeName);
+    }
+
+    public Object getQueryCapabilities() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+        return handleWriter(typeName, filter);
+    }
+
+    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
