@@ -55,7 +55,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
     private final Query query;
 
     public DefaultSubFeatureCollection(FeatureCollection<F> original, Query query) throws SchemaException{
-        super(original.getID(),expectingType(original.getSchema(),query));
+        super(original.getID(),expectingType(original.getFeatureType(),query));
         this.original = original;
         this.query = query;
     }
@@ -121,7 +121,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
 
 
         //change to a reader to get information about the type
-        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(iterator, original.getSchema());
+        FeatureReader reader = GenericWrapFeatureIterator.wrapToReader(iterator, original.getFeatureType());
 
         //wrap properties ------------------------------------------------------
         if(properties != null){
@@ -172,7 +172,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
 
     @Override
     public boolean isWritable(){
-        if(type.equals(original.getSchema())){
+        if(type.equals(original.getFeatureType())){
             return original.isWritable();
         }else{
             return false;

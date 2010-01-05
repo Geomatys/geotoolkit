@@ -308,7 +308,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 streamWriter.writeAttribute("xsi", "http://www.w3.org/2001/XMLSchema-instance", "schemaLocation", schemaLocation);
             }
 
-            FeatureType type = featureCollection.getSchema();
+            FeatureType type = featureCollection.getFeatureType();
             if (type != null && type.getName() != null) {
                 String namespace = type.getName().getNamespaceURI();
                 if (namespace != null && !namespace.equals(GML_NAMESPACE)) {

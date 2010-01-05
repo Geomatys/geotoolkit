@@ -170,7 +170,7 @@ public class RandomStyleBuilder extends Factory {
 
         final Symbolizer ps;
 
-        final FeatureType typ = fs.getSchema();
+        final FeatureType typ = fs.getFeatureType();
         final AttributeDescriptor att = typ.getGeometryDescriptor();
         final AttributeType type = att.getType();
 
@@ -194,7 +194,7 @@ public class RandomStyleBuilder extends Factory {
     public MutableStyle createRandomVectorStyle(FeatureCollection<SimpleFeature> fs) {
         
         final Symbolizer ps;
-        final FeatureType typ = fs.getSchema();
+        final FeatureType typ = fs.getFeatureType();
         final AttributeDescriptor att = typ.getGeometryDescriptor();
         final AttributeType type = att.getType();
         final Class cla = type.getBinding();

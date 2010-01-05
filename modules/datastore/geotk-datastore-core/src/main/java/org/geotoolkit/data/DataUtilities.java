@@ -214,7 +214,7 @@ public class DataUtilities {
         private final FeatureCollection[] wrapped;
 
         private FeatureCollectionSequence(String id, FeatureCollection[] wrapped) {
-            super(id, (SimpleFeatureType) wrapped[0].getSchema());
+            super(id, (SimpleFeatureType) wrapped[0].getFeatureType());
 
             if(wrapped.length == 1){
                 throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");

@@ -83,7 +83,7 @@ public interface DataStore {
      * @return FeatureType
      * @throws DataStoreException
      */
-    FeatureType getSchema(String typeName) throws DataStoreException;
+    FeatureType getFeatureType(String typeName) throws DataStoreException;
 
     /**
      * Get the feature type for the give name.
@@ -92,7 +92,7 @@ public interface DataStore {
      * @return FeatureType type for the given name
      * @throws DataStoreException if typeName doesnt exist or datastore internal error.
      */
-    FeatureType getSchema(Name typeName) throws DataStoreException;
+    FeatureType getFeatureType(Name typeName) throws DataStoreException;
 
     /**
      * Ask if the given type is editable. if true you can
@@ -102,7 +102,7 @@ public interface DataStore {
      * @return true if the type features can be edited.
      * @throws DataStoreException if typeName doesnt exist or datastore internal error.
      */
-    boolean isWriteable(Name typeName) throws DataStoreException;
+    boolean isWritable(Name typeName) throws DataStoreException;
 
     /**
      * Retrieve informations about the query capabilites of this datastore.

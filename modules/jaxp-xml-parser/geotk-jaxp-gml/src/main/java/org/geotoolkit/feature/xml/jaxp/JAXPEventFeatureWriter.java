@@ -291,7 +291,7 @@ public class JAXPEventFeatureWriter extends JAXPFeatureWriter {
             NamespaceImpl namespaceEvent2 = new NamespaceImpl("wfs", "http://www.opengis.net/wfs");
             eventWriter.add(namespaceEvent2);
 
-            FeatureType type = featureCollection.getSchema();
+            FeatureType type = featureCollection.getFeatureType();
             String namespace = type.getName().getNamespaceURI();
             if (!namespace.equals("http://www.opengis.net/gml")) {
                 String prefix    = Namespaces.getPreferredPrefix(namespace, null);

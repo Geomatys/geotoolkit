@@ -120,7 +120,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
 
             guiFields.removeAll();
 
-            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getCollection().getSchema().getDescriptors();
+            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getCollection().getFeatureType().getDescriptors();
             final List<String> vec = new ArrayList<String>();
             
             for(final PropertyDescriptor desc : col){

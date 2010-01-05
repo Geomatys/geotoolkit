@@ -79,7 +79,7 @@ public class FeatureSourceModel extends DefaultTableModel {
         columns.clear();
         features.clear();
 
-        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getSchema();
+        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
 
         for(String name : query.getPropertyNames()){
             columns.add(ft.getDescriptor(name));
@@ -98,7 +98,7 @@ public class FeatureSourceModel extends DefaultTableModel {
 
     public Query removeGeometryAttributs(Query query){
 
-        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getSchema();
+        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
 
         String[] propNames = query.getPropertyNames();
 
@@ -177,7 +177,7 @@ public class FeatureSourceModel extends DefaultTableModel {
 
             FilterFactory ff = FactoryFinder.getFilterFactory(null);
             Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
-            FeatureType schema = collection.getSchema();
+            FeatureType schema = collection.getFeatureType();
 
             AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
 

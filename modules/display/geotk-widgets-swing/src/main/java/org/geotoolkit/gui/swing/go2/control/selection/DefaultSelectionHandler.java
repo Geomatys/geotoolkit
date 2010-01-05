@@ -242,10 +242,10 @@ public class DefaultSelectionHandler implements CanvasHandler {
                             final Set<Identifier> ids = new HashSet<Identifier>();
 
                             final FeatureMapLayer fl = (FeatureMapLayer) layer;
-                            final String geoStr = fl.getCollection().getSchema().getGeometryDescriptor().getLocalName();
+                            final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
                             final Expression geomField = FF.property(geoStr);
 
-                            CoordinateReferenceSystem dataCrs = fl.getCollection().getSchema().getCoordinateReferenceSystem();
+                            CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
 
                             try {
                                 final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map2D.getCanvas().getDisplayCRS(), dataCrs,true));
@@ -254,7 +254,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 final Filter f = (withinArea) ? FF.within(geomField, geomData) : FF.intersects(geomField, geomData);
 
                                 final QueryBuilder builder = new QueryBuilder();
-                                builder.setTypeName(fml.getCollection().getSchema().getName());
+                                builder.setTypeName(fml.getCollection().getFeatureType().getName());
                                 builder.setFilter(f);
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();

@@ -172,7 +172,7 @@ public class SessionTest extends TestCase{
         //----------------------------------------------------------------------
         //test adding new features----------------------------------------------
         //----------------------------------------------------------------------
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) store.getSchema(name));
+        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) store.getFeatureType(name));
         sfb.set("string", "hop4");
         sfb.set("double", 2.5d);
         sfb.set("date", new Date(100L));
@@ -327,7 +327,7 @@ public class SessionTest extends TestCase{
         //test modifying feature------------------------------------------------
         //----------------------------------------------------------------------
         final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
-        values.put( ((SimpleFeatureType)store.getSchema(name)).getDescriptor("double"), 15d);
+        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double"), 15d);
 
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 

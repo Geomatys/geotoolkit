@@ -179,7 +179,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testDuplicateColumnNames() throws Exception {
         File file = ShapeTestData.file(AbstractTestCaseSupport.class, "bad/state.shp");
         ShapefileDataStore dataStore = new ShapefileDataStore(file.toURL());
-        SimpleFeatureType schema = (SimpleFeatureType) dataStore.getSchema(dataStore.getNames().iterator().next());
+        SimpleFeatureType schema = (SimpleFeatureType) dataStore.getFeatureType(dataStore.getNames().iterator().next());
 
         assertEquals(6, schema.getAttributeCount());
         assertTrue(dataStore.getCount(QueryBuilder.all(schema.getName())) > 0);

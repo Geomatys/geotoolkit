@@ -65,7 +65,7 @@ public abstract class AbstractFeatureMapLayer extends AbstractMapLayer implement
     @Override
     public Query getQuery() {
         if(query == null){
-            query = QueryBuilder.all(getCollection().getSchema().getName());
+            query = QueryBuilder.all(getCollection().getFeatureType().getName());
         }
 
         return query;

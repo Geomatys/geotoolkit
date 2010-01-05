@@ -161,7 +161,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     public void testSchema() throws Exception {
         URL url = ShapeTestData.url(STATE_POP);
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(url);
-        SimpleFeatureType schema = (SimpleFeatureType) s.getSchema(s.getTypeNames()[0]);
+        SimpleFeatureType schema = (SimpleFeatureType) s.getFeatureType(s.getTypeNames()[0]);
         List<AttributeDescriptor> types = schema.getAttributeDescriptors();
         assertEquals("Number of Attributes", 253, types.size());
         assertNotNull(schema.getCoordinateReferenceSystem());
@@ -240,7 +240,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         newBounds = new Envelope(newBounds.getMinX() + dx, newBounds.getMaxX()
                 - dx, newBounds.getMinY() + dy, newBounds.getMaxY() - dy);
 
-        CoordinateReferenceSystem crs = ds.getSchema().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs = ds.getFeatureType().getCoordinateReferenceSystem();
 
         performQueryComparison(ds, ds2, new JTSEnvelope2D(newBounds, crs));
         performQueryComparison(ds, ds2, new JTSEnvelope2D(smallestFeature.getBounds()));
@@ -304,7 +304,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         FeatureCollection<SimpleFeature> features;
         FeatureIterator<SimpleFeature> indexIter;
         FilterFactory2 fac = (FilterFactory2) FactoryFinder.getFilterFactory(null);
-        String geometryName = indexedDS.getSchema().getGeometryDescriptor().getLocalName();
+        String geometryName = indexedDS.getFeatureType().getGeometryDescriptor().getLocalName();
 
         Filter filter = fac.bbox(fac.property(geometryName), newBounds);
 
@@ -523,11 +523,11 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeature[] newFeatures1 = new SimpleFeature[1];
         SimpleFeature[] newFeatures2 = new SimpleFeature[2];
         GeometryFactory fac = new GeometryFactory();
-        newFeatures1[0] = FeatureTypeUtilities.template(sds.getSchema());
+        newFeatures1[0] = FeatureTypeUtilities.template(sds.getFeatureType());
         newFeatures1[0].setDefaultGeometry(fac.createPoint(new Coordinate(0, 0)));
-        newFeatures2[0] = FeatureTypeUtilities.template(sds.getSchema());
+        newFeatures2[0] = FeatureTypeUtilities.template(sds.getFeatureType());
         newFeatures2[0].setDefaultGeometry(fac.createPoint(new Coordinate(0, 0)));
-        newFeatures2[1] = FeatureTypeUtilities.template(sds.getSchema());
+        newFeatures2[1] = FeatureTypeUtilities.template(sds.getFeatureType());
         newFeatures2[1].setDefaultGeometry(fac.createPoint(new Coordinate(0, 0)));
 
         session.addFeatures(sds.getName(),DataUtilities.collection(newFeatures1));
@@ -753,7 +753,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         ids.add(ff.featureId(invalidFid2));
         Filter fidFilter = ff.id(ids);
 
-        final SimpleFeatureType schema = ds.getSchema();
+        final SimpleFeatureType schema = ds.getFeatureType();
         final String typeName = schema.getTypeName();
         //get a property of type String to update its value by the given filter
         final AttributeDescriptor attribute = schema.getDescriptor("f");
@@ -774,7 +774,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     private int count(DataStore ds, String typeName, Filter filter) throws Exception {
         FeatureReader<SimpleFeatureType, SimpleFeature> reader;
-        reader = ds.getFeatureReader(QueryBuilder.filtered(ds.getSchema(typeName).getName(), filter));
+        reader = ds.getFeatureReader(QueryBuilder.filtered(ds.getFeatureType(typeName).getName(), filter));
         int count = 0;
         try {
             while (reader.hasNext()) {

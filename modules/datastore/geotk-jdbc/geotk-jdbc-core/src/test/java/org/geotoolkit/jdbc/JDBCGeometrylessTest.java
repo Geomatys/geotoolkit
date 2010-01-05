@@ -54,7 +54,7 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     }
 
     public void testPersonSchema() throws Exception {
-        SimpleFeatureType ft =  (SimpleFeatureType) dataStore.getSchema(tname(PERSON));
+        SimpleFeatureType ft =  (SimpleFeatureType) dataStore.getFeatureType(tname(PERSON));
         assertFeatureTypesEqual(personSchema, ft);
     }
     
@@ -77,6 +77,6 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     
     public void testCreate() throws Exception {
         dataStore.createSchema(zipCodeSchema.getName(),zipCodeSchema);
-        assertFeatureTypesEqual(zipCodeSchema, (SimpleFeatureType)dataStore.getSchema(tname(ZIPCODE)));
+        assertFeatureTypesEqual(zipCodeSchema, (SimpleFeatureType)dataStore.getFeatureType(tname(ZIPCODE)));
     }
 }

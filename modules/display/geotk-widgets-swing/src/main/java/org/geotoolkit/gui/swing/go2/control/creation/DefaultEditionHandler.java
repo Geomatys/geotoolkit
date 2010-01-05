@@ -78,7 +78,7 @@ public class DefaultEditionHandler implements CanvasHandler {
             if(candidate instanceof FeatureMapLayer){
                 FeatureMapLayer layer = (FeatureMapLayer)candidate;
                 if(layer.getCollection().isWritable()){
-                    final Class c = layer.getCollection().getSchema().getGeometryDescriptor().getType().getBinding();
+                    final Class c = layer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
                     guiLayers.setEnabled(false);
                     startAction.setEnabled(false);
                     guiEnd.setEnabled(true);

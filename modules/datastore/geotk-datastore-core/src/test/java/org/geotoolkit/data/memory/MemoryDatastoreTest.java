@@ -106,11 +106,11 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.getLocalPart(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
-        SimpleFeatureType t = (SimpleFeatureType) store.getSchema(n);
+        SimpleFeatureType t = (SimpleFeatureType) store.getFeatureType(n);
         assertEquals(t, type1);
 
         try{
-            store.getSchema(new DefaultName("http://not", "exist"));
+            store.getFeatureType(new DefaultName("http://not", "exist"));
             throw new Exception("Asking for a schema that doesnt exist should have raised an error");
         }catch(Exception ex){
             //ok
@@ -132,7 +132,7 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals(n.getLocalPart(), "TestSchema1");
         assertEquals(n.getNamespaceURI(), "http://test.com");
 
-        t = (SimpleFeatureType) store.getSchema(n);
+        t = (SimpleFeatureType) store.getFeatureType(n);
         assertEquals(t, type2);
 
 

@@ -108,7 +108,7 @@ public class MapLayerTest extends TestCase{
         }
 
         try{
-            layer.setQuery(QueryBuilder.filtered(fs.getSchema().getName(), Filter.EXCLUDE));
+            layer.setQuery(QueryBuilder.filtered(fs.getFeatureType().getName(), Filter.EXCLUDE));
         }catch(Exception ex){
             throw new IllegalArgumentException("Should be able to set this query");
         }

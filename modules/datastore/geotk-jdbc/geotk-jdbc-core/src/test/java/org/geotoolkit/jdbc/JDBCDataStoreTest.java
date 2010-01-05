@@ -56,7 +56,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     }
 
     public void testGetSchema() throws Exception {
-        SimpleFeatureType ft1 = (SimpleFeatureType) dataStore.getSchema(tname("ft1"));
+        SimpleFeatureType ft1 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft1"));
         assertNotNull(ft1);
 
         assertNotNull(ft1.getDescriptor(aname("geometry")));
@@ -81,7 +81,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         SimpleFeatureType featureType = builder.buildFeatureType();
         dataStore.createSchema(featureType.getName(),featureType);
 
-        SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getSchema(tname("ft2"));
+        SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft2"));
         
         //JD: making the comparison a bit more lax
         //asertEquals(ft2,featureType);
@@ -145,7 +145,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         SimpleFeatureType featureType = builder.buildFeatureType();
         dataStore.createSchema(featureType.getName(), featureType);
         
-        SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getSchema(tname("ft2"));
+        SimpleFeatureType ft2 = (SimpleFeatureType) dataStore.getFeatureType(tname("ft2"));
         //assertEquals(ft2, featureType);
         
         //grab a writer
@@ -225,7 +225,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     public void testGetFeatureReader() throws Exception {
         GeometryFactory gf = dataStore.getGeometryFactory();
 
-        Query query = QueryBuilder.all(dataStore.getSchema(tname("ft1")).getName());
+        Query query = QueryBuilder.all(dataStore.getFeatureType(tname("ft1")).getName());
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query);
 
         for (int i = 0; i < 3; i++) {
@@ -288,7 +288,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
         writer.close();
 
-        Query query = QueryBuilder.all(dataStore.getSchema(tname("ft1")).getName());
+        Query query = QueryBuilder.all(dataStore.getFeatureType(tname("ft1")).getName());
         FeatureReader<SimpleFeatureType, SimpleFeature> reader = dataStore.getFeatureReader(query);
         assertTrue(reader.hasNext());
 

@@ -163,7 +163,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(STATE_POP));
 
         DataStore store = factory.createDataStore(map);
-        FeatureType schema = store.getSchema(store.getTypeNames()[0]);
+        FeatureType schema = store.getFeatureType(store.getTypeNames()[0]);
         assertEquals(namespace.toString(), schema.getName().getNamespaceURI());
     }
 
@@ -171,7 +171,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         URL url = ShapeTestData.url(STATE_POP);
         ShapefileDataStore shapeDataStore = new ShapefileDataStore(url);
         String typeName = shapeDataStore.getTypeNames()[0];
-        SimpleFeatureType schema = (SimpleFeatureType) shapeDataStore.getSchema(typeName);
+        SimpleFeatureType schema = (SimpleFeatureType) shapeDataStore.getFeatureType(typeName);
         List<AttributeDescriptor> attributes = schema.getAttributeDescriptors();
         assertEquals("Number of Attributes", 253, attributes.size());
     }
@@ -260,9 +260,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
         ds.createSchema(featureType.getName(),featureType);
 
-        assertEquals("test", ds.getSchema(ds.getTypeNames()[0]).getName().getLocalPart());
+        assertEquals("test", ds.getFeatureType(ds.getTypeNames()[0]).getName().getLocalPart());
 
-        CoordinateReferenceSystem crs2 = ds.getSchema("test").getGeometryDescriptor().getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs2 = ds.getFeatureType("test").getGeometryDescriptor().getCoordinateReferenceSystem();
         assertNotNull( crs2 );
         assertEquals( crs.getName(), crs2.getName() );
 
@@ -603,7 +603,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         query = builder.buildQuery();
 
         reader = s.getFeatureReader(query);
-        assertEquals(s.getSchema(s.getTypeNames()[0]), reader.getFeatureType());
+        assertEquals(s.getFeatureType(s.getTypeNames()[0]), reader.getFeatureType());
         reader.close();
     }
 

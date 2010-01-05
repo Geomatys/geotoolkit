@@ -164,7 +164,7 @@ public class EditionHelper {
             final Polygon geo = mousePositionToGeometry(mx, my);
             final Filter flt = toFilter(geo, layer);
             editgeoms = (FeatureCollection<SimpleFeature>) layer.getCollection().subCollection(
-                    QueryBuilder.filtered(layer.getCollection().getSchema().getName(), flt));
+                    QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), flt));
 
             fi = editgeoms.iterator();
             if (fi.hasNext()) {
@@ -647,7 +647,7 @@ public class EditionHelper {
                 Geometry geom = (Geometry) obj;
 
                 MathTransform trs = CRS.findMathTransform(
-                        layer.getCollection().getSchema().getCoordinateReferenceSystem(),
+                        layer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
                         handler.getMap().getCanvas().getObjectiveCRS(),
                         true);
 
@@ -668,10 +668,10 @@ public class EditionHelper {
      */
     public Filter toFilter(Geometry poly, FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
 
-        final String geoStr = fl.getCollection().getSchema().getGeometryDescriptor().getLocalName();
+        final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
         final Expression geomField = FF.property(geoStr);
 
-        final CoordinateReferenceSystem dataCrs = fl.getCollection().getSchema().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
 
         final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(handler.getMap().getCanvas().getObjectiveCRS(), dataCrs,true));
 
@@ -691,7 +691,7 @@ public class EditionHelper {
 
         if (editionLayer != null) {
 
-            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getSchema();
+            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getFeatureType();
             final Collection collection = new ArrayList();
             final Object[] values = new Object[featureType.getAttributeCount()];
             final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
@@ -752,7 +752,7 @@ public class EditionHelper {
         if (editionLayer != null && editionLayer.getCollection().isWritable()) {
 
             final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getSchema();
+            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getFeatureType();
             final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
             final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
 

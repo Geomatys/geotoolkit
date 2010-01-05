@@ -231,12 +231,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             throws DataStoreException {
         final String typeName = query.getTypeName().getLocalPart();
         if (query.getFilter() == Filter.EXCLUDE){
-            return GenericEmptyFeatureIterator.createReader(getSchema());
+            return GenericEmptyFeatureIterator.createReader(getFeatureType());
         }
 
         String[] propertyNames = query.getPropertyNames() == null ? new String[0]
                 : query.getPropertyNames();
-        final String defaultGeomName = getSchema().getGeometryDescriptor().getLocalName();
+        final String defaultGeomName = getFeatureType().getGeometryDescriptor().getLocalName();
 
         FilterAttributeExtractor fae = new FilterAttributeExtractor();
         query.getFilter().accept(fae, null);
@@ -244,7 +244,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         Set attributes = new HashSet(Arrays.asList(propertyNames));
         attributes.addAll(fae.getAttributeNameSet());
 
-        SimpleFeatureType newSchema = getSchema();
+        SimpleFeatureType newSchema = getFeatureType();
         boolean readDbf = true;
         boolean readGeometry = true;
 
@@ -255,12 +255,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                     && (propertyNames.length == 1) && propertyNames[0]
                     .equals(defaultGeomName))) {
                 readDbf = false;
-                newSchema = FeatureTypeUtilities.createSubType(getSchema(), propertyNames);
+                newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
             } else if ((query.getPropertyNames() != null)
                     && (propertyNames.length == 0)) {
                 readDbf = false;
                 readGeometry = false;
-                newSchema = FeatureTypeUtilities.createSubType(getSchema(), propertyNames);
+                newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
             }
 
             FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
@@ -347,8 +347,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 }
             }
         }
-        List<AttributeDescriptor> atts = (getSchema() == null) ? readAttributes()
-                : getSchema().getAttributeDescriptors();
+        List<AttributeDescriptor> atts = (getFeatureType() == null) ? readAttributes()
+                : getFeatureType().getAttributeDescriptors();
 
         IndexedDbaseFileReader dbfR = null;
 
@@ -356,7 +356,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             getLogger().fine("The DBF file won't be opened since no attributes "
                     + "will be read from it");
             atts = new ArrayList<AttributeDescriptor>(1);
-            atts.add(getSchema().getGeometryDescriptor());
+            atts.add(getFeatureType().getGeometryDescriptor());
 
             if (!readGeometry) {
                 atts = new ArrayList<AttributeDescriptor>(1);
@@ -613,7 +613,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
         IndexedShapefileAttributeReader attReader = getAttributesReader(true,true, null);
         try {
-            SimpleFeatureType schema = (SimpleFeatureType) getSchema(typeName);
+            SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);
             if (schema == null) {
                 throw new IOException(
                         "To create a shapefile, you must first call createSchema()");
@@ -621,7 +621,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema);
 
         } catch (Exception e) {
-            featureReader = GenericEmptyFeatureIterator.createReader(getSchema());
+            featureReader = GenericEmptyFeatureIterator.createReader(getFeatureType());
         }
         try {
             FeatureWriter<SimpleFeatureType, SimpleFeature> writer = new IndexedShapefileFeatureWriter(
@@ -667,7 +667,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         try {
             reader = new ShapefileReader(shpFiles, false, false);
 
-            final JTSEnvelope2D ret = new JTSEnvelope2D(getSchema(getNames().iterator().next()).getCoordinateReferenceSystem());
+            final JTSEnvelope2D ret = new JTSEnvelope2D(getFeatureType(getNames().iterator().next()).getCoordinateReferenceSystem());
             for(final Iterator iter = records.iterator(); iter.hasNext();) {
                 final Data data = (Data) iter.next();
                 reader.goTo(((Long) data.getValue(1)).intValue());

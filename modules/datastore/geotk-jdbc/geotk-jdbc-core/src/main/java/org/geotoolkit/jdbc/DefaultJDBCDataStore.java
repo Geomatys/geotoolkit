@@ -136,8 +136,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     @Override
-    public boolean isWriteable(Name typeName) throws DataStoreException {
-        PrimaryKey key = getPrimaryKey(getSchema(typeName));
+    public boolean isWritable(Name typeName) throws DataStoreException {
+        PrimaryKey key = getPrimaryKey(getFeatureType(typeName));
         return key != null && !(key instanceof NullPrimaryKey);
     }
 
@@ -159,7 +159,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         typeCheck(typeName);
         return names.get(typeName);
     }
@@ -543,7 +543,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
-        final SimpleFeatureType type = (SimpleFeatureType) getSchema(query.getTypeName());
+        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
         // split the filter
         Filter[] split = splitFilter(query.getFilter(),type);
@@ -653,11 +653,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
     private FeatureWriter getFeatureWriterInternal(Query query, int flags) throws DataStoreException, IOException {
         
-        if(!isWriteable(query.getTypeName())){
+        if(!isWritable(query.getTypeName())){
             throw new DataStoreException("Type "+ query.getTypeName() + " is not writeable.");
         }
 
-        final SimpleFeatureType type = (SimpleFeatureType) getSchema(query.getTypeName());
+        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
         if (flags == 0) {
             throw new IllegalArgumentException( "no write flags set" );
@@ -741,7 +741,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public long getCount(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
-        final SimpleFeatureType type = (SimpleFeatureType) getSchema(query.getTypeName());
+        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
         //split the filter
         final Filter[] split = splitFilter( query.getFilter(),type );
@@ -844,7 +844,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
         typeCheck(query.getTypeName());
-        final SimpleFeatureType type = (SimpleFeatureType) getSchema(query.getTypeName());
+        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
         //split the filter
         final Filter[] split = splitFilter(query.getFilter(),type);
@@ -1571,7 +1571,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             try {
                 // grab the full feature type, as we might be encoding a filter
                 // that uses attributes that aren't returned in the results
-                final SimpleFeatureType fullSchema = (SimpleFeatureType) getSchema(featureType.getTypeName());
+                final SimpleFeatureType fullSchema = (SimpleFeatureType) getFeatureType(featureType.getTypeName());
                 final FilterToSQL toSQL = createFilterToSQL(fullSchema);
                 sql.append(' ').append(toSQL.encodeToString(filter));
             } catch (FilterToSQLException e) {
@@ -1769,7 +1769,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             try {
                 // grab the full feature type, as we might be encoding a filter
                 // that uses attributes that aren't returned in the results
-                final SimpleFeatureType fullSchema = (SimpleFeatureType) getSchema(featureType.getTypeName());
+                final SimpleFeatureType fullSchema = (SimpleFeatureType) getFeatureType(featureType.getTypeName());
                 toSQL = createPreparedFilterToSQL(fullSchema);
                 sql.append(' ').append(toSQL.encodeToString(filter));
             } catch (FilterToSQLException e) {

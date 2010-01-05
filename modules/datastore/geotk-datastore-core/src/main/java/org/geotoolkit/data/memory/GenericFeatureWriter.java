@@ -63,7 +63,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
         this.store = store;
         this.typeName = typeName;
         reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
-        type = (T) store.getSchema(typeName);
+        type = (T) store.getFeatureType(typeName);
     }
 
 

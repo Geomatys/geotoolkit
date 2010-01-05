@@ -113,7 +113,7 @@ public class CategoryStyleBuilder extends Factory {
 
         properties.clear();
         if(layer != null){
-            SimpleFeatureType schema = (SimpleFeatureType) layer.getCollection().getSchema();
+            SimpleFeatureType schema = (SimpleFeatureType) layer.getCollection().getFeatureType();
 
             for(PropertyDescriptor desc : schema.getDescriptors()){
                 Class<?> type = desc.getType().getBinding();
@@ -259,7 +259,7 @@ public class CategoryStyleBuilder extends Factory {
         final Set<Object> differentValues = new HashSet<Object>();
         final PropertyName property = currentProperty;
         final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(layer.getCollection().getSchema().getName());
+        builder.setTypeName(layer.getCollection().getFeatureType().getName());
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 

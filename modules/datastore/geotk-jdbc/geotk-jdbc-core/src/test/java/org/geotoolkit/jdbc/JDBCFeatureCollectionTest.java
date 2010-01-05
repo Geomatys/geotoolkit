@@ -90,7 +90,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
         FilterFactory ff = dataStore.getFilterFactory();
         Filter f = ff.equals(ff.property(aname("intProperty")), ff.literal(1));
 
-        FeatureCollection<SimpleFeature> sub = collection.subCollection(QueryBuilder.filtered(collection.getSchema().getName(), f));
+        FeatureCollection<SimpleFeature> sub = collection.subCollection(QueryBuilder.filtered(collection.getFeatureType().getName(), f));
         assertNotNull(sub);
 
         assertEquals(1, sub.size());
@@ -108,7 +108,7 @@ public abstract class JDBCFeatureCollectionTest extends JDBCTestSupport {
     }
 
     public void testAdd() throws IOException {
-        SimpleFeatureBuilder b = new SimpleFeatureBuilder((SimpleFeatureType) collection.getSchema());
+        SimpleFeatureBuilder b = new SimpleFeatureBuilder((SimpleFeatureType) collection.getFeatureType());
         b.set(aname("intProperty"), new Integer(3));
         b.set(aname("doubleProperty"), new Double(3.3));
         b.set(aname("stringProperty"), "three");

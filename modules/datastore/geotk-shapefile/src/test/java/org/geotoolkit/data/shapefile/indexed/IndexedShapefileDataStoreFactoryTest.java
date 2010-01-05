@@ -88,7 +88,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         String typeName = IndexedShapefileDataStoreTest.STATE_POP.substring(
                 IndexedShapefileDataStoreTest.STATE_POP.indexOf('/') + 1,
                 IndexedShapefileDataStoreTest.STATE_POP.lastIndexOf('.'));
-        assertEquals("http://jesse.com", store.getSchema(typeName).getName()
+        assertEquals("http://jesse.com", store.getFeatureType(typeName).getName()
                 .getNamespaceURI());
     }
 

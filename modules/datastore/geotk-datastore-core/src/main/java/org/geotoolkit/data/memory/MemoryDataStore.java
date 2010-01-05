@@ -73,7 +73,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema(Name name) throws DataStoreException {
+    public FeatureType getFeatureType(Name name) throws DataStoreException {
         FeatureType type = types.get(name);
 
         if(type == null){
@@ -220,7 +220,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
-        final FeatureType type = getSchema(query.getTypeName());
+        final FeatureType type = getFeatureType(query.getTypeName());
         final List<Feature> lst = features.get(query.getTypeName());
 
         if(lst == null){
@@ -237,7 +237,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        final FeatureType type = getSchema(typeName);
+        final FeatureType type = getFeatureType(typeName);
         final FeatureWriter writer = new MemoryFeatureWriter(typeName, type);
         return handleRemaining(writer, filter);
     }
@@ -247,7 +247,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
-        final FeatureType type = getSchema(typeName);
+        final FeatureType type = getFeatureType(typeName);
         return new MemoryFeatureWriterAppend(typeName, type);
     }
 

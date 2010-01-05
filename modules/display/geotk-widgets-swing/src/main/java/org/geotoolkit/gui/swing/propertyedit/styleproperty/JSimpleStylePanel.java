@@ -142,7 +142,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
                 
             if(layer instanceof FeatureMapLayer){
                 final FeatureMapLayer featureLayer = (FeatureMapLayer) layer;
-                final Class val = featureLayer.getCollection().getSchema().getGeometryDescriptor().getType().getBinding();
+                final Class val = featureLayer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
 
                 if (val.equals(Polygon.class) || val.equals(MultiPolygon.class)) {
                     detail = new JPolygonSymbolizerPane();

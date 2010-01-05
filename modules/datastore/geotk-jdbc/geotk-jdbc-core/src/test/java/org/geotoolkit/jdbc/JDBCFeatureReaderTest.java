@@ -28,7 +28,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 public abstract class JDBCFeatureReaderTest extends JDBCTestSupport {
 
     public void testNext() throws Exception {
-        Query query = QueryBuilder.all(dataStore.getSchema("ft1").getName());
+        Query query = QueryBuilder.all(dataStore.getFeatureType("ft1").getName());
         FeatureReader reader = dataStore.getFeatureReader( query );
         
         assertTrue( reader.hasNext() );

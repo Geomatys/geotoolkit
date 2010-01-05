@@ -98,7 +98,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         ShapefileDataStoreFactory fac = new ShapefileDataStoreFactory();
         DataStore s1 = createDataStore(fac, ShapeTestData.url(AbstractTestCaseSupport.class, "shapes/stream.shp"), true);
         Name typeName = s1.getNames().iterator().next();
-        SimpleFeatureType type = (SimpleFeatureType) s1.getSchema(typeName);
+        SimpleFeatureType type = (SimpleFeatureType) s1.getFeatureType(typeName);
         FeatureCollection<SimpleFeature> one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileDataStoreFactory maker = new ShapefileDataStoreFactory();
@@ -140,7 +140,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 //        // JAR.
         DataStore s = createDataStore(new ShapefileDataStoreFactory(), ShapeTestData.url(f), true);
         Name typeName = s.getNames().iterator().next();
-        SimpleFeatureType type = (SimpleFeatureType) s.getSchema(typeName);
+        SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
         FeatureCollection<SimpleFeature> one = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
         ShapefileDataStoreFactory maker = new ShapefileDataStoreFactory();

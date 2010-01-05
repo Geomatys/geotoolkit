@@ -74,7 +74,7 @@ final class DefaultFeatureMapLayer extends AbstractFeatureMapLayer {
     @Override
     public Envelope getBounds() {
 
-        final CoordinateReferenceSystem sourceCrs = collection.getSchema().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem sourceCrs = collection.getFeatureType().getCoordinateReferenceSystem();
         Envelope env = null;
         try {
             env = collection.getEnvelope();

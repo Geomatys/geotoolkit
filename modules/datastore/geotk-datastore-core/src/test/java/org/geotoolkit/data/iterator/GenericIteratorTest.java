@@ -134,9 +134,9 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testEmptyReader(){
-        final FeatureReader iterator = GenericEmptyFeatureIterator.createReader(collection.getSchema());
+        final FeatureReader iterator = GenericEmptyFeatureIterator.createReader(collection.getFeatureType());
 
-        assertEquals(iterator.getFeatureType(), collection.getSchema());
+        assertEquals(iterator.getFeatureType(), collection.getFeatureType());
         assertFalse(iterator.hasNext());
 
         try{
@@ -158,9 +158,9 @@ public class GenericIteratorTest extends TestCase{
 
     @Test
     public void testEmptyWriter(){
-        final FeatureWriter iterator = GenericEmptyFeatureIterator.createWriter(collection.getSchema());
+        final FeatureWriter iterator = GenericEmptyFeatureIterator.createWriter(collection.getFeatureType());
 
-        assertEquals(iterator.getFeatureType(), collection.getSchema());
+        assertEquals(iterator.getFeatureType(), collection.getFeatureType());
         assertFalse(iterator.hasNext());
 
         try{

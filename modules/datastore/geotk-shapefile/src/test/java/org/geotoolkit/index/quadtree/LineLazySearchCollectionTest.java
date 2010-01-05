@@ -50,7 +50,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
         ds = new IndexedShapefileDataStore(file.toURL());
         ds.buildQuadTree(0);
         tree = openQuadTree(file);
-        crs = ds.getSchema(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
+        crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
     }
 
     public static QuadTree openQuadTree(File file) throws StoreException {

@@ -268,7 +268,7 @@ public class OMDataStore extends AbstractDataStore {
         types.remove(typeName);
     }
 
-    public FeatureType getSchema(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         return types.get(typeName);
     }
 

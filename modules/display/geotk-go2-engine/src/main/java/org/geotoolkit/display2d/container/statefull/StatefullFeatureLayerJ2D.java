@@ -90,7 +90,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
         params = new StatefullContextParams(canvas,layer);
-        dataCRS = layer.getCollection().getSchema().getCoordinateReferenceSystem();
+        dataCRS = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
     }
 
     private synchronized void updateCache(RenderingContext2D context){
@@ -159,7 +159,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
 
         final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
-        final FeatureType schema                                 = fs.getSchema();
+        final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
@@ -426,7 +426,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         updateCache(context);
 
         final FeatureCollection<SimpleFeature> fs               = (FeatureCollection<SimpleFeature>) layer.getCollection();
-        final FeatureType schema                                 = fs.getSchema();
+        final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();

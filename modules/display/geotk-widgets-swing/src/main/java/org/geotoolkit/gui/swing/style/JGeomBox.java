@@ -54,7 +54,7 @@ public class JGeomBox extends JComboBox {
         setEnabled(layer != null);
 
         if (layer instanceof FeatureMapLayer && layer != null) {
-            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getCollection().getSchema().getDescriptors();
+            final Collection<PropertyDescriptor> col = ((FeatureMapLayer)layer).getCollection().getFeatureType().getDescriptors();
             final Iterator<PropertyDescriptor> ite = col.iterator();
 
             final List<String> geoms = new ArrayList<String>();

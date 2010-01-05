@@ -95,7 +95,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
     }
 
     public void testSchema() throws Exception {
-        SimpleFeatureType schema = (SimpleFeatureType) dataStore.getSchema(tname(LINE3D));
+        SimpleFeatureType schema = (SimpleFeatureType) dataStore.getFeatureType(tname(LINE3D));
         CoordinateReferenceSystem crs = schema.getGeometryDescriptor()
                 .getCoordinateReferenceSystem();
         assertEquals(new Integer(4359), CRS.lookupEpsgCode(crs, false));
@@ -161,7 +161,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
      */
     public void testCreateSchemaAndInsert() throws Exception {
         dataStore.createSchema(poly3DType.getName(),poly3DType);
-        SimpleFeatureType actualSchema = (SimpleFeatureType) dataStore.getSchema(nsname(POLY3D));
+        SimpleFeatureType actualSchema = (SimpleFeatureType) dataStore.getFeatureType(nsname(POLY3D));
         assertFeatureTypesEqual(poly3DType, actualSchema);
         assertEquals(new Integer(4359), actualSchema.getGeometryDescriptor().getUserData().get(
                 JDBCDataStore.JDBC_NATIVE_SRID));
@@ -184,7 +184,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
 
         // read id back and compare
         FeatureReader<SimpleFeatureType, SimpleFeature> fr = dataStore.getFeatureReader(
-                QueryBuilder.all(dataStore.getSchema(tname(POLY3D)).getName()));
+                QueryBuilder.all(dataStore.getFeatureType(tname(POLY3D)).getName()));
         assertTrue(fr.hasNext());
         f = fr.next();
         assertTrue(poly.equals((Geometry) f.getDefaultGeometry()));

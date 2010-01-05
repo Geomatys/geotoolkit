@@ -85,7 +85,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         IndexedShapefileDataStore s1 = new IndexedShapefileDataStore(ShapeTestData
                 .url(ShapeTestData.class, "shapes/stream.shp"));
         Name typeName = s1.getName();
-        SimpleFeatureType type = s1.getSchema();
+        SimpleFeatureType type = s1.getFeatureType();
         FeatureCollection<SimpleFeature> one = s1.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
 
@@ -114,7 +114,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     void test(String f) throws Exception {
         File file = copyShapefiles(f); // Work on File rather than URL from JAR.
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(file.toURI().toURL());
-        SimpleFeatureType type = s.getSchema();
+        SimpleFeatureType type = s.getFeatureType();
         FeatureCollection<SimpleFeature> one = s.createSession(true).getFeatureCollection(QueryBuilder.all(type.getName()));
 
         test(type, one, getTempFile(), false);

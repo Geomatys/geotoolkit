@@ -100,7 +100,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //we abort painting if the layer is not visible.
         if (!layer.isVisible()) return;  
 
-        final SimpleFeatureType sft = (SimpleFeatureType) layer.getCollection().getSchema();
+        final SimpleFeatureType sft = (SimpleFeatureType) layer.getCollection().getFeatureType();
         final CachedRule[] rules;
 
         final Filter selectionFilter = layer.getSelectionFilter();
@@ -177,7 +177,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
         final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
-        final FeatureType schema                                 = fs.getSchema();
+        final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
@@ -296,7 +296,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //if empty we stop this layer rendering
         if(features == null || features.isEmpty()) return;
         
-        final CoordinateReferenceSystem dataCRS      = features.getSchema().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem dataCRS      = features.getFeatureType().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
         final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
@@ -372,7 +372,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
 
         final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
-        final FeatureType schema                                 = fs.getSchema();
+        final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
         BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
@@ -434,7 +434,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //if empty we stop this layer rendering
         if(features == null || features.isEmpty()) return graphics;
 
-        final CoordinateReferenceSystem dataCRS      = features.getSchema().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem dataCRS      = features.getFeatureType().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
         final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
@@ -533,7 +533,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //nothing visible so no possible selection
         if (!layer.isVisible()) return graphics;
 
-        final Name featureTypeName = layer.getCollection().getSchema().getName();
+        final Name featureTypeName = layer.getCollection().getFeatureType().getName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getGeographicScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least

@@ -187,7 +187,7 @@ public class ShapefileDataStore extends AbstractDataStore{
     }
 
     @Override
-    public boolean isWriteable(Name typeName) throws DataStoreException {
+    public boolean isWritable(Name typeName) throws DataStoreException {
         return shpFiles.isLocal();
     }
 
@@ -196,7 +196,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         return name;
     }
 
-    public SimpleFeatureType getSchema() throws DataStoreException{
+    public SimpleFeatureType getFeatureType() throws DataStoreException{
         checkTypeExist();
         return schema;
     }
@@ -225,7 +225,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         typeCheck(typeName);
 
         return schema;

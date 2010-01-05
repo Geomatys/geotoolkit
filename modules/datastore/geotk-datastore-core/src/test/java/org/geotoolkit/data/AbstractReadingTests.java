@@ -117,7 +117,7 @@ public abstract class AbstractReadingTests extends TestCase{
 
         for(Name name : founds){
             assertNotNull(name);
-            assertNotNull(store.getSchema(name));
+            assertNotNull(store.getFeatureType(name));
         }
 
         //check type names------------------------------------------------------
@@ -131,8 +131,8 @@ public abstract class AbstractReadingTests extends TestCase{
             for(Name n : founds){
                 if(n.getLocalPart().equals(typeName)){
                     assertNotNull(typeName);
-                    FeatureType type1 = store.getSchema(typeName);
-                    FeatureType type2 = store.getSchema(n);
+                    FeatureType type1 = store.getFeatureType(typeName);
+                    FeatureType type2 = store.getFeatureType(n);
                     assertNotNull(type1);
                     assertNotNull(type2);
                     assertTrue(type1.equals(type2));
@@ -144,14 +144,14 @@ public abstract class AbstractReadingTests extends TestCase{
 
         //check error on wrong type names---------------------------------------
         try{
-            store.getSchema(new DefaultName("http://not", "exist"));
+            store.getFeatureType(new DefaultName("http://not", "exist"));
             throw new Exception("Asking for a schema that doesnt exist should have raised a datastore exception.");
         }catch(DataStoreException ex){
             //ok
         }
 
         try{
-            store.getSchema("not-exist_stuff");
+            store.getFeatureType("not-exist_stuff");
             throw new Exception("Asking for a schema that doesnt exist should have raised a datastore exception.");
         }catch(DataStoreException ex){
             //ok
@@ -172,7 +172,7 @@ public abstract class AbstractReadingTests extends TestCase{
 
         for(final ExpectedResult candidate : candidates){
             final Name name = candidate.name;
-            final FeatureType type = store.getSchema(name);
+            final FeatureType type = store.getFeatureType(name);
             assertNotNull(type);
             assertEquals(candidate.type, type);
 
@@ -220,7 +220,7 @@ public abstract class AbstractReadingTests extends TestCase{
      * test different readers.
      */
     private void testReaders(DataStore store, ExpectedResult candidate) throws Exception{
-        final FeatureType type = store.getSchema(candidate.name);
+        final FeatureType type = store.getFeatureType(candidate.name);
         final Collection<PropertyDescriptor> properties = type.getDescriptors();
         final QueryBuilder qb = new QueryBuilder();
         Query query = null;

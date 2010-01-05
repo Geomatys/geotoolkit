@@ -108,7 +108,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public void addFeatures(Name groupName, Collection newFeatures) throws DataStoreException {
         //will raise an error if the name doesnt exist
-        store.getSchema(groupName);
+        store.getFeatureType(groupName);
         addDelta(new AddDelta(this, groupName, newFeatures));
     }
 
@@ -118,7 +118,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         //will raise an error if the name doesnt exist
-        store.getSchema(groupName);
+        store.getFeatureType(groupName);
 
         if(values == null || values.isEmpty()){
             //no modifications, no need to create a modify delta
@@ -160,7 +160,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         //will raise an error if the name doesnt exist
-        store.getSchema(groupName);
+        store.getFeatureType(groupName);
 
         final Id removed;
 

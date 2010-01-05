@@ -102,10 +102,10 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema(String typeName) throws DataStoreException {
+    public FeatureType getFeatureType(String typeName) throws DataStoreException {
         for(final Name n : getNames()){
             if(n.getLocalPart().equals(typeName)){
-                return getSchema(n);
+                return getFeatureType(n);
             }
         }
         throw new DataStoreException("Schema : " + typeName + "doesnt exist in this datastore.");
@@ -118,9 +118,9 @@ public abstract class AbstractDataStore implements DataStore{
      * succeed.
      */
     @Override
-    public boolean isWriteable(Name typeName) throws DataStoreException {
+    public boolean isWritable(Name typeName) throws DataStoreException {
         //while raise an error if type doesnt exist
-        getSchema(typeName);
+        getFeatureType(typeName);
 
         try{
             getFeatureWriter(typeName, Filter.EXCLUDE);

@@ -50,7 +50,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
     }
     
     public void testSchema() throws Exception {
-        SimpleFeatureType ft =  (SimpleFeatureType) dataStore.getSchema(tname(LAKE));
+        SimpleFeatureType ft =  (SimpleFeatureType) dataStore.getFeatureType(tname(LAKE));
         assertFeatureTypesEqual(lakeSchema, ft);
     }
     
@@ -86,7 +86,7 @@ public abstract class JDBCNoPrimaryKeyTest extends JDBCTestSupport {
             // ok, fine
         }
 
-        assertFalse(dataStore.isWriteable(nsname(LAKE)));
+        assertFalse(dataStore.isWritable(nsname(LAKE)));
     }
     
 

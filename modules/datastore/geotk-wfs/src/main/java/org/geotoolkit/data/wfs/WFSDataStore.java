@@ -190,7 +190,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         FeatureType ft = types.get(typeName);
 
         if(ft == null){
@@ -257,7 +257,7 @@ public class WFSDataStore extends AbstractDataStore{
     public FeatureReader<SimpleFeatureType,SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         //will raise an error if typename in unknowned
-        final SimpleFeatureType sft = (SimpleFeatureType) getSchema(name);
+        final SimpleFeatureType sft = (SimpleFeatureType) getFeatureType(name);
 
         final QName q = new QName(name.getNamespaceURI(), name.getLocalPart(), prefixes.get(name.getNamespaceURI()));
         final FeatureCollection<SimpleFeature> collection;

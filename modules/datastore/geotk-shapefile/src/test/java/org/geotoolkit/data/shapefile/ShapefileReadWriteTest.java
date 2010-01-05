@@ -185,7 +185,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         }
         Name typeName = s.getNames().iterator().next();
         Session session = s.createSession(true);
-        SimpleFeatureType type = (SimpleFeatureType) s.getSchema(typeName);
+        SimpleFeatureType type = (SimpleFeatureType) s.getFeatureType(typeName);
         FeatureCollection<SimpleFeature> one = session.getFeatureCollection(QueryBuilder.all(typeName));
         File tmp = getTempFile();
 

@@ -47,7 +47,7 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      */
     Session getSession();
 
-    FeatureType getSchema();
+    FeatureType getFeatureType();
 
     Envelope getEnvelope() throws DataStoreException;
 

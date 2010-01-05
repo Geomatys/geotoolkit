@@ -90,9 +90,9 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema() throws DataStoreRuntimeException{
+    public FeatureType getFeatureType() throws DataStoreRuntimeException{
         try {
-            FeatureType ft = session.getDataStore().getSchema(query.getTypeName());
+            FeatureType ft = session.getDataStore().getFeatureType(query.getTypeName());
             return FeatureTypeUtilities.createSubType((SimpleFeatureType) ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
@@ -161,7 +161,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
     @Override
     public boolean isWritable(){
         try {
-            return session.getDataStore().isWriteable(query.getTypeName());
+            return session.getDataStore().isWritable(query.getTypeName());
         } catch (DataStoreException ex) {
             Logger.getLogger(SessionFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
             return false;

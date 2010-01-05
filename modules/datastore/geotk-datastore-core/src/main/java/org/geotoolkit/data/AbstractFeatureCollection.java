@@ -58,7 +58,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getSchema() {
+    public FeatureType getFeatureType() {
         return type;
     }
 

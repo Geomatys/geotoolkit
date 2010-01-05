@@ -97,7 +97,7 @@ public abstract class JDBCGeometryTest extends JDBCTestSupport {
         SimpleFeatureType newFT = ftb.buildFeatureType();
         dataStore.createSchema(newFT.getName(), newFT);
 
-        SimpleFeatureType newSchema = (SimpleFeatureType) dataStore.getSchema(featureTypeName);
+        SimpleFeatureType newSchema = (SimpleFeatureType) dataStore.getFeatureType(featureTypeName);
         assertNotNull(newSchema);
         assertEquals(3, newSchema.getAttributeCount());
         return newSchema.getGeometryDescriptor().getType().getBinding();

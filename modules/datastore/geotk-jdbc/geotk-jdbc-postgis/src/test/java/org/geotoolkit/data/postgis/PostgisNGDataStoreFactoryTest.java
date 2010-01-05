@@ -63,7 +63,7 @@ public class PostgisNGDataStoreFactoryTest extends JDBCTestSupport {
             // check dialect
             assertTrue(store.getDialect() instanceof PostGISDialect);
             // force connection usage
-            assertNotNull(store.getSchema(tname("ft1")));
+            assertNotNull(store.getFeatureType(tname("ft1")));
         } finally {
             store.dispose();
         }

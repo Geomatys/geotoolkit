@@ -96,7 +96,7 @@ public class FidQueryTest extends FIDTestCase {
 
     public void testAddFeature() throws Exception {
         SimpleFeature feature = fids.values().iterator().next();
-        SimpleFeatureType schema = (SimpleFeatureType) ds.getSchema(ds.getTypeNames()[0]);
+        SimpleFeatureType schema = (SimpleFeatureType) ds.getFeatureType(ds.getTypeNames()[0]);
 
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(schema);
         GeometryFactory gf = new GeometryFactory();

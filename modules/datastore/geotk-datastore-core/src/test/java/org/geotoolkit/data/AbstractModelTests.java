@@ -75,7 +75,7 @@ public abstract class AbstractModelTests extends TestCase{
 
             store.createSchema(sft.getName(), sft);
 
-            final SimpleFeatureType type = (SimpleFeatureType) store.getSchema(name);
+            final SimpleFeatureType type = (SimpleFeatureType) store.getFeatureType(name);
             assertNotNull(type);
             assertEquals(sft, type);
 
@@ -95,7 +95,7 @@ public abstract class AbstractModelTests extends TestCase{
             store.deleteSchema(nsname);
 
             try{
-                store.getSchema(nsname);
+                store.getFeatureType(nsname);
                 throw new Exception("Should have raised an error.");
             }catch(DataStoreException ex){
                 //ok
