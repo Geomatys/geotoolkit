@@ -18,6 +18,7 @@
 package org.geotoolkit.data.wfs;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -59,6 +60,7 @@ import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
+import org.geotoolkit.wfs.xml.v110.InsertElementType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 import org.opengis.feature.Feature;
 
@@ -205,6 +207,56 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
+    public Envelope getEnvelope(Query query) throws DataStoreException {
+        final Name typeName = query.getTypeName();
+        typeCheck(typeName);
+        return bounds.get(typeName);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Object getQueryCapabilities() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // schema manipulation /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Schema creation not supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        throw new DataStoreException("Schema update not supported.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteSchema(Name typeName) throws DataStoreException {
+        throw new DataStoreException("Schema deletion not supported.");
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // read & write ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureReader<SimpleFeatureType,SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         //will raise an error if typename in unknowned
@@ -225,27 +277,52 @@ public class WFSDataStore extends AbstractDataStore{
         }
     }
 
-
+    /**
+     * Writer that fall back on add,remove, update methods.
+     */
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return handleWriter(typeName, filter);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public JTSEnvelope2D getEnvelope(Query query) throws DataStoreException {
-        final Name typeName = query.getTypeName();
+    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        final TransactionRequest request = server.createTransaction();
 
-        for(Name n : typeNames){
-            if(n.equals(typeName)){
-                return new JTSEnvelope2D(bounds.get(n));
-            }
+        request.getInsertOrUpdateOrDelete().add(new InsertElementType(newFeatures));
+
+        try {
+            final InputStream response = request.getResponse();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
 
-        throw new DataStoreException("Type name : "+ typeName +"is unknowned is this datastore");
+        //todo read response
+        return null;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        handleUpdateWithFeatureWriter(groupName, filter, values);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+        handleWriterAppend(groupName);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // read & write ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     private SimpleFeatureType requestType(QName typeName) throws IOException{
         final DescribeFeatureTypeRequest request = server.createDescribeFeatureType();
@@ -331,49 +408,6 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Schema creation not supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
-        throw new DataStoreException("Schema update not supported.");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
-        throw new DataStoreException("Schema deletion not supported.");
-    }
-
-    @Override
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
-    }
-
-    @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
-    }
-
-    @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        handleWriterAppend(groupName);
-    }
 
 
 }

@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
 import org.geotoolkit.data.wfs.v110.GetCapabilities110;
 import org.geotoolkit.data.wfs.v110.GetFeature110;
+import org.geotoolkit.data.wfs.v110.Transaction110;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
@@ -147,6 +148,19 @@ public class WebFeatureServer {
         switch (version) {
             case v110:
                 return new GetFeature110(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    /**
+     * Create a transaction request
+     * @return TransactionRequest : transaction request.
+     */
+    public TransactionRequest createTransaction(){
+        switch (version) {
+            case v110:
+                return new Transaction110(serverURL.toString());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
