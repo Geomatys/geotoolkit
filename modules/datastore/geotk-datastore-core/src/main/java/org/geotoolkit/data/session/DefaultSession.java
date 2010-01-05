@@ -109,7 +109,12 @@ public class DefaultSession extends AbstractSession {
     public void addFeatures(Name groupName, Collection newFeatures) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
-        addDelta(new AddDelta(this, groupName, newFeatures));
+
+        if(async){
+            diff.add(new AddDelta(this, groupName, newFeatures));
+        }else{
+            store.addFeatures(groupName, newFeatures);
+        }
     }
 
     /**
@@ -126,32 +131,36 @@ public class DefaultSession extends AbstractSession {
             return;
         }
 
-        final Id modified;
+        if(async){
+            final Id modified;
 
-        if(filter instanceof Id){
-            modified = (Id)filter;
-        }else{
-            final Set<Identifier> identifiers = new HashSet<Identifier>();
-            QueryBuilder qb = new QueryBuilder(groupName);
-            qb.setFilter(filter);
-            final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
-            try{
-                while(ite.hasNext()){
-                    identifiers.add(ite.next().getIdentifier());
-                }
-            }finally{
-                ite.close();
-            }
-
-            if(identifiers.isEmpty()){
-                //no feature match this filter, no need to create a modify delta
-                return;
+            if(filter instanceof Id){
+                modified = (Id)filter;
             }else{
-                modified = FF.id(identifiers);
-            }
-        }
+                final Set<Identifier> identifiers = new HashSet<Identifier>();
+                QueryBuilder qb = new QueryBuilder(groupName);
+                qb.setFilter(filter);
+                final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+                try{
+                    while(ite.hasNext()){
+                        identifiers.add(ite.next().getIdentifier());
+                    }
+                }finally{
+                    ite.close();
+                }
 
-        addDelta(new ModifyDelta(this, groupName, modified, values));
+                if(identifiers.isEmpty()){
+                    //no feature match this filter, no need to create a modify delta
+                    return;
+                }else{
+                    modified = FF.id(identifiers);
+                }
+            }
+
+            diff.add(new ModifyDelta(this, groupName, modified, values));
+        }else{
+            store.updateFeatures(groupName, filter, values);
+        }
     }
 
     /**
@@ -162,43 +171,37 @@ public class DefaultSession extends AbstractSession {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
-        final Id removed;
-
-        if(filter instanceof Id){
-            removed = (Id)filter;
-        }else{
-            final Set<Identifier> identifiers = new HashSet<Identifier>();
-            QueryBuilder qb = new QueryBuilder(groupName);
-            qb.setFilter(filter);
-            final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
-            try{
-                while(ite.hasNext()){
-                    identifiers.add(ite.next().getIdentifier());
-                }
-            }finally{
-                ite.close();
-            }
-
-            if(identifiers.isEmpty()){
-                //no feature match this filter, no need to create to remove delta
-                return;
-            }else{
-                removed = FF.id(identifiers);
-            }
-        }
-
-        addDelta(new RemoveDelta(this, groupName, removed));
-    }
-
-    private void addDelta(Delta delta) throws DataStoreException{
         if(async){
-            diff.add(delta);
+            final Id removed;
+
+            if(filter instanceof Id){
+                removed = (Id)filter;
+            }else{
+                final Set<Identifier> identifiers = new HashSet<Identifier>();
+                QueryBuilder qb = new QueryBuilder(groupName);
+                qb.setFilter(filter);
+                final FeatureIterator ite = getFeatureIterator(qb.buildQuery());
+                try{
+                    while(ite.hasNext()){
+                        identifiers.add(ite.next().getIdentifier());
+                    }
+                }finally{
+                    ite.close();
+                }
+
+                if(identifiers.isEmpty()){
+                    //no feature match this filter, no need to create to remove delta
+                    return;
+                }else{
+                    removed = FF.id(identifiers);
+                }
+            }
+
+            diff.add(new RemoveDelta(this, groupName, removed));
         }else{
-            delta.commit(store);
-            delta.dispose();
+            store.removeFeatures(groupName, filter);
         }
     }
-
 
     /**
      * {@inheritDoc }
