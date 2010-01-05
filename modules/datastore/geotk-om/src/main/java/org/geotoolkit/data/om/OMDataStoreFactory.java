@@ -28,6 +28,7 @@ import org.geotoolkit.data.DataStore;
 
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.opengis.metadata.quality.ConformanceResult;
@@ -158,8 +159,11 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
         }
     }
 
+    @Override
     public ConformanceResult availability() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        DefaultConformanceResult result =  new DefaultConformanceResult();
+        result.setPass(true);
+        return result;
     }
    
 

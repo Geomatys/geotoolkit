@@ -188,7 +188,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                         for (FeatureType ft : featureTypes) {
                             if (ft.getName().equals(name)) {
                                 if (collection == null) {
-                                    collection = new DefaultFeatureCollection(id, ft, null);
+                                    collection = new DefaultFeatureCollection(id, ft, SimpleFeature.class);
                                 }
                                 collection.add(readFeature(streamReader, fid, ft));
                                 find = true;
