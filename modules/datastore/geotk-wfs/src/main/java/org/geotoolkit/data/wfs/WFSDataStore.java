@@ -39,7 +39,6 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
@@ -55,15 +54,13 @@ import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
-import org.geotoolkit.wfs.xml.v110.InsertElementType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
-import org.opengis.feature.Feature;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -291,11 +288,22 @@ public class WFSDataStore extends AbstractDataStore{
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         final TransactionRequest request = server.createTransaction();
+        final Insert insert = server.createInsertElement();
 
-        request.getInsertOrUpdateOrDelete().add(new InsertElementType(newFeatures));
+        final FeatureCollection col;
+        if(newFeatures instanceof FeatureCollection){
+            col = (FeatureCollection) newFeatures;
+        }else{
+            col = new DefaultFeatureCollection("", null, Feature.class);
+            col.addAll(newFeatures);
+        }
+        insert.setFeatures(col);
+
+        request.elements().add(insert);
 
         try {
             final InputStream response = request.getResponse();
+            response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -309,7 +317,23 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
+        final TransactionRequest request = server.createTransaction();
+        final Update update = server.createUpdateElement();
+        
+        update.setFilter(filter);
+        update.setTypeName(groupName.getLocalPart());
+        for(Map.Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
+            update.updates().put(entry.getKey().getName(), entry.getValue());
+        }
+
+        request.elements().add(update);
+
+        try {
+            final InputStream response = request.getResponse();
+            response.close();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     /**
@@ -317,7 +341,20 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        handleWriterAppend(groupName);
+        final TransactionRequest request = server.createTransaction();
+        final Delete delete = server.createDeleteElement();
+        
+        delete.setTypeName(groupName.getLocalPart());
+        delete.setFilter(filter);
+
+        request.elements().add(delete);
+
+        try {
+            final InputStream response = request.getResponse();
+            response.close();
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////

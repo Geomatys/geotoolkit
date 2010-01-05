@@ -19,7 +19,6 @@ package org.geotoolkit.data.wfs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import org.geotoolkit.wfs.xml.v110.AllSomeType;
 
 
 /**
@@ -74,29 +73,18 @@ public interface TransactionRequest {
 
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
-     *
      */
-    public List<Object> getInsertOrUpdateOrDelete();
+    public List<TransactionElement> elements();
 
     /**
      * Gets the value of the releaseAction property.
-     *
-     * @return
-     *     possible object is
-     *     {@link AllSomeType }
-     *
      */
-    public AllSomeType getReleaseAction();
+    public ReleaseAction getReleaseAction();
 
     /**
      * Sets the value of the releaseAction property.
-     *
-     * @param value
-     *     allowed object is
-     *     {@link AllSomeType }
-     *
      */
-    public void setReleaseAction(AllSomeType value);
+    public void setReleaseAction(ReleaseAction value);
 
     InputStream getResponse() throws IOException;
 

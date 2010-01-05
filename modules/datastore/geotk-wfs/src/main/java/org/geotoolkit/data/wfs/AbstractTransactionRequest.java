@@ -22,21 +22,64 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import org.geotoolkit.wfs.xml.v110.TransactionType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class AbstractTransactionRequest extends TransactionType implements TransactionRequest{
+public class AbstractTransactionRequest implements TransactionRequest{
 
+    protected final List<TransactionElement> elements = new ArrayList<TransactionElement>();
     protected final String serverURL;
     protected final String version;
+    protected String lockId = null;
 
     protected AbstractTransactionRequest(String serverURL, String version){
         this.serverURL = serverURL;
         this.version = version;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getLockId() {
+        return lockId;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setLockId(String value) {
+        this.lockId = value;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<TransactionElement> elements() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ReleaseAction getReleaseAction() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setReleaseAction(ReleaseAction value) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -52,6 +95,8 @@ public class AbstractTransactionRequest extends TransactionType implements Trans
         conec.setRequestProperty("Content-Type", "text/xml");
 
         OutputStream stream = conec.getOutputStream();
+
+        
 
         //todo write request in this
 

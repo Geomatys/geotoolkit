@@ -23,10 +23,13 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geotoolkit.data.wfs.v110.Delete110;
 import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
 import org.geotoolkit.data.wfs.v110.GetCapabilities110;
 import org.geotoolkit.data.wfs.v110.GetFeature110;
+import org.geotoolkit.data.wfs.v110.Insert110;
 import org.geotoolkit.data.wfs.v110.Transaction110;
+import org.geotoolkit.data.wfs.v110.Update110;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSVersion;
@@ -161,6 +164,33 @@ public class WebFeatureServer {
         switch (version) {
             case v110:
                 return new Transaction110(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    public Insert createInsertElement(){
+        switch (version) {
+            case v110:
+                return new Insert110();
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    public Update createUpdateElement(){
+        switch (version) {
+            case v110:
+                return new Update110();
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    public Delete createDeleteElement(){
+        switch (version) {
+            case v110:
+                return new Delete110();
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
