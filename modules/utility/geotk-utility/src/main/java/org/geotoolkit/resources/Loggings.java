@@ -341,6 +341,11 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int UPDATE_RENDERER_CACHE_$1 = 55;
 
         /**
+         * Using "{0}" as a fallback.
+         */
+        public static final int USING_FALLBACK_$1 = 58;
+
+        /**
          * Using "{0}" as {1} factory.
          */
         public static final int USING_FILE_AS_FACTORY_$2 = 56;

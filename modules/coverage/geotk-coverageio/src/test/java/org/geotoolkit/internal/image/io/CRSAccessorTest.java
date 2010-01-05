@@ -24,11 +24,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.metadata.MetadataAccessorTest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
+import org.geotoolkit.test.Depend;
 import static org.geotoolkit.test.Commons.*;
 
 
@@ -40,6 +42,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.07
  */
+@Depend(MetadataAccessorTest.class)
 public final class CRSAccessorTest {
     /**
      * The previous locale before the test is run.

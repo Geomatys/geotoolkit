@@ -29,7 +29,7 @@ import org.geotoolkit.util.XArrays;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.07
  *
  * @since 3.00
  * @module
@@ -249,6 +249,56 @@ public final class StringUtilities {
     }
 
     /**
+     * Returns the acronym of the given text, or the test itself if it already looks like
+     * an acronym. Texts that are all upper-case are considered acronyms.
+     *
+     * @param  text The text for which to create an acronym, or {@code null}.
+     * @return The acronym, or {@code null} if the given text was null.
+     *
+     * @since 3.07
+     */
+    public static String acronym(String text) {
+        if (text != null && !isUpperCase(text = text.trim())) {
+            final int length = text.length();
+            final StringBuilder buffer = new StringBuilder();
+            boolean wantChar = true;
+            for (int i=0; i<length; i++) {
+                final char c = text.charAt(i);
+                if (wantChar) {
+                    if (Character.isJavaIdentifierStart(c)) {
+                        buffer.append(c);
+                        wantChar = false;
+                    }
+                } else if (!Character.isJavaIdentifierPart(c) || c == '_') {
+                    wantChar = true;
+                } else if (Character.isUpperCase(c)) {
+                    // Test for mixed-case (e.g. "northEast").
+                    // Note that the buffer is garanteed to contain at least 1 character.
+                    if (Character.isLowerCase(buffer.charAt(buffer.length() - 1))) {
+                        buffer.append(c);
+                    }
+                }
+            }
+            final int acrlg = buffer.length();
+            if (acrlg != 0) {
+                /*
+                 * If every characters except the first one are upper-case, ensure that the
+                 * first one is upper-case as well. This is for handling the identifiers which
+                 * are compliant to Java-Beans convention (e.g. "northEast").
+                 */
+                if (isUpperCase(buffer, 1, acrlg)) {
+                    buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
+                }
+                final String acronym = buffer.toString();
+                if (!text.equals(acronym)) {
+                    text = acronym;
+                }
+            }
+        }
+        return text;
+    }
+
+    /**
      * Returns {@code true} if the second string is an acronym of the first string. An
      * acronym is a sequence of {@linkplain Character#isLetterOrDigit letters or digits}
      * built from at least one character of each word in the complete group. More than
@@ -366,6 +416,32 @@ cmp:    while (ia < lga) {
         }
         for (int i=0; i<length; i++) {
             if (string.charAt(offset + i) != part.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Returns {@code true} if every characters in the given character sequence are
+     * {@linkplain Character#isUpperCase(char) upper-case}.
+     *
+     * @param  text The character sequence to test.
+     * @return {@code true} if every character are upper-case.
+     *
+     * @since 3.07
+     */
+    public static boolean isUpperCase(final CharSequence text) {
+        return isUpperCase(text, 0, text.length());
+    }
+
+    /**
+     * Same as {@link #isUpperCase(CharSequence)}, but on a sub-sequence.
+     */
+    private static boolean isUpperCase(final CharSequence text, int lower, final int upper) {
+        while (lower < upper) {
+            final char c = text.charAt(lower++);
+            if (!Character.isUpperCase(c)) {
                 return false;
             }
         }

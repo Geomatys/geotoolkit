@@ -58,6 +58,7 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.resources.IndexedResourceBundle;
 
 
 /**
@@ -1704,8 +1705,20 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     final void warning(final String method, final int key, final Object value) {
         if (!Level.OFF.equals(warningLevel)) {
-            final LogRecord record = Errors.getResources(getLocale()).getLogRecord(warningLevel, key, value);
-            record.setSourceClassName(MetadataAccessor.class.getName());
+            warning(MetadataAccessor.class, method, Errors.getResources(getLocale()), key, value);
+        }
+    }
+
+    /**
+     * Convenience method for logging a warning from a caller which may be outside this
+     * {@code MetadataAccessor} class.
+     */
+    final void warning(final Class<?> classe, final String method,
+            final IndexedResourceBundle resource, final int key, final Object value)
+    {
+        if (!Level.OFF.equals(warningLevel)) {
+            final LogRecord record = resource.getLogRecord(warningLevel, key, value);
+            record.setSourceClassName(classe.getName());
             record.setSourceMethodName(method);
             warningOccurred(record);
         }

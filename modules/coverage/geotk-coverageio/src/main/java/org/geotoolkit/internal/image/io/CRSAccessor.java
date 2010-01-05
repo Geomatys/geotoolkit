@@ -50,8 +50,6 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
  *
- * @see CRSBuilder
- *
  * @since 3.07
  * @module
  */

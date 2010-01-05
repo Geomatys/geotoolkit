@@ -94,23 +94,25 @@ public final class MetadataEnum {
      * Returns the interface for the given name of the type.
      *
      * @param  <T>      The compile-time class of {@code baseType}.
-     * @param  baseType The base interface {@link CoordinateReferenceSystem},
-     *                  {@link CoordinateSystem} or {@link Datum}.
+     * @param  baseType {@link CoordinateReferenceSystem}, {@link CoordinateSystem}, {@link Datum}
+     *                  or a sub-interface of the above.
      * @param  name     The name of the type for which the interface is wanted.
      * @return The interface for the given name, or {@code null} if unknown.
+     * @throws ClassCastException If the type inferred from the given {@code name} is not
+     *         assignable to the given {@code baseType}.
      */
     public static <T extends IdentifiedObject> Class<? extends T> getInterface(
-            final Class<T> baseType, final String name)
+            final Class<T> baseType, final String name) throws ClassCastException
     {
         final Class<? extends IdentifiedObject>[] types;
         final List<String> names;
-        if (baseType.equals(CoordinateReferenceSystem.class)) {
+        if (CoordinateReferenceSystem.class.isAssignableFrom(baseType)) {
             types = CRS_INTERFACES;
             names = CRS_TYPES;
-        } else if (baseType.equals(CoordinateSystem.class)) {
+        } else if (CoordinateSystem.class.isAssignableFrom(baseType)) {
             types = CS_INTERFACES;
             names = CS_TYPES;
-        } else if (baseType.equals(Datum.class)) {
+        } else if (Datum.class.isAssignableFrom(baseType)) {
             types = DATUM_INTERFACES;
             names = DATUM_TYPES;
         } else {
