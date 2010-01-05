@@ -28,6 +28,7 @@ import org.geotoolkit.data.wfs.v110.DescribeFeatureType110;
 import org.geotoolkit.data.wfs.v110.GetCapabilities110;
 import org.geotoolkit.data.wfs.v110.GetFeature110;
 import org.geotoolkit.data.wfs.v110.Insert110;
+import org.geotoolkit.data.wfs.v110.Native110;
 import org.geotoolkit.data.wfs.v110.Transaction110;
 import org.geotoolkit.data.wfs.v110.Update110;
 import org.geotoolkit.util.logging.Logging;
@@ -191,6 +192,15 @@ public class WebFeatureServer {
         switch (version) {
             case v110:
                 return new Delete110();
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    public Native createNativeElement(){
+        switch (version) {
+            case v110:
+                return new Native110();
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

@@ -15,21 +15,15 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.wfs;
+package org.geotoolkit.data.wfs.v110;
+
+import org.geotoolkit.data.wfs.AbstractNative;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface Native extends TransactionElement{
-
-    String getVendorId();
-
-    void setVendorId(String vendorId);
-
-    boolean isSafeToIgnore();
-
-    void setSafeToIgnore(boolean safe);
+public class Native110 extends AbstractNative{
 
 }

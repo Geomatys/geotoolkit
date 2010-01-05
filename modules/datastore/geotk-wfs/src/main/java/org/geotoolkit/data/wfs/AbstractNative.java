@@ -22,14 +22,29 @@ package org.geotoolkit.data.wfs;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface Native extends TransactionElement{
+public abstract class AbstractNative implements Native{
 
-    String getVendorId();
+    protected String vendorId = null;
+    protected boolean safe = true;
 
-    void setVendorId(String vendorId);
+    @Override
+    public String getVendorId() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-    boolean isSafeToIgnore();
+    @Override
+    public void setVendorId(String vendorId) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-    void setSafeToIgnore(boolean safe);
+    @Override
+    public boolean isSafeToIgnore() {
+        return safe;
+    }
+
+    @Override
+    public void setSafeToIgnore(boolean safe) {
+        this.safe = safe;
+    }
 
 }
