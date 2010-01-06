@@ -18,13 +18,17 @@
 package org.geotoolkit.image.io.metadata;
 
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.FactoryException;
 
+import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
@@ -58,11 +62,9 @@ public final class ReferencingMetadataHelperTest {
 
     /**
      * Tests the parsing of the WGS84 CRS.
-     *
-     * @throws FactoryException Should not happen.
      */
     @Test
-    public void testGeographicCRS() throws FactoryException {
+    public void testGeographicCRS() {
         /*
          * Following should have been tested by CRSAccessorTest.testGeographicCRS()
          */
@@ -73,7 +75,7 @@ public final class ReferencingMetadataHelperTest {
          * Following is the purpose of this test suite.
          */
         final ReferencingMetadataHelper helper = new ReferencingMetadataHelper(metadata);
-        final CoordinateReferenceSystem crs = helper.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem crs = helper.getOptionalCRS();
         assertNotSame("Should have created a new CRS.", DefaultGeographicCRS.WGS84, crs);
         assertEquals(DefaultGeographicCRS.class, crs.getClass());
         final GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
@@ -82,5 +84,33 @@ public final class ReferencingMetadataHelperTest {
         assertEqualsIgnoreMetadata("Datum",         DefaultGeodeticDatum.WGS84,       datum);
         assertEqualsIgnoreMetadata("CS",            DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem());
         assertEqualsIgnoreMetadata("CRS",           DefaultGeographicCRS.WGS84,       crs);
+    }
+
+    /**
+     * Tests the parsing of a Mercator CRS.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testProjectedCRS() throws FactoryException {
+        /*
+         * Following should have been tested by CRSAccessorTest.testGeographicCRS()
+         */
+        final CoordinateReferenceSystem originalCRS = CRS.parseWKT(WKT.PROJCS_MERCATOR);
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final CRSAccessor accessor = new CRSAccessor(metadata);
+        accessor.setCRS(originalCRS);
+        /*
+         * Following is the purpose of this test suite.
+         */
+        final ReferencingMetadataHelper helper = new ReferencingMetadataHelper(metadata);
+        final CoordinateReferenceSystem crs = helper.getOptionalCRS();
+        assertNotSame("Should have created a new CRS.", originalCRS, crs);
+        assertEquals(DefaultProjectedCRS.class, crs.getClass());
+        final GeodeticDatum datum = ((ProjectedCRS) crs).getDatum();
+        assertEqualsIgnoreMetadata("PrimeMeridian", DefaultPrimeMeridian.GREENWICH, datum.getPrimeMeridian());
+        assertEqualsIgnoreMetadata("Ellipsoid",     DefaultEllipsoid    .WGS84,     datum.getEllipsoid());
+        assertEqualsIgnoreMetadata("Datum",         DefaultGeodeticDatum.WGS84,     datum);
+        assertEqualsIgnoreMetadata("CS",            DefaultCartesianCS  .PROJECTED, crs.getCoordinateSystem());
     }
 }

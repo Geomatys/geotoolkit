@@ -18,6 +18,7 @@
 package org.geotoolkit.image.io.metadata;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Collections;
 import javax.imageio.metadata.IIOMetadata;
 import javax.measure.quantity.Angle;
@@ -26,9 +27,12 @@ import javax.measure.unit.Unit;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.datum.*;
+import org.opengis.referencing.operation.*;
+import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
@@ -36,20 +40,24 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
+import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.image.io.MetadataEnum;
+import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.geotoolkit.util.NullArgumentException;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 
 
 /**
  * Builds referencing objects from a {@link IIOMetadata} object. The main method is
- * {@link #getCoordinateReferenceSystem()}. The other methods are hooks for overriding
- * by subclasses.
+ * {@link #getOptionalCRS()}. The other methods are hooks for overriding by subclasses.
  *
  * {@note We do not use the reflection mechanism like what we do for ISO 19115-2 metadata,
  *        because the mapping between Image I/O metadata and the referencing objects is more
@@ -93,29 +101,40 @@ public class ReferencingMetadataHelper extends MetadataHelper {
     }
 
     /**
-     * Gets the {@code "name"} attribute from the given accessor.
-     *
-     * @param  accessor The accessor to use for getting the name attribute.
-     * @return A map containing the name attribute, or an empty map.
+     * Returns {@code "untitled"} in the locale of the given accessor.
      */
-    private static Map<String,String> getName(final MetadataAccessor accessor) {
-        return getName(accessor, "name");
+    private static String untitled(final MetadataAccessor accessor) {
+        return Vocabulary.getResources(accessor.getLocale()).getString(Vocabulary.Keys.UNTITLED);
     }
 
     /**
-     * Same as {@link #getName}, but uses the given attribute name instead than {@code "name"}.
+     * Gets the {@code "name"} attribute from the given accessor.
+     * If this attribute is not found, then a default name is generated.
      *
-     * @param  accessor  The accessor to use for getting the name attribute.
-     * @param  attribute The attribute name ({@code "name"} by default).
-     * @return A map containing the name attribute, or an empty map.
+     * @param  accessor The accessor to use for getting the name attribute.
+     * @return A map containing the name attribute.
      */
-    private static Map<String,String> getName(final MetadataAccessor accessor, final String attribute) {
-        final String name = accessor.getAttribute(attribute);
-        if (name != null) {
-            return Collections.singletonMap(IdentifiedObject.NAME_KEY, name);
+    private static Map<String,Object> getName(final MetadataAccessor accessor) {
+        String name = accessor.getAttribute("name");
+        if (name == null) {
+            name = untitled(accessor);
         } else {
-            return Collections.emptyMap();
+            final int s = name.indexOf(DefaultNameSpace.DEFAULT_SEPARATOR);
+            if (s >= 0) {
+                final String authority = name.substring(0, s).trim();
+                name = name.substring(s + 1).trim();
+                if (name.length() == 0) {
+                    name = authority;
+                } else if (authority.length() != 0) {
+                    final Map<String,Object> properties = new HashMap<String,Object>(6);
+                    properties.put(ReferenceIdentifier.CODESPACE_KEY, authority);
+                    properties.put(ReferenceIdentifier.CODE_KEY, name);
+                    final ReferenceIdentifier id = new DefaultReferenceIdentifier(properties);
+                    return Collections.<String,Object>singletonMap(IdentifiedObject.NAME_KEY, id);
+                }
+            }
         }
+        return Collections.<String,Object>singletonMap(IdentifiedObject.NAME_KEY, name);
     }
 
     /**
@@ -166,7 +185,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
      */
     protected PrimeMeridian getPrimeMeridian(final MetadataAccessor datumAccessor) throws FactoryException {
         final MetadataAccessor pmAccessor = new MetadataAccessor(datumAccessor, "PrimeMeridian", null);
-        final Map<String,String> properties = getName(pmAccessor);
+        final Map<String,?> properties = getName(pmAccessor);
         final Double greenwich = pmAccessor.getAttributeAsDouble("greenwichLongitude");
         if (isNonNull("getEllipsoid", "greenwichLongitude", greenwich)) {
             final Unit<Angle> unit = pmAccessor.getAttributeAsUnit("angularUnit", Angle.class);
@@ -190,7 +209,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
      */
     protected Ellipsoid getEllipsoid(final MetadataAccessor datumAccessor) throws FactoryException {
         final MetadataAccessor ellipsoidAccessor = new MetadataAccessor(datumAccessor, "Ellipsoid", null);
-        final Map<String,String> properties = getName(ellipsoidAccessor);
+        final Map<String,?> properties = getName(ellipsoidAccessor);
         final Unit<Length> unit = ellipsoidAccessor.getAttributeAsUnit("axisUnit", Length.class);
         if (isNonNull("getEllipsoid", "axisUnit", unit)) {
             final Double semiMajor = ellipsoidAccessor.getAttributeAsDouble("semiMajorAxis");
@@ -225,7 +244,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
      */
     protected <T extends Datum> T getDatum(final Class<T> baseType) throws FactoryException {
         final MetadataAccessor datumAccessor = new MetadataAccessor(accessor, "Datum", null);
-        final Map<String,String> properties = getName(datumAccessor);
+        final Map<String,?> properties = getName(datumAccessor);
         final Class<? extends Datum> type = getInterface("getDatum", baseType, datumAccessor);
         if (type != null) {
             final DatumFactory factory = factories.getDatumFactory();
@@ -258,7 +277,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
             throws FactoryException
     {
         final MetadataAccessor csAccessor = new MetadataAccessor(accessor, "CoordinateSystem", null);
-        final Map<String,String> properties = getName(csAccessor);
+        final Map<String,?> properties = getName(csAccessor);
         final Class<? extends CoordinateSystem> type = getInterface("getCoordinateSystem", baseType, csAccessor);
         if (type != null) {
             final Integer dimension = csAccessor.getAttributeAsInteger("dimension");
@@ -272,7 +291,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
             final CSFactory factory = factories.getCSFactory();
             for (int i=0; i<numAxes; i++) {
                 axesAccessor.selectChild(i);
-                final Map<String,String> axesProperties = getName(axesAccessor);
+                final Map<String,?> axesProperties = getName(axesAccessor);
                 String abbreviation = axesAccessor.getAttribute("axisAbbrev");
                 final AxisDirection direction = axesAccessor.getAttributeAsCode("direction", AxisDirection.class);
                 if (!isNonNull("getCoordinateSystem", "direction", direction)) {
@@ -284,7 +303,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                      * name. Note that if non-null, the name is garanteed to have a length greater
                      * than 0 has of MetadataAccessor.getAttribute(String) method implementation.
                      */
-                    abbreviation = axesProperties.get(IdentifiedObject.NAME_KEY);
+                    abbreviation = axesProperties.get(IdentifiedObject.NAME_KEY).toString();
                     if (abbreviation == null) {
                         abbreviation = direction.identifier();
                     }
@@ -337,27 +356,96 @@ public class ReferencingMetadataHelper extends MetadataHelper {
     }
 
     /**
-     * Gets the coordinate reference system.
+     * Gets the coordinate reference system. If no CRS is explicitly defined, then a
+     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain #getDefault(Class) default CRS} is returned.
      *
-     * @return The coordinate reference system, or {@code null}.
+     * @param  <T> The compile-time type of {@code baseType}.
+     * @param  baseType The expected CRS type.
+     * @return The coordinate reference system, or {@code null} if the CRS
+     *         can not be parsed and there is no default value.
      * @throws FactoryException If the coordinate reference system can not be created.
-     *
-     * @todo Current implementation supports only <code>GeographicCRS</code>.
      */
-    public CoordinateReferenceSystem getCoordinateReferenceSystem() throws FactoryException {
-        final Map<String,String> properties = getName(accessor);
-        final Class<? extends SingleCRS> type = getInterface("getCRS", SingleCRS.class, accessor);
+    protected <T extends SingleCRS> CoordinateReferenceSystem getCoordinateReferenceSystem(final Class<T> baseType)
+            throws FactoryException
+    {
+        final Map<String,?> properties = getName(accessor);
+        final Class<? extends SingleCRS> type = getInterface("getCRS", baseType, accessor);
         if (type != null) {
             final CRSFactory factory = factories.getCRSFactory();
             if (GeographicCRS.class.isAssignableFrom(type)) {
                 return factory.createGeographicCRS(properties,
                         getDatum(GeodeticDatum.class),
                         getCoordinateSystem(EllipsoidalCS.class));
+            } else if (ProjectedCRS.class.isAssignableFrom(type)) {
+                final GeographicCRS baseCRS = factory.createGeographicCRS(
+                        Collections.singletonMap(GeographicCRS.NAME_KEY, untitled(accessor)),
+                        getDatum(GeodeticDatum.class), DefaultEllipsoidalCS.GEODETIC_2D);
+                return factory.createProjectedCRS(properties, baseCRS,
+                        getConversionFromBase(),
+                        getCoordinateSystem(CartesianCS.class));
             } else {
                 // TODO: test for other types of CRS here (VerticalCRS, etc.)
                 warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOW_TYPE_$1, type);
             }
         }
+        return getDefault("getCoordinateReferenceSystem", baseType);
+    }
+
+    /**
+     * Returns the defining conversion from the base geographic CRS to the projected CRS.
+     * If no coordinate system is explicitly defined, then a
+     * {@linkplain MetadataAccessor#warningOccurred warning is logged} and a
+     * {@linkplain #getDefault(Class) default conversion} is returned.
+     *
+     * @return The conversion from geographic to projected CRS, or {@code null}.
+     * @throws FactoryException If the conversion can not be created.
+     */
+    protected Conversion getConversionFromBase() throws FactoryException {
+        final MetadataAccessor cvAccessor = new MetadataAccessor(accessor, "Conversion", null);
+        final Map<String,?> properties = getName(cvAccessor);
+        final String method = cvAccessor.getAttribute("method");
+        if (isNonNull("getBaseToCRS", "method", method)) {
+            final MathTransformFactory   factory = factories.getMathTransformFactory();
+            final ParameterValueGroup parameters = factory.getDefaultParameters(method);
+            final MetadataAccessor paramAccessor = new MetadataAccessor(cvAccessor, "Parameters", "ParameterValue");
+            final int numParam = paramAccessor.childCount();
+            for (int i=0; i<numParam; i++) {
+                paramAccessor.selectChild(i);
+                final String name  = paramAccessor.getAttribute("name");
+                if (isNonNull("getBaseToCRS", "name", name)) {
+                    final Double value = paramAccessor.getAttributeAsDouble("value");
+                    if (isNonNull("getBaseToCRS", "value", value)) try {
+                        parameters.parameter(name).setValue(value.doubleValue());
+                    } catch (IllegalArgumentException e) {
+                        paramAccessor.warning(getClass(), "getBaseToCRS", e);
+                    }
+                }
+            }
+            final MathTransform tr = factory.createParameterizedTransform(parameters);
+            return new DefiningConversion(properties, factory.getLastMethodUsed(), tr);
+        }
+        return getDefault("getBaseToCRS", Conversion.class);
+    }
+
+    /**
+     * Returns the coordinate reference system, or {@code null} if it can not be created.
+     * This method delegates to {@link #getCoordinateReferenceSystem(Class)} and catch the
+     * exception. If an exception has been thrown, the exception is
+     * {@linkplain MetadataAccessor#warningOccurred logged} and this method returns {@code null}.
+     *
+     * @return The CRS, or {@code null} if none.
+     */
+    public CoordinateReferenceSystem getOptionalCRS() {
+        Exception failure;
+        try {
+            return getCoordinateReferenceSystem(SingleCRS.class);
+        } catch (FactoryException e) {
+            failure = e;
+        } catch (NullArgumentException e) { // Happen if a mandatory element is absents.
+            failure = e;
+        }
+        accessor.warning(getClass(), "getOptionalCRS", failure);
         return null;
     }
 
@@ -389,6 +477,9 @@ public class ReferencingMetadataHelper extends MetadataHelper {
      * </tr><tr>
      *   <td>&nbsp;{@link CartesianCS}&nbsp;</td>
      *   <td>&nbsp;{@link DefaultCartesianCS#GENERIC_2D GENERIC_2D}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link Conversion}&nbsp;</td>
+     *   <td>&nbsp;{@code null}&nbsp;</td>
      * </tr>
      * </table>
      *
@@ -414,6 +505,10 @@ public class ReferencingMetadataHelper extends MetadataHelper {
             object = DefaultEllipsoidalCS.GEODETIC_2D;
         } else if (CartesianCS.class.isAssignableFrom(type)) {
             object = DefaultCartesianCS.GENERIC_2D;
+        } else if (Conversion.class.isAssignableFrom(type)) {
+            object = null;
+        } else if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
+            object = null;
         } else {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
         }

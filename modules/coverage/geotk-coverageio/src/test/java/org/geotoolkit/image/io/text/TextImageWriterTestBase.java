@@ -26,12 +26,19 @@ import java.awt.image.WritableRaster;
 import javax.imageio.IIOImage;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.opengis.referencing.FactoryException;
+
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.image.io.CRSAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -56,6 +63,15 @@ public abstract class TextImageWriterTestBase {
         dimensions.selectChild(dimensions.appendChild());
         dimensions.setValueRange(0f, 88.97f);
         dimensions.setFillSampleValues(-9998); // Intentionnaly use a value different than -9999.
+        /*
+         * Adds a Coordinate Reference System.
+         * We use a simple Mercator projection.
+         */
+        try {
+            new CRSAccessor(metadata).setCRS(CRS.parseWKT(WKT.PROJCS_MERCATOR));
+        } catch (FactoryException e) {
+            fail(e.toString());
+        }
         return metadata;
     }
 

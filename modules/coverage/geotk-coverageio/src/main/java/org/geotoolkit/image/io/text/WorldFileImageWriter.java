@@ -31,9 +31,11 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOException;
 
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.image.io.ImageWriterAdapter;
-import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.ReferencingMetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
@@ -153,14 +155,23 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         }
         if (metadata instanceof SpatialMetadata) {
             final SpatialMetadata md = (SpatialMetadata) metadata;
-            final MetadataHelper  mh = new MetadataHelper(this);
-            final RectifiedGrid   rf = md.getInstanceForType(RectifiedGrid.class);
+            final ReferencingMetadataHelper mh = new ReferencingMetadataHelper(md);
+            final RectifiedGrid rf = md.getInstanceForType(RectifiedGrid.class);
             if (rf != null) {
                 final AffineTransform tr = mh.getAffineTransform(rf, param);
                 final Object path = createOutput("tfw");
                 if (path != null) {
                     final OutputStream out = IOUtilities.openWrite(path);
                     SupportFiles.writeTFW(out, tr);
+                    out.close();
+                }
+            }
+            final CoordinateReferenceSystem crs = mh.getOptionalCRS();
+            if (crs != null) {
+                final Object path = createOutput("prj");
+                if (path != null) {
+                    final OutputStream out = IOUtilities.openWrite(path);
+                    PrjFiles.write(crs, out);
                     out.close();
                 }
             }
