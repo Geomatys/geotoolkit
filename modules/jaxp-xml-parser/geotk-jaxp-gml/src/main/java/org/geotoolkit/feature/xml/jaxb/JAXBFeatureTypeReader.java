@@ -17,6 +17,7 @@
 
 package org.geotoolkit.feature.xml.jaxb;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -199,7 +200,15 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
                             String elementName = attributeElement.getName();
                             //System.out.println("adding:" + elementName + " type:" + Utils.getTypeFromQName(elementType));
                             CoordinateReferenceSystem crs = null;
-                            builder.add(new DefaultName(namespace, elementName), Utils.getTypeFromQName(elementType), crs);
+
+                            final Class c = Utils.getTypeFromQName(elementType);
+                            if(Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)){
+                                builder.add(new DefaultName(namespace, elementName), c, crs);
+                            }else{
+                                builder.add(new DefaultName(namespace, elementName), c);
+                            }
+
+                            
                         }
                     }
                 }

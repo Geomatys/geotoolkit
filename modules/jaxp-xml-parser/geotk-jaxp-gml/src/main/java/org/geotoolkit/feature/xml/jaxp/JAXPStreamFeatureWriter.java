@@ -270,7 +270,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             LOGGER.log(Level.SEVERE, "DataStore exception exception while writing the feature: " + ex.getMessage(), ex);
         }
     }
-
+    
     @Override
     public String write(FeatureCollection featureCollection) {
         try {
@@ -289,7 +289,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
         return null;
     }
 
-    private void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter) throws DataStoreException {
+    public void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter) throws DataStoreException {
         try {
             // the XML header
             streamWriter.writeStartDocument("UTF-8", "1.0");

@@ -212,11 +212,11 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
     }
 
     private SimpleFeature readFeature(XMLStreamReader streamReader, String id, FeatureType featureType) {
-        SimpleFeatureBuilder builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
+        final SimpleFeatureBuilder builder = new SimpleFeatureBuilder((SimpleFeatureType) featureType);
         //String geometryName = featureType.getGeometryDescriptor().getName().getLocalPart();
         try {
             int nbAttribute            = 0;
-            Map<QName, Object> values  = new HashMap<QName, Object>();
+            final Map<QName, Object> values  = new HashMap<QName, Object>();
 
 
             while (streamReader.hasNext()) {
@@ -224,82 +224,77 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
                 if (event == XMLEvent.START_ELEMENT) {
                     nbAttribute++;
-                    QName q              = streamReader.getName();
-                    String nameAttribute = streamReader.getAttributeValue(null, "name");
-                    
+                    final QName q              = streamReader.getName();
+                    final String nameAttribute = streamReader.getAttributeValue(null, "name");
+                    final PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q).getLocalPart());
 
-                        if (streamReader.next() == XMLEvent.CHARACTERS) {
+                    if(pdesc == null){
+                        final StringBuilder exp = new StringBuilder("expected ones are:").append('\n');
+                        for (PropertyDescriptor pd : featureType.getDescriptors()) {
+                            exp.append(pd.getName().getLocalPart()).append('\n');
+                        }
+                        throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart() + '\n' + exp.toString());
+                    }
 
-                            String content           = streamReader.getText();
-                            PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q));
-                            if (pdesc != null) {
-
-                                if (pdesc instanceof GeometryDescriptor) {
-                                    event = streamReader.next();
-                                    while (event != XMLEvent.START_ELEMENT) {
-                                        event = streamReader.next();
-                                    }
-
-                                    try {
-                                        JTSGeometry isoGeom;
-                                        Object geometry = ((JAXBElement) unmarshaller.unmarshal(streamReader)).getValue();
-                                        if (geometry instanceof JTSGeometry) {
-                                            isoGeom = (JTSGeometry) geometry;
-                                        } else if (geometry instanceof PolygonType) {
-                                            isoGeom = ((PolygonType)geometry).getJTSPolygon();
-                                        } else {
-                                            throw new IllegalArgumentException("unexpected geometry type:" + geometry);
-                                        }
-                                        Geometry jtsGeom = isoGeom.getJTSGeometry();
-                                        values.put(q, jtsGeom);
-                                    } catch (JAXBException ex) {
-                                        LOGGER.severe("JAXB exception while reading the feature geometry: " + ex.getMessage());
-                                        ex.printStackTrace();
-                                    }
-                                } else {
-                                Class propertyType = pdesc.getType().getBinding();
-                                Object previous    = values.get(q);
-
-                                if (previous == null && nameAttribute != null) {
-                                    Map<String, Object> map = new HashMap<String, Object>();
-                                    map.put(nameAttribute, Converters.convert(content, propertyType));
-                                    values.put(q, map);
-
-                                } else if (previous == null) {
-                                    values.put(q, Converters.convert(content, propertyType));
-                                
-                                } else if (previous instanceof Map && nameAttribute != null) {
-                                    ((Map) previous).put(nameAttribute, Converters.convert(content, propertyType));
-
-                                } else if (previous instanceof Map && nameAttribute == null) {
-                                    LOGGER.severe("unable to reader a composite attribute no name has been found");
-
-                                } else if (previous instanceof Collection) {
-                                    ((Collection) previous).add(Converters.convert(content, propertyType));
-
-                                } else {
-                                    List multipleValue = new ArrayList();
-                                    multipleValue.add(previous);
-                                    multipleValue.add(Converters.convert(content, propertyType));
-                                    values.put(q, multipleValue);
-                                }
-                                
-                                }
-                            // Unknow property launch an exception
-                            } else {
-                                StringBuilder exp = new StringBuilder("expected ones are:").append('\n');
-                                for (PropertyDescriptor pd : featureType.getDescriptors()) {
-                                    exp.append(pd.getName().getLocalPart()).append('\n');
-                                }
-                                throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart() + '\n' + exp.toString());
-                            }
-
-                        } else {
-                            LOGGER.severe("unexpected event");
+                    if(pdesc instanceof GeometryDescriptor){
+                        event = streamReader.next();
+                        while (event != XMLEvent.START_ELEMENT) {
+                            event = streamReader.next();
                         }
 
-                    
+                        try {
+                            JTSGeometry isoGeom;
+                            Object geometry = ((JAXBElement) unmarshaller.unmarshal(streamReader)).getValue();
+                            if (geometry instanceof JTSGeometry) {
+                                isoGeom = (JTSGeometry) geometry;
+                            } else if (geometry instanceof PolygonType) {
+                                isoGeom = ((PolygonType)geometry).getJTSPolygon();
+                            } else {
+                                throw new IllegalArgumentException("unexpected geometry type:" + geometry);
+                            }
+                            Geometry jtsGeom = isoGeom.getJTSGeometry();
+                            values.put(q, jtsGeom);
+                        } catch (JAXBException ex) {
+                            LOGGER.severe("JAXB exception while reading the feature geometry: " + ex.getMessage());
+                            ex.printStackTrace();
+                        }
 
+                    }else{
+                        if (streamReader.next() != XMLEvent.CHARACTERS){
+                            LOGGER.severe("unexpected event, was waiting for CHARACTERS event.");
+                        } else {
+                            final String content = streamReader.getText();
+
+                            final Class propertyType = pdesc.getType().getBinding();
+                            final Object previous    = values.get(q);
+
+                            if (previous == null && nameAttribute != null) {
+                                Map<String, Object> map = new HashMap<String, Object>();
+                                map.put(nameAttribute, Converters.convert(content, propertyType));
+                                values.put(q, map);
+
+                            } else if (previous == null) {
+                                values.put(q, Converters.convert(content, propertyType));
+
+                            } else if (previous instanceof Map && nameAttribute != null) {
+                                ((Map) previous).put(nameAttribute, Converters.convert(content, propertyType));
+
+                            } else if (previous instanceof Map && nameAttribute == null) {
+                                LOGGER.severe("unable to reader a composite attribute no name has been found");
+
+                            } else if (previous instanceof Collection) {
+                                ((Collection) previous).add(Converters.convert(content, propertyType));
+
+                            } else {
+                                List multipleValue = new ArrayList();
+                                multipleValue.add(previous);
+                                multipleValue.add(Converters.convert(content, propertyType));
+                                values.put(q, multipleValue);
+                            }
+                        }
+
+                    }
+                   
                     // we fill  the builder with the properties
                     for (Entry<QName, Object> entry : values.entrySet()) {
                         builder.set(entry.getKey().getLocalPart(), entry.getValue());
@@ -307,7 +302,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                     
 
                 } else if (event == XMLEvent.END_ELEMENT) {
-                    QName q             = streamReader.getName();
+                    final QName q = streamReader.getName();
                     if (q.getLocalPart().equals("featureMember")) {
                         break;
                     } else if (Utils.getNameFromQname(q).equals(featureType.getName())) {

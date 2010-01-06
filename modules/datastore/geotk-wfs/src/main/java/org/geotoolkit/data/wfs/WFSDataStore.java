@@ -289,6 +289,7 @@ public class WFSDataStore extends AbstractDataStore{
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         final TransactionRequest request = server.createTransaction();
         final Insert insert = server.createInsertElement();
+        insert.setInputFormat("text/xml; subtype=gml/3.1.1");
 
         final FeatureCollection col;
         if(newFeatures instanceof FeatureCollection){
@@ -319,6 +320,7 @@ public class WFSDataStore extends AbstractDataStore{
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
+        update.setInputFormat("text/xml; subtype=gml/3.1.1");
         
         update.setFilter(filter);
         update.setTypeName(groupName.getLocalPart());
@@ -432,7 +434,10 @@ public class WFSDataStore extends AbstractDataStore{
                 lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
                 return col;
             }else{
-                throw new IOException("unexpected type : " + result);
+                final FeatureCollection<SimpleFeature> col = new DefaultFeatureCollection<SimpleFeature>("", sft, SimpleFeature.class);
+                lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
+                return col;
+//                throw new IOException("unexpected type : " + result);
             }
 
         } catch (JAXBException ex) {

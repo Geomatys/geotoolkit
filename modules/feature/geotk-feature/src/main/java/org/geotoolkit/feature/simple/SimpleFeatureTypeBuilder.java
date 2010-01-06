@@ -474,6 +474,11 @@ public class SimpleFeatureTypeBuilder {
      */
     public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs) {
 
+        if(!( Geometry.class.isAssignableFrom(binding) ||
+                org.opengis.geometry.Geometry.class.isAssignableFrom(binding)) ){
+            throw new IllegalArgumentException("Use add(Name,Class) method to add non-geometric fields.");
+        }
+
         attributeTypeBuilder.reset();
         attributeTypeBuilder.setName(name);
         attributeTypeBuilder.setBinding(binding);

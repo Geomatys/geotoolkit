@@ -18,22 +18,31 @@
 package org.geotoolkit.data.wfs.xml;
 
 import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map.Entry;
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.wfs.Delete;
+import org.geotoolkit.data.wfs.IdentifierGenerationOption;
 import org.geotoolkit.data.wfs.Insert;
 import org.geotoolkit.data.wfs.Native;
 import org.geotoolkit.data.wfs.ReleaseAction;
 import org.geotoolkit.data.wfs.TransactionElement;
 import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
+import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.sld.xml.XMLUtilities;
+
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -56,7 +65,9 @@ public class JAXPStreamTransactionWriter {
     private static final String TAG_DELETE = "Delete";
     private static final String TAG_NATIVE = "Native";
     private static final String TAG_LOCKID = "LockId";
-    private static final String TAG_PROPERTY_TYPE = "PropertyType";
+    private static final String TAG_PROPERTY = "Property";
+    private static final String TAG_NAME = "Name";
+    private static final String TAG_VALUE = "Value";
     
     private static final String PROP_SERVICE = "service";
     private static final String PROP_VERSION = "version";
@@ -65,8 +76,12 @@ public class JAXPStreamTransactionWriter {
     private static final String PROP_SAFETOIGNORE = "safeToIgnore";
     private static final String PROP_HANDLE = "handle";
     private static final String PROP_TYPENAME = "typeName";
+    private static final String PROP_SRSNAME = "srsName";
+    private static final String PROP_INPUTFORMAT = "inputFormat";
+    private static final String PROP_IDGEN = "idgen";
 
-    public void write(OutputStream out, TransactionRequest request) throws XMLStreamException{
+    public void write(OutputStream out, TransactionRequest request) 
+            throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         final XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(out);
 
@@ -85,7 +100,8 @@ public class JAXPStreamTransactionWriter {
         streamWriter.close();
     }
 
-    private void write(XMLStreamWriter writer, TransactionRequest request) throws XMLStreamException{
+    private void write(XMLStreamWriter writer, TransactionRequest request) 
+            throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
         writer.writeStartElement(WFS_PREFIX, TAG_TRANSACTION, WFS_NAMESPACE);
         writer.writeAttribute(PROP_SERVICE, "WFS");
         writer.writeAttribute(PROP_VERSION, "1.1.0");
@@ -144,8 +160,39 @@ public class JAXPStreamTransactionWriter {
 //        <xsd:enumeration value="GenerateNew"/>
 //     </xsd:restriction>
 //  </xsd:simpleType>
-    private void write(XMLStreamWriter writer, Insert element) throws XMLStreamException{
+    private void write(XMLStreamWriter writer, Insert element)
+            throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
         writer.writeStartElement(WFS_PREFIX, TAG_INSERT, WFS_NAMESPACE);
+
+        //write features--------------------------------------------------------
+        final FeatureCollection col = element.getFeatures();
+        final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
+        fw.writeFeatureCollection(col,writer);
+        
+        //write id gen----------------------------------------------------------
+        final IdentifierGenerationOption opt = element.getIdentifierGenerationOption();
+        if(opt != null){
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_IDGEN, opt.value());
+        }
+
+        //write handle----------------------------------------------------------
+        final String handle = element.getHandle();
+        if(handle != null){
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_HANDLE, handle);
+        }
+
+        //write format----------------------------------------------------------
+        final String format = element.getInputFormat();
+        if(format != null){
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_INPUTFORMAT, format);
+        }
+
+        //write crs-------------------------------------------------------------
+        final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
+        if(crs != null){
+            final String id = CRS.lookupIdentifier(Citations.URN_OGC, crs, true);
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
+        }
 
         writer.writeEndElement();
     }
@@ -169,10 +216,59 @@ public class JAXPStreamTransactionWriter {
 //          <xsd:element name="Value" minOccurs="0"/>
 //       </xsd:sequence>
 //    </xsd:complexType>
-    private void write(XMLStreamWriter writer, Update element) throws XMLStreamException{
+    private void write(XMLStreamWriter writer, Update element)
+            throws XMLStreamException, FactoryException, JAXBException{
         writer.writeStartElement(WFS_PREFIX, TAG_UPDATE, WFS_NAMESPACE);
 
+        //write typename--------------------------------------------------------
+        final String typeName = element.getTypeName();
+        writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_TYPENAME, typeName);
 
+        //write crs-------------------------------------------------------------
+        final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
+        if(crs != null){
+            final String id = CRS.lookupIdentifier(Citations.URN_OGC, crs, true);
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
+        }
+
+        //write format----------------------------------------------------------
+        final String format = element.getInputFormat();
+        if(format != null){
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_INPUTFORMAT, format);
+        }
+
+        //write handle----------------------------------------------------------
+        final String handle = element.getHandle();
+        if(handle != null){
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_HANDLE, handle);
+        }
+
+        //write filter ---------------------------------------------------------
+        final Filter filter = element.getFilter();
+        if(filter != null){
+            XMLUtilities util = new XMLUtilities();
+            util.writeFilter(writer, element.getFilter(), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+        }
+
+        //write properties------------------------------------------------------
+        for(final Entry<Name,Object> entry : element.updates().entrySet()){
+            writer.writeStartElement(WFS_PREFIX, TAG_PROPERTY, WFS_NAMESPACE);
+
+            //write name
+            writer.writeStartElement(WFS_PREFIX, TAG_NAME, WFS_NAMESPACE);
+            writer.writeCharacters(entry.getKey().getLocalPart());
+            writer.writeEndElement();
+
+            //write value
+            if(entry.getValue() != null){
+                //todo must handle geometry differently
+                writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
+                writer.writeCharacters(entry.getValue().toString());
+                writer.writeEndElement();
+            }
+
+            writer.writeEndElement();
+        }
 
         writer.writeEndElement();
     }
@@ -185,19 +281,23 @@ public class JAXPStreamTransactionWriter {
 //       <xsd:attribute name="handle" type="xsd:string" use="optional"/>
 //       <xsd:attribute name="typeName" type="xsd:QName" use="required"/>
 //    </xsd:complexType>
-    private void write(XMLStreamWriter writer, Delete element) throws XMLStreamException{
+    private void write(XMLStreamWriter writer, Delete element) throws XMLStreamException, JAXBException{
         writer.writeStartElement(WFS_PREFIX, TAG_DELETE, WFS_NAMESPACE);
 
-        writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_HANDLE, element.getHandle());
-        writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_TYPENAME, element.getTypeName());
+        //write typename--------------------------------------------------------
+        final String typeName = element.getTypeName();
+        writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_TYPENAME, typeName);
 
-        XMLUtilities util = new XMLUtilities();
-        try {
-            util.writeFilter(writer, element.getFilter(), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
-        } catch (JAXBException ex) {
-            throw new XMLStreamException("JAXB error while marshalling filter.");
+        //write handle----------------------------------------------------------
+        final String handle = element.getHandle();
+        if(handle != null){
+            writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_HANDLE, handle);
         }
 
+        //write filter ---------------------------------------------------------
+        XMLUtilities util = new XMLUtilities();
+        util.writeFilter(writer, element.getFilter(), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+        
         writer.writeEndElement();
     }
 
