@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import java.util.logging.Logger;
 import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
 import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
@@ -71,7 +70,6 @@ import org.geotoolkit.index.quadtree.StoreException;
 import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
-import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.resources.NIOUtilities;
@@ -234,9 +232,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             return GenericEmptyFeatureIterator.createReader(getFeatureType());
         }
 
-        String[] propertyNames = query.getPropertyNames() == null ? new String[0]
+        Name[] propertyNames = query.getPropertyNames() == null ? new Name[0]
                 : query.getPropertyNames();
-        final String defaultGeomName = getFeatureType().getGeometryDescriptor().getLocalName();
+        final Name defaultGeomName = getFeatureType().getGeometryDescriptor().getName();
 
         FilterAttributeExtractor fae = new FilterAttributeExtractor();
         query.getFilter().accept(fae, null);
@@ -248,7 +246,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         boolean readDbf = true;
         boolean readGeometry = true;
 
-        propertyNames = (String[]) attributes.toArray(new String[attributes.size()]);
+        propertyNames = (Name[]) attributes.toArray(new Name[attributes.size()]);
 
         try {
             if (((query.getPropertyNames() != null)

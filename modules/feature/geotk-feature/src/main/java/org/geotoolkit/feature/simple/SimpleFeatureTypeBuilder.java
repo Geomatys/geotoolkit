@@ -136,7 +136,7 @@ public class SimpleFeatureTypeBuilder {
     /**
      * Name of the default geometry to use
      */
-    private String defaultGeometry;
+    private Name defaultGeometry;
     /**
      * flag controlling if the type is abstract.
      */
@@ -247,15 +247,37 @@ public class SimpleFeatureTypeBuilder {
 
     /**
      * Sets the name of the default geometry attribute of the built type.
+     * You should use the the method with Name parameter instead.
+     * This method will create a Name without namespace and refer to the first
+     * attribut which local name part match this string.
      */
     public void setDefaultGeometry(final String defaultGeometryName) {
-        this.defaultGeometry = defaultGeometryName;
+        for(AttributeDescriptor desc : attributes){
+            if(desc.getLocalName().equals(defaultGeometryName)){
+                this.defaultGeometry = desc.getName();
+                return;
+            }
+        }
+        throw new IllegalArgumentException("No matching attributs for name "+ defaultGeometryName);
+    }
+
+    /**
+     * Sets the name of the default geometry attribute of the built type.
+     */
+    public void setDefaultGeometry(final Name defaultGeometryName) {
+        for(AttributeDescriptor desc : attributes){
+            if(desc.getName().equals(defaultGeometryName)){
+                this.defaultGeometry = desc.getName();
+                return;
+            }
+        }
+        throw new IllegalArgumentException("No matching attributs for name "+ defaultGeometryName);
     }
 
     /**
      * The name of the default geometry attribute of the built type.
      */
-    public String getDefaultGeometry() {
+    public Name getDefaultGeometry() {
         return defaultGeometry;
     }
 
@@ -476,7 +498,7 @@ public class SimpleFeatureTypeBuilder {
 
         if(!( Geometry.class.isAssignableFrom(binding) ||
                 org.opengis.geometry.Geometry.class.isAssignableFrom(binding)) ){
-            throw new IllegalArgumentException("Use add(Name,Class) method to add non-geometric fields.");
+            throw new IllegalArgumentException("Use add(Name,Class) method to add non-geometric fields. Field type found : " + binding);
         }
 
         attributeTypeBuilder.reset();
@@ -543,7 +565,7 @@ public class SimpleFeatureTypeBuilder {
         if (this.defaultGeometry != null) {
 
             for(final AttributeDescriptor desc : attributes){
-                if(desc.getLocalName().equals(this.defaultGeometry)){
+                if(desc.getName().equals(this.defaultGeometry)){
                     //ensure the attribute is a geometry attribute
                     if(!(desc instanceof GeometryDescriptor)){
                         throw new IllegalStateException("Default geometry : "+ this.defaultGeometry + " is not a GeometryDescriptor.");
@@ -591,7 +613,7 @@ public class SimpleFeatureTypeBuilder {
      * @param types
      * @return SimpleFeatureType
      */
-    public static SimpleFeatureType retype(final SimpleFeatureType original, final String[] types) {
+    public static SimpleFeatureType retype(final SimpleFeatureType original, final Name[] types) {
         final SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
 
         //initialize the builder

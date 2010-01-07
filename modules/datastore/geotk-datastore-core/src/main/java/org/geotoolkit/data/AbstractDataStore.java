@@ -43,7 +43,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -239,7 +238,7 @@ public abstract class AbstractDataStore implements DataStore{
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
         final Filter filter = remainingParameters.getFilter();
-        final String[] properties = remainingParameters.getPropertyNames();
+        final Name[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
 

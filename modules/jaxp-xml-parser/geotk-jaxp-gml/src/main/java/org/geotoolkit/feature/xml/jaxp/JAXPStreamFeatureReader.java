@@ -141,7 +141,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                     }
 
                     throw new IllegalArgumentException("The xml does not describe the same type of feature: \n " +
-                                                       "Expected: " + expectedFeatureType.toString() + '\n'                  +
+                                                       "Expected: " + expectedFeatureType.toString() + '\n' +
                                                        "But was: "  + name);
                     
                 }

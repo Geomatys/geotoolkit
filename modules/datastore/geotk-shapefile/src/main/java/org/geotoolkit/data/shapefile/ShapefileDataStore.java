@@ -329,15 +329,15 @@ public class ShapefileDataStore extends AbstractDataStore{
         typeCheck(query.getTypeName());
 
         final String typeName = query.getTypeName().getLocalPart();
-        final String[] propertyNames = query.getPropertyNames();
-        final String defaultGeomName = schema.getGeometryDescriptor().getLocalName();
+        final Name[] propertyNames = query.getPropertyNames();
+        final Name defaultGeomName = schema.getGeometryDescriptor().getName();
 
         // gather attributes needed by the query tool, they will be used by the
         // query filter
         final FilterAttributeExtractor extractor = new FilterAttributeExtractor();
         final Filter filter = query.getFilter();
         filter.accept(extractor, null);
-        final String[] filterAttnames = extractor.getAttributeNames();
+        final Name[] filterAttnames = extractor.getAttributeNames();
 
         // check if the geometry is the one and only attribute needed
         // to return attribute _and_ to run the query filter
@@ -549,8 +549,8 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        builder.setDefaultGeometry(geomDescriptor.getLocalName());
         builder.addAll(types);
+        builder.setDefaultGeometry(geomDescriptor.getLocalName());
 
         //configure the name
         final String local = shpFiles.getTypeName();

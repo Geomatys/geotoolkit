@@ -25,6 +25,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.sld.xml.XMLUtilities;
+import org.opengis.feature.type.Name;
 
 import org.opengis.filter.Filter;
 
@@ -41,7 +42,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     private QName typeName = null;
     private Filter filter = null;
     private Integer maxFeatures = null;
-    private String[] propertyNames = null;
+    private Name[] propertyNames = null;
 
     protected AbstractGetFeature(String serverURL, String version){
         super(serverURL);
@@ -100,7 +101,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public String[] getPropertyNames() {
+    public Name[] getPropertyNames() {
         return propertyNames;
     }
 
@@ -108,7 +109,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public void setPropertyNames(String[] properties) {
+    public void setPropertyNames(Name[] properties) {
         this.propertyNames = properties;
     }
 
@@ -164,7 +165,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         if(propertyNames != null){
             final StringBuilder sb = new StringBuilder();
 
-            for(final String prop : propertyNames){
+            for(final Name prop : propertyNames){
                 sb.append(prop).append(',');
             }
 

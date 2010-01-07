@@ -54,7 +54,7 @@ public abstract class AbstractModelTests extends TestCase{
     @Test
     public void testSchemaCreation() throws Exception{
         final DataStore store = getDataStore();
-        final List<Class> geometryBindings = getSupportedAttributTypes();
+        final List<Class> geometryBindings = getSupportedGeometryTypes();
         final List<Class> bindinds = getSupportedAttributTypes();
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
         

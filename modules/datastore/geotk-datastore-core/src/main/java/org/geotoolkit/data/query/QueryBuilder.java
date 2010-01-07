@@ -18,6 +18,7 @@
 package org.geotoolkit.data.query;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -31,12 +32,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class QueryBuilder {
 
-    private static final String[] NO_PROPERTIES = new String[0];
+    private static final Name[] NO_PROPERTIES = new Name[0];
     
     private Name typeName = null;
 
     private Filter filter = Filter.INCLUDE;
-    private String[] properties = null;
+    private Name[] properties = null;
     private SortBy[] sortBy = null;
     private CoordinateReferenceSystem crs = null;
     private int startIndex = 0;
@@ -92,11 +93,22 @@ public class QueryBuilder {
         this.filter = filter;
     }
 
-    public String[] getProperties() {
+    public Name[] getProperties() {
         return properties;
     }
 
     public void setProperties(String[] properties) {
+        if(properties == null){
+            this.properties = null;
+        }else{
+            this.properties = new Name[properties.length];
+            for(int i=0;i<properties.length;i++){
+                this.properties[i] = new DefaultName(null, properties[i]);
+            }
+        }
+    }
+
+    public void setProperties(Name[] properties) {
         this.properties = properties;
     }
 

@@ -565,16 +565,16 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             returnedSchema = SimpleFeatureTypeBuilder.retype(type, query.getPropertyNames());
             FilterAttributeExtractor extractor = new FilterAttributeExtractor(type);
             postFilter.accept(extractor, null);
-            String[] extraAttributes = extractor.getAttributeNames();
+            Name[] extraAttributes = extractor.getAttributeNames();
             if(extraAttributes == null || extraAttributes.length == 0) {
                 querySchema = returnedSchema;
             } else {
-                List<String> allAttributes = new ArrayList<String>(Arrays.asList(query.getPropertyNames()));
-                for (String extraAttribute : extraAttributes) {
+                List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
+                for (Name extraAttribute : extraAttributes) {
                     if(!allAttributes.contains(extraAttribute))
                         allAttributes.add(extraAttribute);
                 }
-                String[] allAttributeArray =  (String[]) allAttributes.toArray(new String[allAttributes.size()]);
+                Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
                 querySchema = SimpleFeatureTypeBuilder.retype(type, allAttributeArray);
             }
         }

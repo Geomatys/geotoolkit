@@ -129,7 +129,7 @@ public interface Query {
      *       I think Query.FIDS fills this role to some degree.
      *       Query.FIDS.equals( filter ) would meet this need?
      */
-    String[] getPropertyNames();
+    Name[] getPropertyNames();
 
     /**
      * Convenience method to determine if the query should use the full schema

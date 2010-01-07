@@ -161,8 +161,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
+        assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
+        assertEquals(query.getPropertyNames()[1], DefaultName.valueOf("att2"));
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
         assertEquals(query.getStartIndex(), 5);
 
@@ -189,8 +189,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
+        assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
+        assertEquals(query.getPropertyNames()[1], DefaultName.valueOf("att2"));
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
         assertEquals(query.getStartIndex(), 5);
 
@@ -202,8 +202,8 @@ public class QueryTest extends TestCase{
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
-        assertEquals(query.getPropertyNames()[0], "att1");
-        assertEquals(query.getPropertyNames()[1], "att2");
+        assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
+        assertEquals(query.getPropertyNames()[1], DefaultName.valueOf("att2"));
         assertEquals(query.getSortBy()[0], FF.sort("att1", SortOrder.DESCENDING));
         assertEquals(query.getStartIndex(), 5);
 

@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -167,4 +168,47 @@ public class DefaultName implements Name {
     public String toString() {
         return getURI();
     }
+
+    /**
+     * Parse a string value that can be expressed in 2 different forms :
+     * JSR-283 extended form : {uri}localpart
+     * Separator form : uri:localpart
+     *
+     * if the given string do not match any, then a Name with no namespace will be
+     * created and the localpart will be the given string.
+     *
+     * @param candidate
+     * @return Name
+     */
+    public static Name valueOf(String candidate){
+
+        if(candidate.startsWith("{")){
+            //name is in extended form
+            return toSessionNamespaceFromExtended(candidate);
+        }
+
+        int index = candidate.lastIndexOf(':');
+        
+        if(index <= 0){
+            return new DefaultName(null, candidate);
+        }else{
+            final String uri = candidate.substring(0,index);
+            final String name = candidate.substring(index+1,candidate.length());
+            return new DefaultName(uri, name);
+        }
+
+    }
+
+    private static Name toSessionNamespaceFromExtended(String candidate) {
+        int index = candidate.indexOf('}');
+
+        if(index == -1) throw new IllegalArgumentException("Invalide extended form : "+ candidate);
+
+        final String uri = candidate.substring(1, index);
+        final String name = candidate.substring(index+1, candidate.length());
+
+        return new DefaultName(uri, name);
+    }
+
+
 }

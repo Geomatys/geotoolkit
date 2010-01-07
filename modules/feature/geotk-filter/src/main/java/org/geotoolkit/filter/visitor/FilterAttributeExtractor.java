@@ -20,9 +20,11 @@ package org.geotoolkit.filter.visitor;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.geotoolkit.feature.DefaultName;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.expression.PropertyName;
 
 
@@ -35,7 +37,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /*
      * Last set visited
      */
-    private final Set<String> attributeNames = new HashSet<String>();
+    private final Set<Name> attributeNames = new HashSet<Name>();
 
     /**
      * feature type to evaluate against
@@ -69,8 +71,8 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     /**
      * @return an array of the attribute names found so far during the visit
      */
-    public String[] getAttributeNames() {
-        return (String[]) attributeNames.toArray(new String[attributeNames.size()]);
+    public Name[] getAttributeNames() {
+        return (Name[]) attributeNames.toArray(new Name[attributeNames.size()]);
     }
 
     /**
@@ -92,12 +94,12 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
             // namespace prefixed string
             AttributeDescriptor type = (AttributeDescriptor) expression.evaluate(featureType);
             if(type != null) {
-               attributeNames.add( type.getLocalName() );
+               attributeNames.add( type.getName() );
             }else{
-               attributeNames.add( expression.getPropertyName() );
+               attributeNames.add( DefaultName.valueOf(expression.getPropertyName()) );
             }
         }else{
-            attributeNames.add( expression.getPropertyName() );
+            attributeNames.add( DefaultName.valueOf(expression.getPropertyName()) );
         }
 
         return attributeNames;

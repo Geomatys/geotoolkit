@@ -38,6 +38,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.FactoryException;
@@ -70,7 +71,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
         final Integer start = query.getStartIndex();
         final Integer max = query.getMaxFeatures();
         final Filter filter = query.getFilter();
-        final String[] properties = query.getPropertyNames();
+        final Name[] properties = query.getPropertyNames();
         final SortBy[] sorts = query.getSortBy();
         final CoordinateReferenceSystem crs = query.getCoordinateSystemReproject();
 
@@ -156,7 +157,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
      * @return FeatureType
      */
     private static FeatureType expectingType(FeatureType type, Query query) throws SchemaException{
-        final String[] properties = query.getPropertyNames();
+        final Name[] properties = query.getPropertyNames();
         final CoordinateReferenceSystem crs = query.getCoordinateSystemReproject();
 
         if(properties != null){

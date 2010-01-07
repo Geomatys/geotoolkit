@@ -20,12 +20,14 @@ package org.geotoolkit.filter.accessor;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.util.collection.Cache;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 
 /**
@@ -240,14 +242,14 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public boolean canHandle(Object object, String xpath, Class target) {
-            xpath = stripPrefix(xpath);
+            final Name name = DefaultName.valueOf(xpath);
 
             if (object instanceof Feature) {
-                return ((Feature) object).getProperty(xpath) != null;
+                return ((Feature) object).getProperty(name) != null;
             }
 
             if (object instanceof FeatureType) {
-                return ((FeatureType) object).getDescriptor(xpath) != null;
+                return ((FeatureType) object).getDescriptor(name) != null;
             }
 
             return false;
@@ -255,18 +257,18 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public Object get(Object object, String xpath, Class target) {
-            xpath = stripPrefix(xpath);
+            final Name name = DefaultName.valueOf(xpath);
 
             if(object instanceof SimpleFeature){
-                ((SimpleFeature) object).getAttribute(xpath);
+                ((SimpleFeature) object).getAttribute(name);
             }
 
             if (object instanceof Feature) {
-                return ((Feature) object).getProperty(xpath).getValue();
+                return ((Feature) object).getProperty(name).getValue();
             }
 
             if (object instanceof FeatureType) {
-                return ((FeatureType) object).getDescriptor(xpath);
+                return ((FeatureType) object).getDescriptor(name);
             }
 
             return null;
@@ -275,14 +277,14 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         @Override
         public void set(Object object, String xpath, Object value, Class target)
                 throws IllegalArgumentException {
-            xpath = stripPrefix(xpath);
+            final Name name = DefaultName.valueOf(xpath);
 
-            if(object instanceof SimpleFeature){
-                ((SimpleFeature) object).setAttribute(xpath, value);
+            if(object instanceof SimpleFeature) {
+                ((SimpleFeature) object).setAttribute(name, value);
             }
 
             if (object instanceof Feature) {
-                ((Feature) object).getProperty(xpath).setValue(value);
+                ((Feature) object).getProperty(name).setValue(value);
             }
 
             if (object instanceof FeatureType) {

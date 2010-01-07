@@ -72,6 +72,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.opengis.feature.type.Name;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -199,7 +200,7 @@ public class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
-            final String[] properties, final CoordinateReferenceSystem override) throws SchemaException
+            final Name[] properties, final CoordinateReferenceSystem override) throws SchemaException
     {
         URI namespaceURI = null;
         if (featureType.getName().getNamespaceURI() != null) {
@@ -215,7 +216,7 @@ public class FeatureTypeUtilities {
     }
 
     public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
-            String[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
+            Name[] properties, final CoordinateReferenceSystem override, String typeName, URI namespace)
             throws SchemaException {
 
         if ((properties == null) && (override == null)) {
@@ -223,9 +224,9 @@ public class FeatureTypeUtilities {
         }
 
         if (properties == null) {
-            properties = new String[featureType.getAttributeCount()];
+            properties = new Name[featureType.getAttributeCount()];
             for (int i = 0; i < properties.length; i++) {
-                properties[i] = featureType.getDescriptor(i).getLocalName();
+                properties[i] = featureType.getDescriptor(i).getName();
             }
         }
 
@@ -237,7 +238,7 @@ public class FeatureTypeUtilities {
 
         for (int i = 0; (i < featureType.getAttributeCount()) && same; i++) {
             final AttributeDescriptor type = featureType.getDescriptor(i);
-            same = type.getLocalName().equals(properties[i]) && (((override != null) && type instanceof GeometryDescriptor)
+            same = type.getName().equals(properties[i]) && (((override != null) && type instanceof GeometryDescriptor)
                     ? assertEquals(override, ((GeometryDescriptor) type).getCoordinateReferenceSystem())
                     : true);
         }
@@ -296,7 +297,7 @@ public class FeatureTypeUtilities {
      * @throws SchemaException DOCUMENT ME!
      */
     public static SimpleFeatureType createSubType(final SimpleFeatureType featureType,
-            final String[] properties) throws SchemaException
+            final Name[] properties) throws SchemaException
     {
         if (properties == null) {
             return featureType;
@@ -305,7 +306,7 @@ public class FeatureTypeUtilities {
         boolean same = featureType.getAttributeCount() == properties.length;
 
         for (int i = 0; (i < featureType.getAttributeCount()) && same; i++) {
-            same = featureType.getDescriptor(i).getLocalName().equals(properties[i]);
+            same = featureType.getDescriptor(i).getName().equals(properties[i]);
         }
 
         if (same) {
@@ -1027,11 +1028,11 @@ public class FeatureTypeUtilities {
     ////////////////////////////////////////////////////////////////////////////
 
 
-    public static String[] attributeNames(final SimpleFeatureType featureType) {
-        final String[] names = new String[featureType.getAttributeCount()];
+    public static Name[] attributeNames(final SimpleFeatureType featureType) {
+        final Name[] names = new Name[featureType.getAttributeCount()];
         final int count = featureType.getAttributeCount();
         for (int i = 0; i < count; i++) {
-            names[i] = featureType.getDescriptor(i).getLocalName();
+            names[i] = featureType.getDescriptor(i).getName();
         }
 
         return names;
@@ -1044,13 +1045,13 @@ public class FeatureTypeUtilities {
      * attributeName does not match the actual name of the type.
      * </p>
      */
-    public static String[] attributeNames(final Filter filter, final SimpleFeatureType featureType) {
+    public static Name[] attributeNames(final Filter filter, final SimpleFeatureType featureType) {
         if (filter == null) {
-            return new String[0];
+            return new Name[0];
         }
         final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
         filter.accept(attExtractor, null);
-        final String[] attributeNames = attExtractor.getAttributeNames();
+        final Name[] attributeNames = attExtractor.getAttributeNames();
         return attributeNames;
     }
 
@@ -1061,13 +1062,13 @@ public class FeatureTypeUtilities {
      * attributeName does not match the actual name of the type.
      * </p>
      */
-    public static String[] attributeNames(final Expression expression, final SimpleFeatureType featureType) {
+    public static Name[] attributeNames(final Expression expression, final SimpleFeatureType featureType) {
         if (expression == null) {
-            return new String[0];
+            return new Name[0];
         }
         final FilterAttributeExtractor attExtractor = new FilterAttributeExtractor(featureType);
         expression.accept(attExtractor, null);
-        final String[] attributeNames = attExtractor.getAttributeNames();
+        final Name[] attributeNames = attExtractor.getAttributeNames();
         return attributeNames;
     }
 

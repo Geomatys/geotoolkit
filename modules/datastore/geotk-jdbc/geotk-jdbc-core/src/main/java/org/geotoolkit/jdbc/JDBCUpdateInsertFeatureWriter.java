@@ -20,10 +20,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-
 import org.geotoolkit.factory.Hints;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
@@ -40,7 +41,7 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     }
     
     public JDBCUpdateInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, final String[] attributeNames, final Hints hints)
+            final Name groupName, SimpleFeatureType type, final Name[] attributeNames, final Hints hints)
             throws SQLException, IOException, DataStoreException
     {
         super(ps, cx, store, groupName, type, hints);

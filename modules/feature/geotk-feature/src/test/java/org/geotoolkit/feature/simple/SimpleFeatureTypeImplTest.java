@@ -82,7 +82,7 @@ public class SimpleFeatureTypeImplTest extends TestCase {
     private SimpleFeatureType buildLocationCountType() {
         SimpleFeatureTypeBuilder builder = buildPartialBuilder();
         builder.add(new DefaultName("location"), Point.class, DefaultGeographicCRS.WGS84);
-        builder.add(new DefaultName("count"), Integer.class, DefaultGeographicCRS.WGS84);
+        builder.add(new DefaultName("count"), Integer.class);
         return builder.buildFeatureType();
     }
 

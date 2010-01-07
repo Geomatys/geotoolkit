@@ -43,7 +43,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 class DefaultQuery implements Query {
 
     private final Name typeName;
-    private final String[] properties;
+    private final Name[] properties;
     private final Integer maxFeatures;
     private final int startIndex;
     private final Filter filter;
@@ -65,7 +65,7 @@ class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    DefaultQuery(final Name name, String[] attributs) {
+    DefaultQuery(final Name name, Name[] attributs) {
         this(name,
                 Filter.INCLUDE,
                 attributs,
@@ -76,7 +76,7 @@ class DefaultQuery implements Query {
                 null);
     }
 
-    DefaultQuery(final Name name, Filter filter, String[] attributs, SortBy[] sort,
+    DefaultQuery(final Name name, Filter filter, Name[] attributs, SortBy[] sort,
             CoordinateReferenceSystem crs, int startIndex, Integer MaxFeature,Hints hints){
 
         if(name == null){
@@ -121,7 +121,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public String[] getPropertyNames() {
+    public Name[] getPropertyNames() {
         return properties;
     }
 

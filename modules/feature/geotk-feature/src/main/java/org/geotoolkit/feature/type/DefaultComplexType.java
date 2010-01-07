@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
@@ -105,7 +104,11 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public PropertyDescriptor getDescriptor(final Name name) {
-        return propertyMap.get(name);
+        if(name.getNamespaceURI() == null){
+            return getDescriptor(name.getLocalPart());
+        }else{
+            return propertyMap.get(name);
+        }
     }
 
     /**

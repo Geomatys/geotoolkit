@@ -17,19 +17,15 @@
  */
 package org.geotoolkit.gui.swing.propertyedit.model;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.swing.table.DefaultTableModel;
-import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.FeatureCollection;
 
 import org.jdesktop.swingx.JXTable;
 
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -39,10 +35,10 @@ import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
@@ -79,9 +75,9 @@ public class FeatureSourceModel extends DefaultTableModel {
         columns.clear();
         features.clear();
 
-        FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
+        final FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
 
-        for(String name : query.getPropertyNames()){
+        for(Name name : query.getPropertyNames()){
             columns.add(ft.getDescriptor(name));
         }
         
@@ -100,22 +96,22 @@ public class FeatureSourceModel extends DefaultTableModel {
 
         FeatureType ft = ((FeatureMapLayer)layer).getCollection().getFeatureType();
 
-        String[] propNames = query.getPropertyNames();
+        Name[] propNames = query.getPropertyNames();
 
-        List<String> props = new ArrayList<String>();
+        List<Name> props = new ArrayList<Name>();
         if(propNames != null){
-            for(String str : propNames){
+            for(Name str : propNames){
                 props.add(str);
             }
             for(PropertyDescriptor desc : ft.getDescriptors()){
                 if((desc instanceof GeometryDescriptor)){
-                    props.remove(desc.getName().toString());
+                    props.remove(desc.getName());
                 }
             }
         }else{
             for(PropertyDescriptor desc : ft.getDescriptors()){
                 if(!(desc instanceof GeometryDescriptor)){
-                    props.add(desc.getName().toString());
+                    props.add(desc.getName());
                 }
             }
         }
