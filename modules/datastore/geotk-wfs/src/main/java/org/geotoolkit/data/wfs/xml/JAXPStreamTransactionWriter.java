@@ -351,7 +351,6 @@ public class JAXPStreamTransactionWriter {
         marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());
         marshaller.marshal(jaxbelement, writer);
-        writer.flush();
             
         writer.writeEndElement();
     }

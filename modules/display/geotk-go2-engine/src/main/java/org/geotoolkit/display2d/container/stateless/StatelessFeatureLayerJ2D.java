@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.container.stateless;
 
 
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -27,8 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import org.geotoolkit.data.DataStoreException;
 
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -292,9 +291,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return;
         }
                 
-        //we check that we have features left after the user Query
-        //if empty we stop this layer rendering
-        if(features == null || features.isEmpty()) return;
+        //we do not check if the collection is empty or not since
+        //it can be a very expensive operation
         
         final CoordinateReferenceSystem dataCRS      = features.getFeatureType().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
@@ -430,9 +428,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return graphics;
         }
 
-        //we check that we have features left after the user Query
-        //if empty we stop this layer rendering
-        if(features == null || features.isEmpty()) return graphics;
+        //we do not check if the collection is empty or not since
+        //it can be a very expensive operation
 
         final CoordinateReferenceSystem dataCRS      = features.getFeatureType().getCoordinateReferenceSystem();
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();

@@ -55,7 +55,6 @@ import org.geotoolkit.map.GraphicBuilder;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.expression.Expression;
@@ -268,9 +267,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             return;
         }
 
-        //we check that we have features left after the user Query
-        //if empty we stop this layer rendering
-        if(features == null || features.isEmpty()) return;
+        //we do not check if the collection is empty or not since
+        //it can be a very expensive operation
 
         final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
 
@@ -508,9 +506,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             return graphics;
         }
 
-        //we check that we have features left after the user Query
-        //if empty we stop this layer rendering
-        if(features == null || features.isEmpty()) return graphics;
+        //we do not check if the collection is empty or not since
+        //it can be a very expensive operation
 
 
         //sort the rules

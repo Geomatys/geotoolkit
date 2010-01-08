@@ -55,6 +55,7 @@ import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.model.FeatureSourceModel;
@@ -171,7 +172,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             for(int i=0,n=tab_data.getRowCount();i<n;i++){
                 Feature f = model.getFeatureAt(i);
                 if(selection.evaluate(f)){
-                    tab_data.getSelectionModel().addSelectionInterval(i, i);
+                    int viewIndex = tab_data.convertRowIndexToView(i);
+                    tab_data.getSelectionModel().addSelectionInterval(viewIndex, viewIndex);
                 }
             }
             selected = String.valueOf(selection.getIDs().size());
@@ -187,14 +189,18 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.getSelectionModel().removeListSelectionListener(selectionListener);
         layer.removeLayerListener(layerListener);
 
-        int[] rows = tab_data.getSelectedRows();
-
-        HashSet<Identifier> ids = new HashSet<Identifier>();
+        final int[] rows = tab_data.getSelectedRows();
 
         FeatureSourceModel model = (FeatureSourceModel) tab_data.getModel();
 
+        for(int i=0; i<rows.length; i++){
+            rows[i] = tab_data.convertRowIndexToModel(rows[i]);
+        }
+
+        final HashSet<Identifier> ids = new HashSet<Identifier>();
+
         for(int i : rows){
-            ids.add(model.getFeatureAt(i).getIdentifier());
+            ids.add(new DefaultFeatureId((String)model.getValueAt(i, 0)));
         }
 
         if(ids.isEmpty()){
@@ -226,14 +232,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         jbu_action = new JButton();
         guiCount = new JLabel();
 
-        tab_data.setModel(new DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-
-            }
-        ));
         jScrollPane1.setViewportView(tab_data);
 
         jcb_edit.setText(MessageBundle.getString("property_edit")); // NOI18N
@@ -258,10 +256,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addContainerGap()
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
+                .addGap(89, 89, 89)
                 .addComponent(jbu_action))
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)

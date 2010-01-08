@@ -19,15 +19,13 @@ package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+
 import org.opengis.filter.Filter;
 
 /**
@@ -48,29 +46,27 @@ public class DeleteSelectionAction extends JFeaturePanelAction{
                 final FeatureMapLayer layer = panel.getTarget();
                 if(layer == null) return;
 
-//                try{
-//                    if(layer.getCollection().isWritable()){
-//                        final FeatureStore<SimpleFeatureType,SimpleFeature> store =
-//                                (FeatureStore<SimpleFeatureType, SimpleFeature>) layer.getFeatureSource();
-//                        Filter fid = layer.getSelectionFilter();
-//                        if(fid != null){
-//
-//                            int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
-//                                    MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
-//                            if (JOptionPane.OK_OPTION == confirm) {
-//
-//                                try {
-//                                    store.removeFeatures(layer.getSelectionFilter());
-//                                } catch (IOException ex) {
-//                                    Logger.getLogger(DeleteSelectionAction.class.getName()).log(Level.SEVERE, null, ex);
-//                                }
-//                                panel.reset();
-//                            }
-//                        }
-//                    }
-//                }catch(DataStoreException ex){
-//                    Logger.getLogger(DeleteSelectionAction.class.getName()).log(Level.SEVERE, null, ex);
-//                }
+                final FeatureCollection collection = layer.getCollection();
+                if(collection.isWritable()){
+                    final Filter fid = layer.getSelectionFilter();
+                    if(fid != null){
+                        final int confirm = JOptionPane.showConfirmDialog(null, MessageBundle.getString("confirm_delete"),
+                                MessageBundle.getString("confirm_delete"), JOptionPane.OK_CANCEL_OPTION);
+                        if (JOptionPane.OK_OPTION == confirm) {
+
+                            try {
+                                collection.remove(fid);
+                                if(collection.getSession() != null){
+                                    collection.getSession().commit();
+                                }
+                            } catch (DataStoreException ex) {
+                                ex.printStackTrace();
+                            }
+                            panel.reset();
+                        }
+                    }
+                }
+
             }
         });
     }
