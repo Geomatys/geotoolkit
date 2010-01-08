@@ -51,11 +51,11 @@ public interface Update extends TransactionElement{
      * @return QName : requested type name, can be null
      * if not yet configured.
      */
-    String getTypeName();
+    Name getTypeName();
 
     /**
      * @param type : requested type name, must not be null
      */
-    void setTypeName(String type);
+    void setTypeName(Name type);
 
 }

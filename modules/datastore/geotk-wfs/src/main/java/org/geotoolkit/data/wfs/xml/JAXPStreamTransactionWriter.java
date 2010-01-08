@@ -19,7 +19,10 @@ package org.geotoolkit.data.wfs.xml;
 
 import java.io.OutputStream;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -50,14 +53,21 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JAXPStreamTransactionWriter {
 
-    private static final String GML_NAMESPACE = "http://www.opengis.net/gml";
-    private static final String GML_PREFIX = "gml";
+    public static final String GML_NAMESPACE = "http://www.opengis.net/gml";
+    public static final String GML_PREFIX = "gml";
 
-    private static final String OGC_NAMESPACE = "http://www.opengis.net/ogc";
-    private static final String OGC_PREFIX = "ogc";
+    public static final String OGC_NAMESPACE = "http://www.opengis.net/ogc";
+    public static final String OGC_PREFIX = "ogc";
 
-    private static final String WFS_NAMESPACE = "http://www.opengis.net/wfs";
-    private static final String WFS_PREFIX = "wfs";
+    public static final String WFS_NAMESPACE = "http://www.opengis.net/wfs";
+    public static final String WFS_PREFIX = "wfs";
+
+    public static final String XSI_NAMESPACE = "http://www.w3.org/2001/XMLSchema-instance";
+    public static final String XSI_PREFIX = "xsi";
+
+    public static final String XS_NAMESPACE = "http://www.w3.org/2001/XMLSchema";
+    public static final String XS_PREFIX = "xs";
+
 
     private static final String TAG_TRANSACTION = "Transaction";
     private static final String TAG_INSERT = "Insert";
@@ -68,6 +78,7 @@ public class JAXPStreamTransactionWriter {
     private static final String TAG_PROPERTY = "Property";
     private static final String TAG_NAME = "Name";
     private static final String TAG_VALUE = "Value";
+    private static final String TAG_FILTER = "Filter";
     
     private static final String PROP_SERVICE = "service";
     private static final String PROP_VERSION = "version";
@@ -79,6 +90,12 @@ public class JAXPStreamTransactionWriter {
     private static final String PROP_SRSNAME = "srsName";
     private static final String PROP_INPUTFORMAT = "inputFormat";
     private static final String PROP_IDGEN = "idgen";
+    private static final String PROP_TYPE = "type";
+
+    private static final String TYPE_STRING = XS_PREFIX+":string";
+
+
+    private final AtomicInteger inc = new AtomicInteger();
 
     public void write(OutputStream out, TransactionRequest request) 
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
@@ -93,8 +110,13 @@ public class JAXPStreamTransactionWriter {
         streamWriter.setPrefix(GML_PREFIX, GML_NAMESPACE);
         streamWriter.setPrefix(OGC_PREFIX, OGC_NAMESPACE);
         streamWriter.setPrefix(WFS_PREFIX, WFS_NAMESPACE);
+        streamWriter.setPrefix(XSI_PREFIX, XSI_NAMESPACE);
+        streamWriter.setPrefix(XS_PREFIX, XS_NAMESPACE);
 
+        //write the request
         write(streamWriter, request);
+
+        streamWriter.writeEndDocument();
 
         streamWriter.flush();
         streamWriter.close();
@@ -105,6 +127,14 @@ public class JAXPStreamTransactionWriter {
         writer.writeStartElement(WFS_PREFIX, TAG_TRANSACTION, WFS_NAMESPACE);
         writer.writeAttribute(PROP_SERVICE, "WFS");
         writer.writeAttribute(PROP_VERSION, "1.1.0");
+
+        //write the namespaces
+        writer.writeAttribute("xmlns:"+GML_PREFIX, GML_NAMESPACE);
+        writer.writeAttribute("xmlns:"+OGC_PREFIX, OGC_NAMESPACE);
+        writer.writeAttribute("xmlns:"+WFS_PREFIX, WFS_NAMESPACE);
+        writer.writeAttribute("xmlns:"+XSI_PREFIX, XSI_NAMESPACE);
+        writer.writeAttribute("xmlns:"+XS_PREFIX, XS_NAMESPACE);
+
 
         //write action if there is one------------------------------------------
         final ReleaseAction action = request.getReleaseAction();
@@ -164,11 +194,6 @@ public class JAXPStreamTransactionWriter {
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
         writer.writeStartElement(WFS_PREFIX, TAG_INSERT, WFS_NAMESPACE);
 
-        //write features--------------------------------------------------------
-        final FeatureCollection col = element.getFeatures();
-        final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
-        fw.writeFeatureCollection(col,writer);
-        
         //write id gen----------------------------------------------------------
         final IdentifierGenerationOption opt = element.getIdentifierGenerationOption();
         if(opt != null){
@@ -193,6 +218,12 @@ public class JAXPStreamTransactionWriter {
             final String id = CRS.lookupIdentifier(Citations.URN_OGC, crs, true);
             writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SRSNAME, id);
         }
+
+        //write features--------------------------------------------------------
+        final FeatureCollection col = element.getFeatures();
+        final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
+        fw.writeFeatureCollection(col,writer);
+        
 
         writer.writeEndElement();
     }
@@ -221,8 +252,10 @@ public class JAXPStreamTransactionWriter {
         writer.writeStartElement(WFS_PREFIX, TAG_UPDATE, WFS_NAMESPACE);
 
         //write typename--------------------------------------------------------
-        final String typeName = element.getTypeName();
-        writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_TYPENAME, typeName);
+        final Name typeName = element.getTypeName();
+        final String prefix = "geons"+inc.incrementAndGet();
+        writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
+        writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
 
         //write crs-------------------------------------------------------------
         final CoordinateReferenceSystem crs = element.getCoordinateReferenceSystem();
@@ -246,24 +279,40 @@ public class JAXPStreamTransactionWriter {
         //write filter ---------------------------------------------------------
         final Filter filter = element.getFilter();
         if(filter != null){
-            XMLUtilities util = new XMLUtilities();
-            util.writeFilter(writer, element.getFilter(), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+            final XMLUtilities util = new XMLUtilities();
+            final Marshaller marshaller = util.getJaxbContext110().createMarshaller();
+            marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
+            marshaller.marshal(jaxbelement, writer);
+            writer.flush();
         }
 
         //write properties------------------------------------------------------
         for(final Entry<Name,Object> entry : element.updates().entrySet()){
             writer.writeStartElement(WFS_PREFIX, TAG_PROPERTY, WFS_NAMESPACE);
 
+            //write namespace
+            final Name name = entry.getKey();
+            String pref = writer.getNamespaceContext().getPrefix(name.getNamespaceURI());
+            if(pref == null){
+                pref = "geons"+inc.incrementAndGet();
+                writer.writeAttribute("xmlns:"+pref, name.getNamespaceURI());
+            }
+            
+
             //write name
             writer.writeStartElement(WFS_PREFIX, TAG_NAME, WFS_NAMESPACE);
-            writer.writeCharacters(entry.getKey().getLocalPart());
+            writer.writeCharacters(pref+":"+name.getLocalPart());
             writer.writeEndElement();
 
             //write value
-            if(entry.getValue() != null){
+            final Object value = entry.getValue();
+            if(value != null){
                 //todo must handle geometry differently
                 writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
-                writer.writeCharacters(entry.getValue().toString());
+                writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
+                System.out.println("value  >>> " + value);
+                writer.writeCharacters(value.toString());
                 writer.writeEndElement();
             }
 
@@ -285,8 +334,10 @@ public class JAXPStreamTransactionWriter {
         writer.writeStartElement(WFS_PREFIX, TAG_DELETE, WFS_NAMESPACE);
 
         //write typename--------------------------------------------------------
-        final String typeName = element.getTypeName();
-        writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_TYPENAME, typeName);
+        final Name typeName = element.getTypeName();
+        final String prefix = "geons"+inc.incrementAndGet();
+        writer.writeAttribute("xmlns:"+prefix, typeName.getNamespaceURI());
+        writer.writeAttribute(PROP_TYPENAME, prefix+":"+typeName.getLocalPart());
 
         //write handle----------------------------------------------------------
         final String handle = element.getHandle();
@@ -295,9 +346,13 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write filter ---------------------------------------------------------
-        XMLUtilities util = new XMLUtilities();
-        util.writeFilter(writer, element.getFilter(), org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
-        
+        final XMLUtilities util = new XMLUtilities();
+        final Marshaller marshaller = util.getJaxbContext110().createMarshaller();
+        marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+        final Object jaxbelement = util.getTransformerXMLv110().visit(element.getFilter());
+        marshaller.marshal(jaxbelement, writer);
+        writer.flush();
+            
         writer.writeEndElement();
     }
 
@@ -313,6 +368,11 @@ public class JAXPStreamTransactionWriter {
         writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_SAFETOIGNORE, Boolean.valueOf(element.isSafeToIgnore()).toString());
 
         writer.writeEndElement();
+    }
+
+    private static String bestType(Object candidate){
+        
+        return TYPE_STRING;
     }
 
 }

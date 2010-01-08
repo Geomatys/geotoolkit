@@ -81,6 +81,10 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
         return fid;
     }
 
+    public void setFid(String fid) {
+        this.fid = fid;
+    }
+
     public boolean matches(Object feature) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

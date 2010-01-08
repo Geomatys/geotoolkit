@@ -122,6 +122,14 @@ public final class XMLUtilities {
         this.sldFactory = sldFactory;
     }
 
+    public static JAXBContext getJaxbContext100() {
+        return CONTEXT_100;
+    }
+
+    public static JAXBContext getJaxbContext110() {
+        return CONTEXT_110;
+    }
+
     public SLD100toGTTransformer getTransformer100(){
         if (transformerGTv100 == null) {
             transformerGTv100 = new SLD100toGTTransformer(filterFactory, styleFactory, sldFactory);
@@ -135,6 +143,18 @@ public final class XMLUtilities {
         }
         return transformerGTv110;
     }
+
+    public GTtoSLD100Transformer getTransformerXMLv100() {
+        if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
+        return transformerXMLv100;
+    }
+
+    public GTtoSLD110Transformer getTransformerXMLv110() {
+        if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
+        return transformerXMLv110;
+    }
+
+
 
     private Object unmarshall(final Object source, final Unmarshaller unMarshaller) 
             throws JAXBException{
@@ -313,13 +333,11 @@ public final class XMLUtilities {
         
         switch(version){
             case V_1_0_0 :
-                if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
-                jax = transformerXMLv100.visit(sld, null);
+                jax = getTransformerXMLv100().visit(sld, null);
                 marshallV100(target,jax,SLD_NAMESPACE);
                 break;
             case V_1_1_0 :
-                if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
-                jax = transformerXMLv110.visit(sld, null);
+                jax = getTransformerXMLv110().visit(sld, null);
                 marshallV110(target,jax,SLD_NAMESPACE);
                 break;
             default :
@@ -343,13 +361,11 @@ public final class XMLUtilities {
         
         switch(version){
             case V_1_0_0 :
-                if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
-                jax = transformerXMLv100.visit(sld, null);
+                jax = getTransformerXMLv100().visit(sld, null);
                 marshallV100(target,jax,SLD_NAMESPACE, isformatted);
                 break;
             case V_1_1_0 :
-                if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
-                jax = transformerXMLv110.visit(sld, null);
+                jax = getTransformerXMLv110().visit(sld, null);
                 marshallV110(target,jax,SLD_NAMESPACE);
                 break;
             default :
@@ -409,13 +425,11 @@ public final class XMLUtilities {
         
         switch(version){
             case V_1_0_0 :
-                if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
-                jax = transformerXMLv100.visit(style, null);
+                jax = getTransformerXMLv100().visit(style, null);
                 marshallV100(target,jax,SLD_NAMESPACE);
                 break;
             case V_1_1_0 :
-                if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
-                jax = transformerXMLv110.visit(style, null);
+                jax = getTransformerXMLv110().visit(style, null);
                 marshallV110(target,jax,SLD_NAMESPACE);
                 break;
             default :
@@ -477,13 +491,11 @@ public final class XMLUtilities {
         
         switch(version){
             case SLD_1_0_0 :
-                if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
-                org.geotoolkit.sld.xml.v100.FeatureTypeStyle jaxfts = transformerXMLv100.visit(fts, null);
+                org.geotoolkit.sld.xml.v100.FeatureTypeStyle jaxfts = getTransformerXMLv100().visit(fts, null);
                 marshallV100(target,jaxfts,SLD_NAMESPACE);
                 break;
             case V_1_1_0 :
-                if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
-                jax = transformerXMLv110.visit(fts, null);
+                jax = getTransformerXMLv110().visit(fts, null);
                 if(jax instanceof org.geotoolkit.se.xml.v110.FeatureTypeStyleType){
                     jax = factorySEv110.createFeatureTypeStyle((org.geotoolkit.se.xml.v110.FeatureTypeStyleType) jax);
                 }else if(jax instanceof org.geotoolkit.se.xml.v110.CoverageStyleType){
@@ -550,13 +562,11 @@ public final class XMLUtilities {
         
         switch(version){
             case SLD_1_0_0 :
-                if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
-                final org.geotoolkit.sld.xml.v100.Rule jaxRule = transformerXMLv100.visit(rule, null);
+                final org.geotoolkit.sld.xml.v100.Rule jaxRule = getTransformerXMLv100().visit(rule, null);
                 marshallV100(target,jaxRule,SLD_NAMESPACE);
                 break;
             case V_1_1_0 :
-                if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
-                jax = transformerXMLv110.visit(rule, null);
+                jax = getTransformerXMLv110().visit(rule, null);
                 if(jax instanceof org.geotoolkit.se.xml.v110.RuleType){
                     jax = factorySEv110.createRule( (org.geotoolkit.se.xml.v110.RuleType) jax);
                 }
@@ -656,16 +666,14 @@ public final class XMLUtilities {
         
         switch(version){
             case V_1_0_0 :
-                if (transformerXMLv100 == null) transformerXMLv100 = new GTtoSLD100Transformer();
-                jax = transformerXMLv100.visit(filter);
+                jax = getTransformerXMLv100().visit(filter);
                 if(jax instanceof org.geotoolkit.ogc.xml.v100.FilterType){
                     jax = factoryOGCv100.createFilter( (org.geotoolkit.ogc.xml.v100.FilterType) jax);
                 }
                 marshallV100(target, jax, OGC_NAMESPACE);
                 break;
             case V_1_1_0 :
-                if (transformerXMLv110 == null) transformerXMLv110 = new GTtoSLD110Transformer();
-                jax = transformerXMLv110.visit(filter);
+                jax = getTransformerXMLv110().visit(filter);
                 if(jax instanceof org.geotoolkit.ogc.xml.v110.FilterType){
                     jax = factoryOGCv110.createFilter( (org.geotoolkit.ogc.xml.v110.FilterType) jax);
                 }

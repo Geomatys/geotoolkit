@@ -29,12 +29,12 @@ public abstract class AbstractNative implements Native{
 
     @Override
     public String getVendorId() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return vendorId;
     }
 
     @Override
     public void setVendorId(String vendorId) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.vendorId = vendorId;
     }
 
     @Override

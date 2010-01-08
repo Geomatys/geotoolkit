@@ -71,7 +71,7 @@ public class FilterType implements Filter {
     @XmlElementRef(name = "logicOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends LogicOpsType> logicOps;
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    private List<JAXBElement<? extends AbstractIdType>> id;
+    private List<JAXBElement<AbstractIdType>> id;
 
     /**
      * a transient factory to build JAXBelement
@@ -173,13 +173,12 @@ public class FilterType implements Filter {
 
     /**
      * Gets the value of the id property.
-     * (unmodifiable) 
      */
-    public List<JAXBElement<? extends AbstractIdType>> getId() {
+    public List<JAXBElement<AbstractIdType>> getId() {
         if (id == null) {
-            id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            id = new ArrayList<JAXBElement<AbstractIdType>>();
         }
-        return Collections.unmodifiableList(id);
+        return id;
     }
     
     @Override

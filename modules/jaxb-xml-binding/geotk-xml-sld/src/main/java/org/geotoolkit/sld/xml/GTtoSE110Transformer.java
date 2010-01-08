@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +37,14 @@ import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
+import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
@@ -125,6 +128,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Id;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
@@ -146,6 +151,7 @@ import org.opengis.filter.expression.NilExpression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
 import org.opengis.filter.spatial.Contains;
@@ -217,6 +223,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     private final org.geotoolkit.sld.xml.v110.ObjectFactory sld_factory_v110;
     private final org.geotoolkit.se.xml.v110.ObjectFactory se_factory;
     private final org.geotoolkit.ogc.xml.v110.ObjectFactory ogc_factory;
+    private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
     public GTtoSE110Transformer(){
         this.sld_factory_v110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
@@ -554,11 +561,29 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 throw new IllegalArgumentException("invalide bbox element : " + filter);
             }
 
-
             final BBOXType bbtype = new BBOXType(property, minx, miny, maxx, maxy, srs);
 
-
             return ogc_factory.createBBOX(bbtype);
+        }else if(filter instanceof Id){
+            //todo OGC filter can not handle ID when we are inside another filter type
+            //so here we make a small tric to change an id filter in a serie of propertyequal filter
+            //this is not really legal but we dont have the choice here
+            //we should propose an evolution of ogc filter do consider id filter as a comparison filter
+            final PropertyName n = FF.property("@id");
+            final List<Filter> lst = new ArrayList<Filter>();
+
+            for(Identifier ident : ((Id)filter).getIdentifiers()){
+                lst.add(FF.equals(n, FF.literal(ident.getID().toString())));
+            }
+
+            if(lst.size() == 0){
+                return null;
+            }else if(lst.size() == 1){
+                return visitFilter(lst.get(0));
+            }else{
+                return visitFilter(FF.and(lst));
+            }
+
         }else if(filter instanceof Beyond){
             throw new IllegalArgumentException("Not parsed yet : " + filter);
         }else if(filter instanceof Contains){
@@ -584,23 +609,44 @@ public class GTtoSE110Transformer implements StyleVisitor{
         }
         
     }
-    
+
+    public List<JAXBElement<AbstractIdType>> visitFilter(Id filter){
+
+        final List<JAXBElement<AbstractIdType>> lst = new ArrayList<JAXBElement<AbstractIdType>>();
+
+        for(Identifier ident : filter.getIdentifiers()){
+            final FeatureIdType fit = ogc_factory.createFeatureIdType();
+            fit.setFid(ident.getID().toString());
+            final JAXBElement jax = ogc_factory.createFeatureId(fit);
+            lst.add(jax);
+        }
+
+        return lst;
+    }
+
     public FilterType visit(Filter filter) {
         final FilterType ft = ogc_factory.createFilterType();
-        final JAXBElement<?> sf = visitFilter(filter);
 
-        if(sf == null){
-            return null;
-        }else if (sf.getValue() instanceof ComparisonOpsType) {
-            ft.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
-        } else if (sf.getValue() instanceof LogicOpsType) {
-            ft.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
-        } else if (sf.getValue() instanceof SpatialOpsType) {
-            ft.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
-        } else {
-            //should not happen
-            throw new IllegalArgumentException("invalide filter element : " + sf);
+        if(filter instanceof Id){
+            ft.getId().addAll(visitFilter((Id)filter));
+        }else{
+            final JAXBElement<?> sf = visitFilter(filter);
+
+            if(sf == null){
+                return null;
+            }else if (sf.getValue() instanceof ComparisonOpsType) {
+                ft.setComparisonOps((JAXBElement<? extends ComparisonOpsType>) sf);
+            } else if (sf.getValue() instanceof LogicOpsType) {
+                ft.setLogicOps((JAXBElement<? extends LogicOpsType>) sf);
+            } else if (sf.getValue() instanceof SpatialOpsType) {
+                ft.setSpatialOps((JAXBElement<? extends SpatialOpsType>) sf);
+            } else {
+                //should not happen
+                throw new IllegalArgumentException("invalide filter element : " + sf);
+            }
         }
+
+        
         return ft;
     }
     

@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+import org.apache.bcel.generic.CHECKCAST;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
@@ -176,6 +177,12 @@ public class WFSDataStore extends AbstractDataStore{
 
         }
 
+    }
+
+    @Override
+    public boolean isWritable(Name typeName) throws DataStoreException {
+        this.typeCheck(typeName);
+        return true;
     }
 
     /**
@@ -323,7 +330,7 @@ public class WFSDataStore extends AbstractDataStore{
         update.setInputFormat("text/xml; subtype=gml/3.1.1");
         
         update.setFilter(filter);
-        update.setTypeName(groupName.getLocalPart());
+        update.setTypeName(groupName);
         for(Map.Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
             update.updates().put(entry.getKey().getName(), entry.getValue());
         }
@@ -346,7 +353,7 @@ public class WFSDataStore extends AbstractDataStore{
         final TransactionRequest request = server.createTransaction();
         final Delete delete = server.createDeleteElement();
         
-        delete.setTypeName(groupName.getLocalPart());
+        delete.setTypeName(groupName);
         delete.setFilter(filter);
 
         request.elements().add(delete);

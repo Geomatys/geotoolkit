@@ -117,7 +117,7 @@ public class FeatureSourceModel extends DefaultTableModel {
         }
 
         final QueryBuilder builder = new QueryBuilder(query);
-        builder.setProperties(props.toArray(new String[props.size()]));
+        builder.setProperties(props.toArray(new Name[props.size()]));
         query = builder.buildQuery();
         return query;
     }
@@ -136,7 +136,7 @@ public class FeatureSourceModel extends DefaultTableModel {
     @Override
     public String getColumnName(int column) {
         if(column == 0) return "id";
-        return columns.get(column-1).getName().toString();
+        return columns.get(column-1).getName().getLocalPart();
     }
 
     @Override
@@ -175,7 +175,7 @@ public class FeatureSourceModel extends DefaultTableModel {
             Filter filter = ff.id(Collections.singleton(features.get(rowIndex).getIdentifier()));
             FeatureType schema = collection.getFeatureType();
 
-            AttributeDescriptor NAME = (AttributeDescriptor) schema.getDescriptor(getColumnName(columnIndex-1));
+            AttributeDescriptor NAME = (AttributeDescriptor) columns.get(columnIndex-1);
 
             try {
                 collection.update(filter, NAME, aValue);

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.wfs;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -29,7 +30,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class AbstractUpdate implements Update{
 
-    protected String typeName = null;
+    protected final Map<Name, Object> updates = new HashMap<Name, Object>();
+    protected Name typeName = null;
     protected String handle = null;
     protected Filter filter = null;
     protected CoordinateReferenceSystem crs = null;
@@ -37,7 +39,7 @@ public class AbstractUpdate implements Update{
 
     @Override
     public Map<Name, Object> updates() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return updates;
     }
 
     @Override
@@ -81,12 +83,12 @@ public class AbstractUpdate implements Update{
     }
 
     @Override
-    public String getTypeName() {
+    public Name getTypeName() {
         return typeName;
     }
 
     @Override
-    public void setTypeName(String type) {
+    public void setTypeName(Name type) {
         this.typeName = type;
     }
 

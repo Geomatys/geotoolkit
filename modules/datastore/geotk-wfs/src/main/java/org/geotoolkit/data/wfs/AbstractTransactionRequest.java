@@ -25,6 +25,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geotoolkit.data.wfs.xml.JAXPStreamTransactionWriter;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -36,6 +38,7 @@ public class AbstractTransactionRequest implements TransactionRequest{
     protected final String serverURL;
     protected final String version;
     protected String lockId = null;
+    protected ReleaseAction release = null;
 
     protected AbstractTransactionRequest(String serverURL, String version){
         this.serverURL = serverURL;
@@ -63,7 +66,7 @@ public class AbstractTransactionRequest implements TransactionRequest{
      */
     @Override
     public List<TransactionElement> elements() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return elements;
     }
 
     /**
@@ -71,7 +74,7 @@ public class AbstractTransactionRequest implements TransactionRequest{
      */
     @Override
     public ReleaseAction getReleaseAction() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return release;
     }
 
     /**
@@ -79,7 +82,7 @@ public class AbstractTransactionRequest implements TransactionRequest{
      */
     @Override
     public void setReleaseAction(ReleaseAction value) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.release = value;
     }
 
     /**
@@ -94,9 +97,36 @@ public class AbstractTransactionRequest implements TransactionRequest{
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-        OutputStream stream = conec.getOutputStream();
 
-        
+//        //write the namespaces
+//        final StringBuilder sbNS = new StringBuilder("{");
+//
+//        sbNS.append("xmlns(").append(JAXPStreamTransactionWriter.GML_PREFIX).append('=').append(JAXPStreamTransactionWriter.GML_NAMESPACE).append(')').append(',');
+//        sbNS.append("xmlns(").append(JAXPStreamTransactionWriter.OGC_PREFIX).append('=').append(JAXPStreamTransactionWriter.OGC_NAMESPACE).append(')').append(',');
+//        sbNS.append("xmlns(").append(JAXPStreamTransactionWriter.WFS_PREFIX).append('=').append(JAXPStreamTransactionWriter.WFS_NAMESPACE).append(')').append(',');
+//
+//
+//        if(sbNS.length() > 0 && sbNS.charAt(sbNS.length()-1) == ','){
+//            sbNS.deleteCharAt(sbNS.length()-1);
+//        }
+//
+//        sbNS.append("}");
+//
+//
+//        conec.addRequestProperty("NAMESPACE", sbNS.toString());
+
+
+        final OutputStream stream = conec.getOutputStream();
+
+        //write the transaction xml content
+        JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
+        try {
+            jaxp.write(stream, this);
+            //todo write request in this
+        } catch (Exception ex) {
+            throw (IOException)new IOException(ex.getMessage()).initCause(ex);
+        }
+
 
         //todo write request in this
 
