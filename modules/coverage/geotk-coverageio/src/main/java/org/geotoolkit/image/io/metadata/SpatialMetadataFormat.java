@@ -729,7 +729,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          * for each attribute of the metadata object that we are adding.
          */
         addElement(elementName, parentName, childPolicy);
-        addObjectValue(elementName, type, false, null);
+        addObjectValue(elementName, type);
         addCustomAttributes(elementName, type);
         standards.put(elementName, standard);
         for (final Map.Entry<String,Class<?>> entry : propertyTypes.entrySet()) {
@@ -819,6 +819,41 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * The default implementation does nothing.
      */
     void addCustomAttributes(final String elementName, final Class<?> type) {
+    }
+
+    /**
+     * Allows an {@code Object} reference of a given class type to be stored in nodes implementing
+     * the named element. This method delegates to one of the {@link #addObjectValue(String, Class,
+     * boolean, Object) addObjectValue} methods defined in the super-class. The current
+     * implementation is as below:
+     *
+     * {@preformat java
+     *     addObjectValue(elementName, classType, false, getDefaultValue(classType));
+     * }
+     *
+     * @param <T> The compile-time type of {@code classType}.
+     * @param elementName The name of the element for which to add an object value.
+     * @param classType The legal class type of the object value.
+     *
+     * @since 3.08
+     */
+    private <T> void addObjectValue(final String elementName, final Class<T> classType) {
+        addObjectValue(elementName, classType, false, getDefaultValue(classType));
+    }
+
+    /**
+     * Returns the default value for an object reference of the given type.
+     * The default implementation returns {@code null} in all cases. However
+     * the {@link PredefinedMetadataFormat} subclasse will override this method.
+     *
+     * @param  <T> The compile-time type of {@code classType}.
+     * @param  classType The class type of the object for which to get a default value.
+     * @return The default value for an object of the given type, or {@code null} if none.
+     *
+     * @since 3.08
+     */
+    <T> T getDefaultValue(final Class<T> classType) {
+        return null;
     }
 
     /**

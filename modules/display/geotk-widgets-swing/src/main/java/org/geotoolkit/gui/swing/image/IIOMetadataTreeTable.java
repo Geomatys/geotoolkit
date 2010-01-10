@@ -33,7 +33,9 @@ import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.internal.swing.table.BooleanRenderer;
+import org.geotoolkit.internal.swing.table.IdentifiedObjectRenderer;
 import org.geotoolkit.internal.swing.table.JTables;
+import org.opengis.referencing.IdentifiedObject;
 
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.COLUMN_COUNT;
 import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
@@ -43,7 +45,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * The {@code TreeTable} implementation for {@link IIOMetadataPanel}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.08
  *
  * @see MetadataTreeTable
  *
@@ -66,9 +68,9 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
     MetadataTreeNode selectedNode;
 
     /**
-     * The renderer for boolean values.
+     * Renderers for special kind of values.
      */
-    private final TableCellRenderer booleanRenderer;
+    private final TableCellRenderer booleanRenderer, identifiedObjectRenderer;
 
     /**
      * Creates a new table for the given table. The given root <strong>must</strong> be
@@ -93,6 +95,7 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
         setDefaultRenderer(Class.class, new DefaultTableRenderer(this));
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         booleanRenderer = new BooleanRenderer();
+        identifiedObjectRenderer = new IdentifiedObjectRenderer();
         /*
          * Assign programmatic identifiers to the columns, for handling by JTables static
          * methods. We need to remove the "value" column if there is no such column.
@@ -227,6 +230,9 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
             final Class<?> type = value.getClass();
             if (Boolean.class.equals(type)) {
                 return booleanRenderer;
+            }
+            if (IdentifiedObject.class.isAssignableFrom(type)) {
+                return identifiedObjectRenderer;
             }
         }
         return super.getCellRenderer(row, column);

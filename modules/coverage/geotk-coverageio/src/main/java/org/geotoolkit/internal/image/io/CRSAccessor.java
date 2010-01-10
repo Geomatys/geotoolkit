@@ -22,11 +22,11 @@ import javax.imageio.metadata.IIOMetadata;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
-import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.datum.Datum;
@@ -39,6 +39,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.naming.DefaultNameSpace;
+import org.geotoolkit.referencing.CRS;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 
@@ -48,12 +49,22 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * {@code "CoordinateReferenceSystem"} node.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07
  * @module
  */
 public final class CRSAccessor extends MetadataAccessor {
+    /**
+     * Small tolerance factor for comparisons of floating point numbers.
+     */
+    private static final double EPS = 1E-10;
+
+    /**
+     * {@code true} if the elements that are equal to the default value should be ommited.
+     */
+    private static final boolean OMMIT_DEFAULTS = true;
+
     /**
      * Creates a new accessor for the given metadata.
      *
@@ -147,7 +158,10 @@ public final class CRSAccessor extends MetadataAccessor {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             axes.selectChild(axes.appendChild());
             setName(axis, axes);
-            axes.setAttribute("axisAbbrev", axis.getAbbreviation());
+            final String abbreviation = axis.getAbbreviation();
+            if (!abbreviation.equals(axis.getName().getCode())) {
+                axes.setAttribute("axisAbbrev", abbreviation);
+            }
             axes.setAttribute("direction", axis.getDirection());
             boolean hasRangeMeaning = false;
             double value = axis.getMinimumValue();
@@ -171,6 +185,8 @@ public final class CRSAccessor extends MetadataAccessor {
      * Sets the coordinate reference system to the given value.
      *
      * @param crs The coordinate reference system.
+     *
+     * @todo The base CRS is not yet declared for the {@code DerivedCRS} case.
      */
     public void setCRS(final CoordinateReferenceSystem crs) {
         setName(crs, this);
@@ -183,35 +199,97 @@ public final class CRSAccessor extends MetadataAccessor {
         if (cs != null) {
             setCoordinateSystem(cs);
         }
-        if (crs instanceof ProjectedCRS) {
+        /*
+         * For ProjectedCRS, the baseCRS is implicitly a GeographicCRS with the same datum.
+         * For other kind of DerivedCRS, we need to declare the baseCRS (TODO).
+         */
+        if (crs instanceof GeneralDerivedCRS) {
             final Conversion conversion = ((GeneralDerivedCRS) crs).getConversionFromBase();
-            final MetadataAccessor proj = new MetadataAccessor(this, "Conversion", null);
-            setName(conversion, proj);
-            setName(conversion.getMethod(), false, proj, "method");
-            addParameter(new MetadataAccessor(proj, "Parameters", "ParameterValue"),
-                         conversion.getParameterValues());
+            final MetadataAccessor opAccessor = new MetadataAccessor(this, "Conversion", null);
+            setName(conversion, opAccessor);
+            setName(conversion.getMethod(), false, opAccessor, "method");
+            addParameter(new MetadataAccessor[] {opAccessor, null}, conversion.getParameterValues(),
+                    CRS.getEllipsoid(crs));
         }
     }
 
     /**
      * Adds the given parameter value using the given accessor. If the parameter value is actually
      * a {@link ParameterValueGroup}, then its child are added recursively.
+     * <p>
+     * In order to keep the metadata simplier, this method ommits some parameters that are equal
+     * to the default value. In order to reduce the risk of error, we ommits a parameter only if
+     * its default value is 0, or 1 in the particular case of the scale factor.
      *
-     * @param accessor The accessor to use for adding the parameters.
+     * @param accessors An array of length 2 where the first element is the accessor for the
+     *        {@link Conversion} element. The second element will be created by this method
+     *        when first needed, in order to create a {@code "Parameters"} element only if
+     *        there is at least one parameter to write.
      * @param param The parameter or group of parameters to add.
+     * @param ellipsoid The ellipsoid defined in the datum, or {@code null} if none.
      */
-    private static void addParameter(final MetadataAccessor accessor, final GeneralParameterValue param) {
-        if (param instanceof ParameterValue<?>) {
-            final Object value = ((ParameterValue<?>) param).getValue();
-            if (value != null) {
-                accessor.selectChild(accessor.appendChild());
-                setName(param.getDescriptor(), false, accessor, "name");
-                accessor.setAttribute("value", value.toString());
-            }
-        } else if (param instanceof ParameterValueGroup) {
+    private static void addParameter(final MetadataAccessor[] accessors,
+            final GeneralParameterValue param, final Ellipsoid ellipsoid)
+    {
+        if (param instanceof ParameterValueGroup) {
             for (final GeneralParameterValue p : ((ParameterValueGroup) param).values()) {
-                addParameter(accessor, p);
+                addParameter(accessors, p, ellipsoid);
             }
         }
+        if (param instanceof ParameterValue<?>) {
+            final ParameterValue<?> pv = (ParameterValue<?>) param;
+            final Object value = pv.getValue();
+            if (value != null) {
+                final ParameterDescriptor<?> descriptor = pv.getDescriptor();
+                final String name = descriptor.getName().getCode().trim();
+                if (value instanceof Number) {
+                    /*
+                     * Check if we should skip this value (see the method javadoc for more details).
+                     * Note that the omission of values equal to the default values can be disabled,
+                     * but not the omission of ellipsoid value. This is for consistency with WKT
+                     * formatting.
+                     */
+                    final double numericValue = ((Number) value).doubleValue();
+                    if (ellipsoid != null) {
+                        if (name.equalsIgnoreCase("semi_major")) {
+                            if (equals(numericValue, ellipsoid.getSemiMajorAxis())) {
+                                return;
+                            }
+                        } else if (name.equalsIgnoreCase("semi_minor")) {
+                            if (equals(numericValue, ellipsoid.getSemiMinorAxis())) {
+                                return;
+                            }
+                        }
+                    }
+                    if (OMMIT_DEFAULTS) {
+                        final Object defaultValue = descriptor.getDefaultValue();
+                        if (defaultValue instanceof Number) {
+                            final double df = ((Number) defaultValue).doubleValue();
+                            if (equals(numericValue, df)) {
+                                if (df == (name.equalsIgnoreCase("scale_factor") ? 1 : 0)) {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                MetadataAccessor accessor = accessors[1];
+                if (accessor == null) {
+                    accessor = new MetadataAccessor(accessors[0], "Parameters", "ParameterValue");
+                    accessors[1] = accessor;
+                }
+                accessor.selectChild(accessor.appendChild());
+                accessor.setAttribute("name", name);
+                accessor.setAttribute("value", value.toString());
+            }
+        }
+    }
+
+    /**
+     * Returns {@code true} if the given value is equals to the expected one,
+     * accepting a tolerance interval.
+     */
+    private static boolean equals(final double actual, final double expected) {
+        return Math.abs(actual - expected) <= Math.abs(expected)*EPS;
     }
 }

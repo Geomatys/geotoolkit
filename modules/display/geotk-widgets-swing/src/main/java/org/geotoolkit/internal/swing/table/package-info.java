@@ -25,7 +25,7 @@
  * in incompatible ways in any future version.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.08
  *
  * @since 3.05
  * @module

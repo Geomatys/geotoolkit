@@ -193,7 +193,7 @@
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.06
+ * @version 3.08
  *
  * @since 2.4
  * @module

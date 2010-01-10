@@ -106,38 +106,14 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "    │   └───Axes\n" +
                 "    │       ├───CoordinateSystemAxis\n" +
                 "    │       │   ├───name=“x”\n" +
-                "    │       │   ├───axisAbbrev=“x”\n" +
                 "    │       │   ├───direction=“east”\n" +
                 "    │       │   └───unit=“m”\n" +
                 "    │       └───CoordinateSystemAxis\n" +
                 "    │           ├───name=“y”\n" +
-                "    │           ├───axisAbbrev=“y”\n" +
                 "    │           ├───direction=“north”\n" +
                 "    │           └───unit=“m”\n" +
                 "    └───Conversion\n" +
                 "        ├───name=“WGS 84 / World Mercator”\n" +
-                "        ├───method=“Mercator_1SP”\n" +
-                "        └───Parameters\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“semi_major”\n" +
-                "            │   └───value=“6378137.0”\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“semi_minor”\n" +
-                "            │   └───value=“6356752.314245179”\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“latitude_of_origin”\n" +
-                "            │   └───value=“0.0”\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“central_meridian”\n" +
-                "            │   └───value=“0.0”\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“scale_factor”\n" +
-                "            │   └───value=“1.0”\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“false_easting”\n" +
-                "            │   └───value=“0.0”\n" +
-                "            └───ParameterValue\n" +
-                "                ├───name=“false_northing”\n" +
-                "                └───value=“0.0”"), metadata.toString());
+                "        └───method=“Mercator_1SP”"), metadata.toString());
     }
 }

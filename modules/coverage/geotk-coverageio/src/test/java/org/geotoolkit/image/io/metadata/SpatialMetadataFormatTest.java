@@ -49,6 +49,9 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.operation.Conversion;
 
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -313,6 +316,7 @@ public final class SpatialMetadataFormatTest {
         assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("Datum", "type"));
         assertEquals(VALUE_ENUMERATION,               f.getAttributeValueType    ("Datum", "type"));
         assertEquals(Ellipsoid.class,                 f.getObjectClass           ("Ellipsoid"));
+        assertEquals(DefaultEllipsoid.WGS84,          f.getObjectDefaultValue    ("Ellipsoid"));
         assertEquals(CHILD_POLICY_EMPTY,              f.getChildPolicy           ("Ellipsoid"));
         assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("Ellipsoid", "name"));
         assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("Ellipsoid", "name"));
@@ -323,6 +327,7 @@ public final class SpatialMetadataFormatTest {
         assertEquals(DATATYPE_DOUBLE,                 f.getAttributeDataType     ("Ellipsoid", "inverseFlattening"));
         assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("Ellipsoid", "inverseFlattening"));
         assertEquals(PrimeMeridian.class,             f.getObjectClass           ("PrimeMeridian"));
+        assertEquals(DefaultPrimeMeridian.GREENWICH,  f.getObjectDefaultValue    ("PrimeMeridian"));
         assertEquals(CHILD_POLICY_EMPTY,              f.getChildPolicy           ("PrimeMeridian"));
         assertEquals(DATATYPE_STRING,                 f.getAttributeDataType     ("PrimeMeridian", "name"));
         assertEquals(VALUE_ARBITRARY,                 f.getAttributeValueType    ("PrimeMeridian", "name"));

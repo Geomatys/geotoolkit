@@ -62,6 +62,15 @@ import org.opengis.util.GenericName;
 
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.internal.image.io.MetadataEnum;
+import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 
 
 /**
@@ -71,7 +80,7 @@ import org.geotoolkit.internal.image.io.MetadataEnum;
  * trees derived from the predefined Geotk trees.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07 (derived from 3.05)
  * @module
@@ -364,5 +373,93 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
             return;
         }
         addAttribute(elementName, "type", DATATYPE_STRING, true, null, types);
+    }
+
+    /**
+     * Returns the default value for an object reference of the given type. This method is
+     * invoked automatically by the {@code addTree} methods for determining the value of the
+     * {@code defaultValue} argument in the call to the {@link #addObjectValue(String, Class,
+     * boolean, Object) addObjectValue} method.
+     * <p>
+     * This method is also invoked by {@link ReferencingMetadataHelper#getDefault(Class)}, which
+     * does not rely on {@link #getObjectDefaultValue(String)} because the default value of some
+     * referencing objects depends on the type of the enclosing element. For example the default
+     * coordinate system shall be ellipsoidal for a geographic CRS and cartesian for a projected
+     * CRS.
+     * <p>
+     * The default implementation returns a value determined from the table below.
+     * Subclasses can override this method for providing different default values.
+     * <p>
+     * <table border="1" cellspacing="0">
+     * <tr bgcolor="lightblue">
+     *   <th>Type</th>
+     *   <th>Default value</th>
+     * </tr><tr>
+     *   <td>&nbsp;{@link PrimeMeridian}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultPrimeMeridian#GREENWICH}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link Ellipsoid}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEllipsoid#WGS84}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link GeodeticDatum}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultGeodeticDatum#WGS84}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link VerticalDatum}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultVerticalDatum#GEOIDAL}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link EngineeringDatum}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEngineeringDatum#UNKNOW}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link EllipsoidalCS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEllipsoidalCS#GEODETIC_2D}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link CartesianCS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultCartesianCS#GENERIC_2D}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link GeographicCRS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultGeographicCRS#WGS84}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;{@link GeocentricCRS}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultGeocentricCRS#CARTESIAN}&nbsp;</td>
+     * </tr><tr>
+     *   <td>&nbsp;All other type&nbsp;</td>
+     *   <td>&nbsp;{@code null}&nbsp;</td>
+     * </tr>
+     * </table>
+     *
+     * @param  <T> The compile-time type of {@code classType}.
+     * @param  type The class type of the object for which to get a default value.
+     * @return The default value for an object of the given type, or {@code null} if none.
+     *
+     * @see ReferencingMetadataHelper#getDefault(Class)
+     * @see #getObjectDefaultValue(String)
+     *
+     * @since 3.08
+     */
+    @Override
+    protected <T> T getDefaultValue(final Class<T> type) {
+        final IdentifiedObject object;
+        if (PrimeMeridian.class.isAssignableFrom(type)) {
+            object = DefaultPrimeMeridian.GREENWICH;
+        } else if (Ellipsoid.class.isAssignableFrom(type)) {
+            object = DefaultEllipsoid.WGS84;
+        } else if (GeodeticDatum.class.isAssignableFrom(type)) {
+            object = DefaultGeodeticDatum.WGS84;
+        } else if (VerticalDatum.class.isAssignableFrom(type)) {
+            object = DefaultVerticalDatum.GEOIDAL;
+        } else if (EngineeringDatum.class.isAssignableFrom(type)) {
+            object = DefaultEngineeringDatum.UNKNOW;
+        } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
+            object = DefaultEllipsoidalCS.GEODETIC_2D;
+        } else if (CartesianCS.class.isAssignableFrom(type)) {
+            object = DefaultCartesianCS.GENERIC_2D;
+        } else if (GeographicCRS.class.isAssignableFrom(type)) {
+            object = DefaultGeographicCRS.WGS84;
+        } else if (GeocentricCRS.class.isAssignableFrom(type)) {
+            object = DefaultGeocentricCRS.CARTESIAN;
+        } else {
+            object = null;
+        }
+        return type.cast(object);
     }
 }

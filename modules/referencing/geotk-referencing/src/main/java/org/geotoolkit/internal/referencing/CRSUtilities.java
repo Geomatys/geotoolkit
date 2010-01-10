@@ -300,6 +300,8 @@ public final class CRSUtilities {
      *
      * @param  crs The coordinate reference system for which to get the datum. May be {@code null}.
      * @return The datum in the given CRS, or {@code null} if none.
+     *
+     * @see CRS#getEllipsoid(CoordinateReferenceSystem)
      */
     public static Datum getDatum(final CoordinateReferenceSystem crs) {
         return (crs instanceof SingleCRS) ? ((SingleCRS) crs).getDatum() : null;

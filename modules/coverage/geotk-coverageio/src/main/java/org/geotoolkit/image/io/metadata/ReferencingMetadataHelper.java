@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormat;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
@@ -34,12 +35,8 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.resources.Errors;
@@ -49,7 +46,6 @@ import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.image.io.MetadataEnum;
 import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.util.NullArgumentException;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
@@ -65,7 +61,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  *        <code>"type"</code> attribute.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07
  * @module
@@ -194,7 +190,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                 return factory.createPrimeMeridian(properties, greenwich, unit);
             }
         }
-        return getDefault("getPrimeMeridian", PrimeMeridian.class);
+        return getDefault("getPrimeMeridian", pmAccessor, PrimeMeridian.class);
     }
 
     /**
@@ -225,7 +221,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                 }
             }
         }
-        return getDefault("getEllipsoid", Ellipsoid.class);
+        return getDefault("getEllipsoid", ellipsoidAccessor, Ellipsoid.class);
     }
 
     /**
@@ -258,7 +254,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                 warning("getDatum", Errors.Keys.UNKNOW_TYPE_$1, type);
             }
         }
-        return getDefault("getDatum", baseType);
+        return getDefault("getDatum", datumAccessor, baseType);
     }
 
     /**
@@ -352,7 +348,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                 warning("getCoordinateSystem", Errors.Keys.UNKNOW_TYPE_$1, type);
             }
         }
-        return getDefault("getCoordinateSystem", baseType);
+        return getDefault("getCoordinateSystem", csAccessor, baseType);
     }
 
     /**
@@ -381,15 +377,15 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                 final GeographicCRS baseCRS = factory.createGeographicCRS(
                         Collections.singletonMap(GeographicCRS.NAME_KEY, untitled(accessor)),
                         getDatum(GeodeticDatum.class), DefaultEllipsoidalCS.GEODETIC_2D);
+                final CartesianCS derivedCS = getCoordinateSystem(CartesianCS.class);
                 return factory.createProjectedCRS(properties, baseCRS,
-                        getConversionFromBase(),
-                        getCoordinateSystem(CartesianCS.class));
+                        getConversionFromBase(baseCRS, derivedCS), derivedCS);
             } else {
                 // TODO: test for other types of CRS here (VerticalCRS, etc.)
                 warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOW_TYPE_$1, type);
             }
         }
-        return getDefault("getCoordinateReferenceSystem", baseType);
+        return getDefault("getCoordinateReferenceSystem", accessor, baseType);
     }
 
     /**
@@ -401,7 +397,9 @@ public class ReferencingMetadataHelper extends MetadataHelper {
      * @return The conversion from geographic to projected CRS, or {@code null}.
      * @throws FactoryException If the conversion can not be created.
      */
-    protected Conversion getConversionFromBase() throws FactoryException {
+    private Conversion getConversionFromBase(final CoordinateReferenceSystem baseCRS,
+            final CoordinateSystem derivedCS) throws FactoryException
+    {
         final MetadataAccessor cvAccessor = new MetadataAccessor(accessor, "Conversion", null);
         final Map<String,?> properties = getName(cvAccessor);
         final String method = cvAccessor.getAttribute("method");
@@ -422,10 +420,10 @@ public class ReferencingMetadataHelper extends MetadataHelper {
                     }
                 }
             }
-            final MathTransform tr = factory.createParameterizedTransform(parameters);
+            final MathTransform tr = factory.createBaseToDerived(baseCRS, parameters, derivedCS);
             return new DefiningConversion(properties, factory.getLastMethodUsed(), tr);
         }
-        return getDefault("getBaseToCRS", Conversion.class);
+        return getDefault("getBaseToCRS", cvAccessor, Conversion.class);
     }
 
     /**
@@ -452,77 +450,48 @@ public class ReferencingMetadataHelper extends MetadataHelper {
     /**
      * Returns a default object of the given class. This method is invoked automatically
      * when the object was not explicitly defined in the metadata, or can not be parsed.
-     * The default implementation provides the following default objects. Subclasses can
-     * override this method for changing the defaults.
      * <p>
-     * <table border="1">
-     * <tr bgcolor="lightblue">
-     *   <th>Type</th>
-     *   <th>Default</th>
-     * </tr><tr>
-     *   <td>&nbsp;{@link PrimeMeridian}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultPrimeMeridian#GREENWICH GREENWICH}&nbsp;</td>
-     * </tr><tr>
-     *   <td>&nbsp;{@link Ellipsoid}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultEllipsoid#WGS84 WGS84}&nbsp;</td>
-     * </tr><tr>
-     *   <td>&nbsp;{@link GeodeticDatum}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultGeodeticDatum#WGS84 WGS84}&nbsp;</td>
-     * </tr><tr>
-     *   <td>&nbsp;{@link EngineeringDatum}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultEngineeringDatum#UNKNOW UNKNOW}&nbsp;</td>
-     * </tr><tr>
-     *   <td>&nbsp;{@link EllipsoidalCS}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultEllipsoidalCS#GEODETIC_2D GEODETIC_2D}&nbsp;</td>
-     * </tr><tr>
-     *   <td>&nbsp;{@link CartesianCS}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultCartesianCS#GENERIC_2D GENERIC_2D}&nbsp;</td>
-     * </tr><tr>
-     *   <td>&nbsp;{@link Conversion}&nbsp;</td>
-     *   <td>&nbsp;{@code null}&nbsp;</td>
-     * </tr>
-     * </table>
+     * The default implementation delegates to {@link PredefinedMetadataFormat#getDefaultValue(Class)}.
+     * The later is preferred to {@link IIOMetadataFormat#getObjectDefaultValue(String)} because the
+     * default value may vary depending on the {@code "type"} attribute in the enclosing element.
+     * For example if the CRS type is {@code "geographic"}, then the default coordinate system
+     * shall be a {@link EllipsoidalCS}. But if the CRS type is {@code "projected"} instead,
+     * then the default coordinate system shall rather be a {@link CartesianCS}.
+     * <p>
+     * Subclasses can override this method if they want to provide different default values.
      *
      * @param  <T>  The compile-time type of the {@code type} argument.
      * @param  type The type of the object to be returned.
      * @return The default object of the given type, or {@code null} if none.
-     * @throws IllegalArgumentException If the given type is unknown to this method.
      * @throws FactoryException If the default object can not be created.
+     *
+     * @see PredefinedMetadataFormat#getDefaultValue(Class)
+     * @see IIOMetadataFormat#getObjectDefaultValue(String)
      */
-    protected <T extends IdentifiedObject> T getDefault(final Class<T> type)
-            throws IllegalArgumentException, FactoryException
-    {
-        final IdentifiedObject object;
-        if (PrimeMeridian.class.isAssignableFrom(type)) {
-            object = DefaultPrimeMeridian.GREENWICH;
-        } else if (Ellipsoid.class.isAssignableFrom(type)) {
-            object = DefaultEllipsoid.WGS84;
-        } else if (GeodeticDatum.class.isAssignableFrom(type)) {
-            object = DefaultGeodeticDatum.WGS84;
-        } else if (EngineeringDatum.class.isAssignableFrom(type)) {
-            object = DefaultEngineeringDatum.UNKNOW;
-        } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
-            object = DefaultEllipsoidalCS.GEODETIC_2D;
-        } else if (CartesianCS.class.isAssignableFrom(type)) {
-            object = DefaultCartesianCS.GENERIC_2D;
-        } else if (Conversion.class.isAssignableFrom(type)) {
-            object = null;
-        } else if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
-            object = null;
-        } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+    protected <T extends IdentifiedObject> T getDefault(final Class<T> type) throws FactoryException {
+        if (accessor.format instanceof PredefinedMetadataFormat) {
+            return ((PredefinedMetadataFormat) accessor.format).getDefaultValue(type);
         }
-        return type.cast(object);
+        return null;
     }
 
     /**
-     * Returns a default object of the given class. This method logs
-     * a warning telling that the returned object is used as a fallback.
+     * Returns a default object of the given class. This method logs a warning telling that the
+     * returned object is used as a fallback. The default implementation delegates to the first
+     * of the following methods which return a non-null default value:
+     * <p>
+     * <ul>
+     *   <li>{@link PredefinedMetadataFormat#getDefaultValue(Class)}</li>
+     *   <li>{@link IIOMetadataFormat#getObjectDefaultValue(String)}</li>
+     * </ul>
      */
-    private <T extends IdentifiedObject> T getDefault(final String method, final Class<T> type)
-            throws FactoryException
+    private <T extends IdentifiedObject> T getDefault(final String method,
+            final MetadataAccessor accessor, final Class<T> type) throws FactoryException
     {
-        final T object = getDefault(type);
+        T object = getDefault(type);
+        if (object == null) {
+            object = type.cast(accessor.format.getObjectDefaultValue(accessor.name()));
+        }
         if (object != null) {
             warning(method, Loggings.getResources(accessor.getLocale()),
                     Loggings.Keys.USING_FALLBACK_$1, object.getName());
