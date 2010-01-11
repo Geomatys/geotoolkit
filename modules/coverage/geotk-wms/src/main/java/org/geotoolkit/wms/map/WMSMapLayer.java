@@ -18,7 +18,6 @@ package org.geotoolkit.wms.map;
 
 import java.net.MalformedURLException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -37,12 +37,16 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  *
@@ -50,6 +54,41 @@ import org.opengis.geometry.Envelope;
  * @module pending
  */
 public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
+
+    private static final CoordinateReferenceSystem EPSG_4326;
+
+    static {
+        CoordinateReferenceSystem crs = null;
+        try {
+            crs = CRS.decode("EPSG:4326");
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        EPSG_4326 = crs;
+    }
+
+    /**
+     * Configure the politic when the requested envelope is in CRS:84.
+     * Some servers are not strict on axis order or crs definitions.
+     * that's why we need this.
+     */
+    public static enum CRS84Politic{
+        STRICT,
+        CONVERT_TO_EPSG4326
+    }
+
+    /**
+     * Configure the politic when the requested envelope is in EPSG:4326.
+     * Some servers are not strict on axis order or crs definitions.
+     * that's why we need this.
+     */
+    public static enum EPSG4326Politic{
+        STRICT,
+        CONVERT_TO_CRS84
+    }
+
 
     //TODO : we should use the envelope profided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
@@ -61,6 +100,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     private String sld = null;
     private String sldBody = null;
     private String format = "image/png";
+    private CRS84Politic crs84Politic = CRS84Politic.STRICT;
+    private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
 
     public WMSMapLayer(WebMapServer server,String ... layers) {
         super(new DefaultStyleFactory().style());
@@ -70,6 +111,28 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
     public WebMapServer getServer(){
         return server;
+    }
+
+    public void setCrs84Politic(CRS84Politic crs84Politic) {
+        if(crs84Politic == null){
+            throw new NullPointerException("CRS84 politic can not be null.");
+        }
+        this.crs84Politic = crs84Politic;
+    }
+
+    public CRS84Politic getCrs84Politic() {
+        return crs84Politic;
+    }
+
+    public void setEpsg4326Politic(EPSG4326Politic epsg4326Politic) {
+        if(epsg4326Politic == null){
+            throw new NullPointerException("EPSG4326 politic can not be null.");
+        }
+        this.epsg4326Politic = epsg4326Politic;
+    }
+
+    public EPSG4326Politic getEpsg4326Politic() {
+        return epsg4326Politic;
     }
 
     /**
@@ -97,7 +160,35 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         }
 
         final RenderingContext2D context2D = (RenderingContext2D) context;
-        final Envelope env = context2D.getCanvasObjectiveBounds();
+        Envelope env = context2D.getCanvasObjectiveBounds();
+
+        //check the politics, the distant wms server might not be strict on axis orders
+        // nor in it's crs definitions between CRS:84 and EPSG:4326
+
+        //check CRS84 politic---------------------------------------------------
+        if(crs84Politic != CRS84Politic.STRICT){
+            if(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)){
+                switch(crs84Politic){
+                    case CONVERT_TO_EPSG4326 :
+                        env = new Envelope2D(env);
+                        ((Envelope2D)env).setCoordinateReferenceSystem(EPSG_4326);
+                        break;
+                }
+            }
+        }
+
+        //check EPSG4326 politic------------------------------------------------
+        if(epsg4326Politic != EPSG4326Politic.STRICT){
+            if(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)){
+                switch(epsg4326Politic){
+                    case CONVERT_TO_CRS84:
+                        env = new Envelope2D(env);
+                        ((Envelope2D)env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+                        break;
+                }
+            }
+        }
+
         Shape rect = context2D.getCanvasDisplayBounds();
 
         final double rotation = context2D.getCanvas().getController().getRotation();
@@ -114,7 +205,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         return null;
     }
 
-    public URL query(final Envelope env, final Dimension rect) throws MalformedURLException  {
+    private URL query(final Envelope env, final Dimension rect) throws MalformedURLException  {
         final GetMapRequest request = server.createGetMap();
         request.setEnvelope(env);
         request.setDimension(rect);
