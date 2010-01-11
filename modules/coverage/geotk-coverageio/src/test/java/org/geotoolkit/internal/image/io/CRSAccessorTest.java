@@ -77,42 +77,43 @@ public final class CRSAccessorTest {
         final CRSAccessor accessor = new CRSAccessor(metadata);
         accessor.setCRS(DefaultGeographicCRS.WGS84);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
-            "└───CoordinateReferenceSystem\n" +
-            "    ├───name=“WGS84(DD)”\n" +
-            "    ├───type=“geographic”\n" +
-            "    ├───Datum\n" +
-            "    │   ├───name=“OGC:WGS84”\n" +
-            "    │   ├───type=“geodetic”\n" +
-            "    │   ├───Ellipsoid\n" +
-            "    │   │   ├───name=“WGS84”\n" +
-            "    │   │   ├───axisUnit=“m”\n" +
-            "    │   │   ├───semiMajorAxis=“6378137.0”\n" +
-            "    │   │   └───inverseFlattening=“298.257223563”\n" +
-            "    │   └───PrimeMeridian\n" +
-            "    │       ├───name=“Greenwich”\n" +
-            "    │       ├───greenwichLongitude=“0.0”\n" +
-            "    │       └───angularUnit=“deg”\n" +
-            "    └───CoordinateSystem\n" +
-            "        ├───name=“Géodésique 2D”\n" +
-            "        ├───type=“ellipsoidal”\n" +
-            "        ├───dimension=“2”\n" +
-            "        └───Axes\n" +
-            "            ├───CoordinateSystemAxis\n" +
-            "            │   ├───name=“Geodetic longitude”\n" +
-            "            │   ├───axisAbbrev=“λ”\n" +
-            "            │   ├───direction=“east”\n" +
-            "            │   ├───minimumValue=“-180.0”\n" +
-            "            │   ├───maximumValue=“180.0”\n" +
-            "            │   ├───rangeMeaning=“wraparound”\n" +
-            "            │   └───unit=“deg”\n" +
-            "            └───CoordinateSystemAxis\n" +
-            "                ├───name=“Geodetic latitude”\n" +
-            "                ├───axisAbbrev=“φ”\n" +
-            "                ├───direction=“north”\n" +
-            "                ├───minimumValue=“-90.0”\n" +
-            "                ├───maximumValue=“90.0”\n" +
-            "                ├───rangeMeaning=“exact”\n" +
-            "                └───unit=“deg”"), metadata.toString());
+            "└───RectifiedGridDomain\n" +
+            "    └───CoordinateReferenceSystem\n" +
+            "        ├───name=“WGS84(DD)”\n" +
+            "        ├───type=“geographic”\n" +
+            "        ├───Datum\n" +
+            "        │   ├───name=“OGC:WGS84”\n" +
+            "        │   ├───type=“geodetic”\n" +
+            "        │   ├───Ellipsoid\n" +
+            "        │   │   ├───name=“WGS84”\n" +
+            "        │   │   ├───axisUnit=“m”\n" +
+            "        │   │   ├───semiMajorAxis=“6378137.0”\n" +
+            "        │   │   └───inverseFlattening=“298.257223563”\n" +
+            "        │   └───PrimeMeridian\n" +
+            "        │       ├───name=“Greenwich”\n" +
+            "        │       ├───greenwichLongitude=“0.0”\n" +
+            "        │       └───angularUnit=“deg”\n" +
+            "        └───CoordinateSystem\n" +
+            "            ├───name=“Géodésique 2D”\n" +
+            "            ├───type=“ellipsoidal”\n" +
+            "            ├───dimension=“2”\n" +
+            "            └───Axes\n" +
+            "                ├───CoordinateSystemAxis\n" +
+            "                │   ├───name=“Geodetic longitude”\n" +
+            "                │   ├───axisAbbrev=“λ”\n" +
+            "                │   ├───direction=“east”\n" +
+            "                │   ├───minimumValue=“-180.0”\n" +
+            "                │   ├───maximumValue=“180.0”\n" +
+            "                │   ├───rangeMeaning=“wraparound”\n" +
+            "                │   └───unit=“deg”\n" +
+            "                └───CoordinateSystemAxis\n" +
+            "                    ├───name=“Geodetic latitude”\n" +
+            "                    ├───axisAbbrev=“φ”\n" +
+            "                    ├───direction=“north”\n" +
+            "                    ├───minimumValue=“-90.0”\n" +
+            "                    ├───maximumValue=“90.0”\n" +
+            "                    ├───rangeMeaning=“exact”\n" +
+            "                    └───unit=“deg”"), metadata.toString());
     }
 
     /**
@@ -130,39 +131,40 @@ public final class CRSAccessorTest {
         final CRSAccessor accessor = new CRSAccessor(metadata);
         accessor.setCRS(crs);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
-                "└───CoordinateReferenceSystem\n" +
-                "    ├───name=“EPSG:WGS 84 / World Mercator”\n" +
-                "    ├───type=“projected”\n" +
-                "    ├───Datum\n" +
-                "    │   ├───name=“EPSG:World Geodetic System 1984”\n" +
-                "    │   ├───type=“geodetic”\n" +
-                "    │   ├───Ellipsoid\n" +
-                "    │   │   ├───name=“EPSG:WGS 84”\n" +
-                "    │   │   ├───axisUnit=“m”\n" +
-                "    │   │   ├───semiMajorAxis=“6378137.0”\n" +
-                "    │   │   └───inverseFlattening=“298.257223563”\n" +
-                "    │   └───PrimeMeridian\n" +
-                "    │       ├───name=“EPSG:Greenwich”\n" +
-                "    │       ├───greenwichLongitude=“0.0”\n" +
-                "    │       └───angularUnit=“deg”\n" +
-                "    ├───CoordinateSystem\n" +
-                "    │   ├───name=“EPSG:WGS 84 / World Mercator”\n" +
-                "    │   ├───type=“cartesian”\n" +
-                "    │   ├───dimension=“2”\n" +
-                "    │   └───Axes\n" +
-                "    │       ├───CoordinateSystemAxis\n" +
-                "    │       │   ├───name=“Easting”\n" +
-                "    │       │   ├───axisAbbrev=“E”\n" +
-                "    │       │   ├───direction=“east”\n" +
-                "    │       │   └───unit=“m”\n" +
-                "    │       └───CoordinateSystemAxis\n" +
-                "    │           ├───name=“Northing”\n" +
-                "    │           ├───axisAbbrev=“N”\n" +
-                "    │           ├───direction=“north”\n" +
-                "    │           └───unit=“m”\n" +
-                "    └───Conversion\n" +
-                "        ├───name=“WGS 84 / World Mercator”\n" +
-                "        └───method=“Mercator_1SP”"), metadata.toString());
+            "└───RectifiedGridDomain\n" +
+            "    └───CoordinateReferenceSystem\n" +
+            "        ├───name=“EPSG:WGS 84 / World Mercator”\n" +
+            "        ├───type=“projected”\n" +
+            "        ├───Datum\n" +
+            "        │   ├───name=“EPSG:World Geodetic System 1984”\n" +
+            "        │   ├───type=“geodetic”\n" +
+            "        │   ├───Ellipsoid\n" +
+            "        │   │   ├───name=“EPSG:WGS 84”\n" +
+            "        │   │   ├───axisUnit=“m”\n" +
+            "        │   │   ├───semiMajorAxis=“6378137.0”\n" +
+            "        │   │   └───inverseFlattening=“298.257223563”\n" +
+            "        │   └───PrimeMeridian\n" +
+            "        │       ├───name=“EPSG:Greenwich”\n" +
+            "        │       ├───greenwichLongitude=“0.0”\n" +
+            "        │       └───angularUnit=“deg”\n" +
+            "        ├───CoordinateSystem\n" +
+            "        │   ├───name=“EPSG:WGS 84 / World Mercator”\n" +
+            "        │   ├───type=“cartesian”\n" +
+            "        │   ├───dimension=“2”\n" +
+            "        │   └───Axes\n" +
+            "        │       ├───CoordinateSystemAxis\n" +
+            "        │       │   ├───name=“Easting”\n" +
+            "        │       │   ├───axisAbbrev=“E”\n" +
+            "        │       │   ├───direction=“east”\n" +
+            "        │       │   └───unit=“m”\n" +
+            "        │       └───CoordinateSystemAxis\n" +
+            "        │           ├───name=“Northing”\n" +
+            "        │           ├───axisAbbrev=“N”\n" +
+            "        │           ├───direction=“north”\n" +
+            "        │           └───unit=“m”\n" +
+            "        └───Conversion\n" +
+            "            ├───name=“WGS 84 / World Mercator”\n" +
+            "            └───method=“Mercator_1SP”"), metadata.toString());
     }
 
     /**
@@ -178,46 +180,47 @@ public final class CRSAccessorTest {
         final CRSAccessor accessor = new CRSAccessor(metadata);
         accessor.setCRS(crs);
         assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
-                "└───CoordinateReferenceSystem\n" +
-                "    ├───name=“NAD_1983_UTM_Zone_10N”\n" +
-                "    ├───type=“projected”\n" +
-                "    ├───Datum\n" +
-                "    │   ├───name=“D_North_American_1983”\n" +
-                "    │   ├───type=“geodetic”\n" +
-                "    │   ├───Ellipsoid\n" +
-                "    │   │   ├───name=“GRS_1980”\n" +
-                "    │   │   ├───axisUnit=“m”\n" +
-                "    │   │   ├───semiMajorAxis=“6378137.0”\n" +
-                "    │   │   └───inverseFlattening=“298.257222101”\n" +
-                "    │   └───PrimeMeridian\n" +
-                "    │       ├───name=“Greenwich”\n" +
-                "    │       ├───greenwichLongitude=“0.0”\n" +
-                "    │       └───angularUnit=“deg”\n" +
-                "    ├───CoordinateSystem\n" +
-                "    │   ├───name=“NAD_1983_UTM_Zone_10N”\n" +
-                "    │   ├───type=“cartesian”\n" +
-                "    │   ├───dimension=“2”\n" +
-                "    │   └───Axes\n" +
-                "    │       ├───CoordinateSystemAxis\n" +
-                "    │       │   ├───name=“x”\n" +
-                "    │       │   ├───direction=“east”\n" +
-                "    │       │   └───unit=“m”\n" +
-                "    │       └───CoordinateSystemAxis\n" +
-                "    │           ├───name=“y”\n" +
-                "    │           ├───direction=“north”\n" +
-                "    │           └───unit=“m”\n" +
-                "    └───Conversion\n" +
-                "        ├───name=“NAD_1983_UTM_Zone_10N”\n" +
-                "        ├───method=“Transverse_Mercator”\n" +
-                "        └───Parameters\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“central_meridian”\n" +
-                "            │   └───value=“-123.0”\n" +
-                "            ├───ParameterValue\n" +
-                "            │   ├───name=“scale_factor”\n" +
-                "            │   └───value=“0.9996”\n" +
-                "            └───ParameterValue\n" +
-                "                ├───name=“false_easting”\n" +
-                "                └───value=“500000.0”"), metadata.toString());
+            "└───RectifiedGridDomain\n" +
+            "    └───CoordinateReferenceSystem\n" +
+            "        ├───name=“NAD_1983_UTM_Zone_10N”\n" +
+            "        ├───type=“projected”\n" +
+            "        ├───Datum\n" +
+            "        │   ├───name=“D_North_American_1983”\n" +
+            "        │   ├───type=“geodetic”\n" +
+            "        │   ├───Ellipsoid\n" +
+            "        │   │   ├───name=“GRS_1980”\n" +
+            "        │   │   ├───axisUnit=“m”\n" +
+            "        │   │   ├───semiMajorAxis=“6378137.0”\n" +
+            "        │   │   └───inverseFlattening=“298.257222101”\n" +
+            "        │   └───PrimeMeridian\n" +
+            "        │       ├───name=“Greenwich”\n" +
+            "        │       ├───greenwichLongitude=“0.0”\n" +
+            "        │       └───angularUnit=“deg”\n" +
+            "        ├───CoordinateSystem\n" +
+            "        │   ├───name=“NAD_1983_UTM_Zone_10N”\n" +
+            "        │   ├───type=“cartesian”\n" +
+            "        │   ├───dimension=“2”\n" +
+            "        │   └───Axes\n" +
+            "        │       ├───CoordinateSystemAxis\n" +
+            "        │       │   ├───name=“x”\n" +
+            "        │       │   ├───direction=“east”\n" +
+            "        │       │   └───unit=“m”\n" +
+            "        │       └───CoordinateSystemAxis\n" +
+            "        │           ├───name=“y”\n" +
+            "        │           ├───direction=“north”\n" +
+            "        │           └───unit=“m”\n" +
+            "        └───Conversion\n" +
+            "            ├───name=“NAD_1983_UTM_Zone_10N”\n" +
+            "            ├───method=“Transverse_Mercator”\n" +
+            "            └───Parameters\n" +
+            "                ├───ParameterValue\n" +
+            "                │   ├───name=“central_meridian”\n" +
+            "                │   └───value=“-123.0”\n" +
+            "                ├───ParameterValue\n" +
+            "                │   ├───name=“scale_factor”\n" +
+            "                │   └───value=“0.9996”\n" +
+            "                └───ParameterValue\n" +
+            "                    ├───name=“false_easting”\n" +
+            "                    └───value=“500000.0”"), metadata.toString());
     }
 }

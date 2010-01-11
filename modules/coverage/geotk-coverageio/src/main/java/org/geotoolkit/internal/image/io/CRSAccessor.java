@@ -46,7 +46,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
 
 /**
  * A convenience specialization of {@link MetadataAccessor} for nodes related to the
- * {@code "CoordinateReferenceSystem"} node.
+ * {@code "RectifiedGridDomain/CoordinateReferenceSystem"} node.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
@@ -72,7 +72,7 @@ public final class CRSAccessor extends MetadataAccessor {
      *                 sub-class is recommanded, but not mandatory.
      */
     public CRSAccessor(final IIOMetadata metadata) {
-        super(metadata, FORMAT_NAME, "CoordinateReferenceSystem", null);
+        super(metadata, FORMAT_NAME, "RectifiedGridDomain/CoordinateReferenceSystem", null);
     }
 
     /**

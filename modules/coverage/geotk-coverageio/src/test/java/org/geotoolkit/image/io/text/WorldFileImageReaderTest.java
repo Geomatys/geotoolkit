@@ -69,8 +69,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
         assertNull(reader.getStreamMetadata());
         final SpatialMetadata metadata = reader.getImageMetadata(0);
         assertNotNull(metadata);
-        assertMultilinesEquals(decodeQuotes(
-            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+        assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
                 "├───RectifiedGridDomain\n" +
                 "│   ├───origin=“-10000.0 21000.0”\n" +
                 "│   ├───OffsetVectors\n" +
@@ -78,42 +77,42 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "│   │   │   └───values=“1000.0 0.0”\n" +
                 "│   │   └───OffsetVector\n" +
                 "│   │       └───values=“0.0 -1000.0”\n" +
-                "│   └───Limits\n" +
-                "│       ├───low=“0 0”\n" +
-                "│       └───high=“19 41”\n" +
-                "├───SpatialRepresentation\n" +
-                "│   ├───numberOfDimensions=“2”\n" +
-                "│   └───centerPoint=“0.0 0.0”\n" +
-                "└───CoordinateReferenceSystem\n" +
-                "    ├───name=“WGS 84 / World Mercator”\n" +
-                "    ├───type=“projected”\n" +
-                "    ├───Datum\n" +
-                "    │   ├───name=“World Geodetic System 1984”\n" +
-                "    │   ├───type=“geodetic”\n" +
-                "    │   ├───Ellipsoid\n" +
-                "    │   │   ├───name=“WGS 84”\n" +
-                "    │   │   ├───axisUnit=“m”\n" +
-                "    │   │   ├───semiMajorAxis=“6378137.0”\n" +
-                "    │   │   └───inverseFlattening=“298.257223563”\n" +
-                "    │   └───PrimeMeridian\n" +
-                "    │       ├───name=“Greenwich”\n" +
-                "    │       ├───greenwichLongitude=“0.0”\n" +
-                "    │       └───angularUnit=“deg”\n" +
-                "    ├───CoordinateSystem\n" +
-                "    │   ├───name=“WGS 84 / World Mercator”\n" +
-                "    │   ├───type=“cartesian”\n" +
-                "    │   ├───dimension=“2”\n" +
-                "    │   └───Axes\n" +
-                "    │       ├───CoordinateSystemAxis\n" +
-                "    │       │   ├───name=“x”\n" +
-                "    │       │   ├───direction=“east”\n" +
-                "    │       │   └───unit=“m”\n" +
-                "    │       └───CoordinateSystemAxis\n" +
-                "    │           ├───name=“y”\n" +
-                "    │           ├───direction=“north”\n" +
-                "    │           └───unit=“m”\n" +
-                "    └───Conversion\n" +
-                "        ├───name=“WGS 84 / World Mercator”\n" +
-                "        └───method=“Mercator_1SP”"), metadata.toString());
+                "│   ├───Limits\n" +
+                "│   │   ├───low=“0 0”\n" +
+                "│   │   └───high=“19 41”\n" +
+                "│   └───CoordinateReferenceSystem\n" +
+                "│       ├───name=“WGS 84 / World Mercator”\n" +
+                "│       ├───type=“projected”\n" +
+                "│       ├───Datum\n" +
+                "│       │   ├───name=“World Geodetic System 1984”\n" +
+                "│       │   ├───type=“geodetic”\n" +
+                "│       │   ├───Ellipsoid\n" +
+                "│       │   │   ├───name=“WGS 84”\n" +
+                "│       │   │   ├───axisUnit=“m”\n" +
+                "│       │   │   ├───semiMajorAxis=“6378137.0”\n" +
+                "│       │   │   └───inverseFlattening=“298.257223563”\n" +
+                "│       │   └───PrimeMeridian\n" +
+                "│       │       ├───name=“Greenwich”\n" +
+                "│       │       ├───greenwichLongitude=“0.0”\n" +
+                "│       │       └───angularUnit=“deg”\n" +
+                "│       ├───CoordinateSystem\n" +
+                "│       │   ├───name=“WGS 84 / World Mercator”\n" +
+                "│       │   ├───type=“cartesian”\n" +
+                "│       │   ├───dimension=“2”\n" +
+                "│       │   └───Axes\n" +
+                "│       │       ├───CoordinateSystemAxis\n" +
+                "│       │       │   ├───name=“x”\n" +
+                "│       │       │   ├───direction=“east”\n" +
+                "│       │       │   └───unit=“m”\n" +
+                "│       │       └───CoordinateSystemAxis\n" +
+                "│       │           ├───name=“y”\n" +
+                "│       │           ├───direction=“north”\n" +
+                "│       │           └───unit=“m”\n" +
+                "│       └───Conversion\n" +
+                "│           ├───name=“WGS 84 / World Mercator”\n" +
+                "│           └───method=“Mercator_1SP”\n" +
+                "└───SpatialRepresentation\n" +
+                "    ├───numberOfDimensions=“2”\n" +
+                "    └───centerPoint=“0.0 0.0”"), metadata.toString());
     }
 }

@@ -84,7 +84,7 @@ public class ReferencingMetadataHelper extends MetadataHelper {
      *                 sub-class is recommanded, but not mandatory.
      */
     public ReferencingMetadataHelper(final IIOMetadata metadata) {
-        this(new MetadataAccessor(metadata, FORMAT_NAME, "CoordinateReferenceSystem", null));
+        this(new MetadataAccessor(metadata, FORMAT_NAME, "RectifiedGridDomain/CoordinateReferenceSystem", null));
     }
 
     /**
