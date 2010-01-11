@@ -18,6 +18,12 @@
 package org.geotoolkit.display2d.container;
 
 
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -30,7 +36,6 @@ import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.primitive.ReferencedGraphic;
@@ -39,9 +44,10 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.canvas.CanvasState;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -51,13 +57,11 @@ import org.opengis.style.Displacement;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
-import org.opengis.style.PolygonSymbolizer;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Style;
+import org.opengis.style.Symbolizer;
 
 /**
  * This is the general usecase of a renderer, this renderer is made to work
@@ -72,6 +76,9 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     private static final Logger LOGGER = Logging.getLogger(ContextContainer2D.class);
 
     public static final Style DEFAULT_SELECTION_STYLE;
+    public static final Symbolizer DEFAULT_LINE_SELECTION_SYMBOL;
+    public static final Symbolizer DEFAULT_POINT_SELECTION_SYMBOL;
+    public static final Symbolizer DEFAULT_POLYGON_SELECTION_SYMBOL;
 
     static{
         final MutableStyle style = GO2Utilities.STYLE_FACTORY.style();
@@ -97,13 +104,13 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
         final Displacement disp = GO2Utilities.STYLE_FACTORY.displacement(0, 0);
         final Graphic graphic = GO2Utilities.STYLE_FACTORY.graphic(symbols, opacity, expSize, expRotation, anchor,disp);
 
-        final LineSymbolizer lineSymbol = GO2Utilities.STYLE_FACTORY.lineSymbolizer(selectionStroke, null);
-        final PolygonSymbolizer polygonSymbol = GO2Utilities.STYLE_FACTORY.polygonSymbolizer(selectionStroke, selectionFill, null);
-        final PointSymbolizer pointSymbol = GO2Utilities.STYLE_FACTORY.pointSymbolizer(graphic, null);
+        DEFAULT_LINE_SELECTION_SYMBOL = GO2Utilities.STYLE_FACTORY.lineSymbolizer(selectionStroke, null);
+        DEFAULT_POLYGON_SELECTION_SYMBOL = GO2Utilities.STYLE_FACTORY.polygonSymbolizer(selectionStroke, selectionFill, null);
+        DEFAULT_POINT_SELECTION_SYMBOL = GO2Utilities.STYLE_FACTORY.pointSymbolizer(graphic, null);
 
-        ftsline.rules().add(GO2Utilities.STYLE_FACTORY.rule(lineSymbol));
-        ftspoint.rules().add(GO2Utilities.STYLE_FACTORY.rule(pointSymbol));
-        ftspolygon.rules().add(GO2Utilities.STYLE_FACTORY.rule(polygonSymbol));
+        ftsline.rules().add(GO2Utilities.STYLE_FACTORY.rule(DEFAULT_LINE_SELECTION_SYMBOL));
+        ftspoint.rules().add(GO2Utilities.STYLE_FACTORY.rule(DEFAULT_POINT_SELECTION_SYMBOL));
+        ftspolygon.rules().add(GO2Utilities.STYLE_FACTORY.rule(DEFAULT_POLYGON_SELECTION_SYMBOL));
 
         style.featureTypeStyles().add(ftsline);
         style.featureTypeStyles().add(ftspoint);
@@ -111,6 +118,24 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
 
         DEFAULT_SELECTION_STYLE = style;
     }
+
+//    public static Style getBestSelectionStyle(FeatureType type){
+//        if(type == null){
+//            return DEFAULT_SELECTION_STYLE;
+//        }
+//
+//        Class clazz = type.getGeometryDescriptor().getType().getBinding();
+//
+//        if(Point.class.isAssignableFrom(clazz) || MultiPoint.class.isAssignableFrom(clazz)){
+//            return GO2Utilities.STYLE_FACTORY.style(DEFAULT_POLYGON_SELECTION_SYMBOL);
+//        }else if(LineString.class.isAssignableFrom(clazz) || MultiLineString.class.isAssignableFrom(clazz)){
+//            return GO2Utilities.STYLE_FACTORY.style(DEFAULT_POLYGON_SELECTION_SYMBOL);
+//        }else if(Polygon.class.isAssignableFrom(clazz) || MultiPolygon.class.isAssignableFrom(clazz)){
+//            return GO2Utilities.STYLE_FACTORY.style(DEFAULT_POLYGON_SELECTION_SYMBOL);
+//        }
+//
+//        return DEFAULT_SELECTION_STYLE;
+//    }
 
 
     /**

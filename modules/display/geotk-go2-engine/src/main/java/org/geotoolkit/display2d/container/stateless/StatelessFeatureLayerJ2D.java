@@ -237,7 +237,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
 
-        //concatenate with temporal range if needed
+        //concatenate with temporal range if needed ----------------------------
         final Filter temporalFilter;
         final Date[] temporal = renderingContext.getTemporalRange().clone();
         final Expression[] layerRange = layer.getTemporalRange().clone();
@@ -269,6 +269,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             filter = FILTER_FACTORY.and(filter,temporalFilter);
         }
 
+        //concatenate with elevation range if needed ---------------------------
+        //todo
 
         final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
         final Set<String> copy = new HashSet<String>(attributs);
