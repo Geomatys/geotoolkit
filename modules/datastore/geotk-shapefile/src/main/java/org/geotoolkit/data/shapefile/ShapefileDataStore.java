@@ -357,7 +357,13 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         try {
-            return createFeatureReader(typeName,getAttributesReader(true), schema);
+            final SimpleFeatureType newSchema;
+            if (propertyNames != null) {
+                newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
+            } else {
+                newSchema = schema;
+            }
+            return createFeatureReader(typeName,getAttributesReader(true), newSchema);
         } catch (SchemaException se) {
             throw new DataStoreException("Error creating schema", se);
         }

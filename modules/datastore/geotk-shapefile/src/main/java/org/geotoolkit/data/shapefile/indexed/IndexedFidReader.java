@@ -76,7 +76,7 @@ public class IndexedFidReader implements FeatureIDReader {
     }
 
     private void init( ShpFiles shpFiles, ReadableByteChannel in ) throws IOException {
-        this.typeName = shpFiles.getTypeName() + ".";
+        this.typeName = shpFiles.getTypeName() + "_";
         this.readChannel = in;
         getHeader(shpFiles);
 
@@ -152,7 +152,7 @@ public class IndexedFidReader implements FeatureIDReader {
      */
     public long findFid(String fid) throws IOException {
         try {
-            int idx = typeName.length(); //typeName already contains the trailing "."
+            int idx = typeName.length(); //typeName already contains the trailing "_"
             long desired = -1;
             if(fid.startsWith(typeName)){
                 try{

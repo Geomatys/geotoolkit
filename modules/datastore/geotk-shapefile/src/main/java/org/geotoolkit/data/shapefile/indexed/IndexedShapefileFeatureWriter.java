@@ -86,7 +86,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         } catch (IOException ex) {
             throw new DataStoreRuntimeException(ex);
         }
-        currentFid = getFeatureType().getTypeName() + "." + next;
+        currentFid = getFeatureType().getTypeName() + "_" + next;
         SimpleFeature feature = super.next();
         return feature;
     }

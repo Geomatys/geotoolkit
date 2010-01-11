@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.List;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -59,6 +60,9 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
          super(featureType);
     }
 
+    public JAXPEventFeatureReader(List<FeatureType> featureTypes) throws JAXBException {
+        super(featureTypes);
+    }
     /**
      * {@inheritDoc }
      */
@@ -261,7 +265,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                         for (FeatureType ft : featureTypes) {
                             if (ft.getName().equals(name)) {
                                 if (collection == null) {
-                                    collection = new DefaultFeatureCollection(id, ft, null);
+                                    collection = new DefaultFeatureCollection(id, ft, SimpleFeature.class);
                                 }
                                 collection.add(readFeature(eventReader, fid.getValue(), ft));
                                 find = true;

@@ -38,7 +38,7 @@ public class ShapeFIDReader implements FeatureIDReader {
     public ShapeFIDReader(String typeName,
             IndexedShapefileAttributeReader reader) {
         buffer = new StringBuffer(typeName);
-        buffer.append('.');
+        buffer.append('_');
         len = typeName.length() + 1;
         this.opened = true;
         this.reader = reader;
