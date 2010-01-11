@@ -465,7 +465,10 @@ public class Layer extends AbstractLayer {
    
         return list;
     }
-    
-   
+
+    @Override
+    public List<String> getCRS() {
+        return getSRS();
+    }
     
 }

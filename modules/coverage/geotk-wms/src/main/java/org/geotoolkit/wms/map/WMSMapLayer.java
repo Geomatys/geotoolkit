@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.map;
 
+import java.awt.AlphaComposite;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.awt.Dimension;
@@ -29,6 +30,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.media.jai.Interpolation;
+import org.geotoolkit.coverage.CoverageFactoryFinder;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.coverage.processing.operation.Interpolate;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -38,15 +45,19 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.xml.AbstractLayer;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -102,6 +113,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     private String format = "image/png";
     private CRS84Politic crs84Politic = CRS84Politic.STRICT;
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
+    private boolean useLocalReprojection = false;
 
     public WMSMapLayer(WebMapServer server,String ... layers) {
         super(new DefaultStyleFactory().style());
@@ -136,6 +148,20 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
     }
 
     /**
+     * Define if the map layer must rely on the geotoolkit reprojection capabilities
+     * if the distant server can not handle the canvas crs.
+     * The result image might not be pretty, but still better than no image.
+     * @param useLocalReprojection
+     */
+    public void setUseLocalReprojection(boolean useLocalReprojection) {
+        this.useLocalReprojection = useLocalReprojection;
+    }
+
+    public boolean isUseLocalReprojection() {
+        return useLocalReprojection;
+    }
+
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -154,6 +180,13 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
      */
     @Override
     public URL query(final RenderingContext context) throws PortrayalException{
+        return query(context,null);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    private URL query(final RenderingContext context, CoordinateReferenceSystem replaceCRS) throws PortrayalException{
 
         if( !(context instanceof RenderingContext2D)){
             throw new PortrayalException("WMSLayer only support rendering for RenderingContext2D");
@@ -161,6 +194,16 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
         final RenderingContext2D context2D = (RenderingContext2D) context;
         Envelope env = context2D.getCanvasObjectiveBounds();
+
+        //looks like the reprojection will be handle by geotoolkit,
+        //the distant server might not be very friendly or projection capabilities
+        if(replaceCRS != null){
+            try {
+                env = CRS.transform(env, replaceCRS);
+            } catch (TransformException ex) {
+                Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
 
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
@@ -228,8 +271,21 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         }
 
         final RenderingContext2D context2D = (RenderingContext2D) context;
+        final Graphics2D g2 = context2D.getGraphics();
 
-        final URL url = query(context);
+        //check if we must make the  coverage reprojection ourself--------------
+        CoordinateReferenceSystem replace = null;
+        if(useLocalReprojection){
+            try {
+                if (!supportCRS(context2D.getCanvasObjectiveBounds().getCoordinateReferenceSystem())) {
+                    replace = DefaultGeographicCRS.WGS84;
+                }
+            } catch (FactoryException ex) {
+                context.getMonitor().exceptionOccured(ex, Level.SEVERE);
+            }
+        }
+
+        final URL url = query(context, replace);
         final BufferedImage image;
 
         System.out.println("[WMSMapLayer] : GETMAP request : " + url.toString());
@@ -240,22 +296,59 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             throw new PortrayalException(io);
         }
 
-        //switch to displayCRS
-        context2D.switchToDisplayCRS();
+        if(image == null){
+            throw new PortrayalException("WMS server didn't returned an image.");
+        }
 
-        //draw image centered on top
-        //we center it because rotation parameter may have caused the image
-        // to be larger than the canvas size, this is a normal behavior since
-        // wms layer can not handle rotations.
-        Graphics2D g = context2D.getGraphics();
-        Dimension dim = context2D.getCanvasDisplayBounds().getSize();
-        if(image != null && dim != null){
-            double rotation = context2D.getCanvas().getController().getRotation();
-            g.translate(dim.width/2, dim.height/2);
-            g.rotate(rotation);
-            g.drawImage(image, -image.getWidth()/2, -image.getHeight()/2, null);
-            g.rotate(-rotation);
-            g.translate(-dim.width/2, -dim.height/2);
+        if(replace != null){
+            context2D.switchToObjectiveCRS();
+
+            Envelope env = context2D.getCanvasObjectiveBounds();
+            try {
+                env = CRS.transform(((RenderingContext2D)context).getCanvasObjectiveBounds(),replace);
+            } catch (TransformException ex) {
+                Logger.getLogger(WMSMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+            GridCoverage2D dataCoverage = factory.create("Test", image, env);
+
+            dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
+                        dataCoverage,((RenderingContext2D)context).getCanvasObjectiveBounds(),Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
+            
+            final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
+            if(trs2D instanceof AffineTransform){
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                g2.drawRenderedImage(image, (AffineTransform)trs2D);
+            }else if (trs2D instanceof LinearTransform) {
+                final LinearTransform lt = (LinearTransform) trs2D;
+                final int col = lt.getMatrix().getNumCol();
+                final int row = lt.getMatrix().getNumRow();
+                //TODO using only the first parameters of the linear transform
+                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+            }else{
+                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+            }
+
+
+
+        }else{
+            //switch to displayCRS
+            context2D.switchToDisplayCRS();
+
+            //draw image centered on top
+            //we center it because rotation parameter may have caused the image
+            // to be larger than the canvas size, this is a normal behavior since
+            // wms layer can not handle rotations.
+            Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+            if(image != null && dim != null){
+                double rotation = context2D.getCanvas().getController().getRotation();
+                g2.translate(dim.width/2, dim.height/2);
+                g2.rotate(rotation);
+                g2.drawImage(image, -image.getWidth()/2, -image.getHeight()/2, null);
+                g2.rotate(-rotation);
+                g2.translate(-dim.width/2, -dim.height/2);
+            }
         }
     }
 
@@ -315,6 +408,20 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
 
     public Map<String, String> dimensions() {
         return dims;
+    }
+
+    private boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException{
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+
+        final String srid = CRS.lookupIdentifier(crs, true);
+
+        for(String str : layer.getCRS()){
+            if(srid.equalsIgnoreCase(str)){
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

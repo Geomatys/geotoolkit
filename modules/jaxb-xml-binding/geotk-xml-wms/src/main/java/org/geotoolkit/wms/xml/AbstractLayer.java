@@ -38,5 +38,10 @@ public abstract class AbstractLayer {
      *
      */
     public abstract AbstractKeywordList getKeywordList();
-    
+
+    /**
+     * List of supported CRS.
+     */
+    public abstract List<String> getCRS();
+
 }
