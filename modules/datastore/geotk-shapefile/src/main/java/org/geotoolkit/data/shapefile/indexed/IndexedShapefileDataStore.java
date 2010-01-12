@@ -232,6 +232,10 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             return GenericEmptyFeatureIterator.createReader(getFeatureType());
         }
 
+        if (query.getSortBy() != null) {
+            throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
+        }
+
         Name[] propertyNames = query.getPropertyNames() == null ? new Name[0]
                 : query.getPropertyNames();
         final Name defaultGeomName = getFeatureType().getGeometryDescriptor().getName();

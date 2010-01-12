@@ -332,6 +332,9 @@ public class ShapefileDataStore extends AbstractDataStore{
         final Name[] propertyNames = query.getPropertyNames();
         final Name defaultGeomName = schema.getGeometryDescriptor().getName();
 
+        if (query.getSortBy() != null) {
+            throw new DataStoreException("The ShapeFIleDatastore does not support sortby query");
+        }
         // gather attributes needed by the query tool, they will be used by the
         // query filter
         final FilterAttributeExtractor extractor = new FilterAttributeExtractor();
