@@ -26,6 +26,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import java.util.logging.Logger;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DefaultFeatureCollection;
@@ -48,6 +50,7 @@ import org.geotoolkit.feature.simple.DefaultSimpleFeatureType;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.DefaultGeometryDescriptor;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
@@ -69,6 +72,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class OMDataStore extends AbstractDataStore {
 
+    private Logger LOGGER = Logger.getLogger("org.geotoolkit.data.om");
+    
     private final static Name SAMPLINGPOINT = new DefaultName("http://www.opengis.net/sampling/1.0", "SamplingPoint");
 
     private final Map<Name, SimpleFeatureType> types = new HashMap<Name,SimpleFeatureType>();
@@ -76,6 +81,10 @@ public class OMDataStore extends AbstractDataStore {
     private final Connection connection;
 
     private PreparedStatement getAllSamplingPoint;
+
+    private PreparedStatement writeSamplingPoint;
+
+    private PreparedStatement getLastIndentifier;
 
     protected static final Name DESC     = new DefaultName("http://www.opengis.net/gml", "description");
     protected static final Name NAME     = new DefaultName("http://www.opengis.net/gml", "name");
@@ -104,6 +113,8 @@ public class OMDataStore extends AbstractDataStore {
     private void initStatement() {
         try {
             getAllSamplingPoint = connection.prepareStatement("SELECT * FROM \"observation\".\"sampling_points\"");
+            writeSamplingPoint  = connection.prepareStatement("INSERT INTO \"observation\".\"sampling_points\" VALUES(?,?,?,?,?,?,?,?,?)");
+            getLastIndentifier  = connection.prepareStatement("SELECT COUNT(*) FROM \"observation\".\"sampling_points\"");
         } catch (SQLException ex) {
            getLogger().severe("SQL Exception while requesting the O&M database:" + ex.getMessage());
         }
@@ -248,8 +259,7 @@ public class OMDataStore extends AbstractDataStore {
 
     @Override
     public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
-        SimpleFeatureType ft = types.get(SAMPLINGPOINT);
-        return new OMFeatureWriter(ft, connection);
+        return handleWriterAppend(typeName);
     }
 
     public Set<Name> getNames() throws DataStoreException {
@@ -281,7 +291,74 @@ public class OMDataStore extends AbstractDataStore {
     }
 
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<FeatureId> result = new ArrayList<FeatureId>();
+        FeatureType featureType = types.get(groupName);
+        if (featureType != null) {
+            try {
+                for (Feature feature : newFeatures) {
+                    if (feature instanceof SimpleFeature) {
+                        SimpleFeature simpleFeature = (SimpleFeature) feature;
+
+                        FeatureId identifier = simpleFeature.getIdentifier();
+                        if (identifier == null || identifier.getID().equals("")) {
+                            identifier = getNewFeatureId();
+                        }
+                        writeSamplingPoint.setString(1, identifier.getID());
+                        writeSamplingPoint.setString(2, (String)simpleFeature.getAttribute(OMDataStore.DESC));
+                        writeSamplingPoint.setString(3, (String)simpleFeature.getAttribute(OMDataStore.NAME));
+                        writeSamplingPoint.setString(4, (String)simpleFeature.getAttribute(OMDataStore.SAMPLED));
+                        writeSamplingPoint.setNull(5, java.sql.Types.VARCHAR);
+                        Object geometry = simpleFeature.getDefaultGeometry();
+                        if (geometry instanceof Point) {
+                            Point pt = (Point) geometry;
+                            String crsIdentifier = null;
+                            if (featureType.getCoordinateReferenceSystem() != null) {
+                                try {
+                                    crsIdentifier = CRS.lookupIdentifier(featureType.getCoordinateReferenceSystem(), true);
+                                } catch (FactoryException ex) {
+                                    LOGGER.log(Level.SEVERE, null, ex);
+                                }
+                            }
+                            if (identifier != null) {
+                                writeSamplingPoint.setString(6, crsIdentifier);
+                            } else {
+                                writeSamplingPoint.setNull(6, java.sql.Types.VARCHAR);
+                            }
+                            writeSamplingPoint.setInt(7, 2);
+                            writeSamplingPoint.setDouble(8, pt.getX());
+                            writeSamplingPoint.setDouble(9, pt.getY());
+                        } else {
+                            writeSamplingPoint.setNull(6, java.sql.Types.VARCHAR);
+                            writeSamplingPoint.setNull(7, java.sql.Types.INTEGER);
+                            writeSamplingPoint.setNull(8, java.sql.Types.DOUBLE);
+                            writeSamplingPoint.setNull(9, java.sql.Types.DOUBLE);
+                        }
+                        writeSamplingPoint.executeUpdate();
+                        result.add(identifier);
+                    }
+                }
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, writeSamplingPoint.toString(), ex);
+            }
+        } else {
+            throw new DataStoreException("there is no such featureType: " + groupName);
+        }
+        return result;
+    }
+
+    public FeatureId getNewFeatureId() {
+        String identifier = "sampling-point-";
+        try {
+            ResultSet result = getLastIndentifier.executeQuery();
+            if (result.next()) {
+                int nb = result.getInt(1) + 1;
+                identifier = identifier + nb;
+                return new DefaultFeatureId(identifier);
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {

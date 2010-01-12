@@ -48,7 +48,7 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      */
     public DefaultFeatureIDReader(String base){
         if(base == null) throw new NullPointerException("Base string can not ben ull.");
-        this.base = base+"_";
+        this.base = base + ".";
     }
 
     /**
