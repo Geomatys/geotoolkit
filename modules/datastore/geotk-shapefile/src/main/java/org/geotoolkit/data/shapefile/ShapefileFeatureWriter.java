@@ -330,7 +330,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         // reader has no more (no were are adding to the file)
         // so return an empty feature
         try {
-            final String featureID = getFeatureType().getTypeName()+"_"+(records+1);
+            final String featureID = getFeatureType().getTypeName()+"."+(records+1);
             return currentFeature = FeatureTypeUtilities.template(getFeatureType(),featureID,emptyAtts);
         } catch (IllegalAttributeException iae) {
             throw new DataStoreRuntimeException("Error creating empty Feature", iae);
@@ -343,7 +343,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
      * @return a fid for the new feature
      */
     protected String nextFeatureId() {
-        return getFeatureType().getTypeName()+"_"+(records+1);
+        return getFeatureType().getTypeName()+"."+(records+1);
     }
 
     /**

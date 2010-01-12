@@ -242,13 +242,12 @@ public class FeatureTypeUtilities {
                     ? assertEquals(override, ((GeometryDescriptor) type).getCoordinateReferenceSystem())
                     : true);
         }
-
         if (same) {
             return featureType;
         }
 
         final AttributeDescriptor[] types = new AttributeDescriptor[properties.length];
-
+        boolean crsSetted = false;
         for (int i = 0; i < properties.length; i++) {
             types[i] = featureType.getDescriptor(properties[i]);
 
@@ -257,7 +256,7 @@ public class FeatureTypeUtilities {
                 final AttributeTypeBuilder ab = new AttributeTypeBuilder();
                 ab.copy(types[i].getType());
                 ab.setCRS(override);
-
+                crsSetted = true;
                 final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
                 adb.copy(types[i]);
                 adb.setType(ab.buildGeometryType());
@@ -283,7 +282,13 @@ public class FeatureTypeUtilities {
         tb.setName(new DefaultName(namespaceURI, typeName));
         tb.addAll(types);
 
-        return tb.buildFeatureType();
+        SimpleFeatureType result = tb.buildFeatureType();
+
+        if (!crsSetted && result instanceof DefaultSimpleFeatureType) {
+            System.out.println("waiiii: " + result.getAttributeCount());
+            ((DefaultSimpleFeatureType)result).setCoordinateReferenceSystem(override);
+        }
+        return result;
     }
 
     /**

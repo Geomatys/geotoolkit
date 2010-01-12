@@ -603,7 +603,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         query = builder.buildQuery();
 
         reader = s.getFeatureReader(query);
-        assertEquals(s.getFeatureType(s.getTypeNames()[0]), reader.getFeatureType());
+        assertEquals(1, reader.getFeatureType().getAttributeCount());
+        assertEquals("the_geom", reader.getFeatureType().getDescriptor(0)
+                .getLocalName());
         reader.close();
     }
 

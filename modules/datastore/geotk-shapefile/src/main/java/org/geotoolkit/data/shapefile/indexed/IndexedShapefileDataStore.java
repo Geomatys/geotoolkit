@@ -259,10 +259,14 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 readDbf = false;
                 readGeometry = false;
                 newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
+            } else if (query.getPropertyNames() != null) {
+                System.out.println("before:" + newSchema);
+                newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames, newSchema.getCoordinateReferenceSystem());
+                System.out.println("after:" + newSchema);
             }
 
             FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
-                    readGeometry, query.getFilter()), newSchema);
+                    readGeometry, query.getFilter(), newSchema), newSchema);
 
             reader = handleRemaining(reader, QueryBuilder.filtered(query.getTypeName(), query.getFilter()));
             return reader;
@@ -304,7 +308,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      */
     protected IndexedShapefileAttributeReader getAttributesReader(
-            boolean readDbf, boolean readGeometry, Filter filter)
+            boolean readDbf, boolean readGeometry, Filter filter, SimpleFeatureType newShema)
             throws DataStoreException {
         Envelope bbox = new JTSEnvelope2D(); // will be bbox.isNull() to
         // start
@@ -345,8 +349,14 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 }
             }
         }
-        List<AttributeDescriptor> atts = (getFeatureType() == null) ? readAttributes()
-                : getFeatureType().getAttributeDescriptors();
+        SimpleFeatureType schema;
+        if (newShema == null) {
+            schema = getFeatureType();
+        } else {
+            schema = newShema;
+        }
+        List<AttributeDescriptor> atts = (schema == null) ? readAttributes()
+                : schema.getAttributeDescriptors();
 
         IndexedDbaseFileReader dbfR = null;
 
@@ -354,7 +364,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             getLogger().fine("The DBF file won't be opened since no attributes "
                     + "will be read from it");
             atts = new ArrayList<AttributeDescriptor>(1);
-            atts.add(getFeatureType().getGeometryDescriptor());
+            atts.add(schema.getGeometryDescriptor());
 
             if (!readGeometry) {
                 atts = new ArrayList<AttributeDescriptor>(1);
@@ -609,7 +619,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         typeCheck(typeName);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
-        IndexedShapefileAttributeReader attReader = getAttributesReader(true,true, null);
+        IndexedShapefileAttributeReader attReader = getAttributesReader(true,true, null, null);
         try {
             SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);
             if (schema == null) {
