@@ -260,15 +260,17 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 readGeometry = false;
                 newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
             } else if (query.getPropertyNames() != null) {
-                System.out.println("before:" + newSchema);
                 newSchema = FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames, newSchema.getCoordinateReferenceSystem());
-                System.out.println("after:" + newSchema);
             }
 
             FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
-                    readGeometry, query.getFilter(), newSchema), newSchema);
+                    readGeometry, query.getFilter()), getFeatureType());
 
-            reader = handleRemaining(reader, QueryBuilder.filtered(query.getTypeName(), query.getFilter()));
+            QueryBuilder query2 = new QueryBuilder(query.getTypeName());
+            query2.setProperties(query.getPropertyNames());
+            query2.setFilter(query.getFilter());
+
+            reader = handleRemaining(reader, query2.buildQuery());
             return reader;
 
         } catch (IOException se) {
@@ -308,7 +310,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      */
     protected IndexedShapefileAttributeReader getAttributesReader(
-            boolean readDbf, boolean readGeometry, Filter filter, SimpleFeatureType newShema)
+            boolean readDbf, boolean readGeometry, Filter filter)
             throws DataStoreException {
         Envelope bbox = new JTSEnvelope2D(); // will be bbox.isNull() to
         // start
@@ -349,12 +351,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 }
             }
         }
-        SimpleFeatureType schema;
-        if (newShema == null) {
-            schema = getFeatureType();
-        } else {
-            schema = newShema;
-        }
+        SimpleFeatureType schema = getFeatureType();
         List<AttributeDescriptor> atts = (schema == null) ? readAttributes()
                 : schema.getAttributeDescriptors();
 
@@ -619,7 +616,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         typeCheck(typeName);
 
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
-        IndexedShapefileAttributeReader attReader = getAttributesReader(true,true, null, null);
+        IndexedShapefileAttributeReader attReader = getAttributesReader(true,true, null);
         try {
             SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);
             if (schema == null) {
