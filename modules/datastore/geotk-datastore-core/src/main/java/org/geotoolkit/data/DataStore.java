@@ -232,5 +232,18 @@ public interface DataStore {
      * The datastore should not be used after this call or it may raise errors.
      */
     void dispose();
-    
+
+    /**
+     * Add a storage listener which will be notified when schema are added, modified or deleted
+     * and when features are added, modified or deleted.
+     * @param listener to add
+     */
+    void addStorageListener(StorageListener listener);
+
+    /**
+     * Remove a storage listener
+     * @param listener to remove
+     */
+    void removeStorageListener(StorageListener listener);
+
 }

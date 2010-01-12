@@ -24,6 +24,7 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 
 import org.opengis.feature.Feature;
@@ -43,6 +44,10 @@ import org.opengis.geometry.Envelope;
  */
 public interface Session {
 
+    /**
+     * Get the datastore attached to this session.
+     * @return Datastore, never null
+     */
     DataStore getDataStore();
 
     /**
@@ -54,6 +59,12 @@ public interface Session {
      */
     boolean isAsynchrone();
 
+    /**
+     * Request a collection of features that match the given query.
+     *
+     * @param query collections query
+     * @return FeatureCollection , never null
+     */
     FeatureCollection getFeatureCollection(Query query);
 
     /**
@@ -66,6 +77,10 @@ public interface Session {
      */
     FeatureIterator getFeatureIterator(Query query) throws DataStoreException;
 
+    /**
+     * Same behavior as @see DataStore#updateFeatures(org.opengis.feature.type.Name, java.util.Collection)
+     * but makes modification in the session diff if this one is asynchrone.
+     */
     void addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
     /**
@@ -74,8 +89,16 @@ public interface Session {
      */
     void updateFeatures(Name groupName, Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException;
 
+    /**
+     * Same behavior as @see DataStore#updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
+     * but makes modification in the session diff if this one is asynchrone.
+     */
     void updateFeatures(Name groupName, Filter filter, Map< ? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException;
 
+    /**
+     * Same behavior as @see DataStore#removeFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter)
+     * but makes modification in the session diff if this one is asynchrone.
+     */
     void removeFeatures(Name groupName, Filter filter) throws DataStoreException;
 
     /**
@@ -95,8 +118,32 @@ public interface Session {
      */
     void rollback();
 
+    /**
+     * Same behavior as @see DataStore#getCount(org.geotoolkit.data.query.Query)
+     * but take in consideration the session modifications.
+     */
     long getCount(Query query) throws DataStoreException;
 
+    /**
+     * Same behavior as @see DataStore#getEnvelope(org.geotoolkit.data.query.Query)
+     * but take in consideration the session modifications.
+     */
     Envelope getEnvelope(Query query) throws DataStoreException;
-    
+
+    /**
+     * Add a storage listener which will be notified when schema are added, modified or deleted
+     * and when features are added, modified or deleted.
+     *
+     * This includes events from the datastore and events from the session.
+     *
+     * @param listener to add
+     */
+    void addStorageListener(StorageListener listener);
+
+    /**
+     * Remove a storage listener
+     * @param listener to remove
+     */
+    void removeStorageListener(StorageListener listener);
+
 }

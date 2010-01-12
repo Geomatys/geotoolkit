@@ -39,7 +39,7 @@ import org.opengis.geometry.Envelope;
  * @module pending
  * @todo make this concurrent
  */
-public class AddDelta extends AbstractDelta{
+class AddDelta extends AbstractDelta{
 
     private final Name type;
     private final FeatureCollection<Feature> features;
@@ -53,7 +53,7 @@ public class AddDelta extends AbstractDelta{
      * a datastore which may be slow or changing with time.
      * this features from the given collection will be copied.
      */
-    public AddDelta(Session session, Name typeName, Collection<Feature> features){
+    AddDelta(Session session, Name typeName, Collection<Feature> features){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");

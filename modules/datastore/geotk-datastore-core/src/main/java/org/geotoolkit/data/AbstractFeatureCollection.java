@@ -19,16 +19,18 @@ package org.geotoolkit.data;
 
 import java.util.AbstractCollection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.geometry.DefaultBoundingBox;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -36,15 +38,32 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F> implements FeatureCollection<F>{
+public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F> 
+        implements FeatureCollection<F>, StorageListener{
+
+    //@todo not thread safe, I dont think it's important
+    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
 
     protected final String id;
     protected final FeatureType type;
+    protected final Session session;
 
     public AbstractFeatureCollection(String id, FeatureType type){
+        this(id,type,null);
+    }
+
+    public AbstractFeatureCollection(String id, FeatureType type, Session session){
         this.id = id;
         this.type = type;
+        this.session = session;
+
+        if(session != null){
+            //register a wek listener, to memory leak since we don't know when to remove the listener.
+            //@todo should we have a dispose method on the session ? I dont think so
+            session.addStorageListener(new WeakStorageListener(session, this));
+        }
     }
+
 
     /**
      * {@inheritDoc }
@@ -52,6 +71,14 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     @Override
     public String getID() {
         return id;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Session getSession() {
+        return session;
     }
 
     /**
@@ -85,67 +112,113 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      */
     @Override
     public Envelope getEnvelope() throws DataStoreException{
-        BoundingBox env = null;
-
-        final FeatureIterator<F> ite = iterator();
         try{
-            while(ite.hasNext()){
-                final F f = ite.next();
-                final BoundingBox bbox = f.getBounds();
-                if(!bbox.isEmpty()){
-                    if(env != null){
-                        env.include(bbox);
-                    }else{
-                        env = new DefaultBoundingBox(bbox, bbox.getCoordinateReferenceSystem());
-                    }
-                }
-            }
-        }finally{
-            ite.close();
+            return DataUtilities.calculateEnvelope(iterator());
+        }catch(DataStoreRuntimeException ex){
+            throw new DataStoreException(ex);
         }
-
-        return env;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public int size() {
-        long count = 0;
-
-        final FeatureIterator<F> reader = iterator();
-        try{
-            while(reader.hasNext()){
-                reader.next();
-                count++;
-            }
-        }finally{
-            reader.close();
-        }
-
-        return (int) count;
+    public int size() throws DataStoreRuntimeException{
+        return (int) DataUtilities.calculateCount(iterator());
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void update(Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException {
         update(filter, Collections.singletonMap(desc, value));
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // listeners methods ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
     /**
-     * {@inheritDoc }
+     * Forward event to listeners by changing source.
      */
     @Override
-    public void addListener() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void structureChanged(StorageManagementEvent event){
+        final FeatureType currentType = getFeatureType();
+        
+        //forward events only if the collection is typed and match the type name
+        if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
+            event = StorageManagementEvent.resetSource(this, event);
+            for(final StorageListener listener : listeners){
+                listener.structureChanged(event);
+            }
+        }
+    }
+
+    /**
+     * Forward event to listeners by changing source.
+     */
+    @Override
+    public void contentChanged(StorageContentEvent event){
+        final FeatureType currentType = getFeatureType();
+
+        //forward events only if the collection is typed and match the type name
+        if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
+            sendEvent(StorageContentEvent.resetSource(this, event));
+        }
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void removeListener() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void addStorageListener(StorageListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeStorageListener(StorageListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Fires a features add event.
+     *
+     * @param name of the schema where features where added.
+     */
+    protected void fireFeaturesAdded(Name name){
+        sendEvent(StorageContentEvent.createAddEvent(this, name));
+    }
+
+    /**
+     * Fires a features update event.
+     *
+     * @param name of the schema where features where updated.
+     */
+    protected void fireFeaturesUpdated(Name name){
+        sendEvent(StorageContentEvent.createUpdateEvent(this, name));
+    }
+
+    /**
+     * Fires a features delete event.
+     *
+     * @param name of the schema where features where deleted
+     */
+    protected void fireFeaturesDeleted(Name name){
+        sendEvent(StorageContentEvent.createDeleteEvent(this, name));
+    }
+
+    /**
+     * Forward a features event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendEvent(StorageContentEvent event){
+        for(final StorageListener listener : listeners){
+            listener.contentChanged(event);
+        }
     }
 
 }

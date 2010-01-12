@@ -49,27 +49,18 @@ public class DefaultSession extends AbstractSession {
     protected static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
-    private final DataStore store;
+    
     private final DefaultSessionDiff diff;
     private final boolean async;
 
     public DefaultSession(DataStore store, boolean async){
-        if(store == null){
-            throw new NullPointerException("DataStore can not be null.");
-        }
-
-        this.store = store;
+        super(store);
+        
         this.diff = new DefaultSessionDiff();
         this.async = async;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public DataStore getDataStore() {
-        return store;
-    }
+    
 
     /**
      * {@inheritDoc }

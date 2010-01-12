@@ -30,6 +30,9 @@ import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.StorageContentEvent;
+import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
@@ -50,13 +53,12 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>{
+public class SessionFeatureCollection extends AbstractFeatureCollection<Feature> {
 
-    private final Session session;
     private final Query query;
 
     public SessionFeatureCollection(Session session, String id, Query query){
-        super(id,null);
+        super(id,null,session);
         if(session == null){
             throw new NullPointerException("Session can not be null.");
         }
@@ -66,18 +68,9 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
         if(query == null){
             throw new NullPointerException("Query can not be null.");
         }
-        this.session = session;
         this.query = query;
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Session getSession() {
-        return session;
-    }
-
+   
     /**
      * {@inheritDoc }
      */

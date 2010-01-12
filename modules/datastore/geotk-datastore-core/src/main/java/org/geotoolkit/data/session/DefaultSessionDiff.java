@@ -31,10 +31,9 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * Contain a list of all modification, ensure concurrency when accesing
  * deltas and lock when commiting or reverting changes.
  *
- * @todo must be concurrent
  * @author Johann Sorel (Geomatys)
  */
-public class DefaultSessionDiff{
+class DefaultSessionDiff{
 
     private final List<Delta> deltas = new ArrayList<Delta>();
     private List<Delta> readCopy = null;
@@ -44,7 +43,7 @@ public class DefaultSessionDiff{
     private final Lock writeLock = rwlock.writeLock();
 
 
-    public DefaultSessionDiff(){
+    DefaultSessionDiff(){
     }
 
     /**

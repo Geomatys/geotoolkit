@@ -28,7 +28,7 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface Delta {
+interface Delta {
 
     Query modify(Query query);
 

@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +41,8 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.feature.Feature;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -68,6 +69,10 @@ public abstract class AbstractDataStore implements DataStore{
     public static final String GML_DESCRIPTION = "description";
 
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
+
+    //@todo not thread safe, I dont think it's important
+    private final Set<StorageListener> listeners = new HashSet<StorageListener>();
+
 
     protected Logger getLogger(){
         return Logger;
@@ -188,7 +193,107 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public void dispose() {
+        listeners.clear();
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // listeners methods ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addStorageListener(StorageListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeStorageListener(StorageListener listener) {
+        listeners.remove(listener);
+    }
+
+    /**
+     * Fires a schema add event to all listeners.
+     * 
+     * @param name added schema name
+     * @param type added feature type
+     */
+    protected void fireSchemaAdded(Name name, FeatureType type){
+        sendEvent(StorageManagementEvent.createAddEvent(this, name, type));
+    }
+
+    /**
+     * Fires a schema update event to all listeners.
+     *
+     * @param name updated schema name
+     * @param oldType featuretype before change
+     * @param newType featuretype after change
+     */
+    protected void fireSchemaUpdated(Name name, FeatureType oldType, FeatureType newType){
+        sendEvent(StorageManagementEvent.createUpdateEvent(this, name, oldType, newType));
+    }
+
+    /**
+     * Fires a schema delete event to all listeners.
+     *
+     * @param name deleted schema name
+     * @param type feature type of the deleted schema
+     */
+    protected void fireSchemaDeleted(Name name, FeatureType type){
+        sendEvent(StorageManagementEvent.createDeleteEvent(this, name, type));
+    }
+
+    /**
+     * Fires a features add event.
+     *
+     * @param name of the schema where features where added.
+     */
+    protected void fireFeaturesAdded(Name name){
+        sendEvent(StorageContentEvent.createAddEvent(this, name));
+    }
+
+    /**
+     * Fires a features update event.
+     *
+     * @param name of the schema where features where updated.
+     */
+    protected void fireFeaturesUpdated(Name name){
+        sendEvent(StorageContentEvent.createUpdateEvent(this, name));
+    }
+
+    /**
+     * Fires a features delete event.
+     *
+     * @param name of the schema where features where deleted
+     */
+    protected void fireFeaturesDeleted(Name name){
+        sendEvent(StorageContentEvent.createDeleteEvent(this, name));
+    }
+
+    /**
+     * Forward a schema event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendEvent(StorageManagementEvent event){
+        for(final StorageListener listener : listeners){
+            listener.structureChanged(event);
+        }
+    }
+
+    /**
+     * Forward a features event to all listeners.
+     * @param event , event to send to listeners.
+     */
+    protected void sendEvent(StorageContentEvent event){
+        for(final StorageListener listener : listeners){
+            listener.contentChanged(event);
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // useful methods for datastore that doesn't implement all query parameters/

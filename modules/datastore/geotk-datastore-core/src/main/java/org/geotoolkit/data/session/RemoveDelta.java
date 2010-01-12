@@ -34,12 +34,12 @@ import org.opengis.geometry.Envelope;
  * @module pending
  * @todo make this concurrent
  */
-public class RemoveDelta extends AbstractDelta{
+class RemoveDelta extends AbstractDelta{
 
     private final Name type;
     private final Id removedIds;
 
-    public RemoveDelta(Session session, Name typeName, Id filter){
+    RemoveDelta(Session session, Name typeName, Id filter){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");

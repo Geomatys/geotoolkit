@@ -27,7 +27,7 @@ import org.opengis.filter.FilterFactory2;
  *
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractDelta implements Delta{
+abstract class AbstractDelta implements Delta{
 
     protected static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
