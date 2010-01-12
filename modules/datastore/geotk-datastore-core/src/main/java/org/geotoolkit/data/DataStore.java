@@ -35,6 +35,13 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.Envelope;
 
 /**
+ * A Datastore is a storage object which manage a serie of FeatureTypes.
+ * Depending on it's underlying storage system, the datastore may offer
+ * possibility to add new types or allow writing operations.
+ *
+ * Performances can be completly different from one implementation to another.
+ * Consider using the memory datastore is you need to work fast on a small amought
+ * of datas.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -69,10 +76,33 @@ public interface DataStore {
      */
     Set<Name> getNames() throws DataStoreException;
 
+    /**
+     * Create a new schema.
+     *
+     * @param typeName , new type name
+     * @param featureType , new type schema
+     * @throws DataStoreException if schema already exist or can not create schema.
+     */
     void createSchema(Name typeName, FeatureType featureType) throws DataStoreException;
 
+    /**
+     * Update a schema, should preserve attribut with the same
+     * name and set default values to new attributs.
+     * If the attributs type have changed, the datastore should do the best
+     * effort to try to convert values.
+     *
+     * @param typeName , type name to update
+     * @param featureType , new type schema
+     * @throws DataStoreException if schema does not exist or can not be modified.
+     */
     void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException;
 
+    /**
+     * Delete a schema.
+     * 
+     * @param typeName , type name to delete
+     * @throws DataStoreException if schema does not exist or can not be deleted.
+     */
     void deleteSchema(Name typeName) throws DataStoreException;
 
     /**
@@ -133,6 +163,15 @@ public interface DataStore {
      */
     Envelope getEnvelope(Query query) throws DataStoreException;
 
+    /**
+     * Add a collection of features in a group of features.
+     *
+     * @param groupName , group where features must be added
+     * @param newFeatures , collection of new features
+     * @return List of featureId of the added features, may be null or inexact
+     * if the datastore can not handle persistant ids.
+     * @throws DataStoreException
+     */
     List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
     /**
@@ -141,16 +180,57 @@ public interface DataStore {
      */
     void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException;
 
+    /**
+     * Update a set of features that match the given filter and replace
+     * there attributs values by thoses in the given map.
+     *
+     * @param groupName , group where features must be updated
+     * @param filter , updating filter, all features that match the filter will be updated
+     * @param values , map of values to update
+     * @throws DataStoreException
+     */
     void updateFeatures(Name groupName, Filter filter, Map< ? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException;
 
+    /**
+     *
+     * @param groupName , group where features must be deleted
+     * @param filter , deleting filter, all features that match the filter will be removed
+     * @throws DataStoreException
+     */
     void removeFeatures(Name groupName, Filter filter) throws DataStoreException;
-    
+
+    /**
+     * Get a feature reader to iterate on.
+     *
+     * @param query , requested parameters
+     * @return FeatureReader , never null but can be empty
+     * @throws DataStoreException
+     */
     FeatureReader getFeatureReader(Query query) throws DataStoreException;
 
+    /**
+     * Aquiere a writer on a given featuretype in modify mode.
+     *
+     * @param typeName , type name
+     * @param filter , limit features to only thoses that match this filter
+     * @return FeatureWriter , never null but can be empty.
+     * @throws DataStoreException
+     */
     FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException;
 
+    /**
+     * Aquiere a writer on a given featuretype in append mode.
+     *
+     * @param typeName , type name
+     * @return FeatureWriter , empty.
+     * @throws DataStoreException
+     */
     FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException;
 
+    /**
+     * Dispose the datastore caches and underlying resources.
+     * The datastore should not be used after this call or it may raise errors.
+     */
     void dispose();
     
 }
