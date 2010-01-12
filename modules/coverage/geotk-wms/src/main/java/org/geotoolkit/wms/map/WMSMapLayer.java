@@ -35,7 +35,6 @@ import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.coverage.processing.operation.Interpolate;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -205,6 +204,26 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             }
         }
 
+        
+
+        Shape rect = context2D.getCanvasDisplayBounds();
+
+        final double rotation = context2D.getCanvas().getController().getRotation();
+        final AffineTransform trs = new AffineTransform();
+        trs.rotate(rotation);
+        rect = trs.createTransformedShape(rect);
+
+        try {
+            return query(env, rect.getBounds().getSize());
+        } catch (MalformedURLException ex) {
+            Logging.getLogger(WMSMapLayer.class).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    public URL query(Envelope env, final Dimension rect) throws MalformedURLException  {
+
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
 
@@ -232,23 +251,6 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
             }
         }
 
-        Shape rect = context2D.getCanvasDisplayBounds();
-
-        final double rotation = context2D.getCanvas().getController().getRotation();
-        final AffineTransform trs = new AffineTransform();
-        trs.rotate(rotation);
-        rect = trs.createTransformedShape(rect);
-
-        try {
-            return query(env, rect.getBounds().getSize());
-        } catch (MalformedURLException ex) {
-            Logging.getLogger(WMSMapLayer.class).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
-    }
-
-    private URL query(final Envelope env, final Dimension rect) throws MalformedURLException  {
         final GetMapRequest request = server.createGetMap();
         request.setEnvelope(env);
         request.setDimension(rect);
