@@ -30,7 +30,7 @@ import java.io.InputStream;
  * Those files will be open in read-only mode.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.08
  *
  * @since 3.00
  */
@@ -39,6 +39,14 @@ final class PackInput implements Closeable {
      * The {@code value} directory.
      */
     public static final String META_INF = "META-INF/";
+
+    /**
+     * Files from the {@code META-INF} directory to include.
+     * Every files not in this list will be excluded.
+     *
+     * @since 3.08
+     */
+    private static final String[] INCLUDES = {"registryFile.jai"};
 
     /**
      * The {@code value} directory.
@@ -96,8 +104,8 @@ final class PackInput implements Closeable {
         while (entries.hasMoreElements()) {
             entry = entries.nextElement();
             final String name = entry.getName();
-            if (name.startsWith(META_INF)) {
-                if (!name.startsWith(SERVICES)) {
+            if (name.startsWith(META_INF) && !name.startsWith(SERVICES)) {
+                if (!include(name.substring(META_INF.length()))) {
                     continue;
                 }
             }
@@ -106,6 +114,18 @@ final class PackInput implements Closeable {
             return entry;
         }
         return entry = null;
+    }
+
+    /**
+     * Returns {@code true} if the given name is part of the {@link #INCLUDES} list.
+     */
+    private static boolean include(final String name) {
+        for (final String include : INCLUDES) {
+            if (name.equals(include)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

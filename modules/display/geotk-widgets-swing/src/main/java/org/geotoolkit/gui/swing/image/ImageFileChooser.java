@@ -77,7 +77,7 @@ import org.geotoolkit.resources.Errors;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.08
  *
  * @see ImageFileProperties
  *
@@ -398,7 +398,11 @@ skip:   while (it.hasNext()) {
                     String line; while ((line = in.readLine()) != null) {
                         line = line.trim();
                         if (line.length() != 0 && line.charAt(0) != '#') {
-                            content.add(new File(directory, line));
+                            File file = new File(line);
+                            if (!file.isAbsolute()) {
+                                file = new File(directory, line);
+                            }
+                            content.add(file);
                         }
                     }
                     in.close();

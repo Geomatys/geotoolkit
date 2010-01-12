@@ -55,7 +55,7 @@ import org.geotoolkit.internal.image.io.RawFile;
 
 /**
  * Copies a set of tiles to temporary RAW files. This is created indirectly by
- * {@link MosaicImageWriter#writeFromInput} before to start to creation of the
+ * {@link MosaicImageWriter#writeFromInput} before to start the creation of the
  * new mosaic.
  *
  * @author Martin Desruisseaux (Geomatys)

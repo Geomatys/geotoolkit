@@ -75,7 +75,7 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.08
  *
  * @since 3.00
  * @module
@@ -366,8 +366,13 @@ public class MosaicChooser extends JPanel implements Dialog {
          * invocation from any thread, since it acceed only immutable fields.
          */
         public String getFormat() {
-            final String[] names = provider.getFormatNames();
-            return (names != null && names.length != 0) ? names[0] : null;
+            if (provider != null) {
+                final String[] names = provider.getFormatNames();
+                if (names != null && names.length != 0) {
+                    return names[0];
+                }
+            }
+            return null;
         }
 
         /**

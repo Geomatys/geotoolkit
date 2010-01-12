@@ -51,8 +51,8 @@ public class SimpleInternationalString extends AbstractInternationalString imple
      * @param message The string for all locales.
      */
     public SimpleInternationalString(final String message) {
-        defaultValue = message;
         ensureNonNull("message", message);
+        defaultValue = message;
     }
 
     /**
