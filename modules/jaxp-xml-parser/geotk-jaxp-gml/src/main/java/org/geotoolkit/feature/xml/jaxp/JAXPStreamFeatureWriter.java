@@ -183,9 +183,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                     }
 
                 } else if (!(a.getType() instanceof GeometryType)) {
-                    System.out.println("en");
                     String value = Utils.getStringValue(a.getValue());
-                    System.out.println("globe");
                     if (value != null || (value == null && !a.isNillable())) {
                         
                         String namespaceProperty = a.getName().getNamespaceURI();

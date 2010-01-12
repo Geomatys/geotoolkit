@@ -285,7 +285,6 @@ public class FeatureTypeUtilities {
         SimpleFeatureType result = tb.buildFeatureType();
 
         if (!crsSetted && result instanceof DefaultSimpleFeatureType) {
-            System.out.println("waiiii: " + result.getAttributeCount());
             ((DefaultSimpleFeatureType)result).setCoordinateReferenceSystem(override);
         }
         return result;
