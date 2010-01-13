@@ -22,6 +22,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 
 /**
+ * Storage management event.
  *
  * @todo work in progress
  * @author Johann Sorel (Geomatys)
@@ -48,11 +49,8 @@ public class StorageManagementEvent extends EventObject{
         if(name == null){
             throw new NullPointerException("Name can not be null.");
         }
-        if(oldtype == null){
-            throw new NullPointerException("Old feature type can not be null.");
-        }
-        if(newtype == null){
-            throw new NullPointerException("New feature type can not be null.");
+        if(oldtype == null && newtype == null){
+            throw new NullPointerException("Old and new feature type can not be both null.");
         }
 
 
@@ -62,24 +60,43 @@ public class StorageManagementEvent extends EventObject{
         this.newType = newtype;
     }
 
+    /**
+     * get the event type, can be Add, Update or Delete.
+     * @return Type of the event , never null.
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * Get the affected type name by this event.
+     * @return Name , never null.
+     */
     public Name getFeatureTypeName() {
         return name;
     }
 
+    /**
+     * Retrieve the newly created feature type or
+     * the updated feature type.
+     * @return FeatureType or null if event is a Delete
+     */
     public FeatureType getNewFeatureType() {
         return newType;
     }
 
+    /**
+     * Retrieve the deleted feature type or
+     * the old updated feature type.
+     *
+     * @return FeatureType or null if event is an Add
+     */
     public FeatureType getOldFeatureType() {
         return oldType;
     }
 
     public static StorageManagementEvent createAddEvent(Object source, Name name, FeatureType type){
-        return new StorageManagementEvent(source, Type.ADD, name, type, type);
+        return new StorageManagementEvent(source, Type.ADD, name, null, type);
     }
 
     public static StorageManagementEvent createUpdateEvent(Object source, Name name, FeatureType oldType, FeatureType newType){
@@ -87,7 +104,7 @@ public class StorageManagementEvent extends EventObject{
     }
 
     public static StorageManagementEvent createDeleteEvent(Object source, Name name, FeatureType type){
-        return new StorageManagementEvent(source, Type.DELETE, name, type, type);
+        return new StorageManagementEvent(source, Type.DELETE, name, type, null);
     }
 
     public static StorageManagementEvent resetSource(Object source, StorageManagementEvent event){

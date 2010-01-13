@@ -25,12 +25,14 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.geotoolkit.data.DefaultFeatureIDReader;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.AbstractFeatureWriterAppend;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
@@ -38,6 +40,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
@@ -100,11 +103,14 @@ public class MemoryDataStore extends AbstractDataStore{
         }
 
         types.put(name, featureType);
-        features.put(name, new ArrayList<Feature>());
+        features.put(name, new CopyOnWriteArrayList<Feature>());
         idGenerators.put(name, new DefaultFeatureIDReader(name.getLocalPart()));
 
         //clear name cache
         nameCache = null;
+
+        //fire event
+        fireSchemaAdded(name, featureType);
     }
 
     /**
@@ -113,8 +119,32 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public synchronized void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
         //todo must do it a way to avoid destroying all features.
-        deleteSchema(typeName);
-        createSchema(typeName,featureType);
+
+        if(featureType == null){
+            throw new NullPointerException("Feature type can not be null.");
+        }
+        if(typeName == null){
+            throw new NullPointerException("Name can not be null.");
+        }
+
+        final FeatureType type = types.remove(typeName);
+
+        if(type == null){
+            throw new IllegalArgumentException("No featureType for name : " + typeName);
+        }
+
+        features.remove(typeName);
+        idGenerators.remove(typeName);
+
+        types.put(typeName, featureType);
+        features.put(typeName, new ArrayList<Feature>());
+        idGenerators.put(typeName, new DefaultFeatureIDReader(typeName.getLocalPart()));
+
+        //clear name cache
+        nameCache = null;
+
+        //fire update event
+        fireSchemaUpdated(typeName, type, featureType);
     }
 
     /**
@@ -133,6 +163,9 @@ public class MemoryDataStore extends AbstractDataStore{
 
         //clear name cache
         nameCache = null;
+
+        //fire event
+        fireSchemaDeleted(typeName, type);
     }
 
     /**
@@ -196,7 +229,35 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+        final FeatureType type = getFeatureType(groupName);
+        final List<Feature> group = this.features.get(groupName);
+
+
+        final List<FeatureId> ids = new ArrayList<FeatureId>();
+        int numAdded = 0;
+
+        if(newFeatures instanceof FeatureCollection && type.equals( ((FeatureCollection)newFeatures).getFeatureType()) ){
+            //safe to use the addAll method
+            numAdded++;
+            group.addAll(newFeatures);
+        }else{
+            //safe iteration add
+            for(Feature f : newFeatures){
+                if(f.getType().equals(type)){
+                    numAdded++;
+                    group.add(f);
+                }else{
+                    throw new DataStoreException("Trying to add a feature with wrong type : " + f.getType() +" should be : " + type);
+                }
+            }
+        }
+
+        //fire event if needed
+        if(numAdded > 0){
+            fireFeaturesAdded(groupName);
+        }
+
+        return ids;
     }
 
     /**
@@ -204,7 +265,25 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
-        handleUpdateWithFeatureWriter(groupName, filter, values);
+        final FeatureType type = getFeatureType(groupName);
+        final List<Feature> group = this.features.get(groupName);
+
+        int numUpdated = 0;
+
+        for(Feature f : group){
+            if(filter.evaluate(f)){
+                numUpdated++;
+                for(Map.Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
+                    f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
+                }
+            }
+        }
+
+        //fire event if needed
+        if(numUpdated > 0){
+            fireFeaturesUpdated(groupName);
+        }
+
     }
 
     /**
@@ -212,7 +291,25 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        handleRemoveWithFeatureWriter(groupName, filter);
+        final List<Feature> group = this.features.get(groupName);
+        
+        if(group == null){
+            throw new DataStoreException("Type : " + groupName +" do not exist.");
+        }
+        
+        int numRemoved = 0;
+        for(Feature f : group){
+            if(filter.evaluate(f)){
+                numRemoved++;
+                group.remove(f);
+            }
+        }
+
+        //fire event if needed
+        if(numRemoved > 0){
+            fireFeaturesDeleted(groupName);
+        }
+
     }
 
     /**
@@ -290,6 +387,8 @@ public class MemoryDataStore extends AbstractDataStore{
         public void write() throws DataStoreRuntimeException {
             if(currentFeature != null){
                 features.get(name).add(currentFeature);
+                //fire event
+                fireFeaturesAdded(builder.getFeatureType().getName());
             }
         }
 
@@ -298,13 +397,15 @@ public class MemoryDataStore extends AbstractDataStore{
     private class MemoryFeatureWriter<T extends FeatureType, F extends Feature> implements FeatureWriter<T,F>{
 
         private final T type;
+        private final List<F> list;
         private final ListIterator<F> iterator;
         private F currentFeature = null;
         private F modified = null;
 
         MemoryFeatureWriter(Name name, T type){
             this.type = type;
-            this.iterator = (ListIterator<F>) features.get(name).listIterator();
+            this.list =  (List<F>) features.get(name);
+            this.iterator = list.listIterator();
         }
 
         @Override
@@ -316,7 +417,11 @@ public class MemoryDataStore extends AbstractDataStore{
 
         @Override
         public void write() throws DataStoreRuntimeException {
-            iterator.set(modified);
+            for(Property prop : modified.getProperties()){
+                currentFeature.getProperty(prop.getName()).setValue(prop.getValue());
+            }
+            //fire event
+            fireFeaturesUpdated(type.getName());
         }
 
         @Override
@@ -326,7 +431,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
         @Override
         public void remove() throws DataStoreRuntimeException {
-            iterator.remove();
+            list.remove(currentFeature);
         }
 
         @Override

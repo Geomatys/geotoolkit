@@ -21,6 +21,7 @@ import java.util.EventObject;
 import org.opengis.feature.type.Name;
 
 /**
+ * Storage content event.
  *
  * @todo work in progress , what kind of information should we return?
  * list of ids for add ?
@@ -46,10 +47,18 @@ public class StorageContentEvent extends EventObject{
         this.name = name;
     }
 
+    /**
+     * get the event type, can be Add, Update or Delete.
+     * @return Type of the event , never null.
+     */
     public Type getType() {
         return type;
     }
 
+    /**
+     * Get the affected type name by this event.
+     * @return Name , never null.
+     */
     public Name getFeatureTypeName() {
         return name;
     }

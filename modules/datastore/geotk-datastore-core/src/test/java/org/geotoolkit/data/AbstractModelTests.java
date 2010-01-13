@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 
 import java.util.List;
 import junit.framework.TestCase;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -32,7 +33,7 @@ import org.opengis.filter.FilterFactory;
  * Tests schema modifications
  *
  * @author Johann Sorel (Geomatys)
- * todo make generic tests
+ * todo make more generic tests
  */
 public abstract class AbstractModelTests extends TestCase{
 
@@ -57,21 +58,27 @@ public abstract class AbstractModelTests extends TestCase{
         final List<Class> geometryBindings = getSupportedGeometryTypes();
         final List<Class> bindinds = getSupportedAttributTypes();
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final Session session = store.createSession(true);
         
 
         for(final Class geomType : geometryBindings){
+
+            //create the schema ------------------------------------------------
             final String name = "testname";
             sftb.reset();
-            sftb.setName(name);
-            
+            sftb.setName(name);            
             sftb.add("att_geometry", geomType, DefaultGeographicCRS.WGS84);
-            sftb.setDefaultGeometry("att_geometry");
-            
+            sftb.setDefaultGeometry("att_geometry");            
             for(int i=0; i<bindinds.size(); i++){
                 sftb.add("att"+i, bindinds.get(i));
-            }
-            
+            }            
             final SimpleFeatureType sft = sftb.buildFeatureType();
+
+            //add listeners
+            SimpleListener storeListen = new SimpleListener();
+            SimpleListener sessionListen = new SimpleListener();
+            store.addStorageListener(storeListen);
+            session.addStorageListener(sessionListen);
 
             store.createSchema(sft.getName(), sft);
 
@@ -79,7 +86,29 @@ public abstract class AbstractModelTests extends TestCase{
             assertNotNull(type);
             assertEquals(sft, type);
 
-            //delete the created schema
+            //check listeners
+            assertEquals(1, storeListen.numManageEvent);
+            assertEquals(1, sessionListen.numManageEvent);
+            assertEquals(0, storeListen.numContentEvent);
+            assertEquals(0, sessionListen.numContentEvent);
+            assertNotNull(storeListen.lastManagementEvent);
+            assertNotNull(sessionListen.lastManagementEvent);
+            assertNull(storeListen.lastContentEvent);
+            assertNull(sessionListen.lastContentEvent);
+            assertEquals(StorageManagementEvent.Type.ADD, storeListen.lastManagementEvent.getType());
+            assertEquals(StorageManagementEvent.Type.ADD, sessionListen.lastManagementEvent.getType());
+            assertEquals(name, storeListen.lastManagementEvent.getFeatureTypeName().getLocalPart());
+            assertEquals(name, sessionListen.lastManagementEvent.getFeatureTypeName().getLocalPart());
+            assertEquals(sft, storeListen.lastManagementEvent.getNewFeatureType());
+            assertEquals(sft, sessionListen.lastManagementEvent.getNewFeatureType());
+            assertEquals(null, storeListen.lastManagementEvent.getOldFeatureType());
+            assertEquals(null, sessionListen.lastManagementEvent.getOldFeatureType());
+
+            store.removeStorageListener(storeListen);
+            session.removeStorageListener(sessionListen);
+
+
+            //delete the created schema ----------------------------------------
             Name nsname = null;
             for(Name n : store.getNames()){
                 if(n.getLocalPart().equalsIgnoreCase(name)){
@@ -88,11 +117,37 @@ public abstract class AbstractModelTests extends TestCase{
                 }
             }
 
+            assertNotNull(nsname);
             readAndWriteTest(store, nsname);
 
+            //add listeners
+            storeListen = new SimpleListener();
+            sessionListen = new SimpleListener();
+            store.addStorageListener(storeListen);
+            session.addStorageListener(sessionListen);
 
-            assertNotNull(nsname);
             store.deleteSchema(nsname);
+
+            //check listeners
+            assertEquals(1, storeListen.numManageEvent);
+            assertEquals(1, sessionListen.numManageEvent);
+            assertEquals(0, storeListen.numContentEvent);
+            assertEquals(0, sessionListen.numContentEvent);
+            assertNotNull(storeListen.lastManagementEvent);
+            assertNotNull(sessionListen.lastManagementEvent);
+            assertNull(storeListen.lastContentEvent);
+            assertNull(sessionListen.lastContentEvent);
+            assertEquals(StorageManagementEvent.Type.DELETE, storeListen.lastManagementEvent.getType());
+            assertEquals(StorageManagementEvent.Type.DELETE, sessionListen.lastManagementEvent.getType());
+            assertEquals(name, storeListen.lastManagementEvent.getFeatureTypeName().getLocalPart());
+            assertEquals(name, sessionListen.lastManagementEvent.getFeatureTypeName().getLocalPart());
+            assertEquals(null, storeListen.lastManagementEvent.getNewFeatureType());
+            assertEquals(null, sessionListen.lastManagementEvent.getNewFeatureType());
+            assertEquals(sft, storeListen.lastManagementEvent.getOldFeatureType());
+            assertEquals(sft, sessionListen.lastManagementEvent.getOldFeatureType());
+
+            store.removeStorageListener(storeListen);
+            session.removeStorageListener(sessionListen);
 
             try{
                 store.getFeatureType(nsname);
@@ -115,5 +170,26 @@ public abstract class AbstractModelTests extends TestCase{
         //todo, must find a way to test this in a correct way.
     }
 
+
+    private static class SimpleListener implements StorageListener{
+
+        public int numManageEvent = 0;
+        public int numContentEvent = 0;
+        public StorageManagementEvent lastManagementEvent = null;
+        public StorageContentEvent lastContentEvent = null;
+
+        @Override
+        public void structureChanged(StorageManagementEvent event) {
+            numManageEvent++;
+            this.lastManagementEvent = event;
+        }
+
+        @Override
+        public void contentChanged(StorageContentEvent event) {
+            numContentEvent++;
+            this.lastContentEvent = event;
+        }
+
+    }
 
 }

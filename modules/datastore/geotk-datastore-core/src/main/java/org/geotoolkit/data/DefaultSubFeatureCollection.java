@@ -29,6 +29,7 @@ import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -59,6 +60,21 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
         super(original.getID(),expectingType(original.getFeatureType(),query));
         this.original = original;
         this.query = query;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureCollection<F> subCollection(Query query) throws DataStoreException {
+        try {
+            //avoid making another encapsulation
+            //fuze querys and wrap the original collection.
+            final Query mix = QueryUtilities.subQuery(this.query, query);
+            return new DefaultSubFeatureCollection<F>(original, mix);
+        } catch (SchemaException ex) {
+            throw new DataStoreException(ex);
+        }
     }
 
     /**
