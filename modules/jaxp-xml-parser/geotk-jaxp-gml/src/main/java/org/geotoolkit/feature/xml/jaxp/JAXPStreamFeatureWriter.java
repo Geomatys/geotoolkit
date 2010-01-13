@@ -246,7 +246,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
             XMLStreamWriter streamWriter    = outputFactory.createXMLStreamWriter(writer);
 
-            writeFeatureCollection(fc, streamWriter);
+            writeFeatureCollection(fc, streamWriter,false);
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
@@ -261,7 +261,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
             XMLStreamWriter streamWriter    = outputFactory.createXMLStreamWriter(out);
 
-            writeFeatureCollection(fc, streamWriter);
+            writeFeatureCollection(fc, streamWriter,false);
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);
@@ -277,7 +277,7 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
             StringWriter sw                = new StringWriter();
             XMLStreamWriter streamWriter   = outputFactory.createXMLStreamWriter(sw);
 
-            writeFeatureCollection(featureCollection, streamWriter);
+            writeFeatureCollection(featureCollection, streamWriter,false);
             return sw.toString();
 
         } catch (XMLStreamException ex) {
@@ -288,10 +288,19 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
         return null;
     }
 
-    public void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter) throws DataStoreException {
+    /**
+     *
+     * @param featureCollection
+     * @param streamWriter
+     * @param fragment : true if we write in a stream, dont write start and end elements
+     * @throws DataStoreException
+     */
+    public void writeFeatureCollection(FeatureCollection featureCollection, XMLStreamWriter streamWriter, boolean fragment) throws DataStoreException {
         try {
             // the XML header
-            streamWriter.writeStartDocument("UTF-8", "1.0");
+            if(!fragment){
+                streamWriter.writeStartDocument("UTF-8", "1.0");
+            }
 
             // the root Element
             streamWriter.writeStartElement("wfs", "FeatureCollection", "http://www.opengis.net/wfs");
@@ -330,12 +339,20 @@ public class JAXPStreamFeatureWriter extends JAXPFeatureWriter {
                 streamWriter.writeEndElement();
             }
 
-            streamWriter.writeEndElement();
-            streamWriter.writeEndDocument();
             // we close the stream
             iterator.close();
+
+            streamWriter.writeEndElement();
+
+            if(!fragment){
+                streamWriter.writeEndDocument();
+            }
+            
             streamWriter.flush();
-            streamWriter.close();
+
+            if(!fragment){
+                streamWriter.close();
+            }
 
         } catch (XMLStreamException ex) {
             LOGGER.log(Level.SEVERE, "XMl stream exception while writing the feature: " + ex.getMessage(), ex);

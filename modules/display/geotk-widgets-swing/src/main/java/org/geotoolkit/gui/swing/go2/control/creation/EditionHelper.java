@@ -49,6 +49,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
@@ -674,6 +675,7 @@ public class EditionHelper {
         final CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
 
         final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(handler.getMap().getCanvas().getObjectiveCRS(), dataCrs,true));
+        dataPoly.setSRID(SRIDGenerator.toSRID(dataCrs, SRIDGenerator.Version.V1));
 
         final Expression geomData = FF.literal(dataPoly);
         final Filter f = FF.intersects(geomField, geomData);

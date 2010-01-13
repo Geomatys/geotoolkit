@@ -29,25 +29,42 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.gml.xml.v311.AbstractCurveSegmentType;
+import org.geotoolkit.gml.xml.v311.AbstractCurveType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.AbstractRingPropertyType;
 import org.geotoolkit.gml.xml.v311.AbstractRingType;
+import org.geotoolkit.gml.xml.v311.ArcByCenterPointType;
+import org.geotoolkit.gml.xml.v311.ArcStringByBulgeType;
+import org.geotoolkit.gml.xml.v311.ArcStringType;
+import org.geotoolkit.gml.xml.v311.BSplineType;
+import org.geotoolkit.gml.xml.v311.ClothoidType;
+import org.geotoolkit.gml.xml.v311.CubicSplineType;
+import org.geotoolkit.gml.xml.v311.CurvePropertyType;
+import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.GeodesicStringType;
 import org.geotoolkit.gml.xml.v311.LineStringPropertyType;
+import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
 import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.LinearRingType;
 import org.geotoolkit.gml.xml.v311.MultiLineStringType;
 import org.geotoolkit.gml.xml.v311.MultiPointType;
 import org.geotoolkit.gml.xml.v311.MultiPolygonType;
+import org.geotoolkit.gml.xml.v311.OffsetCurveType;
+import org.geotoolkit.gml.xml.v311.OrientableCurveType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonPropertyType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.v311.RingType;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.geometry.DirectPosition;
@@ -129,13 +146,7 @@ public class GeometrytoJTS {
         final DirectPositionListType lst = gml.getPosList();
         final int dim = gml.getCoordinateDimension();
 
-
-        final List<Double> values = lst.getValue();
-        final List<Coordinate> coords = new ArrayList<Coordinate>();
-
-        for(int i=0,n=values.size();i<n;i+=dim){
-            coords.add( new Coordinate(values.get(i), values.get(i+1)) );
-        }
+        final List<Coordinate> coords = toJTSCoords(lst, dim);
 
         final LineString lineString = GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
 
@@ -146,6 +157,16 @@ public class GeometrytoJTS {
         }
 
         return lineString;
+    }
+
+    public static List<Coordinate> toJTSCoords(DirectPositionListType lst, int dim){
+        final List<Double> values = lst.getValue();
+        final List<Coordinate> coords = new ArrayList<Coordinate>();
+
+        for(int i=0,n=values.size();i<n;i+=dim){
+            coords.add( new Coordinate(values.get(i), values.get(i+1)) );
+        }
+        return coords;
     }
 
     public static MultiPoint toJTS(MultiPointType gml){
@@ -208,9 +229,12 @@ public class GeometrytoJTS {
     public static LinearRing toJTS(AbstractRingType gml){
         if(gml instanceof LinearRingType){
             return toJTS((LinearRingType)gml);
+        }else if(gml instanceof RingType){
+            return toJTS((RingType)gml);
         }else{
             Logging.getLogger(GeometrytoJTS.class).log(Level.SEVERE, "Unssupported geometry type : " + gml);
-            return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0), new Coordinate(0, 0)});
+            return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0),
+            new Coordinate(0, 0),new Coordinate(0, 0)});
         }
 
     }
@@ -225,6 +249,135 @@ public class GeometrytoJTS {
         for(int i=0,n=values.size();i<n;i+=dim){
             coords.add( new Coordinate(values.get(i), values.get(i+1)) );
         }
+
+        final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
+
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        if(crs != null){
+            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+            ring.setSRID(srid);
+        }
+
+        return ring;
+    }
+
+    public static LinearRing toJTS(RingType gml){
+
+        final LinkedList<Coordinate> coords = new LinkedList<Coordinate>();
+
+        for(CurvePropertyType cpt :gml.getCurveMember()){
+            AbstractCurveType act = cpt.getAbstractCurve().getValue();
+
+            if(act instanceof CurveType){
+                final CurveType ct = (CurveType) act;
+                for(JAXBElement<? extends AbstractCurveSegmentType> jax : ct.getSegments().getAbstractCurveSegment()){
+                    AbstractCurveSegmentType acst = jax.getValue();
+
+                    if(acst instanceof ClothoidType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof BSplineType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof CubicSplineType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof GeodesicStringType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof LineStringSegmentType){
+                        final LineStringSegmentType lsst = (LineStringSegmentType)acst;
+
+                        if(lsst.getPosList() != null){
+                            final DirectPositionListType dpst = lsst.getPosList();
+                            final int dim = ct.getCoordinateDimension();
+                            final List<Coordinate> plots = toJTSCoords(dpst, dim);
+
+                            if(coords.isEmpty()){
+                                for(Coordinate c : plots){
+                                    coords.add(c);
+                                }
+                            }else{
+                                if( coords.getLast().equals(plots.get(0)) ){
+                                    for(int i=1; i<plots.size();i++){
+                                        coords.add(plots.get(i));
+                                    }
+                                }else{
+                                    for(Coordinate c : plots){
+                                        coords.add(c);
+                                    }
+                                }
+                            }
+                        }else{
+
+                            if(coords.isEmpty()){
+                                for(JAXBElement ele : lsst.getPosOrPointPropertyOrPointRep()){
+                                    Object v = ele.getValue();
+                                    if(v instanceof DirectPositionType){
+                                        DirectPositionType pos = (DirectPositionType)v;
+                                        coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1)));
+                                    }else{
+                                        throw new IllegalArgumentException("not supported yet");
+                                    }
+                                }
+                            }else{
+                                for(JAXBElement ele : lsst.getPosOrPointPropertyOrPointRep()){
+                                    Object v = ele.getValue();
+                                    if(v instanceof DirectPositionType){
+                                        DirectPositionType pos = (DirectPositionType)v;
+
+                                        Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1));
+
+                                        if(!c.equals2D(coords.getLast())){
+                                            coords.add(c);
+                                        }
+                                    }else{
+                                        throw new IllegalArgumentException("not supported yet");
+                                    }
+                                }
+                            }
+
+
+                            
+
+                        }
+
+
+                    } else if (acst instanceof ArcByCenterPointType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof ArcStringType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof OffsetCurveType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else if (acst instanceof ArcStringByBulgeType){
+                        throw new IllegalArgumentException("not supported yet");
+                    } else{
+                        throw new IllegalArgumentException("not supported yet");
+                    }
+
+                }
+            }else if(act instanceof LineStringType){
+                final LineString ls = toJTS((LineStringType)act);
+                final Coordinate[] plots = ls.getCoordinates();
+
+                if(coords.isEmpty()){
+                    for(Coordinate c : plots){
+                        coords.add(c);
+                    }
+                }else{
+                    if( coords.getLast().equals(plots[0]) ){
+                        for(int i=1; i<plots.length;i++){
+                            coords.add(plots[i]);
+                        }
+                    }else{
+                        for(Coordinate c : plots){
+                            coords.add(c);
+                        }
+                    }
+                }
+
+
+            }else if(act instanceof OrientableCurveType){
+                throw new IllegalArgumentException("not supported yet");
+            }
+        }
+
 
         final LinearRing ring = GF.createLinearRing(coords.toArray(new Coordinate[coords.size()]));
 

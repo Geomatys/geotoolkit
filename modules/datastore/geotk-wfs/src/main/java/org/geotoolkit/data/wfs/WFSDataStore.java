@@ -50,6 +50,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
@@ -332,7 +333,7 @@ public class WFSDataStore extends AbstractDataStore{
         update.setFilter(filter);
         update.setTypeName(groupName);
         for(Map.Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
-            update.updates().put(entry.getKey().getName(), entry.getValue());
+            update.updates().put(entry.getKey(), entry.getValue());
         }
 
         request.elements().add(update);
@@ -390,7 +391,8 @@ public class WFSDataStore extends AbstractDataStore{
 
     private FeatureCollection<SimpleFeature> requestFeature(QName typeName, Query query) throws IOException {
         final Name name = new DefaultName(typeName);
-        final SimpleFeatureType sft = types.get(name);
+        SimpleFeatureType sft = types.get(name);
+        sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
 
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);
