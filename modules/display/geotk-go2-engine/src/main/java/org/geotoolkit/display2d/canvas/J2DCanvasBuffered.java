@@ -18,18 +18,15 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultController2D;
-import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
@@ -152,12 +149,8 @@ public class J2DCanvasBuffered extends J2DCanvas{
          * to update their informations before they start their rendering. Consequently,
          * disabling repaint events while we are painting help to reduces duplicated rendering.
          */
-        final Rectangle displayBounds = new Rectangle(dim);
-        Rectangle2D dirtyArea = XRectangle2D.INFINITY;
         if (clipBounds == null) {
-            clipBounds = displayBounds;
-        } else if (displayBounds.contains(clipBounds)) {
-            dirtyArea = clipBounds;
+            clipBounds = new Rectangle(dim);
         }
         output.setClip(clipBounds);
         output.addRenderingHints(hints);
@@ -169,9 +162,8 @@ public class J2DCanvasBuffered extends J2DCanvas{
             painter.paint(context2D);
         }
 
-        final AbstractContainer renderer = getContainer();
-        if(renderer != null && renderer instanceof AbstractContainer2D){
-            final AbstractContainer2D renderer2D = (AbstractContainer2D) renderer;
+        final AbstractContainer2D renderer2D = getContainer();
+        if(renderer2D != null){
             render(context, renderer2D.getSortedGraphics());
         }
 
