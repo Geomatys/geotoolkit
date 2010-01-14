@@ -36,7 +36,7 @@ public class ObjectFactory {
     private static final QName ENVELOPE_QNAME           = new QName("http://www.opengis.net/gml", "Envelope");
     private static final QName MULTI_POINT_QNAME        = new QName("http://www.opengis.net/gml", "MultiPoint");
     private static final QName MULTI_CURVE_QNAME        = new QName("http://www.opengis.net/gml", "MultiCurve");
-    private static final QName MULTI_SURFACE_QNAME        = new QName("http://www.opengis.net/gml", "MultiSurface");
+    private static final QName MULTI_SURFACE_QNAME      = new QName("http://www.opengis.net/gml", "MultiSurface");
     private static final QName COMPOSITE_CURVE_QNAME    = new QName("http://www.opengis.net/gml", "CompositeCurve");
     private static final QName POLYHEDRAL_SURFACE_QNAME = new QName("http://www.opengis.net/gml", "PolyhedralSurface");
     private static final QName POLYGON_QNAME            = new QName("http://www.opengis.net/gml", "Polygon");

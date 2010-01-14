@@ -320,7 +320,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
         return null;
     }
 
-    private List<SimpleFeature> extractFeatureFromTransaction(XMLStreamReader streamReader) {
+    private Object extractFeatureFromTransaction(XMLStreamReader streamReader) {
         List<SimpleFeature> features = new ArrayList<SimpleFeature>();
         try {
             boolean insert = false;
@@ -344,6 +344,9 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
                     } else if (insert) {
 
+                        if (name.getLocalPart().equals("FeatureCollection")) {
+                            return readFeatureCollection(streamReader, "");
+                        }
                         boolean find = false;
                         StringBuilder expectedFeatureType = new StringBuilder();
                         for (FeatureType ft : featureTypes) {
