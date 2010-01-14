@@ -41,6 +41,11 @@ zip -d xml-apis-1.3.04.jar org/xml/sax/*
 zip -d grib-5.1.03.jar ucar/unidata/io/*
 
 #
+# Remove entry that duplicates geotk-coverage-SNAPSHOT.jar
+#
+zip -d geotk-go2-SNAPSHOT.jar META-INF/registryFile.jai
+
+#
 # Remove duplicate entries
 #
 find . -name "*.jar" -exec zip -d '{}' NOTICE LICENSE README license/* META-INF/*.txt META-INF/maven/* \;
