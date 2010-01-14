@@ -70,6 +70,30 @@ import static org.geotoolkit.test.Commons.*;
 @Depend(MetadataStandardTest.class)
 public final class MetadataMarshallingTest {
     /**
+     * The previous locale before the test is run.
+     * This is usually the default locale.
+     */
+    private Locale defaultLocale;
+
+    /**
+     * Sets the locale to a compile-time value. We need to use a fixed value because the
+     * value of an international string is locale-sensitive in this test.
+     */
+    @Before
+    public void fixLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.FRANCE);
+    }
+
+    /**
+     * Restores the locales to its original value.
+     */
+    @After
+    public void restoreLocale() {
+        Locale.setDefault(defaultLocale);
+    }
+
+    /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
      * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.
      * Some assertions about the validity of the unmarshalled data are checked.

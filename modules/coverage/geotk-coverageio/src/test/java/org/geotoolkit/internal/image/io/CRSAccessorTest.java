@@ -28,6 +28,7 @@ import org.geotoolkit.image.io.metadata.MetadataAccessorTest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;
@@ -76,7 +77,7 @@ public final class CRSAccessorTest {
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         final CRSAccessor accessor = new CRSAccessor(metadata);
         accessor.setCRS(DefaultGeographicCRS.WGS84);
-        assertMultilinesEquals(decodeQuotes(SpatialMetadataFormat.FORMAT_NAME + '\n' +
+        String expected = SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "└───RectifiedGridDomain\n" +
             "    └───CoordinateReferenceSystem\n" +
             "        ├───name=“WGS84(DD)”\n" +
@@ -113,7 +114,16 @@ public final class CRSAccessorTest {
             "                    ├───minimumValue=“-90.0”\n" +
             "                    ├───maximumValue=“90.0”\n" +
             "                    ├───rangeMeaning=“exact”\n" +
-            "                    └───unit=“deg”"), metadata.toString());
+            "                    └───unit=“deg”";
+        /*
+         * We must replace the name of the Coordinate System from French to current locale
+         * because the above CRS uses the DefaultEllipsoidalCS.GEODETIC_2D static final constant,
+         * which has been initialized to the current locale and is not refreshed after the call
+         * to Locale.setDefault(Locale.FRANCE).
+         */
+        final String localizedName = DefaultEllipsoidalCS.GEODETIC_2D.getName().getCode();
+        expected = expected.replace("“Géodésique 2D”", '"' + localizedName + '"');
+        assertMultilinesEquals(decodeQuotes(expected), metadata.toString());
     }
 
     /**
