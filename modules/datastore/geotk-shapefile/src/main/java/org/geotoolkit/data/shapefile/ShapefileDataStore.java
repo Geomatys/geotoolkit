@@ -249,6 +249,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
+        typeCheck(query.getTypeName());
 
         if(QueryUtilities.queryAll(query)){
 
