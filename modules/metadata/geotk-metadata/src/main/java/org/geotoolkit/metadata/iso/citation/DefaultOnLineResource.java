@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.08
  *
  * @since 2.1
  * @module
@@ -95,6 +95,19 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
     static {
         final DefaultOnlineResource r;
         EPSG = r = new DefaultOnlineResource("http://www.epsg.org");
+        r.freeze();
+    }
+
+    /**
+     * The online resources for the
+     * <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF library</A>.
+     *
+     * @since 3.08
+     */
+    public static final OnlineResource NETCDF;
+    static {
+        final DefaultOnlineResource r;
+        NETCDF = r = new DefaultOnlineResource("http://www.unidata.ucar.edu/software/netcdf-java");
         r.freeze();
     }
 

@@ -154,16 +154,21 @@
         <artifactId>commons-logging</artifactId>
         <version>1.1.1</version>
       </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-jdk14</artifactId> <!-- Logging system used by NetCDF -->
-        <version>1.4.0</version>
-      </dependency>
-      <!-- Raster formats -->
+      <!--
+        NetCDF dependency. If the version is updated, remember to update also the link to javadoc
+        later in this pom.xml file, the server/javadoc/links.html file, and the information below.
+        Transitive dependencies relevant to Geotk (for dependencies convergence) are:
+
+           slf4j                1.5.6
+           commons-logging      1.1    (modified to 1.1.1 in Geotk distribution)
+           commons-codec        1.3
+           commons-httpclient   3.1
+           jdom                 1.1
+      -->
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>netcdf</artifactId>
-        <version>2.2.20</version>
+        <version>4.1</version>
       </dependency>
       <!-- Database and Server -->
       <dependency>
@@ -437,6 +442,7 @@
             <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
+            <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.1/javadoc</link>
             <link>http://swinglabs.org/hudson/job/SwingX%20Continuous%20Build/javadoc</link>
             <link>http://jscience.org/api/</link>
             <link>http://www.geoapi.org/snapshot/pending</link>

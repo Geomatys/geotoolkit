@@ -49,7 +49,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.05
+ * @version 3.08
  *
  * @since 2.2
  * @module
@@ -227,6 +227,23 @@ public final class Citations {
         c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
         c.freeze();
         WMS = c;
+    }
+
+    /**
+     * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</A> specification.
+     *
+     * @see DefaultResponsibleParty#NETCDF
+     * @category Specification
+     *
+     * @since 3.08
+     */
+    public static final Citation NETCDF;
+    static {
+        final CitationConstant c = new CitationConstant(DefaultResponsibleParty.NETCDF, "NETCDF");
+        c.addAuthority("NetCDF", false);
+        c.getPresentationForms().add(PresentationForm.DOCUMENT_DIGITAL);
+        c.freeze();
+        NETCDF = c;
     }
 
     /**
@@ -468,7 +485,7 @@ public final class Citations {
      * List of citations declared in this class.
      */
     private static final Citation[] AUTHORITIES = {
-        OGC, OPEN_GIS, ESRI, ORACLE, POSTGIS, GEOTOOLKIT, GEOTOOLS, WMS, GEOTIFF, JAI,
+        OGC, OPEN_GIS, ESRI, ORACLE, POSTGIS, GEOTOOLKIT, GEOTOOLS, WMS, NETCDF, GEOTIFF, JAI,
         EPSG, AUTO, AUTO2, CRS, URN_OGC, HTTP_OGC, UNKNOWN
     };
 

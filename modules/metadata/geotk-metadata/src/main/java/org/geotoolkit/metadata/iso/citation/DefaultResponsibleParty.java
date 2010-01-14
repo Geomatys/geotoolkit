@@ -44,7 +44,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.08
  *
  * @since 2.1
  * @module
@@ -135,7 +135,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#OGC
      */
-    public static ResponsibleParty OGC;
+    public static final ResponsibleParty OGC;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(OGC_NAME);
@@ -150,7 +150,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#OPEN_GIS
      */
-    public static ResponsibleParty OPEN_GIS;
+    public static final ResponsibleParty OPEN_GIS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("OpenGIS consortium"));
@@ -164,7 +164,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#EPSG
      */
-    public static ResponsibleParty EPSG;
+    public static final ResponsibleParty EPSG;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("European Petroleum Survey Group"));
@@ -174,12 +174,28 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
     }
 
     /**
+     * The <A HREF="http://www.unidata.ucar.edu/software/netcdf-java">NETCDF</A> responsible party.
+     *
+     * @see DefaultContact#NETCDF
+     *
+     * @since 3.08
+     */
+    public static final ResponsibleParty NETCDF;
+    static {
+        final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
+        r.setOrganisationName(new SimpleInternationalString("NETCDF"));
+        r.setContactInfo(DefaultContact.NETCDF);
+        r.freeze();
+        NETCDF = r;
+    }
+
+    /**
      * The <A HREF="http://www.remotesensing.org/geotiff/geotiff.html">GeoTIFF</A> responsible
      * party.
      *
      * @see DefaultContact#GEOTIFF
      */
-    public static ResponsibleParty GEOTIFF;
+    public static final ResponsibleParty GEOTIFF;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("GeoTIFF"));
@@ -193,7 +209,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#ESRI
      */
-    public static ResponsibleParty ESRI;
+    public static final ResponsibleParty ESRI;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.OWNER);
         r.setOrganisationName(new SimpleInternationalString("ESRI"));
@@ -207,7 +223,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#ORACLE
      */
-    public static ResponsibleParty ORACLE;
+    public static final ResponsibleParty ORACLE;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.OWNER);
         r.setOrganisationName(new SimpleInternationalString("Oracle"));
@@ -223,7 +239,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @since 2.4
      */
-    public static ResponsibleParty POSTGIS;
+    public static final ResponsibleParty POSTGIS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("PostGIS"));
@@ -239,7 +255,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @since 2.2
      */
-    public static ResponsibleParty SUN_MICROSYSTEMS;
+    public static final ResponsibleParty SUN_MICROSYSTEMS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("Sun Microsystems"));
@@ -253,7 +269,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#GEOTOOLKIT
      */
-    public static ResponsibleParty GEOTOOLKIT;
+    public static final ResponsibleParty GEOTOOLKIT;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("Geotoolkit.org"));
@@ -267,7 +283,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      *
      * @see DefaultContact#GEOTOOLS
      */
-    public static ResponsibleParty GEOTOOLS;
+    public static final ResponsibleParty GEOTOOLS;
     static {
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.PRINCIPAL_INVESTIGATOR);
         r.setOrganisationName(new SimpleInternationalString("GeoTools"));

@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.08
  *
  * @since 2.1
  * @module
@@ -97,6 +97,21 @@ public class DefaultContact extends MetadataEntity implements Contact {
         final DefaultContact c = new DefaultContact(DefaultOnlineResource.EPSG);
         c.freeze();
         EPSG = c;
+    }
+
+    /**
+     * Contact informations for the
+     * <A HREF="http://www.unidata.ucar.edu/software/netcdf-java/">NetCDF</A> library.
+     *
+     * @see DefaultOnlineResource#NETCDF
+     *
+     * @since 3.08
+     */
+    public static final Contact NETCDF;
+    static {
+        final DefaultContact c = new DefaultContact(DefaultOnlineResource.NETCDF);
+        c.freeze();
+        NETCDF = c;
     }
 
     /**

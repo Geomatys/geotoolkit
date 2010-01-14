@@ -29,6 +29,12 @@
  *     <th>MIME type</th>
  *     <th>Comments</th>
  *   </tr><tr>
+ *     <td>{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}</td>
+ *     <td>&nbsp;</td>
+ *     <td>{@code "netcdf"}</td>
+ *     <td>&nbsp;</td>
+ *     <td>&nbsp;Assumes <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
+ *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.plugin.RawImageReader}</td>
  *     <td>&nbsp;</td>
  *     <td>{@code "raw"}</td>
@@ -36,14 +42,14 @@
  *     <td>&nbsp;Requires {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
  *   </tr>
  * </table>
- * <p>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @author Antoine Hnawia (IRD)
+ * @version 3.08
  *
  * @see org.geotoolkit.image.io.text
  *
- * @since 3.07
+ * @since 3.07 (derived from 3.0)
  * @module
  */
 package org.geotoolkit.image.io.plugin;
