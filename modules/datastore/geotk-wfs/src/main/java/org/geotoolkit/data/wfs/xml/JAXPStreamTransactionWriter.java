@@ -40,7 +40,7 @@ import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
-import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.sld.xml.XMLUtilities;
@@ -108,7 +108,7 @@ public class JAXPStreamTransactionWriter {
 
     public Marshaller getMarshaller() throws JAXBException {
         if(marshaller == null){
-            JAXBContext context = JAXBContext.newInstance(ObjectFactory.class);
+            JAXBContext context = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.ObjectFactory.class);
             marshaller = context.createMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
         }
@@ -336,10 +336,10 @@ public class JAXPStreamTransactionWriter {
                     final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
                     value = JTSUtils.toISO( (Geometry)value, desc.getCoordinateReferenceSystem());
                     writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
-                    getMarshaller().marshal(value, writer);
+                    getMarshaller().marshal(new ObjectFactory().buildAnyGeometry((org.opengis.geometry.Geometry) value), writer);
                 }else if(value instanceof org.opengis.geometry.Geometry){
                     writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
-                    getMarshaller().marshal(value, writer);
+                    getMarshaller().marshal(new ObjectFactory().buildAnyGeometry((org.opengis.geometry.Geometry) value), writer);
                 }else{
                     writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
                     writer.writeCharacters(value.toString());

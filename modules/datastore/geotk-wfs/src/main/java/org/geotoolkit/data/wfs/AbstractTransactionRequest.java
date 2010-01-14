@@ -97,52 +97,21 @@ public class AbstractTransactionRequest implements TransactionRequest{
         conec.setDoOutput(true);
         conec.setRequestProperty("Content-Type", "text/xml");
 
-
-//        //write the namespaces
-//        final StringBuilder sbNS = new StringBuilder("{");
-//
-//        sbNS.append("xmlns(").append(JAXPStreamTransactionWriter.GML_PREFIX).append('=').append(JAXPStreamTransactionWriter.GML_NAMESPACE).append(')').append(',');
-//        sbNS.append("xmlns(").append(JAXPStreamTransactionWriter.OGC_PREFIX).append('=').append(JAXPStreamTransactionWriter.OGC_NAMESPACE).append(')').append(',');
-//        sbNS.append("xmlns(").append(JAXPStreamTransactionWriter.WFS_PREFIX).append('=').append(JAXPStreamTransactionWriter.WFS_NAMESPACE).append(')').append(',');
-//
-//
-//        if(sbNS.length() > 0 && sbNS.charAt(sbNS.length()-1) == ','){
-//            sbNS.deleteCharAt(sbNS.length()-1);
-//        }
-//
-//        sbNS.append("}");
-//
-//
-//        conec.addRequestProperty("NAMESPACE", sbNS.toString());
-
-
+        final OutputStream debug = System.out;
         final OutputStream stream = conec.getOutputStream();
 
         //write the transaction xml content
         JAXPStreamTransactionWriter jaxp = new JAXPStreamTransactionWriter();
         try {
+            System.out.println("--------------------------------------------");
+            jaxp.write(debug, this);
+            debug.flush();
+            System.out.println("-----------------------------------------------");
             jaxp.write(stream, this);
             //todo write request in this
         } catch (Exception ex) {
             throw (IOException)new IOException(ex.getMessage()).initCause(ex);
         }
-
-
-        //todo write request in this
-
-
-//        OutputStreamWriter wr = new OutputStreamWriter(conec.getOutputStream());
-//        final InputStream is  = Util.getResourceAsStream("org/constellation/xml/Insert-SamplingPoint-1.xml");
-//        StringWriter sw       = new StringWriter();
-//        BufferedReader in     = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-//        char[] buffer         = new char[1024];
-//        int size;
-//        while ((size = in.read(buffer, 0, 1024)) > 0) {
-//            sw.append(new String(buffer, 0, size));
-//        }
-//
-//        wr.write(sw.toString());
-//        wr.flush();
 
         return conec.getInputStream();
     }
