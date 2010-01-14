@@ -48,6 +48,7 @@ import org.geotoolkit.sld.xml.SE110toGTTransformer;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.FactoryException;
 import org.opengis.style.ContrastMethod;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.Mark;
@@ -187,7 +188,7 @@ public class SEforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void testStyle() throws JAXBException{
+    public void testStyle() throws JAXBException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_SE_STYLE);
@@ -221,7 +222,7 @@ public class SEforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFTS() throws JAXBException{
+    public void testFTS() throws JAXBException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_SE_FTS);
@@ -272,7 +273,7 @@ public class SEforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testRule() throws JAXBException{
+    public void testRule() throws JAXBException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_SE_RULE);

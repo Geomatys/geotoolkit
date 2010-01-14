@@ -34,15 +34,12 @@ import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.LogicOpsType;
-import org.geotoolkit.ogc.xml.v110.OverlapsType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
-import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.sld.DefaultSLDFactory;
@@ -63,7 +60,6 @@ import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
@@ -71,7 +67,8 @@ import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Disjoint;
 import org.opengis.filter.spatial.Overlaps;
-import org.opengis.geometry.Envelope;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -544,7 +541,8 @@ public class OGCforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void testFilterComparisonPropertyIsBetween() throws JAXBException{
+    public void testFilterComparisonPropertyIsBetween() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISBETWEEN);
@@ -583,7 +581,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsEqualTo() throws JAXBException{
+    public void testFilterComparisonPropertyIsEqualTo() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISEQUAL);
@@ -619,7 +618,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsGreaterThan() throws JAXBException{
+    public void testFilterComparisonPropertyIsGreaterThan() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISGREATER);
@@ -655,7 +655,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsGreaterThanOrEqual() throws JAXBException{
+    public void testFilterComparisonPropertyIsGreaterThanOrEqual() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISGREATEROREQUAL);
@@ -690,7 +691,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsLessThan() throws JAXBException{
+    public void testFilterComparisonPropertyIsLessThan() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISLESS);
@@ -725,7 +727,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsLessThanOrEqual() throws JAXBException{
+    public void testFilterComparisonPropertyIsLessThanOrEqual() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISLESSOREQUAL);
@@ -760,7 +763,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsLike() throws JAXBException{
+    public void testFilterComparisonPropertyIsLike() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISLIKE);
@@ -808,7 +812,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsNotEqualTo() throws JAXBException{
+    public void testFilterComparisonPropertyIsNotEqualTo() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISNOTEQUAL);
@@ -844,7 +849,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterComparisonPropertyIsNull() throws JAXBException{
+    public void testFilterComparisonPropertyIsNull() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_COMP_ISNULL);
@@ -882,7 +888,8 @@ public class OGCforSLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void testFilterLogicalAnd() throws JAXBException{
+    public void testFilterLogicalAnd() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
        
         //Read test
         Object obj = unMarshall(FILE_FIL_LOG_AND);
@@ -936,7 +943,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterLogicalOr() throws JAXBException{
+    public void testFilterLogicalOr() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
         
         //Read test
         Object obj = unMarshall(FILE_FIL_LOG_OR);
@@ -990,7 +998,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterLogicalNot() throws JAXBException{
+    public void testFilterLogicalNot() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
      
         //Read test
         Object obj = unMarshall(FILE_FIL_LOG_NOT);
@@ -1062,7 +1071,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterSpatialDisjoint() throws JAXBException{
+    public void testFilterSpatialDisjoint() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
 
         //Read test
         Object obj = unMarshall(FILE_FIL_SPA_DISJOINT);
@@ -1094,7 +1104,8 @@ public class OGCforSLD110Test extends TestCase{
     }
 
     @Test
-    public void testFilterSpatialOverlaps() throws JAXBException{
+    public void testFilterSpatialOverlaps() 
+            throws JAXBException, NoSuchAuthorityCodeException, FactoryException{
 
         //Read test
         Object obj = unMarshall(FILE_FIL_SPA_OVERLAPS2);

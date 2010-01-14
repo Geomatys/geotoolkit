@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
@@ -319,7 +320,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final int elseRuleIndex = sortByElseRule(rules);
 
         // read & paint in the same thread
-        final FeatureIterator<SimpleFeature> iterator = features.iterator();
+        final FeatureIterator<SimpleFeature> iterator;
+        try{
+            iterator = features.iterator();
+        }catch(DataStoreRuntimeException ex){
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+
         try{
             while(iterator.hasNext()){
                 if(monitor.stopRequested()) return;

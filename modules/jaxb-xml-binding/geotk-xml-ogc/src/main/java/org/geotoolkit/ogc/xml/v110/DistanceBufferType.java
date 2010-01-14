@@ -76,7 +76,19 @@ public class DistanceBufferType extends SpatialOpsType {
     public DistanceBufferType() {
         
     }
-    
+
+    public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
+        this.abstractGeometry = abstractGeometry;
+    }
+
+    public void setDistance(DistanceType distance) {
+        this.distance = distance;
+    }
+
+    public void setPropertyName(PropertyNameType propertyName) {
+        this.propertyName = propertyName;
+    }
+
     /**
      * build a new Distance buffer
      */

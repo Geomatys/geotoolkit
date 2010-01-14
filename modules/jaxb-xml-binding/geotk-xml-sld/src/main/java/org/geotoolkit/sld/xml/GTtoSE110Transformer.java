@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.measure.quantity.Energy;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -36,22 +37,37 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.display2d.ext.pattern.PatternSymbolizer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.gml.GMLUtilities;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
+import org.geotoolkit.ogc.xml.v110.BeyondType;
 import org.geotoolkit.ogc.xml.v110.BinaryComparisonOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
+import org.geotoolkit.ogc.xml.v110.BinarySpatialOpType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
+import org.geotoolkit.ogc.xml.v110.ContainsType;
+import org.geotoolkit.ogc.xml.v110.CrossesType;
+import org.geotoolkit.ogc.xml.v110.DWithinType;
+import org.geotoolkit.ogc.xml.v110.DisjointType;
+import org.geotoolkit.ogc.xml.v110.EqualsType;
 import org.geotoolkit.ogc.xml.v110.FeatureIdType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
+import org.geotoolkit.ogc.xml.v110.IntersectsType;
 import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.LogicOpsType;
 import org.geotoolkit.ogc.xml.v110.LowerBoundaryType;
 import org.geotoolkit.ogc.xml.v110.NotType;
 import org.geotoolkit.ogc.xml.v110.OrType;
+import org.geotoolkit.ogc.xml.v110.OverlapsType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsBetweenType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsGreaterThanOrEqualToType;
@@ -63,9 +79,12 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsNotEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
+import org.geotoolkit.ogc.xml.v110.TouchesType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
 import org.geotoolkit.ogc.xml.v110.UpperBoundaryType;
+import org.geotoolkit.ogc.xml.v110.WithinType;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.se.xml.v110.AnchorPointType;
 import org.geotoolkit.se.xml.v110.CategorizeType;
 import org.geotoolkit.se.xml.v110.ChannelSelectionType;
@@ -125,6 +144,7 @@ import org.geotoolkit.style.function.ThreshholdsBelongTo;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.And;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.Filter;
@@ -154,6 +174,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
+import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Contains;
 import org.opengis.filter.spatial.Crosses;
 import org.opengis.filter.spatial.DWithin;
@@ -165,6 +186,8 @@ import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -223,12 +246,14 @@ public class GTtoSE110Transformer implements StyleVisitor{
     private final org.geotoolkit.sld.xml.v110.ObjectFactory sld_factory_v110;
     private final org.geotoolkit.se.xml.v110.ObjectFactory se_factory;
     private final org.geotoolkit.ogc.xml.v110.ObjectFactory ogc_factory;
+    private final org.geotoolkit.gml.xml.v311.ObjectFactory gml_factory;
     private final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
     public GTtoSE110Transformer(){
         this.sld_factory_v110 = new org.geotoolkit.sld.xml.v110.ObjectFactory();
         this.se_factory = new org.geotoolkit.se.xml.v110.ObjectFactory();
         this.ogc_factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
+        this.gml_factory = new ObjectFactory();
     }
 
     public JAXBElement<?> extract(Expression exp){
@@ -584,26 +609,126 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 return visitFilter(FF.and(lst));
             }
 
-        }else if(filter instanceof Beyond){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Contains){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Crosses){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof DWithin){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Disjoint){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Equals){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Intersects){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Overlaps){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Touches){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
-        }else if(filter instanceof Within){
-            throw new IllegalArgumentException("Not parsed yet : " + filter);
+        }else if(filter instanceof BinarySpatialOperator){
+            final BinarySpatialOperator spatialOp = (BinarySpatialOperator) filter;
+            
+            Expression exp1 = spatialOp.getExpression1();
+            Expression exp2 = spatialOp.getExpression2();
+
+            if(!(exp1 instanceof PropertyName)){
+                //flip order
+                final Expression ex = exp1;
+                exp1 = exp2;
+                exp2 = ex;
+            }
+            
+            if(!(exp1 instanceof PropertyName)){
+                throw new IllegalArgumentException("Filter can not be transformed in wml filter, " +
+                        "expression are not of the requiered type ");
+            }
+
+            final JAXBElement<PropertyNameType> pnt = (JAXBElement<PropertyNameType>) extract(exp1);
+            final JAXBElement<EnvelopeEntry> jaxEnv;
+            final JAXBElement<AbstractGeometryType> jaxGeom;
+
+            final Object geom = ((Literal)exp2).getValue();
+
+            if(geom instanceof Geometry){
+                final Geometry jts = (Geometry) geom;
+                final String srid = SRIDGenerator.toSRS(jts.getSRID(), SRIDGenerator.Version.V1);
+                CoordinateReferenceSystem crs;
+                try {
+                    crs = CRS.decode(srid);
+                } catch (Exception ex) {
+                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.SEVERE, null, ex);
+                    crs = null;
+                }
+                final AbstractGeometryType gt = GMLUtilities.getGMLFromISO(JTSUtils.toISO(jts, crs));
+                jaxGeom = gml_factory.createAbstractGeometry(gt);
+                jaxEnv = null;
+            }else if(geom instanceof org.opengis.geometry.Geometry){
+                final AbstractGeometryType gt = GMLUtilities.getGMLFromISO((org.opengis.geometry.Geometry) geom);
+                jaxGeom = gml_factory.createAbstractGeometry(gt);
+                jaxEnv = null;
+            }else if(geom instanceof org.opengis.geometry.Envelope){
+                final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope)geom;
+                EnvelopeEntry ee = gml_factory.createEnvelopeType();
+                try {
+                    ee.setSrsName(CRS.lookupIdentifier(genv.getCoordinateReferenceSystem(), true));
+                } catch (FactoryException ex) {
+                    Logger.getLogger(GTtoSE110Transformer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                ee.setLowerCorner(new DirectPositionType(genv.getLowerCorner()));
+                ee.setUpperCorner(new DirectPositionType(genv.getUpperCorner()));
+
+                jaxGeom = null;
+                jaxEnv = gml_factory.createEnvelope(ee);
+            }else{
+                throw new IllegalArgumentException("Type is not geometric or envelope.");
+            }
+
+            if(filter instanceof Beyond){
+                final BeyondType jaxelement = ogc_factory.createBeyondType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setPropertyName(pnt.getValue());
+                return ogc_factory.createBeyond(jaxelement);
+            }else if(filter instanceof Contains){
+                final ContainsType jaxelement = ogc_factory.createContainsType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createContains(jaxelement);
+            }else if(filter instanceof Crosses){
+                final CrossesType jaxelement = ogc_factory.createCrossesType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createCrosses(jaxelement);
+            }else if(filter instanceof DWithin){
+                final DWithinType jaxelement = ogc_factory.createDWithinType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setPropertyName(pnt.getValue());
+                return ogc_factory.createDWithin(jaxelement);
+            }else if(filter instanceof Disjoint){
+                final DisjointType jaxelement = ogc_factory.createDisjointType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createDisjoint(jaxelement);
+            }else if(filter instanceof Equals){
+                final EqualsType jaxelement = ogc_factory.createEqualsType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createEquals(jaxelement);
+            }else if(filter instanceof Intersects){
+                final IntersectsType jaxelement = ogc_factory.createIntersectsType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createIntersects(jaxelement);
+            }else if(filter instanceof Overlaps){
+                final OverlapsType jaxelement = new OverlapsType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createOverlaps(jaxelement);
+            }else if(filter instanceof Touches){
+                final TouchesType jaxelement = ogc_factory.createTouchesType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createTouches(jaxelement);
+            }else if(filter instanceof Within){
+                final WithinType jaxelement = ogc_factory.createWithinType();
+                jaxelement.setAbstractGeometry(jaxGeom);
+                jaxelement.setEnvelope(jaxEnv);
+                jaxelement.setPropertyName(pnt);
+                return ogc_factory.createWithin(jaxelement);
+            }else{
+                throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
+            }
         }else{
             throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
         }

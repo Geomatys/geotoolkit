@@ -229,7 +229,8 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
             SimpleFeature feature = null;
 
             final FeatureCollection<? extends Feature> collection =
-                    layer.getCollection().subCollection(QueryBuilder.filtered(null, filter));
+                    layer.getCollection().subCollection(
+                    QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), filter));
 
             if(!collection.isEmpty()){
                 final FeatureIterator<? extends Feature> ite = collection.iterator();

@@ -20,6 +20,7 @@ package org.geotoolkit.data.wfs;
 import java.util.HashMap;
 import java.util.Map;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -30,7 +31,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class AbstractUpdate implements Update{
 
-    protected final Map<Name, Object> updates = new HashMap<Name, Object>();
+    protected final Map<PropertyDescriptor,Object> updates = new HashMap<PropertyDescriptor,Object>();
     protected Name typeName = null;
     protected String handle = null;
     protected Filter filter = null;
@@ -38,7 +39,7 @@ public class AbstractUpdate implements Update{
     protected String inputFormat = null;
 
     @Override
-    public Map<Name, Object> updates() {
+    public Map<PropertyDescriptor,Object> updates() {
         return updates;
     }
 

@@ -120,6 +120,8 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -390,7 +392,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 userstyle in GT style.
      */
-    public MutableStyle visitUserStyle(org.geotoolkit.sld.xml.v110.UserStyle us) {
+    public MutableStyle visitUserStyle(org.geotoolkit.sld.xml.v110.UserStyle us) throws FactoryException {
         if(us == null){
             return null;
         }else{
@@ -415,7 +417,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 FeatureTypeStyle or CoverageStyle in GT FTS.
      */
-    public MutableFeatureTypeStyle visitFTS(Object obj){
+    public MutableFeatureTypeStyle visitFTS(Object obj) throws FactoryException{
         if(obj == null) return null;
 
         if(obj instanceof OnlineResourceType){
@@ -508,7 +510,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(Object objRule) {
+    public MutableRule visitRule(Object objRule) throws FactoryException {
         if(objRule instanceof OnlineResourceType){
             final OnlineResourceType ortRule = (OnlineResourceType) objRule;
             return visitRule(ortRule);
@@ -522,7 +524,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(OnlineResourceType ort) {
+    public MutableRule visitRule(OnlineResourceType ort) throws FactoryException {
         final OnlineResource or = visitOnlineResource(ort);
         if(or != null) {
             try{
@@ -538,7 +540,8 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(org.geotoolkit.se.xml.v110.RuleType rt) {
+    public MutableRule visitRule(org.geotoolkit.se.xml.v110.RuleType rt) 
+            throws FactoryException {
 
         final MutableRule rule = styleFactory.rule();
 

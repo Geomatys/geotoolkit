@@ -45,6 +45,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.referencing.FactoryException;
 import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.Extent;
@@ -73,7 +74,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD in a GT class.
      */
-    public MutableStyledLayerDescriptor visit(StyledLayerDescriptor sld){
+    public MutableStyledLayerDescriptor visit(StyledLayerDescriptor sld) throws FactoryException{
         final MutableStyledLayerDescriptor geoSLD = sldFactory.createSLD();
         geoSLD.setName(sld.getName());
         geoSLD.setVersion(sld.getVersion());
@@ -103,7 +104,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD layers in a GT layers Objects
      */
-    public Collection<? extends MutableLayer> visitLayers(List<Object> layers){
+    public Collection<? extends MutableLayer> visitLayers(List<Object> layers) throws FactoryException{
         if(layers == null || layers.isEmpty()){
             return Collections.emptyList();
         } else {
@@ -154,7 +155,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD constraints in a GT constraints class.
      */
-    public Collection<? extends FeatureTypeConstraint> visitFeatureConstraints(LayerFeatureConstraints ftc){
+    public Collection<? extends FeatureTypeConstraint> visitFeatureConstraints(LayerFeatureConstraints ftc) throws FactoryException{
         if(ftc == null || ftc.getFeatureTypeConstraint() == null || ftc.getFeatureTypeConstraint().isEmpty()){
             return Collections.emptyList();
         }else{
@@ -273,7 +274,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD layer style in a GT style class.
      */
-    public Collection<? extends MutableLayerStyle> visitStyles(List<Object> styles){
+    public Collection<? extends MutableLayerStyle> visitStyles(List<Object> styles) throws FactoryException{
         if(styles == null || styles.isEmpty()){
             return Collections.emptyList();
         }else{
@@ -301,7 +302,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 layer style in a GT layer style class.
      */
-    public Collection<? extends MutableStyle> visitUserStyles(List<UserStyle> styles){
+    public Collection<? extends MutableStyle> visitUserStyles(List<UserStyle> styles) throws FactoryException{
         if(styles == null || styles.isEmpty()){
             return Collections.emptyList();
         }else{

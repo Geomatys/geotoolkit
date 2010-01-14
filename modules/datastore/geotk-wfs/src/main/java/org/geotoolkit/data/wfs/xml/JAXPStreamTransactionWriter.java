@@ -17,12 +17,13 @@
 
 package org.geotoolkit.data.wfs.xml;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.OutputStream;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -38,11 +39,15 @@ import org.geotoolkit.data.wfs.TransactionElement;
 import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
+import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.sld.xml.XMLUtilities;
 
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -93,9 +98,26 @@ public class JAXPStreamTransactionWriter {
     private static final String PROP_TYPE = "type";
 
     private static final String TYPE_STRING = XS_PREFIX+":string";
+    private static final String TYPE_DECIMAL = XS_PREFIX+":decimal";
+    private static final String TYPE_INTEGER = XS_PREFIX+":int";
+    private static final String TYPE_DATE = XS_PREFIX+":date";
 
+    private Marshaller marshaller = null;
 
     private final AtomicInteger inc = new AtomicInteger();
+
+    public Marshaller getMarshaller() throws JAXBException {
+        if(marshaller == null){
+            JAXBContext context = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.ObjectFactory.class);
+            marshaller = context.createMarshaller();
+            marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+        }
+
+        return marshaller;
+    }
+
+
+
 
     public void write(OutputStream out, TransactionRequest request) 
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException{
@@ -222,9 +244,8 @@ public class JAXPStreamTransactionWriter {
         //write features--------------------------------------------------------
         final FeatureCollection col = element.getFeatures();
         final JAXPStreamFeatureWriter fw = new JAXPStreamFeatureWriter();
-        fw.writeFeatureCollection(col,writer);
+        fw.writeFeatureCollection(col,writer,true);
         
-
         writer.writeEndElement();
     }
 
@@ -280,7 +301,7 @@ public class JAXPStreamTransactionWriter {
         final Filter filter = element.getFilter();
         if(filter != null){
             final XMLUtilities util = new XMLUtilities();
-            final Marshaller marshaller = util.getJaxbContext110().createMarshaller();
+            final Marshaller marshaller = XMLUtilities.getJaxbContext110().createMarshaller();
             marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
             final Object jaxbelement = util.getTransformerXMLv110().visit(filter);
             marshaller.marshal(jaxbelement, writer);
@@ -288,11 +309,11 @@ public class JAXPStreamTransactionWriter {
         }
 
         //write properties------------------------------------------------------
-        for(final Entry<Name,Object> entry : element.updates().entrySet()){
+        for(final Entry<PropertyDescriptor,Object> entry : element.updates().entrySet()){
             writer.writeStartElement(WFS_PREFIX, TAG_PROPERTY, WFS_NAMESPACE);
 
             //write namespace
-            final Name name = entry.getKey();
+            final Name name = entry.getKey().getName();
             String pref = writer.getNamespaceContext().getPrefix(name.getNamespaceURI());
             if(pref == null){
                 pref = "geons"+inc.incrementAndGet();
@@ -306,13 +327,23 @@ public class JAXPStreamTransactionWriter {
             writer.writeEndElement();
 
             //write value
-            final Object value = entry.getValue();
+            Object value = entry.getValue();
             if(value != null){
                 //todo must handle geometry differently
                 writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
-                writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
-                System.out.println("value  >>> " + value);
-                writer.writeCharacters(value.toString());
+
+                if(value instanceof Geometry){
+                    final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
+                    value = JTSUtils.toISO( (Geometry)value, desc.getCoordinateReferenceSystem());
+                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
+                    getMarshaller().marshal(new ObjectFactory().buildAnyGeometry((org.opengis.geometry.Geometry) value), writer);
+                }else if(value instanceof org.opengis.geometry.Geometry){
+                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
+                    getMarshaller().marshal(new ObjectFactory().buildAnyGeometry((org.opengis.geometry.Geometry) value), writer);
+                }else{
+                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
+                    writer.writeCharacters(value.toString());
+                }
                 writer.writeEndElement();
             }
 
@@ -370,8 +401,21 @@ public class JAXPStreamTransactionWriter {
     }
 
     private static String bestType(Object candidate){
+
+        if(candidate instanceof String){
+            return TYPE_STRING;
+        }else if(candidate instanceof Integer){
+            return TYPE_INTEGER;
+        }else if(candidate instanceof Float || candidate instanceof Double){
+            return TYPE_DECIMAL;
+        }else if(candidate instanceof org.opengis.geometry.Geometry){
+            //is that correct ?
+            return GML_PREFIX+':'+"Geometry";
+        }else{
+            throw new IllegalArgumentException("Unexpected attribut type : "+ candidate.getClass());
+        }
+
         
-        return TYPE_STRING;
     }
 
 }

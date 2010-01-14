@@ -45,6 +45,7 @@ import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.referencing.FactoryException;
 import org.opengis.sld.Layer;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.StyledLayerDescriptor;
@@ -92,7 +93,7 @@ public class Tester {
     }
 
     @Test
-    public void marshalltests() {
+    public void marshalltests() throws FactoryException {
 
         File sld100 = new File("sld_v100.xml");
         File sld110 = new File("sld_v110.xml");
@@ -133,7 +134,7 @@ public class Tester {
         SLD_UTILITIES.marshallV110(sld, file);
     }
 
-    private static void testSLDUnMarshall_V110(File file) {        
+    private static void testSLDUnMarshall_V110(File file) throws FactoryException {
         org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV110(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV110(sld);
         showSLD(geoSLD);
