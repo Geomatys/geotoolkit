@@ -44,6 +44,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.referencing.FactoryException;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
@@ -170,7 +171,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
     @Test
-    public void testSLDReading() throws JAXBException{
+    public void testSLDReading() throws JAXBException, FactoryException{
         MutableStyledLayerDescriptor sld;
         sld = util.readSLD(FILE_SLD_V100, org.geotoolkit.sld.xml.Specification.StyledLayerDescriptor.V_1_0_0);
         assertNotNull(sld);
@@ -186,7 +187,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
     @Test
-    public void testStyleReading() throws JAXBException{
+    public void testStyleReading() throws JAXBException, FactoryException{
         MutableStyle style;
         style = util.readStyle(FILE_STYLE_V100, Specification.SymbologyEncoding.SLD_1_0_0);
         assertNotNull(style);
@@ -202,7 +203,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
     @Test
-    public void testFTSReading() throws JAXBException{
+    public void testFTSReading() throws JAXBException, FactoryException{
         MutableFeatureTypeStyle fts;
         fts = util.readFeatureTypeStyle(FILE_FTS_V100, Specification.SymbologyEncoding.SLD_1_0_0);
         assertNotNull(fts);
@@ -218,7 +219,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
     @Test
-    public void testRuleReading() throws JAXBException{
+    public void testRuleReading() throws JAXBException, FactoryException{
         MutableRule rule;
         rule = util.readRule(FILE_RULE_V100, Specification.SymbologyEncoding.SLD_1_0_0);
         assertNotNull(rule);
@@ -234,7 +235,7 @@ public class XMLUtilitiesTest extends TestCase{
     }
 
     @Test
-    public void testFilterReading() throws JAXBException{
+    public void testFilterReading() throws JAXBException, FactoryException{
         Filter filter;
         filter = util.readFilter(FILE_FILTER_V100, Specification.Filter.V_1_0_0);
         assertNotNull(filter);

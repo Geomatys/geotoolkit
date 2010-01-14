@@ -20,15 +20,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
+
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.filter.GeometrytoJTS;
-import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
@@ -45,6 +42,7 @@ import org.geotoolkit.ogc.xml.v110.SortByType;
 import org.geotoolkit.ogc.xml.v110.SortPropertyType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -52,10 +50,8 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
-import org.opengis.filter.sort.SortOrder;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 /**
  * Transform OGC jaxb xml in GT classes.
@@ -74,7 +70,8 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD filter v1.1 in GT filter.
      */
-    public Filter visitFilter(org.geotoolkit.ogc.xml.v110.FilterType ft){
+    public Filter visitFilter(org.geotoolkit.ogc.xml.v110.FilterType ft)
+            throws FactoryException{
         if(ft == null)return null;        
         
         if(ft.getComparisonOps() != null){
@@ -98,7 +95,8 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD spatial Filter v1.1 in GT filter.
      */
-    public Filter visitSpatialOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.SpatialOpsType> jax) {
+    public Filter visitSpatialOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.SpatialOpsType> jax) 
+            throws NoSuchAuthorityCodeException, FactoryException {
         final org.geotoolkit.ogc.xml.v110.SpatialOpsType ops = jax.getValue();
         final String OpName = jax.getName().getLocalPart();
 
@@ -193,7 +191,8 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD logic Filter v1.1 in GT filter.
      */
-    public Filter visitLogicOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.LogicOpsType> jax) {
+    public Filter visitLogicOp(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.LogicOpsType> jax) 
+            throws NoSuchAuthorityCodeException, FactoryException {
         final org.geotoolkit.ogc.xml.v110.LogicOpsType ops = jax.getValue();
         final String OpName = jax.getName().getLocalPart();
 
@@ -381,7 +380,8 @@ public class OGC110toGTTransformer {
         return sorts;
     }
 
-    public Expression visit(JAXBElement<? extends AbstractGeometryType> ele){
+    public Expression visit(JAXBElement<? extends AbstractGeometryType> ele)
+            throws NoSuchAuthorityCodeException, FactoryException{
         return filterFactory.literal(GeometrytoJTS.toJTS(ele.getValue()));
     }
 

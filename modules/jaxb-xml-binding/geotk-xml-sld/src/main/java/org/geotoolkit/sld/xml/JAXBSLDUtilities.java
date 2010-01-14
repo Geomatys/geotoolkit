@@ -27,6 +27,7 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 
 import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.FactoryException;
 import org.opengis.sld.StyledLayerDescriptor;
 
 /**
@@ -93,7 +94,7 @@ public class JAXBSLDUtilities {
         return new GTtoSLD110Transformer().visit(sld, null);
     }
     
-    public MutableStyledLayerDescriptor transformV110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld){
+    public MutableStyledLayerDescriptor transformV110(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld) throws FactoryException{
         return new SLD110toGTTransformer(filterFactory,styleFactory,sldFactory).visit(sld);
     }
     

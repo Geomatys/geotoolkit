@@ -39,6 +39,7 @@ import org.geotoolkit.sld.xml.SLD110toGTTransformer;
 
 import org.junit.Test;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.referencing.FactoryException;
 import org.opengis.sld.Extent;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.LayerFeatureConstraints;
@@ -130,7 +131,7 @@ public class SLD110Test extends TestCase{
     ////////////////////////////////////////////////////////////////////////////
 
     @Test
-    public void testSLD() throws JAXBException{
+    public void testSLD() throws JAXBException, FactoryException{
         
         //Read test-------------------------------------------------------------
         //----------------------------------------------------------------------

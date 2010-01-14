@@ -53,6 +53,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.referencing.FactoryException;
 import org.opengis.sld.StyledLayerDescriptor;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
@@ -291,7 +292,7 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     public MutableStyledLayerDescriptor readSLD(final Object source, 
-            final Specification.StyledLayerDescriptor version) throws JAXBException{
+            final Specification.StyledLayerDescriptor version) throws JAXBException, FactoryException{
         
         if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
         
@@ -384,7 +385,7 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     public MutableStyle readStyle(final Object source, 
-            final Specification.SymbologyEncoding version) throws JAXBException{
+            final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
         if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
         
         final Object obj;
@@ -446,7 +447,7 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     public MutableFeatureTypeStyle readFeatureTypeStyle(final Object source, 
-            final Specification.SymbologyEncoding version) throws JAXBException{
+            final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
         if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
         
         final Object obj;
@@ -517,7 +518,7 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     public MutableRule readRule(final Object source, 
-            final Specification.SymbologyEncoding version) throws JAXBException{
+            final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
         if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
         
         final Object obj;
@@ -619,7 +620,7 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     public Filter readFilter(final Object source, 
-            final Specification.Filter version) throws JAXBException{
+            final Specification.Filter version) throws JAXBException, FactoryException{
         if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
         
         final Object obj;
