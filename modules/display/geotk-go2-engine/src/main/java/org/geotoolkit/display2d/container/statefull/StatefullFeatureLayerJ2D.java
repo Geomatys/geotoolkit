@@ -62,6 +62,7 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -99,7 +100,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         //clear objective cache is objective crs changed -----------------------
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
         if(objectiveCRS != lastObjectiveCRS){
-            params.objectiveToDisplay.setToIdentity();
+            //change the aff value to force it's refresh
+            params.objectiveToDisplay.setTransform(2, 0, 0, 2, 0, 0);
             lastObjectiveCRS = objectiveCRS;
             objectiveCleared = true;
 

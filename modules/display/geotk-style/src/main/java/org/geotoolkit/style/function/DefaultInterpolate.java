@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.geotoolkit.filter.AbstractExpression;
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Feature;
@@ -217,11 +218,11 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
                     int r = lastRed   + (int)(pourcent*redInterval);
                     int g = lastGreen + (int)(pourcent*greenInterval);
                     int b = lastBlue  + (int)(pourcent*blueInterval);
-                    return new Color(r, g, b, a);
+                    return Converters.convert( new Color(r, g, b, a) , c);
                 }else{
                     final Double n1 = before.getValue().evaluate(object,Double.class);
                     final Double n2 = after.getValue().evaluate(object,Double.class);
-                    return n1 + pourcent*(n2-n1);
+                    return Converters.convert( (n1 + pourcent*(n2-n1)) , c);
                 }
                 
             }

@@ -295,6 +295,8 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+        lastCollection = null;
+
         final TransactionRequest request = server.createTransaction();
         final Insert insert = server.createInsertElement();
         insert.setInputFormat("text/xml; subtype=gml/3.1.1");
@@ -326,6 +328,8 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+        lastCollection = null;
+        
         final TransactionRequest request = server.createTransaction();
         final Update update = server.createUpdateElement();
         update.setInputFormat("text/xml; subtype=gml/3.1.1");
@@ -351,6 +355,8 @@ public class WFSDataStore extends AbstractDataStore{
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+        lastCollection = null;
+        
         final TransactionRequest request = server.createTransaction();
         final Delete delete = server.createDeleteElement();
         

@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 
 import org.opengis.feature.Feature;
 import org.opengis.style.PointSymbolizer;
@@ -54,6 +55,11 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     @Override
     protected void evaluate() {
         cachedGraphic.evaluate();
+    }
+
+    @Override
+    public Collection<String> getRequieredAttributsName() {
+        return cachedGraphic.getRequieredAttributsName();
     }
 
     /**

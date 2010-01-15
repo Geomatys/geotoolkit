@@ -18,11 +18,14 @@
 package org.geotoolkit.style.function;
 
 import java.awt.Color;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.StyleConstants;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -94,6 +97,14 @@ public class CategorizeTest {
         assertEquals(c, RED);
         c = categorize.evaluate(f3,Color.class);
         assertEquals(c, BLUE);
+
+
+        //test get lookup property
+        Collection<String> requieredAttributs = new HashSet<String>();
+        categorize.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
+
+        assertEquals(requieredAttributs.size(), 1);
+        assertEquals(requieredAttributs.iterator().next(), attribut);
 
     }
 

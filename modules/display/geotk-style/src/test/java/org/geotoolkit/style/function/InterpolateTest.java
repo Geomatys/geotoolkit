@@ -7,10 +7,13 @@ package org.geotoolkit.style.function;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.AfterClass;
@@ -121,6 +124,12 @@ public class InterpolateTest {
         d = interpolate.evaluate(f4,Double.class);
         assertEquals(d.doubleValue(), 75d, 0d);
 
+        //test get lookup property
+        Collection<String> requieredAttributs = new HashSet<String>();
+        interpolate.accept(ListingPropertyVisitor.VISITOR, requieredAttributs);
+
+        assertEquals(requieredAttributs.size(), 1);
+        assertEquals(requieredAttributs.iterator().next(), attribut);
 
     }
 

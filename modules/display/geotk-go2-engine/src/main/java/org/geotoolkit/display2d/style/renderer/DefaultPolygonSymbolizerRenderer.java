@@ -134,6 +134,10 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             throw new PortrayalException("Could not calculate projected geometry",ex);
         }
 
+        if(shape == null){
+            //no geometry, end here
+            return;
+        }
 
         //we apply the displacement ---------------------------------------
         final float[] disps = symbol.getDisplacement(feature);

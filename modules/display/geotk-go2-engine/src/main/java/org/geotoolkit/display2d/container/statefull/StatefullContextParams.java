@@ -39,7 +39,7 @@ public class StatefullContextParams {
 
     public final ReferencedCanvas2D canvas;
     public final FeatureMapLayer layer;
-    public final AffineTransform objectiveToDisplay = new AffineTransform();
+    public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();
     public final GeometryCoordinateSequenceTransformer dataToDisplayTransformer = new GeometryCoordinateSequenceTransformer();
     public double[] resolutionObjective = new double[2];
