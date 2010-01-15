@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -80,8 +80,8 @@ import org.geotoolkit.jdbc.fid.NonIncrementingPrimaryKeyColumn;
 import org.geotoolkit.jdbc.fid.SequencedPrimaryKeyColumn;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Converters;
-import org.opengis.feature.Feature;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -493,16 +493,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
 
         return pkey;
-    }
-
-    private static Name ensureGMLNS(String namespace, String local){
-        if(local.equals(GML_NAME)){
-            return new DefaultName(GML_NAMESPACE, GML_NAME);
-        }else if(local.equals(GML_DESCRIPTION)){
-            return new DefaultName(GML_NAMESPACE, GML_DESCRIPTION);
-        }else{
-            return new DefaultName(namespace, local);
-        }
     }
 
     /**

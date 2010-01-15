@@ -28,7 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Guilhem Legal (Geomatys)
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name="PolygonType", namespace="http://www.opengis.net/gml")
+//@XmlType(name="PolygonType", namespace="http://www.opengis.net/gml")
 public class PolygonType {
 
     /**

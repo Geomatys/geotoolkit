@@ -38,6 +38,7 @@ import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.util.logging.Logging;
@@ -521,6 +522,17 @@ public abstract class AbstractDataStore implements DataStore{
 
     protected FeatureWriter handleWriterAppend(Name groupName) throws DataStoreException {
         return GenericFeatureWriter.wrapAppend(this, groupName);
+    }
+
+
+    protected static Name ensureGMLNS(String namespace, String local){
+        if(local.equals(GML_NAME)){
+            return new DefaultName(GML_NAMESPACE, GML_NAME);
+        }else if(local.equals(GML_DESCRIPTION)){
+            return new DefaultName(GML_NAMESPACE, GML_DESCRIPTION);
+        }else{
+            return new DefaultName(namespace, local);
+        }
     }
 
 }

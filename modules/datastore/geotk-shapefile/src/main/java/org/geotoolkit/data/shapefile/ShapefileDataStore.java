@@ -180,7 +180,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         if(namespace != null){
             this.namespace = namespace.toString();
         }else{
-            this.namespace = null;
+            this.namespace = "http://geotoolkit.org";
         }
 
         this.dbfCharset = dbfCharset;
@@ -205,9 +205,9 @@ public class ShapefileDataStore extends AbstractDataStore{
         if(name != null && schema != null) return;
 
         if(namespace != null){
-            this.schema = buildSchema(namespace.toString());
+            this.schema = buildSchema(namespace);
         }else{
-            this.schema = buildSchema(null);
+            this.schema = buildSchema("http://geotoolkit.org");
         }
 
         this.name = schema.getName();
@@ -543,7 +543,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     private SimpleFeatureType buildSchema(String namespace) throws DataStoreException {
 
-        final List<AttributeDescriptor> types = readAttributes();
+        final List<AttributeDescriptor> types = readAttributes(namespace);
         final GeometryDescriptor geomDescriptor = (GeometryDescriptor) types.get(0);
         final Class<?> geomBinding = geomDescriptor.getType().getBinding();
 
@@ -583,7 +583,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return List of new AttributeDescriptor
      * @throws DataStoreException If AttributeType reading fails
      */
-    protected List<AttributeDescriptor> readAttributes() throws DataStoreException {
+    protected List<AttributeDescriptor> readAttributes(String namespace) throws DataStoreException {
         final ShapefileReader shp = openShapeReader();
         final DbaseFileReader dbf = openDbfReader();
 
@@ -613,12 +613,12 @@ public class ShapefileDataStore extends AbstractDataStore{
 
         try {
             final Class<?> geometryClass = shp.getHeader().getShapeType().bestJTSClass();
-            buildAtt.setName(Classes.getShortName(geometryClass));
+            buildAtt.setName(ensureGMLNS(namespace, Classes.getShortName(geometryClass)));
             buildAtt.setCRS(crs);
             buildAtt.setBinding(geometryClass);
 
             buildDesc.setNillable(true);
-            buildDesc.setName(BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME);
+            buildDesc.setName(ensureGMLNS(namespace, BasicFeatureTypes.GEOMETRY_ATTRIBUTE_NAME));
             buildDesc.setType(buildAtt.buildGeometryType());
 
             attributes.add(buildDesc.buildDescriptor());
@@ -647,12 +647,12 @@ public class ShapefileDataStore extends AbstractDataStore{
                     usedNames.add(name);
 
                     buildAtt.reset();
-                    buildAtt.setName(name);
+                    buildAtt.setName(ensureGMLNS(namespace, name));
                     buildAtt.setBinding(attributeClass);
                     buildAtt.setLength(length);
 
                     buildDesc.reset();
-                    buildDesc.setName(name);
+                    buildDesc.setName(ensureGMLNS(namespace, name));
                     buildDesc.setNillable(true);
                     buildDesc.setType(buildAtt.buildType());
 
@@ -695,7 +695,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             return new ShapefileAttributeReader(desc, openShapeReader(), null);
         }
 
-        List<AttributeDescriptor> atts = (schema == null) ? readAttributes() : schema.getAttributeDescriptors();
+        List<AttributeDescriptor> atts = (schema == null) ? readAttributes(namespace) : schema.getAttributeDescriptors();
         return new ShapefileAttributeReader(atts, openShapeReader(), openDbfReader());
     }
 

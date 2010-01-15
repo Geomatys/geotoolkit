@@ -33,6 +33,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.feature.type.BasicFeatureTypes;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -125,7 +126,11 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     @Override
     public final JDBCDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
         // namespace
-        final String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
+        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
+
+        if(namespace == null){
+            namespace = "http://geotoolkit.org";
+        }
 
         final JDBCDataStore dataStore = new DefaultJDBCDataStore(namespace);
 
