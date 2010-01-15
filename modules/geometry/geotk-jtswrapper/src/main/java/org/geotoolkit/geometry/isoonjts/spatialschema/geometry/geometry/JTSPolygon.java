@@ -19,6 +19,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 import java.util.List;
 
 import java.util.Set;
+import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
@@ -34,7 +35,7 @@ import org.opengis.geometry.primitive.SurfaceInterpolation;
 import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.primitive.Primitive;
 
-
+@XmlType(name="PolygonType", namespace="http://www.opengis.net/gml")
 public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     
     //*************************************************************************

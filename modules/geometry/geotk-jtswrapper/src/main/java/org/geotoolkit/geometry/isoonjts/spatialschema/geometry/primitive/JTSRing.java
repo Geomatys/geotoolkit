@@ -12,6 +12,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive;
 import com.vividsolutions.jts.geom.LineString;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 
@@ -48,6 +49,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @module pending
  */
 @XmlRootElement(name = "Ring", namespace="http://www.opengis.net/gml")
+@XmlType(name="RingType", namespace="http://www.opengis.net/gml")
 public class JTSRing extends JTSCompositeCurve implements Ring {
 
     /**

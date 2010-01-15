@@ -11,6 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.GeometryAdapter;
 import org.opengis.geometry.primitive.Point;
@@ -21,6 +22,7 @@ import org.opengis.geometry.aggregate.MultiPoint;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
+@XmlType(name="MultiPointType", namespace="http://www.opengis.net/gml")
 public class JTSMultiPoint extends AbstractJTSAggregate<Point>	implements MultiPoint {
 
     public JTSMultiPoint() {

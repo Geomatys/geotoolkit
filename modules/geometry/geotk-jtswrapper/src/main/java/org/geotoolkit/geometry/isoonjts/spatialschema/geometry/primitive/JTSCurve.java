@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
@@ -42,6 +43,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  * connected end-to-end.
  * @module pending
  */
+@XmlType(name="CurveType", namespace="http://www.opengis.net/gml")
 public class JTSCurve extends AbstractJTSGeometry implements Curve {
     /**
      * Component parts of the Curve.  Each element must implement CurveSegment.

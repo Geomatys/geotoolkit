@@ -12,6 +12,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
@@ -43,6 +44,7 @@ import org.opengis.geometry.primitive.CurveBoundary;
  *          (returns TRUE for end points).
  * @module pending
  */
+@XmlType(name="CompositeCurveType", namespace="http://www.opengis.net/gml")
 public class JTSCompositeCurve extends AbstractJTSComposite implements CompositeCurve {
     
     // A parent curve, if any.

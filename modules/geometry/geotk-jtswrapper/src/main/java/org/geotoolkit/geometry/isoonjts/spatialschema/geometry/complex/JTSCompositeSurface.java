@@ -11,6 +11,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex;
 
 import java.util.Set;
 
+import javax.xml.bind.annotation.XmlType;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.CompositeSurface;
 import org.opengis.geometry.primitive.Curve;
@@ -39,6 +40,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  *          (returns TRUE for end points).
  * @module pending
  */
+@XmlType(name="CompositeSurfaceType", namespace="http://www.opengis.net/gml")
 public class JTSCompositeSurface extends AbstractJTSComposite implements CompositeSurface {//, OrientableSurface {
     
     

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
@@ -43,6 +44,7 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
  * @version $Revision $
  * @module pending
  */
+@XmlType(name="PolyHedralSurfaceType", namespace="http://www.opengis.net/gml")
 public class JTSPolyhedralSurface extends AbstractJTSGeometry implements PolyhedralSurface {
     private static final long serialVersionUID = 4153619785904408034L;
 

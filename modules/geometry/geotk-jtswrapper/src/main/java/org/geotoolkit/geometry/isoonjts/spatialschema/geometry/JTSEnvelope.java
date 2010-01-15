@@ -13,6 +13,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry;
 import javax.measure.unit.NonSI;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.GeometryUtils;
@@ -33,6 +34,7 @@ import org.opengis.geometry.Envelope;
  * @version 2.0
  * @module pending
  */
+@XmlType(name="EnvelopeType", namespace="http://www.opengis.net/gml")
 public class JTSEnvelope implements Envelope {
 
     /**

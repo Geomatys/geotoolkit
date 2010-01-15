@@ -4,6 +4,7 @@ package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate;
 
 import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.GeometryAdapter;
 import org.opengis.geometry.aggregate.MultiCurve;
@@ -15,6 +16,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
+@XmlType(name="MultiCurveType", namespace="http://www.opengis.net/gml")
 public class JTSMultiCurve extends AbstractJTSAggregate<OrientableCurve> implements MultiCurve {
 
     public JTSMultiCurve() {

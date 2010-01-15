@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -53,6 +54,7 @@ import org.opengis.geometry.complex.Composite;
  * @version $Revision $
  * @module pending
  */
+@XmlType(name="PointType", namespace="http://www.opengis.net/gml")
 public class JTSPoint extends AbstractJTSGeometry implements Point {
 
     private DirectPosition position;
