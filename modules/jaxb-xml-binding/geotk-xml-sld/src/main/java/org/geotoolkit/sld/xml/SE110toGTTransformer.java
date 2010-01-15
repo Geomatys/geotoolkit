@@ -113,15 +113,14 @@ import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
 import org.geotoolkit.style.function.RecolorFunction;
 import org.geotoolkit.style.function.ThreshholdsBelongTo;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.style.AnchorPoint;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
@@ -1205,8 +1204,9 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         for(final InterpolationPointType ip : interpolate.getInterpolationPoint()){
             values.add(
                 styleFactory.interpolationPoint(
-                    visitExpression(ip.getValue()),
-                    ip.getData())
+                    ip.getData(),
+                    visitExpression(ip.getValue())
+                    )
             );
         }
         

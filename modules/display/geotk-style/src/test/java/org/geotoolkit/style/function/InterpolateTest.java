@@ -69,9 +69,9 @@ public class InterpolateTest {
 
         //test color interpolation ---------------------------------------------
         values.clear();
-        values.add(new DefaultInterpolationPoint(ff.literal(BLACK),0d));
-        values.add(new DefaultInterpolationPoint(ff.literal(RED),10d));
-        values.add(new DefaultInterpolationPoint(ff.literal(BLUE),20d));
+        values.add(new DefaultInterpolationPoint(0d,ff.literal(BLACK)));
+        values.add(new DefaultInterpolationPoint(10d,ff.literal(RED)));
+        values.add(new DefaultInterpolationPoint(20d,ff.literal(BLUE)));
 
         Interpolate interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
 
@@ -87,9 +87,9 @@ public class InterpolateTest {
 
         //test color interpolation ---------------------------------------------
         values.clear();
-        values.add(new DefaultInterpolationPoint(sf.literal(BLACK),0d));
-        values.add(new DefaultInterpolationPoint(sf.literal(RED),10d));
-        values.add(new DefaultInterpolationPoint(sf.literal(BLUE),20d));
+        values.add(new DefaultInterpolationPoint(0d,sf.literal(BLACK)));
+        values.add(new DefaultInterpolationPoint(10d,sf.literal(RED)));
+        values.add(new DefaultInterpolationPoint(20d,sf.literal(BLUE)));
 
         interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
 
@@ -106,9 +106,9 @@ public class InterpolateTest {
 
         //test number interpolation --------------------------------------------
         values.clear();
-        values.add(new DefaultInterpolationPoint(ff.literal(0d),0d));
-        values.add(new DefaultInterpolationPoint(ff.literal(100d),10d));
-        values.add(new DefaultInterpolationPoint(ff.literal(50d),20d));
+        values.add(new DefaultInterpolationPoint(0d,ff.literal(0d)));
+        values.add(new DefaultInterpolationPoint(10d,ff.literal(100d)));
+        values.add(new DefaultInterpolationPoint(20d,ff.literal(50d)));
 
         interpolate = new DefaultInterpolate(Lookup, values, Method.COLOR, Mode.CUBIC, null);
 
