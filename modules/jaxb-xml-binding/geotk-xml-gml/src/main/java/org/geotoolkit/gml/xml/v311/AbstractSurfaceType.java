@@ -48,9 +48,6 @@ import javax.xml.bind.annotation.XmlType;
     PolygonType.class,
     SurfaceType.class
 })
-public class AbstractSurfaceType
-    extends AbstractGeometricPrimitiveType
-{
-
+public class AbstractSurfaceType extends AbstractGeometricPrimitiveType {
 
 }

@@ -27,6 +27,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 //Junit dependencies
@@ -103,6 +107,17 @@ public class WfsXMLBindingTest {
         StringWriter sw = new StringWriter();
         marshaller.marshal(capa, sw);
 
-        //logger.info(sw.toString());
+
+        TransactionType transac = new TransactionType("WFS", "1.1.0", null, AllSomeType.ALL, null);
+        PropertyIsLikeType pis = new PropertyIsLikeType("NAME", "Ashton", "*", "?", "\\");
+        FilterType filter = new FilterType(pis);
+        DirectPositionType dp = new DirectPositionType(21400.0,2001368.0);
+        PointType pt = new PointType(null, dp);
+        pt.setSrsName("urn:ogc:def:crs:epsg:7.4:27582");
+        PropertyType property = new PropertyType(new QName("the_geom"), pt);
+        UpdateElementType update = new UpdateElementType(Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
+        transac.getInsertOrUpdateOrDelete().add(update);
+
+        //marshaller.marshal(transac, System.out);
     }
 }

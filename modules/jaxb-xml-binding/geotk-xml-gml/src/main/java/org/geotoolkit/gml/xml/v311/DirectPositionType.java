@@ -312,12 +312,14 @@ public class DirectPositionType implements DirectPosition {
 
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        try {
-            return CRS.decode(srsName);
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+        if (srsName != null) {
+            try {
+                return CRS.decode(srsName);
+            } catch (NoSuchAuthorityCodeException ex) {
+                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+            } catch (FactoryException ex) {
+                Logging.getLogger(DirectPositionType.class).log(Level.SEVERE, null, ex);
+            }
         }
         return null;
     }

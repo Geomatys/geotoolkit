@@ -69,7 +69,7 @@
     </dependency>
     <dependency>
         <groupId>org.geotoolkit.pending</groupId>
-        <artifactId>geotk-geometry</artifactId>
+        <artifactId>geotk-jtswrapper</artifactId>
         <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -133,4 +133,23 @@ public class PolygonType extends AbstractSurfaceType {
         return this.interior;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior.getValue()).append('\n');
+        } else {
+            sb.append("exterior null").append('\n');
+        }
+        if (interior != null) {
+            sb.append("interior:").append('\n');
+            for (JAXBElement<AbstractRingPropertyType> inte : interior) {
+                sb.append(inte).append('\n');
+            }
+        } else {
+            sb.append("interior null").append('\n');
+        }
+        return sb.toString();
+    }
+
 }
