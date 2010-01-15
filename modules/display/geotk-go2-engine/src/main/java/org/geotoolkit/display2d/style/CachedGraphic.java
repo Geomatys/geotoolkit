@@ -359,7 +359,7 @@ public class CachedGraphic extends Cache<Graphic>{
             candidateRotation = new Float(Math.toRadians(rot));
         }
 
-        if(candidateSize == Float.NaN){
+        if(candidateSize.isNaN()){
             final Expression expSize = styleElement.getSize();
             candidateSize = GO2Utilities.evaluate(expSize, feature, Float.class, Float.NaN);
         }

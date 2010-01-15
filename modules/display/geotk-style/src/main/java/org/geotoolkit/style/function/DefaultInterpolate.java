@@ -17,6 +17,7 @@
 package org.geotoolkit.style.function;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -142,8 +143,9 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
     @Override
     public List<Expression> getParameters() {
-        //TODO to this cleanly
-        return Collections.emptyList();
+        final List<Expression> params = new ArrayList<Expression>();
+        params.add(lookup);
+        return params;
     }
 
     @Override
@@ -226,7 +228,7 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
 
         }
 
-        return fallback;
+        return fallback.evaluate(object,c);
     }
 
     @Override

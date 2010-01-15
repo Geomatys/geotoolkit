@@ -165,6 +165,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             }else{
 
                 final Point pt2d = geom.getCentroid();
+                if(pt2d == null){
+                    //no geometry
+                    return;
+                }
 
                 final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
                 final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
@@ -340,7 +344,12 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
         }
         
         if(GO2Utilities.isStatic(expSize)){
-            size = expSize.evaluate(null, Number.class).floatValue();
+            Number n = expSize.evaluate(null, Number.class);
+            if(n != null){
+                size = n.floatValue();
+            }else{
+                size = 8f;
+            }
         }else{
             size = 8f;
         }

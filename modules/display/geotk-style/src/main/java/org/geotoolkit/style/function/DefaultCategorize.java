@@ -189,9 +189,8 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      */
     @Override
     public List<Expression> getParameters() {
-        //TODO to this cleanly. I'm still not sure a style function should behave
-        //like a expression Function.
         final List<Expression> params = new ArrayList<Expression>();
+        params.add(lookup);
         return params;
     }
 
