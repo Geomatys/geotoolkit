@@ -62,6 +62,7 @@ import org.geotoolkit.gml.xml.v311.LinearRingType;
 import org.geotoolkit.gml.xml.v311.MultiLineStringType;
 import org.geotoolkit.gml.xml.v311.MultiPointType;
 import org.geotoolkit.gml.xml.v311.MultiPolygonType;
+import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
 import org.geotoolkit.gml.xml.v311.OffsetCurveType;
 import org.geotoolkit.gml.xml.v311.OrientableCurveType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
@@ -69,6 +70,7 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonPropertyType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.gml.xml.v311.RingType;
+import org.geotoolkit.gml.xml.v311.SurfacePropertyType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
@@ -134,20 +136,22 @@ public class GeometrytoJTS {
     public static Geometry toJTS(AbstractGeometryType gml)
             throws NoSuchAuthorityCodeException, FactoryException{
 
-        if(gml instanceof PointType){
+        if (gml instanceof PointType){
             return toJTS((PointType)gml);
-        }else if(gml instanceof LineStringType){
+        } else if(gml instanceof LineStringType){
             return toJTS((LineStringType)gml);
-        }else if(gml instanceof PolygonType){
+        } else if(gml instanceof PolygonType){
             return toJTS((PolygonType)gml);
-        }
+        
 
-        else if(gml instanceof MultiPointType){
+        } else if(gml instanceof MultiPointType){
             return toJTS((MultiPointType)gml);
-        }else if(gml instanceof MultiLineStringType){
+        } else if(gml instanceof MultiLineStringType){
             return toJTS((MultiLineStringType)gml);
-        }else if(gml instanceof MultiPolygonType){
+        } else if(gml instanceof MultiPolygonType){
             return toJTS((MultiPolygonType)gml);
+        } else if(gml instanceof MultiSurfaceType){
+            return toJTS((MultiSurfaceType)gml);
         }
 
         else{
@@ -316,6 +320,25 @@ public class GeometrytoJTS {
 
         for(int i=0,n=pos.size(); i<n; i++){
             members[i] = toJTS(pos.get(i).getPolygon());
+        }
+
+        final MultiPolygon geom = GF.createMultiPolygon(members);
+
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        if(crs != null){
+            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+            geom.setSRID(srid);
+        }
+
+        return geom;
+    }
+
+    public static MultiPolygon toJTS(MultiSurfaceType gml) throws FactoryException{
+        final List<SurfacePropertyType> pos = gml.getSurfaceMember();
+        final Polygon[] members = new Polygon[pos.size()];
+
+        for(int i=0,n=pos.size(); i<n; i++){
+            members[i] = toJTS((PolygonType)pos.get(i).getRealAbstractSurface());
         }
 
         final MultiPolygon geom = GF.createMultiPolygon(members);

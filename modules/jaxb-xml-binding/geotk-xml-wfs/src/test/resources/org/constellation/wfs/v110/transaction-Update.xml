@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:Transaction version="1.1.0" service="WFS"
+   xmlns:sampling="http://www.opengis.net/sampling/1.0"
+   xmlns:gml="http://www.opengis.net/gml"
+   xmlns:ogc="http://www.opengis.net/ogc"
+   xmlns:wfs="http://www.opengis.net/wfs"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <wfs:Update typeName="gml:NamedPlaces">
+        <wfs:Property>
+            <wfs:Name>the_geom</wfs:Name>
+            <wfs:Value xsi:type="gml:PointType">
+                <gml:Point srsName="urn:ogc:def:crs:epsg:7.4:27582">
+                    <gml:pos>21400.0 2001368.0</gml:pos>
+                </gml:Point>
+            </wfs:Value>
+        </wfs:Property>
+        <ogc:Filter>
+            <ogc:PropertyIsLike escapeChar="\" singleChar="?" wildCard="*">
+                <ogc:PropertyName>NAME</ogc:PropertyName>
+                <ogc:Literal>Ashton</ogc:Literal>
+            </ogc:PropertyIsLike>
+        </ogc:Filter>
+    </wfs:Update>
+</wfs:Transaction>

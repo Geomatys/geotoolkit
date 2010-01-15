@@ -95,6 +95,13 @@ public class SurfacePropertyType {
         return abstractSurface;
     }
 
+    public AbstractSurfaceType getRealAbstractSurface() {
+        if (abstractSurface != null) {
+            return abstractSurface.getValue();
+        }
+        return null;
+    }
+
     /**
      * Sets the value of the abstractSurface property.
      * 

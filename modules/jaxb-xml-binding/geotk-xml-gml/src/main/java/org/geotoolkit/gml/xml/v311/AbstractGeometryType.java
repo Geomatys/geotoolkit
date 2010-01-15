@@ -39,7 +39,6 @@ import org.opengis.geometry.TransfiniteSet;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.primitive.PrimitiveBoundary;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -419,4 +418,31 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     public AbstractGeometryType clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        if (gid != null) {
+            sb.append("gid:").append(gid).append('\n');
+        }
+        if (srsDimension != null) {
+            sb.append("srsDimension:").append(srsDimension).append('\n');
+        }
+        if (srsName != null) {
+            sb.append("srsName:").append(srsName).append('\n');
+        }
+        if (uomLabels != null) {
+            sb.append("uomLabels:").append('\n');
+            for (String uomlabel : uomLabels) {
+                sb.append(uomlabel).append('\n');
+            }
+        }
+        if (axisLabels != null) {
+            sb.append("axisLabels:").append('\n');
+            for (String axislabel : axisLabels) {
+                sb.append(axislabel).append('\n');
+            }
+        }
+        return sb.toString();
+     }
 }

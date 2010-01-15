@@ -21,7 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-
+import org.apache.xerces.dom.ElementNSImpl;
+import org.w3c.dom.Node;
 
 /**
  * <p>Java class for PropertyType complex type.
