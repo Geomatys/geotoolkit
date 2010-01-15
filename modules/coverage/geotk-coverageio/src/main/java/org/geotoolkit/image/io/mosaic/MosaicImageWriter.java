@@ -1615,7 +1615,10 @@ search: for (final Tile tile : tiles) {
      */
     private void deleteTemporaryFiles() {
         for (final Iterator<RawFile> it=temporaryFiles.values().iterator(); it.hasNext();) {
-            TemporaryFile.delete(it.next().file);
+            final File file = it.next().file;
+            if (!TemporaryFile.delete(file)) {
+                file.deleteOnExit();
+            }
             it.remove();
         }
     }

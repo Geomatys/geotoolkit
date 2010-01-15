@@ -582,7 +582,8 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
                 if (numMetadataBands != 0) for (int i=0; i<numBands; i++) {
                     final int sourceBand = (sourceBands != null) ? sourceBands[i] : i;
                     if (sourceBand < 0 || sourceBand >= numMetadataBands) {
-                        warningOccurred("getRawImageType", indexOutOfBounds(sourceBand, 0, numMetadataBands));
+                        warningOccurred(SpatialImageReader.class, "getRawImageType",
+                                indexOutOfBounds(sourceBand, 0, numMetadataBands));
                     }
                     final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
                     final double[] nodataValues = band.getFillSampleValues();
@@ -602,7 +603,8 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
                             allRanges = (allRanges != null) ? allRanges.union(range) : range;
                         } else {
                             // Use range.getMin/MaxValue() because they may be integers rather than doubles.
-                            warningOccurred("getRawImageType", Errors.format(Errors.Keys.BAD_RANGE_$2,
+                            warningOccurred(SpatialImageReader.class, "getRawImageType",
+                                    getErrorResources().getString(Errors.Keys.BAD_RANGE_$2,
                                     range.getMinValue(), range.getMaxValue()));
                             continue;
                         }
@@ -1001,9 +1003,9 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     /**
      * Convenience method for logging a warning from the given method.
      */
-    private void warningOccurred(final String method, final String message) {
+    final void warningOccurred(final Class<?> classe, final String method, final String message) {
         final LogRecord record = new LogRecord(Level.WARNING, message);
-        record.setSourceClassName(SpatialImageReader.class.getName());
+        record.setSourceClassName(classe.getName());
         record.setSourceMethodName(method);
         warningOccurred(record);
     }

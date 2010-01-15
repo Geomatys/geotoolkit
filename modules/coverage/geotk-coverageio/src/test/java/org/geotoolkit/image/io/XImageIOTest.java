@@ -68,7 +68,7 @@ public final class XImageIOTest {
             writer.dispose();
             assertTrue("The created file should not be empty.", tmp.length() > 0);
         } finally {
-            TemporaryFile.delete(tmp);
+            assertTrue(TemporaryFile.delete(tmp));
         }
     }
 }

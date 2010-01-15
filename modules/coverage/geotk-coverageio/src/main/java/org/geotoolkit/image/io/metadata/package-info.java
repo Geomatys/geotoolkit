@@ -32,7 +32,12 @@
  * {@link javax.imageio.metadata.IIOMetadata} object. However this package defines a convenience
  * subclass, {@link org.geotoolkit.image.io.metadata.SpatialMetadata}, which can instantiate
  * implementations of the ISO 19115-2 standard. This allow fetching attribute values in the
- * XML tree with simple method calls like {@code ImageDescription.getCloudCoverPercentage()}.
+ * XML tree with simple method calls like:
+ *
+ * {@preformat java
+ *     ImageDescription desc = metadata.getInstanceForType(ImageDescription.class);
+ *     Double cloudCover = desc.getCloudCoverPercentage()
+ * }
  *
  * <a name="accessor-types">{@section Attributes accessor}</a>
  * This package uses {@link org.geotoolkit.image.io.metadata.MetadataAccessor} for reading and

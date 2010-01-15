@@ -140,7 +140,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
                 "AXIS[“Easting”, EAST],\n" +
                 "AXIS[“Northing”, NORTH]]"), wkt);
         } finally {
-            TemporaryFile.delete(file);
+            assertTrue(TemporaryFile.delete(file));
             if (fileTFW != null) {
                 assertTrue(fileTFW.delete());
             }

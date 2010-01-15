@@ -194,13 +194,15 @@ public abstract class FileImageReader extends StreamImageReader {
     @Override
     protected void close() throws IOException {
         try {
-            super.close();
+            super.close(); // Must close the stream before to delete the file.
         } finally {
             final File file = inputFile;
             if (file != null) {
                 inputFile = null;
                 if (isTemporary) {
-                    TemporaryFile.delete(file);
+                    if (!TemporaryFile.delete(file)) {
+                        file.deleteOnExit();
+                    }
                 }
             }
             isTemporary = false;

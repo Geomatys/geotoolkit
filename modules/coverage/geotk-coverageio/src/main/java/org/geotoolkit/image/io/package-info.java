@@ -62,7 +62,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.07
+ * @version 3.08
  *
  * @see org.geotoolkit.image.io.text
  * @see org.geotoolkit.image.io.plugin

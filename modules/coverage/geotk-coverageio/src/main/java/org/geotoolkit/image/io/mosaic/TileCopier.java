@@ -221,8 +221,11 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
      */
     @Override
     public void rollback() {
-        for (final RawFile file : temporaryFiles.values()) {
-            TemporaryFile.delete(file.file);
+        for (final RawFile raw : temporaryFiles.values()) {
+            final File file = raw.file;
+            if (!TemporaryFile.delete(file)) {
+                file.deleteOnExit();
+            }
         }
         temporaryFiles.clear();
     }
