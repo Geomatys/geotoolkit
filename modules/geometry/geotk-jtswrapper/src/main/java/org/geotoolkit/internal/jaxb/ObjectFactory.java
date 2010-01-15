@@ -30,6 +30,7 @@ import org.opengis.geometry.Geometry;
 public class ObjectFactory {
 
     private static final QName POINT_QNAME              = new QName("http://www.opengis.net/gml", "Point");
+    private static final QName VALUE_QNAME              = new QName("http://www.opengis.net/wfs", "Value");
     private static final QName LINE_STRING_QNAME        = new QName("http://www.opengis.net/gml", "LineString");
     private static final QName RING_QNAME               = new QName("http://www.opengis.net/gml", "LinearRing");
     private static final QName CURVE_QNAME              = new QName("http://www.opengis.net/gml", "Curve");
@@ -88,6 +89,11 @@ public class ObjectFactory {
 
     public LineStringPosListType createLineStringPosListType() {
         return new LineStringPosListType();
+    }
+
+    @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Value")
+    public JAXBElement<Object> createValue(Object value) {
+        return new JAXBElement<Object>(VALUE_QNAME, Object.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Point")
