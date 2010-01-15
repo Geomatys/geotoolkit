@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 import java.util.TreeMap;
+
+import org.geotoolkit.filter.AbstractExpression;
+import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.style.StyleConstants;
+
+import org.opengis.feature.Feature;
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -55,24 +59,36 @@ import static org.opengis.filter.expression.Expression.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultCategorize implements Categorize {
+public class DefaultCategorize extends AbstractExpression implements Categorize {
     
     private final Comparator<Expression> comparator = new Comparator<Expression>() {
 
+        @Override
         public int compare(Expression exp1, Expression exp2) {
             if(exp1.equals(StyleConstants.CATEGORIZE_LESS_INFINITY)){
                 //categorize less is always first
                 return -1;
+            }else if(exp2.equals(StyleConstants.CATEGORIZE_LESS_INFINITY)){
+                //categorize less is always first
+                return +1;
             }else{
-                double d1 = exp1.evaluate(null, Double.class);
-                double d2 = exp2.evaluate(null, Double.class);
-                return (int) (d1 - d2);
+                final double d1 = exp1.evaluate(null, Double.class);
+                final double d2 = exp2.evaluate(null, Double.class);
+                final double diff = d1-d2;
+
+                if(diff < 0){
+                    return -1;
+                }else if(diff > 0){
+                    return +1;
+                }else{
+                    return 0;
+                }
             }
         }
     };
     
     private final Expression lookup;
-    private final Map<Expression,Expression> values = new TreeMap<Expression, Expression>(comparator);
+    private final TreeMap<Expression,Expression> values = new TreeMap<Expression, Expression>(comparator);
     private final ThreshholdsBelongTo belongTo;
     private final Literal fallback;
     
@@ -89,10 +105,12 @@ public class DefaultCategorize implements Categorize {
      */
     public static class Name implements FunctionName {
 
+        @Override
         public int getArgumentCount() {
             return 2; // indicating unbounded, 2 minimum
         }
 
+        @Override
         public List<String> getArgumentNames() {
             return Arrays.asList(new String[]{
                         "LookupValue",
@@ -103,11 +121,19 @@ public class DefaultCategorize implements Categorize {
                     });
         }
 
+        @Override
         public String getName() {
             return "Categorize";
         }
     };
 
+    /**
+     *
+     * @param LookUpValue
+     * @param values map with threadholds keys.
+     * @param belongs
+     * @param fallback
+     */
     public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values, 
             ThreshholdsBelongTo belongs, Literal fallback){
                 
@@ -129,6 +155,7 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public Expression getLookupValue(){
         return lookup;
     }
@@ -136,6 +163,7 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public Map<Expression,Expression> getThresholds() {
         return Collections.unmodifiableMap(values);
     }
@@ -143,6 +171,7 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public ThreshholdsBelongTo getBelongTo(){
         return belongTo;
     }
@@ -150,6 +179,7 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public String getName() {
         return NAME.getName();
     }
@@ -157,6 +187,7 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public List<Expression> getParameters() {
         //TODO to this cleanly. I'm still not sure a style function should behave
         //like a expression Function.
@@ -167,6 +198,7 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public Object accept(ExpressionVisitor visitor, Object extraData) {
         return visitor.visit(this, extraData);
     }
@@ -174,20 +206,27 @@ public class DefaultCategorize implements Categorize {
     /**
      * {@inheritDoc }
      */
+    @Override
     public Object evaluate(Object object) {
-        return evaluate(object, Object.class);
-    }
 
-    /**
-     * {@inheritDoc }
-     */
-    public <T> T evaluate(Object object, Class<T> context) {
+        if(object instanceof Feature){
+            final Feature f = (Feature)object;
+            final Double value = lookup.evaluate(f,Double.class);
+            final Expression exp = new DefaultLiteral<Double>(value);
+
+            final boolean b = this.belongTo == belongTo.SUCCEEDING;
+
+            final Expression closest = values.headMap(exp,!b).lastEntry().getValue();
+            return closest.evaluate(f);
+        }
+        
         return null;
     }
 
     /**
      * {@inheritDoc }
      */
+    @Override
     public Literal getFallbackValue() {
         return fallback;
     }

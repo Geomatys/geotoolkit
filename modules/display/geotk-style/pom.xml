@@ -60,6 +60,11 @@
           <version>${geotoolkit.version}</version>
       </dependency>
       <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-feature</artifactId>
+          <version>${geotoolkit.version}</version>
+      </dependency>
+      <dependency>
           <groupId>org.geotoolkit.project</groupId>
           <artifactId>geotk-provided</artifactId>
           <version>${geotoolkit.version}</version>
