@@ -192,10 +192,10 @@ public class JTSGeometryBindingTest {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPoint(point), sw);
 
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"              + '\n' +
-                           "<gml:Point srsName=\"urn:ogc:def:crs:epsg:7.4:4326\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+                           "<gml:Point srsName=\"urn:ogc:def:crs:epsg:7.4:4326\" >" + '\n' +
                            "    <gml:pos>2.1 12.6</gml:pos>"   + '\n' +
                            "</gml:Point>" + '\n';
 
@@ -280,11 +280,11 @@ public class JTSGeometryBindingTest {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCurve(curve), sw);
 
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n' +
-        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                   + '\n' +
+        "<gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" >"                   + '\n' +
         "    <gml:segments>"                                                                            + '\n' +
         "        <gml:LineStringSegment interpolation=\"linear\">"                                      + '\n' +
         "            <gml:pos>401500.0 3334500.0</gml:pos>"   + '\n' +
@@ -398,11 +398,11 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSEnvelope(envelope), sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expresult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:Envelope xmlns:gml=\"http://www.opengis.net/gml\">"                                     + '\n' +
+        "<gml:Envelope >"                                     + '\n' +
         "    <gml:lowerCorner>402320.0 3334850.0</gml:lowerCorner>" + '\n' +
         "    <gml:upperCorner>402200.0 3335200.0</gml:upperCorner>" + '\n' +
         "</gml:Envelope>" + '\n';
@@ -476,11 +476,11 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPoint(multiPoint), sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
-        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"            + '\n' +
+        "<gml:MultiPoint srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" >"            + '\n' +
         "    <gml:pointMember>"                                                                       + '\n' +
         "        <gml:Point srsName=\"urn:ogc:def:crs:epsg:7.4:27572\">"                                                  + '\n' +
         "            <gml:pos>402000.0 3334850.0</gml:pos>" + '\n' +
@@ -611,11 +611,11 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCompositeCurve(compositeCurve), sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                + '\n' +
+        "<gml:CompositeCurve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" >"                + '\n' +
         "    <gml:curveMember>"                                                                               + '\n' +
         "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
@@ -892,12 +892,12 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolyhedralSurface(polyHedralSurface), sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                       + '\n'  +
-        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                             + '\n'  +
+        "<gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" >"                             + '\n'  +
         "    <gml:polygonPatches>"                                                                                            + '\n'  +
         "        <gml:PolygonPatch>"                                                                                          + '\n'  +
         "            <gml:exterior>"                                                                                          + '\n'  +
@@ -1174,11 +1174,11 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(ring, sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
-        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"       + '\n'  +
+        "<gml:Ring srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" >"       + '\n'  +
         "    <gml:curveMember>"                                                            + '\n'  +
         "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\">"                                       + '\n'  +
         "            <gml:segments>"                                                       + '\n'  +
@@ -1346,11 +1346,11 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolygon(polygon), sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
-        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" xmlns:gml=\"http://www.opengis.net/gml\">"                               + '\n'  +
+        "<gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.4:27572\" >"                               + '\n'  +
         "    <gml:exterior>"                                                                                          + '\n'  +
         "        <gml:LinearRing>"                                                                   + '\n'  +
         "            <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
@@ -1529,11 +1529,11 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        String result = sw.toString();
+        String result = removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
+        "<gml:MultiGeometry >"                                        + '\n' +
         "    <gml:geometryMember>"                                                                               + '\n' +
         "        <gml:Curve srsName=\"urn:ogc:def:crs:epsg:7.4:27572\">"                                                          + '\n' +
         "            <gml:segments>"                                                                          + '\n' +
@@ -1607,11 +1607,11 @@ public class JTSGeometryBindingTest {
 
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        result = sw.toString();
+        result = removeXmlns(sw.toString());
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
-        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                        + '\n' +
+        "<gml:MultiGeometry >"                                        + '\n' +
         "    <gml:geometryMember>" + '\n' +
         "        <gml:PolyhedralSurface srsName=\"urn:ogc:def:crs:epsg:7.4:27593\">" + '\n' +
         "            <gml:polygonPatches>" + '\n' +
@@ -1680,11 +1680,11 @@ public class JTSGeometryBindingTest {
 
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        result = sw.toString();
+        result = removeXmlns(sw.toString());
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
-        "<gml:MultiGeometry xmlns:gml=\"http://www.opengis.net/gml\">"                                                                        + '\n' +
+        "<gml:MultiGeometry >"                                                                        + '\n' +
         "    <gml:geometryMember>"                                                                   + '\n' +
         "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:7.4:4326\">"                                                + '\n' +
         "            <gml:exterior>"                                                                 + '\n' +
@@ -1970,5 +1970,23 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult.getElements(), result.getElements());
         assertEquals(expResult, result);
     }
+
+
+   public String removeXmlns(String xml) {
+
+        String s = xml;
+        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
+
+        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
+
+        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
+
+        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
+
+
+        return s;
+    }
+
+
 }
 
