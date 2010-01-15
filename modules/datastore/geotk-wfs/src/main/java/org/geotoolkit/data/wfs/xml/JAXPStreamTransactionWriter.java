@@ -330,21 +330,19 @@ public class JAXPStreamTransactionWriter {
             Object value = entry.getValue();
             if(value != null){
                 //todo must handle geometry differently
-                writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
 
                 if(value instanceof Geometry){
                     final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
                     value = JTSUtils.toISO( (Geometry)value, desc.getCoordinateReferenceSystem());
-                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
                     getMarshaller().marshal(new ObjectFactory().createValue(value), writer);
                 }else if(value instanceof org.opengis.geometry.Geometry){
-                    writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
                     getMarshaller().marshal(new ObjectFactory().createValue(value), writer);
                 }else{
+                    writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
                     writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));
                     writer.writeCharacters(value.toString());
+                    writer.writeEndElement();
                 }
-                writer.writeEndElement();
             }
 
             writer.writeEndElement();

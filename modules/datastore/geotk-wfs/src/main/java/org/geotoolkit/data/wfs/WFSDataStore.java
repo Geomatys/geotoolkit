@@ -420,7 +420,7 @@ public class WFSDataStore extends AbstractDataStore{
             request.setPropertyNames(query.getPropertyNames());
         }
 
-        if(request.equals(lastRequest)){
+        if(request.equals(lastRequest) && lastCollection != null){
             FeatureCollection<SimpleFeature> col = lastCollection.get();
             if(col != null){
                 return col;
