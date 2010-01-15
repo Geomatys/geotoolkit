@@ -191,7 +191,7 @@ final class DefaultMapContext implements MapContext {
         }
 
         synchronized (this) {
-            if(this.area.getCoordinateReferenceSystem().equals(crs)) return;
+            if(CRS.equalsIgnoreMetadata(this.area.getCoordinateReferenceSystem(),crs)) return;
 
             try {
                 //update the area of interest
