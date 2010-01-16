@@ -142,7 +142,7 @@ public final class Exceptions {
      * and we want to write it rather than leaving an empty window.
      *
      * @param graphics Graphics context in which to write exception. The graphics context shall
-     *        be in its initial state (default affine transform, default color, <cite>etc.</cite>)
+     *        be in its initial state (default affine transform, default color, <i>etc.</i>)
      * @param widgetBounds Size of the trace which was being drawn.
      * @param exception Exception whose trace we want to write.
      */

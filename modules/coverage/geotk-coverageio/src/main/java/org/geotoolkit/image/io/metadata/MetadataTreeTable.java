@@ -38,7 +38,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  * different instances of {@code IIOMetadata} can be given to this {@code MetadataTreeTable} in
  * order to generate tables with different values. If no {@code IIOMetadata} instance is given,
  * then this object represents only the structure of the format with its restrictions (expected
- * type, range of values, <cite>etc.</cite>) but no values.
+ * type, range of values, <i>etc.</i>) but no values.
  * <p>
  * The root of the tree is obtained by {@link #getRootNode()}. The table contains at most
  * {@value #COLUMN_COUNT} columns, described below:

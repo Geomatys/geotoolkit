@@ -40,7 +40,6 @@ import static org.junit.Assert.*;
  * @version 3.07
  *
  * @since 3.07
- * @module
  */
 public final class ChannelImageInputStreamTest {
     /**

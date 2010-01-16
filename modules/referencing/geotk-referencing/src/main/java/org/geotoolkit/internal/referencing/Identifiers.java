@@ -483,7 +483,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
     /**
      * Constructs a parameter descriptor for a mandatory floating point value. The parameter is
      * identified by codes in the namespace of one or more authorities ({@link Citations#OGC OGC},
-     * {@link Citations#EPSG EPSG}, <cite>etc.</cite>). Those codes are declared as elements in the
+     * {@link Citations#EPSG EPSG}, <i>etc.</i>). Those codes are declared as elements in the
      * {@code identifiers} array argument. The first element ({@code identifiers[0]}) is both the
      * {@linkplain ParameterDescriptor#getName main name} and the
      * {@linkplain ParameterDescriptor#getIdentifiers identifiers}.

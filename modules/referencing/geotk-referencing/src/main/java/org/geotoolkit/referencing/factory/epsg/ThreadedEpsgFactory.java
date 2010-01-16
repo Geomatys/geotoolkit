@@ -473,7 +473,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * exception will be thrown the first time the factory will be used.</p>
      * <p>
      * Subclasses should override this method if they can create a data source from other
-     * properties ({@code "serverName"}, {@code "databaseName"}, <cite>etc.</cite>), or if
+     * properties ({@code "serverName"}, {@code "databaseName"}, <i>etc.</i>), or if
      * they can provide a default data source.
      *
      * @param  properties The properties loaded from the configuration file if it was found,

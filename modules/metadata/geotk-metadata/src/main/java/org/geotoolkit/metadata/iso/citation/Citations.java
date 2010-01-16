@@ -497,7 +497,7 @@ public final class Citations {
      *       returns {@code null}.</li>
      *   <li>Otherwise if the given name matches a {@linkplain Citation#getTitle title} or an
      *       {@linkplain Citation#getAlternateTitles alternate titles} of one of the pre-defined
-     *       constants ({@link #EPSG}, {@link #GEOTIFF}, <cite>etc.</cite>), then that constant
+     *       constants ({@link #EPSG}, {@link #GEOTIFF}, <i>etc.</i>), then that constant
      *       is returned.</li>
      *   <li>Otherwise, a new citation is created with the specified name as the title.</li>
      * </ul>

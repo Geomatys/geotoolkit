@@ -134,7 +134,7 @@ public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthori
     /**
      * Provides a complete set of the known codes provided by this authority.
      * The returned set contains only numeric identifiers like {@code "42001"},
-     * {@code "42002"}, <cite>etc</cite>. The authority name ({@code "AUTO"})
+     * {@code "42002"}, <i>etc</i>. The authority name ({@code "AUTO"})
      * and the {@code lon0,lat0} part are not included. This is consistent with the
      * {@linkplain org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory#getAuthorityCodes
      * codes returned by the EPSG factory} and avoid duplication, since the authority is the

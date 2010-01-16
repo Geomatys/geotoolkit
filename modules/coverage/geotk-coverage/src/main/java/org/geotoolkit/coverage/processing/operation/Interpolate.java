@@ -58,7 +58,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
  * less likely to fails because of clouds ({@code NaN} values) than the {@code "Bicubic"} one
  * (note: only one {@code NaN} value is enough to make an interpolation fails). One can workaround
  * the problem by trying a bicubic interpolation first, then a linear interpolation if
- * {@code "Bicubic"} failed at a particular location, <cite>etc.</cite> This behavior can be
+ * {@code "Bicubic"} failed at a particular location, <i>etc.</i> This behavior can be
  * specified with the following {@code "Type"} argument:
  *
  * {@preformat java

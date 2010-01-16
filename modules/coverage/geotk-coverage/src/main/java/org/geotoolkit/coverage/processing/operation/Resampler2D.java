@@ -345,7 +345,7 @@ final class Resampler2D extends GridCoverage2D {
                 allSteps = mtFactory.createConcatenatedTransform(step1, step3);
                 if (!targetGG.isDefined(GridGeometry2D.GRID_RANGE)) {
                     /*
-                     * If the target grid envelope was not explicitely specified, a grid envelope
+                     * If the target grid envelope was not explicitly specified, a grid envelope
                      * will be automatically computed in such a way that it will maps to the same
                      * georeferenced envelope (at least approximatively).
                      */

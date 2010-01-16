@@ -137,7 +137,7 @@ public class Mercator extends UnitaryProjection {
                 throw unknownParameter(Identifiers.STANDARD_PARALLEL_2);
             }
             case 0: {
-                // No standard parallel. Instead, uses the scale factor explicitely provided.
+                // No standard parallel. Instead, uses the scale factor explicitly provided.
                 break;
             }
             case 1: {

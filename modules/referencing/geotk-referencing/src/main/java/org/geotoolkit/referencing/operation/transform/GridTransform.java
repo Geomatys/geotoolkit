@@ -582,7 +582,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
      * {@linkplain #height}, {@linkplain #getTargetDimensions target dimension} and the same values
      * in all valid grid cells. Note that the grids are not required to be of the same type
      * ({@link DataBuffer#TYPE_FLOAT TYPE_FLOAT}, {@link DataBuffer#TYPE_DOUBLE TYPE_DOUBLE},
-     * <cite>etc.</cite>) if the values casted to the {@code double} type are equal.
+     * <i>etc.</i>) if the values casted to the {@code double} type are equal.
      */
     @Override
     public boolean equals(final Object object) {

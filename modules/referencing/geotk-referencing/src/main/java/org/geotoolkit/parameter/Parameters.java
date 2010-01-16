@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 /**
  * Utility class for methods helping implementing, and working with the parameter API from
  * {@link org.opengis.parameter} package. This class provides methods for {@linkplain #search
- * searching}, {@linkplain #ensureSet setting a value}, <cite>etc.</cite> from a parameter name.
+ * searching}, {@linkplain #ensureSet setting a value}, <i>etc.</i> from a parameter name.
  * Names in simple {@code String} form are preferred over the full {@code ParameterDescriptor}
  * object because:
  *

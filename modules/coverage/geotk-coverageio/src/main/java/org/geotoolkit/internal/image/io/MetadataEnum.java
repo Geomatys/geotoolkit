@@ -34,6 +34,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @version 3.07
  *
  * @since 3.07
+ * @module
  */
 public final class MetadataEnum {
     /**

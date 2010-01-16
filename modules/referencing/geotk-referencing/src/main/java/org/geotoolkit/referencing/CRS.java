@@ -306,8 +306,8 @@ public final class CRS {
     /**
      * Gets the list of the codes that are supported by the given authority. For example
      * {@code getSupportedCodes("EPSG")} may returns {@code "EPSG:2000"}, {@code "EPSG:2001"},
-     * {@code "EPSG:2002"}, <cite>etc</cite>. It may also returns {@code "2000"}, {@code "2001"},
-     * {@code "2002"}, <cite>etc.</cite> without the {@code "EPSG:"} prefix. Whatever the authority
+     * {@code "EPSG:2002"}, <i>etc</i>. It may also returns {@code "2000"}, {@code "2001"},
+     * {@code "2002"}, <i>etc.</i> without the {@code "EPSG:"} prefix. Whatever the authority
      * name is prefixed or not is factory implementation dependent.
      * <p>
      * If there is more than one factory for the given authority, then this method merges the

@@ -45,7 +45,7 @@
  * are ordinary parameters for which the {@linkplain org.opengis.parameter.ParameterDescriptor#getValueClass
  * value class} is {@link org.opengis.coverage.Coverage} or a subclass. The parameter name of source
  * coverages can be anything, but the <cite>Java Advanced Imaging</cite> usage is {@code "source0"}
- * for the first source, {@code "source1"} for the second source (if any), <cite>etc.</cite>.
+ * for the first source, {@code "source1"} for the second source (if any), <i>etc.</i>.
  * <p>
  * {@link org.geotoolkit.coverage.processing.AbstractOperation} is the base class offering few convenience
  * for the developers, but few restrictions on the kind of source coverage and on the way to implement

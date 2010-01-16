@@ -59,7 +59,7 @@ import org.geotoolkit.resources.Errors;
  *       <em>horizontal</em> coordinate reference system. Axis directions may be
  *       ({@linkplain AxisDirection#NORTH North}, {@linkplain AxisDirection#WEST West}),
  *       or ({@linkplain AxisDirection#EAST East}, {@linkplain AxisDirection#NORTH North}),
- *       <cite>etc.</cite>.</p></li>
+ *       <i>etc.</i>.</p></li>
  * </ul>
  *
  * In such case (and assuming that the image's CRS has the same characteristics than the

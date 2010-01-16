@@ -89,7 +89,7 @@ import static java.lang.Math.max;
  *   need to apply on the tile having the finest resolution in order to produce an image equivalent
  *   to this tile. The subsampling is (1,1) for the tile having the finest resolution, (2,3) for an
  *   overview having half the width and third of the height for the same geographic extent,
- *   <cite>etc.</cite> (note that overviews are not required to have the same geographic extent -
+ *   <i>etc.</i> (note that overviews are not required to have the same geographic extent -
  *   the above is just an example).</p>
  *
  *     <blockquote><font size=2>

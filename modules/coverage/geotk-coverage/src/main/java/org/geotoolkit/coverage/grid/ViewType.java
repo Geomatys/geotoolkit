@@ -122,7 +122,7 @@ public enum ViewType {
      * <strong>not</strong> allowed.
      * <p>
      * Interpolations ({@linkplain InterpolationBilinear bilinear},
-     * {@linkplain InterpolationBicubic bicubic}, <cite>etc.</cite>) are allowed.
+     * {@linkplain InterpolationBicubic bicubic}, <i>etc.</i>) are allowed.
      * If there is some missing values around the interpolation point, then the
      * result is a {@code NaN} value.
      * <p>

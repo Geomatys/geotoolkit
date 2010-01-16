@@ -23,7 +23,7 @@
  * <p>
  * This package provides implementations for general positioning, coordinate reference systems (CRS),
  * and coordinate transformations. Coordinates can have any number of dimensions. So this implementation
- * can handle 2D and 3D coordinates, as well as 4D, 5D, <cite>etc.</cite>
+ * can handle 2D and 3D coordinates, as well as 4D, 5D, <i>etc.</i>
  * <p>
  * This package provides a special implementation of
  * {@linkplain org.geotoolkit.referencing.NamedIdentifier identifier}, which is also a

@@ -69,14 +69,14 @@ import org.geotoolkit.resources.Errors;
  *     <td>Print full stack trace in case of error.</td>
  *   </tr><tr>
  *     <td nowrap bgcolor="#EEEEFF"><b>{@code --encoding}</b>=<var>cp</var></td>
- *     <td>Sets the console encoding ({@code "UTF-8"}, {@code "ISO-8859-1"}, <cite>etc.</cite>)
+ *     <td>Sets the console encoding ({@code "UTF-8"}, {@code "ISO-8859-1"}, <i>etc.</i>)
  *         for application input and output. This value has no impact on data, but may improve
  *         the output quality. This is not needed on Linux terminal using UTF-8 encoding (tip:
  *         the <cite>terminus font</cite> gives good results).</td>
  *   </tr><tr>
  *     <td nowrap bgcolor="#EEEEFF"><b>{@code --locale}</b>=<var>lc</var></td>
  *     <td>Set the locale for string, number and date formatting
- *         ({@code "fr"} for French, <cite>etc.</cite>).</td>
+ *         ({@code "fr"} for French, <i>etc.</i>).</td>
  *   </tr>
  * </table>
  *

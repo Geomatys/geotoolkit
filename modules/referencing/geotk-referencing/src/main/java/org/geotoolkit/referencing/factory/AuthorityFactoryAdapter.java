@@ -363,7 +363,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
 
     /**
      * Sets {@link Hints#CRS_AUTHORITY_FACTORY}, {@link Hints#CS_AUTHORITY_FACTORY} and similiar
-     * hints to the values provided by {@link #crsFactory}, {@link #csFactory}, <cite>etc</cite>.
+     * hints to the values provided by {@link #crsFactory}, {@link #csFactory}, <i>etc</i>.
      * This method also ensure that required arguments are non-null.
      */
     private void putFactoryHints() {

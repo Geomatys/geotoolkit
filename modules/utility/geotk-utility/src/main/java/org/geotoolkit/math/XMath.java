@@ -250,7 +250,7 @@ public final class XMath {
      * of {@code amount}. More specifically:
      *
      * <ul>
-     *   <li><p>If {@code type} is an integer type ({@link Integer}, {@link Short}, <cite>etc.</cite>),
+     *   <li><p>If {@code type} is an integer type ({@link Integer}, {@link Short}, <i>etc.</i>),
      *       then this method returns {@code value + amount}. If {@code value} had a fractional part,
      *       then this part is truncated before the addition is performed.</p></li>
      *

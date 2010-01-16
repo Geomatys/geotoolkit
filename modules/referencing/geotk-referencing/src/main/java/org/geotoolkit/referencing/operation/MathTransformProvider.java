@@ -141,7 +141,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      * <code>{@linkplain org.opengis.referencing.operation.SingleOperation}.class</code>,
      * <code>{@linkplain org.opengis.referencing.operation.Conversion}.class</code>,
      * <code>{@linkplain org.opengis.referencing.operation.Projection}.class</code>,
-     * <cite>etc</cite>.
+     * <i>etc</i>.
      * <p>
      * The default implementation returns {@code SingleOperation.class}.
      * Subclass should overrides this methods and returns the appropriate

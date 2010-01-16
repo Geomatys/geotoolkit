@@ -438,7 +438,7 @@ header: for (int i=0; ; i++) {
 
     /**
      * Formats a summary of a collection of {@linkplain IdentifiedObject identified objects}.
-     * The objects may be parameters, available map projections, CRS, <cite>etc.</cite>
+     * The objects may be parameters, available map projections, CRS, <i>etc.</i>
      * The summary contains the identifier name and alias aligned in a table.
      * <p>
      * The table formatted by default may be quite large. It is recommanded to invoke

@@ -121,7 +121,7 @@ public class LineFormat extends Format {
 
     /**
      * Index of the the first character parsed in each column. For example {@code index[0]}
-     * contains the index of the first character read for {@code data[0]}, <cite>etc</cite>.
+     * contains the index of the first character read for {@code data[0]}, <i>etc</i>.
      * This array length must be equal to <code>{@linkplain #data}.length + 1</code>. The
      * last element will be the line length.
      */
@@ -172,7 +172,7 @@ public class LineFormat extends Format {
     /**
      * Constructs a new line parser using the specified format objects. For example the first
      * column will be parsed using {@code formats[0]}; the second column will be parsed using
-     * {@code formats[1]}, <cite>etc</cite>. If there is more columns than formats, then the
+     * {@code formats[1]}, <i>etc</i>. If there is more columns than formats, then the
      * last format object is reused for all remaining columns.
      *
      * @param formats The formats to use for parsing.

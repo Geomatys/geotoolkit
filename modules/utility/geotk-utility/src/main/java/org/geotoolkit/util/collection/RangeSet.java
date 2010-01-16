@@ -48,7 +48,7 @@ import static org.geotoolkit.util.converter.Classes.*;
 /**
  * An ordered set of ranges. {@code RangeSet} objects store an arbitrary number of
  * {@linkplain Range ranges} in any Java's primitives ({@code int}, {@code float},
- * <cite>etc.</cite>) or any {@linkplain Comparable comparable} objects. Ranges may
+ * <i>etc.</i>) or any {@linkplain Comparable comparable} objects. Ranges may
  * be added in any order. When a range is added, {@code RangeSet} first looks for an
  * existing range overlapping the specified range. If an overlapping range is found,
  * ranges are merged as of {@link Range#union}. Consequently, ranges returned by

@@ -41,7 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * {@section Serialization}
  * {@code ObjectStream} implementations are usually not {@linkplain Serializable serializable} since
- * we don't want to cause the serialization of an entire dataset (collection, file, <cite>etc.</cite>).
+ * we don't want to cause the serialization of an entire dataset (collection, file, <i>etc.</i>).
  * When a particular instance of {@code ObjectStream} is serializable, this is usually a remote object
  * exported for use through <cite>Remote Method Invocation</cite> (RMI).
  *

@@ -79,7 +79,7 @@ public abstract class Calculator2D extends GridCoverage2D {
      * Returns the native view to be given to a newly created {@link ViewsManager}. We can not
      * returns {@code this} like what {@link GridCoverage2D} does because this class is just a
      * decorator around a {@linkplain #source}, and the later may not be a native view - it can
-     * be anything like a geophysics, a packed, <cite>etc</cite>. We can hardly call any instance
+     * be anything like a geophysics, a packed, <i>etc</i>. We can hardly call any instance
      * of this decorator as "native", so the safest approach is to use the native view of the
      * source. This is needed for proper working of {@link ViewsManager}: if this decorator stands
      * between it and the views that it creates, it may not realize that a view was already created.

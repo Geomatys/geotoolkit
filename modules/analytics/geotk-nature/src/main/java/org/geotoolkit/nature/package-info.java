@@ -23,10 +23,10 @@
  * <p>
  * <UL>
  *   <LI>Sea water properties (density, sound velocity, fusion temperature,
- *       <cite>etc.</cite>) computed from salinity, temperature and pression
+ *       <i>etc.</i>) computed from salinity, temperature and pression
  *      using algorithms published by UNESCO.</LI>
  *   <LI>Values relative to earth calendar, like tropical year length.</LI>
- *   <LI><cite>etc.</cite></LI>
+ *   <LI><i>etc.</i></LI>
  * </UL>
  * <p>
  * <TABLE BORDER="3" ALIGN="center" CELLPADDING="6" BGCOLOR="#FEF3D6" WIDTH="75%">

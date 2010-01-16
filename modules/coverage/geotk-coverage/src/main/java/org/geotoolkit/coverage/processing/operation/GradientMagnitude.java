@@ -68,7 +68,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * {@linkplain GridCoverage2D#getGridGeometry grid geometry}.
  *
  * {@note When the masks are symetric (e.g. Sobel, Prewitt (or Smoothed), isotropic,
- * <cite>etc.</cite>), then the above-cited algorithm produces the same result than the
+ * <i>etc.</i>), then the above-cited algorithm produces the same result than the
  * (<var>normalization factor</var>) &times; (<var>spatial factor</var>) published by:
  *
  * <blockquote>

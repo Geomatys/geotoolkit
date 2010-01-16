@@ -304,7 +304,7 @@ final class RegionCalculator {
      * first one, or discarded if the scale ratio is not an integer. In the later case, the
      * transforms that were discarded from the first pass will be put in a new map to be added
      * as the second element in the returned list. A new pass is run, discarded transforms from
-     * the second pass are put in the third element of the list, <cite>etc</cite>.
+     * the second pass are put in the third element of the list, <i>etc</i>.
      *
      * @param  gridToCRS The <cite>grid to CRS</cite> affine transforms computed from the
      *         image to use in a pyramid. The collection and the transform elements are not

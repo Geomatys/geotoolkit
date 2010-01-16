@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
  * A category delimited by a range of sample values. A category may be either <em>qualitative</em>
  * or <em>quantitative</em>. For exemple, a classified image may have a qualitative category
  * defining sample value {@code 0} as water. An other qualitative category may defines sample
- * value {@code 1} as forest, <cite>etc.</cite> An other image may define elevation data as sample
+ * value {@code 1} as forest, <i>etc.</i> An other image may define elevation data as sample
  * values in the range {@code [0..100]}. The later is a <em>quantitative</em> category, because
  * sample values are related to some measurement in the real world. For example, elevation data
  * may be related to an altitude in metres through the following linear relation:

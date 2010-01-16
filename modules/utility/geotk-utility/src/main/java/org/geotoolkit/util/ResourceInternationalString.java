@@ -49,7 +49,7 @@ import org.opengis.util.InternationalString;
  *
  * The "{@code some value}" string will be localized if the required properties files exist, for
  * example "{@code MyResources_fr.properties}" for French, "{@code MyResources_it.properties}"
- * for Italian, <cite>etc.</cite>
+ * for Italian, <i>etc.</i>
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

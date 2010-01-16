@@ -40,7 +40,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
 
 /**
  * Tests the {@link CRS} class. This is actually an indirect way to test many referencing
- * service (WKT parsing, object comparisons, <cite>etc.</cite>).
+ * service (WKT parsing, object comparisons, <i>etc.</i>).
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.02

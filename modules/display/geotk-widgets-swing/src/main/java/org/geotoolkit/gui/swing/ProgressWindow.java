@@ -96,7 +96,7 @@ public class ProgressWindow implements ProgressListener {
 
     /**
      * A description of the undergoing operation. Examples: "Reading header",
-     * "Reading data", <cite>etc.</cite>
+     * "Reading data", <i>etc.</i>
      */
     private final JLabel description;
 
@@ -482,7 +482,7 @@ public class ProgressWindow implements ProgressListener {
         public static final int DISPOSE = 7;
 
         /**
-         * The task to execute, as one of the {@link #TITLE}, {@link #LABEL}, <cite>etc.</cite>
+         * The task to execute, as one of the {@link #TITLE}, {@link #LABEL}, <i>etc.</i>
          * constants or their negative counterpart.
          */
         private final int task;
@@ -494,7 +494,7 @@ public class ProgressWindow implements ProgressListener {
 
         /**
          * Creates an action. {@code task} must be one of {@link #TITLE}, {@link #LABEL}
-         * <cite>etc.</cite> constants or their negative counterpart.
+         * <i>etc.</i> constants or their negative counterpart.
          */
         public Caller(final int task) {
             this.task = task;

@@ -767,7 +767,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
 
     /**
      * Returns an arbitrary object from a code. This method is the only one to be overriden in this
-     * class because it needs to try every kind of factories (datum, CS, CRS, <cite>etc.</cite>)
+     * class because it needs to try every kind of factories (datum, CS, CRS, <i>etc.</i>)
      * instead than using a specific type known at compile time.
      *
      * @see #createCoordinateReferenceSystem

@@ -677,7 +677,7 @@ public class ImageWorker extends ImageInspector {
      * <p>
      * For convenience, negative parameter values are relative to the {@linkplain #getNumBands()
      * number of bands} (i.e. the number of bands is added to negative parameter values). So -1
-     * stands for the last band, -2 for the band before the last one, <cite>etc.</cite>
+     * stands for the last band, -2 for the band before the last one, <i>etc.</i>
      * <p>
      * <b>Examples:</b>
      * <ul>

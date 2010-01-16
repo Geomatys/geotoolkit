@@ -74,7 +74,7 @@
  *   <li><p>Create a {@link org.geotoolkit.image.io.mosaic.TileManager} from the collection of tiles.
  *       The tile manager is {@linkplain org.geotoolkit.image.io.mosaic.TileManagerFactory#create created
  *       using a factory}. The factory will infer the mosaic layout (location of tiles relative to each
- *       other, subsampling relative to the tiles having the smallest pixels, <cite>etc.</cite>) from
+ *       other, subsampling relative to the tiles having the smallest pixels, <i>etc.</i>) from
  *       the affine transform defined for each tile. If the tiles appear to be distributed on a regular
  *       grid, then the created {@code TileManager} instance will store that information in a compact
  *       way that does not require the retention of every {@code Tile} object.</p></li>

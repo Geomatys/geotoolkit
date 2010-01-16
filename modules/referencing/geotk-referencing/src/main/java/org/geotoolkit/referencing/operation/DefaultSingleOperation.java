@@ -128,7 +128,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      *                   to positions in the {@linkplain #getTargetCRS target CRS}.
      * @param method     The operation method, or {@code null}.
      * @param type       The minimal type as <code>{@linkplain Conversion}.class</code>,
-     *                   <code>{@linkplain Projection}.class</code>, <cite>etc.</cite>
+     *                   <code>{@linkplain Projection}.class</code>, <i>etc.</i>
      *                   This method may create an instance of a subclass of {@code type}.
      * @return A new coordinate operation of the given type.
      *

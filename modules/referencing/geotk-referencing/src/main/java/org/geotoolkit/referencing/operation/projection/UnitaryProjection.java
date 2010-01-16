@@ -87,7 +87,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * </ul>
  *
  * {@code UnitaryProjection} does not expose publicly the above cited parameters (central meridian,
- * scale factor, <cite>etc.</cite>) on intend, in order to make clear that those parameters are not
+ * scale factor, <i>etc.</i>) on intend, in order to make clear that those parameters are not
  * used by subclasses. This separation removes ambiguity when testing for {@linkplain #equivalent
  * equivalence}. The ability to recognize two {@code UnitaryProjection}s as equivalent without
  * consideration for the scale factor (among other) allow more efficient concatenation in some

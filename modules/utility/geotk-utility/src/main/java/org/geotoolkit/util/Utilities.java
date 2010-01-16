@@ -321,12 +321,12 @@ public final class Utilities {
      *   if it is known that the array elements can never be other arrays.</li>
      *
      *   <li>Otherwise if both objects are arrays (e.g. {@code Expression[]}, {@code String[]},
-     *   {@code int[]}, <cite>etc.</cite>), use {@link Arrays#equals(Object[],Object[])}. This
+     *   {@code int[]}, <i>etc.</i>), use {@link Arrays#equals(Object[],Object[])}. This
      *   rule is applicable to arrays of primitive type too, since {@code Arrays.equals} is
      *   overriden with primitive counter-parts.</li>
      *
      *   <li>Otherwise if at least one object is anything else than {@code Object} (e.g.
-     *   {@code String}, {@code Expression}, <cite>etc.</cite>), use {@link #equals(Object,Object)}.
+     *   {@code String}, {@code Expression}, <i>etc.</i>), use {@link #equals(Object,Object)}.
      *   Using this {@code deepEquals} method would be an overkill since there is no chance that
      *   {@code String} or {@code Expression} could be an array.</li>
      *

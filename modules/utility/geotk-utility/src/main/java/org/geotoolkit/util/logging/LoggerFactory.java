@@ -96,7 +96,7 @@ public abstract class LoggerFactory<L> {
      * <p>
      * <ul>
      *   <li>the logger has not yet been garbage collected;</li>
-     *   <li>the implementation instance (Log4J, SLF4J, <cite>etc.</cite>) returned by
+     *   <li>the implementation instance (Log4J, SLF4J, <i>etc.</i>) returned by
      *       <code>{@linkplain #getImplementation getImplementation}(name)</code> has
      *       not changed.</li>
      * </ul>
@@ -124,7 +124,7 @@ public abstract class LoggerFactory<L> {
 
     /**
      * Returns the base class of objects to be returned by {@link #getImplementation}. The
-     * class depends on the underlying logging framework (Log4J, SLF4J, <cite>etc.</cite>).
+     * class depends on the underlying logging framework (Log4J, SLF4J, <i>etc.</i>).
      *
      * @return The type of loggers used for the implementation backend.
      */
@@ -134,13 +134,13 @@ public abstract class LoggerFactory<L> {
 
     /**
      * Returns the implementation to use for the logger of the specified name. The object to be
-     * returned depends on the logging framework (Log4J, SLF4J, <cite>etc.</cite>). If the target
+     * returned depends on the logging framework (Log4J, SLF4J, <i>etc.</i>). If the target
      * framework redirects logging events to Java logging, then this method should returns
      * {@code null} since we should not use wrapper at all.
      *
      * @param  name The name of the logger.
      * @return The logger as an object of the target logging framework (Log4J, SLF4J,
-     *         <cite>etc.</cite>), or {@code null} if the target framework would redirect
+     *         <i>etc.</i>), or {@code null} if the target framework would redirect
      *         to the Java logging framework.
      */
     protected abstract L getImplementation(String name);

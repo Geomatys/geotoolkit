@@ -276,7 +276,7 @@ public class TextRecordImageReader extends TextImageReader {
      * {@section Example}
      * Assume that the longitudes in a file are likely to have an interval of 1/6° but are written
      * with only 3 decimal digits. In such case, the {@linkplain #getColumnX x} values look like
-     * {@code 10.000}, {@code 10.167}, {@code 10.333}, <cite>etc.</cite>, which can leads to an
+     * {@code 10.000}, {@code 10.167}, {@code 10.333}, <i>etc.</i>, which can leads to an
      * error of 0.001° in longitude. This error may cause {@code TextRecordImageReader} to fails
      * validation tests and throws an {@link javax.imageio.IIOException}: "<cite>Points dont seem
      * to be distributed on a regular grid</cite>".

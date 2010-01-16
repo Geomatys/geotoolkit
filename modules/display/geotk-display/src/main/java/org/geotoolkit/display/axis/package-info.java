@@ -22,7 +22,7 @@
  * Axes are graduated from the starting point ({@link java.awt.geom.Line2D#getP1()}) to the end
  * point ({@link java.awt.geom.Line2D#getP2()}). Since axes can have arbitrary starting and end
  * points (usually expressed in pixel coordinates), axes can be located anywhere in a widget and
- * have any direction: vertical, horizontal, inclined, increasing up or down, <cite>etc.</cite>
+ * have any direction: vertical, horizontal, inclined, increasing up or down, <i>etc.</i>
  * Two axes don't have to be perpendicular. As long as they are not parallel, it is always possible
  * to construct an {@link java.awt.geom.AffineTransform} mapping logical values to pixel coordinates
  * on any arbitrary axis, no matter their orientation.

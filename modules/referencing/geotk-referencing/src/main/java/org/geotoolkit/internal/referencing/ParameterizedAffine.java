@@ -32,7 +32,7 @@ import org.geotoolkit.util.Utilities;
  * Note that this class does not override {@link #getParameterValues()} and
  * {@link #getParameterDescriptors()}. Those methods shall continue to return affine transform
  * parameters, because the Equirectangular projection may have been concatenated with other
- * affine transform for axis swapping, <cite>etc</cite>. However subclasses may override those
+ * affine transform for axis swapping, <i>etc</i>. However subclasses may override those
  * methods if they known that no such concatenation have been applied.
  *
  * @author Martin Desruisseaux (Geomatys)

@@ -217,7 +217,7 @@ public final class Logging {
      * <p>
      * {@code Logging} instances follow the same hierarchy than {@link Logger}, i.e.
      * {@code "org.geotoolkit"} is the parent of {@code "org.geotoolkit.referencing"},
-     * {@code "org.geotoolkit.metadata"}, <cite>etc</cite>.
+     * {@code "org.geotoolkit.metadata"}, <i>etc</i>.
      *
      * @param name The base logger name.
      * @return The logging instance for the given name.
@@ -396,7 +396,7 @@ public final class Logging {
      *
      * The first factory found on the classpath is given to {@link #setLoggerFactory(String)}.
      * If it can't be used (for example because of missing dependency), then the second factory
-     * is tried, <cite>etc.</cite> until an acceptable factory is found.
+     * is tried, <i>etc.</i> until an acceptable factory is found.
      * <p>
      * This method usually doesn't need to be invoked explicitly, since it is automatically
      * invoked on {@code Logging} class initialization. However developpers may invoke it if

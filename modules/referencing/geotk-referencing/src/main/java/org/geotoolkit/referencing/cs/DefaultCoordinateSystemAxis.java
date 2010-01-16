@@ -1082,7 +1082,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     /**
      * Returns {@code true} if the specified direction is a compass direction.
      * Compass directions include "<cite>North</cite>", "<cite>North-North-East</cite>",
-     * "<cite>North-East</cite>", <cite>etc.</cite>
+     * "<cite>North-East</cite>", <i>etc.</i>
      *
      * @param direction The axis direction to test.
      * @return {@code true} if the given direction is a compass direction.

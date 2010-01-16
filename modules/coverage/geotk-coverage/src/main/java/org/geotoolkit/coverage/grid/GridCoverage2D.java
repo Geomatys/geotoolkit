@@ -1030,7 +1030,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * <ul>
      *   <li>{@code force} is {@code true}, <strong>or</strong></li>
      *   <li>The underlying {@linkplain #image} has no {@linkplain PlanarImage#getSinks sinks}
-     *       other than the views (geophysics, display, <cite>etc.</cite>).</li>
+     *       other than the views (geophysics, display, <i>etc.</i>).</li>
      * </ul>
      * <p>
      * This safety check helps to prevent the disposal of an {@linkplain #image} that still

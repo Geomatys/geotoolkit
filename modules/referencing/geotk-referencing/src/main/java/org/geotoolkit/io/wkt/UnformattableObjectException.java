@@ -96,7 +96,7 @@ public class UnformattableObjectException extends UnsupportedOperationException 
      * <code>{@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem}.class</code>.
      * It doesn't mean that no CRS can be formatted; only that a particular instance of it
      * can't. Other possible classes are {@link org.opengis.referencing.datum.ImageDatum},
-     * {@link org.opengis.referencing.crs.ProjectedCRS}, <cite>etc</cite>.
+     * {@link org.opengis.referencing.crs.ProjectedCRS}, <i>etc</i>.
      *
      * @return The class of the object that can't be formatted.
      *

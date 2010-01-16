@@ -83,7 +83,7 @@ import org.geotoolkit.util.Localized;
  *   <li>Change the interpolation method used when evaluating points which fall between grid cells.</li>
  *   <li>Filtering.</li>
  *   <li>Image enhancements.</li>
- *   <li><cite>etc.</cite></li>
+ *   <li><i>etc.</i></li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)

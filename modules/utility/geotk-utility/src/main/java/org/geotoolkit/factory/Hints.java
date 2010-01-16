@@ -349,7 +349,7 @@ public class Hints extends RenderingHints {
      * {@linkplain CoordinateSystemAxis#getDirection axis directions}. If {@code true},
      * then {@linkplain AxisDirection#SOUTH South} axis directions are forced to
      * {@linkplain AxisDirection#NORTH North}, {@linkplain AxisDirection#WEST West} axis
-     * directions are forced to {@linkplain AxisDirection#EAST East}, <cite>etc.</cite>
+     * directions are forced to {@linkplain AxisDirection#EAST East}, <i>etc.</i>
      * If {@code false}, then the axis directions are left unchanged.
      * <p>
      * This hint shall be passed to the

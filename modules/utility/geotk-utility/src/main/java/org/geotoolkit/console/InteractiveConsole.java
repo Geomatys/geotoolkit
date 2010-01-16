@@ -85,7 +85,7 @@ public abstract class InteractiveConsole implements Runnable {
 
     /**
      * The locale. The default value is not necessarly the system default, since this locale is
-     * used also for parsing numbers, dates, <cite>etc</cite>. The policy for the default value
+     * used also for parsing numbers, dates, <i>etc</i>. The policy for the default value
      * may change in future version, so it is safer to not make this field public for now.
      */
     final Locale locale;

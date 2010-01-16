@@ -55,7 +55,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
  * transforms from {@linkplain GeographicCRS geographic} to geographic coordinate reference systems,
  * without passing though {@linkplain GeocentricCRS geocentric} one.
  *
- * {@note The EPSG database does not use <code>src_semi_major</code>, <cite>etc.</cite>
+ * {@note The EPSG database does not use <code>src_semi_major</code>, <i>etc.</i>
  *        parameters and instead uses "<cite>Semi-major axis length difference</cite>"
  *        and "<cite>Flattening difference</cite>".}
  *

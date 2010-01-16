@@ -178,7 +178,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
     /**
      * Compares this version with an other version object, up to the specified limit. A limit
      * of 1 compares only the {@linkplain #getMajor major} version number. A limit of 2 compares
-     * the major and {@linkplain #getMinor minor} version numbers, <cite>etc</cite>. The
+     * the major and {@linkplain #getMinor minor} version numbers, <i>etc</i>. The
      * comparisons are performed as {@link Integer} object if possible, or as {@link String}
      * otherwise.
      *

@@ -1224,7 +1224,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
     }
 
     /**
-     * Returns the default locale for logging, error messages, <cite>etc.</cite>.
+     * Returns the default locale for logging, error messages, <i>etc.</i>.
      *
      * @return The default locale for logging and error message.
      */

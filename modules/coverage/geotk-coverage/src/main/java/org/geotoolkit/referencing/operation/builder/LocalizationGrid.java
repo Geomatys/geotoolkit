@@ -149,7 +149,7 @@ public class LocalizationGrid {
      * Math transforms from grid to "real world" data for various degrees. By convention,
      * {@code transforms[0]} is the transform backed by the whole grid. Other index are fittings
      * using different polynomial degrees ({@code transforms[1]} for affine, {@code transforms[2]}
-     * for quadratic, <cite>etc.</cite>). Will be computed only when first needed.
+     * for quadratic, <i>etc.</i>). Will be computed only when first needed.
      */
     private transient MathTransform2D[] transforms;
 

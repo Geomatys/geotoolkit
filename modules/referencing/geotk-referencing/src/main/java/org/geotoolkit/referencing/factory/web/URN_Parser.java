@@ -48,7 +48,7 @@ final class URN_Parser {
     /**
      * The begining parts of the URN, typically {@code "urn:ogc:def:"} and {@code "urn:x-ogc:def:"}.
      * All elements in the array are treated as synonymous. Those parts are up to, but do not
-     * include, de type part ({@code "crs"}, {@code "cs"}, {@code "datum"}, <cite>etc.</cite>).
+     * include, de type part ({@code "crs"}, {@code "cs"}, {@code "datum"}, <i>etc.</i>).
      * They must include a trailing (@value #SEPARATOR} character.
      */
     private static final String[] URN_BASES = new String[] {
@@ -67,7 +67,7 @@ final class URN_Parser {
     public final String urn;
 
     /**
-     * The type part of the URN ({@code "crs"}, {@code "cs"}, {@code "datum"}, <cite>etc</cite>).
+     * The type part of the URN ({@code "crs"}, {@code "cs"}, {@code "datum"}, <i>etc</i>).
      */
     public final URN_Type type;
 

@@ -317,7 +317,7 @@ public class MosaicBuilder {
      * This is merely a convenient way to invoke {@link TileManager#setGridToCRS} with a transform
      * computed from the envelope and the {@linkplain #getUntiledImageBounds untiled image bounds}.
      * Like usual, creating "grid to CRS" from an envelope is ambiguous since we don't know if axis
-     * need to be interchanged, <var>y</var> axis flipped, <cite>etc.</cite> Subclasses can gain
+     * need to be interchanged, <var>y</var> axis flipped, <i>etc.</i> Subclasses can gain
      * more control by overriding the {@link #createGridToEnvelopeMapper createGridToEnvelopeMapper}
      * method.
      * <p>

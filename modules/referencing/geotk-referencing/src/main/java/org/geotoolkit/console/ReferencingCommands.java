@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
  * Describe the given referencing object.  This tool can display in Well Known Text
  * format a Coordinate Reference System identified by a given code  (typically, but
  * not limited to, EPSG namespace). It can also describe the parameters expected by
- * a given Operation Method, list the available authority codes, <cite>etc.</cite>
+ * a given Operation Method, list the available authority codes, <i>etc.</i>
  * The syntax is:
  *
  * {@preformat text

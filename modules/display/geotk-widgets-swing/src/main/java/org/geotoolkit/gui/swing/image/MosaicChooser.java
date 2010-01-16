@@ -55,9 +55,9 @@ import org.geotoolkit.gui.swing.ExceptionMonitor;
 /**
  * A chooser for a set of {@linkplain Tile tiles} to be used for creating a mosaic. This chooser
  * allows users to select tiles from a file or a directory. The tiles are images in any format
- * supported by Java Image I/O library (TIFF, PNG, <cite>etc.</cite>), accompanied by their
+ * supported by Java Image I/O library (TIFF, PNG, <i>etc.</i>), accompanied by their
  * <cite>World Files</cite> (text files having the same name than the image files except for the
- * extension, which is {@code .tfw}, {@code .jpw}, <cite>etc.</cite> depending on the image format).
+ * extension, which is {@code .tfw}, {@code .jpw}, <i>etc.</i> depending on the image format).
  * The silhouette of selected tiles is displayed in the right pane.
  * <p>
  * As an alternative to the selection of multiple image files, the user can also select a single

@@ -198,9 +198,9 @@ public class FactoryDependencies {
 
     /**
      * Enables or disables the addition of attributes after factory names. Attributes
-     * are labels like "{@code crs}", "{@code datum}", <cite>etc.</cite> put between
+     * are labels like "{@code crs}", "{@code datum}", <i>etc.</i> put between
      * parenthesis. They give indications on the services implemented by the factory
-     * (e.g. {@link CRSAuthorityFactory}, {@link DatumAuthorityFactory}, <cite>etc.</cite>).
+     * (e.g. {@link CRSAuthorityFactory}, {@link DatumAuthorityFactory}, <i>etc.</i>).
      *
      * @param enabled {@code true} for printing attributes.
      */

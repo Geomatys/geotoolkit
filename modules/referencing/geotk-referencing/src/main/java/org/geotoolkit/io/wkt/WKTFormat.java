@@ -508,7 +508,7 @@ public class WKTFormat extends Format {
      * This method is useful for {@linkplain #setIndentation changing the indentation}, rewriting
      * the WKT using parameter names specified by a {@linkplain #setAuthority different authority},
      * for {@linkplain #setColors adding syntax coloring}, expanding the WKT strings according the
-     * {@linkplain #definitions() definitions}, <cite>etc.</cite>
+     * {@linkplain #definitions() definitions}, <i>etc.</i>
      *
      * @param  in  The input stream.
      * @param  out The output stream.

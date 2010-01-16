@@ -42,7 +42,7 @@ import org.geotoolkit.lang.Immutable;
  * to be specifically an instance of {@link AbstractAuthorityFactory}. This restriction makes
  * the implementation easier because we don't need to deal with the different kind of factories
  * ({@link CRSAuthorityFactory}, {@link CSAuthorityFactory}, {@link DatumAuthorityFactory},
- * <cite>etc.</cite>), which allow us to declare static final constants and pass the factory
+ * <i>etc.</i>), which allow us to declare static final constants and pass the factory
  * in parameter. By contrast, {@link AuthorityFactoryProxy} needs to keep the factory as a
  * field because the type may vary.
  *

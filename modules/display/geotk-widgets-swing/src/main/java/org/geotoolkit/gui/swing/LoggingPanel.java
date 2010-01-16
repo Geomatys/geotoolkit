@@ -440,7 +440,7 @@ public class LoggingPanel extends JPanel {
      * This method is invoked automatically when the user closes the windows created with
      * {@link #show(Component)}. If this {@code LoggingPanel} is displayed by some other ways
      * (for example if it has been added into a {@link JPanel}), then this {@code dispose()}
-     * method must be invoked explicitely when the container is being discarted.
+     * method must be invoked explicitly when the container is being discarted.
      */
     public void dispose() {
         model.removeTableModelListener(scrollControl);

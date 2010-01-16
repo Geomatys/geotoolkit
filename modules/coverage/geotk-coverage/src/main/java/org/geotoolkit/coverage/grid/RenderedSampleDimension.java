@@ -282,7 +282,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
             needScaling = !targetRange.contains(TypeMap.getRange(sourceType));
         }
         /*
-         * Computes the minimal and maximal values, if not explicitely provided.
+         * Computes the minimal and maximal values, if not explicitly provided.
          * This information is required for determining the range of geophysics
          * values.
          */

@@ -34,7 +34,7 @@ public interface ZoomChangeListener extends EventListener {
     /**
      * Invoked when a zoom changed.
      *
-     * @param event The change in zoom scale, translation, rotation, <cite>etc.</cite>
+     * @param event The change in zoom scale, translation, rotation, <i>etc.</i>
      */
     void zoomChanged(ZoomChangeEvent event);
 }
