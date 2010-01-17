@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
+import java.util.Iterator;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -401,10 +402,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                 final CachedRule rule = rules[i];
                 final Filter rulefilter = rule.getFilter();
                 for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                    for(StatefullProjectedFeature feature : unPainted){
+                    final Iterator<StatefullProjectedFeature> ite = unPainted.listIterator();
+                    while(ite.hasNext()){
+                        final StatefullProjectedFeature feature = ite.next();
                         //test if the rule is valid for this feature
                         if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
-                            unPainted.remove(feature);
+                            ite.remove();
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
                                 renderer.portray(feature, symbol, context);
