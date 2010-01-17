@@ -378,7 +378,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             iterator.close();
         }
 
-        List<StatefullProjectedFeature> unPainted = new ArrayList<StatefullProjectedFeature>(cycle);
+        final List<StatefullProjectedFeature> unPainted = new ArrayList<StatefullProjectedFeature>(cycle);
 
         try{
            for(int i=0;i<elseRuleIndex;i++){
@@ -402,12 +402,11 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                 final CachedRule rule = rules[i];
                 final Filter rulefilter = rule.getFilter();
                 for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                    final Iterator<StatefullProjectedFeature> ite = unPainted.listIterator();
+                    final Iterator<StatefullProjectedFeature> ite = unPainted.iterator();
                     while(ite.hasNext()){
                         final StatefullProjectedFeature feature = ite.next();
                         //test if the rule is valid for this feature
                         if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
-                            ite.remove();
                             final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
                             if(renderer != null){
                                 renderer.portray(feature, symbol, context);
@@ -416,6 +415,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
                     }
                 }
             }
+           unPainted.clear();
 
         }catch(PortrayalException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
@@ -444,7 +444,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
-                System.err.println("StatefullFeatureGraphicLayerJ2D ligne 272 :" +ex.getMessage());
+                System.err.println("StatefullFeatureGraphicLayerJ2D ligne 447 :" +ex.getMessage());
 //                renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
                 env = new Envelope2D();
             }
