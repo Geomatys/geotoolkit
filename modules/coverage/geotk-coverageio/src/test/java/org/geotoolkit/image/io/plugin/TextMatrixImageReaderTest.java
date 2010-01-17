@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Locale;
 import java.util.Iterator;
@@ -25,6 +25,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.image.io.TextImageReader;
+import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
@@ -37,21 +39,28 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link TextMatrixImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.08
  *
  * @since 3.06
  */
 public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
     /**
+     * The provider for the format to be tested.
+     */
+    static final class Spi extends TextMatrixImageReader.Spi {
+        Spi() {
+            padValue = -9999;
+            locale   = Locale.CANADA;
+            charset  = Charset.forName("UTF-8");
+        }
+    }
+
+    /**
      * Creates a reader using the {@link Locale#CANADA}.
      */
     @Override
     protected TextMatrixImageReader createImageReader() throws IOException {
-        TextMatrixImageReader.Spi spi = new TextMatrixImageReader.Spi();
-        spi.padValue = -9999;
-        spi.locale   = Locale.CANADA;
-        spi.charset  = Charset.forName("UTF-8");
-        final TextMatrixImageReader reader = new TextMatrixImageReader(spi);
+        final TextMatrixImageReader reader = new TextMatrixImageReader(new Spi());
         reader.setInput(TestData.file(this, "matrix.txt"));
         return reader;
     }

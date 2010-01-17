@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io;
 
 import java.io.*; // Many imports, including some for javadoc only.
 import java.util.Set;
@@ -37,7 +37,7 @@ import org.geotoolkit.io.LineFormat;
  * loading the real image reader implementation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 2.4
  * @module

@@ -15,16 +15,15 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
-import java.util.Locale;
 import java.io.IOException;
-import java.nio.charset.Charset;
 
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -35,7 +34,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07
  */
@@ -46,11 +45,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
      */
     @Override
     protected WorldFileImageReader createImageReader() throws IOException {
-        final TextMatrixImageReader.Spi main = new TextMatrixImageReader.Spi();
-        main.padValue = -9999;
-        main.locale   = Locale.CANADA;
-        main.charset  = Charset.forName("UTF-8");
-        final WorldFileImageReader.Spi spi = new WorldFileImageReader.Spi(main);
+        final WorldFileImageReader.Spi spi = new WorldFileImageReader.Spi(new TextMatrixImageReaderTest.Spi());
         final WorldFileImageReader reader = new WorldFileImageReader(spi);
         reader.setInput(TestData.file(this, "matrix.txt"));
         return reader;

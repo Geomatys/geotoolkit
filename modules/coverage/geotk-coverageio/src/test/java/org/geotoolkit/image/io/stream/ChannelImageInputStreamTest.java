@@ -26,7 +26,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.io.text.TextImageReaderTestBase;
+import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -197,7 +197,7 @@ public final class ChannelImageInputStreamTest {
      */
     @Test
     public void testUsingFile() throws IOException {
-        final File          file = TestData.file(TextImageReaderTestBase.class, "matrix.txt");
+        final File          file = TestData.file(TextMatrixImageReader.class, "matrix.txt");
         final FileInputStream in = new FileInputStream(file);
         final ImageInputStream r = ImageIO.createImageInputStream(new FileInputStream(file));
         final ImageInputStream t = new ChannelImageInputStream(in.getChannel(), 128);

@@ -42,9 +42,8 @@ import org.geotoolkit.util.converter.Classes;
  * {@link InputStream}, {@link ImageInputStream}, {@link ReadableByteChannel}.
  * </blockquote>
  *
- * Note the {@link org.geotoolkit.image.io.text.TextImageReader} subclass can go one step
- * further by wrapping the {@code InputStream} into a {@link java.io.BufferedReader} using
- * some character encoding.
+ * Note the {@link TextImageReader} subclass can go one step further by wrapping the
+ * {@code InputStream} into a {@link java.io.BufferedReader} using some character encoding.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
@@ -67,7 +66,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * from an other user object like {@link File} or {@link URL}.
      *
      * @see #getInputStream
-     * @see org.geotoolkit.image.io.text.TextImageReader#getReader
+     * @see TextImageReader#getReader
      * @see #close
      */
     protected Closeable closeOnReset;
@@ -178,7 +177,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      *
      * @see #getInput()
      * @see #getChannel()
-     * @see org.geotoolkit.image.io.text.TextImageReader#getReader()
+     * @see TextImageReader#getReader()
      */
     protected InputStream getInputStream() throws IllegalStateException, IOException {
         if (stream == null) {

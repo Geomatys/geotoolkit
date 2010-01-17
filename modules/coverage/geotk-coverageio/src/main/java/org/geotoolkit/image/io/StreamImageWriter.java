@@ -42,9 +42,8 @@ import org.geotoolkit.util.converter.Classes;
  * {@link OutputStream}, {@link ImageOutputStream}, {@link WritableByteChannel}.
  * </blockquote>
  *
- * Note the {@link org.geotoolkit.image.io.text.TextImageWriter} subclass can go one step
- * further by wrapping the {@code InputStream} into a {@link java.io.BufferedWriter} using
- * some character encoding.
+ * Note the {@link TextImageWriter} subclass can go one step further by wrapping the
+ * {@code InputStream} into a {@link java.io.BufferedWriter} using some character encoding.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
@@ -67,7 +66,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * from an other user object like {@link File} or {@link URL}.
      *
      * @see #getOutputStream
-     * @see org.geotoolkit.image.io.text.TextImageWriter#getWriter
+     * @see TextImageWriter#getWriter(ImageWriteParam)
      * @see #close
      */
     protected Closeable closeOnReset;
@@ -123,7 +122,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * @throws IOException If the output stream can't be created for an other reason.
      *
      * @see #getOutput
-     * @see org.geotoolkit.image.io.text.TextImageWriter#getWriter
+     * @see TextImageWriter#getWriter(ImageWriteParam)
      */
     protected OutputStream getOutputStream() throws IllegalStateException, IOException {
         if (stream == null) {

@@ -1,2 +1,2 @@
-org.geotoolkit.image.io.text.AsciiGridWriter$Spi
-org.geotoolkit.image.io.text.TextMatrixImageWriter$Spi
+org.geotoolkit.image.io.plugin.AsciiGridWriter$Spi
+org.geotoolkit.image.io.plugin.TextMatrixImageWriter$Spi

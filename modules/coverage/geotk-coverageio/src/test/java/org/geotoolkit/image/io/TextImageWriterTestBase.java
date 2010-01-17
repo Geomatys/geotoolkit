@@ -15,9 +15,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io;
 
 import java.util.Locale;
+import java.text.NumberFormat;
+import java.text.FieldPosition;
 import java.io.IOException;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -30,8 +32,6 @@ import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.WKT;
-import org.geotoolkit.image.io.PaletteFactory;
-import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.CRSAccessor;
@@ -45,11 +45,45 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageWriter} tests.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.06 (derived from 2.4)
  */
 public abstract class TextImageWriterTestBase {
+    /**
+     * Creates the image writer using the {@link Locale#CANADA}.
+     * This arbitrary locale is fixed in order to keep the build locale-independent.
+     *
+     * @return The reader to test.
+     * @throws IOException If an error occured while creating the format.
+     */
+    protected abstract SpatialImageWriter createImageWriter() throws IOException;
+
+    /**
+     * Tests the number format. This method must be invoked explictly in sub-class,
+     * because this test is not suitable to all of them. The code is declared in this
+     * class instead than sub-class in order to get access to package-protected methods.
+     *
+     * @param  writer the {@code TextImageWriter} to test.
+     * @throws IOException Should never happen.
+     */
+    protected static void testCreateNumberFormat(final TextImageWriter writer) throws IOException {
+        final IIOImage image = createImage(false);
+        assertEquals(Locale.CANADA, writer.getDataLocale(null));
+
+        final NumberFormat format = writer.createNumberFormat(image, null);
+        assertEquals(2, format.getMinimumFractionDigits());
+        assertEquals(2, format.getMaximumFractionDigits());
+        assertEquals(1, format.getMinimumIntegerDigits());
+        assertEquals( "0.12", format.format( 0.1216));
+        assertEquals("-0.30", format.format(-0.2978));
+
+        final FieldPosition pos = writer.getExpectedFractionPosition(format);
+        assertEquals("Field type", NumberFormat.FRACTION_FIELD, pos.getField());
+        assertEquals("Fraction width", 2, pos.getEndIndex() - pos.getBeginIndex());
+        assertEquals("Total width (including sign)", 6, pos.getEndIndex());
+    }
+
     /**
      * Creates dummy metadata for the image to be returned by {@link #createImage()}.
      */
@@ -117,13 +151,4 @@ public abstract class TextImageWriterTestBase {
         }
         return new IIOImage(new BufferedImage(cm, raster, false, null), null, createMetadata());
     }
-
-    /**
-     * Creates the image writer using the {@link Locale#CANADA}.
-     * This arbitrary locale is fixed in order to keep the build locale-independent.
-     *
-     * @return The reader to test.
-     * @throws IOException If an error occured while creating the format.
-     */
-    protected abstract SpatialImageWriter createImageWriter() throws IOException;
 }

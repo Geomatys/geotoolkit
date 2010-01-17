@@ -48,7 +48,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  *   <li><p>Specify the name of a {@linkplain Palette color palette}. This is useful when
  *       reading an image from a file that doesn't contain such information, for example
- *       {@linkplain org.geotoolkit.image.io.text.AsciiGridReader ASCII grid}.</p></li>
+ *       {@linkplain org.geotoolkit.image.io.plugin.AsciiGridReader ASCII grid}.</p></li>
  *
  *   <li><p>For images having more than one band where the bands are <strong>not</strong> color
  *       components, specify which band to use with the {@linkplain IndexColorModel Index

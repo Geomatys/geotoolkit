@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.awt.Rectangle;
 import java.awt.image.Raster;
@@ -28,6 +28,8 @@ import javax.imageio.ImageReader;
 import java.util.Iterator;
 
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.image.io.TextImageReader;
+import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 

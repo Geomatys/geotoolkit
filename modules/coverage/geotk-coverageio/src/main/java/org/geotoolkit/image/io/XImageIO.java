@@ -79,7 +79,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * {@linkplain ImageOutputStream output stream}, while some plugins used in the Geotk library
  * can not work with streams. For example plugins which depend on native libraries (e.g. the HDF
  * format) can typically accept only a filename as input, since the file will be open in C/C++
- * code. Some other plugins like {@link org.geotoolkit.image.io.text.WorldFileImageReader} require
+ * code. Some other plugins like {@link org.geotoolkit.image.io.plugin.WorldFileImageReader} require
  * the filename because they need to open many files, instead than reading a single stream.
  * Consequently if the user wants to read an image in a {@link java.io.File}, it is preferable to
  * check if an {@code ImageReader} accepts directly a {@code File} input before to open the file
@@ -106,7 +106,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * {@section Example}
  * The following example reads a TIFF image. Because we use an input of type {@link java.io.File}
- * instead than {@link ImageInputStream}, the {@link org.geotoolkit.image.io.text.WorldFileImageReader}
+ * instead than {@link ImageInputStream}, the {@link org.geotoolkit.image.io.plugin.WorldFileImageReader}
  * can be used. Consequently the metadata associated with the TIFF image can contain geolocalization
  * information if a {@code ".tfw"} file was found together with the {@code ".tiff"} file.
  *

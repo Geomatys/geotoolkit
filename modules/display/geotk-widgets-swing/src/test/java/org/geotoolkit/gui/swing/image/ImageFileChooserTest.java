@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.image;
 
 import org.geotoolkit.gui.test.SwingBase;
 import org.geotoolkit.image.jai.Registry;
-import org.geotoolkit.image.io.text.WorldFileImageReader;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 
 import org.junit.*;
 import static org.junit.Assume.*;

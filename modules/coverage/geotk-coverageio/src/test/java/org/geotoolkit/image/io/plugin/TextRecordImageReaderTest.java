@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Locale;
 import java.util.Iterator;
@@ -26,6 +26,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
 
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.image.io.TextImageReader;
+import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
@@ -38,11 +40,25 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link TextRecordImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.06
  */
 public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
+    /**
+     * The provider for the format to be tested.
+     */
+    private static final class Spi extends TextRecordImageReader.Spi {
+        Spi(final boolean lenient) {
+            padValue = -9999;
+            locale   = Locale.CANADA;
+            charset  = Charset.forName("UTF-8");
+            if (lenient) {
+                gridTolerance = 0.002f;
+            }
+        }
+    }
+
     /**
      * Creates a reader using the {@link Locale#CANADA}.
      */
@@ -56,24 +72,9 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
      * uses a relaxed threshold value for determining if the grid is regular.
      */
     private TextRecordImageReader createImageReader(final boolean lenient) throws IOException {
-        final TextRecordImageReader reader = new TextRecordImageReader(createImageReaderSpi(lenient));
+        final TextRecordImageReader reader = new TextRecordImageReader(new Spi(lenient));
         reader.setInput(TestData.file(this, "records.txt"));
         return reader;
-    }
-
-    /**
-     * Creates a provider using the {@link Locale#CANADA}. If {@code lenient} is {@code true},
-     * uses a relaxed threshold value for determining if the grid is regular.
-     */
-    private TextRecordImageReader.Spi createImageReaderSpi(final boolean lenient) throws IOException {
-        TextRecordImageReader.Spi spi = new TextRecordImageReader.Spi();
-        spi.padValue = -9999;
-        spi.locale   = Locale.CANADA;
-        spi.charset  = Charset.forName("UTF-8");
-        if (lenient) {
-            spi.gridTolerance = 0.002f;
-        }
-        return spi;
     }
 
     /**
@@ -84,7 +85,7 @@ public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
      */
     @Test
     public void testCanNotRead() throws IOException {
-        final TextRecordImageReader.Spi spi = createImageReaderSpi(true);
+        final TextRecordImageReader.Spi spi = new Spi(true);
         assertFalse(spi.canDecodeInput(TestData.file(this, "matrix.txt")));
     }
 

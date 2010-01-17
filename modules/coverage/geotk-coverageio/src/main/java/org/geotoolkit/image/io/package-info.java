@@ -24,8 +24,7 @@
  * {@code IIOMetadata} class for metadata ({@link org.geotoolkit.image.io.metadata.SpatialMetadata}).
  * <p>
  * Concrete implementations are provided in the {@linkplain org.geotoolkit.image.io.plugin plugin}
- * sub-package for binary image formats, and in the {@linkplain org.geotoolkit.image.io.text text}
- * sub-package for ASCII (or other text encoding) image formats.
+ * sub-package.
  * <p>
  * The {@link org.geotoolkit.image.io.XImageIO} class provides static methods completing the ones
  * provided in the standard {@link javax.imageio.ImageIO} class. Those methods consider the input
@@ -40,8 +39,8 @@
  * <ol>
  *   <li>Invoke some AWT method first; see {@code setDefaultCodecPreferences()} below for explanation.</li>
  *   <li>{@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}</li>
- *   <li>{@link org.geotoolkit.image.io.text.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
- *   <li>{@link org.geotoolkit.image.io.text.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
+ *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
+ *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
  *
  * {@section Conversion of sample values}
@@ -64,7 +63,6 @@
  * @author Antoine Hnawia (IRD)
  * @version 3.08
  *
- * @see org.geotoolkit.image.io.text
  * @see org.geotoolkit.image.io.plugin
  *
  * @since 1.2

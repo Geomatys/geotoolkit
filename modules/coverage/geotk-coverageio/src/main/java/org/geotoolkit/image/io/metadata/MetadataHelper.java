@@ -268,7 +268,7 @@ public class MetadataHelper {
      * <p>
      * If all those conditions are meet, then {@code scaleX} is returned. Otherwise an
      * exception is thrown. This behavior is convenient for code like the
-     * {@linkplain org.geotoolkit.image.io.text.AsciiGridWriter ASCII Grid writer},
+     * {@linkplain org.geotoolkit.image.io.plugin.AsciiGridWriter ASCII Grid writer},
      * which require square pixels as of format specification.
      *
      * @param  gridToCRS The affine transform from which to extract the cell size.
@@ -302,7 +302,7 @@ public class MetadataHelper {
      * If this condition is meet, then {@code scaleX} and <strong>the negative value</strong>
      * of {@code scaleY} (because the Y axis is assumed reversed) are returned in a new
      * {@link Dimension2D} object. Otherwise {@code null} is returned. This behavior is
-     * convenient for code like the {@linkplain org.geotoolkit.image.io.text.AsciiGridWriter
+     * convenient for code like the {@linkplain org.geotoolkit.image.io.plugin.AsciiGridWriter
      * ASCII Grid writer}, which require square pixels unless some extensions are enabled for
      * rectangular pixel.
      *

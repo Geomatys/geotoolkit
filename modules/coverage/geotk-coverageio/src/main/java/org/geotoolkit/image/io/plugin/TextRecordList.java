@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Arrays;
 import javax.imageio.IIOException;
@@ -27,7 +27,7 @@ import org.geotoolkit.resources.Vocabulary;
 
 /**
  * List of data records in an image. One instance of this class is created by
- * {@link TextRecordImageReader} for every image in a file. A {@code RecordList}
+ * {@link TextRecordImageReader} for every image in a file. A {@code TextRecordList}
  * contains a list of records where each record contains data for one pixel. A record
  * contains usually the following information:
  * <p>
@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Vocabulary;
  * </li>
  * <p>
  * Those information can appear in arbitrary columns, providing that the column order stay
- * the same for every record in a particular {@code RecordList} instance. Records can appear
+ * the same for every record in a particular {@code TextRecordList} instance. Records can appear
  * in arbitrary order.
  * <p>
  * Data are floating point value ({@code float} type). Current implementation expects pixels
@@ -45,12 +45,12 @@ import org.geotoolkit.resources.Vocabulary;
  * The interval computation should be accurate even if there is missing and/or duplicated records.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.08
  *
  * @since 1.2
  * @module
  */
-final class RecordList {
+final class TextRecordList {
     /**
      * The minimal values found in every columns.
      */
@@ -97,13 +97,13 @@ final class RecordList {
     private final float gridTolerance;
 
     /**
-     * Creates a new {@code RecordList} initialized to the given line.
+     * Creates a new {@code TextRecordList} initialized to the given line.
      *
      * @param firstLine The first line having been read.
      * @param expectedLineCount Number of expected lines. This information is approximative,
      *        but array allocations will be reduced if an exact value is provided.
      */
-    public RecordList(final double[] firstLine, final int expectedLineCount,
+    public TextRecordList(final double[] firstLine, final int expectedLineCount,
             final int xColumn, final int yColumn, final float gridTolerance)
     {
         min = firstLine.clone();
@@ -300,7 +300,7 @@ final class RecordList {
     }
 
     /**
-     * Returns a string representation of this {@code RecordList} for debugging purpose.
+     * Returns a string representation of this {@code TextRecordList} for debugging purpose.
      */
     @Override
     public String toString() {

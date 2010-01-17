@@ -185,14 +185,6 @@ image.io.mosaic.TreeNode
 image.io.mosaic.TreeTileManager
 image.io.stream.FinalizationStopper
 image.io.stream.UrlInputSpi
-image.io.text.LineReader
-image.io.text.RecordList
-image.io.text.TestReader
-image.io.text.TextImageReader
-image.io.text.TextImageWriter
-image.io.text.TextMatrixImageReader
-image.io.text.TextMatrixImageWriter
-image.io.text.TextRecordImageReader
 image.jai.Combine
 image.jai.Hysteresis
 image.jai.NodataFilter

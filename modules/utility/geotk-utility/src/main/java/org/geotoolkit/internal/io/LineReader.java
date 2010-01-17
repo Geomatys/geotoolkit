@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.internal.io;
 
 import java.io.Reader;
 import java.io.IOException;
@@ -33,7 +33,7 @@ import java.io.LineNumberReader;
  * @since 1.2
  * @module
  */
-final class LineReader extends LineNumberReader {
+public final class LineReader extends LineNumberReader {
     /**
      * The current stream position.
      */

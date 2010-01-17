@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io;
 
 import java.io.IOException;
 import java.awt.Rectangle;
@@ -26,10 +26,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import javax.imageio.ImageTypeSpecifier;
 
-import org.geotoolkit.image.io.SpatialImageReader;
-import org.geotoolkit.image.io.SpatialImageReadParam;
-import org.geotoolkit.image.io.plugin.ImageReaderTestBase;
-
 import org.junit.*;
 import static java.lang.Float.NaN;
 import static org.junit.Assert.*;
@@ -39,7 +35,7 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageReader} tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.06
  */

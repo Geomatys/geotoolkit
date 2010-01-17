@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.plugin;
+package org.geotoolkit.image.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  * for manual testings.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.06
  */

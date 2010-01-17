@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Iterator;
 import java.awt.Rectangle;
@@ -26,6 +26,8 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOImage;
 
+import org.geotoolkit.image.io.TextImageWriterTestBase;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.assertMultilinesEquals;
@@ -35,7 +37,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * Tests {@link AsciiGridWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07
  */

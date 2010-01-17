@@ -15,12 +15,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Locale;
 import java.util.Iterator;
-import java.text.NumberFormat;
-import java.text.FieldPosition;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -29,6 +27,8 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOImage;
+
+import org.geotoolkit.image.io.TextImageWriterTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,20 +39,27 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * Tests {@link TextMatrixImageWriter}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.08
  *
  * @since 2.4
  */
 public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
     /**
+     * The provider for the format to be tested.
+     */
+    static final class Spi extends TextMatrixImageWriter.Spi {
+        Spi() {
+            locale  = Locale.CANADA;
+            charset = Charset.forName("UTF-8");
+        }
+    }
+
+    /**
      * Creates a writer using the {@link Locale#CANADA}.
      */
     @Override
     protected TextMatrixImageWriter createImageWriter() {
-        TextMatrixImageWriter.Spi spi = new TextMatrixImageWriter.Spi();
-        spi.locale  = Locale.CANADA;
-        spi.charset = Charset.forName("UTF-8");
-        return new TextMatrixImageWriter(spi);
+        return new TextMatrixImageWriter(new Spi());
     }
 
     /**
@@ -62,21 +69,7 @@ public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
      */
     @Test
     public void testCreateNumberFormat() throws IOException {
-        final IIOImage image = createImage(false);
-        final TextImageWriter writer = createImageWriter();
-        assertEquals(Locale.CANADA, writer.getDataLocale(null));
-
-        final NumberFormat format = writer.createNumberFormat(image, null);
-        assertEquals(2, format.getMinimumFractionDigits());
-        assertEquals(2, format.getMaximumFractionDigits());
-        assertEquals(1, format.getMinimumIntegerDigits());
-        assertEquals( "0.12", format.format( 0.1216));
-        assertEquals("-0.30", format.format(-0.2978));
-
-        final FieldPosition pos = writer.getExpectedFractionPosition(format);
-        assertEquals("Field type", NumberFormat.FRACTION_FIELD, pos.getField());
-        assertEquals("Fraction width", 2, pos.getEndIndex() - pos.getBeginIndex());
-        assertEquals("Total width (including sign)", 6, pos.getEndIndex());
+        testCreateNumberFormat(createImageWriter());
     }
 
     /**

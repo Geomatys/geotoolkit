@@ -15,17 +15,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io.text;
+package org.geotoolkit.image.io.plugin;
 
 import java.util.Locale;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import javax.imageio.IIOImage;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
+import org.geotoolkit.image.io.TextImageWriterTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07
  */
@@ -71,10 +71,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
      */
     @Override
     protected WorldFileImageWriter createImageWriter() throws IOException {
-        final TextMatrixImageWriter.Spi main = new TextMatrixImageWriter.Spi();
-        main.locale  = Locale.CANADA;
-        main.charset = Charset.forName("UTF-8");
-        final WorldFileImageWriter.Spi spi = new WorldFileImageWriter.Spi(main);
+        final WorldFileImageWriter.Spi spi = new WorldFileImageWriter.Spi(new TextMatrixImageWriter.Spi());
         final WorldFileImageWriter writer = new WorldFileImageWriter(spi);
         return writer;
     }
