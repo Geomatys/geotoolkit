@@ -33,9 +33,10 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.forceAxisOrderHonoring;
 
@@ -44,12 +45,12 @@ import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.force
  * Tests the {@link HTTP_AuthorityFactory} class backed by WMS or AUTO factories.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 2.4
  */
 @Depend(AllAuthoritiesFactoryTest.class)
-public final class HTTP_AuthorityFactoryTest {
+public final class HTTP_AuthorityFactoryTest extends ReferencingTestCase {
     /**
      * Tests the {@link HTTP_AuthorityFactory#forceAxisOrderHonoring} method.
      */
@@ -201,5 +202,26 @@ public final class HTTP_AuthorityFactoryTest {
                 factory.createCoordinateReferenceSystem("http://www.opengis.net/gml/srs/crs.xml#84");
         assertEquals("CRS:84", CRS.getDeclaredIdentifier(crs));
         assertEquals("http://www.opengis.net/gml/srs/crs.xml#84", finder.findIdentifier(crs));
+    }
+
+    /**
+     * Tests a URL in the EPSG namespace. This test requires the EPSG database to be available.
+     * We just make sure that no exception has been thrown, and opportunistly compare the result
+     * with the one produced by the {@link CRS} facade.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.08
+     */
+    @Test
+    public void testEPSG() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        final CRSAuthorityFactory factory = getCRSAuthorityFactory("http://www.opengis.net", null);
+        CoordinateReferenceSystem crs;
+        crs = factory.createGeographicCRS("http://www.opengis.net/gml/srs/epsg.xml#4326");
+        assertNotNull(crs);
+        assertSame(crs, CRS.decode("http://www.opengis.net/gml/srs/epsg.xml#4326"));
+        assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:4326"));
+        assertSame(crs, CRS.decode("EPSG:4326"));
     }
 }

@@ -32,9 +32,10 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 
 
@@ -42,12 +43,12 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  * Tests the {@link URN_AuthorityFactory} class backed by WMS or AUTO factories.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 2.4
  */
 @Depend({AllAuthoritiesFactoryTest.class, HTTP_AuthorityFactoryTest.class})
-public final class URN_AuthorityFactoryTest {
+public final class URN_AuthorityFactoryTest extends ReferencingTestCase {
     /**
      * Makes sure that a singleton instance is registered.
      */
@@ -182,5 +183,26 @@ public final class URN_AuthorityFactoryTest {
                 factory.createCoordinateReferenceSystem("URN:X-OGC:DEF:CRS:CRS:84");
         assertEquals("CRS:84", CRS.getDeclaredIdentifier(crs));
         assertEquals("urn:ogc:def:crs:crs:84", finder.findIdentifier(crs));
+    }
+
+    /**
+     * Tests a URN in the EPSG namespace. This test requires the EPSG database to be available.
+     * We just make sure that no exception has been thrown, and opportunistly compare the result
+     * with the one produced by the {@link CRS} facade.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.08
+     */
+    @Test
+    public void testEPSG() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        final CRSAuthorityFactory factory = getCRSAuthorityFactory("urn:ogc:def", null);
+        CoordinateReferenceSystem crs;
+        crs = factory.createGeographicCRS("urn:x-ogc:def:crs:EPSG:6.11.2:4326");
+        assertNotNull(crs);
+        assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:6.11.2:4326"));
+        assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:7.04:4326"));
+        assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:7.10:4326"));
     }
 }
