@@ -35,7 +35,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.image.io.ImageWriterAdapter;
-import org.geotoolkit.image.io.metadata.ReferencingMetadataHelper;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
@@ -155,9 +156,9 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         }
         if (metadata instanceof SpatialMetadata) {
             final SpatialMetadata md = (SpatialMetadata) metadata;
-            final ReferencingMetadataHelper mh = new ReferencingMetadataHelper(md);
             final RectifiedGrid rf = md.getInstanceForType(RectifiedGrid.class);
             if (rf != null) {
+                final MetadataHelper mh = new MetadataHelper(md);
                 final AffineTransform tr = mh.getAffineTransform(rf, param);
                 final Object path = createOutput("tfw");
                 if (path != null) {
@@ -166,6 +167,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                     out.close();
                 }
             }
+            final ReferencingBuilder mh = new ReferencingBuilder(md);
             final CoordinateReferenceSystem crs = mh.getOptionalCRS();
             if (crs != null) {
                 final Object path = createOutput("prj");

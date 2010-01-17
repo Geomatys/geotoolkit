@@ -106,8 +106,7 @@ public class MetadataHelper {
      * @param  dimension The dimension which shall be equals to 2.
      * @throws IIOException If the given dimension is not equals to 2.
      */
-    private void ensureTwoDimensional(String name, int index, int dimension) throws IIOException
-    {
+    private void ensureTwoDimensional(String name, int index, int dimension) throws IIOException {
         if (dimension != 2) {
             if (index >= 0) {
                 name = name + '[' + index + ']';

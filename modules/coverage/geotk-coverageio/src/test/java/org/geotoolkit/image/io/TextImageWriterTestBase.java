@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.internal.image.io.CRSAccessor;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
@@ -102,7 +102,7 @@ public abstract class TextImageWriterTestBase {
          * We use a simple Mercator projection.
          */
         try {
-            new CRSAccessor(metadata).setCRS(CRS.parseWKT(WKT.PROJCS_MERCATOR));
+            new ReferencingBuilder(metadata).setCoordinateReferenceSystem(CRS.parseWKT(WKT.PROJCS_MERCATOR));
         } catch (FactoryException e) {
             fail(e.toString());
         }

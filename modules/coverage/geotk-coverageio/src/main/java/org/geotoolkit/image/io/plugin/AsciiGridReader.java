@@ -297,7 +297,7 @@ public class AsciiGridReader extends TextImageReader {
             binaryType = DataBuffer.TYPE_UNDEFINED;
             String value = header.remove("BINARY_TYPE");
             if (value != null) {
-                binaryType = DataTypes.decode(value);
+                binaryType = DataTypes.getDataBufferType(value);
                 if (binaryType == DataBuffer.TYPE_UNDEFINED) {
                     Warnings.log(this, AsciiGridReader.class, "readHeader",
                             Errors.Keys.BAD_PARAMETER_$2, "BINARY_TYPE", value);

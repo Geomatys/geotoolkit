@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
+import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.RecordType;
@@ -61,7 +62,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.internal.image.io.MetadataEnum;
+import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
@@ -364,11 +365,11 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         }
         final List<String> types;
         if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
-            types = MetadataEnum.CRS_TYPES;
+            types = DataTypes.CRS_TYPES;
         } else if (CoordinateSystem.class.isAssignableFrom(type)) {
-            types = MetadataEnum.CS_TYPES;
+            types = DataTypes.CS_TYPES;
         } else if (Datum.class.isAssignableFrom(type)) {
-            types = MetadataEnum.DATUM_TYPES;
+            types = DataTypes.DATUM_TYPES;
         } else {
             return;
         }
@@ -381,9 +382,9 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
      * {@code defaultValue} argument in the call to the {@link #addObjectValue(String, Class,
      * boolean, Object) addObjectValue} method.
      * <p>
-     * This method is also invoked by {@link ReferencingMetadataHelper#getDefault(Class)}, which
-     * does not rely on {@link #getObjectDefaultValue(String)} because the default value of some
-     * referencing objects depends on the type of the enclosing element. For example the default
+     * This method is also invoked by {@link ReferencingBuilder#getDefault(Class)}, which does not
+     * rely on {@link IIOMetadataFormat#getObjectDefaultValue(String)} because the default value of
+     * some referencing objects depends on the type of the enclosing element. For example the default
      * coordinate system shall be ellipsoidal for a geographic CRS and cartesian for a projected
      * CRS.
      * <p>
@@ -431,7 +432,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
      * @param  type The class type of the object for which to get a default value.
      * @return The default value for an object of the given type, or {@code null} if none.
      *
-     * @see ReferencingMetadataHelper#getDefault(Class)
+     * @see ReferencingBuilder#getDefault(Class)
      * @see #getObjectDefaultValue(String)
      *
      * @since 3.08
