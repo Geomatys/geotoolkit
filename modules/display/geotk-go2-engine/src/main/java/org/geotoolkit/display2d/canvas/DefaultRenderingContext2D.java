@@ -243,7 +243,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 //                                      canvasObjectiveBounds.getWidth()+2*d0,
 //                                      canvasObjectiveBounds.getHeight()+2*d1);
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.paintingObjectiveBBox = initEnvelope(objectiveCRS, objectiveCRS2D, canvasObjectiveBounds, temporal, elevation);
+        this.canvasObjectiveBBox = initEnvelope(objectiveCRS, objectiveCRS2D, canvasObjectiveBounds, temporal, elevation);
 
         //calculate painting shape/bounds values -------------------------------
         this.paintingDisplayShape = paintingDisplayShape;
