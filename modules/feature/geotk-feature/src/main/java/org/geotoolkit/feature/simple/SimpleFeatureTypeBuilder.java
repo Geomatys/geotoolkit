@@ -18,6 +18,7 @@ package org.geotoolkit.feature.simple;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -127,8 +128,47 @@ public class SimpleFeatureTypeBuilder {
     private InternationalString description;
     /**
      * List of attributes.
+     * Add some safe check so that we don't add null descriptors.
      */
-    private final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>();
+    private final List<AttributeDescriptor> attributes = new ArrayList<AttributeDescriptor>(){
+
+        @Override
+        public boolean add(AttributeDescriptor e) {
+            if(e == null){
+                throw new NullPointerException("Attribut descriptor can not be null.");
+            }
+            return super.add(e);
+        }
+
+        @Override
+        public void add(int i, AttributeDescriptor e) {
+            if(e == null){
+                throw new NullPointerException("Attribut descriptor can not be null.");
+            }
+            super.add(i, e);
+        }
+
+        @Override
+        public boolean addAll(Collection<? extends AttributeDescriptor> clctn) {
+            for(AttributeDescriptor att : clctn){
+                if(att == null){
+                    throw new NullPointerException("Attribut descriptor can not be null.");
+                }
+            }
+            return super.addAll(clctn);
+        }
+
+        @Override
+        public boolean addAll(int i, Collection<? extends AttributeDescriptor> clctn) {
+            for(AttributeDescriptor att : clctn){
+                if(att == null){
+                    throw new NullPointerException("Attribut descriptor can not be null.");
+                }
+            }
+            return super.addAll(i, clctn);
+        }
+
+    };
     /**
      * Additional restrictions on the type.
      */

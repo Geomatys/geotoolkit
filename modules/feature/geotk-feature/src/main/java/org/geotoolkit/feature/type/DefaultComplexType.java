@@ -183,15 +183,20 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         }
         boolean first = true;
         for (PropertyDescriptor property : getDescriptors()) {
+            sb.append("\n| ");
             if (first) {
                 first = false;
-            } else {
-                sb.append(",");
             }
-            sb.append(property.getName().getLocalPart());
+            sb.append(property.getName().getURI());
             sb.append(":");
             sb.append(property.getType().getName().getLocalPart());
+            sb.append(" \t ").append(property.getType().getBinding());
         }
+
+        if(!getDescriptors().isEmpty()){
+            sb.append("\n");
+        }
+
         if (List.class.isAssignableFrom(binding)) {
             sb.append("]");
         } else {
