@@ -1017,7 +1017,7 @@ search: for (final Tile tile : tiles) {
          */
         final Runtime rt = Runtime.getRuntime(); rt.gc();
         final long maxInputSize = rt.maxMemory() - (rt.totalMemory() - rt.freeMemory());
-        final int bitPerPixels = Compressions.bitsPerPixel(input.getRawImageType(inputIndex).getSampleModel());
+        final int bitPerPixels = Compressions.bitsPerPixel(input.getRawImageType(inputIndex));
         /*
          * Checks the space available in the temporary directory, which
          * will contain the temporary uncompressed files for source tiles.

@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.image.io;
 
 import java.awt.image.SampleModel;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageReaderWriterSpi;
 
 import org.geotoolkit.lang.Static;
@@ -27,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * Utilities methods related to image compression.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.08
  *
  * @since 3.00
  * @module
@@ -71,16 +72,23 @@ public final class Compressions {
     /**
      * Guess the number of bits per pixel for an image to be saved on the disk in the RAW format.
      * Current implementation ignores the leading or trailing bits which could exists on each
-     * lines.
+     * lines. If the information is unknown (which may happen with some JPEG readers),
+     * conservatively returns the size required for storing ARGB values using bytes.
      *
-     * @param  sm The sample model of the image to be saved.
+     * @param  type The color model and sample model of the image to be saved.
      * @return Expected number of bits per pixel.
      */
-    public static int bitsPerPixel(final SampleModel sm) {
-        int size = 0;
-        for (final int s : sm.getSampleSize()) {
-            size += s;
+    public static int bitsPerPixel(final ImageTypeSpecifier type) {
+        if (type != null) {
+            final SampleModel sm = type.getSampleModel();
+            if (sm != null) {
+                int size = 0;
+                for (final int s : sm.getSampleSize()) {
+                    size += s;
+                }
+                return size;
+            }
         }
-        return size;
+        return 4 * Byte.SIZE;
     }
 }
