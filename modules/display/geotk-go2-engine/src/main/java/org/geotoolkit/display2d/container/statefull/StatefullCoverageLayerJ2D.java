@@ -151,7 +151,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
             return;
         }
         
-        if(!intersects(context.getCanvasObjectiveBounds())){
+        if(!intersects(context.getCanvasObjectiveBounds2D())){
             //grid not in the envelope, we have finisehd
             return;
         }
