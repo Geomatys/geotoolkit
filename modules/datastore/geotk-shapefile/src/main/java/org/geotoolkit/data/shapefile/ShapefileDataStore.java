@@ -29,7 +29,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -138,7 +137,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param url
      * @param namespace
      */
-    public ShapefileDataStore(URL url, URI namespace)
+    public ShapefileDataStore(URL url, String namespace)
             throws DataStoreException,MalformedURLException {
         this(url, namespace, false, DEFAULT_STRING_CHARSET);
     }
@@ -152,7 +151,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param namespace
      * @param useMemoryMapped
      */
-    public ShapefileDataStore(URL url, URI namespace, boolean useMemoryMapped)
+    public ShapefileDataStore(URL url, String namespace, boolean useMemoryMapped)
             throws DataStoreException,MalformedURLException {
         this(url, namespace, useMemoryMapped, DEFAULT_STRING_CHARSET);
     }
@@ -167,7 +166,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param useMemoryMapped : default is true
      * @param dbfCharset : default is ShapefileDataStore.DEFAULT_STRING_CHARSET
      */
-    public ShapefileDataStore(URL url, URI namespace, boolean useMemoryMapped,
+    public ShapefileDataStore(URL url, String namespace, boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
         shpFiles = new ShpFiles(url);
 

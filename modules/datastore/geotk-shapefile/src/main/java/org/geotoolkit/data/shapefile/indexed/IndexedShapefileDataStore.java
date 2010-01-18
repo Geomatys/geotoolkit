@@ -25,7 +25,6 @@ import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -124,7 +123,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param url The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      */
-    public IndexedShapefileDataStore(URL url, URI namespace)
+    public IndexedShapefileDataStore(URL url, String namespace)
             throws MalformedURLException,DataStoreException {
         this(url, namespace, false, true, IndexType.QIX);
     }
@@ -151,7 +150,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param treeType The type of index to use
      * 
      */
-    public IndexedShapefileDataStore(URL url, URI namespace, boolean useMemoryMappedBuffer,
+    public IndexedShapefileDataStore(URL url, String namespace, boolean useMemoryMappedBuffer,
             boolean createIndex, IndexType treeType)
             throws MalformedURLException,DataStoreException {
         this(url, namespace, useMemoryMappedBuffer, createIndex, treeType, DEFAULT_STRING_CHARSET);
@@ -169,7 +168,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * 
      * @throws MalformedURLException
      */
-    public IndexedShapefileDataStore(URL url, URI namespace, boolean useMemoryMappedBuffer, 
+    public IndexedShapefileDataStore(URL url, String namespace, boolean useMemoryMappedBuffer,
             boolean createIndex, IndexType treeType, Charset dbfCharset)
             throws MalformedURLException,DataStoreException {
         super(url, namespace, useMemoryMappedBuffer, dbfCharset);

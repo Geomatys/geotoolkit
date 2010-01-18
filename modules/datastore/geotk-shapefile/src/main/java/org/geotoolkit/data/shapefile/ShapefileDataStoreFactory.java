@@ -18,7 +18,6 @@
 package org.geotoolkit.data.shapefile;
 
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Set;
@@ -66,12 +65,6 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
     
     /**
-     * Optional - uri of the FeatureType's namespace
-     */
-    public static final GeneralParameterDescriptor NAMESPACEP =
-            new DefaultParameterDescriptor("namespace","uri to a the namespace",URI.class,null,false);
-
-    /**
      * Optional - enable/disable the use of memory-mapped io
      */
     public static final GeneralParameterDescriptor MEMORY_MAPPED =
@@ -91,7 +84,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ShapefileParameters",
-                new GeneralParameterDescriptor[]{URLP,NAMESPACEP,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET});
+                new GeneralParameterDescriptor[]{URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET});
 
     public ShapefileDataStoreFactory(){
     }
@@ -174,7 +167,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
 
         URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
-        URI namespace = (URI) params.parameter(NAMESPACEP.getName().toString()).getValue();
+        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
@@ -233,7 +226,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
     public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
         URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
-        URI namespace = (URI) params.parameter(NAMESPACEP.getName().toString()).getValue();
+        String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         Charset dbfCharset = (Charset) params.parameter(DBFCHARSET.getName().toString()).getValue();
         Boolean isCreateSpatialIndex = (Boolean) params.parameter(CREATE_SPATIAL_INDEX.getName().toString()).getValue();
 
