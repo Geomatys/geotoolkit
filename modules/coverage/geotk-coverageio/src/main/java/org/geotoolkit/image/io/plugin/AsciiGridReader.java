@@ -161,7 +161,7 @@ import org.geotoolkit.resources.Errors;
  * @see <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI Grid on Wikipedia</a>
  * @see AsciiGridWriter
  *
- * @since 3.07
+ * @since 3.08 (derived from 3.07)
  * @module
  *
  * @todo The current implementation ignores the <code>seekForwardOnly</code> parameter.
@@ -901,15 +901,16 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
-     *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See
+     *   {@linkplain org.geotoolkit.image.io.TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.08
      *
      * @see AsciiGridWriter.Spi
      *
-     * @since 3.07
+     * @since 3.08 (derived from 3.07)
      * @module
      */
     public static class Spi extends TextImageReader.Spi {

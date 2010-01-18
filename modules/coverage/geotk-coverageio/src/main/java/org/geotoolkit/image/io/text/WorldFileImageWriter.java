@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.text;
 
 import java.io.IOException;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.ImageWriterSpi;
 
 
 /**

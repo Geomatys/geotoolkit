@@ -85,14 +85,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * The {@link CoordinateSystem#getCoordinateAxes()} is invoked at construction time and
      * every elements are assumed instance of {@link CoordinateAxis1D}.
      *
-     * @param  cs The NetCDF coordinate system to wrap.
+     * @param  netcdfCS The NetCDF coordinate system to wrap.
      * @throws ClassCastException If at least one axis is not an instance of the
      *         {@link CoordinateAxis1D} subclass.
      */
-    protected NetcdfCRS(final CoordinateSystem cs) throws ClassCastException {
-        ensureNonNull("cs", cs);
-        this.cs = cs;
-        final List<CoordinateAxis> netcdfAxis = cs.getCoordinateAxes();
+    protected NetcdfCRS(final CoordinateSystem netcdfCS) throws ClassCastException {
+        ensureNonNull("netcdfCS", netcdfCS);
+        this.cs = netcdfCS;
+        final List<CoordinateAxis> netcdfAxis = netcdfCS.getCoordinateAxes();
         final int dimension = netcdfAxis.size();
         axes = new NetcdfAxis[dimension];
         for (int i=0; i<dimension; i++) {
@@ -110,22 +110,22 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *   <li>{@link ProjectedCRS}  if {@link CoordinateSystem#isGeoXY()}  returns {@code true}.</li>
      * </ul>
      *
-     * @param  cs The NetCDF coordinate system to wrap.
+     * @param  netcdfCS The NetCDF coordinate system to wrap.
      * @return A wrapper for the given object, or {@code null} if the argument was null.
      * @throws ClassCastException If at least one axis is not an instance of the
      *         {@link CoordinateAxis1D} subclass.
      */
-    public static NetcdfCRS create(final CoordinateSystem cs) throws ClassCastException {
-        if (cs == null) {
+    public static NetcdfCRS create(final CoordinateSystem netcdfCS) throws ClassCastException {
+        if (netcdfCS == null) {
             return null;
         }
-        if (cs.isLatLon()) {
-            return new Geographic(cs);
+        if (netcdfCS.isLatLon()) {
+            return new Geographic(netcdfCS);
         }
-        if (cs.isGeoXY()) {
-            return new Projected(cs);
+        if (netcdfCS.isGeoXY()) {
+            return new Projected(netcdfCS);
         }
-        return new NetcdfCRS(cs);
+        return new NetcdfCRS(netcdfCS);
     }
 
     /**

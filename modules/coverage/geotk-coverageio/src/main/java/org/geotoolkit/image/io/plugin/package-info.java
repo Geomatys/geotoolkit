@@ -17,13 +17,9 @@
  */
 
 /**
- * Extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter} for
- * binary files and text files. In the case of text files, the {@link java.nio.charset.Charset}
- * used for decoding/encoding streams and the {@link java.util.Locale} used for parsing/formatting
- * numbers are plugin-specific. Some plugins use the {@linkplain java.util.Locale#getDefault()
- * system default}, which make them locale-dependent (see the table below).
- * <p>
- * The <code>geotk-coverageio.jar</code> file declares service providers for the following formats:
+ * Extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter} for binary
+ * files and text files. The {@code geotk-coverageio.jar} and {@code geotk-coverageio-netcdf.jar}
+ * files declare service providers for the following formats:
  * <p>
  * <table border="3" cellpadding="6">
  *   <tr bgcolor="lightblue">
@@ -37,71 +33,48 @@
  *     <td>{@link org.geotoolkit.image.io.plugin.AsciiGridWriter}</td>
  *     <td>{@code "ascii-grid"}</td>
  *     <td>text/plain</td>
- *     <td>US locale and ASCII encoding</td>
+ *     <td>US locale and ASCII encoding.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}</td>
  *     <td>&nbsp;</td>
  *     <td>{@code "netcdf"}</td>
  *     <td>&nbsp;</td>
- *     <td>&nbsp;Assumes <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
+ *     <td>Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.plugin.RawImageReader}</td>
  *     <td>&nbsp;</td>
  *     <td>{@code "raw"}</td>
  *     <td>&nbsp;</td>
- *     <td>&nbsp;Requires {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
+ *     <td>Require {@link com.sun.media.imageio.stream.RawImageInputStream}.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}</td>
  *     <td>{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}</td>
  *     <td>{@code "matrix"}</td>
  *     <td>text/plain</td>
- *     <td>Locale sensitive</td>
+ *     <td>Locale sensitive.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.plugin.TextRecordImageReader}</td>
  *     <td>&nbsp;</td>
  *     <td>{@code "records"}</td>
  *     <td>text/plain</td>
- *     <td>Locale sensitive</td>
+ *     <td>Locale sensitive.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}</td>
  *     <td>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter}</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>Require {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults
- *         explicit registration}</td>
+ *         explicit registration}.</td>
  *   </tr>
  * </table>
  *
  * {@section Note about text formats}
- * It is possible to derive a locale-insensitive format from a locale sensitive one.
- * See the {@link org.geotoolkit.image.io.plugin.TextMatrixImageReader.Spi} javadoc for
- * an example.
- * <p>
- * <b>Example:</b> The text of the left side is an extract of a list of
- * (<var>longitude</var>, <var>latitude</var>, <var>elevation of the ocean floor</var>)
- * records. The image on the right side is the image produced by
- * {@link org.geotoolkit.image.io.plugin.TextRecordImageReader} when reading such file.
- *
- * <table cellpadding='24'>
- * <tr valign="top"><td><pre>
- * # Longitude Latitude Altitude
- *   59.9000   -30.0000   -3022
- *   59.9333   -30.0000   -3194
- *   59.9667   -30.0000   -3888
- *   60.0000   -30.0000   -3888
- *   45.0000   -29.9667   -2502
- *   45.0333   -29.9667   -2502
- *   45.0667   -29.9667   -2576
- *   45.1000   -29.9667   -2576
- *   45.1333   -29.9667   -2624
- *   45.1667   -29.9667   -2690
- *   45.2000   -29.9667   -2690
- *   45.2333   -29.9667   -2692
- *   45.2667   -29.9667   -2606
- *   45.3000   -29.9667   -2606
- *   45.3333   -29.9667   -2528</pre>etc...</td>
- * <td><img src="doc-files/Sandwell.jpeg"></td>
- * </tr></table>
+ * In the case of text files, the {@link java.nio.charset.Charset} used for decoding/encoding
+ * streams and the {@link java.util.Locale} used for parsing/formatting numbers are plugin-specific.
+ * Some plugins use the {@linkplain java.util.Locale#getDefault() system default}, which make them
+ * locale-dependent (see the table above). However it is possible to derive a locale-insensitive
+ * format from a locale sensitive one. See the
+ * {@link org.geotoolkit.image.io.plugin.TextMatrixImageReader.Spi} javadoc for an example.
  *
  * {@section Reformating to integer sample values}
  * By default, {@link org.geotoolkit.image.io.StreamImageReader} creates images backed by floating
@@ -150,7 +123,7 @@
  * @author Antoine Hnawia (IRD)
  * @version 3.08
  *
- * @since 1.2
+ * @since 3.07 (derived from 1.2)
  * @module
  */
 package org.geotoolkit.image.io.plugin;

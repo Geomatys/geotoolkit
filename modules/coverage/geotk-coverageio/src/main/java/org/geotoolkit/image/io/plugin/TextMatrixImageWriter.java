@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Descriptions;
  *
  * @see TextMatrixImageReader
  *
- * @since 1.2
+ * @since 3.08 (derived from 1.2)
  * @module
  */
 public class TextMatrixImageWriter extends TextImageWriter {
@@ -142,15 +142,16 @@ public class TextMatrixImageWriter extends TextImageWriter {
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.TextMatrixImageWriter"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
-     *   <tr><td colspan="2" align="center">See {@linkplain TextImageWriter.Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See
+     *   {@linkplain org.geotoolkit.image.io.TextImageWriter.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @version 3.08
      *
      * @see TextMatrixImageReader.Spi
      *
-     * @since 2.4
+     * @since 3.08 (derived from 2.4)
      * @module
      */
     public static class Spi extends TextImageWriter.Spi {

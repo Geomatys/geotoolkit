@@ -60,9 +60,6 @@ public class ReferencingMetadataHelper extends MetadataHelper {
 
     /**
      * Returns the coordinate reference system, or {@code null} if it can not be created.
-     * This method delegates to {@link #getCoordinateReferenceSystem(Class)} and catch the
-     * exception. If an exception has been thrown, the exception is
-     * {@linkplain MetadataAccessor#warningOccurred logged} and this method returns {@code null}.
      *
      * @return The CRS, or {@code null} if none.
      */

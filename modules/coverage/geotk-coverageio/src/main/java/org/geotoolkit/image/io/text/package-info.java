@@ -17,7 +17,7 @@
  */
 
 /**
- * @deprecated Moved to the {@link org.geotoolkit.image.io.plugin} package.
+ * <b>Deprecated</b>: moved to the {@link org.geotoolkit.image.io.plugin} package.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07

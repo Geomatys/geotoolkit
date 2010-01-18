@@ -34,9 +34,9 @@ import org.geotoolkit.resources.Vocabulary;
 
 
 /**
- * Base class for text image decoders. "<cite>Text images</cite>" are usually ASCII files
- * where pixels values are actually the geophysical values. This base class provides the
- * following conveniences:
+ * Base class for image readers that expect a {@link BufferedReader} input source.
+ * "<cite>Text images</cite>" are usually ASCII files where pixels values are actually
+ * the geophysical values. This base class provides the following conveniences:
  * <p>
  * <ul>
  *   <li>Get a {@link BufferedReader} from the input types, which may be a any type documented
@@ -53,7 +53,7 @@ import org.geotoolkit.resources.Vocabulary;
  *
  * @see TextImageWriter
  *
- * @since 1.2
+ * @since 3.08 (derived from 1.2)
  * @module
  */
 public abstract class TextImageReader extends StreamImageReader {
@@ -121,8 +121,9 @@ public abstract class TextImageReader extends StreamImageReader {
 
     /**
      * Returns the pad value for missing data, or {@link Double#NaN} if none. The pad value will
-     * applies to all columns except the one for {@link TextRecordImageReader#getColumnX x} and
-     * {@link TextRecordImageReader#getColumnY y} values, if any.
+     * applies to all columns except the one for
+     * {@link org.geotoolkit.image.io.plugin.TextRecordImageReader#getColumnX x} and
+     * {@link org.geotoolkit.image.io.plugin.TextRecordImageReader#getColumnY y} values, if any.
      * <p>
      * The default implementation returns the pad value specified to the {@link Spi} object given
      * to this {@code TextImageReader} constructor. Subclasses can override this method if they
@@ -331,7 +332,7 @@ public abstract class TextImageReader extends StreamImageReader {
      *
      * @see TextImageWriter.Spi
      *
-     * @since 2.4
+     * @since 3.08 (derived from 2.4)
      * @module
      */
     protected static abstract class Spi extends StreamImageReader.Spi {
@@ -381,7 +382,8 @@ public abstract class TextImageReader extends StreamImageReader {
          * The pad value, or {@link Double#NaN} if none. Every occurences of pixel value equals
          * to this pad value will be replaced by {@link Double#NaN} during the read operation.
          * Note that this replacement doesn't apply to non-pixel values (for example <var>x</var>,
-         * <var>y</var> coordinates in the format read by {@link TextRecordImageReader}).
+         * <var>y</var> coordinates in the format read by
+         * {@link org.geotoolkit.image.io.plugin.TextRecordImageReader}).
          *
          * @see TextImageReader#getPadValue(int)
          */
@@ -426,7 +428,8 @@ public abstract class TextImageReader extends StreamImageReader {
          * few lines up to the specified number of characters, then gives those lines to
          * the {@link #isValidHeader(Set)} and {@link #isValidContent(double[][])} methods.
          * <p>
-         * The default implementation is suitable for {@link TextMatrixImageReader}, i.e.
+         * The default implementation is suitable for
+         * {@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}, i.e.
          * it expects only rows for pixel values (no header) and all rows shall have the
          * same length. If this behavior needs to be changed, consider overriding the
          * {@code isValidHeader} and {@code isValidContent} methods.

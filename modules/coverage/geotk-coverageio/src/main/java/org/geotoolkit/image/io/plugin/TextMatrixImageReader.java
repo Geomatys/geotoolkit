@@ -58,7 +58,7 @@ import org.geotoolkit.internal.image.io.DimensionAccessor;
  *
  * @see TextMatrixImageWriter
  *
- * @since 1.2
+ * @since 3.08 (derived from 1.2)
  * @module
  */
 public class TextMatrixImageReader extends TextImageReader {
@@ -423,7 +423,8 @@ public class TextMatrixImageReader extends TextImageReader {
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.TextMatrixImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
-     *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See
+     *   {@linkplain org.geotoolkit.image.io.TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      * <p>
      * Subclasses can set some fields at construction time
@@ -450,11 +451,11 @@ public class TextMatrixImageReader extends TextImageReader {
      * and {@code Spi}.
      *
      * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @version 3.08
      *
      * @see TextMatrixImageWriter.Spi
      *
-     * @since 2.1
+     * @since 3.08 (derived from 2.1)
      * @module
      */
     public static class Spi extends TextImageReader.Spi {

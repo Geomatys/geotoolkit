@@ -36,9 +36,9 @@ import javax.media.jai.iterator.RectIter;
 
 
 /**
- * Base class for text image encoders. "<cite>Text images</cite>" are usually ASCII files
- * where pixels values are actually the geophysical values. This base class provides the
- * following conveniences:
+ * Base class for image writers that expect a {@link BufferedWriter} output.
+ * "<cite>Text images</cite>" are usually ASCII files where pixels values are
+ * actually the geophysical values. This base class provides the following conveniences:
  * <p>
  * <ul>
  *   <li>Get a {@link BufferedWriter} from the output types, which may be a any type documented
@@ -56,7 +56,7 @@ import javax.media.jai.iterator.RectIter;
  *
  * @see TextImageReader
  *
- * @since 1.2
+ * @since 3.08 (derived from 1.2)
  * @module
  */
 public abstract class TextImageWriter extends StreamImageWriter {
@@ -375,7 +375,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      *
      * @see TextImageReader.Spi
      *
-     * @since 2.4
+     * @since 3.08 (derived from 2.4)
      * @module
      */
     protected static abstract class Spi extends StreamImageWriter.Spi {

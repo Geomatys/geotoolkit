@@ -114,7 +114,7 @@ import org.geotoolkit.resources.Errors;
  * @see <a href="http://en.wikipedia.org/wiki/ESRI_grid">ESRI Grid on Wikipedia</a>
  * @see AsciiGridReader
  *
- * @since 3.07
+ * @since 3.08 (derived from 3.07)
  * @module
  */
 public class AsciiGridWriter extends TextImageWriter {
@@ -388,15 +388,16 @@ public class AsciiGridWriter extends TextImageWriter {
      *   <tr><td>&nbsp;{@link #locale}          &nbsp;</td><td>&nbsp;{@link Locale#US}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #charset}         &nbsp;</td><td>&nbsp;{@code "US-ASCII"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #lineSeparator}   &nbsp;</td><td>&nbsp;{@code "\n"}&nbsp;</td></tr>
-     *   <tr><td colspan="2" align="center">See {@linkplain TextImageWriter.Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See
+     *   {@linkplain org.geotoolkit.image.io.TextImageWriter.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.08
      *
      * @see AsciiGridReader.Spi
      *
-     * @since 3.07
+     * @since 3.08 (derived from 3.07)
      * @module
      */
     public static class Spi extends TextImageWriter.Spi {

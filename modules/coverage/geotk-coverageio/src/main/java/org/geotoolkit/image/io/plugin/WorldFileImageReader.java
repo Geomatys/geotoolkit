@@ -81,7 +81,7 @@ import org.geotoolkit.util.logging.Logging;
  * @see <a href="http://en.wikipedia.org/wiki/World_file">World File Format Description</a>
  * @see WorldFileImageWriter
  *
- * @since 3.07
+ * @since 3.08 (derived from 3.07)
  * @module
  */
 public class WorldFileImageReader extends ImageReaderAdapter {
@@ -257,11 +257,11 @@ public class WorldFileImageReader extends ImageReaderAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.08
      *
      * @see WorldFileImageWriter.Spi
      *
-     * @since 3.07
+     * @since 3.08 (derived from 3.07)
      * @module
      */
     public static class Spi extends ImageReaderAdapter.Spi {

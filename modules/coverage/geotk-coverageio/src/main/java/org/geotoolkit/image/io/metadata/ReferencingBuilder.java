@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormat;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
@@ -195,24 +196,24 @@ public class ReferencingBuilder {
      *         can not be parsed and there is no default value.
      * @throws FactoryException If the coordinate reference system can not be created.
      */
-    public <T extends SingleCRS> CoordinateReferenceSystem getCoordinateReferenceSystem(final Class<T> baseType)
+    public <T extends CoordinateReferenceSystem> T getCoordinateReferenceSystem(final Class<T> baseType)
             throws FactoryException
     {
-        final Class<? extends SingleCRS> type = getInterface("getCRS", baseType, accessor);
+        final Class<? extends CoordinateReferenceSystem> type = getInterface("getCRS", baseType, accessor);
         if (type != null) {
             final Map<String,?> properties = getName(accessor);
             final CRSFactory factory = factories().getCRSFactory();
             if (GeographicCRS.class.isAssignableFrom(type)) {
-                return factory.createGeographicCRS(properties,
+                return baseType.cast(factory.createGeographicCRS(properties,
                         getDatum(GeodeticDatum.class),
-                        getCoordinateSystem(EllipsoidalCS.class));
+                        getCoordinateSystem(EllipsoidalCS.class)));
             } else if (ProjectedCRS.class.isAssignableFrom(type)) {
                 final GeographicCRS baseCRS = factory.createGeographicCRS(
                         Collections.singletonMap(GeographicCRS.NAME_KEY, untitled(accessor)),
                         getDatum(GeodeticDatum.class), DefaultEllipsoidalCS.GEODETIC_2D);
                 final CartesianCS derivedCS = getCoordinateSystem(CartesianCS.class);
-                return factory.createProjectedCRS(properties, baseCRS,
-                        getConversionFromBase(baseCRS, derivedCS), derivedCS);
+                return baseType.cast(factory.createProjectedCRS(properties, baseCRS,
+                        getConversionFromBase(baseCRS, derivedCS), derivedCS));
             } else {
                 // TODO: test for other types of CRS here (VerticalCRS, etc.)
                 warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOW_TYPE_$1, type);

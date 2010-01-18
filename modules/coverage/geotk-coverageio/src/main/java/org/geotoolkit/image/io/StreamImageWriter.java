@@ -32,10 +32,10 @@ import org.geotoolkit.util.converter.Classes;
 
 
 /**
- * Base class for simple image encoders. This class provides a {@link #getOutputStream} method,
- * which returns the {@linkplain #output output} as an {@link OutputStream} for convenience.
- * Different kinds of outputs are automatically handled. The default implementation handles all
- * the following types:
+ * Base class for image writers that expect an {@link OutputStream} or channel output. This class
+ * provides a {@link #getOutputStream} method, which returns the {@linkplain #output output} as an
+ * {@link OutputStream} for convenience. Different kinds of outputs are automatically handled.
+ * The default implementation handles all the following types:
  *
  * <blockquote>
  * {@link String}, {@link File}, {@link URI}, {@link URL}, {@link URLConnection},

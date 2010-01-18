@@ -84,10 +84,36 @@ import org.geotoolkit.internal.io.LineReader;
  * the default setting is to create a {@link Spi} subclass. There is no need to subclass
  * {@code TextRecordImageReader}, unless you want more control on the decoding process.
  *
+ * {@section Example}
+ * The text of the left side is an extract of a list of (<var>longitude</var>, <var>latitude</var>,
+ * <var>elevation of the ocean floor</var>) records. The image on the right side is the image
+ * produced by {@code TextRecordImageReader} when reading such file.
+ *
+ * <table cellpadding='24'>
+ * <tr valign="top"><td><pre>
+ * # Longitude Latitude Altitude
+ *   59.9000   -30.0000   -3022
+ *   59.9333   -30.0000   -3194
+ *   59.9667   -30.0000   -3888
+ *   60.0000   -30.0000   -3888
+ *   45.0000   -29.9667   -2502
+ *   45.0333   -29.9667   -2502
+ *   45.0667   -29.9667   -2576
+ *   45.1000   -29.9667   -2576
+ *   45.1333   -29.9667   -2624
+ *   45.1667   -29.9667   -2690
+ *   45.2000   -29.9667   -2690
+ *   45.2333   -29.9667   -2692
+ *   45.2667   -29.9667   -2606
+ *   45.3000   -29.9667   -2606
+ *   45.3333   -29.9667   -2528</pre>etc...</td>
+ * <td><img src="doc-files/Sandwell.jpeg"></td>
+ * </tr></table>
+ *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.08
  *
- * @since 1.2
+ * @since 3.08 (derived from 1.2)
  * @module
  */
 public class TextRecordImageReader extends TextImageReader {
@@ -627,7 +653,8 @@ public class TextRecordImageReader extends TextImageReader {
      *   <tr><td>&nbsp;{@link #xColumn}         &nbsp;</td><td>&nbsp;{@code 0}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #yColumn}         &nbsp;</td><td>&nbsp;{@code 1}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #gridTolerance}   &nbsp;</td><td>&nbsp;May vary.&nbsp;</td></tr>
-     *   <tr><td colspan="2" align="center">See {@linkplain TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See
+     *   {@linkplain org.geotoolkit.image.io.TextImageReader.Spi super-class javadoc} for remaining fields</td></tr>
      * </table>
      * <p>
      * Subclasses can set some fields at construction time in order to
@@ -654,9 +681,9 @@ public class TextRecordImageReader extends TextImageReader {
      * and {@code Spi}.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.06
+     * @version 3.08
      *
-     * @since 2.1
+     * @since 3.08 (derived from 2.1)
      * @module
      */
     public static class Spi extends TextImageReader.Spi {
@@ -745,8 +772,8 @@ public class TextRecordImageReader extends TextImageReader {
         /**
          * Returns {@code true} if the content of the first few rows seems valid, or {@code false}
          * otherwise. The default implementation performs the same check than the
-         * {@linkplain TextImageReader.Spi#isValidContent(double[][]) super-class},
-         * and additionaly checks if the (<var>x</var>, <var>y</var>) values seem
+         * {@linkplain org.geotoolkit.image.io.TextImageReader.Spi#isValidContent(double[][])
+         * super-class}, and additionaly checks if the (<var>x</var>, <var>y</var>) values seem
          * distributed on a regular grid.
          *
          * @param rows The first few rows.

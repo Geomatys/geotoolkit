@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.08
  *
- * @since 1.2
+ * @since 3.08 (derived from 1.2)
  * @module
  */
 final class TextRecordList {

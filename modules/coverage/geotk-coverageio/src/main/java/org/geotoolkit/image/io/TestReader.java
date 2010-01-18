@@ -39,7 +39,7 @@ import org.geotoolkit.io.LineFormat;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.08
  *
- * @since 2.4
+ * @since 3.08 (derived from 2.4)
  * @module
  */
 final class TestReader extends TextImageReader {
