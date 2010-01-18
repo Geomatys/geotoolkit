@@ -79,8 +79,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
     public void testNamespace() throws Exception {
         ShapefileDataStoreFactory factory = new ShapefileDataStoreFactory();
         Map map = new HashMap();
-        URI namespace = new URI("http://jesse.com");
-        map.put(ShapefileDataStoreFactory.NAMESPACEP.getName().toString(), namespace);
+        String namespace = "http://jesse.com";
+        map.put(ShapefileDataStoreFactory.NAMESPACE.getName().toString(), namespace);
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData
                 .url(IndexedShapefileDataStoreTest.STATE_POP));
 
