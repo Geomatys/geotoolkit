@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -157,9 +156,9 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ShapefileDataStoreFactory factory = new ShapefileDataStoreFactory();
         Map map = new HashMap();
 
-        URI namespace = new URI("http://jesse.com");
+        String namespace = "http://jesse.com";
 
-        map.put(ShapefileDataStoreFactory.NAMESPACEP.getName().toString(), namespace);
+        map.put(ShapefileDataStoreFactory.NAMESPACE.getName().toString(), namespace);
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(STATE_POP));
 
         DataStore store = factory.createDataStore(map);
