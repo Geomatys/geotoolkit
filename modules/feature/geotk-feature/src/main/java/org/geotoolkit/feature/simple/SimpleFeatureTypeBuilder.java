@@ -664,7 +664,20 @@ public class SimpleFeatureTypeBuilder {
 
         //add attributes in order
         for (int i=0; i<types.length; i++) {
-            b.add(original.getDescriptor(types[i]));
+            if(types[i] == null){
+                throw new NullPointerException("Retype can not ask for 'null' property names.");
+            }
+
+            final  AttributeDescriptor desc = original.getDescriptor(types[i]);
+
+            if(desc != null){
+                b.add(desc);
+            }else{
+                StringBuilder sb = new StringBuilder();
+                sb.append("Could not retype, property : ").append(types[i]).append(" could not be found in originale feature type,");
+                sb.append("\n Original type : "+ original);
+                throw new IllegalArgumentException(sb.toString());
+            }
         }
 
         return b.buildFeatureType();
