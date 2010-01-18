@@ -30,6 +30,7 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.geometry.BoundingBox;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -148,7 +149,9 @@ public interface RenderingContext2D extends RenderingContext{
 
     Shape getPaintingObjectiveShape();
 
-    BoundingBox getPaintingObjectiveBounds();
+    BoundingBox getPaintingObjectiveBounds2D();
+
+    Envelope getPaintingObjectiveBounds();
 
 
     
@@ -159,7 +162,9 @@ public interface RenderingContext2D extends RenderingContext{
     Rectangle getCanvasDisplayBounds();
     
     Shape getCanvasObjectiveShape();
+
+    BoundingBox getCanvasObjectiveBounds2D();
     
-    BoundingBox getCanvasObjectiveBounds();
+    Envelope getCanvasObjectiveBounds();
     
 }

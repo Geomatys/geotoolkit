@@ -163,7 +163,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
-        BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
+        BoundingBox bbox                                         = context.getPaintingObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = context.getMonitor();
         final Envelope layerBounds                     = layer.getBounds();
@@ -431,7 +431,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final FeatureCollection<SimpleFeature> fs               = (FeatureCollection<SimpleFeature>) layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
         final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
-        BoundingBox bbox                                         = context.getPaintingObjectiveBounds();
+        BoundingBox bbox                                         = context.getPaintingObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final Envelope layerBounds                               = layer.getBounds();
 

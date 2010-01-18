@@ -41,8 +41,12 @@ import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
@@ -50,7 +54,10 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -183,12 +190,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     private Shape              paintingDisplayShape   = null;
     private Rectangle          paintingDisplaybounds  = null;
     private Shape              paintingObjectiveShape = null;
-    private Envelope           paintingObjectiveBBox  = null;
+    private GeneralEnvelope    paintingObjectiveBBox  = null;
+    private Envelope           paintingObjectiveBBox2D  = null;
 
     private Shape              canvasDisplayShape   = null;
     private Rectangle          canvasDisplaybounds  = null;
     private Shape              canvasObjectiveShape = null;
-    private Envelope           canvasObjectiveBBox  = null;
+    private GeneralEnvelope    canvasObjectiveBBox  = null;
+    private Envelope           canvasObjectiveBBox2D  = null;
     
 
     /**
@@ -233,7 +242,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 //                                      canvasObjectiveBounds.getY()-d1,
 //                                      canvasObjectiveBounds.getWidth()+2*d0,
 //                                      canvasObjectiveBounds.getHeight()+2*d1);
-        this.canvasObjectiveBBox = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
+        this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
+        this.paintingObjectiveBBox = initEnvelope(objectiveCRS, objectiveCRS2D, canvasObjectiveBounds, temporal, elevation);
 
         //calculate painting shape/bounds values -------------------------------
         this.paintingDisplayShape = paintingDisplayShape;
@@ -242,7 +252,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.paintingObjectiveShape = paintingObjectiveShape;
 
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
-        this.paintingObjectiveBBox = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
+        this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
+        this.paintingObjectiveBBox = initEnvelope(objectiveCRS, objectiveCRS2D, paintingObjectiveBounds, temporal, elevation);
 
         geoScale = canvas.getController().getGeographicScale();
 
@@ -262,6 +273,37 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             elevationRange[1] = null;
         }
 
+    }
+
+    private static GeneralEnvelope initEnvelope(CoordinateReferenceSystem crs, CoordinateReferenceSystem crs2D, Rectangle2D bounds,
+            Date[] temporal, Double[] elevation){
+        TemporalCRS temporalDim = null;
+        VerticalCRS verticalDim = null;
+
+        if(temporal != null){
+            temporalDim = CRS.getTemporalCRS(crs);
+
+            if(temporalDim == null){
+                temporalDim = DefaultTemporalCRS.MODIFIED_JULIAN;
+            }
+        }
+
+        if(elevation != null){
+            verticalDim = CRS.getVerticalCRS(crs);
+
+            if(verticalDim == null){
+                verticalDim = DefaultVerticalCRS.GEOIDAL_HEIGHT;
+            }
+        }
+
+        crs = new DefaultCompoundCRS("", crs2D, verticalDim, temporalDim);
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+        env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+        env.setRange(3, (temporal[0] != null) ? temporal[0].getTime() : Double.NaN, (temporal[1] != null) ? temporal[1].getTime() : Double.NaN);
+        env.setRange(4, (elevation[0] != null) ? elevation[0] : Double.NaN, (elevation[1] != null) ? elevation[1] : Double.NaN);
+
+        return env;
     }
 
     public void initGraphic(final Graphics2D graphics){
@@ -550,11 +592,17 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
-    public BoundingBox getPaintingObjectiveBounds(){
-        return new DefaultBoundingBox(paintingObjectiveBBox);
+    public BoundingBox getPaintingObjectiveBounds2D(){
+        return new DefaultBoundingBox(paintingObjectiveBBox2D);
     }
 
-
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Envelope getPaintingObjectiveBounds(){
+        return paintingObjectiveBBox;
+    }
 
     // Informations about the complete canvas area -----------------------------
     /**
@@ -585,8 +633,16 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
-    public BoundingBox getCanvasObjectiveBounds() {
-        return new DefaultBoundingBox(canvasObjectiveBBox);
+    public BoundingBox getCanvasObjectiveBounds2D() {
+        return new DefaultBoundingBox(canvasObjectiveBBox2D);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Envelope getCanvasObjectiveBounds() {
+        return canvasObjectiveBBox;
     }
 
     @Override
