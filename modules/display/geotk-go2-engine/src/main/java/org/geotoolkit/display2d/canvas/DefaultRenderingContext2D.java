@@ -300,8 +300,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         final GeneralEnvelope env = new GeneralEnvelope(crs);
         env.setRange(0, bounds.getMinX(), bounds.getMaxX());
         env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-        env.setRange(3, (temporal[0] != null) ? temporal[0].getTime() : Double.NaN, (temporal[1] != null) ? temporal[1].getTime() : Double.NaN);
-        env.setRange(4, (elevation[0] != null) ? elevation[0] : Double.NaN, (elevation[1] != null) ? elevation[1] : Double.NaN);
+        env.setRange(2, (temporal[0] != null) ? temporal[0].getTime() : Double.NaN, (temporal[1] != null) ? temporal[1].getTime() : Double.NaN);
+        env.setRange(3, (elevation[0] != null) ? elevation[0] : Double.NaN, (elevation[1] != null) ? elevation[1] : Double.NaN);
 
         return env;
     }
