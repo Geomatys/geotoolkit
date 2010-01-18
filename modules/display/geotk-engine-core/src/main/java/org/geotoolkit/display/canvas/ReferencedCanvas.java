@@ -28,6 +28,7 @@ import java.util.Collections;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.display.canvas.CanvasState;
+import org.opengis.display.container.GraphicsContainer;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.DerivedCRS;
@@ -49,7 +50,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.referencing.CRS;
@@ -63,11 +63,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
-import org.geotoolkit.display.primitive.ReferencedGraphic;
-import org.geotoolkit.display.primitive.ReferencedGraphic2D;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
-import org.opengis.display.canvas.CanvasController;
-import org.opengis.display.container.GraphicsContainer;
 
 
 /**
@@ -163,13 +159,6 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
     private transient CoordinateOperationFactory opFactory;
 
     /**
-     * {@code true} if this canvas use a {@link #getDefaultCRS default CRS} instead of
-     * an user-supplied one. In such case, a more appropriate CRS will be inferred from
-     * the first graphic {@linkplain #add added}.
-     */
-    private boolean useDefaultCRS;
-
-    /**
      * {@code true} if this canvas or graphic has {@value #SCALE_PROPERTY} properties listeners.
      * Used in order to reduce the amount of {@link PropertyChangeEvent} objects created in the
      * common case where no listener have interest in this property. This optimisation may be
@@ -190,29 +179,6 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @see #listenersChanged
      */
     private boolean hasDisplayListeners;
-
-
-//    /**
-//     * Creates an initially empty canvas with a default CRS of the specified number of dimensions.
-//     *
-//     * @param  dimension The number of dimensions, which must be 2 or 3.
-//     * @throws IllegalArgumentException if the specified number of dimensions is not supported.
-//     */
-//    protected ReferencedCanvas(final int dimension)
-//            throws IllegalArgumentException{
-//        this(getDefaultCRS(dimension), null);
-//    }
-//
-//    /**
-//     * Creates an initially empty canvas with a default CRS of the specified number of dimensions.
-//     *
-//     * @param  dimension The number of dimensions, which must be 2 or 3.
-//     * @throws IllegalArgumentException if the specified number of dimensions is not supported.
-//     */
-//    protected ReferencedCanvas(final int dimension, Hints hints)
-//            throws IllegalArgumentException{
-//        this(getDefaultCRS(dimension), hints);
-//    }
 
     /**
      * Creates an initially empty canvas with the specified objective CRS.
@@ -248,6 +214,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
     @Override
     public synchronized boolean isVisible(final DirectPosition coordinate) {
         try {
+            //todo uncorrect check, should check against the canvas envelope, not container
             return getContainer().getGraphicsEnvelope().contains(toObjectivePosition(coordinate));
         } catch (TransformException e) {
             /*
@@ -258,18 +225,6 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
              */
             return false;
         }
-    }
-
-    /**
-     * Invoked when an unexpected exception occured. This method is a shortcut for
-     * {@link AbstractCanvas#handleException} with {@code sourceClassName} set to
-     * {@code "org.geotoolkit.display.canvas.ReferencedCanvas"}.
-     *
-     * @param  sourceMethodName The caller's method name, for logging purpose.
-     * @param  exception        The exception.
-     */
-    private void handleException(final String sourceMethodName, final Exception exception) {
-        handleException(ReferencedCanvas.class, sourceMethodName, exception);
     }
 
     /**
@@ -301,22 +256,6 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
     protected abstract RenderingContext getRenderingContext();
     
     //----------------------CRS & MathTransform methods-------------------------
-    /**
-     * Returns a default CRS for the specified number of dimensions.
-     *
-     * @param  dimension The number of dimension for the viewer.
-     * @return A default coordinate reference system with the specified number of dimensions.
-     * @throws IllegalArgumentException if the specified number of dimensions is not supported.
-     */
-    private static CoordinateReferenceSystem getDefaultCRS(final int dimension)
-            throws IllegalArgumentException {
-        switch (dimension) {
-            case 2:  return DefaultEngineeringCRS.GENERIC_2D;
-            case 3:  return DefaultEngineeringCRS.GENERIC_3D;
-            default: throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
-                                                        "dimension", new Integer(dimension)));
-        }
-    }
 
     /**
      * {@inheritDoc}
@@ -331,8 +270,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      */
     @Override
     public synchronized void setObjectiveCRS(final CoordinateReferenceSystem crs)
-            throws TransformException
-    {
+            throws TransformException {
         final CoordinateReferenceSystem oldCRS = getObjectiveCRS();
         
         if (CRS.equalsIgnoreMetadata(crs, oldCRS)) {
@@ -362,7 +300,6 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
          * Now updates internal states.
          */
         clearCache();
-        useDefaultCRS = false;
         updateNormalizationFactor(crs);
         computeEnvelope(ReferencedCanvas.class, "setObjectiveCRS");
         /*
@@ -619,8 +556,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @throws FactoryException if the CRS can't be created.
      */
     private final DerivedCRS validateBaseCRS(DerivedCRS crs, final CoordinateReferenceSystem baseCRS)
-            throws FactoryException
-    {
+            throws FactoryException {
         if (crs.getBaseCRS() != baseCRS) {
             final CoordinateOperationFactory factory = getCoordinateOperationFactory();
             final CoordinateOperation operation = factory.createOperation(baseCRS, crs);
@@ -656,8 +592,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
                                                final Conversion  conversionFromBase,
                                                final CoordinateReferenceSystem base,
                                                final CoordinateSystem     derivedCS)
-            throws FactoryException
-    {
+            throws FactoryException {
         return new org.geotoolkit.referencing.crs.DefaultDerivedCRS(properties,
                 conversionFromBase, base, conversionFromBase.getMathTransform(), derivedCS);
     }
@@ -676,8 +611,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @see #setObjectiveToDisplayTransform(Matrix)
      */
     private DerivedCRS createDerivedCRS(final boolean device, final Matrix transform)
-            throws FactoryException
-    {
+            throws FactoryException {
 //        assert Thread.holdsLock(this);
         DerivedCRS crs;
         Map<String,?> properties;
@@ -707,8 +641,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @throws TransformException if the transform can not be set to the specified value.
      */
     protected synchronized void setDisplayToDeviceTransform(final Matrix transform)
-            throws TransformException
-    {
+            throws TransformException {
         final DerivedCRS crs;
         try {
             crs = createDerivedCRS(true, transform);
@@ -729,8 +662,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @throws TransformException if the transform can not be set to the specified value.
      */
     public synchronized void setObjectiveToDisplayTransform(final Matrix transform)
-            throws TransformException
-    {
+            throws TransformException {
         final DerivedCRS crs;
         try {
             crs = createDerivedCRS(false, transform);
@@ -752,8 +684,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      */
     @Override
     public void setObjectiveToDisplayTransform(final MathTransform transform)
-            throws TransformException
-    {
+            throws TransformException {
         if (transform instanceof LinearTransform) {
             setObjectiveToDisplayTransform(((LinearTransform) transform).getMatrix());
         } else {
@@ -813,8 +744,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
                                                       final CoordinateReferenceSystem targetCRS,
                                                       final Class<?> sourceClassName,
                                                       final String sourceMethodName)
-            throws FactoryException
-    {
+            throws FactoryException {
         /*
          * Fast check for a very common case. We will use the more general (but slower)
          * 'equalsIgnoreMetadata(...)' version implicitly in the call to factory method.
@@ -926,8 +856,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @throws TransformException if the transformation failed.
      */
     protected final GeneralDirectPosition toObjectivePosition(final DirectPosition coordinate)
-            throws TransformException
-    {
+            throws TransformException {
 //        assert Thread.holdsLock(this);
         if (objectivePosition == null) {
             objectivePosition = new TransformedDirectPosition(null, getObjectiveCRS(), hints);
@@ -947,8 +876,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @throws TransformException if the transformation failed.
      */
     protected final GeneralDirectPosition toDisplayPosition(final DirectPosition coordinate)
-            throws TransformException
-    {
+            throws TransformException {
 //        assert Thread.holdsLock(this);
         if (displayPosition == null) {
             displayPosition = new TransformedDirectPosition(null, getDisplayCRS(), hints);

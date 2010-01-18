@@ -540,6 +540,7 @@ public class DefaultController2D implements CanvasController2D{
      */
     @Override
     public Date[] getTemporalRange() {
+
         Date[] range = new Date[2];
 
         if(this.dateRange[0] == null){
@@ -614,7 +615,7 @@ public class DefaultController2D implements CanvasController2D{
             LOGGER.log(Level.SEVERE, null, ex);
         }
 
-        final CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+        final CoordinateReferenceSystem crs = canvas.getObjectiveCRS2D();
         final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
 
         final double distance;

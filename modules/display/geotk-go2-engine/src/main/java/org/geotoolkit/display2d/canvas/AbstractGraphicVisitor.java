@@ -146,7 +146,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             resolution[1] = objectiveRect.getHeight()/displayRect.getHeight();
 
             GeneralEnvelope env = new GeneralEnvelope(objectiveRect);
-            env.setCoordinateReferenceSystem(canvas.getObjectiveCRS());
+            env.setCoordinateReferenceSystem(canvas.getObjectiveCRS2D());
 
             CoverageReadParam param = new CoverageReadParam(env, resolution);
 
@@ -170,7 +170,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         try {
 
             final CoordinateReferenceSystem dataCRS = coverage.getCoordinateReferenceSystem();
-            final MathTransform objToData           = CRS.findMathTransform(CRS.getHorizontalCRS(canvas.getObjectiveCRS()),
+            final MathTransform objToData           = CRS.findMathTransform(CRS.getHorizontalCRS(canvas.getObjectiveCRS2D()),
                                                                             CRS.getHorizontalCRS(dataCRS),true);
 
             final Point2D p2d = new Point2D.Double(centerX, centerY);
@@ -179,7 +179,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             dispToObj.transform(p2d, p2d);
 
             final GeneralDirectPosition dp = new GeneralDirectPosition(p2d);
-            dp.setCoordinateReferenceSystem(canvas.getObjectiveCRS());
+            dp.setCoordinateReferenceSystem(canvas.getObjectiveCRS2D());
 
             //transform to coverage CRS
             objToData.transform(dp, dp);

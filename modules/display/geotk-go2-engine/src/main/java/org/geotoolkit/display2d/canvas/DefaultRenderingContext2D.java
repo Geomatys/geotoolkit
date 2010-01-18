@@ -119,6 +119,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * @see ReferencedCanvas#getObjectiveCRS
      */
     private CoordinateReferenceSystem objectiveCRS = null;
+    private CoordinateReferenceSystem objectiveCRS2D = null;
 
     /**
      * A snapshot of {@link ReferencedCanvas#getDisplayCRS} at the time of painting. This CRS maps
@@ -203,6 +204,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
             final Shape canvasDisplayShape, final Shape canvasObjectiveShape, Date[] temporal, Double[] elevation){
         this.objectiveCRS       = canvas.getObjectiveCRS();
+        this.objectiveCRS2D = canvas.getObjectiveCRS2D();
         this.displayCRS         = canvas.getDisplayCRS();
         this.objectiveToDisplay = objToDisp;
         try {
@@ -231,7 +233,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 //                                      canvasObjectiveBounds.getY()-d1,
 //                                      canvasObjectiveBounds.getWidth()+2*d0,
 //                                      canvasObjectiveBounds.getHeight()+2*d1);
-        this.canvasObjectiveBBox = new Envelope2D(objectiveCRS,canvasObjectiveBounds);
+        this.canvasObjectiveBBox = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
 
         //calculate painting shape/bounds values -------------------------------
         this.paintingDisplayShape = paintingDisplayShape;
@@ -240,7 +242,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.paintingObjectiveShape = paintingObjectiveShape;
 
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
-        this.paintingObjectiveBBox = new Envelope2D(objectiveCRS,paintingObjectiveBounds);
+        this.paintingObjectiveBBox = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
 
         geoScale = canvas.getController().getGeographicScale();
 
@@ -316,6 +318,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
+    public CoordinateReferenceSystem getObjectiveCRS2D() {
+        return objectiveCRS2D;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public CoordinateReferenceSystem getDisplayCRS() {
         return displayCRS;
     }
@@ -351,7 +361,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     public void setGraphicsCRS(CoordinateReferenceSystem crs) throws TransformException {
 
         final AffineTransform at;
-        if (crs == objectiveCRS) {
+        if (crs == objectiveCRS || crs == objectiveCRS2D) {
             at = objectiveToDevice;
         } else if (crs == displayCRS) {
             at = displayToDevice;
@@ -472,7 +482,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     @Override
     public double[] getResolution(CoordinateReferenceSystem crs) {
-        if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
+        if(CRS.equalsIgnoreMetadata(objectiveCRS2D, crs)){
             return getResolution();
         }else{
             final double[] res = getResolution();

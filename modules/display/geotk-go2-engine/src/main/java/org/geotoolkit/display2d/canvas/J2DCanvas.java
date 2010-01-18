@@ -235,7 +235,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             final com.vividsolutions.jts.geom.Geometry displayGeometryJTS = GO2Utilities.toJTS(displayShape);
             final com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS = GO2Utilities.toJTS(objectiveShape);
             final Geometry displayGeometryISO = JTSUtils.toISO(displayGeometryJTS, getDisplayCRS());
-            final Geometry objectiveGeometryISO = JTSUtils.toISO(objectiveGeometryJTS, getObjectiveCRS());
+            final Geometry objectiveGeometryISO = JTSUtils.toISO(objectiveGeometryJTS, getObjectiveCRS2D());
             final SearchAreaJ2D searchMask = new DefaultSearchAreaJ2D(
                     objectiveGeometryISO, displayGeometryISO,
                     objectiveGeometryJTS, displayGeometryJTS,

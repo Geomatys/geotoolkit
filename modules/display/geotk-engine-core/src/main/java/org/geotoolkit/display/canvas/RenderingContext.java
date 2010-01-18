@@ -81,6 +81,12 @@ public interface RenderingContext {
     CoordinateReferenceSystem getObjectiveCRS();
 
     /**
+     * Returns only the 2D composant of the objective crs.
+     * @return Objective CRS 2D
+     */
+    CoordinateReferenceSystem getObjectiveCRS2D();
+
+    /**
      * Returns the rendering display CRS. this may not be at all time
      * the same crs as the canvas, because the canvas might be update while rendering.
      * @return Display CRS

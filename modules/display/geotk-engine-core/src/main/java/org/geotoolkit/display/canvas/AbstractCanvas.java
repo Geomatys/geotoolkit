@@ -38,6 +38,7 @@ import org.geotoolkit.display.canvas.event.DefaultCanvasEvent;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
@@ -207,7 +208,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * Set the renderer for this canvas.
      */
     public void setContainer(AbstractContainer renderer){
-        
+
         if(this.container != null){
             this.container.removeContainerListener(containerListener);
         }

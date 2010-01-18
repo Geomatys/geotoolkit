@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.beans.PropertyChangeSupport;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
@@ -159,7 +160,16 @@ public abstract class ReferencedCanvas2D extends ReferencedCanvas {
         // The following must be invoked here instead than in super-class because
         // 'normalizeToDots' is not yet assigned when the super-class constructor
         // is run.
-        updateNormalizationFactor(getObjectiveCRS());
+        updateNormalizationFactor(getObjectiveCRS2D());
+    }
+
+    public CoordinateReferenceSystem getObjectiveCRS2D(){
+        try {
+            return CRSUtilities.getCRS2D(getObjectiveCRS());
+        } catch (TransformException ex) {
+            handleException(ReferencedCanvas2D.class, "getObjectiveCRS2D", ex);
+            return null;
+        }
     }
 
     @Override
