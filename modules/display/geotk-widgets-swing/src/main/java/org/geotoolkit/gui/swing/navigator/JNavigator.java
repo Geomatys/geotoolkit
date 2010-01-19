@@ -37,7 +37,7 @@ public class JNavigator<T extends Comparable> extends JPanel {
 
     private final NavigatorModel<T> model;
     private NavigatorRenderer<T> renderer;
-    private final JComponent graduation = new JComponent() {};
+    private final JComponent graduation = new JComponent(){};
 
     private int orientation = SwingConstants.SOUTH;
 

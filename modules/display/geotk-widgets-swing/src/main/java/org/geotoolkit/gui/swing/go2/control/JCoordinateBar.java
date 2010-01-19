@@ -89,7 +89,7 @@ public class JCoordinateBar extends JToolBar {
     private final JPanel paneTemp = new JPanel(new BorderLayout());
     private final JPanel paneElev = new JPanel(new BorderLayout());
     private final JMapAnimatingPane guiAnimatingPane = new JMapAnimatingPane();
-    private final JNavigator<Double> panenav = new JNavigator<Double>(new DoubleNavigatorModel());
+    private final JMapElevationLine panenav = new JMapElevationLine();
     private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
     public JCoordinateBar() {
@@ -106,7 +106,6 @@ public class JCoordinateBar extends JToolBar {
         paneTemp.add(BorderLayout.WEST,guiAnimatingPane);
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
 
-        panenav.setModelRenderer(new DoubleRenderer());
         paneElev.add(BorderLayout.CENTER,panenav);
 
 
@@ -173,6 +172,7 @@ public class JCoordinateBar extends JToolBar {
 
 
         paneTemp.setVisible(false);
+        paneElev.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
 
         GridBagConstraints constraints = new GridBagConstraints();
@@ -210,6 +210,7 @@ public class JCoordinateBar extends JToolBar {
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
         guiAnimatingPane.setMap(map);
+        panenav.setMap(map);
         
         if(this.map != null){
 

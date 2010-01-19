@@ -20,6 +20,12 @@ package org.geotoolkit.gui.swing.navigator;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import javax.measure.unit.NonSI;
+import javax.swing.SwingConstants;
+import org.geotoolkit.display.axis.Graduation;
+import org.geotoolkit.display.axis.NumberGraduation;
+import org.geotoolkit.display.axis.TickIterator;
 
 /**
  *
@@ -35,20 +41,105 @@ public class DoubleRenderer implements NavigatorRenderer<Double>{
 
     @Override
     public void render(NavigatorModel<Double> model, Graphics2D g, Rectangle area) {
+        g = (Graphics2D) g.create();
         g.setClip(area);
         g.setColor(Color.LIGHT_GRAY);
         g.fill(area);
 
         g.setColor(Color.BLACK);
 
-        for(int i=0; i<area.width; i+=10){
-            final int d = model.getValueAt(i).intValue();
+        final int extent;
+        final int orientation = model.getOrientation();
+        final boolean horizontal = orientation == SwingConstants.NORTH || orientation == SwingConstants.SOUTH;
+        final boolean flipText = orientation == SwingConstants.NORTH || orientation == SwingConstants.WEST;
 
-            g.drawLine(d, 0, d, getGraduationHeight());
-            g.drawString(String.valueOf(d), d+2, getGraduationHeight());
-
+        
+        if(horizontal){
+            extent = area.width;
+        }else{
+            extent = area.height;
+            g.rotate(Math.toRadians(90));
         }
 
+
+        final RenderingHints tickHint = new RenderingHints(null);
+        tickHint.put(Graduation.VISUAL_AXIS_LENGTH, extent);
+        tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
+
+        double start = model.getValueAt(0);
+        double end = model.getValueAt(extent);
+
+        final NumberGraduation graduationX = new NumberGraduation(null);
+        graduationX.setRange(start, end, NonSI.PIXEL);
+
+        TickIterator tickIte = graduationX.getTickIterator(tickHint, null);
+
+        while(!tickIte.isDone()){
+            tickIte.next();
+            final String label = tickIte.currentLabel();
+            final double d = tickIte.currentPosition();
+
+            g.drawLine( (int)d, -getGraduationHeight(), (int)d, getGraduationHeight());
+            g.drawString(label, (int)d+2, -getGraduationHeight());
+
+//            final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
+//            final double maxY = gridBounds.getMaximum(1);
+//            for(double k= gridBounds.getMinimum(1); k<maxY; k+=gridResolution[1]){
+//                lineCoords.add(new Coordinate(d, k));
+//            }
+//            lineCoords.add(new Coordinate(d, maxY));
+//
+//            Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
+//            ls = JTS.transform(ls, gridToObj);
+//
+//            if(ls == null) continue;
+//
+//            final Geometry geom = ls.intersection(bounds);
+//            final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(geom);
+//            pg.setObjToDisplay(objToDisp);
+//
+//            final LinearLabelDescriptor desc;
+//            if(tickIte.isMajorTick()){
+//                desc = new DefaultLinearLabelDescriptor(
+//                    label, template.getMainLabelFont(), template.getMainLabelPaint(),
+//                    template.getMainHaloWidth(), template.getMainHaloPaint(),
+//                    0, 10, 3,
+//                    false, false, false,
+//                    pg);
+//            }else{
+//                desc = new DefaultLinearLabelDescriptor(
+//                    label, template.getLabelFont(), template.getLabelPaint(),
+//                    template.getHaloWidth(), template.getHaloPaint(),
+//                    0, 10, 3,
+//                    false, false, false,
+//                    pg);
+//            }
+//            layer.labels().add(desc);
+//
+//            if(tickIte.isMajorTick()){
+//                g.setPaint(template.getMainLinePaint());
+//                g.setStroke(template.getMainLineStroke());
+//            }else{
+//                g.setPaint(template.getLinePaint());
+//                g.setStroke(template.getLineStroke());
+//            }
+//
+//            g.draw(pg.getDisplayShape());
+        }
+
+
+
+
+
+//        for(int i=0; i<extent; i+=10){
+//            final int d = model.getValueAt(i).intValue();
+//
+//            g.drawLine(d, 0, d, getGraduationHeight());
+//            g.drawString(String.valueOf(d), d+2, getGraduationHeight());
+//
+//        }
+
+        g.dispose();
     }
 
 }
