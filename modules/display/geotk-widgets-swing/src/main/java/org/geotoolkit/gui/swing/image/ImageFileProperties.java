@@ -615,7 +615,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          * Shows the content of this {@code Info} object in the given properties pane.
          */
         final void show(final ImageFileProperties properties) {
-            properties.setDescription(type.getColorModel(), type.getSampleModel(),
+            properties.setDescription(
+                    (type != null) ? type.getColorModel()  : null,
+                    (type != null) ? type.getSampleModel() : null,
                     width, height, tileWidth, tileHeight,
                     (width  + tileWidth -1) / tileWidth,
                     (height + tileHeight-1) / tileHeight);

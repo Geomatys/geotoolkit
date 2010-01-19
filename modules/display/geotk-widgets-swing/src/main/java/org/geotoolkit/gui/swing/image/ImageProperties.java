@@ -443,9 +443,10 @@ public class ImageProperties extends JPanel implements Dialog {
     {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         final IndexColorModel icm = (cm instanceof IndexColorModel) ? (IndexColorModel) cm : null;
-        imageSize  .setText(resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height, sm.getNumBands()));
+        imageSize  .setText(resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height,
+                (sm != null) ? sm.getNumBands() : resources.getString(Vocabulary.Keys.UNDEFINED)));
         tileSize   .setText(resources.getString(Vocabulary.Keys.TILE_SIZE_$4, numXTiles, numYTiles, tileWidth, tileHeight));
-        dataType   .setText(getDataType(sm.getDataType(), cm, resources));
+        dataType   .setText(getDataType(sm != null ? sm.getDataType() : DataBuffer.TYPE_UNDEFINED, cm, resources));
         sampleModel.setText(formatClassName(sm, resources));
         colorModel .setText(formatClassName(cm, resources));
         colorSpace .setText(getColorSpace  (cm, resources));
@@ -457,7 +458,7 @@ public class ImageProperties extends JPanel implements Dialog {
      * Returns a string representation for the given data type.
      *
      * @param  type The data type (one of {@link DataBuffer} constants).
-     * @param  cm The color model, for computing the pixel size in bits.
+     * @param  cm The color model for computing the pixel size in bits, or {@code null}.
      * @param  resources The resources to use for formatting the type.
      * @return The data type as a localized string.
      */
@@ -482,7 +483,7 @@ public class ImageProperties extends JPanel implements Dialog {
     /**
      * Returns the name of the color space for the given color model.
      *
-     * @param  cm The color model.
+     * @param  cm The color model, or {@code null} if undefined.
      * @param  resources The resources to use for formatting the type.
      * @return The name of the color space.
      */
@@ -519,7 +520,7 @@ public class ImageProperties extends JPanel implements Dialog {
      * Split a class name into a more human readeable sentence
      * (e.g. "PixelInterleavedSampleModel" into "Pixel interleaved sample model").
      *
-     * @param  object The object to format.
+     * @param  object The object to format, or {@code null} if undefined.
      * @param  resources The resources to use for formatting localized text.
      * @return The object class name.
      */

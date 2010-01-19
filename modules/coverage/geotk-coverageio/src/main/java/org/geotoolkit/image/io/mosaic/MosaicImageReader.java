@@ -747,7 +747,7 @@ public class MosaicImageReader extends ImageReader {
      */
     @Override
     public ImageTypeSpecifier getRawImageType(final int imageIndex) throws IOException {
-        ImageTypeSpecifier type;
+        ImageTypeSpecifier type = null;
         final ImageTypePolicy policy = getDefaultImageTypePolicy();
         switch (policy) {
             default: {
@@ -759,20 +759,19 @@ public class MosaicImageReader extends ImageReader {
                 final Tile tile = getSpecificTile(tiles);
                 if (tile != null) {
                     type = getTileReader(tile).getRawImageType(imageIndex);
-                    assert type.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
-                } else {
-                    type = super.getRawImageType(imageIndex);
+                    assert type == null || // Should never be null with non-broken ImageReader.
+                           type.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
                 }
                 break;
             }
             case SUPPORTED_BY_ALL: {
                 final Collection<Tile> tiles = getTileManager(imageIndex).getTiles();
                 type = getRawImageType(tiles);
-                if (type == null) {
-                    type = super.getRawImageType(imageIndex);
-                }
                 break;
             }
+        }
+        if (type == null) {
+            type = super.getRawImageType(imageIndex);
         }
         return type;
     }

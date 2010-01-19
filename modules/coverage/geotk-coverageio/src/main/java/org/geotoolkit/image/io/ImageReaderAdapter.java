@@ -265,7 +265,8 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the number of bands available for the specified image. The default implementation
      * delegates to the {@linkplain #main} reader if it is an instance of {@link SpatialImageReader},
-     * or returns the number of bands of the raw image type otherwise.
+     * or returns the number of bands of the {@linkplain ImageReader#getRawImageType(int) raw image
+     * type} otherwise.
      * <p>
      * Note that the {@linkplain #main} reader is indirectly initialized by an implicit call to
      * {@link #getNumImages(boolean)}.

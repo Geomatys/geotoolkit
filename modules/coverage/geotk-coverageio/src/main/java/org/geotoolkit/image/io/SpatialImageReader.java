@@ -355,7 +355,16 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      */
     @Override
     public Iterator<ImageTypeSpecifier> getImageTypes(final int imageIndex) throws IOException {
-        return Collections.singleton(getRawImageType(imageIndex)).iterator();
+        final ImageTypeSpecifier type = getRawImageType(imageIndex);
+        final Set<ImageTypeSpecifier> types;
+        if (type != null) {
+            types = Collections.singleton(type);
+        } else {
+            // Should never occur in non-broken ImageReader, but experience
+            // suggests that we are better to be assume that this case happen.
+            types = Collections.emptySet();
+        }
+        return types.iterator();
     }
 
     /**
