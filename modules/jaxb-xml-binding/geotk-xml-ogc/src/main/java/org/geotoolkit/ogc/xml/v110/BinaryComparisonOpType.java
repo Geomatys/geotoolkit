@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 
@@ -170,10 +171,12 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
         this.matchCase = matchCase;
     }
 
+    @Override
     public boolean evaluate(Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Object accept(FilterVisitor visitor, Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -231,6 +234,13 @@ public class BinaryComparisonOpType extends ComparisonOpsType {
             final Object value = elem.getValue();
             if (value instanceof String) {
                 return (String) value;
+            }
+            if (value instanceof QName) {
+                QName content = (QName) value;
+                if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
+                    return content.getNamespaceURI() + ':' + content.getLocalPart();
+                }
+                return content.getLocalPart();
             }
             if (value instanceof PropertyNameType) {
                 return ((PropertyNameType) value).getContent();
