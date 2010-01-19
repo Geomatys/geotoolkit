@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlTransient;
 /**
  *
  * @author Guilhem Legal
+ * @author Cédric Briançon
+ *
  * @module pending
  */
 @XmlTransient
@@ -34,6 +36,11 @@ public abstract class AbstractLayer {
     public abstract List<AbstractDimension> getAbstractDimension();
 
     /**
+     * Unmodifiable list of dimensions contained in this layer.
+     */
+    public abstract List<? extends AbstractDimension> getDimension();
+
+    /**
      * Gets the value of the keywordList property.
      *
      */
@@ -44,4 +51,13 @@ public abstract class AbstractLayer {
      */
     public abstract List<String> getCRS();
 
+    /**
+     * Unmodifiable list of layers contained in this layer.
+     */
+    public abstract List<? extends AbstractLayer> getLayer();
+
+    /**
+     * Get the layer name.
+     */
+    public abstract String getName();
 }

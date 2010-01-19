@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -250,6 +250,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -272,6 +273,7 @@ public class Layer extends AbstractLayer {
      * Gets the value of the keywordList property.
      * 
      */
+    @Override
     public KeywordList getKeywordList() {
         return keywordList;
     }
@@ -304,6 +306,7 @@ public class Layer extends AbstractLayer {
      * Gets the value of the dimension property.
      * 
      */    
+    @Override
     public List<Dimension> getDimension() {
         return Collections.unmodifiableList(dimension);
     }
@@ -376,8 +379,9 @@ public class Layer extends AbstractLayer {
     }
 
     /**
-     * Gets the value of the layer property. 
+     * {@inheritDoc}
      */
+    @Override
     public List<Layer> getLayer() {
         return Collections.unmodifiableList(layer);
     }
