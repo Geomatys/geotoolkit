@@ -130,7 +130,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
         final CanvasMonitor monitor = context.getMonitor();
 
         double[] resolution = context.getResolution();
-        final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
+        final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds2D());
         resolution = checkResolution(resolution,bounds);
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
