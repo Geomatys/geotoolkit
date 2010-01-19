@@ -26,9 +26,11 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @XmlTransient
 public abstract class AbstractCapability {
-    
+
      public abstract AbstractRequest getRequest();
-     
+
+     public abstract AbstractLayer getLayer();
+
      public abstract void setLayer(AbstractLayer layer);
 
 }

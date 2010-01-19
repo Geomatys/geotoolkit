@@ -43,7 +43,6 @@ import org.geotoolkit.csw.xml.v202.QueryConstraintType;
 import org.geotoolkit.csw.xml.v202.QueryType;
 import org.geotoolkit.csw.xml.v202.RecordPropertyType;
 import org.geotoolkit.csw.xml.v202.RecordType;
-import org.geotoolkit.csw.xml.ResultType;
 import org.geotoolkit.csw.xml.v202.SummaryRecordType;
 import org.geotoolkit.csw.xml.v202.TransactionType;
 import org.geotoolkit.csw.xml.v202.UpdateType;
@@ -920,7 +919,7 @@ public class CswXMLBindingTest {
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */ 
         List<QName> typeNames  = new ArrayList<QName>();
-        PropertyNameType pname = new PropertyNameType("dc:Title");
+        PropertyNameType pname = new PropertyNameType(new QName("http://purl.org/dc/elements/1.1/", "Title"));
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);
@@ -1056,7 +1055,7 @@ public class CswXMLBindingTest {
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */ 
         List<QName> typeNames  = new ArrayList<QName>();
-        PropertyNameType pname = new PropertyNameType("dc:Title");
+        PropertyNameType pname = new PropertyNameType(new QName("http://purl.org/dc/elements/1.1/", "Title"));
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);

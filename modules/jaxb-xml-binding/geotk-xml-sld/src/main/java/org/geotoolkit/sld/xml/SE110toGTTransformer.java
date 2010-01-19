@@ -208,7 +208,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     }
 
     public String visitGeom(final GeometryType geometry) {
-        if(geometry == null || geometry.getPropertyName() == null || geometry.getPropertyName().getContent().trim().isEmpty()) return null;
+        if(geometry == null || geometry.getPropertyName() == null || geometry.getPropertyName().getContent() == null || geometry.getPropertyName().getContent().trim().isEmpty()) return null;
         return geometry.getPropertyName().getContent();
     }
 

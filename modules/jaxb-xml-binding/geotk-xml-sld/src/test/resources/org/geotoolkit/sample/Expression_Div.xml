@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Div xmlns="http://www.opengis.net/ogc">
-   <PropertyName>feature_property_name</PropertyName>
-   <Literal>456</Literal>
-</Div>
+<ogc:Div xmlns:ogc="http://www.opengis.net/ogc">
+   <ogc:PropertyName>feature_property_name</ogc:PropertyName>
+   <ogc:Literal>456</ogc:Literal>
+</ogc:Div>

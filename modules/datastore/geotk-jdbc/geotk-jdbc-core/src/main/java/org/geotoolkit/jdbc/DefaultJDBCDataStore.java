@@ -363,9 +363,10 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                         tb.add(adb.buildDescriptor());
                     } else {
                         //add the attribute
-                        atb.setName(ensureGMLNS(namespace, name));
+                        Name attName = ensureGMLNS(namespace, name);
+                        atb.setName(attName);
                         atb.setBinding(binding);
-                        adb.setName(ensureGMLNS(namespace,name));
+                        adb.setName(attName);
                         adb.setType(atb.buildType());
                         tb.add(adb.buildDescriptor());
                     }
@@ -561,10 +562,14 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             } else {
                 List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
                 for (Name extraAttribute : extraAttributes) {
-                    if(!allAttributes.contains(extraAttribute))
+                    if(!allAttributes.contains(extraAttribute)) {
                         allAttributes.add(extraAttribute);
+                    }
                 }
                 Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
+                for (Name n: allAttributeArray) {
+                    System.out.println("allattributeArray:" + n);
+                }
                 querySchema = SimpleFeatureTypeBuilder.retype(type, allAttributeArray);
             }
         }

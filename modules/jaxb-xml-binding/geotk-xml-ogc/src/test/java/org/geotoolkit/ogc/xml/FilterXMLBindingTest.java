@@ -105,7 +105,7 @@ public class FilterXMLBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<ogc:Filter>" + '\n' +
         "    <ogc:Overlaps>"                                                                                                                           + '\n' +
-        "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"                                                                                     + '\n' +
+        "        <ogc:PropertyName xmlns=\"\">boundingBox</ogc:PropertyName>"                                                                          + '\n' +
         "        <gml:Envelope srsName=\"EPSG:4326\">"                                                                                                 + '\n' +
         "            <gml:id>env-id</gml:id>"                                                                                                          + '\n' +
         "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"                                                                                     + '\n' +
