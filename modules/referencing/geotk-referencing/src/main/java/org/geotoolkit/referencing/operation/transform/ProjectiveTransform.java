@@ -95,7 +95,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.08
  *
  * @see javax.media.jai.PerspectiveTransform
  * @see java.awt.geom.AffineTransform
@@ -174,6 +174,10 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
             } else if (sourceDimension == 2) {
                 return new ProjectiveTransform2D(matrix);
             }
+        }
+        final LinearTransform candidate = CopyTransform.create(matrix);
+        if (candidate != null) {
+            return candidate;
         }
         return new ProjectiveTransform(matrix);
     }
@@ -316,7 +320,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @param dstOff The offset to the location of the first transformed point that is stored
      *               in the destination array. The source and destination array sections can
      *               be overlaps.
-     * @param numPts The number of points to be transformed
+     * @param numPts The number of points to be transformed.
      */
     @Override
     public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
@@ -378,7 +382,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @param dstOff The offset to the location of the first transformed point that is stored
      *               in the destination array. The source and destination array sections can
      *               be overlaps.
-     * @param numPts The number of points to be transformed
+     * @param numPts The number of points to be transformed.
      */
     @Override
     public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
@@ -432,7 +436,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @param dstPts The array into which the transformed point coordinates are returned.
      * @param dstOff The offset to the location of the first transformed point that is stored
      *               in the destination array.
-     * @param numPts The number of points to be transformed
+     * @param numPts The number of points to be transformed.
      */
     @Override
     public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
@@ -465,7 +469,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      * @param dstPts The array into which the transformed point coordinates are returned.
      * @param dstOff The offset to the location of the first transformed point that is stored
      *               in the destination array.
-     * @param numPts The number of points to be transformed
+     * @param numPts The number of points to be transformed.
      */
     @Override
     public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
@@ -496,7 +500,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      */
     @Override
     public Matrix derivative(final Point2D point) {
-        return derivative((DirectPosition)null);
+        return derivative((DirectPosition) null);
     }
 
     /**

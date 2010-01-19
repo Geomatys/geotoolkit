@@ -27,9 +27,15 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.opengis.geometry.Envelope;
+
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 
@@ -43,7 +49,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * service (WKT parsing, object comparisons, <i>etc.</i>).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.08
  *
  * @since 3.00
  */
@@ -246,5 +252,38 @@ public final class CRS_Test {
         expected = XRectangle2D.createFromExtremums(-180, -90, 180, -41.03163170198091);
         actual = CRS.transform(operation, envelope, actual);
         assertTrue(XRectangle2D.equalsEpsilon(expected, actual));
+    }
+
+    /**
+     * Tests the transformations of an envelope from a 4D CRS to a 2D CRS
+     * where the ordinates in one dimension are NaN.
+     *
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testTransformation4to2D() throws TransformException {
+        final CoordinateReferenceSystem crs = new DefaultCompoundCRS("4D CRS",
+                DefaultGeographicCRS.WGS84,
+                DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
+                DefaultTemporalCRS.JAVA);
+
+        final GeneralEnvelope env = new GeneralEnvelope(crs);
+        env.setRange(0, -170, 170);
+        env.setRange(1, -80,   80);
+        env.setRange(2, -50,  -50);
+        env.setRange(3, Double.NaN, Double.NaN);
+        assertFalse(env.isNull());
+        assertTrue(env.isEmpty());
+        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
+        assertSame(DefaultGeographicCRS.WGS84, crs2D);
+        final Envelope env2D = CRS.transform(env, crs2D);
+        /*
+         * If the referencing framework has selected the CopyTransform implementation
+         * as expected, then the envelope ordinates should not be NaN.
+         */
+        assertEquals(-170, env2D.getMinimum(0), 0);
+        assertEquals( 170, env2D.getMaximum(0), 0);
+        assertEquals( -80, env2D.getMinimum(1), 0);
+        assertEquals(  80, env2D.getMaximum(1), 0);
     }
 }

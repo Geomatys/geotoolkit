@@ -332,7 +332,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     private static void checkCoordinates(final double[] ordinates) throws IllegalArgumentException {
         final int dimension = ordinates.length / 2;
         for (int i=0; i<dimension; i++) {
-            if (!(ordinates[i] <= ordinates[dimension+i])) { // Use '!' in order to catch 'NaN'.
+            if (ordinates[i] > ordinates[dimension+i]) { // We accept 'NaN' values.
                 throw new IllegalArgumentException(Errors.format(
                         Errors.Keys.ILLEGAL_ENVELOPE_ORDINATE_$1, i));
             }

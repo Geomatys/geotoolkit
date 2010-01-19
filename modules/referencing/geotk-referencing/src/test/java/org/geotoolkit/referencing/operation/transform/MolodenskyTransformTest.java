@@ -68,7 +68,7 @@ public final class MolodenskyTransformTest extends TransformTestCase {
                 if (source3D == target3D) {
                     expected = source3D ? IdentityTransform.class : AffineTransform2D.class;
                 } else {
-                    expected = ProjectiveTransform.class;
+                    expected = source3D ? CopyTransform.class : ProjectiveTransform.class;
                 }
                 boolean abridged = false;
                 do {

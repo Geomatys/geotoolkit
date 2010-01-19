@@ -63,6 +63,7 @@ public final class ProjectiveTransformTest extends TransformTestCase {
         final double[] target = new double[source.length];
         reference.transform(source, 0, target, 0, source.length/2);
         verifyTransform(source, target);
+        stress(source);
     }
 
     /**
@@ -84,6 +85,7 @@ public final class ProjectiveTransformTest extends TransformTestCase {
         final double[] target = new double[source.length];
         reference.transform(source, 0, target, 0, source.length/2);
         verifyTransform(source, target);
+        stress(source);
     }
 
     /**
@@ -105,6 +107,7 @@ public final class ProjectiveTransformTest extends TransformTestCase {
         final double[] target = new double[source.length];
         reference.transform(source, 0, target, 0, source.length/2);
         verifyTransform(source, target);
+        stress(source);
     }
 
     /**
@@ -129,5 +132,6 @@ public final class ProjectiveTransformTest extends TransformTestCase {
         final double[] target = new double[source.length];
         reference.transform(source, 0, target, 0, source.length/2);
         verifyTransform(source, target);
+        stress(source);
     }
 }
