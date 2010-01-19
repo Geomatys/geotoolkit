@@ -280,28 +280,56 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         TemporalCRS temporalDim = null;
         VerticalCRS verticalDim = null;
 
-        if(temporal != null){
+        if(temporal != null && (temporal[0] != null || temporal[1] != null)){
             temporalDim = CRS.getTemporalCRS(crs);
 
             if(temporalDim == null){
-                temporalDim = DefaultTemporalCRS.MODIFIED_JULIAN;
+                temporalDim = DefaultTemporalCRS.JAVA;
             }
         }
 
-        if(elevation != null){
+        if(elevation != null && (elevation[0] != null || elevation[1] != null)){
             verticalDim = CRS.getVerticalCRS(crs);
 
             if(verticalDim == null){
-                verticalDim = DefaultVerticalCRS.GEOIDAL_HEIGHT;
+                verticalDim = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
             }
         }
 
-        crs = new DefaultCompoundCRS("", crs2D, verticalDim, temporalDim);
-        final GeneralEnvelope env = new GeneralEnvelope(crs);
-        env.setRange(0, bounds.getMinX(), bounds.getMaxX());
-        env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-        env.setRange(2, (temporal[0] != null) ? temporal[0].getTime() : Double.NaN, (temporal[1] != null) ? temporal[1].getTime() : Double.NaN);
-        env.setRange(3, (elevation[0] != null) ? elevation[0] : Double.NaN, (elevation[1] != null) ? elevation[1] : Double.NaN);
+        final GeneralEnvelope env;
+        if(temporalDim != null && verticalDim != null){
+            crs = new DefaultCompoundCRS("", crs2D, verticalDim, temporalDim);
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+            env.setRange(2,
+                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
+                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
+            env.setRange(3,
+                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
+                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
+        }else if(temporalDim != null){
+            crs = new DefaultCompoundCRS("", crs2D,  temporalDim);
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+            env.setRange(2,
+                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
+                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
+        }else if(verticalDim != null){
+            crs = new DefaultCompoundCRS("", crs2D, verticalDim);
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+            env.setRange(2,
+                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
+                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
+        }else{
+            crs = crs2D;
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+        }
 
         return env;
     }
