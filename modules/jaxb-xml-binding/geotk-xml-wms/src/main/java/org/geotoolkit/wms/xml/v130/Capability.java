@@ -94,6 +94,7 @@ public class Capability extends AbstractCapability {
     /**
      * Gets the value of the request property.
      */
+    @Override
     public Request getRequest() {
         return request;
     }
@@ -115,6 +116,7 @@ public class Capability extends AbstractCapability {
     /**
      * Gets the value of the layer property.
      */
+    @Override
     public Layer getLayer() {
         return layer;
     }
@@ -122,6 +124,7 @@ public class Capability extends AbstractCapability {
     /**
      * Gets the value of the layer property.
      */
+    @Override
     public void setLayer(AbstractLayer layer) {
         if (layer instanceof Layer) {
             this.layer = (Layer) layer;
