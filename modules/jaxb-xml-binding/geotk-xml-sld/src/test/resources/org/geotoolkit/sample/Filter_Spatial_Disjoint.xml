@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
-    <Disjoint>
-        <PropertyName>feature_property_name</PropertyName>
+<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+    <ogc:Disjoint>
+        <ogc:PropertyName>feature_property_name</ogc:PropertyName>
         <gml:Envelope srsName="urn:x-ogc:def:crs:EPSG:6.11.2:4326">
             <gml:lowerCorner>48.0 18.0</gml:lowerCorner>
             <gml:upperCorner>52.0 21.0</gml:upperCorner>
         </gml:Envelope>
-    </Disjoint>
-</Filter>
+    </ogc:Disjoint>
+</ogc:Filter>

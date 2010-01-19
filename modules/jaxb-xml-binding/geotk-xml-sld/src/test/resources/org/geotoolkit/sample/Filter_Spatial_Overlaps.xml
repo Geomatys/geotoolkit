@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
-   <Overlaps>
-      <PropertyName>Geometry</PropertyName>
+<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">
+   <ogc:Overlaps>
+      <ogc:PropertyName>Geometry</ogc:PropertyName>
       <gml:Polygon srsName="http://www.opengis.net/gml/srs/epsg.xml#63266405">
           <gml:outerBoundaryIs>
              <gml:LinearRing>
@@ -9,8 +9,8 @@
              </gml:LinearRing>
           </gml:outerBoundaryIs>
       </gml:Polygon>
-   </Overlaps>
-</Filter>
+   </ogc:Overlaps>
+</ogc:Filter>
 
 
 

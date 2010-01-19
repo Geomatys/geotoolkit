@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
@@ -49,7 +50,7 @@ import org.opengis.filter.expression.PropertyName;
 public class PropertyNameType implements PropertyName {
 
     @XmlValue
-    private String content;
+    private QName content;
 
     /**
      * An empty constructor used by JAXB
@@ -62,6 +63,13 @@ public class PropertyNameType implements PropertyName {
      * Build a new propertyName with the specified name.
      */
     public PropertyNameType(String content) {
+        this.content = new QName(content);
+    }
+
+    /**
+     * Build a new propertyName with the specified name.
+     */
+    public PropertyNameType(QName content) {
         this.content = content;
     }
     
@@ -69,23 +77,41 @@ public class PropertyNameType implements PropertyName {
      * Gets the value of the content property.
      */
     public String getContent() {
-        return content;
+        if (content != null) {
+            if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
+                return content.getNamespaceURI() + ':' + content.getLocalPart();
+            }
+            return content.getLocalPart();
+        }
+        return null;
     }
 
     /**
      * Gets the value of the content property.
      */
     public void setContent(String content) {
-        this.content = content;
+        this.content = new QName(content);
     }
 
     @Override
     public String toString() {
-        return content;
+        if (content != null) {
+            if (content.getNamespaceURI() != null) {
+                return "content: " + content.getNamespaceURI() + ':' + content.getLocalPart();
+            }
+            return "content: " + content.getLocalPart();
+        }
+        return "content: null";
     }
 
     public String getPropertyName() {
-        return content;
+        if (content != null) {
+            if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
+                return content.getNamespaceURI() + ':' + content.getLocalPart();
+            }
+            return content.getLocalPart();
+        }
+        return null;
     }
 
     public Object evaluate(Object object) {

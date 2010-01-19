@@ -166,7 +166,7 @@ public class DefaultName implements Name {
      */
     @Override
     public String toString() {
-        return getURI();
+        return "{" + namespace + "}" + local;
     }
 
     /**

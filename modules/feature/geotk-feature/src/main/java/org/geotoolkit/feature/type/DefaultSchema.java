@@ -101,7 +101,7 @@ public class DefaultSchema implements Schema {
             throw new IllegalArgumentException("Please use a Name");
         }
         final Name n = (Name) name;
-        if (!(n.toString().startsWith(uri.toString()))) {
+        if (!(n.getURI().startsWith(uri.toString()))) {
             throw new IllegalArgumentException("Provided name was not in schema:" + uri);
         }
         if (!(type instanceof AttributeType)) {

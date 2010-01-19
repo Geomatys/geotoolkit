@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<PointSymbolizer xmlns="http://www.opengis.net/se" 
+<se:PointSymbolizer xmlns:se="http://www.opengis.net/se"
     xmlns:sld="http://www.opengis.net/sld" 
     xmlns:xlink="http://www.w3.org/1999/xlink" 
     xmlns:ogc="http://www.opengis.net/ogc" 
     xmlns:gml="http://www.opengis.net/gml"
     uom="http://www.opengeospatial.org/se/units/pixel">
         
-    <Geometry>
+    <se:Geometry>
         <ogc:PropertyName></ogc:PropertyName>
-    </Geometry>
+    </se:Geometry>
     
-    <Graphic>
-        <Mark>
-            <WellKnownName>square</WellKnownName>
-            <Fill>
-                <SvgParameter name="fill"><ogc:Literal>#808080</ogc:Literal></SvgParameter>
-                <SvgParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></SvgParameter>
-            </Fill>
-            <Stroke>
-                <SvgParameter name="stroke"><ogc:Literal>#404040</ogc:Literal></SvgParameter>
-                <SvgParameter name="stroke-dashoffset"><ogc:Literal>2.3</ogc:Literal></SvgParameter>
-                <SvgParameter name="stroke-linecap"><ogc:Literal>butt</ogc:Literal></SvgParameter>
-                <SvgParameter name="stroke-linejoin"><ogc:Literal>bevel</ogc:Literal></SvgParameter>
-                <SvgParameter name="stroke-opacity"><ogc:Literal>0.4</ogc:Literal></SvgParameter>
-                <SvgParameter name="stroke-width"><ogc:Literal>13.0</ogc:Literal></SvgParameter>
-            </Stroke>
-        </Mark>
+    <se:Graphic>
+        <se:Mark>
+            <se:WellKnownName>square</se:WellKnownName>
+            <se:Fill>
+                <se:SvgParameter name="fill"><ogc:Literal>#808080</ogc:Literal></se:SvgParameter>
+                <se:SvgParameter name="fill-opacity"><ogc:Literal>1.0</ogc:Literal></se:SvgParameter>
+            </se:Fill>
+            <se:Stroke>
+                <se:SvgParameter name="stroke"><ogc:Literal>#404040</ogc:Literal></se:SvgParameter>
+                <se:SvgParameter name="stroke-dashoffset"><ogc:Literal>2.3</ogc:Literal></se:SvgParameter>
+                <se:SvgParameter name="stroke-linecap"><ogc:Literal>butt</ogc:Literal></se:SvgParameter>
+                <se:SvgParameter name="stroke-linejoin"><ogc:Literal>bevel</ogc:Literal></se:SvgParameter>
+                <se:SvgParameter name="stroke-opacity"><ogc:Literal>0.4</ogc:Literal></se:SvgParameter>
+                <se:SvgParameter name="stroke-width"><ogc:Literal>13.0</ogc:Literal></se:SvgParameter>
+            </se:Stroke>
+        </se:Mark>
         
-        <Opacity><ogc:Literal>0.7</ogc:Literal></Opacity>
+        <se:Opacity><ogc:Literal>0.7</ogc:Literal></se:Opacity>
         
-        <Size><ogc:Literal>32</ogc:Literal></Size>
+        <se:Size><ogc:Literal>32</ogc:Literal></se:Size>
         
-        <Rotation><ogc:Literal>110</ogc:Literal></Rotation>
+        <se:Rotation><ogc:Literal>110</ogc:Literal></se:Rotation>
         
-        <AnchorPoint>
-            <AnchorPointX><ogc:Literal>23.0</ogc:Literal></AnchorPointX>
-            <AnchorPointY><ogc:Literal>12.0</ogc:Literal></AnchorPointY>
-        </AnchorPoint>
+        <se:AnchorPoint>
+            <se:AnchorPointX><ogc:Literal>23.0</ogc:Literal></se:AnchorPointX>
+            <se:AnchorPointY><ogc:Literal>12.0</ogc:Literal></se:AnchorPointY>
+        </se:AnchorPoint>
         
-        <Displacement>
-            <DisplacementX><ogc:Literal>21.0</ogc:Literal></DisplacementX>
-            <DisplacementY><ogc:Literal>15.0</ogc:Literal></DisplacementY>
-        </Displacement>
+        <se:Displacement>
+            <se:DisplacementX><ogc:Literal>21.0</ogc:Literal></se:DisplacementX>
+            <se:DisplacementY><ogc:Literal>15.0</ogc:Literal></se:DisplacementY>
+        </se:Displacement>
         
-    </Graphic>
+    </se:Graphic>
     
-</PointSymbolizer>
+</se:PointSymbolizer>
