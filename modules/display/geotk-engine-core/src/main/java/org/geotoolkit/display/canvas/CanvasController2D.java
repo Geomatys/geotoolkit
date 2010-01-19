@@ -43,6 +43,8 @@ public interface CanvasController2D extends CanvasController{
 
     public static final String TEMPORAL_PROPERTY = "temporal";
 
+    public static final String ELEVATION_PROPERTY = "elevation";
+
     /**
      * Reinitializes the affine transform {@link #transform(java.awt.geom.AffineTransform)}
      * in order to cancel any zoom, rotation or translation.

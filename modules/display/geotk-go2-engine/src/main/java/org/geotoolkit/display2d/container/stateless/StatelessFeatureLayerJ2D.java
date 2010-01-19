@@ -241,7 +241,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //concatenate with temporal range if needed ----------------------------
         final Filter temporalFilter;
         final Date[] temporal = renderingContext.getTemporalRange().clone();
-        final Expression[] layerRange = layer.getTemporalRange().clone();
+        final Expression[] layerTemporalRange = layer.getTemporalRange().clone();
 
         if(temporal[0] == null){
             temporal[0] = new Date(Long.MIN_VALUE);
@@ -250,18 +250,18 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             temporal[1] = new Date(Long.MAX_VALUE);
         }
 
-        if(layerRange[0] != null && layerRange[1] != null){
+        if(layerTemporalRange[0] != null && layerTemporalRange[1] != null){
             temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerRange[0] != null){
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerTemporalRange[0] != null){
             temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerRange[0], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerRange[1] != null){
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerTemporalRange[1] != null){
             temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerRange[1], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerRange[1], FILTER_FACTORY.literal(temporal[0])));
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
         }else{
             temporalFilter = Filter.INCLUDE;
         }
@@ -271,7 +271,37 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
         //concatenate with elevation range if needed ---------------------------
-        //todo
+        final Filter verticalFilter;
+        final Double[] vertical = renderingContext.getElevationRange().clone();
+        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
+        
+        if(vertical[0] == null){
+            vertical[0] = Double.NEGATIVE_INFINITY;
+        }
+        if(vertical[1] == null){
+            vertical[1] = Double.POSITIVE_INFINITY;
+        }
+
+        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[0] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else{
+            verticalFilter = Filter.INCLUDE;
+        }
+
+        if(verticalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,verticalFilter);
+        }
+
 
         final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
         final Set<String> copy = new HashSet<String>(attributs);

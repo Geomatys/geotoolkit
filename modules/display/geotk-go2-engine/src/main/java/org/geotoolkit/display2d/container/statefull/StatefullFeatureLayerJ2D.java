@@ -237,6 +237,38 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             filter = FILTER_FACTORY.and(filter,temporalFilter);
         }
 
+        //concatenate with elevation range if needed ---------------------------
+        final Filter verticalFilter;
+        final Double[] vertical = context.getElevationRange().clone();
+        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
+        
+        if(vertical[0] == null){
+            vertical[0] = Double.NEGATIVE_INFINITY;
+        }
+        if(vertical[1] == null){
+            vertical[1] = Double.POSITIVE_INFINITY;
+        }
+
+        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[0] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else{
+            verticalFilter = Filter.INCLUDE;
+        }
+
+        if(verticalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,verticalFilter);
+        }
+
 
 
 
