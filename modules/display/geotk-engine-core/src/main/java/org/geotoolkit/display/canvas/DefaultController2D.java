@@ -563,9 +563,18 @@ public class DefaultController2D implements CanvasController2D{
      */
     @Override
     public void setElevationRange(Double min, Double max, Unit<Length> unit) {
+
+        final Double[] old = this.elevationRange.clone();
+
         this.elevationRange[0] = min;
         this.elevationRange[1] = max;
         this.elevationUnit = unit;
+
+        if(autoRepaint){
+            repaint();
+        }
+
+        canvas.getPropertyListeners().firePropertyChange(ELEVATION_PROPERTY, old.clone(), this.elevationRange.clone());
     }
 
     /**

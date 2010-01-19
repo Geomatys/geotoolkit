@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -32,6 +33,7 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -44,6 +46,9 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.navigator.DoubleNavigatorModel;
+import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
+import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -64,6 +69,7 @@ public class JCoordinateBar extends JToolBar {
     private static final ImageIcon ICON_STATEFULL = IconBundle.getInstance().getIcon("16_statefull");
     private static final ImageIcon ICON_STATEFULL_DISABLE = IconBundle.getInstance().getIcon("16_statefull_disable");
     private static final ImageIcon ICON_TEMPORAL = IconBundle.getInstance().getIcon("16_temporal");
+    private static final ImageIcon ICON_ELEVATION = IconBundle.getInstance().getIcon("16_elevation");
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
@@ -77,10 +83,13 @@ public class JCoordinateBar extends JToolBar {
     private final JCheckBox guiStatefull = new JCheckBox();
     private final JCRSButton guiCRS = new JCRSButton();
     private final JProgressBar guiPainting = new JProgressBar();
+    private final JToggleButton guiElevation = new JToggleButton(ICON_ELEVATION);
     private final JToggleButton guiTemporal = new JToggleButton(ICON_TEMPORAL);
     
     private final JPanel paneTemp = new JPanel(new BorderLayout());
+    private final JPanel paneElev = new JPanel(new BorderLayout());
     private final JMapAnimatingPane guiAnimatingPane = new JMapAnimatingPane();
+    private final JNavigator<Double> panenav = new JNavigator<Double>(new DoubleNavigatorModel());
     private final JMapTimeLine guiTimeLine = new JMapTimeLine();
 
     public JCoordinateBar() {
@@ -96,6 +105,9 @@ public class JCoordinateBar extends JToolBar {
 
         paneTemp.add(BorderLayout.WEST,guiAnimatingPane);
         paneTemp.add(BorderLayout.CENTER,guiTimeLine);
+
+        panenav.setModelRenderer(new DoubleRenderer());
+        paneElev.add(BorderLayout.CENTER,panenav);
 
 
         guiAxis.setSelected(true);
@@ -150,6 +162,16 @@ public class JCoordinateBar extends JToolBar {
             }
         });
 
+        guiElevation.setToolTipText(MessageBundle.getString("map_elevation_slider"));
+        guiElevation.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                paneElev.setVisible(guiElevation.isSelected());
+            }
+        });
+
+
         paneTemp.setVisible(false);
         guiTimeLine.setPreferredSize(new Dimension(100, 100));
 
@@ -159,6 +181,7 @@ public class JCoordinateBar extends JToolBar {
         constraints.weightx = 0.0;
         constraints.weighty = 1.0;
 
+        bottom.add(guiElevation);
         bottom.add(guiTemporal);
         bottom.add(guiPainting);
         bottom.add(guiStatefull,constraints);
@@ -189,6 +212,10 @@ public class JCoordinateBar extends JToolBar {
         guiAnimatingPane.setMap(map);
         
         if(this.map != null){
+
+            Container container = (Container) map.getComponent();
+            container.remove(paneElev);
+
             this.map.getComponent().removeMouseMotionListener(listener);
             this.map.getCanvas().removeCanvasListener(listener);
         }
@@ -200,6 +227,10 @@ public class JCoordinateBar extends JToolBar {
             this.map.getComponent().addMouseMotionListener(listener);
             this.map.getCanvas().addCanvasListener(listener);
             map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
+
+            Container container = (Container) map.getComponent();
+            container.add(BorderLayout.WEST, paneElev);
+            container.repaint();
 
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             guiCRS.setText(crs.getName().toString());
