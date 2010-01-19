@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control;
 
+import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -25,11 +26,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.navigator.DoubleNavigatorModel;
+import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
+import org.geotoolkit.gui.swing.navigator.JNavigator;
 
 /**
  *
@@ -40,11 +45,15 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
 
     private final SpinnerNumberModel modelHaut;
     private final SpinnerNumberModel modelBas;
+    private final JNavigator<Double> guiNav = new JNavigator<Double>(new DoubleNavigatorModel());
     
     private volatile Map2D map = null;
 
     public JMapElevationLine(){
-        super(new FlowLayout());
+        super(new BorderLayout());
+
+        guiNav.setModelRenderer(new DoubleRenderer());
+        guiNav.setOrientation(SwingConstants.WEST);
 
         modelHaut = new SpinnerNumberModel();
         modelHaut.setStepSize(10);
@@ -78,10 +87,15 @@ public class JMapElevationLine extends JPanel implements PropertyChangeListener{
         modelBas.addChangeListener(lst);
         modelHaut.addChangeListener(lst);
 
-        add(new JLabel("min"));
-        add(bas);
-        add(new JLabel("max"));
-        add(haut);
+        JPanel north = new JPanel();
+        north.add(new JLabel("min"));
+        north.add(bas);
+        north.add(new JLabel("max"));
+        north.add(haut);
+
+        add(BorderLayout.NORTH,north);
+        add(BorderLayout.CENTER,guiNav);
+
 
     }
     

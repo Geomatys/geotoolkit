@@ -43,8 +43,8 @@ public class DoubleRenderer implements NavigatorRenderer<Double>{
     public void render(NavigatorModel<Double> model, Graphics2D g, Rectangle area) {
         g = (Graphics2D) g.create();
         g.setClip(area);
-        g.setColor(Color.LIGHT_GRAY);
-        g.fill(area);
+//        g.setColor(Color.LIGHT_GRAY);
+//        g.fill(area);
 
         g.setColor(Color.BLACK);
 
@@ -58,7 +58,6 @@ public class DoubleRenderer implements NavigatorRenderer<Double>{
             extent = area.width;
         }else{
             extent = area.height;
-            g.rotate(Math.toRadians(90));
         }
 
 
@@ -71,61 +70,80 @@ public class DoubleRenderer implements NavigatorRenderer<Double>{
 
         final NumberGraduation graduationX = new NumberGraduation(null);
         graduationX.setRange(start, end, NonSI.PIXEL);
-
         TickIterator tickIte = graduationX.getTickIterator(tickHint, null);
 
-        while(!tickIte.isDone()){
-            tickIte.next();
-            final String label = tickIte.currentLabel();
-            final double d = tickIte.currentPosition();
+        if(orientation == SwingConstants.NORTH){
 
-            g.drawLine( (int)d, -getGraduationHeight(), (int)d, getGraduationHeight());
-            g.drawString(label, (int)d+2, -getGraduationHeight());
+        }else if(orientation == SwingConstants.SOUTH){
 
-//            final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
-//            final double maxY = gridBounds.getMaximum(1);
-//            for(double k= gridBounds.getMinimum(1); k<maxY; k+=gridResolution[1]){
-//                lineCoords.add(new Coordinate(d, k));
-//            }
-//            lineCoords.add(new Coordinate(d, maxY));
-//
-//            Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
-//            ls = JTS.transform(ls, gridToObj);
-//
-//            if(ls == null) continue;
-//
-//            final Geometry geom = ls.intersection(bounds);
-//            final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(geom);
-//            pg.setObjToDisplay(objToDisp);
-//
-//            final LinearLabelDescriptor desc;
-//            if(tickIte.isMajorTick()){
-//                desc = new DefaultLinearLabelDescriptor(
-//                    label, template.getMainLabelFont(), template.getMainLabelPaint(),
-//                    template.getMainHaloWidth(), template.getMainHaloPaint(),
-//                    0, 10, 3,
-//                    false, false, false,
-//                    pg);
-//            }else{
-//                desc = new DefaultLinearLabelDescriptor(
-//                    label, template.getLabelFont(), template.getLabelPaint(),
-//                    template.getHaloWidth(), template.getHaloPaint(),
-//                    0, 10, 3,
-//                    false, false, false,
-//                    pg);
-//            }
-//            layer.labels().add(desc);
-//
-//            if(tickIte.isMajorTick()){
-//                g.setPaint(template.getMainLinePaint());
-//                g.setStroke(template.getMainLineStroke());
-//            }else{
-//                g.setPaint(template.getLinePaint());
-//                g.setStroke(template.getLineStroke());
-//            }
-//
-//            g.draw(pg.getDisplayShape());
+        }else if(orientation == SwingConstants.WEST){
+            while(!tickIte.isDone()){
+                tickIte.next();
+                final String label = tickIte.currentLabel();
+                final int d = (int)tickIte.currentPosition();
+
+                g.drawLine(0, d, getGraduationHeight(), d);
+                g.drawString(label, 2, d-2);
+
+            }
+
+        }else if(orientation == SwingConstants.EAST){
+
         }
+
+
+//        while(!tickIte.isDone()){
+//            tickIte.next();
+//            final String label = tickIte.currentLabel();
+//            final double d = tickIte.currentPosition();
+//
+//            g.drawLine( (int)d, -getGraduationHeight(), (int)d, getGraduationHeight());
+//            g.drawString(label, (int)d+2, -getGraduationHeight());
+//
+////            final ArrayList<Coordinate> lineCoords = new ArrayList<Coordinate>();
+////            final double maxY = gridBounds.getMaximum(1);
+////            for(double k= gridBounds.getMinimum(1); k<maxY; k+=gridResolution[1]){
+////                lineCoords.add(new Coordinate(d, k));
+////            }
+////            lineCoords.add(new Coordinate(d, maxY));
+////
+////            Geometry ls = fact.createLineString(lineCoords.toArray(new Coordinate[lineCoords.size()]));
+////            ls = JTS.transform(ls, gridToObj);
+////
+////            if(ls == null) continue;
+////
+////            final Geometry geom = ls.intersection(bounds);
+////            final DefaultProjectedGeometry pg = new DefaultProjectedGeometry(geom);
+////            pg.setObjToDisplay(objToDisp);
+////
+////            final LinearLabelDescriptor desc;
+////            if(tickIte.isMajorTick()){
+////                desc = new DefaultLinearLabelDescriptor(
+////                    label, template.getMainLabelFont(), template.getMainLabelPaint(),
+////                    template.getMainHaloWidth(), template.getMainHaloPaint(),
+////                    0, 10, 3,
+////                    false, false, false,
+////                    pg);
+////            }else{
+////                desc = new DefaultLinearLabelDescriptor(
+////                    label, template.getLabelFont(), template.getLabelPaint(),
+////                    template.getHaloWidth(), template.getHaloPaint(),
+////                    0, 10, 3,
+////                    false, false, false,
+////                    pg);
+////            }
+////            layer.labels().add(desc);
+////
+////            if(tickIte.isMajorTick()){
+////                g.setPaint(template.getMainLinePaint());
+////                g.setStroke(template.getMainLineStroke());
+////            }else{
+////                g.setPaint(template.getLinePaint());
+////                g.setStroke(template.getLineStroke());
+////            }
+////
+////            g.draw(pg.getDisplayShape());
+//        }
 
 
 

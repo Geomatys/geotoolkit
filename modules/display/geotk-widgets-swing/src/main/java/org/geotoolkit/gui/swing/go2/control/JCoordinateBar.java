@@ -214,7 +214,7 @@ public class JCoordinateBar extends JToolBar {
         
         if(this.map != null){
 
-            Container container = (Container) map.getComponent();
+            final Container container = map.getUIContainer();
             container.remove(paneElev);
 
             this.map.getComponent().removeMouseMotionListener(listener);
@@ -229,7 +229,7 @@ public class JCoordinateBar extends JToolBar {
             this.map.getCanvas().addCanvasListener(listener);
             map.getCanvas().addPropertyChangeListener(J2DCanvas.OBJECTIVE_CRS_PROPERTY, listener);
 
-            Container container = (Container) map.getComponent();
+            final Container container = map.getUIContainer();
             container.add(BorderLayout.WEST, paneElev);
             container.repaint();
 

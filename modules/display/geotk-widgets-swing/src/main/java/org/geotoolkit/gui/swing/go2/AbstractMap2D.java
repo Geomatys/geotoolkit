@@ -196,6 +196,11 @@ public abstract class AbstractMap2D extends JPanel implements Map2D {
 
     @Override
     public Component getComponent() {
+        return mainDecorationPane;
+    }
+
+    @Override
+    public JPanel getUIContainer() {
         return this;
     }
 

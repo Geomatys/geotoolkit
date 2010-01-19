@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2;
 
 import java.awt.Component;
+import javax.swing.JPanel;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration;
@@ -57,6 +58,12 @@ public interface Map2D {
      */
     public Component getComponent();
 
+    /**
+     * Can be used to add more components on the side of the map
+     * if needed. in any case, dont remove the central component.
+     * @return JPanel the container in borderlayout mode
+     */
+    public JPanel getUIContainer();
 
     //----------------------map decorations-------------------------------------
     /**
