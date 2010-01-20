@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 /**
  *
@@ -257,5 +260,66 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     }
 
     protected abstract Map<String,String> toString(Envelope env);
+
+    protected void encodeTimeAndElevation(Envelope env, Map<String,String> map){
+        //append time and elevation parameter
+        final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
+        for(int i=0, n=cs.getDimension(); i<n; i++){
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            final AxisDirection ad = axis.getDirection();
+            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
+                //found a temporal axis
+                final double minT = env.getMinimum(i);
+                final double maxT = env.getMaximum(i);
+
+                if(Double.isNaN(minT) || Double.isInfinite(minT)){
+                    if(Double.isNaN(maxT) || Double.isInfinite(maxT)){
+                        //both null, do nothing
+                    }else{
+                        //only max limit
+                        map.put("TIME", String.valueOf(maxT));
+                    }
+                }else if(Double.isNaN(maxT) || Double.isInfinite(maxT)){
+                    if(Double.isNaN(minT) || Double.isInfinite(minT)){
+                        //both null, do nothing
+                    }else{
+                        //only min limit
+                        map.put("TIME", String.valueOf(minT));
+                    }
+                }else{
+                    //both ok, calculate median
+                    final double median = (minT+maxT)/2;
+                    map.put("TIME", String.valueOf(median));
+                }
+
+
+            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
+                //found a vertical axis
+                final double minV = env.getMinimum(i);
+                final double maxV = env.getMaximum(i);
+
+                if(Double.isNaN(minV) || Double.isInfinite(minV)){
+                    if(Double.isNaN(maxV) || Double.isInfinite(maxV)){
+                        //both null, do nothing
+                    }else{
+                        //only max limit
+                        map.put("ELEVATION", String.valueOf(maxV));
+                    }
+                }else if(Double.isNaN(maxV) || Double.isInfinite(maxV)){
+                    if(Double.isNaN(minV) || Double.isInfinite(minV)){
+                        //both null, do nothing
+                    }else{
+                        //only min limit
+                        map.put("ELEVATION", String.valueOf(minV));
+                    }
+                }else{
+                    //both ok, calculate median
+                    final double median = (minV+maxV)/2;
+                    map.put("ELEVATION", String.valueOf(median));
+                }
+
+            }
+        }
+    }
 
 }

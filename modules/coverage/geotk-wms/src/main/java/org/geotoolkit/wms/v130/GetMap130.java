@@ -24,6 +24,9 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wms.AbstractGetMap;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -55,6 +58,8 @@ public class GetMap130 extends AbstractGetMap {
         } catch (FactoryException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
+
+        encodeTimeAndElevation(env, map);
 
         return map;
     }

@@ -56,6 +56,8 @@ public class GetMap111 extends AbstractGetMap {
             LOGGER.log(Level.SEVERE, null, ex);
         }
 
+        encodeTimeAndElevation(env, map);
+        
         return map;
     }
 
