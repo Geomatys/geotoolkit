@@ -33,6 +33,8 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -42,6 +44,9 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
@@ -495,9 +500,34 @@ public class DefaultController2D implements CanvasController2D{
      * {@inheritDoc }
      */
     @Override
-    public void setVisibleArea(Envelope env) throws NoninvertibleTransformException{
-        Rectangle2D rect2D = new Rectangle2D.Double(env.getMinimum(0), env.getMinimum(1), env.getSpan(0), env.getSpan(1));
+    public void setVisibleArea(Envelope env) throws NoninvertibleTransformException,TransformException{
+        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
+        final Envelope env2D = CRS.transform(env, crs2D);
+
+        //configure the 2D envelope
+        Rectangle2D rect2D = new Rectangle2D.Double(env2D.getMinimum(0), env2D.getMinimum(1), env2D.getSpan(0), env2D.getSpan(1));
         reset(rect2D, canvas.getDisplayBounds().getBounds(), true,false);
+
+        //set the temporal and elevation if some
+        final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
+
+        for(int i=0, n= cs.getDimension(); i<n;i++){
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            final AxisDirection ad = axis.getDirection();
+            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
+                //found a temporal axis
+                final double minT = env.getMinimum(i);
+                final double maxT = env.getMaximum(i);
+                setTemporalRange(toDate(minT), toDate(maxT));
+            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
+                //found a vertical axis
+                final double minT = env.getMinimum(i);
+                final double maxT = env.getMaximum(i);
+                //todo should use the axis unit
+                setElevationRange(minT, maxT, SI.METRE);
+            }
+        }
+
     }
 
     /**
@@ -673,6 +703,14 @@ public class DefaultController2D implements CanvasController2D{
                 y > Double.NEGATIVE_INFINITY && y < Double.POSITIVE_INFINITY &&
                 w > 0                        && w < Double.POSITIVE_INFINITY &&
                 h > 0                        && h < Double.POSITIVE_INFINITY);
+    }
+
+    private static Date toDate(double d){
+        if(Double.isNaN(d)){
+            return null;
+        }else{
+            return new Date((long)d);
+        }
     }
 
 }

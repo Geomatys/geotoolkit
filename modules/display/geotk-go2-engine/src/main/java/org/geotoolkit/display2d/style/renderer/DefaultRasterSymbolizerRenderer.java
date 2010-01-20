@@ -147,6 +147,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
             throw new PortrayalException(ex);
         }
 
+        if(dataCoverage == null){
+            LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
+        }
+
+
         if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),context.getObjectiveCRS())){
             //todo : we should raise an ERROR exception, not just an info
 //            monitor.exceptionOccured(

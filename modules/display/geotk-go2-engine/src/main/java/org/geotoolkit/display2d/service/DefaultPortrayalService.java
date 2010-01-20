@@ -29,7 +29,6 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -150,26 +149,19 @@ public class DefaultPortrayalService implements PortrayalService{
             final Dimension canvasDimension, final boolean strechImage, final float azimuth,
             final CanvasMonitor monitor, final Color background)
             throws PortrayalException{
-        return portray(context,contextEnv,null,null,canvasDimension,strechImage,azimuth,monitor,background);
+        return portray(context,contextEnv,canvasDimension,strechImage,azimuth,monitor,background);
     }
 
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Dimension canvasDimension,
-            final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
-            final Color background) throws PortrayalException{
-        return portray(context,contextEnv,start,end,canvasDimension,strechImage,azimuth,monitor,background,null);
-    }
-
-    public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Dimension canvasDimension,
+            final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, Hints hints) throws PortrayalException{
-        return portray(context,contextEnv,start,end,canvasDimension,
+        return portray(context,contextEnv,canvasDimension,
                 strechImage,azimuth,monitor,background,hints,new PortrayalExtension[0]);
     }
 
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Dimension canvasDimension,
+            final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, Hints hints, PortrayalExtension ... extensions) throws PortrayalException{
 
@@ -194,7 +186,6 @@ public class DefaultPortrayalService implements PortrayalService{
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
-        canvas.getController().setTemporalRange(start, end);
 
         //we specifically say to not repect X/Y proportions
         final CanvasController2D control = canvas.getController();
@@ -205,6 +196,8 @@ public class DefaultPortrayalService implements PortrayalService{
                 control.rotate( -Math.toRadians(azimuth) );
             }
         } catch (NoninvertibleTransformException ex) {
+            throw new PortrayalException(ex);
+        } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -254,7 +247,6 @@ public class DefaultPortrayalService implements PortrayalService{
         } catch (TransformException ex) {
             throw new PortrayalException("Could not set objective crs",ex);
         }
-        canvas.getController().setTemporalRange(viewDef.getStart(), viewDef.getEnd());
 
         //we specifically say to not repect X/Y proportions
         final CanvasController2D control = canvas.getController();
@@ -265,6 +257,8 @@ public class DefaultPortrayalService implements PortrayalService{
                 control.rotate( -Math.toRadians(viewDef.getAzimuth()) );
             }
         } catch (NoninvertibleTransformException ex) {
+            throw new PortrayalException(ex);
+        } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -318,25 +312,18 @@ public class DefaultPortrayalService implements PortrayalService{
             final Color background, final Object output, final String mime,
             final Dimension canvasDimension, Hints hints, final boolean strechImage)
             throws PortrayalException {
-        portray(context, contextEnv, null,null,background,output,mime,canvasDimension, hints,strechImage);
+        portray(context, contextEnv, background,output,mime,canvasDimension, hints,strechImage);
     }
 
     public static void portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Color background, final Object output,
-            final String mime, final Dimension canvasDimension, Hints hints,
-            final boolean strechImage) throws PortrayalException {
-        portray(context,contextEnv,start,end,background,output,mime,canvasDimension,hints,strechImage,new PortrayalExtension[0]);
-    }
-
-    public static void portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Color background, final Object output,
+            final Color background, final Object output,
             final String mime, final Dimension canvasDimension, Hints hints,
             final boolean strechImage, PortrayalExtension ... extensions) throws PortrayalException {
-        portray(context,contextEnv,start,end,canvasDimension,strechImage,0.0f,null,background,output,mime,hints,extensions);
+        portray(context,contextEnv,canvasDimension,strechImage,0.0f,null,background,output,mime,hints,extensions);
     }
 
     public static void portray(final MapContext context, final Envelope contextEnv,
-            final Date start, final Date end, final Dimension canvasDimension,
+            final Dimension canvasDimension,
             final boolean strechImage, final float azimuth, final CanvasMonitor monitor,
             final Color background, final Object output, final String mime, Hints hints,
             PortrayalExtension ... extensions) throws PortrayalException{
@@ -352,8 +339,6 @@ public class DefaultPortrayalService implements PortrayalService{
         canvasDef.setStretchImage(strechImage);
         canvasDef.setBackground(background);
         viewDef.setEnvelope(contextEnv);
-        viewDef.setStart(start);
-        viewDef.setEnd(end);
         viewDef.setAzimuth(azimuth);
         viewDef.setMonitor(monitor);
 
@@ -474,6 +459,8 @@ public class DefaultPortrayalService implements PortrayalService{
         try {
             canvas.getController().setVisibleArea(contextEnv);
         } catch (NoninvertibleTransformException ex) {
+            throw new PortrayalException(ex);
+        } catch (TransformException ex) {
             throw new PortrayalException(ex);
         }
 

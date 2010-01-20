@@ -30,6 +30,7 @@ import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.opengis.display.canvas.CanvasController;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Default canvas 2D controller methods. 
@@ -162,7 +163,7 @@ public interface CanvasController2D extends CanvasController{
     
     void setDisplayVisibleArea(Rectangle2D dipsEnv);
 
-    void setVisibleArea(Envelope env) throws NoninvertibleTransformException;
+    void setVisibleArea(Envelope env) throws NoninvertibleTransformException,TransformException;
 
     /**
      * Defines the limits of the visible part, in logical coordinates.  This method will modify the

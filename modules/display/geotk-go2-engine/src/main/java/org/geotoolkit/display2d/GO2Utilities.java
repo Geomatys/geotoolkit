@@ -32,9 +32,11 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +72,13 @@ import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.MutableStyleFactory;
 
@@ -84,11 +92,15 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Style;
 import org.opengis.style.Rule;
@@ -233,6 +245,86 @@ public final class GO2Utilities {
         }
 
         return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // work on envelope ////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Make a new envelope with vertical and temporal dimensions.
+     */
+    public static GeneralEnvelope combine(Envelope bounds, Date[] temporal, Double[] elevation) throws TransformException{
+        CoordinateReferenceSystem crs = bounds.getCoordinateReferenceSystem();
+        Rectangle2D rect = new Rectangle2D.Double(
+                bounds.getMinimum(0),
+                bounds.getMinimum(1),
+                bounds.getSpan(0),
+                bounds.getSpan(1));
+        return combine(crs, rect, temporal, elevation);
+    }
+
+    /**
+     * Make a new envelope with vertical and temporal dimensions.
+     */
+    public static GeneralEnvelope combine(CoordinateReferenceSystem crs, Rectangle2D bounds,
+            Date[] temporal, Double[] elevation) throws TransformException{
+        CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
+        TemporalCRS temporalDim = null;
+        VerticalCRS verticalDim = null;
+
+        if(temporal != null && (temporal[0] != null || temporal[1] != null)){
+            temporalDim = CRS.getTemporalCRS(crs);
+
+            if(temporalDim == null){
+                temporalDim = DefaultTemporalCRS.JAVA;
+            }
+        }
+
+        if(elevation != null && (elevation[0] != null || elevation[1] != null)){
+            verticalDim = CRS.getVerticalCRS(crs);
+
+            if(verticalDim == null){
+                verticalDim = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
+            }
+        }
+
+        final GeneralEnvelope env;
+        if(temporalDim != null && verticalDim != null){
+            crs = new DefaultCompoundCRS("", crs2D, verticalDim, temporalDim);
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+            env.setRange(2,
+                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
+                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
+            env.setRange(3,
+                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
+                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
+        }else if(temporalDim != null){
+            crs = new DefaultCompoundCRS("", crs2D,  temporalDim);
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+            env.setRange(2,
+                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
+                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
+        }else if(verticalDim != null){
+            crs = new DefaultCompoundCRS("", crs2D, verticalDim);
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+            env.setRange(2,
+                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
+                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
+        }else{
+            crs = crs2D;
+            env = new GeneralEnvelope(crs);
+            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
+            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
+        }
+
+        return env;
     }
 
 

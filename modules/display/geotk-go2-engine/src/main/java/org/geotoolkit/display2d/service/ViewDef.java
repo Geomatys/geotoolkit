@@ -33,8 +33,6 @@ public class ViewDef {
 
     private Envelope envelope = new JTSEnvelope2D(DefaultGeographicCRS.WGS84);
     private double azimuth = 0;
-    private Date start = null;
-    private Date end = null;
     private CanvasMonitor monitor = null;
 
     public ViewDef() {
@@ -61,22 +59,6 @@ public class ViewDef {
         return azimuth;
     }
 
-    public Date getStart() {
-        return start;
-    }
-
-    public void setStart(Date start) {
-        this.start = start;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
     public void setMonitor(CanvasMonitor monitor) {
         this.monitor = monitor;
     }
@@ -87,6 +69,6 @@ public class ViewDef {
 
     @Override
     public String toString() {
-        return "ViewDef[envelope=" + envelope + ", azimuth=" + azimuth + ", startDate="+start+", endDate="+end+"]";
+        return "ViewDef[envelope=" + envelope + ", azimuth=" + azimuth +"]";
     }
 }

@@ -46,6 +46,7 @@ import org.geotoolkit.display.shape.XRectangle2D;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.canvas.RenderingState;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Special canvas used to render maps in JasperReport templates.
@@ -226,6 +227,8 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         try {
             getController().setVisibleArea(renderer.getContext().getAreaOfInterest());
         } catch (NoninvertibleTransformException ex) {
+            Logging.getLogger(CanvasRenderer.class).log(Level.SEVERE, null, ex);
+        } catch (TransformException ex) {
             Logging.getLogger(CanvasRenderer.class).log(Level.SEVERE, null, ex);
         }
         

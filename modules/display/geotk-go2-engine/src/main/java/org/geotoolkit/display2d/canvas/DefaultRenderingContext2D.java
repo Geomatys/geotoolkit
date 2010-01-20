@@ -44,9 +44,6 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
@@ -54,10 +51,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
-import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
@@ -243,7 +237,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 //                                      canvasObjectiveBounds.getWidth()+2*d0,
 //                                      canvasObjectiveBounds.getHeight()+2*d1);
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        this.canvasObjectiveBBox = initEnvelope(objectiveCRS, objectiveCRS2D, canvasObjectiveBounds, temporal, elevation);
+        try {
+            this.canvasObjectiveBBox = GO2Utilities.combine(objectiveCRS, canvasObjectiveBounds, temporal, elevation);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
 
         //calculate painting shape/bounds values -------------------------------
         this.paintingDisplayShape = paintingDisplayShape;
@@ -253,7 +251,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
         this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
-        this.paintingObjectiveBBox = initEnvelope(objectiveCRS, objectiveCRS2D, paintingObjectiveBounds, temporal, elevation);
+        try {
+            this.paintingObjectiveBBox = GO2Utilities.combine(objectiveCRS, paintingObjectiveBounds, temporal, elevation);
+        } catch (TransformException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }
 
         geoScale = canvas.getController().getGeographicScale();
 
@@ -273,65 +275,6 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             elevationRange[1] = null;
         }
 
-    }
-
-    private static GeneralEnvelope initEnvelope(CoordinateReferenceSystem crs, CoordinateReferenceSystem crs2D, Rectangle2D bounds,
-            Date[] temporal, Double[] elevation){
-        TemporalCRS temporalDim = null;
-        VerticalCRS verticalDim = null;
-
-        if(temporal != null && (temporal[0] != null || temporal[1] != null)){
-            temporalDim = CRS.getTemporalCRS(crs);
-
-            if(temporalDim == null){
-                temporalDim = DefaultTemporalCRS.JAVA;
-            }
-        }
-
-        if(elevation != null && (elevation[0] != null || elevation[1] != null)){
-            verticalDim = CRS.getVerticalCRS(crs);
-
-            if(verticalDim == null){
-                verticalDim = DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
-            }
-        }
-
-        final GeneralEnvelope env;
-        if(temporalDim != null && verticalDim != null){
-            crs = new DefaultCompoundCRS("", crs2D, verticalDim, temporalDim);
-            env = new GeneralEnvelope(crs);
-            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
-            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            env.setRange(2,
-                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
-                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
-            env.setRange(3,
-                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
-                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
-        }else if(temporalDim != null){
-            crs = new DefaultCompoundCRS("", crs2D,  temporalDim);
-            env = new GeneralEnvelope(crs);
-            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
-            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            env.setRange(2,
-                    (temporal[0] != null) ? temporal[0].getTime() : Double.NEGATIVE_INFINITY,
-                    (temporal[1] != null) ? temporal[1].getTime() : Double.POSITIVE_INFINITY);
-        }else if(verticalDim != null){
-            crs = new DefaultCompoundCRS("", crs2D, verticalDim);
-            env = new GeneralEnvelope(crs);
-            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
-            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-            env.setRange(2,
-                    (elevation[0] != null) ? elevation[0] : Double.NEGATIVE_INFINITY,
-                    (elevation[1] != null) ? elevation[1] : Double.POSITIVE_INFINITY);
-        }else{
-            crs = crs2D;
-            env = new GeneralEnvelope(crs);
-            env.setRange(0, bounds.getMinX(), bounds.getMaxX());
-            env.setRange(1, bounds.getMinY(), bounds.getMaxY());
-        }
-
-        return env;
     }
 
     public void initGraphic(final Graphics2D graphics){
