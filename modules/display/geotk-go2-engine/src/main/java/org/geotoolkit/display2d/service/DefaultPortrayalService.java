@@ -149,7 +149,7 @@ public class DefaultPortrayalService implements PortrayalService{
             final Dimension canvasDimension, final boolean strechImage, final float azimuth,
             final CanvasMonitor monitor, final Color background)
             throws PortrayalException{
-        return portray(context,contextEnv,canvasDimension,strechImage,azimuth,monitor,background);
+        return portray(context,contextEnv,canvasDimension,strechImage,azimuth,monitor,background, null);
     }
 
     public static BufferedImage portray(final MapContext context, final Envelope contextEnv,
@@ -312,7 +312,7 @@ public class DefaultPortrayalService implements PortrayalService{
             final Color background, final Object output, final String mime,
             final Dimension canvasDimension, Hints hints, final boolean strechImage)
             throws PortrayalException {
-        portray(context, contextEnv, background,output,mime,canvasDimension, hints,strechImage);
+        portray(context,contextEnv,canvasDimension,strechImage,0.0f,null,background,output,mime,hints);
     }
 
     public static void portray(final MapContext context, final Envelope contextEnv,

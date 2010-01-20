@@ -72,6 +72,7 @@ public class AbstractRequest implements Request{
     }
 
     private static String noSpaces(String str){
+        if(str == null) return null;
         return str.replaceAll(" ", "%20");
     }
 
