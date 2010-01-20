@@ -39,9 +39,15 @@ import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 /**
  * A transform which copy the ordinates in the source array to different locations in the target
- * array. The main advantage of this transform compared to {@link ProjectiveTransform} (apart a
- * slight potential performance improvement) is that it works with {@code NaN} values. This class
- * is used mostly for transforms that just reduce the number of dimension of source coordinates.
+ * array. This is a special case of {@link ProjectiveTransform} where the matrix coefficients
+ * are zero everywhere, except one value by row which is set to 1 and is not the translation term.
+ * Those transforms are used for swapping axis order, or selecting the dimension to retain when
+ * converting from a large dimension to a smaller one. This transform has the particularity to
+ * involve no floating point operation - just copy of values with no change - and consequently
+ * works well with NaN ordinate values.
+ * <p>
+ * We do not provide a subclass for the 2D case because our policy is to use
+ * an {@link java.awt.geom.AffineTransform} for every 2D affine conversions.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08

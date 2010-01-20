@@ -56,6 +56,13 @@ public final class CopyTransformTest extends TransformTestCase {
     }
 
     /**
+     * Replaces the current {@link CopyTransform} by an instance of {@link ProjectiveTransform}.
+     */
+    private void makeProjectiveTransform() {
+        transform = new ProjectiveTransform(((CopyTransform) transform).getMatrix());
+    }
+
+    /**
      * Tests an identity transform.
      *
      * @throws TransformException should never happen.
@@ -70,6 +77,10 @@ public final class CopyTransformTest extends TransformTestCase {
 
         final double[] source = generateRandom(373766338);
         final double[] target = source.clone();
+        verifyTransform(source, target);
+        stress(source);
+
+        makeProjectiveTransform();
         verifyTransform(source, target);
         stress(source);
     }
@@ -95,23 +106,8 @@ public final class CopyTransformTest extends TransformTestCase {
         }
         verifyTransform(source, target);
         stress(source);
-    }
 
-    /**
-     * Same than {@link #test3D()}, but compares the results with {@link ProjectiveTransform}.
-     * This is an indirect way to test the matrix created by {@link CopyTransform#getMatrix()}.
-     *
-     * @throws TransformException should never happen.
-     */
-    @Test
-    public void compareWithProjective3D() throws TransformException {
-        final LinearTransform transform = new CopyTransform(3, 2, 1, 0);
-        final LinearTransform reference = new ProjectiveTransform(transform.getMatrix());
-        this.transform = transform;
-
-        final double[] source = generateRandomCoordinates(CoordinateDomain.GEOGRAPHIC, 812283341);
-        final double[] target = new double[source.length];
-        reference.transform(source, 0, target, 0, source.length/3);
+        makeProjectiveTransform();
         verifyTransform(source, target);
         stress(source);
     }
@@ -138,24 +134,8 @@ public final class CopyTransformTest extends TransformTestCase {
         }
         verifyTransform(source, target);
         stress(source);
-    }
 
-    /**
-     * Same than {@link #test3Dto2D()}, but compares the results with {@link ProjectiveTransform}.
-     * This is an indirect way to test the matrix created by {@link CopyTransform#getMatrix()}.
-     *
-     * @throws TransformException should never happen.
-     */
-    @Test
-    public void compareWithProjective3Dto2D() throws TransformException {
-        final LinearTransform transform = new CopyTransform(3, 0, 1);
-        final LinearTransform reference = new ProjectiveTransform(transform.getMatrix());
-        this.transform = transform;
-        isInverseTransformSupported = false;
-
-        final double[] source = generateRandomCoordinates(CoordinateDomain.GEOGRAPHIC, 78541666);
-        final double[] target = new double[source.length * 2/3];
-        reference.transform(source, 0, target, 0, source.length/3);
+        makeProjectiveTransform();
         verifyTransform(source, target);
         stress(source);
     }

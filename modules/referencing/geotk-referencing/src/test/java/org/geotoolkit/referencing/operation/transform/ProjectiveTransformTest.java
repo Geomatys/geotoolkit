@@ -28,7 +28,8 @@ import org.junit.*;
 
 /**
  * Tests the {@link ProjectiveTransform} class. We use the {@link AffineTransform2D} class
- * as a reference.
+ * as a reference, so we need to avoid NaN values. Note that {@link CopyTransformTest} will
+ * use {@code ProjectiveTransform} as a reference, this time with NaN values.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
