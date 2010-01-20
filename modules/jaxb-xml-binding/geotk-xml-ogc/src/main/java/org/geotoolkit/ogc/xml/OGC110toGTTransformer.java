@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
@@ -63,8 +64,16 @@ public class OGC110toGTTransformer {
 
     protected final FilterFactory2 filterFactory;
 
+    private final Map<String, String> namespaceMapping;
+
     public OGC110toGTTransformer(FilterFactory2 factory) {
+        this.filterFactory   = factory;
+        this.namespaceMapping = null;
+    }
+
+    public OGC110toGTTransformer(FilterFactory2 factory, Map<String, String> namespaceMapping) {
         this.filterFactory = factory;
+        this.namespaceMapping = namespaceMapping;
     }
 
     /**
@@ -91,7 +100,7 @@ public class OGC110toGTTransformer {
         }
         
     }
-    
+
     /**
      * Transform a SLD spatial Filter v1.1 in GT filter.
      */
@@ -399,7 +408,32 @@ public class OGC110toGTTransformer {
     }
 
     public PropertyName visitPropertyName(PropertyNameType pnt){
-        return filterFactory.property(pnt.getContent());
+        String brutPname = pnt.getContent();
+        if (brutPname.indexOf(':') == -1)
+            return filterFactory.property(brutPname);
+
+        String[] pnames = brutPname.split("/");
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        for (String pname : pnames) {
+            if (pnames.length > 1 && i != 0) {
+                sb.append("/");
+            }
+            int pos = pname.indexOf(':');
+            if (pos != -1) {
+                String prefix = pname.substring(0, pos);
+                String namespace = namespaceMapping.get(prefix);
+                if (namespace == null) {
+                    throw new IllegalArgumentException("Prefix " + prefix + " is nor bounded.");
+                } else {
+                    sb.append(namespace).append(':').append(pname.substring(pos +1));
+                }
+            } else {
+                sb.append(pname);
+            }
+            i++;
+        }
+        return filterFactory.property(sb.toString());
     }
 
     /**

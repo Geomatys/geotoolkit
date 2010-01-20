@@ -181,6 +181,11 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         this.styleFactory = styleFactory;
     }
 
+    public SE110toGTTransformer(FilterFactory2 filterFactory,MutableStyleFactory styleFactory, Map<String, String> namespaceMapping){
+        super(filterFactory, namespaceMapping);
+        this.styleFactory = styleFactory;
+    }
+
     public Description visitDescription(final DescriptionType dt) {
         if (dt == null) {
             return StyleConstants.DEFAULT_DESCRIPTION;

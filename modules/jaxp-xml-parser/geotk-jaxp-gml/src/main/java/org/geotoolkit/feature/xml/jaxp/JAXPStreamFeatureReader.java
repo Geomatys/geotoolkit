@@ -371,7 +371,32 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
         }
         return null;
     }
-    
+
+    @Override
+    public Map<String, String> extractNamespace(String xml) {
+        try {
+
+            XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
+            XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
+
+            XMLStreamReader streamReader = XMLfactory.createXMLStreamReader(new StringReader(xml));
+
+            Map<String, String> namespaceMapping = new HashMap<String, String>();
+            while (streamReader.hasNext()) {
+                int event = streamReader.next();
+                if (event == XMLEvent.START_ELEMENT) {
+                    for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
+                        namespaceMapping.put(streamReader.getNamespacePrefix(i), streamReader.getNamespaceURI(i));
+                    }
+                }
+            }
+            return namespaceMapping;
+        } catch (XMLStreamException ex) {
+            LOGGER.severe("XMl stream exception while extracting namespace: " + ex.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Extract An envelope from the BoundedBy XML mark of a feature collection.
      *

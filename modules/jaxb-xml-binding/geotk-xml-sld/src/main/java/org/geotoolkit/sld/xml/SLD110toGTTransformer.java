@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.geotoolkit.sld.xml.v110.InlineFeature;
 import org.geotoolkit.sld.xml.v110.LayerCoverageConstraints;
@@ -68,6 +69,12 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     public SLD110toGTTransformer(FilterFactory2 filterFactory, MutableStyleFactory styleFactory,
             MutableSLDFactory sldFactory) {
         super(filterFactory,styleFactory);
+        this.sldFactory = sldFactory;
+    }
+
+    public SLD110toGTTransformer(FilterFactory2 filterFactory, MutableStyleFactory styleFactory,
+            MutableSLDFactory sldFactory, Map<String, String> namespaceMapping) {
+        super(filterFactory,styleFactory, namespaceMapping);
         this.sldFactory = sldFactory;
     }
 

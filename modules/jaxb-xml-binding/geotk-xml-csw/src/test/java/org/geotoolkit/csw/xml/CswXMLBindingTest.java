@@ -919,7 +919,7 @@ public class CswXMLBindingTest {
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */ 
         List<QName> typeNames  = new ArrayList<QName>();
-        PropertyNameType pname = new PropertyNameType(new QName("http://purl.org/dc/elements/1.1/", "Title"));
+        PropertyNameType pname = new PropertyNameType(new QName("http://purl.org/dc/elements/1.1/", "dc:Title"));
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);
@@ -1055,7 +1055,7 @@ public class CswXMLBindingTest {
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
          */ 
         List<QName> typeNames  = new ArrayList<QName>();
-        PropertyNameType pname = new PropertyNameType(new QName("http://purl.org/dc/elements/1.1/", "Title"));
+        PropertyNameType pname = new PropertyNameType(new QName("http://purl.org/dc/elements/1.1/", "dc:Title"));
         PropertyIsLikeType pil = new PropertyIsLikeType(pname, "something?", "*", "?", "\\");
         NotType n              = new NotType(pil);
         FilterType filter1     = new FilterType(n);

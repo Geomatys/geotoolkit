@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -311,5 +312,9 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
 
        }
         return bounds;
+    }
+
+    public Map<String, String> extractNamespace(String xml) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

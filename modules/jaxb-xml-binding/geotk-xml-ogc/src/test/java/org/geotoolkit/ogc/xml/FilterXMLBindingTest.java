@@ -31,13 +31,16 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.OverlapsType;
+import org.geotoolkit.ogc.xml.v110.PropertyIsEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
+import org.opengis.filter.PropertyIsEqualTo;
 import static org.junit.Assert.*;
 
 
@@ -105,7 +108,7 @@ public class FilterXMLBindingTest {
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
         "<ogc:Filter>" + '\n' +
         "    <ogc:Overlaps>"                                                                                                                           + '\n' +
-        "        <ogc:PropertyName xmlns=\"\">boundingBox</ogc:PropertyName>"                                                                          + '\n' +
+        "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"                                                                          + '\n' +
         "        <gml:Envelope srsName=\"EPSG:4326\">"                                                                                                 + '\n' +
         "            <gml:id>env-id</gml:id>"                                                                                                          + '\n' +
         "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"                                                                                     + '\n' +

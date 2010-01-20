@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.xml.bind.JAXBContext;
@@ -141,6 +142,13 @@ public final class XMLUtilities {
     public SLD110toGTTransformer getTransformer110(){
         if (transformerGTv110 == null) {
             transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory);
+        }
+        return transformerGTv110;
+    }
+
+    public SLD110toGTTransformer getTransformer110(Map<String, String> namespaceMapping){
+        if (transformerGTv110 == null) {
+            transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory, namespaceMapping);
         }
         return transformerGTv110;
     }

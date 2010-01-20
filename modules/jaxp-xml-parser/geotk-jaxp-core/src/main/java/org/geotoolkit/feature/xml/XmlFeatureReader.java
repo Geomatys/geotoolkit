@@ -19,6 +19,7 @@ package org.geotoolkit.feature.xml;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Map;
 import org.opengis.feature.type.FeatureType;
 
 /**
@@ -55,6 +56,15 @@ public interface XmlFeatureReader {
      * @return A SimpleFeature / featureCollection or {@code null}
      */
     public Object read(Reader reader);
+
+
+    /**
+     * Extract the mapping between namespaces and prefix from an xml document;
+     *
+     * @param xml
+     * @return
+     */
+    public Map<String, String> extractNamespace(String xml);
 
     public void setFeatureType(FeatureType featureType);
 
