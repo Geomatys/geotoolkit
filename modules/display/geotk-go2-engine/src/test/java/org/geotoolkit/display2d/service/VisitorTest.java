@@ -1,6 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.display2d.service;
@@ -9,16 +21,15 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.memory.MemoryDataStore;
-import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -31,9 +42,11 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.identity.FeatureId;
@@ -41,7 +54,8 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class VisitorTest {
 
