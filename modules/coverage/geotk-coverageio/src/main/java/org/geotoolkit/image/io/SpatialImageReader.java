@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collections;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
@@ -52,6 +51,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.internal.image.io.Warnings;
 
 
 /**
@@ -591,7 +591,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
                 if (numMetadataBands != 0) for (int i=0; i<numBands; i++) {
                     final int sourceBand = (sourceBands != null) ? sourceBands[i] : i;
                     if (sourceBand < 0 || sourceBand >= numMetadataBands) {
-                        warningOccurred(SpatialImageReader.class, "getRawImageType",
+                        Warnings.log(this, SpatialImageReader.class, "getRawImageType",
                                 indexOutOfBounds(sourceBand, 0, numMetadataBands));
                     }
                     final SampleDimension band = bands.get(Math.min(sourceBand, numMetadataBands-1));
@@ -612,9 +612,8 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
                             allRanges = (allRanges != null) ? allRanges.union(range) : range;
                         } else {
                             // Use range.getMin/MaxValue() because they may be integers rather than doubles.
-                            warningOccurred(SpatialImageReader.class, "getRawImageType",
-                                    getErrorResources().getString(Errors.Keys.BAD_RANGE_$2,
-                                    range.getMinValue(), range.getMaxValue()));
+                            Warnings.log(this, SpatialImageReader.class, "getRawImageType",
+                                    Errors.Keys.BAD_RANGE_$2, range.getMinValue(), range.getMaxValue());
                             continue;
                         }
                     } else {
@@ -1007,16 +1006,6 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
             processWarningOccurred(IndexedResourceBundle.format(record));
             return true;
         }
-    }
-
-    /**
-     * Convenience method for logging a warning from the given method.
-     */
-    final void warningOccurred(final Class<?> classe, final String method, final String message) {
-        final LogRecord record = new LogRecord(Level.WARNING, message);
-        record.setSourceClassName(classe.getName());
-        record.setSourceMethodName(method);
-        warningOccurred(record);
     }
 
     /**

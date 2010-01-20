@@ -27,8 +27,8 @@
  * <p>
  * <table border="3" cellpadding="6">
  *   <tr bgcolor="lightblue">
- *     <th>{@link javax.imageio.ImageReader} subclass</th>
- *     <th>{@link javax.imageio.ImageWriter} subclass</th>
+ *     <th>{@link javax.imageio.ImageReader}</th>
+ *     <th>{@link javax.imageio.ImageWriter}</th>
  *     <th>Purpose</th>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.SpatialImageReader}</td>
@@ -38,8 +38,8 @@
  *     <td>{@link org.geotoolkit.image.io.FileImageReader}</td>
  *     <td>&nbsp;</td>
  *     <td>Base class for readers/writers that require {@link java.io.File} input or output.
- *         Other kind of input/output are copied to a temporary file. This is used for wrapping
- *         some external libraries.</td>
+ *         Other kind of input/output are copied in a temporary file. This is used for wrapping
+ *         native libraries which doesn't work with Java streams.</td>
  *   </tr><tr>
  *     <td>{@link org.geotoolkit.image.io.StreamImageReader}</td>
  *     <td>{@link org.geotoolkit.image.io.StreamImageWriter}</td>

@@ -86,6 +86,22 @@ public final class Warnings {
                 message = message + ": " + word;
             }
         }
+        log(plugin, caller, method, message);
+    }
+
+    /**
+     * Convenience method for logging a warning from the given message.
+     *
+     * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  caller The public class which is invoking this method.
+     * @param  method The public method which is invoking this method.
+     * @param  message The message to log.
+     * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
+     *         or {@link SpatialImageWriter}.
+     */
+    public static void log(final Localized plugin, final Class<?> caller, final String method,
+            final String message)
+    {
         final LogRecord record = new LogRecord(Level.WARNING, message);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);

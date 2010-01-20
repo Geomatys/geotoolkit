@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Arrays;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.Rectangle;
@@ -35,6 +34,7 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -43,7 +43,7 @@ import org.geotoolkit.util.converter.Classes;
  * {@link ImageReadParam} class with the following additional capabilities:
  * <p>
  * <ul>
- *   <li><p>Specify the slice to read in datasets having more than 2 dimensions, as for example
+ *   <li><p>Specify the plane to read in datasets having more than 2 dimensions, as for example
  *       in {@linkplain org.geotoolkit.image.io.plugin.NetcdfImageReader NetCDF} files.</p></li>
  *
  *   <li><p>Specify the name of a {@linkplain Palette color palette}. This is useful when
@@ -60,20 +60,26 @@ import org.geotoolkit.util.converter.Classes;
  *
  * {@section Handling more than two dimensions}
  * Some file formats like NetCDF can store dataset having more than two dimensions.
- * Geotk handles extra dimensions with the following policies:
+ * Geotk handles extra dimensions with the following policies by default:
  *
  * <ul>
  *   <li><p>The two first dimensions - typically named (<var>x</var>, <var>y</var>) - are
  *     assigned to the (<var>columns</var>, <var>rows</var>) pixel indices.</p></li>
  *
- *   <li><p>The third dimension is assigned to band indices (see {@link #DEFAULT_DIMENSION_FOR_BANDS}
- *     for more details). This is typically the altitude (<var>z</var>) in a dataset having the
- *     (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions. This behavior can be
- *     changed by invoking the {@link #setDimensionForBands(int)} method.</p></li>
+ *   <li><p>The third dimension is assigned to band indices. This is typically the altitude
+ *     (<var>z</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
+ *     <var>t</var>) dimensions, in which case the bands are used as below:</p>
+ *     <ul>
+ *       <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>0</sub> is stored in band 0</li>
+ *       <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>1</sub> is stored in band 1</li>
+ *       <li><i>etc.</i></li>
+ *     </ul>
+ *     <p>The actual dimension assigned to band indices is returned by {@link #getDimensionForAPI
+ *     getDimensionForAPI(...)}. See {@link DimensionSlice} for changing the assignment.</p>
  *
  *   <li><p>Only one slice of every extra dimensions can be read. By default the data at indice 0
- *     are loaded, but different indices can be selected by invoking
- *     {@link #setSourceIndiceForDimension(int, int)}.</p></li>
+ *     are loaded, but different indices can be selected (see {@link DimensionSlice}). The actual
+ *     indice used is the value returned by {@link #getSourceIndiceForDimension(Object[])}.</p></li>
  * </ul>
  *
  * Note that the reader for some formats (e.g. NetCDF) will initialize the {@linkplain #sourceBands
@@ -89,28 +95,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.05 (derived from 2.4)
  * @module
  */
-public class SpatialImageReadParam extends ImageReadParam {
-    /**
-     * The default dimension to assign to band indices, 0-based. Its value is {@value} which
-     * means that if a dataset has (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>)
-     * dimensions, then by default the <var>z</var> dimension will be assigned to bands as
-     * below:
-     * <p>
-     * <ul>
-     *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>0</sub> is stored in band 0</li>
-     *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>1</sub> is stored in band 1</li>
-     *   <li><i>etc.</i></li>
-     * </ul>
-     *
-     * @see #getDimensionForBands(Iterable)
-     * @see #setDimensionForBands(int)
-     * @see #setDimensionForBands(String[])
-     * @see #setDimensionForBands(AxisDirection[])
-     *
-     * @since 3.08
-     */
-    public static final int DEFAULT_DIMENSION_FOR_BANDS = 2;
-
+public class SpatialImageReadParam extends ImageReadParam implements Localized {
     /**
      * The name of the default color palette to apply when none was explicitly specified.
      * The default palette is {@value}.
@@ -121,20 +106,21 @@ public class SpatialImageReadParam extends ImageReadParam {
     public static final String DEFAULT_PALETTE_NAME = "grayscale";
 
     /**
-     * The dimension to use as image bands, or {@code null} for the default behavior.
-     * The dimension can be identified by a single {@link Integer}, by a name as a set
-     * of {@link String}s, or as an axis direction as a set of {@link AxisDirection}s.
-     * See class javadoc for details.
+     * For <var>n</var>-dimensional images where <var>n</var>&gt;2, the data to
+     * select in arbitrary dimensions. Will be created only when first needed.
      *
      * @since 3.08
      */
-    private Object dimensionForBands;
+    private Map<Object,DimensionSlice> slicesForDimensions;
 
     /**
-     * For <var>n</var>-dimensional images, the indices to use for dimensions above 2.
-     * Will be created only when first needed.
+     * For <var>n</var>-dimensional images, the standard Java API to use for setting the index.
+     * Will be created only when first needed. The length of this array shall be equals to the
+     * length of the {@link DimensionSlice.API#VALIDS} array.
+     *
+     * @since 3.08
      */
-    private Map<Object,Integer> sourceIndicesForDimensions;
+    private DimensionSlice[] apiMapping;
 
     /**
      * The name of the color palette.
@@ -165,86 +151,142 @@ public class SpatialImageReadParam extends ImageReadParam {
      * Returns the resources for formatting error messages.
      */
     private IndexedResourceBundle getErrorResources() {
-        return Errors.getResources((reader != null) ? reader.getLocale() : null);
+        return Errors.getResources(getLocale());
     }
 
     /**
      * Convenience method for logging a warning from the given method.
      */
     private void warningOccurred(final String method, final String message) {
+        final LogRecord record = new LogRecord(Level.WARNING, message);
+        record.setSourceClassName(SpatialImageReadParam.class.getName());
+        record.setSourceMethodName(method);
         if (reader instanceof SpatialImageReader) {
-            ((SpatialImageReader) reader).warningOccurred(SpatialImageReadParam.class, method, message);
+            ((SpatialImageReader) reader).warningOccurred(record);
         } else {
-            final LogRecord record = new LogRecord(Level.WARNING, message);
-            record.setSourceClassName(SpatialImageReadParam.class.getName());
-            record.setSourceMethodName(method);
             record.setLoggerName(SpatialImageReader.LOGGER.getName());
             SpatialImageReader.LOGGER.log(record);
         }
     }
 
     /**
-     * Returns {@code true} if the parameters contain at least one
-     * {@linkplain #getSourceIndiceForDimension(Object[]) source indice} defined to a value
-     * different than 0. This is the case if at least one {@code setSourceIndiceForDimension(...)}
-     * method has been invoked with an {@code indice} argument different than zero.
+     * Creates a new handler for selecting a slice of the (<var>x</var>, <var>y</var>) plane to
+     * read. This is relevant only for <var>n</var>-dimensional dataset where <var>n</var>&gt;2.
+     * The caller should invoke one or many {@link DimensionSlice#addDimensionId(int)
+     * addDimensionId(...)} methods for specifying the dimension, and invoke
+     * {@link DimensionSlice#setIndice(int)} for specifying the indice of the
+     * <cite>slice point</cite> (WMS 2.0 terminology).
      * <p>
-     * This method is relevant only for <var>n</var>-dimensional dataset where <var>n</var>&gt;2.
+     * A new handler can be created for each supplemental dimension above the two (<var>x</var>,
+     * <var>y</var>) dimensions and the bands handled by Java2D. If no slice is specified for a
+     * supplemental dimension, then the default is the slice at indice 0.
      *
-     * @return {@code true} if the parameters contain at least one indice defined
-     *         to a value different than 0.
+     * @return A new handler for specifying the indice of the slice to read in a supplemental
+     *         dimension.
      *
      * @since 3.08
      */
-    public boolean hasNonDefaultSourceIndices() {
-        return sourceIndicesForDimensions != null && !sourceIndicesForDimensions.isEmpty();
+    public DimensionSlice newDimensionSlice() {
+        if (slicesForDimensions == null) {
+            slicesForDimensions = new HashMap<Object,DimensionSlice>();
+            apiMapping = new DimensionSlice[DimensionSlice.API.VALIDS.length];
+        }
+        return new DimensionSlice(this, slicesForDimensions, apiMapping, false);
     }
 
     /**
      * Returns the first key in the given map. If the map has more than one entry,
-     * a warning is emitted. If the map is empty, {@code null} is returned.
+     * a warning is emitted. If the map is empty, {@code null} is returned. This
+     * method is used for determining the {@link DimensionSlice} instance to use
+     * after we have iterated over the properties of all axes in a coordinate system.
      *
+     * @param  <T>         Either {@link Integer} or {@link API}.
      * @param  methodName  The method which is invoking this method, used for logging purpose.
      * @param  found       The map from which to extract the first key.
      * @return The first key in the given map, or {@code null} if none.
      */
-    private Integer firstIndice(final String methodName, final Map<Integer,?> found) {
-        final int size = found.size();
-        if (size == 0) {
-            return null;
-        }
-        /*
-         * At least one (indice, property) pair has been found.  We will return the
-         * indice. However if we found more than one pair, we have an ambiguity. In
-         * the later case, we will log a warning before to return the first indice.
-         */
-        if (size > 1) {
-            final StringBuilder buffer = new StringBuilder();
-            for (final Object value : found.values()) {
-                if (buffer.length() != 0) {
-                    buffer.append(" | ");
+    private <T> T first(final String methodName, final Map<T,?> found) {
+        if (found != null) {
+            final int size = found.size();
+            if (size != 0) {
+                /*
+                 * At least one (source, property) pair has been found.  We will return the
+                 * indice. However if we found more than one pair, we have an ambiguity. In
+                 * the later case, we will log a warning before to return the first indice.
+                 */
+                if (size > 1) {
+                    final StringBuilder buffer = new StringBuilder();
+                    for (final Object value : found.values()) {
+                        if (buffer.length() != 0) {
+                            buffer.append(" | ");
+                        }
+                        buffer.append(value);
+                    }
+                    String message = getErrorResources().getString(Errors.Keys.AMBIGIOUS_VALUE_$1, buffer);
+                    buffer.setLength(0);
+                    buffer.append(message);
+                    for (final T source : found.keySet()) {
+                        if (buffer.length() != 0) {
+                            buffer.append(',');
+                        }
+                        buffer.append(' ').append(source);
+                    }
+                    message = buffer.toString();
+                    warningOccurred(methodName, message);
                 }
-                buffer.append(value);
+                return found.keySet().iterator().next();
             }
-            String message = getErrorResources().getString(Errors.Keys.AMBIGIOUS_VALUE_$1, buffer);
-            buffer.setLength(0);
-            buffer.append(message);
-            for (final int indice : found.keySet()) {
-                if (buffer.length() != 0) {
-                    buffer.append(',');
-                }
-                buffer.append(' ').append(indice);
-            }
-            message = buffer.toString();
-            warningOccurred(methodName, message);
         }
-        return found.keySet().iterator().next();
+        return null;
+    }
+
+    /**
+     * Returns the slice at the given dimension. This is relevant only for <var>n</var>-dimensional
+     * dataset where <var>n</var>&gt;2. The dimension can be identified by a zero-based index as an
+     * {@link Integer}, a dimension name as a {@link String}, or an axis direction as an
+     * {@link AxisDirection}. More than one identifier can be specified in order to increase
+     * the chance to get the indice, for example:
+     *
+     * {@preformat java
+     *     DimensionSlice slice = getDimensionSlice("time", AxisDirection.FUTURE);
+     * }
+     *
+     * If different slices are found for the given identifiers, then a warning is emitted and
+     * this method returns the first slice matching the given identifiers. If no slice is found,
+     * {@code null} is returned.
+     *
+     * @param  dimension {@link Integer}, {@link String} or {@link AxisDirection}
+     *         that identify the dimension for which the slice is desired.
+     * @return The slice for the given dimension, or {@code null} if none.
+     *
+     * @since 3.08
+     */
+    public DimensionSlice getDimensionSlice(final Object... dimension) {
+        if (slicesForDimensions != null) {
+            Map<DimensionSlice,Object> found = null;
+            for (final Object id : dimension) {
+                final DimensionSlice slice = slicesForDimensions.get(id);
+                if (slice != null) {
+                    if (found == null) {
+                        found = new LinkedHashMap<DimensionSlice,Object>(4);
+                    }
+                    final Object old = found.put(slice, id);
+                    if (old != null) {
+                        found.put(slice, old); // Keep the old value.
+                    }
+                }
+            }
+            final DimensionSlice slice = first("getDimensionSlice", found);
+            if (slice != null) {
+                return slice;
+            }
+        }
+        return null;
     }
 
     /**
      * Returns the indice to set at the given dimension. This is relevant only for
-     * <var>n</var>-dimensional dataset where <var>n</var>&gt;2 (note that dimension
-     * {@value #DEFAULT_DIMENSION_FOR_BANDS} may be assigned to bands). The dimension
+     * <var>n</var>-dimensional dataset where <var>n</var>&gt;2. The dimension
      * can be identified by a zero-based index as an {@link Integer}, a dimension name
      * as a {@link String}, or an axis direction as an {@link AxisDirection}. More than
      * one identifier can be specified in order to increase the chance to get the indice,
@@ -254,8 +296,9 @@ public class SpatialImageReadParam extends ImageReadParam {
      *     int indice = getSourceIndiceForDimension("time", AxisDirection.FUTURE);
      * }
      *
-     * If different indices are found for the given identifiers, a warning is emitted
-     * and the first indice is returned. If no indice is found, 0 is returned.
+     * If different indices are found for the given identifiers, then a warning is emitted and this
+     * method returns the indice for the first slice matching the given identifiers. If no indice
+     * is found, 0 is returned.
      *
      * @param  dimension {@link Integer}, {@link String} or {@link AxisDirection}
      *         that identify the dimension for which the indice is desired.
@@ -264,18 +307,22 @@ public class SpatialImageReadParam extends ImageReadParam {
      * @since 3.08
      */
     public int getSourceIndiceForDimension(final Object... dimension) {
-        if (sourceIndicesForDimensions != null) {
-            final Map<Integer,Object> found = new LinkedHashMap<Integer,Object>(4);
+        if (slicesForDimensions != null) {
+            Map<Integer,Object> found = null;
             for (final Object id : dimension) {
-                final Integer indice = sourceIndicesForDimensions.get(id);
-                if (indice != null) {
+                final DimensionSlice source = slicesForDimensions.get(id);
+                if (source != null) {
+                    final Integer indice = source.getIndice();
+                    if (found == null) {
+                        found = new LinkedHashMap<Integer,Object>(4);
+                    }
                     final Object old = found.put(indice, id);
                     if (old != null) {
                         found.put(indice, old); // Keep the old value.
                     }
                 }
             }
-            final Integer indice = firstIndice("getSourceIndiceForDimension", found);
+            final Integer indice = first("getSourceIndiceForDimension", found);
             if (indice != null) {
                 return indice;
             }
@@ -284,261 +331,113 @@ public class SpatialImageReadParam extends ImageReadParam {
     }
 
     /**
-     * Sets the indice of the slice to read in the given dimension. This is relevant only
-     * for <var>n</var>-dimensional dataset where <var>n</var>&gt;2 (note that dimension
-     * {@value #DEFAULT_DIMENSION_FOR_BANDS} may be assigned to bands). For example in
-     * a 4-D dataset having (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions,
-     * users may want to read the (<var>x</var>, <var>y</var>) plane at time <var>t</var><sub>25</sub>.
-     * This can be done by invoking:
+     * Returns the dimension to assign to a standard Java API. For example in a dataset having
+     * (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions, it may be useful to
+     * handle the <var>z</var> dimension as bands. After the method calls below, users can select
+     * one or many elevation indices through the standard {@link #setSourceBands(int[])} API.
      *
      * {@preformat java
-     *     setSourceIndiceForDimension(25, 3);
+     *     DimensionSlice slice = parameters.newDimensionSlice();
+     *     slice.setDimensionId(3);
+     *     slice.setAPI(DimensionSlice.API.BANDS);
      * }
      *
-     * If no {@code setSourceIndiceForDimension} method is invoked, then the default value is 0.
-     * This means that for the above-cited 4-D dataset, only the image at the first
-     * time (<var>t</var><sub>0</sub>) and first altitude (<var>z</var><sub>0</sub>)
-     * is selected by default. See <cite>Handling more than two dimensions</cite> in
-     * <a href="#skip-navbar_top">class javadoc</a> for more details.
+     * Lets {@code slice} be the {@link DimensionSlice} instance on which the
+     * {@linkplain DimensionSlice#setAPI API has been set} to the given {@code api} argument value.
+     * The default implementation makes the following choice:
      *
-     * @param indice The indice of the plane to read in the given dimension.
-     * @param dimension The 0-based index of the dimension for which the indice is set.
-     *
-     * @since 3.08
-     */
-    public void setSourceIndiceForDimension(final int indice, final int dimension) {
-        setSourceIndiceForDimension(new Integer[] {dimension}, indice);
-    }
-
-    /**
-     * Sets the indice of the slice to read in the given dimension. This is relevant only
-     * for <var>n</var>-dimensional dataset where <var>n</var>&gt;2 (note that dimension
-     * {@value #DEFAULT_DIMENSION_FOR_BANDS} may be assigned to bands). The dimension is
-     * identified by name, which works only with file formats that provide support for named
-     * dimensions (e.g. NetCDF).
-     * <p>
-     * For example in a 4-D dataset having (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>)
-     * dimensions, users may want to read the (<var>x</var>, <var>y</var>) plane at time
-     * <var>t</var><sub>25</sub>. This can be done by invoking the following (assuming
-     * that the time dimension is named "<cite>time</cite>" in the file to be read):
-     *
-     * {@preformat java
-     *     setSourceIndiceForDimension(25, "time");
-     * }
-     *
-     * More than one name can be specified if they should be considered as the same dimension.
-     * For example in order to set the indice in the <var>z</var> dimension, it may be necessary
-     * to specify both the {@link "height"} and {@code "depth"} names.
-     *
-     * @param indice The indice of the plane to read in the given dimension.
-     * @param dimension The name of the dimension for which the indice is set.
-     *
-     * @since 3.08
-     */
-    public void setSourceIndiceForDimension(final int indice, final String... dimension) {
-        setSourceIndiceForDimension(dimension, indice);
-    }
-
-    /**
-     * Sets the indice of the slice to read in the given dimension. This is relevant only
-     * for <var>n</var>-dimensional dataset where <var>n</var>&gt;2 (note that dimension
-     * {@value #DEFAULT_DIMENSION_FOR_BANDS} may be assigned to bands). The dimension is
-     * identified by axis direction.
-     * <p>
-     * For example in a 4-D dataset having (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>)
-     * dimensions, users may want to read the (<var>x</var>, <var>y</var>) plane at time
-     * <var>t</var><sub>25</sub>. This can be done by invoking the following:
-     *
-     * {@preformat java
-     *     setSourceIndiceForDimension(25, AxisDirection.FUTURE);
-     * }
-     *
-     * More than one direction can be specified if they should be considered as the same dimension.
-     * For example in order to set the indice in the <var>z</var> dimension, it may be necessary to
-     * specify both the {@link AxisDirection#UP UP} and {@link AxisDirection#DOWN DOWN} directions.
-     *
-     * @param indice The indice of the plane to read in the given dimension.
-     * @param dimension The name of the dimension for which the indice is set.
-     *
-     * @since 3.08
-     */
-    public void setSourceIndiceForDimension(final int indice, final AxisDirection... dimension) {
-        setSourceIndiceForDimension(dimension, indice);
-    }
-
-    /**
-     * Implementation of {@code setSourceIndiceForDimension(...)} methods.
-     */
-    private void setSourceIndiceForDimension(final Object[] dimensions, final int indice) {
-        if (indice < 0) {
-            throw new IllegalArgumentException(getErrorResources()
-                    .getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "indice", indice));
-        }
-        if (indice != 0) {
-            if (sourceIndicesForDimensions == null) {
-                sourceIndicesForDimensions = new HashMap<Object,Integer>();
-            }
-            for (final Object dimension : dimensions) {
-                sourceIndicesForDimensions.put(dimension, indice);
-            }
-        } else if (sourceIndicesForDimensions != null) {
-            for (final Object dimension : dimensions) {
-                sourceIndicesForDimensions.remove(dimension);
-            }
-        }
-    }
-
-    /**
-     * Returns the dimension to assign to bands. The default implementation makes the following
-     * choice:
-     * <p>
      * <ol>
-     *   <li>If {@link #setDimensionForBands(int)} has been invoked, then the value specified
-     *       to that method is returned regardeless the {@code properties} argument value.</li>
-     *   <li>Otherwise if a {@code setDimensionForBands(...)} method has been invoked and the
-     *       {@code properties} argument is non-null, then this method iterates over the given
-     *       properties (<em>note</em>: the iteration order must be the dimension order). If an
-     *       element is equals to a value specified to a {@code setDimensionForBands(...)} method,
-     *       then the position of that element in the {@code properties} iteration is returned.</li>
-     *   <li>Otherwise this method returns {@value #DEFAULT_DIMENSION_FOR_BANDS}.</li>
+     *   <li><p>If <code>slice.{@linkplain DimensionSlice#setDimensionId(int) setDimensionId(int)}</code>
+     *       has been invoked, then the value specified to that method is returned regardeless the
+     *       {@code properties} argument value.</p></li>
+     *   <li><p>Otherwise if an other <code>slice.{@linkplain DimensionSlice#setDimensionId(String[])
+     *       setDimensionId(...)}</code> method has been invoked and the {@code properties} argument
+     *       is non-null, then this method iterates over the given properties. The iteration must
+     *       return exactly one element for each dimension, in order.
+     *       If an element is equals to a value specified to a {@code setDimensionId(...)} method,
+     *       then the position of that element in the {@code properties} iteration is returned.</p></li>
+     *   <li><p>Otherwise this method returns 0 for {@link DimensionSlice.API#COLUMNS}, 1 for
+     *       {@link DimensionSlice.API#ROWS ROWS}, 2 for {@link DimensionSlice.API#BANDS BANDS}
+     *       or -1 otherwise.</p></li>
      * </ol>
-     * <p>
-     * If more than one dimension match, then a warning is emitted and the first dimension
-     * is returned.
      *
+     * If more than one dimension match, then a warning is emitted and this method returns the
+     * dimension index of the first slice matching the given properties.
+     *
+     * @param  api The API for which to get the dimension index. This is typically
+     *         {@link DimensionSlice.API#BANDS BANDS}.
      * @param  properties Contains one property (the dimension name as a {@link String} or the axis
      *         direction as an {@link AxisDirection}) for each dimension. The iteration order must
      *         be the order of dimensions in the dataset. This argument can be {@code null} if there
      *         is no such properties.
-     * @return The dimension assigned to bands.
-     *
-     * @see #DEFAULT_DIMENSION_FOR_BANDS
+     * @return The dimension assigned to the given API, or -1 if none.
      *
      * @since 3.08
      */
-    public int getDimensionForBands(final Iterable<?> properties) {
-        final Object dimensionForBands = this.dimensionForBands;
-        if (dimensionForBands instanceof Integer) {
-            return (Integer) dimensionForBands;
-        }
-        if (properties != null && dimensionForBands != null) {
-            final Set<?> set = (Set<?>) dimensionForBands;
-            final Map<Integer,Object> found = new LinkedHashMap<Integer,Object>(4);
-            int position = 0;
-            for (Object property : properties) {
+    public int getDimensionForAPI(final DimensionSlice.API api, final Iterable<?> properties) {
+        // Note: we want a NullPointerException if 'api' is null.
+        if (!api.equals(DimensionSlice.API.NONE) && apiMapping != null) {
+            final DimensionSlice slice = apiMapping[api.ordinal()];
+            if (slice != null) {
                 /*
-                 * Undocumented (for now) feature: if we have Map.Entry<?,Integer>,
-                 * the value will be the dimension. This allow us to pass more than
-                 * one property per dimension.
+                 * Get all identifiers for the slice. If an explicit dimension
+                 * index is found in the process, it will be returned immediately.
                  */
-                if (property instanceof Map.Entry<?,?>) {
-                    final Map.Entry<?,?> entry = (Map.Entry<?,?>) property;
-                    property = entry.getKey();
-                    position = (Integer) entry.getValue();
-                }
-                if (set.contains(property)) {
-                    final Object old = found.put(position, property);
-                    if (old != null) {
-                        found.put(position, old); // Keep the first value.
+                Set<Object> identifiers = null;
+                for (final Map.Entry<Object,DimensionSlice> entry : slicesForDimensions.entrySet()) {
+                    if (slice.equals(entry.getValue())) {
+                        final Object key = entry.getKey();
+                        if (key instanceof Integer) {
+                            return (Integer) key;
+                        }
+                        if (identifiers == null) {
+                            identifiers = new HashSet<Object>(8);
+                        }
+                        identifiers.add(key);
                     }
                 }
-                position++;
+                /*
+                 * No explicit dimension found. Now searchs for an element from the
+                 * given iterator which would be one of the declared identifiers.
+                 */
+                if (properties != null && identifiers != null) {
+                    Map<Integer,Object> found = null;
+                    int position = 0;
+                    for (Object property : properties) {
+                        /*
+                         * Undocumented (for now) feature: if we have Map.Entry<?,Integer>,
+                         * the value will be the dimension. This allow us to pass more than
+                         * one property per dimension.
+                         */
+                        if (property instanceof Map.Entry<?,?>) {
+                            final Map.Entry<?,?> entry = (Map.Entry<?,?>) property;
+                            property = entry.getKey();
+                            position = (Integer) entry.getValue();
+                        }
+                        if (identifiers.contains(property)) {
+                            if (found == null) {
+                                found = new LinkedHashMap<Integer,Object>(4);
+                            }
+                            final Object old = found.put(position, property);
+                            if (old != null) {
+                                found.put(position, old); // Keep the first value.
+                            }
+                        }
+                        position++;
+                    }
+                    final Integer dimension = first("getDimensionForAPI", found);
+                    if (dimension != null) {
+                        return dimension;
+                    }
+                }
             }
-            final Integer dimension = firstIndice("getDimensionForBands", found);
-            if (dimension != null) {
-                return dimension;
-            }
         }
-        return DEFAULT_DIMENSION_FOR_BANDS;
-    }
-
-    /**
-     * Assigns a dimension to band indices. For example in a dataset having (<var>x</var>,
-     * <var>y</var>, <var>z</var>, <var>t</var>) dimensions, it may be useful to handle the
-     * <var>t</var> dimension as bands. After invoking this method with the {@code 3} argument
-     * value, users can select one or many time indices through the standard
-     * {@link #setSourceBands(int[])} API.
-     * <p>
-     * Invoking this method discard the value set by previous call to any {@code setDimensionForBands(...)}
-     * method. If no {@code setDimensionForBands} method is invoked, then the default value is
-     * {@value #DEFAULT_DIMENSION_FOR_BANDS}. See <cite>Handling more than two dimensions</cite>
-     * in <a href="#skip-navbar_top">class javadoc</a> for more details.
-     *
-     * @param dimension The 0-based index of the dimension to assign to bands.
-     *        Shall be equals or greater than {@value #DEFAULT_DIMENSION_FOR_BANDS}.
-     *
-     * @since 3.08
-     */
-    public void setDimensionForBands(final int dimension) {
-        if (dimension < DEFAULT_DIMENSION_FOR_BANDS) {
-            throw new IllegalArgumentException(getErrorResources().getString(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "dimension", dimension));
+        switch (api) {
+            case COLUMNS: return 0;
+            case ROWS:    return 1;
+            case BANDS:   return 2;
+            default:      return -1;
         }
-        dimensionForBands = dimension;
-    }
-
-    /**
-     * Assigns a dimension to band indices. The dimension is identified by name, which works only
-     * with file formats that provide support for named dimensions (e.g. NetCDF). For example in
-     * a dataset having (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions, it may
-     * be useful to handle the <var>t</var> dimension as bands. After invoking this method with the
-     * {@code "time"} argument value (assuming the dimension is named that way), users can select
-     * one or many time indices through the standard {@link #setSourceBands(int[])} API.
-     * <p>
-     * More than one name can be specified if they should be considered as the same dimension.
-     * For example in order to assign the <var>z</var> dimension to bands, it may be necessary
-     * to specify both the {@link "height"} and {@code "depth"} names.
-     * <p>
-     * Invoking this method discard the value set by previous call to the
-     * {@link #setDimensionForBands(int)} method. Note however that this method
-     * can be combined with {@link #setDimensionForBands(AxisDirection[])}.
-     *
-     * @param names The name(s) of the dimension to assign to bands.
-     *
-     * @since 3.08
-     */
-    public void setDimensionForBands(final String... names) {
-        dimensionForBands(names);
-    }
-
-    /**
-     * Assigns a dimension to band indices. The dimension is identified by axis direction. For
-     * example in a dataset having (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>)
-     * dimensions, it may be useful to handle the <var>t</var> dimension as bands. After invoking
-     * this method with the {@link AxisDirection#FUTURE} argument value, users can select one or
-     * many time indices through the standard {@link #setSourceBands(int[])} API.
-     * <p>
-     * More than one direction can be specified if they should be considered as the same dimension.
-     * For example in order to assign the <var>z</var> dimension to bands, it may be necessary to
-     * specify both the {@link AxisDirection#UP UP} and {@link AxisDirection#DOWN DOWN} directions.
-     * <p>
-     * Invoking this method discard the value set by previous call to the
-     * {@link #setDimensionForBands(int)} method. Note however that this method
-     * can be combined with {@link #setDimensionForBands(String[])}.
-     *
-     * @param directions The direction(s) of the dimension to assign to bands.
-     *
-     * @since 3.08
-     */
-    public void setDimensionForBands(final AxisDirection... directions) {
-        dimensionForBands(directions);
-    }
-
-    /**
-     * Implementation of {@code setDimensionForBands(...)} methods.
-     */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    private void dimensionForBands(final Object[] identifiers) {
-        final List<Object> list = Arrays.asList(identifiers);
-        final Set<Object> ids;
-        if (dimensionForBands instanceof Set<?>) {
-            ids = (Set) dimensionForBands;
-            ids.addAll(list);
-        } else {
-            ids = new HashSet<Object>(list);
-            dimensionForBands = ids;
-        }
-        ids.remove(null);
     }
 
     /**
@@ -615,6 +514,16 @@ public class SpatialImageReadParam extends ImageReadParam {
      */
     public void setPaletteName(final String palette) {
         this.palette = palette;
+    }
+
+    /**
+     * Returns the locale used for formatting error messages, or {@code null} if none.
+     * The default implementation returns the locale used by the {@link ImageReader}
+     * given at construction time, or {@code null} if none.
+     */
+    @Override
+    public Locale getLocale() {
+        return (reader != null) ? reader.getLocale() : null;
     }
 
     /**
