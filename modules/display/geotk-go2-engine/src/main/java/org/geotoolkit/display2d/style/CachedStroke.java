@@ -67,7 +67,9 @@ public class CachedStroke extends Cache<Stroke>{
     @Override
     public void evaluate(){
         if(!isNotEvaluated) return;
-        
+
+        this.isStatic = true;
+
         if(!evaluateComposite() || !evaluatePaint() || !evaluateStroke()){
             //composite is completely translucent or paint is not visible
             //we cache nothing seens nothing can be render
@@ -117,7 +119,7 @@ public class CachedStroke extends Cache<Stroke>{
 
         final GraphicFill graphicFill = styleElement.getGraphicFill();
 
-        if(graphicFill != null && graphicFill != null){
+        if(graphicFill != null){
             cachedGraphic = new CachedGraphic(graphicFill);
 
             if(cachedGraphic.isStaticVisible() == VisibilityState.UNVISIBLE){
@@ -173,7 +175,7 @@ public class CachedStroke extends Cache<Stroke>{
         final Expression expLineCap = styleElement.getLineCap();
         final Expression expLineJoin = styleElement.getLineJoin();
         final Expression expWidth = styleElement.getWidth();
-        boolean isStatic = true;
+        boolean strokeStatic = true;
 
         float[] candidateDashes = null;
         float candidateOffset = Float.NaN;
@@ -188,7 +190,7 @@ public class CachedStroke extends Cache<Stroke>{
         if(GO2Utilities.isStatic(expOffset)){
             candidateOffset = GO2Utilities.evaluate(expOffset, null, Float.class, 1f);
         }else{
-            isStatic = false;
+            strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expOffset,requieredAttributs);
         }
 
@@ -201,7 +203,7 @@ public class CachedStroke extends Cache<Stroke>{
             else if (cap.equalsIgnoreCase("round"))  candidateCap = BasicStroke.CAP_ROUND;
             else                                     candidateCap = BasicStroke.CAP_BUTT;
         }else{
-            isStatic = false;
+            strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expLineCap,requieredAttributs);
         }
 
@@ -214,7 +216,7 @@ public class CachedStroke extends Cache<Stroke>{
             else if (join.equalsIgnoreCase("round")) candidateJoin = BasicStroke.JOIN_ROUND;
             else                                     candidateJoin = BasicStroke.JOIN_BEVEL;
         }else{
-            isStatic = false;
+            strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expLineJoin,requieredAttributs);
         }
 
@@ -235,25 +237,27 @@ public class CachedStroke extends Cache<Stroke>{
         }else{
             //this style visibility is dynamic
             if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
-            isStatic = false;
+            strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expWidth,requieredAttributs);
         }
 
         // we cache each possible expression ------------------------------
         this.cachedDashes = candidateDashes;
-        if(candidateOffset != Float.NaN) cachedDashOffset = candidateOffset;
+        if(!Float.isNaN(candidateOffset)) cachedDashOffset = candidateOffset;
         if(candidateCap != -1) cachedCap = candidateCap;
         if(candidateJoin != -1) cachedJoin = candidateJoin;
-        if(candidateWidth != Float.NaN) cachedWidth = candidateWidth;
+        if(!Float.isNaN(candidateWidth)) cachedWidth = candidateWidth;
 
         //if static we can can cache the stroke directly----------------------
-        if(isStatic){
+        if(strokeStatic){
             //we can never cache the java2d stroke seens it's size depend on the symbolizer unit of mesure
             if (cachedDashes != null) {
                 cachedStroke = new BasicStroke(candidateWidth, candidateCap, candidateJoin, 10f, cachedDashes, cachedDashOffset);
             } else {
                 cachedStroke = new BasicStroke(candidateWidth, candidateCap, candidateJoin, 10f);
             }
+        }else{
+            this.isStatic = false;
         }
 
         return true;
@@ -270,7 +274,7 @@ public class CachedStroke extends Cache<Stroke>{
     public float getMargin(final Feature feature, final float coeff){
         evaluate();
         
-        if(cachedWidth == Float.NaN){
+        if(Float.isNaN(cachedWidth)){
             final Expression expWidth = styleElement.getWidth();
             return GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
         }
@@ -441,7 +445,7 @@ public class CachedStroke extends Cache<Stroke>{
             }
 
             //test dynamic width
-            if(cachedWidth == Float.NaN){
+            if(Float.isNaN(cachedWidth)){
                 final Expression expWidth = styleElement.getWidth();
                 Float j2dWidth = GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
                 if(j2dWidth == 0) return false;

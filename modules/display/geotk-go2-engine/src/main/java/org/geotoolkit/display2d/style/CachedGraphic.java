@@ -93,6 +93,29 @@ public class CachedGraphic extends Cache<Graphic>{
             //we can try to cache other parameters
             evaluateDisplacement();
             evaluateAnchor();
+
+            if(cachedMark != null){
+                isStatic = (
+                        cachedMark.isStatic() &&
+                        !Float.isNaN(cachedOpacity) &&
+                        !Float.isNaN(cachedRotation) &&
+                        !Float.isNaN(cachedSize) &&
+                        !Float.isNaN(cachedDispX) &&
+                        !Float.isNaN(cachedDispY)
+                        );
+            }else if(cachedExternal != null){
+                isStatic = (
+                        cachedExternal.isStatic() &&
+                        !Float.isNaN(cachedOpacity) &&
+                        !Float.isNaN(cachedRotation) &&
+                        !Float.isNaN(cachedSize) &&
+                        !Float.isNaN(cachedDispX) &&
+                        !Float.isNaN(cachedDispY)
+                        );
+            }else{
+                throw new IllegalStateException("Inconsistent symbology graphic cache.");
+            }
+
         }
         
         isNotEvaluated = false;
@@ -165,21 +188,20 @@ public class CachedGraphic extends Cache<Graphic>{
                     
                     //if the mark is invisible this graphic is invisible too
                     //so there is nothing to cache
-                    if(candidateMark.isStaticVisible() == VisibilityState.UNVISIBLE){
+                    VisibilityState markStaticVisibility = candidateMark.isStaticVisible();
+                    if(markStaticVisibility == VisibilityState.UNVISIBLE){
                         isStaticVisible = VisibilityState.UNVISIBLE;
                         return false;
-                    }
-                    
-//                    //if size is static and mark static visible, we can cache the symbol graphic
-//                    if(cachedSize != Float.NaN && cachedMark.isStatic() && cachedMark.isStaticVisible() == VisibilityState.VISIBLE){
-//                        BufferedImage buffer = cachedMark.getImage(null, cachedSize);
-//                        cachedValues.put(ID_BUFFER, buffer);
-//                    }else{
-                        if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
-                        isStatic = false;
+                    }else if(markStaticVisibility == VisibilityState.VISIBLE){
+                        if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
+                        if(!candidateMark.isStatic()) isStatic = false;
                         this.cachedMark = candidateMark;
-//                    }
-                    
+                    }else{
+                        if(isStaticVisible != VisibilityState.UNVISIBLE) isStaticVisible = VisibilityState.DYNAMIC;
+                        if(!candidateMark.isStatic()) isStatic = false;
+                        this.cachedMark = candidateMark;
+                    }
+                                        
                     requieredAttributs.addAll( candidateMark.getRequieredAttributsName() );
                     found = true;
                     break graphicLoop;
@@ -197,7 +219,7 @@ public class CachedGraphic extends Cache<Graphic>{
                     }
                     
 //                    //if size is static and external static visible, we can cache the symbol graphic
-//                    if(cachedSize != Float.NaN && cachedExternal.isStatic() && cachedExternal.isStaticVisible() == VisibilityState.VISIBLE){
+//                    if(!Float.isNaN(cachedSize) && cachedExternal.isStatic() && cachedExternal.isStaticVisible() == VisibilityState.VISIBLE){
 //                        BufferedImage buffer = cachedExternal.getImage(cachedSize);
 //                        cachedValues.put(ID_SUBBUFFER, buffer);
 //                    }else{
@@ -222,7 +244,7 @@ public class CachedGraphic extends Cache<Graphic>{
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
             
 //            //if size is static, we can cache the symbol graphic
-//            if(cachedSize != Float.NaN){
+//            if(!Float.isNaN(cachedSize)){
 //                BufferedImage buffer = cachedMark.getImage(null, cachedSize);
 //                cachedValues.put(ID_SUBBUFFER, buffer);
 //            }else{
@@ -348,12 +370,12 @@ public class CachedGraphic extends Cache<Graphic>{
         float candidateRotation = cachedRotation;
         Float candidateSize = cachedSize;
 
-        if(candidateOpacity == Float.NaN){
+        if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
             candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Float.class, 1f);
         }
 
-        if(candidateRotation == Float.NaN){
+        if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
             final Float rot = GO2Utilities.evaluate(expRotation, feature, Float.class, 0f);
             candidateRotation = new Float(Math.toRadians(rot));
@@ -430,7 +452,7 @@ public class CachedGraphic extends Cache<Graphic>{
         
         final float[] disps = new float[2];
                 
-        if(cachedDispX == Float.NaN){
+        if(Float.isNaN(cachedDispX)){
             //if dispX is Float.NaN it means it is dynamic
             final Expression dispX = styleElement.getDisplacement().getDisplacementX();
             disps[0] = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
@@ -438,7 +460,7 @@ public class CachedGraphic extends Cache<Graphic>{
             disps[0] = cachedDispX;
         }
         
-        if(cachedDispY == Float.NaN){
+        if(Float.isNaN(cachedDispY)){
             //if dispY is Float.NaN it means it is dynamic
             final Expression dispY = styleElement.getDisplacement().getDisplacementY();
             disps[1] = GO2Utilities.evaluate(dispY, null, Float.class, 0f);
@@ -458,7 +480,7 @@ public class CachedGraphic extends Cache<Graphic>{
         
         final float[] anchors = new float[2];
         
-        if(cachedAnchorX == Float.NaN){
+        if(Float.isNaN(cachedAnchorX)){
             //if dispX is null it means it is dynamic
             final Expression anchorX = styleElement.getAnchorPoint().getAnchorPointX();
             anchors[0] = GO2Utilities.evaluate(anchorX, null, Float.class, 0.5f);
@@ -466,7 +488,7 @@ public class CachedGraphic extends Cache<Graphic>{
             anchors[0] = cachedAnchorX;
         }
         
-        if(cachedAnchorY == Float.NaN){
+        if(Float.isNaN(cachedAnchorY)){
             //if dispY is null it means it is dynamic
             final Expression anchorY = styleElement.getDisplacement().getDisplacementY();
             anchors[1] = GO2Utilities.evaluate(anchorY, null, Float.class, 0.5f);
@@ -494,20 +516,20 @@ public class CachedGraphic extends Cache<Graphic>{
         float candidateRotation = cachedRotation;
         float candidateSize = cachedSize;
 
-        if(candidateOpacity == Float.NaN){
+        if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
             candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Float.class, 1f);
         }
 
         if(candidateOpacity == 0) return 0;
         
-        if(candidateRotation == Float.NaN){
+        if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
             final Float rot = GO2Utilities.evaluate(expRotation, feature, Float.class, 0f);
             candidateRotation = new Float(Math.toRadians(rot));
         }
 
-        if(candidateSize == Float.NaN){
+        if(Float.isNaN(candidateSize)){
             final Expression expSize = styleElement.getSize();
             candidateSize = GO2Utilities.evaluate(expSize, feature, Float.class, 16f);
         }
@@ -577,14 +599,14 @@ public class CachedGraphic extends Cache<Graphic>{
 //            }
             
             //test dynamic opacity
-            if(cachedOpacity == Float.NaN){
+            if(Float.isNaN(cachedOpacity)){
                 final Expression expopacity = styleElement.getOpacity();
                 float j2dOpacity = GO2Utilities.evaluate(expopacity, feature, Float.class, 1f);
                 if(j2dOpacity == 0) return false;
             }
             
             //test dynamic size
-            if(cachedSize == Float.NaN){
+            if(Float.isNaN(cachedSize)){
                 final Expression expSize = styleElement.getSize();
                 float j2dSize = GO2Utilities.evaluate(expSize, feature, Float.class, 16f);
                 if(j2dSize == 0) return false;

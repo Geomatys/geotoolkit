@@ -75,7 +75,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
     public float getOffset(Feature feature, float coeff){
         evaluate();
 
-        if(cachedOffset == Float.NaN){
+        if(Float.isNaN(cachedOffset)){
             //if offset is null it means it is dynamic
             final Expression offset = line.getPerpendicularOffset();
             return GO2Utilities.evaluate(offset, null, Float.class, 0f);

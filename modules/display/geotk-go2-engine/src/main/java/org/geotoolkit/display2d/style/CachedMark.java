@@ -60,7 +60,8 @@ public class CachedMark extends Cache<Mark>{
     @Override
     protected void evaluate() {
         if(!isNotEvaluated) return;
-        
+
+        this.isStatic = true;
         if(!evaluateMark()){
             //composite is completely translucent or paint is not visible
             //we cache nothing seens nothing can be render

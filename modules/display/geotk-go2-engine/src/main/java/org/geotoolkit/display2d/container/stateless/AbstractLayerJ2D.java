@@ -23,6 +23,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -60,13 +61,18 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     protected final T layer;
 
     public AbstractLayerJ2D(final ReferencedCanvas2D canvas, final T layer){
-        super(canvas, layer.getBounds().getCoordinateReferenceSystem());
+        //do not use layer crs here, to long to calculate
+        super(canvas, canvas.getObjectiveCRS());
+        //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
         this.layer = layer;
 
         layer.addLayerListener(listener);
 
         try{
-            setEnvelope(layer.getBounds());
+            setEnvelope(CRS.getEnvelope(canvas.getObjectiveCRS()));
+            //todo we do not use the layer envelope since it can be reallllly long to calculate
+            //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
+            //setEnvelope(layer.getBounds());
         }catch(TransformException ex){
             ex.printStackTrace();
         }

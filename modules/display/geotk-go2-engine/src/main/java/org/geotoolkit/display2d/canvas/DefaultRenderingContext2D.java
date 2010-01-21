@@ -93,6 +93,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     private static final Logger LOGGER = Logging.getLogger(DefaultRenderingContext2D.class);
 
+    private static final int DISPLAY_TRS = 0;
+    private static final int OBJECTIVE_TRS = 1;
+    private static final int OTHER_TRS = 2;
+    private int current = DISPLAY_TRS;
+
     /**
      * The originating canvas.
      */
@@ -356,7 +361,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     @Override
     public void switchToDisplayCRS() {
-        graphics.setTransform(displayToDevice);
+        if(current != DISPLAY_TRS){
+            graphics.setTransform(displayToDevice);
+            current = DISPLAY_TRS;
+        }
     }
 
     /**
@@ -364,7 +372,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     @Override
     public void switchToObjectiveCRS() {
-        graphics.setTransform(objectiveToDevice);
+        if(current != OBJECTIVE_TRS){
+            graphics.setTransform(objectiveToDevice);
+            current = OBJECTIVE_TRS;
+        }
     }
 
     /**
@@ -373,20 +384,21 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public void setGraphicsCRS(CoordinateReferenceSystem crs) throws TransformException {
 
-        final AffineTransform at;
-        if (crs == objectiveCRS || crs == objectiveCRS2D) {
-            at = objectiveToDevice;
-        } else if (crs == displayCRS) {
-            at = displayToDevice;
+        if (crs == displayCRS) {
+            switchToDisplayCRS();
+        }else if (crs == objectiveCRS || crs == objectiveCRS2D) {
+            switchToObjectiveCRS();
         } else try {
             crs = CRSUtilities.getCRS2D(crs);
-            at = getAffineTransform(crs, displayCRS);
+            AffineTransform at = getAffineTransform(crs, displayCRS);
             at.preConcatenate(displayToDevice);
+            current = OTHER_TRS;
+            graphics.setTransform(at);
         } catch (FactoryException e) {
             throw new TransformException(Errors.format(
                         Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM), e);
         }
-        graphics.setTransform(at);
+        
     }
 
     /**

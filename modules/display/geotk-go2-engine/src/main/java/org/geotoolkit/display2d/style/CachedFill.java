@@ -55,7 +55,8 @@ public class CachedFill extends Cache<Fill>{
     @Override
     protected void evaluate(){
         if(!isNotEvaluated) return;
-        
+
+        this.isStatic = true;
         if(!evaluateComposite() || !evaluatePaint() ){
             //composite is completely translucent or paint is not visible
             //we cache nothing seens nothing can be render

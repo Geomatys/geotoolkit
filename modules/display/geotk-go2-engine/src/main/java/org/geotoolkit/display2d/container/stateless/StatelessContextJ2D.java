@@ -41,6 +41,7 @@ import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
 
 import org.geotoolkit.util.logging.Logging;
@@ -111,11 +112,13 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
 
         this.context = context;
 
+
         try {
-            setEnvelope(context.getBounds());
+            setEnvelope(CRS.getEnvelope(canvas.getObjectiveCRS()));
+            //todo we do not use the context envelope since it can be reallllly long to calculate
+            //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
+            //setEnvelope(context.getBounds());
         } catch (TransformException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
         parseContext(this.context);

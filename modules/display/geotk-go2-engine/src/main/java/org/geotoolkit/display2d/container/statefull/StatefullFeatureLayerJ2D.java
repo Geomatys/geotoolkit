@@ -166,14 +166,14 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         BoundingBox bbox                                         = context.getPaintingObjectiveBounds2D();
         final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
         final CanvasMonitor monitor                              = context.getMonitor();
-        final Envelope layerBounds                     = layer.getBounds();
+        final CoordinateReferenceSystem layerCRS                 = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
 
-        if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
+        if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
             Envelope env;
 
             try{
-                env = CRS.transform(bbox, layerBounds.getCoordinateReferenceSystem());
+                env = CRS.transform(bbox, layerCRS);
             }catch(TransformException ex){
                 //TODO is fixed in geotidy, the result envelope will have infinte values where needed
                 //TODO should do something about this, since canvas bounds may be over the crs bounds
@@ -185,19 +185,23 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
             //fix CRS classes method and remove the two next lines.
             env = new GeneralEnvelope(env);
-            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
+            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
 
             bbox = new DefaultBoundingBox(env);
         }
 
         Filter filter;
-        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
-            //the layer bounds in within the bbox, no need for a spatial filter
-            filter = Filter.INCLUDE;
-        }else{
-            //make a bbox filter
-            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-        }
+        //final Envelope layerBounds = layer.getBounds();
+        //we better not do any call to the layer bounding box before since it can be
+        //really expensive, the datastore is the best placed to check if he might
+        //optimize the filter.
+        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+            //the layer bounds overlaps the bbox, no need for a spatial filter
+        //   filter = Filter.INCLUDE;
+        //}else{
+        //make a bbox filter
+        filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+        //}
 
         //concatenate geographique filter with data filter if there is one
         if(layer.getQuery() != null && layer.getQuery().getFilter() != null){

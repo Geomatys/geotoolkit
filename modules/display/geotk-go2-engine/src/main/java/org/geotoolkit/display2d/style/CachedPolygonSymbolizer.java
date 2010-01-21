@@ -138,7 +138,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     public float getOffset(Feature feature, float coeff){
         evaluate();
         
-        if(cachedOffset == Float.NaN){
+        if(Float.isNaN(cachedOffset)){
             //if offset is null it means it is dynamic
             final Expression offset = styleElement.getPerpendicularOffset();
             return GO2Utilities.evaluate(offset, null, Float.class, 0f);
@@ -155,7 +155,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         
         final float[] disps = new float[2];
                 
-        if(cachedDispX == Float.NaN){
+        if(Float.isNaN(cachedDispX)){
             //if dispX is Float.NaN it means it is dynamic
             final Expression dispX = styleElement.getDisplacement().getDisplacementX();
             disps[0] = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
@@ -163,7 +163,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
             disps[0] = cachedDispX;
         }
         
-        if(cachedDispY == Float.NaN){
+        if(Float.isNaN(cachedDispY)){
             //if dispY is Float.NaN it means it is dynamic
             final Expression dispY = styleElement.getDisplacement().getDisplacementY();
             disps[1] = GO2Utilities.evaluate(dispY, null, Float.class, 0f);

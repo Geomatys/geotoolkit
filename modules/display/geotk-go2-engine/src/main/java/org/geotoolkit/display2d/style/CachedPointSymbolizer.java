@@ -20,6 +20,7 @@ package org.geotoolkit.display2d.style;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 import org.opengis.feature.Feature;
 import org.opengis.style.PointSymbolizer;
@@ -32,13 +33,12 @@ import org.opengis.style.PointSymbolizer;
  */
 public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
 
-    private final PointSymbolizer point;
     private final CachedGraphic cachedGraphic;
+    private UnSynchronizedCache<Float,BufferedImage> cache = null;
         
     public CachedPointSymbolizer(PointSymbolizer point){
         super(point);
         cachedGraphic = new CachedGraphic(point.getGraphic());
-        this.point = point;
     }
 
     /**
@@ -54,7 +54,18 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      */
     @Override
     protected void evaluate() {
-        cachedGraphic.evaluate();
+        if(!isNotEvaluated) return;
+
+        //will call an evaluate indirectly
+        if(cachedGraphic.isStatic()){
+            //we can make a cache
+            cache = new UnSynchronizedCache<Float, BufferedImage>(5);
+        }
+
+        isStatic = cachedGraphic.isStatic();
+        isStaticVisible = cachedGraphic.isStaticVisible();
+
+        isNotEvaluated = false;
     }
 
     @Override
@@ -75,6 +86,20 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * @return BufferedImage for a feature 
      */
     public BufferedImage getImage(Feature feature, final float coeff, RenderingHints hints) {
+        evaluate();
+
+        if(cache != null){
+            //means the graphic is static, so we can cache fixed size images
+            BufferedImage buffer = cache.get(coeff);
+            if(buffer == null){
+                buffer = cachedGraphic.getImage(feature, coeff, hints);
+                cache.put(coeff, buffer);
+            }
+
+            return buffer;
+        }
+
+        //no cache recalculate image
         return cachedGraphic.getImage(feature, coeff, hints);
     }
 
