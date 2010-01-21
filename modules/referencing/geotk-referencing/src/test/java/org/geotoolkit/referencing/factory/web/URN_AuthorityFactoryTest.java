@@ -204,5 +204,6 @@ public final class URN_AuthorityFactoryTest extends ReferencingTestCase {
         assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:6.11.2:4326"));
         assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:7.04:4326"));
         assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:7.10:4326"));
+        assertSame(crs, CRS.decode("urn:x-ogc:def:crs:EPSG:4326"));
     }
 }

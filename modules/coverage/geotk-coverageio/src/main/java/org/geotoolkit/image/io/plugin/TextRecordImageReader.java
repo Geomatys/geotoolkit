@@ -643,7 +643,7 @@ public class TextRecordImageReader extends TextImageReader {
      * locale and character set. The default constructor initializes the fields to the values
      * listed below:
      * <p>
-     * <table border="1">
+     * <table border="1" cellspacing="0">
      *   <tr bgcolor="lightblue"><th>Field</th><th>Value</th></tr>
      *   <tr><td>&nbsp;{@link #names}           &nbsp;</td><td>&nbsp;{@code "records"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #MIMETypes}       &nbsp;</td><td>&nbsp;{@code "text/plain"}&nbsp;</td></tr>

@@ -421,9 +421,9 @@ public final class XMath {
     }
 
     /**
-     * Returns the <var>i</var><sup>th</sup> prime number. This method returns (2,3,5,7,11...)
-     * for index (0,1,2,3,4...). This method is designed for relatively small prime numbers only;
-     * don't use it for large values.
+     * Returns the <var>i</var><sup>th</sup> prime number. This method returns (2, 3, 5, 7, 11...)
+     * for index (0, 1, 2, 3, 4, ...). This method is designed for relatively small prime numbers
+     * only; don't use it for large values.
      *
      * @param  index The prime number index, starting at index 0 for prime number 2.
      * @return The prime number at the specified index.

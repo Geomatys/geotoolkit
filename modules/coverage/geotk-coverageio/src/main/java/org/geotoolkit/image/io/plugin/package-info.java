@@ -21,7 +21,7 @@
  * files and text files. The {@code geotk-coverageio.jar} and {@code geotk-coverageio-netcdf.jar}
  * files declare service providers for the following formats:
  * <p>
- * <table border="3" cellpadding="6">
+ * <table border="1" cellspacing="0">
  *   <tr bgcolor="lightblue">
  *     <th>{@link javax.imageio.ImageReader} subclass</th>
  *     <th>{@link javax.imageio.ImageWriter} subclass</th>
@@ -29,42 +29,42 @@
  *     <th>MIME type</th>
  *     <th>Comments</th>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.plugin.AsciiGridReader}</td>
- *     <td>{@link org.geotoolkit.image.io.plugin.AsciiGridWriter}</td>
- *     <td>{@code "ascii-grid"}</td>
- *     <td>text/plain</td>
- *     <td>US locale and ASCII encoding.</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridReader}&nbsp;</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridWriter}&nbsp;</td>
+ *     <td>&nbsp;{@code "ascii-grid"}&nbsp;</td>
+ *     <td>&nbsp;text/plain&nbsp;</td>
+ *     <td>&nbsp;US locale and ASCII encoding.&nbsp;</td>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}&nbsp;</td>
+ *     <td>&nbsp;&nbsp;&nbsp;</td>
+ *     <td>&nbsp;{@code "netcdf"}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>{@code "netcdf"}</td>
- *     <td>&nbsp;</td>
- *     <td>Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.</td>
+ *     <td>&nbsp;Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.plugin.RawImageReader}</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>{@code "raw"}</td>
+ *     <td>&nbsp;{@code "raw"}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>Require {@link com.sun.media.imageio.stream.RawImageInputStream}.</td>
+ *     <td>&nbsp;Require {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}</td>
- *     <td>{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}</td>
- *     <td>{@code "matrix"}</td>
- *     <td>text/plain</td>
- *     <td>Locale sensitive.</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}&nbsp;</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}&nbsp;</td>
+ *     <td>&nbsp;{@code "matrix"}&nbsp;</td>
+ *     <td>&nbsp;text/plain&nbsp;</td>
+ *     <td>&nbsp;Locale sensitive.&nbsp;</td>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.plugin.TextRecordImageReader}</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextRecordImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>{@code "records"}</td>
- *     <td>text/plain</td>
- *     <td>Locale sensitive.</td>
+ *     <td>&nbsp;{@code "records"}&nbsp;</td>
+ *     <td>&nbsp;text/plain&nbsp;</td>
+ *     <td>&nbsp;Locale sensitive.&nbsp;</td>
  *   </tr><tr>
- *     <td>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}</td>
- *     <td>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter}</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}&nbsp;</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter}&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>Require {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults
- *         explicit registration}.</td>
+ *     <td>&nbsp;Require {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults
+ *         explicit registration}.&nbsp;</td>
  *   </tr>
  * </table>
  *

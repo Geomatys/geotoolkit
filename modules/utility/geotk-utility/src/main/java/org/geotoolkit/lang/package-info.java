@@ -21,6 +21,9 @@
  * Those annotations are used mostly for documentation purpose. For example a click
  * on the "Use" javadoc link of {@link org.geotoolkit.lang.Configuration} gives the
  * list of all static methods having a system-wide effect on the Geotk library.
+ * <p>
+ * The javadoc of the {@link org.geotoolkit.lang.Static} annotation provides a summary
+ * of their '<cite>Use</cite>" page content for convenience.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.04
