@@ -35,8 +35,13 @@ public class CanvasDef {
     }
 
     public CanvasDef(Dimension dim, Color background) {
+        this(dim,background,true);
+    }
+
+    public CanvasDef(Dimension dim, Color background, boolean stretch) {
         setDimension(dim);
         setBackground(background);
+        setStretchImage(stretch);
     }
 
     public void setDimension(Dimension dimension) {

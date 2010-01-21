@@ -38,9 +38,18 @@ public class ViewDef {
     public ViewDef() {
     }
 
+    public ViewDef(Envelope env) {
+        this(env,0);
+    }
+
     public ViewDef(Envelope env, double azimuth) {
+        this(env,azimuth,null);
+    }
+
+    public ViewDef(Envelope env, double azimuth, CanvasMonitor monitor) {
         setEnvelope(env);
         setAzimuth(azimuth);
+        setMonitor(monitor);
     }
 
     public void setEnvelope(Envelope envelope) {

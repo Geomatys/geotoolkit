@@ -32,6 +32,11 @@ public class VisitDef {
 
     public VisitDef(){}
 
+    public VisitDef(Shape area, GraphicVisitor visitor){
+        setArea(area);
+        setVisitor(visitor);
+    }
+
     public void setArea(Shape area) {
         this.area = area;
     }
