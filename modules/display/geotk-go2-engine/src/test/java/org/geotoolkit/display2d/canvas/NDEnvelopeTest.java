@@ -19,8 +19,13 @@ package org.geotoolkit.display2d.canvas;
 
 import java.awt.Dimension;
 import java.util.Date;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.container.ContextContainer2D;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -56,7 +61,6 @@ public class NDEnvelopeTest {
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
-
 
      @Test
      public void test4DEnvelope() throws Exception {
@@ -99,7 +103,30 @@ public class NDEnvelopeTest {
          assertTrue(temps[0].getTime() == 3000);
          assertTrue(temps[1].getTime() == 6000);
 
+     }
+
+     @Test
+     public void testCreationWith4Denvelope() throws PortrayalException{
+
+         CoordinateReferenceSystem crs = new DefaultCompoundCRS(
+               "",
+               DefaultGeographicCRS.WGS84,
+               DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
+               DefaultTemporalCRS.JAVA);
+
+         final GeneralEnvelope env = new GeneralEnvelope(crs);
+         env.setRange(0, -170, 170);
+         env.setRange(1, -80, 80);
+         env.setRange(2, -50, 150);
+         env.setRange(3, 3000, 6000);
+
+         MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
+
+         //was raising an error since we asked a 4D envelope with a 2D context
+         //the canvas should change the crs to 2D to pass this test
+         DefaultPortrayalService.portray(context, env, new Dimension(800, 600), true);
 
      }
+
 
 }

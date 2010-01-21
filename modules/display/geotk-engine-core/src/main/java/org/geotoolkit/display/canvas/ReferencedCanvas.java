@@ -261,7 +261,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * {@inheritDoc}
      */
     @Override
-    public final CoordinateReferenceSystem getObjectiveCRS() {
+    public CoordinateReferenceSystem getObjectiveCRS() {
         return objectiveCRS;
     }
 
