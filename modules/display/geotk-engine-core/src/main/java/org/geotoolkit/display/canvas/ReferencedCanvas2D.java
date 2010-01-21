@@ -156,7 +156,7 @@ public abstract class ReferencedCanvas2D extends ReferencedCanvas {
      * @param renderer Renderer to use with this canvas
      */
     protected ReferencedCanvas2D(CoordinateReferenceSystem crs,Hints hints) {
-        super(crs,hints);
+        super(toCRS2D(crs),hints);
         // The following must be invoked here instead than in super-class because
         // 'normalizeToDots' is not yet assigned when the super-class constructor
         // is run.
@@ -164,13 +164,25 @@ public abstract class ReferencedCanvas2D extends ReferencedCanvas {
     }
 
     public CoordinateReferenceSystem getObjectiveCRS2D(){
+        //we already know it's a 2D CRS.
+        return getObjectiveCRS();
+    }
+
+
+    private static CoordinateReferenceSystem toCRS2D(CoordinateReferenceSystem crs) {
         try {
-            return CRSUtilities.getCRS2D(getObjectiveCRS());
+            return CRSUtilities.getCRS2D(crs);
         } catch (TransformException ex) {
-            handleException(ReferencedCanvas2D.class, "getObjectiveCRS2D", ex);
-            return null;
+            throw new IllegalArgumentException("CRS must contain at least one 2D part");
         }
     }
+
+    @Override
+    public synchronized void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
+        super.setObjectiveCRS(toCRS2D(crs));
+    }
+
+
 
     @Override
     public void setContainer(AbstractContainer renderer) {
