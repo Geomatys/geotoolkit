@@ -17,6 +17,11 @@
 package org.geotoolkit.geometry.jts;
 
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -99,7 +104,7 @@ public final class SRIDGenerator {
         }
 
         final String authority = srs.substring(0, index);
-        final int code = Integer.parseInt(srs.substring(index+1, srs.length()));
+        int code = Integer.parseInt(srs.substring(index+1, srs.length()));
         final int authorityCode;
 
         if(version == Version.V1){
@@ -108,7 +113,20 @@ public final class SRIDGenerator {
             }else if(AUTHORITY_CRS.equalsIgnoreCase(authority)){
                 authorityCode = 1;
             }else{
-                throw new IllegalArgumentException("unknowed authority : " + authority);
+                try {
+                    CoordinateReferenceSystem crs = CRS.decode(srs);
+                    Integer epsgCode = CRS.lookupEpsgCode(crs, true);
+                    if (epsgCode != null) {
+                        authorityCode = 0;
+                        code = epsgCode;
+                    } else {
+                        throw new IllegalArgumentException("unknowed authority : " + authority);
+                    }
+                } catch (NoSuchAuthorityCodeException ex) {
+                   throw new IllegalArgumentException("unknowed authority : " + srs);
+                } catch (FactoryException ex) {
+                    throw new IllegalArgumentException("unknowed authority : " + srs);
+                }
             }
             int compact = (authorityCode << 28) | code ;
             return compact;

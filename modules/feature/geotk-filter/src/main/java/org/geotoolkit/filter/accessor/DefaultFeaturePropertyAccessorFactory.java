@@ -158,10 +158,10 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             xpath = xpath.substring(2);
         }
 
-        final int split = xpath.indexOf(':');
+       /* final int split = xpath.indexOf(':');
         if (split != -1) {
             return xpath.substring(split + 1);
-        }
+        }*/
         return xpath;
     }
 
@@ -242,6 +242,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public boolean canHandle(Object object, String xpath, Class target) {
+            xpath = stripPrefix(xpath);
             final Name name = DefaultName.valueOf(xpath);
 
             if (object instanceof Feature) {
@@ -257,6 +258,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
 
         @Override
         public Object get(Object object, String xpath, Class target) {
+            xpath = stripPrefix(xpath);
             final Name name = DefaultName.valueOf(xpath);
 
             if(object instanceof SimpleFeature){
@@ -277,6 +279,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
         @Override
         public void set(Object object, String xpath, Object value, Class target)
                 throws IllegalArgumentException {
+            xpath = stripPrefix(xpath);
             final Name name = DefaultName.valueOf(xpath);
 
             if(object instanceof SimpleFeature) {
