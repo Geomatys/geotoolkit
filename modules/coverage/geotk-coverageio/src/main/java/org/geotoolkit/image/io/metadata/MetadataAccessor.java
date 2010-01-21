@@ -887,7 +887,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * declared in that type shall comply with the <cite>Java Beans</cite> conventions.
      *
      * {@section Example}
-     * Lets assume a metadata format conforms to the
+     * Assume a metadata format conforms to the
      * <a href="SpatialMetadataFormat.html#default-formats"><cite>Stream metadata</cite>
      * format documented here</a>. There is an extract of that format:
      *

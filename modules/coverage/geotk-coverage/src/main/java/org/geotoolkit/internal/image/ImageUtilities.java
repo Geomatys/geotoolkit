@@ -222,7 +222,7 @@ public final class ImageUtilities {
      * example.
      * <p>
      * This method inspects different tile sizes close to the {@linkplain JAI#getDefaultTileSize()
-     * default tile size}. Lets {@code width} be the default tile width. Values are tried in the
+     * default tile size}. Let {@code width} be the default tile width. Values are tried in the
      * following order: {@code width}, {@code width+1}, {@code width-1}, {@code width+2},
      * {@code width-2}, {@code width+3}, {@code width-3}, <i>etc.</i> until one of the
      * following happen:

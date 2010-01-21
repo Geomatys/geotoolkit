@@ -17,16 +17,18 @@
  */
 package org.geotoolkit.image.io;
 
+import java.awt.Point;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashSet;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.Rectangle;
 import java.awt.image.IndexColorModel;
+import javax.imageio.IIOParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 
@@ -60,25 +62,25 @@ import org.geotoolkit.util.converter.Classes;
  *
  * {@section Handling more than two dimensions}
  * Some file formats like NetCDF can store dataset having more than two dimensions.
- * Geotk handles extra dimensions with the following policies by default:
+ * Geotk handles the supplemental dimensions with the following policies by default:
  *
  * <ul>
  *   <li><p>The two first dimensions - typically named (<var>x</var>, <var>y</var>) - are
  *     assigned to the (<var>columns</var>, <var>rows</var>) pixel indices.</p></li>
  *
- *   <li><p>The third dimension is assigned to band indices. This is typically the altitude
- *     (<var>z</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
+ *   <li><p>The third dimension can optionnaly be assigned to band indices. This is typically the
+ *     altitude (<var>z</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
  *     <var>t</var>) dimensions, in which case the bands are used as below:</p>
  *     <ul>
  *       <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>0</sub> is stored in band 0</li>
  *       <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>1</sub> is stored in band 1</li>
  *       <li><i>etc.</i></li>
  *     </ul>
- *     <p>The actual dimension assigned to band indices is returned by {@link #getDimensionForAPI
- *     getDimensionForAPI(...)}. See {@link DimensionSlice} for changing the assignment.</p>
+ *     <p>The actual dimension assigned to band indices is returned by {@link #findDimensionForAPI
+ *     findDimensionForAPI(...)}. See {@link DimensionSlice} for more information.</p>
  *
- *   <li><p>Only one slice of every extra dimensions can be read. By default the data at indice 0
- *     are loaded, but different indices can be selected (see {@link DimensionSlice}). The actual
+ *   <li><p>Only one slice of every supplemental dimensions can be read. By default the data at indice
+ *     0 are loaded, but different indices can be selected (see {@link DimensionSlice}). The actual
  *     indice used is the value returned by {@link #getSourceIndiceForDimension(Object[])}.</p></li>
  * </ul>
  *
@@ -188,7 +190,7 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      */
     public DimensionSlice newDimensionSlice() {
         if (slicesForDimensions == null) {
-            slicesForDimensions = new HashMap<Object,DimensionSlice>();
+            slicesForDimensions = new LinkedHashMap<Object,DimensionSlice>();
             apiMapping = new DimensionSlice[DimensionSlice.API.VALIDS.length];
         }
         return new DimensionSlice(this, slicesForDimensions, apiMapping, false);
@@ -251,29 +253,44 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      *     DimensionSlice slice = getDimensionSlice("time", AxisDirection.FUTURE);
      * }
      *
-     * If different slices are found for the given identifiers, then a warning is emitted and
-     * this method returns the first slice matching the given identifiers. If no slice is found,
-     * {@code null} is returned.
+     * If different slices are found for the given identifiers, then a
+     * {@linkplain SpatialImageReader#warningOccurred warning is emitted}
+     * and this method returns the first slice matching the given identifiers.
+     * If no slice is found, {@code null} is returned.
      *
-     * @param  dimension {@link Integer}, {@link String} or {@link AxisDirection}
+     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
      *         that identify the dimension for which the slice is desired.
-     * @return The slice for the given dimension, or {@code null} if none.
+     * @return The first slice found for the given dimension identifiers, or {@code null} if none.
      *
      * @since 3.08
      */
-    public DimensionSlice getDimensionSlice(final Object... dimension) {
+    public DimensionSlice getDimensionSlice(final Object... dimensionIds) {
         if (slicesForDimensions != null) {
             Map<DimensionSlice,Object> found = null;
-            for (final Object id : dimension) {
-                final DimensionSlice slice = slicesForDimensions.get(id);
-                if (slice != null) {
-                    if (found == null) {
-                        found = new LinkedHashMap<DimensionSlice,Object>(4);
+            for (final Object id : dimensionIds) {
+                DimensionSlice slice = slicesForDimensions.get(id);
+                if (slice == null) {
+                    /*
+                     * If the caller asked for one of the reserved
+                     * dimensions (COLUMNS, ROWS), creates it on the fly.
+                     */
+                    if (!(id instanceof Integer)) {
+                        continue;
                     }
-                    final Object old = found.put(slice, id);
-                    if (old != null) {
-                        found.put(slice, old); // Keep the old value.
+                    final int n = (Integer) id;
+                    if (n < 0 || n >= DimensionSlice.API.RESERVED) {
+                        continue;
                     }
+                    slice = new DimensionSlice(this, slicesForDimensions, apiMapping, false);
+                    slicesForDimensions.put(id, slice);
+                    apiMapping[n] = slice;
+                }
+                if (found == null) {
+                    found = new LinkedHashMap<DimensionSlice,Object>(4);
+                }
+                final Object old = found.put(slice, id);
+                if (old != null) {
+                    found.put(slice, old); // Keep the old value.
                 }
             }
             final DimensionSlice slice = first("getDimensionSlice", found);
@@ -296,20 +313,22 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      *     int indice = getSourceIndiceForDimension("time", AxisDirection.FUTURE);
      * }
      *
-     * If different indices are found for the given identifiers, then a warning is emitted and this
-     * method returns the indice for the first slice matching the given identifiers. If no indice
-     * is found, 0 is returned.
+     * If different indices are found for the given identifiers, then a
+     * {@linkplain SpatialImageReader#warningOccurred warning is emitted}
+     * and this method returns the indice for the first slice matching the given identifiers.
+     * If no indice is found, 0 (which is the default indice value) is returned.
      *
-     * @param  dimension {@link Integer}, {@link String} or {@link AxisDirection}
+     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
      *         that identify the dimension for which the indice is desired.
-     * @return The indice to set at the given dimension, or 0 if no indice were specified.
+     * @return The indice set in the first slice found for the given dimension identifiers,
+     *         or 0 if none.
      *
      * @since 3.08
      */
-    public int getSourceIndiceForDimension(final Object... dimension) {
+    public int getSourceIndiceForDimension(final Object... dimensionIds) {
         if (slicesForDimensions != null) {
             Map<Integer,Object> found = null;
-            for (final Object id : dimension) {
+            for (final Object id : dimensionIds) {
                 final DimensionSlice source = slicesForDimensions.get(id);
                 if (source != null) {
                     final Integer indice = source.getIndice();
@@ -335,46 +354,55 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      * (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions, it may be useful to
      * handle the <var>z</var> dimension as bands. After the method calls below, users can select
      * one or many elevation indices through the standard {@link #setSourceBands(int[])} API.
+     * Compared to the {@link DimensionSlice} API, it allows loading more than one slice in one
+     * read operation.
      *
      * {@preformat java
      *     DimensionSlice slice = parameters.newDimensionSlice();
-     *     slice.setDimensionId(3);
+     *     slice.addDimensionId(3);
      *     slice.setAPI(DimensionSlice.API.BANDS);
      * }
      *
-     * Lets {@code slice} be the {@link DimensionSlice} instance on which the
+     * This method is invoked by implementations of {@link SpatialImageReader} when a dataset is
+     * about to be read. The caller shall known the set of dimensions which exist in the dataset.
+     * The set of dimensions in the dataset may not be the same than the set of dimensions
+     * declared in this {@code SpatialImageReadParam} instance.
+     *
+     * {@section Default implementation}
+     * Let {@code slice} be the {@link DimensionSlice} instance on which the
      * {@linkplain DimensionSlice#setAPI API has been set} to the given {@code api} argument value.
      * The default implementation makes the following choice:
      *
      * <ol>
-     *   <li><p>If <code>slice.{@linkplain DimensionSlice#setDimensionId(int) setDimensionId(int)}</code>
+     *   <li><p>If <code>slice.{@linkplain DimensionSlice#addDimensionId(int) addDimensionId(int)}</code>
      *       has been invoked, then the value specified to that method is returned regardeless the
      *       {@code properties} argument value.</p></li>
-     *   <li><p>Otherwise if an other <code>slice.{@linkplain DimensionSlice#setDimensionId(String[])
-     *       setDimensionId(...)}</code> method has been invoked and the {@code properties} argument
+     *   <li><p>Otherwise if an other <code>slice.{@linkplain DimensionSlice#addDimensionId(String[])
+     *       addDimensionId(...)}</code> method has been invoked and the {@code properties} argument
      *       is non-null, then this method iterates over the given properties. The iteration must
      *       return exactly one element for each dimension, in order.
-     *       If an element is equals to a value specified to a {@code setDimensionId(...)} method,
+     *       If an element is equals to a value specified to a {@code addDimensionId(...)} method,
      *       then the position of that element in the {@code properties} iteration is returned.</p></li>
-     *   <li><p>Otherwise this method returns 0 for {@link DimensionSlice.API#COLUMNS}, 1 for
+     *   <li><p>Otherwise this method returns 0 for {@link DimensionSlice.API#COLUMNS COLUMNS}, 1 for
      *       {@link DimensionSlice.API#ROWS ROWS}, 2 for {@link DimensionSlice.API#BANDS BANDS}
      *       or -1 otherwise.</p></li>
      * </ol>
      *
-     * If more than one dimension match, then a warning is emitted and this method returns the
-     * dimension index of the first slice matching the given properties.
+     * If more than one dimension match, then a {@linkplain SpatialImageReader#warningOccurred
+     * warning is emitted} and this method returns the dimension index of the first slice matching
+     * the given properties.
      *
      * @param  api The API for which to get the dimension index. This is typically
      *         {@link DimensionSlice.API#BANDS BANDS}.
      * @param  properties Contains one property (the dimension name as a {@link String} or the axis
-     *         direction as an {@link AxisDirection}) for each dimension. The iteration order must
-     *         be the order of dimensions in the dataset. This argument can be {@code null} if there
-     *         is no such properties.
-     * @return The dimension assigned to the given API, or -1 if none.
+     *         direction as an {@link AxisDirection}) for each dimension of the dataset being read.
+     *         The iteration order shall be the order of dimensions in the dataset. This argument
+     *         can be {@code null} if no such properties are available.
+     * @return The index of the dimension assigned to the given API, or -1 if none.
      *
      * @since 3.08
      */
-    public int getDimensionForAPI(final DimensionSlice.API api, final Iterable<?> properties) {
+    public int findDimensionForAPI(final DimensionSlice.API api, final Iterable<?> properties) {
         // Note: we want a NullPointerException if 'api' is null.
         if (!api.equals(DimensionSlice.API.NONE) && apiMapping != null) {
             final DimensionSlice slice = apiMapping[api.ordinal()];
@@ -425,7 +453,7 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
                         }
                         position++;
                     }
-                    final Integer dimension = first("getDimensionForAPI", found);
+                    final Integer dimension = first("findDimensionForAPI", found);
                     if (dimension != null) {
                         return dimension;
                     }
@@ -492,7 +520,7 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      * For a table of available palette names in the default Geotk installation,
      * see the {@link PaletteFactory} class javadoc.
      *
-     * @return The name of the color palette to apply.
+     * @return The name of the color palette to apply, or {@code null} if none.
      */
     public String getPaletteName() {
         return palette;
@@ -527,27 +555,32 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
     }
 
     /**
-     * Returns a string representation of this block of parameters.
+     * Builds the first part of the string representation of the given parameters.
+     * The closing bracket is missing from the buffer, in order to allow callers
+     * to add more elements.
      */
-    @Override
-    public String toString() {
-        final int[]     sourceBands  = this.sourceBands;
-        final Rectangle sourceRegion = this.sourceRegion;
-        final int sourceXSubsampling = this.sourceXSubsampling;
-        final int sourceYSubsampling = this.sourceYSubsampling;
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
+    static StringBuilder toStringBegining(final IIOParam param,
+            final Rectangle sourceRegion, final Point destinationOffset,
+            final int sourceXSubsampling, final int sourceYSubsampling,
+            final int[] sourceBands)
+    {
+        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(param));
         buffer.append('[');
         if (sourceRegion != null) {
-            buffer.append("sourceRegion=(").
-                   append(sourceRegion.x).append(':').append(sourceRegion.x + sourceRegion.width).append(',').
-                   append(sourceRegion.y).append(':').append(sourceRegion.y + sourceRegion.height).append("), ");
+            buffer.append("size=(").append(sourceRegion.width).append(',').append(sourceRegion.height)
+                  .append("), source=(").append(sourceRegion.x).append(',').append(sourceRegion.y)
+                  .append("), ");
+        }
+        if (destinationOffset != null && (destinationOffset.x != 0 || destinationOffset.y != 0)) {
+            buffer.append("dest=(").append(destinationOffset.x).append(',').append(destinationOffset.y)
+                  .append("), ");
         }
         if (sourceXSubsampling != 1 || sourceYSubsampling != 1) {
             buffer.append("subsampling=(").append(sourceXSubsampling).append(',').
                     append(sourceYSubsampling).append("), ");
         }
         if (sourceBands != null) {
-            buffer.append("sourceBands={");
+            buffer.append("bands={");
             for (int i=0; i<sourceBands.length; i++) {
                 if (i != 0) {
                     buffer.append(',');
@@ -556,6 +589,49 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
             }
             buffer.append("}, ");
         }
-        return buffer.append("palette=\"").append(palette).append("\", ").append(']').toString();
+        return buffer;
+    }
+
+    /**
+     * Returns a string representation of this block of parameters. This is mostly for debugging
+     * purpose and may change in any future version. The current implementation formats the
+     * {@linkplain #sourceRegion source region}, {@linkplain #destinationOffset destination offset},
+     * the subsampling values, the {@linkplain #sourceBands source bands} and the color palette on
+     * a single line, with the list of {@linkplain DimensionSlice dimension slices} (if any) on the
+     * next lines.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder buffer = toStringBegining(this,
+                sourceRegion, destinationOffset,
+                sourceXSubsampling, sourceYSubsampling, sourceBands);
+        if (palette != null) {
+            buffer.append("palette=\"").append(palette).append('"');
+        }
+        return toStringEnd(buffer, slicesForDimensions);
+    }
+
+    /**
+     * Completes the string representation with the list of dimension slices. If the last character
+     * in the given buffer is a space, then this method removes the two last characters on the
+     * assumption that they are {@code ", "}. Then the closing {@code ']'} character is appended.
+     */
+    static String toStringEnd(final StringBuilder buffer, final Map<Object,DimensionSlice> slicesForDimensions) {
+        final int length = buffer.length();
+        if (buffer.charAt(length - 1) == ' ') {
+            buffer.setLength(length - 2);
+        }
+        buffer.append(']');
+        if (slicesForDimensions != null) {
+            int last = 0;
+            for (final DimensionSlice slice : new LinkedHashSet<DimensionSlice>(slicesForDimensions.values())) {
+                last = buffer.append("\n\u00A0\u00A0\u251C\u2500\u00A0").length();
+                buffer.append(slice);
+            }
+            if (last != 0) {
+                buffer.append('\n').setCharAt(last - 3, '\u2514');
+            }
+        }
+        return buffer.toString();
     }
 }

@@ -186,12 +186,12 @@ public class VectorPair implements Serializable {
      * limit respectively (for example computed from a standard deviation) of the above data.
      *
      * {@section On input}
-     * Lets define <var>X</var><sub>i</sub> and <var>Y</var><sub>i</sub> the input vectors before
-     * this method is invoked. If <var>s</var> is the length of the <var>Y</var><sub>i</sub> vector,
+     * Starting with <var>X</var><sub>i</sub> and <var>Y</var><sub>i</sub> as the input vectors before
+     * this method is invoked, take <var>s</var> to be the length of the <var>Y</var><sub>i</sub> vector,
      * then the length of the <var>X</var><sub>i</sub> vector must be <var>s</var>+1.
      *
      * {@section On output}
-     * Lets define <var>X</var><sub>o</sub> and <var>Y</var><sub>o</sub> the output vectors after
+     * Let define <var>X</var><sub>o</sub> and <var>Y</var><sub>o</sub> the output vectors after
      * this method has been invoked. The length of those two vectors will be at most 2<var>s</var>
      * (they will be exactly of that length if {@code abs(direction) <= 1}). The first point and the
      * last point in the output vectors will be the same than the first point and the last point in

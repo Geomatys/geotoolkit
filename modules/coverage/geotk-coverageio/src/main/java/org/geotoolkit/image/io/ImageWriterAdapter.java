@@ -83,7 +83,7 @@ import org.geotoolkit.util.XArrays;
  * the {@link SpatialMetadata} object given to the {@link #write(IIOImage)} method in this class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @see ImageReaderAdapter
  *
@@ -228,16 +228,6 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             main.setOutput(mainOutput);
             initialize();
         }
-    }
-
-    /**
-     * Returns an initially empty parameters object of the appropriate type for the format
-     * of this writer. The default implementation delegates to the {@linkplain #main} writer.
-     * No output needs to be set for this method.
-     */
-    @Override
-    public ImageWriteParam getDefaultWriteParam() {
-        return main.getDefaultWriteParam();
     }
 
     /**

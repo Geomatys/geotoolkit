@@ -449,31 +449,28 @@ public final class IOUtilities {
      */
     public static void unzip(final InputStream in, final File target) throws IOException {
         final ZipInputStream def = new ZipInputStream(in);
-        try {
-            final byte[] buffer = new byte[4096];
-            ZipEntry entry;
-            while ((entry = def.getNextEntry()) != null) {
-                final File file = new File(target, entry.getName());
-                if (entry.isDirectory()) {
-                    if (!file.isDirectory() && !file.mkdir()) {
-                        throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, file));
-                    }
-                    continue;
+        final byte[] buffer = new byte[4096];
+        ZipEntry entry;
+        while ((entry = def.getNextEntry()) != null) {
+            final File file = new File(target, entry.getName());
+            if (entry.isDirectory()) {
+                if (!file.isDirectory() && !file.mkdir()) {
+                    throw new IOException(Errors.format(Errors.Keys.CANT_CREATE_DIRECTORY_$1, file));
                 }
-                final OutputStream out = new FileOutputStream(file);
-                int n;
-                while ((n = def.read(buffer)) >= 0) {
-                    out.write(buffer, 0, n);
-                }
-                out.close();
-                final long time = entry.getTime();
-                if (time >= 0) {
-                    file.setLastModified(time);
-                }
-                def.closeEntry();
+                continue;
             }
-        } finally {
-            def.close();
+            final OutputStream out = new FileOutputStream(file);
+            int n;
+            while ((n = def.read(buffer)) >= 0) {
+                out.write(buffer, 0, n);
+            }
+            out.close();
+            final long time = entry.getTime();
+            if (time >= 0) {
+                file.setLastModified(time);
+            }
+            def.closeEntry();
         }
+        def.close();
     }
 }

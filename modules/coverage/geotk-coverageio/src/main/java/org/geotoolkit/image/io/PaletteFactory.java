@@ -704,7 +704,7 @@ public class PaletteFactory {
                  * if they are not in the 0-255 range. Intercept this exception and rethrows as a
                  * checked IIOException, since we want to notify the user that the palette file is
                  * badly formatted. (additional note: it is somewhat redundant with byteValue(int)
-                 * work. Lets keep it as a safety).
+                 * work. Let keep it as a safety).
                  */
                 throw syntaxError(input, name, exception);
             }

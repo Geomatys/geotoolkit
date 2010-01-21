@@ -332,7 +332,7 @@ public class Hints extends RenderingHints {
      *     hints.put(FORCE_AXIS_ORDER_HONORING, "epsg, http, urn");
      * }
      *
-     * Lets stress again that the application of (<var>longitude</var>, <var>latitude</var>) axis
+     * Let stress again that the application of (<var>longitude</var>, <var>latitude</var>) axis
      * order to the {@code "urn:ogc"} name space is a clear violation of OGC specification, which
      * is why Geotk wants you to provide this additional hint meaning "I'm really sure". Note
      * also that {@code "epsg"} is implicit and doesn't need to be included in the above list,

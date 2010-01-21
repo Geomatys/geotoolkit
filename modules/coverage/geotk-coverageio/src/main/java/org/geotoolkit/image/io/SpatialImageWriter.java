@@ -60,7 +60,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @see SpatialImageReader
  *
@@ -110,6 +110,17 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
      */
     final IndexedResourceBundle getErrorResources() {
         return Errors.getResources(getLocale());
+    }
+
+    /**
+     * Returns a default parameter object appropriate for this format. The default
+     * implementation constructs and returns a new {@link SpatialImageWriteParam}.
+     *
+     * @return An {@code ImageWriteParam} object which may be used.
+     */
+    @Override
+    public SpatialImageWriteParam getDefaultWriteParam() {
+        return new SpatialImageWriteParam(this);
     }
 
     /**

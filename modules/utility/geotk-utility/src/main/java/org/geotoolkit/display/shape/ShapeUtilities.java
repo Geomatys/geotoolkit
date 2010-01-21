@@ -116,7 +116,7 @@ public final class ShapeUtilities {
 
     /**
      * Returns the point on the given {@code line} segment which is closest to the given
-     * {@code point}. Lets {@code result} be the returned point. This method guarantees
+     * {@code point}. Let {@code result} be the returned point. This method guarantees
      * (except for rounding errors) that:
      * <p>
      * <ul>
@@ -142,7 +142,7 @@ public final class ShapeUtilities {
 
     /**
      * Returns the point on the given {@code (x1,y1)-(x2,y2)} line segment which is closest
-     * to the given {@code (x,y)} point. Lets {@code result} be the returned point. This method
+     * to the given {@code (x,y)} point. Let {@code result} be the returned point. This method
      * guarantees (except for rounding errors) that:
      * <p>
      * <ul>
@@ -193,7 +193,7 @@ public final class ShapeUtilities {
 
     /**
      * Returns a point on the given {@code line} segment located at the given {@code distance}
-     * from that line. Lets {@code result} be the returned point. If {@code result} is not null,
+     * from that line. Let {@code result} be the returned point. If {@code result} is not null,
      * then this method guarantees (except for rounding error) that:
      * <p>
      * <ul>
@@ -222,7 +222,7 @@ public final class ShapeUtilities {
 
     /**
      * Returns a point on the given {@code (x1,y1)-(x2,y2)} line segment located at the given
-     * {@code distance} from that line. Lets {@code result} be the returned point. If {@code result}
+     * {@code distance} from that line. Let {@code result} be the returned point. If {@code result}
      * is not null, then this method guarantees (except for rounding error) that:
      * <p>
      * <ul>

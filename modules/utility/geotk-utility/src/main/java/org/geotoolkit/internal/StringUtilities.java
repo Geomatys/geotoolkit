@@ -201,7 +201,7 @@ public final class StringUtilities {
      * method, a "token" is any sequence of consecutive characters of the same type, as defined
      * below.
      * <p>
-     * Lets define <var>c</var> as the first non-blank character located at an index equals or
+     * Let define <var>c</var> as the first non-blank character located at an index equals or
      * greater than the given offset. Then the characters that are considered of the same type
      * are:
      * <p>

@@ -23,6 +23,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import javax.imageio.IIOParam;
 
+import org.opengis.util.CodeList;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
@@ -35,8 +36,8 @@ import org.geotoolkit.util.converter.Classes;
 /**
  * Selects the indice of the data to read/write along an arbitrary dimension. This class is relevant
  * only for <var>n</var>-dimensional datasets where <var>n</var>&gt;2. Each {@code DimensionSlice}
- * instance applies to only one dimension. Many instances are required for defining the selection
- * along all dimensions.
+ * instance applies to only one dimension. If the indices of a slice need to be specified for more
+ * than one dimension, then many instances of {@code DimensionSlice} are required.
  *
  * {@note The <code>DimensionSlice</code> name is used in the WCS 2.0 specification for the same
  * purpose. The semantic of attributes are similar but not identical: the <code>getDimensionIds()</code>
@@ -56,13 +57,13 @@ import org.geotoolkit.util.converter.Classes;
  * When used with {@link SpatialImageWriteParam}, this class contains the indice of the section to
  * write in the file (the <cite>destination region</cite>).
  * <p>
- * {@code DimensionSlice} contains the indice from which to read the data or where to write the
- * data, and the dimension on which the above indice applies. The dimension can be identified in
- * any of the following ways:
+ * In addition of the indice from which to read the data or where to write the data,
+ * {@code DimensionSlice} specifies also the dimension on which the above indice applies.
+ * The dimension can be identified in any of the following ways:
  *
  * <ul>
  *   <li><p>A zero-based index as an {@link Integer}. This is the most straightforward approach
- *     when the set of dimensions if known. For example if the dimensions are known to be
+ *     when the set of dimensions is known. For example if the dimensions are known to be
  *     (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>), then the <var>t</var> dimension
  *     is at index 3.</p></li>
  *
@@ -81,7 +82,8 @@ import org.geotoolkit.util.converter.Classes;
  *
  * More than one identifier can be used in order to increase the chance to find the dimension.
  * For example in order to fetch the <var>z</var> dimension, it may be necessary to specify both
- * the {@code "height"} and {@code "depth"} names. In case of ambiguity, a warning will be emitted
+ * the {@code "height"} and {@code "depth"} names. In case of ambiguity, a
+ * {@linkplain SpatialImageReader#warningOccurred warning will be emitted}
  * at image reading time (see the example #2 below).
  * <p>
  * Instances of {@code DimensionSlice} can be created and used as below:
@@ -133,9 +135,10 @@ import org.geotoolkit.util.converter.Classes;
  *     elevationSlice.setIndice(25);
  * }
  *
- * If there is ambiguity (for example a dimension named {@code "height"} and an other dimension
- * named {@code "depth"}, then a warning will be emitted at reading time and the indice 25 will
- * be set to the dimension named {@code "height"} because that name has been specified first.
+ * If there is ambiguity (for example if both a dimension named {@code "height"} and an other
+ * dimension named {@code "depth"} exist), then a {@linkplain SpatialImageReader#warningOccurred
+ * warning will be emitted} at reading time and the indice 25 will be set to the dimension named
+ * {@code "height"} because that name has been specified first.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
@@ -161,19 +164,23 @@ public class DimensionSlice {
         /**
          * The region to read/write along a dimension is specified by the
          * {@linkplain Rectangle#x x} and {@linkplain Rectangle#width width}
-         * attributes of the {@linkplain IIOParam#getSourceRegion() source region}.
+         * attributes of the {@linkplain IIOParam#getSourceRegion() source region} (read),
+         * or the {@linkplain Point#x x} attribute of the {@linkplain IIOParam#getDestinationOffset()
+         * destination offset} (write).
          */
         COLUMNS,
 
         /**
          * The region to read/write along a dimension is specified by the
          * {@linkplain Rectangle#y y} and {@linkplain Rectangle#height height}
-         * attributes of the {@linkplain IIOParam#getSourceRegion() source region}.
+         * attributes of the {@linkplain IIOParam#getSourceRegion() source region} (read),
+         * or the {@linkplain Point#y y} attribute of the {@linkplain IIOParam#getDestinationOffset()
+         * destination offset} (write).
          */
         ROWS,
 
         /**
-         * The region to read/write along a dimension is specified by the
+         * The region to read along a dimension is specified by the
          * {@linkplain IIOParam#getSourceBands() source bands}.
          */
         BANDS,
@@ -189,6 +196,12 @@ public class DimensionSlice {
          * Indicates that no standard Java API match the dimension.
          */
         NONE;
+
+        /**
+         * The ordinal of the first non-reserved enumeration. All enumeration having an ordinal
+         * value below that value are "reserved" API.
+         */
+        static final int RESERVED = 2;
 
         /**
          * All valid API except {@link #NONE}. The indice of each element in the
@@ -355,7 +368,7 @@ public class DimensionSlice {
      *         or already assigned to an other {@code DimensionSlice} instance.
      */
     public void addDimensionId(final int index) throws IllegalArgumentException {
-        if (index < 2) {
+        if (index < API.RESERVED) {
             throw new IllegalArgumentException(getErrorResources().getString(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "index", index));
         }
@@ -376,7 +389,7 @@ public class DimensionSlice {
      * }
      *
      * More than one name can be specified if they should be considered as possible identifiers
-     * for the same dimension. For example in order to assign the <var>z</var> dimension to bands,
+     * for the same dimension. For example in order to set the indice for the <var>z</var> dimension,
      * it may be necessary to specify both the {@code "height"} and {@code "depth"} names.
      *
      * @param  names The names of the dimension.
@@ -401,7 +414,7 @@ public class DimensionSlice {
      * }
      *
      * More than one direction can be specified if they should be considered as possible identifiers
-     * for the same dimension. For example in order to assign the <var>z</var> dimension to bands,
+     * for the same dimension. For example in order to set the indice for the <var>z</var> dimension,
      * it may be necessary to specify both the {@link AxisDirection#UP UP} and
      * {@link AxisDirection#DOWN DOWN} directions.
      *
@@ -415,13 +428,19 @@ public class DimensionSlice {
 
     /**
      * Removes identifiers for the dimension represented by this object. The {@code identifiers}
-     * argument can contains the identifiers given to any {@code addDimensionId(...)} method.
+     * argument can contain the identifiers given to any {@code addDimensionId(...)} method.
      * Unknown identifiers are silently ignored.
      *
      * @param identifiers The identifiers to remove.
      */
     public void removeDimensionId(final Object... identifiers) {
         for (final Object identifier : identifiers) {
+            if (identifier instanceof Integer) {
+                // In the special case of dimension index, don't touch to reserved dimensions.
+                if ((Integer) identifier < API.RESERVED) {
+                    continue;
+                }
+            }
             final DimensionSlice old = paramMap.remove(identifier);
             if (old != null && !equals(old)) {
                 paramMap.put(identifier, old); // Restore the previous state.
@@ -433,7 +452,7 @@ public class DimensionSlice {
      * Returns {@code true} if the given API can not be assigned to a new dimension.
      */
     private static boolean isReserved(final API api) {
-        return API.COLUMNS.equals(api) || API.ROWS.equals(api);
+        return api.ordinal() < API.RESERVED;
     }
 
     /**
@@ -471,6 +490,7 @@ public class DimensionSlice {
                 throw new IllegalArgumentException(getErrorResources().getString(
                         Errors.Keys.BAD_PARAMETER_$2, "newAPI", newAPI));
             }
+            final int indice = getIndice(api);
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     apiMapping[i] = null;
@@ -480,6 +500,7 @@ public class DimensionSlice {
                 apiMapping[newAPI.ordinal()] = this;
             }
             assert newAPI.equals(getAPI()) : newAPI;
+            setIndice(newAPI, indice);
         }
     }
 
@@ -495,13 +516,15 @@ public class DimensionSlice {
      *     <li>Otherwise if the API is {@link API#BANDS BANDS}, then this method invokes
      *         {@link IIOParam#getSourceBands()} and returns the indice of the first band,
      *         or 0 if the source bands are not set.</li>
-     *     <li>Otherwise this method returns the last value set by {@link #setIndice(int)}.</li>
+     *     <li>Otherwise this method returns the value set by the last call to
+     *         {@link #setIndice(int)}.</li>
      *   </ul></li>
      *   <li>For {@link SpatialImageWriteParam}:<ul>
      *     <li>If the API is {@link API#COLUMNS COLUMNS} or {@link API#ROWS ROWS}, then this method
      *         invokes {@link IIOParam#getDestinationOffset()} and returns the {@link Point#x x} or
      *         {@link Point#y y} attribute respectively, or 0 if the offset is not set.</li>
-     *     <li>Otherwise this method returns the last value set by {@link #setIndice(int)}.</li>
+     *     <li>Otherwise this method returns the value set by the last call to
+     *         {@link #setIndice(int)}.</li>
      *   </ul></li>
      * </ul>
      *
@@ -513,12 +536,22 @@ public class DimensionSlice {
      * issue since the main purpose of this method is to get the indice in extra dimensions where
      * no standard Java API is available.}
      *
-     * @return The indice of the first element to read.
+     * @return The indice of the first element to read/write in the dimension represented by this
+     *         object.
+     */
+    public int getIndice() {
+        return getIndice(getAPI());
+    }
+
+    /**
+     * Implementation of {@link #getIndice()}.
+     *
+     * @param api The value of {@link #getAPI()}.
      */
     @SuppressWarnings("fallthrough")
-    public int getIndice() {
+    private int getIndice(final API api) {
         final boolean isY;
-        switch (getAPI()) {
+        switch (api) {
             case COLUMNS: {
                 isY = false;
                 break;
@@ -577,12 +610,21 @@ public class DimensionSlice {
      *   </ul></li>
      * </ul>
      *
-     * @param indice
+     * @param indice The slice point to read/write in the dimension represented by this object.
+     */
+    public void setIndice(final int indice) {
+        setIndice(getAPI(), indice);
+    }
+
+    /**
+     * Implementation of {@link #getIndice()}.
+     *
+     * @param api The value of {@link #getAPI()}.
      */
     @SuppressWarnings("fallthrough")
-    public void setIndice(final int indice) {
+    private void setIndice(final API api, final int indice) {
         final boolean isY;
-        switch (getAPI()) {
+        switch (api) {
             case COLUMNS: {
                 isY = false;
                 break;
@@ -631,7 +673,8 @@ public class DimensionSlice {
     }
 
     /**
-     * Returns a string representation of this object.
+     * Returns a string representation of this object. This is mostly for debugging purpose
+     * and may change in any future version.
      */
     @Override
     public String toString() {
@@ -639,18 +682,29 @@ public class DimensionSlice {
         boolean addSeparator = false;
         for (final Map.Entry<Object,DimensionSlice> entry : paramMap.entrySet()) {
             if (entry.getValue() == this) {
-                buffer.append(entry.getKey());
+                Object key = entry.getKey();
+                final boolean addQuotes = (key instanceof CharSequence);
+                if (key instanceof CodeList<?>) {
+                    key = ((CodeList<?>) key).name();
+                }
                 if (addSeparator) {
                     buffer.append(", ");
+                }
+                if (addQuotes) {
+                    buffer.append('"');
+                }
+                buffer.append(key);
+                if (addQuotes) {
+                    buffer.append('"');
                 }
                 addSeparator = true;
             }
         }
-        buffer.append('}');
+        buffer.append("}, indice=").append(getIndice());
         final API api = getAPI();
         if (!API.NONE.equals(api)) {
             buffer.append(", API=").append(api.name());
         }
-        return buffer.append(", indice=").append(getIndice()).append(']').toString();
+        return buffer.append(']').toString();
     }
 }
