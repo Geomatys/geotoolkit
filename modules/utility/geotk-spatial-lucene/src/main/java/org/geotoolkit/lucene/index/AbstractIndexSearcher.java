@@ -221,10 +221,10 @@ public abstract class AbstractIndexSearcher extends IndexLucene {
                 parser.setAllowLeadingWildcard(true);
                 BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
             }
-            final Query query = parser.parse(spatialQuery.getQuery());
+            final Query query   = parser.parse(spatialQuery.getQuery());
             final Filter filter = spatialQuery.getSpatialFilter();
-            final int operator = spatialQuery.getLogicalOperator();
-            final Sort sort = spatialQuery.getSort();
+            final int operator  = spatialQuery.getLogicalOperator();
+            final Sort sort     = spatialQuery.getSort();
             String sorted = "no Sorted";
             if (sort != null) {
                 sorted = "order by: " + sort.toString();

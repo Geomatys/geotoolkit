@@ -152,4 +152,8 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         return new LuceneOGCFilter(filter);
     }
 
+    @Override
+    public String toString() {
+        return "[LuceneOGCFilter] " + filter.toString();
+    }
 }
