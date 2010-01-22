@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
+
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -42,15 +43,9 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.expression.Expression;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.aggregate.MultiPrimitive;
-import org.opengis.geometry.coordinate.Polygon;
-import org.opengis.geometry.coordinate.PolyhedralSurface;
-import org.opengis.geometry.primitive.Curve;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.GraphicalSymbol;
@@ -155,10 +150,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
                 final Coordinate[] coords = geom.getCoordinates();
                 for(int i=0, n = coords.length; i<n ; i++){
                     final Coordinate coord = coords[i];
-                    DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
-
-                    final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
-                    final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
+                    final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
+                    final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
                     g2.drawImage(img, x, y, null);
                 }
                 
@@ -251,10 +244,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             final Coordinate[] coords = geom.getCoordinates();
             for(int i=0, n = coords.length; i<n ; i++){
                 final Coordinate coord = coords[i];
-                DirectPosition pt2d = new DirectPosition2D(coord.x, coord.y);
-
-                final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getOrdinate(0) + disps[0]);
-                final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getOrdinate(1) - disps[1]);
+                final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
+                final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
 
                 switch(filter){
                     case INTERSECTS :

@@ -58,6 +58,15 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.dataGeometryJTS = geom;
     }
 
+    public com.vividsolutions.jts.geom.Geometry getDataGeometry(){
+        return this.dataGeometryJTS;
+    }
+
+    public synchronized void setDataGeometry(com.vividsolutions.jts.geom.Geometry geom){
+        clearDataCache();
+        this.dataGeometryJTS = geom;
+    }
+
     public synchronized void clearDataCache(){
         clearObjectiveCache();
         this.decimatedGeometryJTS = null;
