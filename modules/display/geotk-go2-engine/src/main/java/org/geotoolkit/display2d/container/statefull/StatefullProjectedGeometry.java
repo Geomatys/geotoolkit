@@ -58,6 +58,17 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.dataGeometryJTS = geom;
     }
 
+    public StatefullProjectedGeometry(StatefullProjectedGeometry copy){
+        this.params = copy.params;
+        this.dataGeometryJTS = copy.dataGeometryJTS;
+        this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
+        this.objectiveGeometryISO = copy.objectiveGeometryISO;
+        this.objectiveShape = copy.objectiveShape;
+        this.displayGeometryJTS = copy.displayGeometryJTS;
+        this.displayGeometryISO = copy.displayGeometryISO;
+        this.displayShape = copy.displayShape;
+    }
+
     public com.vividsolutions.jts.geom.Geometry getDataGeometry(){
         return this.dataGeometryJTS;
     }

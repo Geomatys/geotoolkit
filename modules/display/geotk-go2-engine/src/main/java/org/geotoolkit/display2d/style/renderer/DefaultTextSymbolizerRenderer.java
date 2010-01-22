@@ -35,6 +35,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -141,10 +142,12 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
             final Paint fontPaint = symbol.getFontPaint(feature, 0,0, coeff, hints);
             final Font j2dFont = symbol.getJ2dFont(feature, coeff);
 
-            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+            ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
+
+            projectedGeometry = new StatefullProjectedGeometry((StatefullProjectedGeometry)projectedGeometry);
 
             portray(projectedGeometry, context, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
         }
