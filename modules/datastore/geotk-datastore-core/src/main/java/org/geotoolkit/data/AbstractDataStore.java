@@ -478,10 +478,6 @@ public abstract class AbstractDataStore implements DataStore{
             while(writer.hasNext()){
                 final Feature f = writer.next();
                 for(final Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
-                    System.out.println("key : " +entry.getKey());
-                    System.out.println("property : "+ f.getProperty(entry.getKey().getName()));
-                    System.out.println("feature : " + f);
-                    System.out.println("feature type : " + f.getType());
                     f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
                 }
                 writer.write();
