@@ -28,6 +28,8 @@ import org.opengis.geometry.Geometry;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Not thread safe.
+ * Use it knowing you make clear cache operation in a syncrhonize way.
  * GraphicJ2D for feature objects.
  *
  * @author Johann Sorel (Geomatys)
@@ -73,24 +75,24 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         return this.dataGeometryJTS;
     }
 
-    public synchronized void setDataGeometry(com.vividsolutions.jts.geom.Geometry geom){
+    public void setDataGeometry(com.vividsolutions.jts.geom.Geometry geom){
         clearDataCache();
         this.dataGeometryJTS = geom;
     }
 
-    public synchronized void clearDataCache(){
+    public void clearDataCache(){
         clearObjectiveCache();
         this.decimatedGeometryJTS = null;
     }
 
-    public synchronized void clearObjectiveCache(){
+    public void clearObjectiveCache(){
         clearDisplayCache();
         objectiveGeometryISO = null;
         objectiveGeometryJTS = null;
         objectiveShape = null;
     }
     
-    public synchronized void clearDisplayCache(){
+    public void clearDisplayCache(){
         displayGeometryISO = null;
         displayGeometryJTS = null;
         displayShape = null;

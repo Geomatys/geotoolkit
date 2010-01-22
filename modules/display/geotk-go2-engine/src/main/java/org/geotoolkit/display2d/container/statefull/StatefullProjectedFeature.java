@@ -33,6 +33,8 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.identity.FeatureId;
 
 /**
+ * Not thread safe.
+ * Use it knowing you make clear cache operation in a syncrhonize way.
  * GraphicJ2D for feature objects.
  *
  * @author Johann Sorel (Geomatys)
@@ -56,58 +58,50 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
         this.feature = feature;
     }
 
-    public synchronized void setFeature(SimpleFeature feature) {
+    public void setFeature(SimpleFeature feature) {
         if(this.feature != feature){
             clearDataCache();
         }
         this.feature = feature;
     }
 
-    public synchronized void clearDataCache(){
-        synchronized(geometries){
-            for(StatefullProjectedGeometry sg : geometries.values()){
-                sg.setDataGeometry(null);
-            }
+    public void clearDataCache(){
+        for(StatefullProjectedGeometry sg : geometries.values()){
+            sg.setDataGeometry(null);
         }
     }
 
-    public synchronized void clearObjectiveCache(){
-        synchronized(geometries){
-            for(StatefullProjectedGeometry geom : geometries.values()){
-                geom.clearObjectiveCache();
-            }
+    public void clearObjectiveCache(){
+        for(StatefullProjectedGeometry geom : geometries.values()){
+            geom.clearObjectiveCache();
         }
     }
     
-    public synchronized void clearDisplayCache(){
-        synchronized(geometries){
-            for(StatefullProjectedGeometry geom : geometries.values()){
-                geom.clearDisplayCache();
-            }
+    public void clearDisplayCache(){
+        for(StatefullProjectedGeometry geom : geometries.values()){
+            geom.clearDisplayCache();
         }
     }
 
     @Override
     public ProjectedGeometry getGeometry(String name) {
-        synchronized(geometries){
-            if(name == null) name = DEFAULT_GEOM;
+        if(name == null) name = DEFAULT_GEOM;
 
-            StatefullProjectedGeometry proj = geometries.get(name);
-            if(proj == null){
-                Geometry geom = GO2Utilities.getGeometry(feature, name);
-                if(geom != null){
-                    StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geom);
-                    geometries.put(name, projectedGeom);
-                    return projectedGeom;
-                }
-            }else{
-                //check that the geometry is set
-                if(proj.getDataGeometry() == null){
-                    proj.setDataGeometry(GO2Utilities.getGeometry(feature, name));
-                }
+        StatefullProjectedGeometry proj = geometries.get(name);
+        if(proj == null){
+            Geometry geom = GO2Utilities.getGeometry(feature, name);
+            if(geom != null){
+                StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geom);
+                geometries.put(name, projectedGeom);
+                return projectedGeom;
             }
-            return proj;
+        }else{
+            //check that the geometry is set
+            if(proj.getDataGeometry() == null){
+                proj.setDataGeometry(GO2Utilities.getGeometry(feature, name));
+            }
         }
+        return proj;
     }
 
     @Override

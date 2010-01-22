@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -40,7 +39,6 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 
-import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -53,8 +51,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer>{
-
-    private static final Logger LOGGER = Logging.getLogger(StatefullCoverageLayerJ2D.class);
 
     private final StatefullProjectedCoverage projectedCoverage;
 

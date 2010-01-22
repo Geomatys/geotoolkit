@@ -37,6 +37,8 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
+ * Not thread safe. 
+ * Use it knowing you make clear cache operation in a syncrhonize way.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -54,13 +56,13 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
         this.layer = layer;
     }
 
-    public synchronized void clearObjectiveCache(){
+    public void clearObjectiveCache(){
         if(border != null){
             border.clearObjectiveCache();
         }
     }
 
-    public synchronized void clearDisplayCache(){
+    public void clearDisplayCache(){
         if(border != null){
             border.clearDisplayCache();
         }
