@@ -141,7 +141,7 @@ public class ImageFileChooser extends JFileChooser {
     }
 
     /**
-     * Creates a new file chooser, optionnaly with an {@link ImageFileProperties} pane to be shown.
+     * Creates a new file chooser, optionally with an {@link ImageFileProperties} pane to be shown.
      * If {@code showProperties} is {@code true}, then the properties pane will be visible when the
      * {@link #showDialog showDialog} method or one of its variants is invoked. The properties pane
      * is not visible otherwise; see {@link #setPropertiesPane(ImageFileProperties)} for more
@@ -463,13 +463,13 @@ verify:     for (final File file : getSelectedFiles()) {
     }
 
     /**
-     * Creates and returns a new dialog wrapping this {@code ImageFileChooser}, optionnaly
+     * Creates and returns a new dialog wrapping this {@code ImageFileChooser}, optionally
      * with its {@link ImageFileProperties} pane. This method is invoked automatically by
      * the {@link #showDialog showDialog} methods and is overriden for adding the optional
      * properties pane, if presents.
      *
      * @param  parent he parent component of the dialog, or {@code null}.
-     * @return A dialog containing this file chooser, and optionnaly a properties pane.
+     * @return A dialog containing this file chooser, and optionally a properties pane.
      * @throws HeadlessException If the graphics environment is headlesss.
      *
      * @since 3.05

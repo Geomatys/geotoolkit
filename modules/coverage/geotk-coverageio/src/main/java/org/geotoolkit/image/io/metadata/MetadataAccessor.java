@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.ImageReader; // For javadoc
 import javax.imageio.metadata.IIOMetadata;
@@ -47,8 +46,10 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Localized;
@@ -56,7 +57,6 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.UnsupportedImplementationException;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
@@ -172,7 +172,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * @since 2.5
  * @module
  */
-public class MetadataAccessor implements Localized {
+public class MetadataAccessor implements WarningProducer {
     /**
      * The separator between names in a node path.
      */
@@ -1772,15 +1772,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      *         system as a fallback, or the {@linkplain #getWarningLevel() warning level}
      *         if {@link Level#OFF OFF}).
      */
-    protected boolean warningOccurred(final LogRecord record) {
+    @Override
+    public boolean warningOccurred(final LogRecord record) {
         if (!Level.OFF.equals(warningLevel)) {
-            if (metadata instanceof SpatialMetadata) {
-                return ((SpatialMetadata) metadata).warningOccurred(record);
-            } else {
-                final Logger logger = Logging.getLogger(MetadataAccessor.class);
-                record.setLoggerName(logger.getName());
-                logger.log(record);
-            }
+            return Warnings.log(metadata, record);
         }
         return false;
     }

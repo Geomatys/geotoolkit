@@ -17,10 +17,11 @@
  */
 package org.geotoolkit.image.io;
 
+import java.util.logging.LogRecord;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 
-import org.geotoolkit.util.Localized;
+import org.geotoolkit.internal.image.io.Warnings;
 
 
 /**
@@ -33,7 +34,13 @@ import org.geotoolkit.util.Localized;
  * @since 3.08
  * @module
  */
-public class SpatialImageWriteParam extends ImageWriteParam implements Localized {
+public class SpatialImageWriteParam extends ImageWriteParam implements WarningProducer {
+    /**
+     * The image writer which created the parameters, or {@code null} if unknown.
+     * This is used for emitting warnings.
+     */
+    private final ImageWriter writer;
+
     /**
      * Creates a new, initially empty, set of parameters.
      *
@@ -41,14 +48,25 @@ public class SpatialImageWriteParam extends ImageWriteParam implements Localized
      */
     public SpatialImageWriteParam(final ImageWriter writer) {
         super((writer != null) ? writer.getLocale() : null);
+        this.writer = writer;
     }
 
     /**
-     * Returns a string representation of this block of parameters. This is mostly for debugging
-     * purpose and may change in any future version. The current implementation formats the
-     * {@linkplain #sourceRegion source region}, {@linkplain #destinationOffset destination offset}
-     * and the subsampling values on a single line, with the list of {@linkplain DimensionSlice
-     * dimension slices} (if any) on the next lines.
+     * Invoked when a warning occured. The default implementation
+     * {@linkplain SpatialImageWriter#warningOccurred forwards the warning to the image writer}
+     * given at construction time if possible, or logs the warning otherwise.
+     */
+    @Override
+    public boolean warningOccurred(final LogRecord record) {
+        return Warnings.log(writer, record);
+    }
+
+    /**
+     * Returns a string representation of this block of parameters. The default implementation
+     * formats the {@linkplain #sourceRegion source region}, subsampling values,
+     * {@linkplain #sourceBands source bands} and {@linkplain #destinationOffset destination offset}
+     * on a single line, completed by the list of {@linkplain DimensionSlice dimension slices}
+     * (if any) on the next lines.
      */
     @Override
     public String toString() {

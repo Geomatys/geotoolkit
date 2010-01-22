@@ -17,12 +17,16 @@
  */
 
 /**
- * Base classes for extensions to {@link javax.imageio.ImageReader} and {@link javax.imageio.ImageWriter}
- * for spatial data. The base {@code ImageReader} class for reading raster data is
- * {@link org.geotoolkit.image.io.SpatialImageReader}, completed by a specialized {@code ImageReadParam}
- * class for parameters ({@link org.geotoolkit.image.io.SpatialImageReadParam} and
- * {@link org.geotoolkit.image.io.SpatialImageWriteParam}) and a specialized {@code IIOMetadata}
- * class for metadata ({@link org.geotoolkit.image.io.metadata.SpatialMetadata}). This class
+ * Base classes for extensions to
+ * {@link javax.imageio.ImageReader} /
+ * {@link javax.imageio.ImageWriter}
+ * for spatial data. The base classes for reading / writing raster data are
+ * {@link org.geotoolkit.image.io.SpatialImageReader} /
+ * {@link org.geotoolkit.image.io.SpatialImageWriter},
+ * completed by specialized {@link javax.imageio.IIOParam} classes for parameters
+ * ({@link org.geotoolkit.image.io.SpatialImageReadParam} /
+ *  {@link org.geotoolkit.image.io.SpatialImageWriteParam}) and a specialized {@code IIOMetadata}
+ * class for metadata ({@link org.geotoolkit.image.io.metadata.SpatialMetadata}). This package
  * provides different specialization of {@code ImageReader} and {@code ImageWriter}, listed below:
  * <p>
  * <table border="3" cellpadding="6">

@@ -516,7 +516,7 @@ search:     while (configs.hasMoreElements()) try {
     /**
      * Invoked when an unexpected error occurs. This method logs a message at the
      * {@link Level#WARNING WARNING} level to the specified logger. The originating
-     * class name and method name can optionnaly be specified. If any of them is
+     * class name and method name can optionally be specified. If any of them is
      * {@code null}, then it will be inferred from the error stack trace as in
      * {@link #unexpectedException(Logger, Throwable)}.
      * <p>

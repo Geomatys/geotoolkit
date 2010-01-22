@@ -89,7 +89,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *         }
  *     }
  *
- *     // Optionnaly, we could override getResourceAsStream(String) if we wanted
+ *     // Optionally, we could override getResourceAsStream(String) if we wanted
  *     // to fetch the color codes from a custom source (e.g. from a database).
  * }
  *

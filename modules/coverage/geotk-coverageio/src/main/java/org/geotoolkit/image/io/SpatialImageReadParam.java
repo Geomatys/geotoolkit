@@ -31,12 +31,13 @@ import java.awt.image.IndexColorModel;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
+import org.geotoolkit.internal.image.io.Warnings;
 
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
-import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -64,32 +65,58 @@ import org.geotoolkit.util.converter.Classes;
  * Some file formats like NetCDF can store dataset having more than two dimensions.
  * Geotk handles the supplemental dimensions with the following policies by default:
  *
- * <ul>
+ * <ol>
  *   <li><p>The two first dimensions - typically named (<var>x</var>, <var>y</var>) - are
  *     assigned to the (<var>columns</var>, <var>rows</var>) pixel indices.</p></li>
  *
- *   <li><p>The third dimension can optionnaly be assigned to band indices. This is typically the
+ *   <li><p>The third dimension can optionally be assigned to band indices. This is typically the
  *     altitude (<var>z</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
- *     <var>t</var>) dimensions, in which case the bands are used as below:</p>
- *     <ul>
- *       <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>0</sub> is stored in band 0</li>
- *       <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>1</sub> is stored in band 1</li>
- *       <li><i>etc.</i></li>
- *     </ul>
- *     <p>The actual dimension assigned to band indices is returned by {@link #findDimensionForAPI
- *     findDimensionForAPI(...)}. See {@link DimensionSlice} for more information.</p>
+ *     <var>t</var>) dimensions, but can be customized. The actual dimension assigned to band
+ *     indices is returned by {@link #findDimensionForAPI findDimensionForAPI(...)}. See the
+ *     next section below for more information.</p>
  *
  *   <li><p>Only one slice of every supplemental dimensions can be read. By default the data at indice
  *     0 are loaded, but different indices can be selected (see {@link DimensionSlice}). The actual
  *     indice used is the value returned by {@link #getSourceIndiceForDimension(Object[])}.</p></li>
- * </ul>
+ * </ol>
  *
- * Note that the reader for some formats (e.g. NetCDF) will initialize the {@linkplain #sourceBands
- * source bands} array to {@code {0}} in order to load only one band by default. This is different
- * than the usual {@code ImageReadParam} behavior which is to initialize source bands to {@code null}
- * (meaning to load all bands). This is done that way because the number of bands in NetCDF files is
- * typically large and those bands are not color components. The decision to initialize
- * {@code sourceBands} to {@code {0}} or {@code null} is left to reader implementations.
+ * {@section Assigning a third dimension to bands}
+ * Whatever a third dimension is assigned to bands or not is plugin-specific. Plugins that have no
+ * concept of bands (like NetCDF which has the concept of <var>n</var>-dimensional data cube instead)
+ * do that, which allow us to read more than one slice in a single read operation. In such case the
+ * bands can be used as below:
+ * <p>
+ * <ul>
+ *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>0</sub> is stored in band 0.</li>
+ *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>1</sub> is stored in band 1.</li>
+ *   <li><i>etc.</i></li>
+ * </ul>
+ * <p>
+ * In order to use the bands for this purpose, plugin implementations shall invoke the following
+ * code in their {@link ImageReader#getDefaultReadParam()} method:
+ *
+ * {@preformat java
+ *     public SpatialImageReadParam getDefaultReadParam() {
+ *         SpatialImageReadParam param = new SpatialImageReadParam(this);
+ *         DimensionSlice thirdDimension = param.newDimensionSlice();
+ *         thirdDimension.addDimensionId(2); // This is where we said that this is the 3th dimension.
+ *         thirdDimension.setAPI(DimensionSlice.API.BANDS);
+ *         return param;
+ *     }
+ * }
+ *
+ * Note that the above code has the side-effect to initialize the {@linkplain #sourceBands source
+ * bands} array to {@code {0}} (meaning to load only the first band by default), which is desired
+ * since the number of bands in NetCDF files is typically large and those bands are not color
+ * components. This is different than the usual {@code ImageReadParam} behavior which is to
+ * initialize source bands to {@code null} (meaning to load all bands).
+ *
+ * {@note The side-effect described above is not a special case. It is a natural consequence
+ *        of the fact that the default indice of <strong>every</strong> dimension slice in 0.}
+ *
+ * Users can know if a dimension has been set to the bands API by invoking
+ * <code>{@linkplain #getDimensionSliceForAPI getDimensionSliceForAPI}(BANDS)</code>
+ * and checking if the return value is non-null.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
@@ -97,7 +124,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.05 (derived from 2.4)
  * @module
  */
-public class SpatialImageReadParam extends ImageReadParam implements Localized {
+public class SpatialImageReadParam extends ImageReadParam implements WarningProducer {
     /**
      * The name of the default color palette to apply when none was explicitly specified.
      * The default palette is {@value}.
@@ -163,12 +190,7 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
         final LogRecord record = new LogRecord(Level.WARNING, message);
         record.setSourceClassName(SpatialImageReadParam.class.getName());
         record.setSourceMethodName(method);
-        if (reader instanceof SpatialImageReader) {
-            ((SpatialImageReader) reader).warningOccurred(record);
-        } else {
-            record.setLoggerName(SpatialImageReader.LOGGER.getName());
-            SpatialImageReader.LOGGER.log(record);
-        }
+        warningOccurred(record);
     }
 
     /**
@@ -193,7 +215,22 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
             slicesForDimensions = new LinkedHashMap<Object,DimensionSlice>();
             apiMapping = new DimensionSlice[DimensionSlice.API.VALIDS.length];
         }
-        return new DimensionSlice(this, slicesForDimensions, apiMapping, false);
+        return new DimensionSlice(this, slicesForDimensions, apiMapping);
+    }
+
+    /**
+     * Creates a new dimension slice for a reserved API.
+     *
+     * @param api The ordinal of the reserved API.
+     */
+    private DimensionSlice newDimensionSlice(final Integer api) {
+        assert DimensionSlice.isReserved(api) : api;
+        final DimensionSlice slice = newDimensionSlice();
+        if (slicesForDimensions.put(api, slice) != null) {
+            throw new AssertionError(api);
+        }
+        apiMapping[api] = slice;
+        return slice;
     }
 
     /**
@@ -265,25 +302,30 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      * @since 3.08
      */
     public DimensionSlice getDimensionSlice(final Object... dimensionIds) {
-        if (slicesForDimensions != null) {
+        /*
+         * NOTE: If the dimensionIds argument contains 0 or 1 integer, then we will
+         * generate the corresponding DimensionSlice for COLUMNS or ROWS API on the
+         * fly.
+         */
+        if (slicesForDimensions == null) {
+            for (final Object id : dimensionIds) {
+                if (id instanceof Integer) {
+                    final Integer api = (Integer) id;
+                    if (DimensionSlice.isReserved(api)) {
+                        return newDimensionSlice(api);
+                    }
+                }
+            }
+        } else {
             Map<DimensionSlice,Object> found = null;
             for (final Object id : dimensionIds) {
                 DimensionSlice slice = slicesForDimensions.get(id);
                 if (slice == null) {
-                    /*
-                     * If the caller asked for one of the reserved
-                     * dimensions (COLUMNS, ROWS), creates it on the fly.
-                     */
-                    if (!(id instanceof Integer)) {
+                    if ((id instanceof Integer) && DimensionSlice.isReserved((Integer) id)) {
+                        slice = newDimensionSlice((Integer) id);
+                    } else {
                         continue;
                     }
-                    final int n = (Integer) id;
-                    if (n < 0 || n >= DimensionSlice.API.RESERVED) {
-                        continue;
-                    }
-                    slice = new DimensionSlice(this, slicesForDimensions, apiMapping, false);
-                    slicesForDimensions.put(id, slice);
-                    apiMapping[n] = slice;
                 }
                 if (found == null) {
                     found = new LinkedHashMap<DimensionSlice,Object>(4);
@@ -350,6 +392,35 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
     }
 
     /**
+     * Returns the dimension slice which has been assigned to the given API, or {@code null}
+     * if none. This method returns the last {@code DimensionSlice} instance created by the
+     * {@link #newDimensionSlice()} method on which the {@link DimensionSlice#setAPI setAPI}
+     * method has been invoked with the given {@code api} value.
+     *
+     * @param  api The API for which to test if a dimension slice has been assigned.
+     * @return The dimension slice assigned to the given API, or {@code null} if none.
+     *
+     * @since 3.08
+     */
+    public DimensionSlice getDimensionSliceForAPI(final DimensionSlice.API api) {
+        if (api == null) {
+            throw new NullArgumentException(getErrorResources().getString(Errors.Keys.NULL_ARGUMENT_$1, "api"));
+        }
+        if (!api.equals(DimensionSlice.API.NONE)) {
+            if (apiMapping != null) {
+                final DimensionSlice slice = apiMapping[api.ordinal()];
+                if (slice != null) {
+                    return slice;
+                }
+            }
+            if (DimensionSlice.isReserved(api)) {
+                return newDimensionSlice(api.ordinal());
+            }
+        }
+        return null;
+    }
+
+    /**
      * Returns the dimension to assign to a standard Java API. For example in a dataset having
      * (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions, it may be useful to
      * handle the <var>z</var> dimension as bands. After the method calls below, users can select
@@ -359,12 +430,12 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      *
      * {@preformat java
      *     DimensionSlice slice = parameters.newDimensionSlice();
-     *     slice.addDimensionId(3);
+     *     slice.addDimensionId(2); // Will assign the third dimension to bands.
      *     slice.setAPI(DimensionSlice.API.BANDS);
      * }
      *
      * This method is invoked by implementations of {@link SpatialImageReader} when a dataset is
-     * about to be read. The caller shall known the set of dimensions which exist in the dataset.
+     * about to be read. The caller shall know the set of dimensions which exist in the dataset.
      * The set of dimensions in the dataset may not be the same than the set of dimensions
      * declared in this {@code SpatialImageReadParam} instance.
      *
@@ -384,8 +455,7 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      *       If an element is equals to a value specified to a {@code addDimensionId(...)} method,
      *       then the position of that element in the {@code properties} iteration is returned.</p></li>
      *   <li><p>Otherwise this method returns 0 for {@link DimensionSlice.API#COLUMNS COLUMNS}, 1 for
-     *       {@link DimensionSlice.API#ROWS ROWS}, 2 for {@link DimensionSlice.API#BANDS BANDS}
-     *       or -1 otherwise.</p></li>
+     *       {@link DimensionSlice.API#ROWS ROWS}, or -1 otherwise.</p></li>
      * </ol>
      *
      * If more than one dimension match, then a {@linkplain SpatialImageReader#warningOccurred
@@ -403,69 +473,61 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
      * @since 3.08
      */
     public int findDimensionForAPI(final DimensionSlice.API api, final Iterable<?> properties) {
-        // Note: we want a NullPointerException if 'api' is null.
-        if (!api.equals(DimensionSlice.API.NONE) && apiMapping != null) {
-            final DimensionSlice slice = apiMapping[api.ordinal()];
-            if (slice != null) {
-                /*
-                 * Get all identifiers for the slice. If an explicit dimension
-                 * index is found in the process, it will be returned immediately.
-                 */
-                Set<Object> identifiers = null;
-                for (final Map.Entry<Object,DimensionSlice> entry : slicesForDimensions.entrySet()) {
-                    if (slice.equals(entry.getValue())) {
-                        final Object key = entry.getKey();
-                        if (key instanceof Integer) {
-                            return (Integer) key;
-                        }
-                        if (identifiers == null) {
-                            identifiers = new HashSet<Object>(8);
-                        }
-                        identifiers.add(key);
+        final DimensionSlice slice = getDimensionSliceForAPI(api);
+        if (slice != null) {
+            /*
+             * Get all identifiers for the slice. If an explicit dimension
+             * index is found in the process, it will be returned immediately.
+             */
+            Set<Object> identifiers = null;
+            for (final Map.Entry<Object,DimensionSlice> entry : slicesForDimensions.entrySet()) {
+                if (slice.equals(entry.getValue())) {
+                    final Object key = entry.getKey();
+                    if (key instanceof Integer) {
+                        return (Integer) key;
                     }
+                    if (identifiers == null) {
+                        identifiers = new HashSet<Object>(8);
+                    }
+                    identifiers.add(key);
                 }
-                /*
-                 * No explicit dimension found. Now searchs for an element from the
-                 * given iterator which would be one of the declared identifiers.
-                 */
-                if (properties != null && identifiers != null) {
-                    Map<Integer,Object> found = null;
-                    int position = 0;
-                    for (Object property : properties) {
-                        /*
-                         * Undocumented (for now) feature: if we have Map.Entry<?,Integer>,
-                         * the value will be the dimension. This allow us to pass more than
-                         * one property per dimension.
-                         */
-                        if (property instanceof Map.Entry<?,?>) {
-                            final Map.Entry<?,?> entry = (Map.Entry<?,?>) property;
-                            property = entry.getKey();
-                            position = (Integer) entry.getValue();
-                        }
-                        if (identifiers.contains(property)) {
-                            if (found == null) {
-                                found = new LinkedHashMap<Integer,Object>(4);
-                            }
-                            final Object old = found.put(position, property);
-                            if (old != null) {
-                                found.put(position, old); // Keep the first value.
-                            }
-                        }
-                        position++;
+            }
+            /*
+             * No explicit dimension found. Now searchs for an element from the
+             * given iterator which would be one of the declared identifiers.
+             */
+            if (properties != null && identifiers != null) {
+                Map<Integer,Object> found = null;
+                int position = 0;
+                for (Object property : properties) {
+                    /*
+                     * Undocumented (for now) feature: if we have Map.Entry<?,Integer>,
+                     * the value will be the dimension. This allow us to pass more than
+                     * one property per dimension.
+                     */
+                    if (property instanceof Map.Entry<?,?>) {
+                        final Map.Entry<?,?> entry = (Map.Entry<?,?>) property;
+                        property = entry.getKey();
+                        position = (Integer) entry.getValue();
                     }
-                    final Integer dimension = first("findDimensionForAPI", found);
-                    if (dimension != null) {
-                        return dimension;
+                    if (identifiers.contains(property)) {
+                        if (found == null) {
+                            found = new LinkedHashMap<Integer,Object>(4);
+                        }
+                        final Object old = found.put(position, property);
+                        if (old != null) {
+                            found.put(position, old); // Keep the first value.
+                        }
                     }
+                    position++;
+                }
+                final Integer dimension = first("findDimensionForAPI", found);
+                if (dimension != null) {
+                    return dimension;
                 }
             }
         }
-        switch (api) {
-            case COLUMNS: return 0;
-            case ROWS:    return 1;
-            case BANDS:   return 2;
-            default:      return -1;
-        }
+        return -1;
     }
 
     /**
@@ -555,6 +617,18 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
     }
 
     /**
+     * Invoked when a warning occured. The default implementation
+     * {@linkplain SpatialImageReader#warningOccurred forwards the warning to the image reader}
+     * given at construction time if possible, or logs the warning otherwise.
+     *
+     * @since 3.08
+     */
+    @Override
+    public boolean warningOccurred(final LogRecord record) {
+        return Warnings.log(reader, record);
+    }
+
+    /**
      * Builds the first part of the string representation of the given parameters.
      * The closing bracket is missing from the buffer, in order to allow callers
      * to add more elements.
@@ -567,20 +641,16 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(param));
         buffer.append('[');
         if (sourceRegion != null) {
-            buffer.append("size=(").append(sourceRegion.width).append(',').append(sourceRegion.height)
-                  .append("), source=(").append(sourceRegion.x).append(',').append(sourceRegion.y)
-                  .append("), ");
-        }
-        if (destinationOffset != null && (destinationOffset.x != 0 || destinationOffset.y != 0)) {
-            buffer.append("dest=(").append(destinationOffset.x).append(',').append(destinationOffset.y)
+            buffer.append("sourceRegion=(").append(sourceRegion.x).append(',').append(sourceRegion.y)
+                  .append(" : ").append(sourceRegion.width).append(',').append(sourceRegion.height)
                   .append("), ");
         }
         if (sourceXSubsampling != 1 || sourceYSubsampling != 1) {
-            buffer.append("subsampling=(").append(sourceXSubsampling).append(',').
+            buffer.append("sourceSubsampling=(").append(sourceXSubsampling).append(',').
                     append(sourceYSubsampling).append("), ");
         }
         if (sourceBands != null) {
-            buffer.append("bands={");
+            buffer.append("sourceBands={");
             for (int i=0; i<sourceBands.length; i++) {
                 if (i != 0) {
                     buffer.append(',');
@@ -589,16 +659,19 @@ public class SpatialImageReadParam extends ImageReadParam implements Localized {
             }
             buffer.append("}, ");
         }
+        if (destinationOffset != null && (destinationOffset.x != 0 || destinationOffset.y != 0)) {
+            buffer.append("destinationOffset=(").append(destinationOffset.x)
+                  .append(',').append(destinationOffset.y).append("), ");
+        }
         return buffer;
     }
 
     /**
-     * Returns a string representation of this block of parameters. This is mostly for debugging
-     * purpose and may change in any future version. The current implementation formats the
-     * {@linkplain #sourceRegion source region}, {@linkplain #destinationOffset destination offset},
-     * the subsampling values, the {@linkplain #sourceBands source bands} and the color palette on
-     * a single line, with the list of {@linkplain DimensionSlice dimension slices} (if any) on the
-     * next lines.
+     * Returns a string representation of this block of parameters. The default implementation
+     * formats the {@linkplain #sourceRegion source region}, subsampling values,
+     * {@linkplain #sourceBands source bands}, {@linkplain #destinationOffset destination offset}
+     * and the color palette on a single line, completed by the list of
+     * {@linkplain DimensionSlice dimension slices} (if any) on the next lines.
      */
     @Override
     public String toString() {

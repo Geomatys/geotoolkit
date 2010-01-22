@@ -77,7 +77,7 @@ public final class IOUtilities {
      * this method adds the following functionalities:
      * <p>
      * <ul>
-     *   <li>Optionnaly decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
+     *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>
      *   <li>Converts various exceptions into subclasses of {@link IOException}.</li>
      * </ul>
      *

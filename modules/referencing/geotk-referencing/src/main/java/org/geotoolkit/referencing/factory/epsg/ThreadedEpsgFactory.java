@@ -452,7 +452,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     }
 
     /**
-     * Creates a default data source, optionnaly using the given configuration. This method is
+     * Creates a default data source, optionally using the given configuration. This method is
      * invoked by {@link #getDataSource()} when no explicit value was provided for
      * {@link Hints#EPSG_DATA_SOURCE}. If a {@linkplain #CONFIGURATION_FILE configuration file}
      * has been found, its content is given as the sole argument to this method. Otherwise the

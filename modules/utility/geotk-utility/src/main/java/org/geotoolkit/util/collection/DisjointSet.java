@@ -31,7 +31,7 @@ import java.io.Serializable;
  * A set which is disjoint from others {@code DisjointSet}s. Two sets are
  * disjoint (or <em>mutually exclusive</em>) if their intersection is the empty
  * set. Adding an element to a {@code DisjointSet} remove it from any other
- * mutually exclusive {@code DisjointSet}. Optionnaly, {@code DisjointSet}s
+ * mutually exclusive {@code DisjointSet}. Optionally, {@code DisjointSet}s
  * may also have a trash set receiving removed elements. The example below
  * creates 3 mutually exclusive sets with a trash:
  *

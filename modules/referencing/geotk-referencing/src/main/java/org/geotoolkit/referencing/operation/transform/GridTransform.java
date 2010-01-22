@@ -49,7 +49,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  *
  * {@section Input and output coordinates}
  *
- * First, "<cite>real world</cite>" input coordinates (<var>x</var>, <var>y</var>) are optionnaly
+ * First, "<cite>real world</cite>" input coordinates (<var>x</var>, <var>y</var>) are optionally
  * converted to <cite>grid</cite> coordinates (<var>xi</var>, <var>yi</var>), which are zero-based
  * index in the two-dimensional grid. This conversion is applied only if a "real world" envelope
  * was given to the constructor, otherwise the input coordinates are assumed to be directly grid

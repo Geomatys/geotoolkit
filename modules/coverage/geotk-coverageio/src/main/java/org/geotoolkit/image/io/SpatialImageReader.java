@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collections;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
 import java.awt.Rectangle;
@@ -41,7 +40,6 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
@@ -92,19 +90,14 @@ import org.geotoolkit.internal.image.io.Warnings;
  * operators after reading.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @see SpatialImageWriter
  *
  * @since 3.06 (derived from 1.2)
  * @module
  */
-public abstract class SpatialImageReader extends ImageReader implements Localized {
-    /**
-     * The logger to use for events related to this image reader.
-     */
-    static final Logger LOGGER = Logging.getLogger(SpatialImageReader.class);
-
+public abstract class SpatialImageReader extends ImageReader implements WarningProducer {
     /**
      * Stream and image metadata for each images, or {@code null} if not yet created.
      * The element at index 0 is the stream metadata, and next elements are image metadata
@@ -977,7 +970,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
     }
 
     /**
-     * Invoked when a warning occured. The default implementation make the following choice:
+     * Invoked when a warning occured. The default implementation makes the following choice:
      * <p>
      * <ul>
      *   <li>If at least one {@linkplain IIOReadWarningListener warning listener}
@@ -997,6 +990,7 @@ public abstract class SpatialImageReader extends ImageReader implements Localize
      *
      * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
      */
+    @Override
     public boolean warningOccurred(final LogRecord record) {
         if (warningListeners == null) {
             record.setLoggerName(LOGGER.getName());

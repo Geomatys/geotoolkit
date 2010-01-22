@@ -164,8 +164,8 @@ public final class Locales {
 
     /**
      * Parses the given locale. The string is the language code either as the 2 letters or the
-     * 3 letters ISO code. It can optionnaly be followed by the {@code '_'} character and the
-     * country code (again either as 2 or 3 letters), optionnaly followed by {@code '_'} and
+     * 3 letters ISO code. It can optionally be followed by the {@code '_'} character and the
+     * country code (again either as 2 or 3 letters), optionally followed by {@code '_'} and
      * the variant.
      *
      * @param  code The language code, which may be followed by country code.

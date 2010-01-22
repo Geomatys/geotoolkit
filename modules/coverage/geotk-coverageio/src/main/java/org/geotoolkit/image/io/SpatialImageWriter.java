@@ -22,7 +22,6 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.io.IOException;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
@@ -39,7 +38,6 @@ import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
@@ -67,12 +65,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * @since 3.05 (derived from 2.4)
  * @module
  */
-public abstract class SpatialImageWriter extends ImageWriter implements Localized {
-    /**
-     * The logger to use for events related to this image writer.
-     */
-    static final Logger LOGGER = Logging.getLogger(SpatialImageWriter.class);
-
+public abstract class SpatialImageWriter extends ImageWriter implements WarningProducer {
     /**
      * Index of the image in process of being written. This convenience index is reset to 0
      * by {@link #close} method.
@@ -438,7 +431,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
     }
 
     /**
-     * Invoked when a warning occured. The default implementation make the following choice:
+     * Invoked when a warning occured. The default implementation makes the following choice:
      * <p>
      * <ul>
      *   <li>If at least one {@linkplain IIOWriteWarningListener warning listener}
@@ -458,6 +451,7 @@ public abstract class SpatialImageWriter extends ImageWriter implements Localize
      *
      * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
      */
+    @Override
     public boolean warningOccurred(final LogRecord record) {
         if (warningListeners == null) {
             record.setLoggerName(LOGGER.getName());

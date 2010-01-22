@@ -135,7 +135,7 @@ public abstract class SwingBase<T extends JComponent> {
                 gr.dispose();
             }
             /*
-             * Optionnaly save to a file in the current directory, for checking purpose.
+             * Optionally save to a file in the current directory, for checking purpose.
              * Actually the image is empty if we didn't overrided the Component.paint method,
              * so the above check is useful only for widgets doing their own painting like
              * ColorRamp.

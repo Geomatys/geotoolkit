@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
@@ -49,13 +48,13 @@ import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
+import org.geotoolkit.image.io.WarningProducer;
+import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.measure.RangeFormat;
 
 
@@ -135,7 +134,7 @@ import org.geotoolkit.measure.RangeFormat;
  * @since 3.04 (derived from 2.4)
  * @module
  */
-public class SpatialMetadata extends IIOMetadata implements Localized {
+public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     /**
      * An empty {@code SpatialMetadata} with no data and no format. This constant is
      * an alternative to {@code null} for meaning that no metadata are available.
@@ -766,17 +765,9 @@ public class SpatialMetadata extends IIOMetadata implements Localized {
      * @see MetadataAccessor#warningOccurred(LogRecord)
      * @see javax.imageio.event.IIOReadWarningListener
      */
-    protected boolean warningOccurred(final LogRecord record) {
-        if (owner instanceof SpatialImageReader) {
-            return ((SpatialImageReader) owner).warningOccurred(record);
-        } else if (owner instanceof SpatialImageWriter) {
-            return ((SpatialImageWriter) owner).warningOccurred(record);
-        } else {
-            final Logger logger = Logging.getLogger("org.geotoolkit.image.io");
-            record.setLoggerName(logger.getName());
-            logger.log(record);
-            return false;
-        }
+    @Override
+    public boolean warningOccurred(final LogRecord record) {
+        return Warnings.log(owner, record);
     }
 
     /**

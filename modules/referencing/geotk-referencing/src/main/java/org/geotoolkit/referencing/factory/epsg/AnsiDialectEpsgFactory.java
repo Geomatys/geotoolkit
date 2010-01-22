@@ -194,7 +194,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     }
 
     /**
-     * Sets the schema where to search for the tables, and optionnaly removes the "{@code epsg_}"
+     * Sets the schema where to search for the tables, and optionally removes the "{@code epsg_}"
      * prefix. Those two operations (setting a schema and removing the prefix) are proposed
      * together because the prefix is redundant with the schema.
      * <p>

@@ -19,9 +19,11 @@ package org.geotoolkit.image.io;
 
 import java.util.Map;
 import java.util.Locale;
+import java.util.logging.LogRecord;
 import java.awt.Point;
 import java.awt.Rectangle;
 import javax.imageio.IIOParam;
+import javax.imageio.ImageWriteParam;
 
 import org.opengis.util.CodeList;
 import org.opengis.referencing.cs.AxisDirection;
@@ -31,6 +33,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.internal.image.io.Warnings;
 
 
 /**
@@ -146,13 +149,33 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.08
  * @module
  */
-public class DimensionSlice {
+public class DimensionSlice implements WarningProducer {
     /**
-     * The standard Java API used for selecting the data to read or write. The selection can be
-     * performed by specifying the {@linkplain IIOParam#getSourceRegion() source region} for the
-     * two first dimensions, the {@linkplain IIOParam#getSourceBands() source bands} for a third
-     * dimension, or the image index for the fourth dimension. Extra-dimensions if any can not be
-     * specified by an API from the standard Java library.
+     * The standard Java API used for selecting the slice to read or write.
+     * The selection can be performed in the first 3 or 4 dimensions by:
+     *
+     * <ul>
+     *   <li><p>When reading:</p></li>
+     *   <ol>
+     *     <li>Specifying the {@linkplain Rectangle#x x} ordinate of the
+     *         {@linkplain IIOParam#getSourceRegion() source region}.</li>
+     *     <li>Specifying the {@linkplain Rectangle#y y} ordinate of the
+     *         {@linkplain IIOParam#getSourceRegion() source region}.</li>
+     *     <li>Specifying the the {@linkplain IIOParam#getSourceBands() source bands}.</li>
+     *     <li>Specifying the image index.</li>
+     *   </ol>
+     *   <li><p>When writing:</p></li>
+     *   <ol>
+     *     <li>Specifying the {@linkplain Point#x x} ordinate of the
+     *         {@linkplain IIOParam#getDestinationOffset() destination offset}.</li>
+     *     <li>Specifying the {@linkplain Point#y y} ordinate of the
+     *         {@linkplain IIOParam#getDestinationOffset() destination offset}.</li>
+     *     <li>Specifying the image index.</li>
+     *   </ol>
+     * </ul>
+     * <p>
+     * Supplemental dimensions if any can not be specified by an API from the standard Java library.
+     * {@link DimensionSlice} instances shall be created for those supplemental dimensions.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.08
@@ -162,20 +185,26 @@ public class DimensionSlice {
      */
     public static enum API {
         /**
-         * The region to read/write along a dimension is specified by the
-         * {@linkplain Rectangle#x x} and {@linkplain Rectangle#width width}
-         * attributes of the {@linkplain IIOParam#getSourceRegion() source region} (read),
-         * or the {@linkplain Point#x x} attribute of the {@linkplain IIOParam#getDestinationOffset()
-         * destination offset} (write).
+         * The region to read/write along a dimension is specified by the <var>x</var> ordinate.
+         * <p>
+         * <ul>
+         *   <li>On reading, this is the ({@linkplain Rectangle#x x}, {@linkplain Rectangle#width width})
+         *       attributes of the {@linkplain IIOParam#getSourceRegion() source region}.</li>
+         *   <li>On writing, this is the {@linkplain Point#x x} attribute of the
+         *       {@linkplain IIOParam#getDestinationOffset() destination offset}.</li>
+         * </ul>
          */
         COLUMNS,
 
         /**
-         * The region to read/write along a dimension is specified by the
-         * {@linkplain Rectangle#y y} and {@linkplain Rectangle#height height}
-         * attributes of the {@linkplain IIOParam#getSourceRegion() source region} (read),
-         * or the {@linkplain Point#y y} attribute of the {@linkplain IIOParam#getDestinationOffset()
-         * destination offset} (write).
+         * The region to read/write along a dimension is specified by the <var>y</var> ordinate.
+         * <p>
+         * <ul>
+         *   <li>On reading, this is the ({@linkplain Rectangle#y y}, {@linkplain Rectangle#height height})
+         *       attributes of the {@linkplain IIOParam#getSourceRegion() source region}.</li>
+         *   <li>On writing, this is the {@linkplain Point#y y} attribute of the
+         *       {@linkplain IIOParam#getDestinationOffset() destination offset}.</li>
+         * </ul>
          */
         ROWS,
 
@@ -187,8 +216,8 @@ public class DimensionSlice {
 
         /**
          * The region to read/write along a dimension is specified by the image index. Note that
-         * this parameter needs to be given directly to the {@link javax.imageio.ImageReader}
-         * instead than the {@link IIOParam} object.
+         * this parameter needs to be given directly to the {@link javax.imageio.ImageReader} or
+         * {@link javax.imageio.ImageWriter} instead than the {@link IIOParam} object.
          */
         IMAGES,
 
@@ -228,12 +257,6 @@ public class DimensionSlice {
     private final DimensionSlice[] apiMapping;
 
     /**
-     * {@code true} if this section is for specifying the target indices,
-     * or {@code false} for specifying the source indices.
-     */
-    private final boolean write;
-
-    /**
      * The indice of the region to read along the dimension that this
      * {@code DimensionSlice} object represents.
      */
@@ -255,16 +278,13 @@ public class DimensionSlice {
      * @param parameters The parameters that created this object.
      * @param paramMap   A reference to the map in the parameters object.
      * @param apiMapping A reference to the array in the parameters object.
-     * @param write      {@code true} for specifying the target indices, or
-     *                   {@code false} for source indices.
      */
     DimensionSlice(final IIOParam parameters, final Map<Object,DimensionSlice> paramMap,
-            final DimensionSlice[] apiMapping, final boolean write)
+            final DimensionSlice[] apiMapping)
     {
         this.parameters = parameters;
         this.paramMap   = paramMap;
         this.apiMapping = apiMapping;
-        this.write      = write;
     }
 
     /**
@@ -299,19 +319,21 @@ public class DimensionSlice {
         this.parameters = original.parameters;
         this.paramMap   = original.paramMap;
         this.apiMapping = original.apiMapping;
-        this.write      = original.write;
         this.indice     = original.indice;
+    }
+
+    /**
+     * Returns {@code true} if the parameters are for writting an image.
+     */
+    private boolean isWrite() {
+        return (parameters instanceof ImageWriteParam);
     }
 
     /**
      * Returns the resources for formatting error messages.
      */
     private IndexedResourceBundle getErrorResources() {
-        Locale locale = null;
-        if (parameters instanceof Localized) {
-            locale = ((Localized) parameters).getLocale();
-        }
-        return Errors.getResources(locale);
+        return Errors.getResources(getLocale());
     }
 
     /**
@@ -437,7 +459,7 @@ public class DimensionSlice {
         for (final Object identifier : identifiers) {
             if (identifier instanceof Integer) {
                 // In the special case of dimension index, don't touch to reserved dimensions.
-                if ((Integer) identifier < API.RESERVED) {
+                if (isReserved((Integer) identifier)) {
                     continue;
                 }
             }
@@ -451,8 +473,16 @@ public class DimensionSlice {
     /**
      * Returns {@code true} if the given API can not be assigned to a new dimension.
      */
-    private static boolean isReserved(final API api) {
+    static boolean isReserved(final API api) {
         return api.ordinal() < API.RESERVED;
+    }
+
+    /**
+     * Returns {@code true} if the given identifier is for a reserved dimension.
+     */
+    static boolean isReserved(final Integer id) {
+        final int n = id;
+        return n >= 0 && n < API.RESERVED;
     }
 
     /**
@@ -460,6 +490,8 @@ public class DimensionSlice {
      * dimension represented by this object. The default value is {@link API#NONE NONE}.
      *
      * @return The standard Java API for selecting a region along the dimension.
+     *
+     * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
      */
     public final API getAPI() {
         for (int i=apiMapping.length; --i>=0;) {
@@ -482,6 +514,8 @@ public class DimensionSlice {
      *
      * @param  newAPI The standard Java API to use for the dimension.
      * @throws IllegalArgumentException If the given API can not be used with this dimension.
+     *
+     * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
      */
     public void setAPI(final API newAPI) throws IllegalArgumentException {
         final API api = getAPI();
@@ -538,6 +572,8 @@ public class DimensionSlice {
      *
      * @return The indice of the first element to read/write in the dimension represented by this
      *         object.
+     *
+     * @see SpatialImageReadParam#getSourceIndiceForDimension(Object[])
      */
     public int getIndice() {
         return getIndice(getAPI());
@@ -561,7 +597,7 @@ public class DimensionSlice {
                 break;
             }
             case BANDS: {
-                if (!write) {
+                if (!isWrite()) {
                     final int[] sourceBands = parameters.getSourceBands();
                     return (sourceBands != null && sourceBands.length != 0) ? sourceBands[0] : 0;
                 }
@@ -574,7 +610,7 @@ public class DimensionSlice {
         /*
          * COLUMNS and ROWS cases.
          */
-        if (write) {
+        if (isWrite()) {
             final Point offset = parameters.getDestinationOffset();
             if (offset != null) {
                 return isY ? offset.y : offset.x;
@@ -611,6 +647,8 @@ public class DimensionSlice {
      * </ul>
      *
      * @param indice The slice point to read/write in the dimension represented by this object.
+     *
+     * @see SpatialImageReadParam#getSourceIndiceForDimension(Object[])
      */
     public void setIndice(final int indice) {
         setIndice(getAPI(), indice);
@@ -634,7 +672,7 @@ public class DimensionSlice {
                 break;
             }
             case BANDS: {
-                if (!write) {
+                if (!isWrite()) {
                     parameters.setSourceBands(new int[] {indice});
                     return;
                 }
@@ -648,7 +686,7 @@ public class DimensionSlice {
         /*
          * COLUMNS and ROWS cases.
          */
-        if (write) {
+        if (isWrite()) {
             final Point offset = parameters.getDestinationOffset();
             if (isY) {
                 offset.y = indice;
@@ -673,8 +711,30 @@ public class DimensionSlice {
     }
 
     /**
-     * Returns a string representation of this object. This is mostly for debugging purpose
-     * and may change in any future version.
+     * Returns the locale used for formatting error messages, or {@code null} if none.
+     */
+    @Override
+    public Locale getLocale() {
+        return (parameters instanceof Localized) ? ((Localized) parameters).getLocale() : null;
+    }
+
+    /**
+     * Invoked when a warning occured. The default implementation
+     * {@linkplain SpatialImageReader#warningOccurred forwards the warning to the image reader} or
+     * {@linkplain SpatialImageWriter#warningOccurred writer} if possible, or logs the warning
+     * otherwise.
+     */
+    @Override
+    public boolean warningOccurred(final LogRecord record) {
+        return Warnings.log(parameters, record);
+    }
+
+    /**
+     * Returns a string representation of this object. The default implementation
+     * formats on a single line the class name, the list of dimension identifiers,
+     * the {@linkplain #getIndice() indice} and the {@linkplain #getAPI() API} (if any).
+     *
+     * @see SpatialImageReadParam#toString()
      */
     @Override
     public String toString() {

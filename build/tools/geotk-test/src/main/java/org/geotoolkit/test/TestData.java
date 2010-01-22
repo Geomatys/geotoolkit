@@ -402,7 +402,7 @@ public class TestData implements Runnable {
 
     /**
      * Requests that the file or directory denoted by the specified pathname be deleted
-     * when the virtual machine terminates. This method can optionnaly delete the file
+     * when the virtual machine terminates. This method can optionally delete the file
      * only if it has been modified, thus giving a chance for test suites to copy their
      * resources only once.
      *

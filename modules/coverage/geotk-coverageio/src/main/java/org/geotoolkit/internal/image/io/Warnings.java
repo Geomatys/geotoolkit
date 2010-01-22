@@ -26,6 +26,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.SpatialImageReader;
 import org.geotoolkit.image.io.SpatialImageWriter;
+import org.geotoolkit.image.io.WarningProducer;
 
 
 /**
@@ -48,18 +49,20 @@ public final class Warnings {
     }
 
     /**
-     * Sends the given record to the given image reader or writer.
+     * Logs the given record to the given object, which may or may not be an instance
+     * of {@link WarningProducer}.
      *
-     * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} where to log.
-     * @param  record The record to log.
-     * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
-     *         or {@link SpatialImageWriter}.
+     * @param  target The object where to log the message.
+     * @param  record The message to log.
+     * @return {@code true} if the message has been sent to at least one warning listener.
      */
-    private static void log(final Localized plugin, final LogRecord record) {
-        if (plugin instanceof SpatialImageReader) {
-            ((SpatialImageReader) plugin).warningOccurred(record);
+    public static boolean log(final Object target, final LogRecord record) {
+        if (target instanceof WarningProducer) {
+            return ((WarningProducer) target).warningOccurred(record);
         } else {
-            ((SpatialImageWriter) plugin).warningOccurred(record);
+            record.setLoggerName(WarningProducer.LOGGER.getName());
+            WarningProducer.LOGGER.log(record);
+            return false;
         }
     }
 
@@ -75,7 +78,7 @@ public final class Warnings {
      * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
      *         or {@link SpatialImageWriter}.
      */
-    public static void log(final Localized plugin, final Class<?> caller, final String method,
+    public static void log(final WarningProducer plugin, final Class<?> caller, final String method,
             final Exception exception)
     {
         String message = exception.getLocalizedMessage();
@@ -99,13 +102,13 @@ public final class Warnings {
      * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
      *         or {@link SpatialImageWriter}.
      */
-    public static void log(final Localized plugin, final Class<?> caller, final String method,
+    public static void log(final WarningProducer plugin, final Class<?> caller, final String method,
             final String message)
     {
         final LogRecord record = new LogRecord(Level.WARNING, message);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);
-        log(plugin, record);
+        plugin.warningOccurred(record);
     }
 
     /**
@@ -119,14 +122,14 @@ public final class Warnings {
      * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
      *         or {@link SpatialImageWriter}.
      */
-    public static void log(final Localized plugin, final Class<?> caller,
+    public static void log(final WarningProducer plugin, final Class<?> caller,
             final String method, final int key, final Object... arguments)
     {
         final LogRecord record = Errors.getResources(plugin.getLocale())
                 .getLogRecord(Level.WARNING, key, arguments);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);
-        log(plugin, record);
+        plugin.warningOccurred(record);
     }
 
     /**
