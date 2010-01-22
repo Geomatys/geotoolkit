@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
@@ -246,7 +247,7 @@ public class SimpleFeatureBuilder {
      *             If no such attribute with teh specified name exists.
      */
     public void set(final Name name, final Object value) {
-        set(name.getLocalPart(), value);
+        set(DefaultName.toExtendedForm(name), value);
     }
 
     /**

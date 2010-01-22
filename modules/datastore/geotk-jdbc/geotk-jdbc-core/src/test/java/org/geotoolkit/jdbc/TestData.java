@@ -35,6 +35,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.data.AbstractDataStore;
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.junit.Ignore;
@@ -87,8 +88,8 @@ public class TestData {
     }
     
     void createRoadData() throws Exception {
-        roadType = FeatureTypeUtilities.createType(namespace + "." + ROAD, ROAD_ID+":0," + ROAD_GEOM+":LineString," + ROAD_NAME+":String");
-        subRoadType = FeatureTypeUtilities.createType(namespace + ROAD, ROAD_ID+":0,"+ ROAD_GEOM+":LineString");
+        roadType = AbstractDataStore.ensureGMLNS(FeatureTypeUtilities.createType(namespace + "." + ROAD, ROAD_ID+":0," + ROAD_GEOM+":LineString," + ROAD_NAME+":String"));
+        subRoadType = AbstractDataStore.ensureGMLNS(FeatureTypeUtilities.createType(namespace + ROAD, ROAD_ID+":0,"+ ROAD_GEOM+":LineString"));
         gf = new GeometryFactory();
 
         roadFeatures = new SimpleFeature[3];

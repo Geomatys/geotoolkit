@@ -166,7 +166,7 @@ public class DefaultName implements Name {
      */
     @Override
     public String toString() {
-        return "{" + namespace + "}" + local;
+        return toJCRExtendedForm(this);
     }
 
     /**
@@ -210,5 +210,22 @@ public class DefaultName implements Name {
         return new DefaultName(uri, name);
     }
 
+    public static String toJCRExtendedForm(Name name){
+        final String uri = name.getNamespaceURI();
+        if(uri == null){
+            return name.getLocalPart();
+        }else{
+            return new StringBuilder("{").append(uri).append('}').append(name.getLocalPart()).toString();
+        }
+    }
+
+    public static String toExtendedForm(Name name){
+        final String uri = name.getNamespaceURI();
+        if(uri == null){
+            return name.getLocalPart();
+        }else{
+            return new StringBuilder(uri).append(':').append(name.getLocalPart()).toString();
+        }
+    }
 
 }

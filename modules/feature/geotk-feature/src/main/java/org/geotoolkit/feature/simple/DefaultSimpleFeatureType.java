@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultFeatureType;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -57,6 +58,7 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
         index = buildIndex(this);
 
 
+        //for faster access
         types = new AttributeType[descriptors.length];
         for(int i=0; i<descriptors.length;i++){
             types[i] = (AttributeType) descriptors[i].getType();
@@ -190,9 +192,16 @@ public class DefaultSimpleFeatureType extends DefaultFeatureType implements Simp
 
         // build an index of attribute name to index
         final Map<String, Integer> index = new HashMap<String, Integer>();
-        int i = 0;
-        for (AttributeDescriptor ad : featureType.getAttributeDescriptors()) {
-            index.put(ad.getLocalName(), i++);
+
+        final List<AttributeDescriptor> descs = featureType.getAttributeDescriptors();
+        final int n = descs.size();
+        //must iterate backward to make first attribut with same local part first
+        for(int i=n-1; i>=0; i--){
+            final AttributeDescriptor ad = descs.get(i);
+            //must add possible string combinaison
+            index.put(ad.getName().getLocalPart(), i);
+            index.put(DefaultName.toJCRExtendedForm(ad.getName()), i);
+            index.put(DefaultName.toExtendedForm(ad.getName()), i);
         }
 
         final GeometryDescriptor geomDesc = featureType.getGeometryDescriptor();

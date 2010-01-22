@@ -38,13 +38,17 @@ import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -474,6 +478,10 @@ public abstract class AbstractDataStore implements DataStore{
             while(writer.hasNext()){
                 final Feature f = writer.next();
                 for(final Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
+                    System.out.println("key : " +entry.getKey());
+                    System.out.println("property : "+ f.getProperty(entry.getKey().getName()));
+                    System.out.println("feature : " + f);
+                    System.out.println("feature type : " + f.getType());
                     f.getProperty(entry.getKey().getName()).setValue(entry.getValue());
                 }
                 writer.write();
@@ -525,7 +533,7 @@ public abstract class AbstractDataStore implements DataStore{
     }
 
 
-    protected static Name ensureGMLNS(String namespace, String local){
+    public static Name ensureGMLNS(String namespace, String local){
         if(local.equals(GML_NAME)){
             return new DefaultName(GML_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){
@@ -533,6 +541,31 @@ public abstract class AbstractDataStore implements DataStore{
         }else{
             return new DefaultName(namespace, local);
         }
+    }
+
+    public static SimpleFeatureType ensureGMLNS(SimpleFeatureType type){
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
+        sftb.setName(type.getName());
+
+        for(AttributeDescriptor desc : type.getAttributeDescriptors()){
+            adb.reset();
+            adb.copy(desc);
+            if(desc.getName().getLocalPart().equals(GML_NAME)){
+                adb.setName(GML_NAMESPACE, GML_NAME);
+                sftb.add(adb.buildDescriptor());
+            }else if(desc.getName().getLocalPart().equals(GML_DESCRIPTION)){
+                adb.setName(GML_NAMESPACE, GML_DESCRIPTION);
+                sftb.add(adb.buildDescriptor());
+            }else{
+                sftb.add(desc);
+            }
+        }
+
+        sftb.setDefaultGeometry(type.getGeometryDescriptor().getName());
+
+        return sftb.buildFeatureType();
     }
 
 }

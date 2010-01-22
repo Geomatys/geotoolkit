@@ -25,11 +25,9 @@ import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
 
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Builder for attribute types and descriptors.
@@ -127,17 +125,22 @@ public class AttributeDescriptorBuilder {
         isNillable = true;
         userData.clear();
         defaultValue = null;
+        type = null;
+        userData.clear();
     }
 
     /**
      * Initializes builder state from another attribute descriptor.
      */
     public void copy(final AttributeDescriptor descriptor) {
+        reset();
         name = descriptor.getName();
         defaultValue = descriptor.getDefaultValue();
         minOccurs = descriptor.getMinOccurs();
         maxOccurs = descriptor.getMaxOccurs();
         isNillable = descriptor.isNillable();
+        type = descriptor.getType();
+        userData.putAll(descriptor.getUserData());
     }
 
     public void setName(final Name name) {

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.fid.PrimaryKey;
-import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,7 +23,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +33,19 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.simple.AbstractSimpleFeature;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.jdbc.fid.PrimaryKey;
+import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.FeatureFactory;
-import org.opengis.feature.GeometryAttribute;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -58,7 +57,6 @@ import org.opengis.geometry.BoundingBox;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.feature.simple.AbstractSimpleFeature;
 
 
 /**
@@ -382,12 +380,12 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         /**
          * primary key
          */
-        PrimaryKey key;
+        final PrimaryKey key;
 
         /**
          * updated values
          * */
-        Object[] values;
+        final Object[] values;
 
         /**
          * fid
@@ -397,7 +395,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         /**
          * dirty flags
          */
-        boolean[] dirty;
+        final boolean[] dirty;
 
         /**
          * Marks this feature as "new", about to be inserted
@@ -407,11 +405,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         /**
          * name index
          */
-        HashMap<String, Integer> index;
+        final HashMap<String, Integer> index;
         /**
          * user data
          */
-        HashMap<Object, Object> userData = new HashMap<Object, Object>();
+        final HashMap<Object, Object> userData = new HashMap<Object, Object>();
 
         /**
          * The set of user data attached to each attribute (lazily created)
@@ -460,7 +458,13 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                     }
                 }
 
-                index.put(md.getColumnName(i + 1), i - offset);
+                //must store all possible name writing combinaison
+                final String localpart = md.getColumnName(i + 1);
+                final Name name = featureType.getDescriptor(localpart).getName();
+                final int attIndex = i - offset;
+                index.put(name.getLocalPart(), attIndex);
+                index.put(DefaultName.toJCRExtendedForm(name), attIndex);
+                index.put(DefaultName.toExtendedForm(name), attIndex);
             }
         }
 
@@ -506,7 +510,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
         @Override
         public Object getAttribute(final Name name) {
-            return getAttribute(name.getLocalPart());
+            return getAttribute(DefaultName.toExtendedForm(name));
         }
 
         @Override
@@ -574,7 +578,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
         @Override
         public void setAttribute(Name name, Object value) {
-            setAttribute(name.getLocalPart(), value);
+            setAttribute(DefaultName.toExtendedForm(name), value);
         }
 
         @Override

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -100,7 +101,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public void setAttribute(Name name, Object value) {
-        setAttribute(name.getLocalPart(), value);
+        setAttribute(DefaultName.toExtendedForm(name), value);
     }
 
     @Override
@@ -128,7 +129,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public Object getAttribute(Name name) {
-        return getAttribute(name.getLocalPart());
+        return getAttribute(DefaultName.toExtendedForm(name));
     }
 
     @Override
@@ -159,7 +160,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
         if (defaultGeometry == null) {
             final GeometryDescriptor geometryDescriptor = getFeatureType().getGeometryDescriptor();
             if (geometryDescriptor != null) {
-                final Integer defaultGeomIndex = index.get(geometryDescriptor.getName().getLocalPart());
+                final Integer defaultGeomIndex = index.get(DefaultName.toExtendedForm(geometryDescriptor.getName()));
                 defaultGeometry = getAttribute(defaultGeomIndex.intValue());
             }
         }
@@ -243,12 +244,12 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
 
     @Override
     public Collection<Property> getProperties(Name name) {
-        return getProperties(name.getLocalPart());
+        return getProperties(DefaultName.toExtendedForm(name));
     }
 
     @Override
     public Property getProperty(Name name) {
-        return getProperty(name.getLocalPart());
+        return getProperty(DefaultName.toExtendedForm(name));
     }
 
     @Override

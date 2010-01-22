@@ -262,7 +262,7 @@ public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFa
             final Name name = DefaultName.valueOf(xpath);
 
             if(object instanceof SimpleFeature){
-                ((SimpleFeature) object).getAttribute(name);
+                return ((SimpleFeature) object).getAttribute(name);
             }
 
             if (object instanceof Feature) {

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -103,7 +103,7 @@ public class QueryBuilder {
         }else{
             this.properties = new Name[properties.length];
             for(int i=0;i<properties.length;i++){
-                this.properties[i] = new DefaultName(null, properties[i]);
+                this.properties[i] = DefaultName.valueOf(properties[i]);
             }
         }
     }
