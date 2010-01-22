@@ -115,7 +115,7 @@ public class OGC110toGTTransformer {
             final JAXBElement<EnvelopeEntry> env = binary.getEnvelope();
             final org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = binary.getPropertyName().getValue();
                         
-            final Expression left = filterFactory.property(pnt.getContent());
+            final Expression left = visitPropertyName(pnt);
             final Expression right;
             if(env != null && env.getValue() != null){
                 try {
@@ -154,7 +154,7 @@ public class OGC110toGTTransformer {
             final JAXBElement<? extends AbstractGeometryType> geom = dstOp.getAbstractGeometry();
             final org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = dstOp.getPropertyName();
 
-            final Expression geom1 = filterFactory.property(pnt.getContent());
+            final Expression geom1 = visitPropertyName(pnt);
             final Expression geom2 = visit(geom);
             //TODO marche pas ? ou est la distance ? Double.valueOf(dt.getContent());
             final double distance = 0;
@@ -174,7 +174,7 @@ public class OGC110toGTTransformer {
             final EnvelopeEntry box = binary.getEnvelope();
             final String pnt = binary.getPropertyName();
             
-            final Expression geom = filterFactory.property(pnt);
+            final Expression geom = visitPropertyName(pnt);
             final double minx = box.getLowerCorner().getOrdinate(0);
             final double maxx = box.getUpperCorner().getOrdinate(0);
             final double miny = box.getLowerCorner().getOrdinate(1);
@@ -319,7 +319,7 @@ public class OGC110toGTTransformer {
         } else if (ops instanceof org.geotoolkit.ogc.xml.v110.PropertyIsLikeType) {
             final org.geotoolkit.ogc.xml.v110.PropertyIsLikeType property = (org.geotoolkit.ogc.xml.v110.PropertyIsLikeType) ops;
 
-            final Expression expr = filterFactory.property(property.getPropertyName().getContent());
+            final Expression expr = visitPropertyName(property.getPropertyName());
             final String pattern = visitExpression(property.getLiteralType()).toString();
             final String wild = property.getWildCard();
             final String single = property.getSingleChar();
@@ -347,7 +347,7 @@ public class OGC110toGTTransformer {
         } else if (ops instanceof org.geotoolkit.ogc.xml.v110.PropertyIsNullType) {
             final org.geotoolkit.ogc.xml.v110.PropertyIsNullType property = (org.geotoolkit.ogc.xml.v110.PropertyIsNullType) ops;
 
-            final Expression expr = filterFactory.property(property.getPropertyName().getContent());
+            final Expression expr = visitPropertyName(property.getPropertyName());
             
             if (OGCJAXBStatics.FILTER_COMPARISON_ISNULL.equalsIgnoreCase(OpName)) {
                 return filterFactory.isNull(expr);
@@ -408,7 +408,12 @@ public class OGC110toGTTransformer {
     }
 
     public PropertyName visitPropertyName(PropertyNameType pnt){
-        String brutPname = pnt.getContent();
+        if (pnt != null)
+            return visitPropertyName(pnt.getContent());
+        return null;
+    }
+    public PropertyName visitPropertyName(String pnt){
+        String brutPname = pnt;
         if (brutPname.indexOf(':') == -1)
             return filterFactory.property(brutPname);
 
@@ -420,7 +425,7 @@ public class OGC110toGTTransformer {
                 sb.append("/");
             }
             int pos = pname.indexOf(':');
-            if (pos != -1) {
+            if (pos != -1 && namespaceMapping != null) {
                 String prefix = pname.substring(0, pos);
                 String namespace = namespaceMapping.get(prefix);
                 if (namespace == null) {
