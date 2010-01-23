@@ -89,7 +89,7 @@ public class SwingVolatileGeoComponent extends JComponent{
     }
 
     @Override
-    public void paint(final Graphics g) {
+    public void paintComponent(final Graphics g) {
         img = canvas.getVolatile();
 
         if (img != null) {

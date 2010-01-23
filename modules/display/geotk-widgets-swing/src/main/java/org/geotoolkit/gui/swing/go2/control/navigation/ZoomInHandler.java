@@ -128,7 +128,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
 
                 decorationPane.setBuffer(null);
                 decorationPane.setFill(false);
-                decorationPane.setCoord(0, 0, 0, 0, false);
+                decorationPane.setCoord(-10, -10,-10, -10, false);
                 
 //                int width = map.getComponent().getWidth() / 2;
 //                int height = map.getComponent().getHeight() / 2;
@@ -140,7 +140,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
             } //right mouse button : pan action
             else if (mousebutton == MouseEvent.BUTTON3) {
                 decorationPane.setFill(false);
-                decorationPane.setCoord(0, 0, 0, 0, false);
+                decorationPane.setCoord(-10, -10,-10, -10, false);
                 processDrag(startX, startY, endX, endY);
             }
 
@@ -156,7 +156,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         @Override
         public void mouseExited(MouseEvent e) {
             decorationPane.setFill(false);
-            decorationPane.setCoord(0, 0, 0, 0, true);
+            decorationPane.setCoord(-10, -10,-10, -10, true);
         }
 
         @Override

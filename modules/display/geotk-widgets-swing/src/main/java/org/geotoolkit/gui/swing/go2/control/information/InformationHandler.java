@@ -121,7 +121,7 @@ public class InformationHandler extends AbstractNavigationHandler {
             //right mouse button : pan action
             if (mousebutton == MouseEvent.BUTTON3) {
                 decorationPane.setFill(false);
-                decorationPane.setCoord(0, 0, 0, 0, false);
+                decorationPane.setCoord(-10, -10,-10, -10, false);
                 processDrag(startX, startY, endX, endY);
             }
             

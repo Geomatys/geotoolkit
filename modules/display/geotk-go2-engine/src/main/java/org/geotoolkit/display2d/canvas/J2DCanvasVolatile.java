@@ -30,9 +30,7 @@ import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.image.VolatileImage;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.container.AbstractContainer;
@@ -40,8 +38,9 @@ import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
-
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -150,31 +149,31 @@ public class J2DCanvasVolatile extends J2DCanvas{
     private void render(Shape paintingDisplayShape){
 
         if(paintingDisplayShape == null) paintingDisplayShape = getDisplayBounds();
+        final AffineTransform2D old =  new AffineTransform2D(previousObjectiveToDisplay.clone());
 
         final Graphics2D output;
 
         synchronized(LOCK){
-        VolatileImage buffer;
+            VolatileImage buffer;
 
-        if(buffer0 == null){
-            //create the buffer at the last possible moment
-            //or create a new one if we are already rendering
-            //TODO : find a way to stop previous thread
-            buffer = createBackBuffer();
-            buffer.setAccelerationPriority(1);
-            output = (Graphics2D) buffer.getGraphics();
-            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-            output.fillRect(0,0,dim.width,dim.height);
-        }else{
-            buffer = buffer0;
-            //we clear the buffer part if it exists
-            output = (Graphics2D) buffer0.getGraphics();
-            output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
-            output.fill(paintingDisplayShape);
-        }
+            if(buffer0 == null){
+                //create the buffer at the last possible moment
+                //or create a new one if we are already rendering
+                //TODO : find a way to stop previous thread
+                buffer = createBackBuffer();
+                buffer.setAccelerationPriority(1);
+                output = (Graphics2D) buffer.getGraphics();
+                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+                output.fillRect(0,0,dim.width,dim.height);
+            }else{
+                buffer = buffer0;
+                //we clear the buffer part if it exists
+                output = (Graphics2D) buffer0.getGraphics();
+                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+                output.fill(paintingDisplayShape);
+            }
 
-        buffer0 = buffer;
-
+            buffer0 = buffer;
             output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
 
 
@@ -200,6 +199,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     //        paintStarted(dirtyArea);
             output.setClip(paintingDisplayShape);
 
+            //must be called outside of the lock or it may provoque a deadlock
             prepareContext(context2D, output, paintingDisplayShape);
 
             //paint background if there is one.
@@ -207,6 +207,13 @@ public class J2DCanvasVolatile extends J2DCanvas{
                 painter.paint(context2D);
             }
         }
+
+
+        //notify graphics that the affine changed
+        if( !old.equals(context2D.getObjectiveToDisplay()) ){
+            propertyListeners.firePropertyChange(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY, old, context2D.getObjectiveToDisplay());
+        }
+
 
 
             monitor.renderingStarted();

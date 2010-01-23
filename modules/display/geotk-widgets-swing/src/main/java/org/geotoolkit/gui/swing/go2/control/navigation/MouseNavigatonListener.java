@@ -181,7 +181,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         if (mousebutton == panButton) {
             //right mouse button : pan action
             decorationPane.setFill(false);
-            decorationPane.setCoord(-5, -5, -4, -4, false);
+            decorationPane.setCoord(-10, -10,-10, -10, false);
             processDrag(startX, startY, endX, endY);
         }
 
@@ -196,7 +196,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     @Override
     public void mouseExited(MouseEvent e) {
         decorationPane.setFill(false);
-        decorationPane.setCoord(-5, -5, -4, -4, true);
+        decorationPane.setCoord(-10, -10,-10, -10, true);
     }
 
     @Override

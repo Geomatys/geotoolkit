@@ -112,13 +112,13 @@ public class PanHandler extends AbstractNavigationHandler {
 
             if (mousebutton == MouseEvent.BUTTON1) {
                 decorationPane.setFill(false);
-                decorationPane.setCoord(-5, -5, -4, -4, false);
+                decorationPane.setCoord(-10, -10,-10, -10, false);
                 processDrag(startX, startY, endX, endY);
 
             } //right mouse button : pan action
             else if (mousebutton == MouseEvent.BUTTON3) {
                 decorationPane.setFill(false);
-                decorationPane.setCoord(-5, -5, -4, -4, false);
+                decorationPane.setCoord(-10, -10,-10, -10, false);
                 processDrag(startX, startY, endX, endY);
             }
 
@@ -134,7 +134,7 @@ public class PanHandler extends AbstractNavigationHandler {
         @Override
         public void mouseExited(MouseEvent e) {
             decorationPane.setFill(false);
-            decorationPane.setCoord(-5, -5, -4, -4, true);
+            decorationPane.setCoord(-10, -10,-10, -10, true);
         }
 
         @Override

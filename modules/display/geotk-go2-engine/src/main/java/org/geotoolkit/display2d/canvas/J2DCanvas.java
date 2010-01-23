@@ -119,14 +119,8 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             exception.printStackTrace();
             return null;
         }
-
-        //notify graphics that the affine changed
-        if( !old.equals(objToDisp) ){
-            propertyListeners.firePropertyChange(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY, old, objToDisp);
-        }
         
         if(output != null) output.addRenderingHints(hints);
-
         
         final Shape canvasObjectShape;
         

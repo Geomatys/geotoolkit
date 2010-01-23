@@ -144,6 +144,8 @@ public class JCoordinateBar extends JToolBar {
         guiStatefull.setRolloverIcon(ICON_STATEFULL_DISABLE);
         guiStatefull.setOpaque(false);
 
+        guiCombo.setOpaque(false);
+
         guiCoord.setOpaque(false);
         guiCoord.setBorder(null);
         guiCoord.setEditable(false);

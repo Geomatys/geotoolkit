@@ -150,6 +150,7 @@ public class JScaleCombo extends JComboBox {
         @Override
         public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
             super.getListCellRendererComponent(jlist, o, i, bln, bln1);
+            ScaleRenderer.this.setOpaque(false);
             final Long l = ((Number) o).longValue();
 
             final StringBuilder sb = new StringBuilder();
@@ -179,6 +180,7 @@ public class JScaleCombo extends JComboBox {
 
         public ScaleEditor() {
             super(new BorderLayout());
+            setOpaque(false);
             ScaleEditor.this.add(BorderLayout.WEST,new JLabel("  1 : "));
             ScaleEditor.this.add(BorderLayout.CENTER,field);
 
