@@ -217,7 +217,7 @@ public class AsciiGridWriter extends TextImageWriter {
             if (strictCellSize || (size = helper.getCellDimension(gridToCRS)) == null) {
                 throw e;
             }
-            Warnings.log(this, AsciiGridWriter.class, "writeHeader", e);
+            Warnings.log(this, null, AsciiGridWriter.class, "writeHeader", e);
             header.put("DX", String.valueOf(size.getWidth()));
             header.put("DY", String.valueOf(size.getHeight()));
         }

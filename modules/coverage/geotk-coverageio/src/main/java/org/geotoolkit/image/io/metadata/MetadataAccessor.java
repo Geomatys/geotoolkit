@@ -1733,18 +1733,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     final void warning(final Class<?> classe, final String method, final Exception exception) {
         if (!Level.OFF.equals(warningLevel)) {
-            String message = exception.getLocalizedMessage();
-            if (message == null || ((message = message.trim()).indexOf(' ') < 0)) {
-                final String word = message;
-                message = Classes.getShortClassName(exception);
-                if (word != null) {
-                    message = message + ": " + word;
-                }
-            }
-            final LogRecord record = new LogRecord(warningLevel, message);
-            record.setSourceClassName(classe.getName());
-            record.setSourceMethodName(method);
-            warningOccurred(record);
+            Warnings.log(this, warningLevel, classe, method, exception);
         }
     }
 

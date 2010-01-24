@@ -46,7 +46,6 @@ public final class SpatialImageReadParamTest {
         for (final DimensionSlice.API api : DimensionSlice.API.VALIDS) {
             assertEquals("Array of valid enum is not consistent with ordinal values.", index++, api.ordinal());
         }
-        assertEquals("The first non-reserved API should be bands.", RESERVED, BANDS.ordinal());
     }
 
     /**
@@ -65,7 +64,7 @@ public final class SpatialImageReadParamTest {
         assertArrayEquals(new int[1], param.getSourceBands());
 
         param.setSourceBands(new int[] {8, 4, 2});
-        assertEquals(8, bandsSlice.getIndice());
+        assertEquals(8, bandsSlice.getSliceIndex());
     }
 
     /**
@@ -74,105 +73,88 @@ public final class SpatialImageReadParamTest {
     @Test
     public void testDimensionSlice() {
         final SpatialImageReadParam param = new SpatialImageReadParam(null);
-        /*
-         * The next 3 lines are mostly to ensure that the (x,y) dimensions are created first,
-         * just for making the SpatialImageReadParam.toString() nicer. We may delete tham in
-         * a future version if we decide to implement some sorting algorithm.
-         */
-        assertEquals(0, param.findDimensionForAPI(COLUMNS, null));
-        assertEquals(1, param.findDimensionForAPI(ROWS,    null));
-
         final DimensionSlice timeSlice = param.newDimensionSlice();
         timeSlice.addDimensionId("time");
-        timeSlice.setIndice(20);
+        timeSlice.setSliceIndex(20);
 
         final DimensionSlice depthSlice = param.newDimensionSlice();
         depthSlice.addDimensionId("depth");
-        depthSlice.setIndice(25);
+        depthSlice.setSliceIndex(25);
 
         assertSame(timeSlice,  param.getDimensionSlice("time"));
         assertSame(depthSlice, param.getDimensionSlice("depth"));
         assertNull(            param.getDimensionSlice("dummy"));
 
-        assertEquals(20, param.getSourceIndiceForDimension("time"));
-        assertEquals(25, param.getSourceIndiceForDimension("depth"));
-        assertEquals( 0, param.getSourceIndiceForDimension("dummy"));
+        assertEquals(20, param.getSliceIndex("time"));
+        assertEquals(25, param.getSliceIndex("depth"));
+        assertEquals( 0, param.getSliceIndex("dummy"));
         /*
          * Simulates NetCDF file having longitude, latitude, depth and time dimensions.
          * The longitude and latitude are unknown for now, but the depth and time should
          * be recognized.
          */
         final List<String> AXES = Arrays.asList("longitude", "latitude", "depth", "time");
-        assertEquals( 0, param.findDimensionForAPI(COLUMNS, AXES));
-        assertEquals( 1, param.findDimensionForAPI(ROWS,    AXES));
-        assertEquals(-1, param.findDimensionForAPI(BANDS,   AXES));
-        assertEquals(-1, param.findDimensionForAPI(IMAGES,  AXES));
-        assertEquals(-1, param.findDimensionForAPI(NONE,    AXES));
+        assertNull(param.getDimensionSliceForAPI(COLUMNS));
+        assertNull(param.getDimensionSliceForAPI(ROWS));
+        assertNull(param.getDimensionSliceForAPI(BANDS));
+        assertNull(param.getDimensionSliceForAPI(IMAGES));
+        assertNull(param.getDimensionSliceForAPI(NONE));
         assertEquals(NONE, timeSlice .getAPI());
         assertEquals(NONE, depthSlice.getAPI());
         assertNull(param.getSourceBands());
 
         timeSlice.setAPI(BANDS);
-        assertEquals( 0, param.findDimensionForAPI(COLUMNS, AXES));
-        assertEquals( 1, param.findDimensionForAPI(ROWS,    AXES));
-        assertEquals( 3, param.findDimensionForAPI(BANDS,   AXES));
-        assertEquals(-1, param.findDimensionForAPI(IMAGES,  AXES));
-        assertEquals(-1, param.findDimensionForAPI(NONE,    AXES));
+        assertNull  (   param.getDimensionSliceForAPI(COLUMNS));
+        assertNull  (   param.getDimensionSliceForAPI(ROWS));
+        assertEquals(3, param.getDimensionSliceForAPI(BANDS).findDimensionIndex(AXES));
+        assertNull  (   param.getDimensionSliceForAPI(IMAGES));
+        assertNull  (   param.getDimensionSliceForAPI(NONE));
         assertEquals(BANDS, timeSlice .getAPI());
         assertEquals(NONE,  depthSlice.getAPI());
         assertArrayEquals(new int[] {20}, param.getSourceBands());
 
         depthSlice.setAPI(BANDS);
-        assertEquals( 0, param.findDimensionForAPI(COLUMNS, AXES));
-        assertEquals( 1, param.findDimensionForAPI(ROWS,    AXES));
-        assertEquals( 2, param.findDimensionForAPI(BANDS,   AXES));
-        assertEquals(-1, param.findDimensionForAPI(IMAGES,  AXES));
-        assertEquals(-1, param.findDimensionForAPI(NONE,    AXES));
+        assertNull  (   param.getDimensionSliceForAPI(COLUMNS));
+        assertNull  (   param.getDimensionSliceForAPI(ROWS));
+        assertEquals(2, param.getDimensionSliceForAPI(BANDS).findDimensionIndex(AXES));
+        assertNull  (   param.getDimensionSliceForAPI(IMAGES));
+        assertNull  (   param.getDimensionSliceForAPI(NONE));
         assertEquals(NONE,  timeSlice .getAPI());
         assertEquals(BANDS, depthSlice.getAPI());
         assertArrayEquals(new int[] {25}, param.getSourceBands());
 
-        try {
-            depthSlice.setAPI(ROWS);
-            fail("Changing the API to ROWS should not be allowed.");
-        } catch (IllegalArgumentException e) {
-            // This is the expected exception.
-        }
-        assertEquals(BANDS, depthSlice.getAPI());
         assertNull("Should not have been set by any of the above.", param.getSourceRegion());
         assertEquals("Should not have been set by any of the above.", new Point(), param.getDestinationOffset());
 
         assertMultilinesEquals(decodeQuotes(
             "SpatialImageReadParam[sourceBands={25}]\n" +
-            "  ├─ DimensionSlice[id={0}, indice=0, API=COLUMNS]\n" +
-            "  ├─ DimensionSlice[id={1}, indice=0, API=ROWS]\n" +
-            "  ├─ DimensionSlice[id={“time”}, indice=20]\n" +
-            "  └─ DimensionSlice[id={“depth”}, indice=25, API=BANDS]"), param.toString());
+            "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
+            "  └─ DimensionSlice[id={“depth”}, sliceIndex=25, API=BANDS]"), param.toString());
 
         depthSlice.removeDimensionId("depth");
         assertMultilinesEquals(decodeQuotes(
             "SpatialImageReadParam[sourceBands={25}]\n" +
-            "  ├─ DimensionSlice[id={0}, indice=0, API=COLUMNS]\n" +
-            "  ├─ DimensionSlice[id={1}, indice=0, API=ROWS]\n" +
-            "  └─ DimensionSlice[id={“time”}, indice=20]"), param.toString());
+            "  └─ DimensionSlice[id={“time”}, sliceIndex=20]"), param.toString());
         /*
          * Now adds name to the (latitude, longitude) dimensions.
          */
-        param.getDimensionSlice(0).addDimensionId("longitude");
-        param.getDimensionSlice(1).addDimensionId("latitude");
+        param.newDimensionSlice().addDimensionId("longitude");
+        param.newDimensionSlice().addDimensionId("latitude");
+        param.getDimensionSlice("longitude").setAPI(COLUMNS);
+        param.getDimensionSlice("latitude" ).setAPI(ROWS);
         assertMultilinesEquals(decodeQuotes(
             "SpatialImageReadParam[sourceBands={25}]\n" +
-            "  ├─ DimensionSlice[id={0, “longitude”}, indice=0, API=COLUMNS]\n" +
-            "  ├─ DimensionSlice[id={1, “latitude”}, indice=0, API=ROWS]\n" +
-            "  └─ DimensionSlice[id={“time”}, indice=20]"), param.toString());
+            "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
+            "  ├─ DimensionSlice[id={“longitude”}, sliceIndex=0, API=COLUMNS]\n" +
+            "  └─ DimensionSlice[id={“latitude”}, sliceIndex=0, API=ROWS]"), param.toString());
 
-        param.getDimensionSlice(0).setIndice(100);
-        param.getDimensionSlice(1).setIndice(200);
+        param.getDimensionSlice("longitude").setSliceIndex(100);
+        param.getDimensionSlice("latitude" ).setSliceIndex(200);
         param.setDestinationOffset(new Point(2,3));
         assertMultilinesEquals(decodeQuotes(
             "SpatialImageReadParam[sourceRegion=(100,200 : 1,1), sourceBands={25}, destinationOffset=(2,3)]\n" +
-            "  ├─ DimensionSlice[id={0, “longitude”}, indice=100, API=COLUMNS]\n" +
-            "  ├─ DimensionSlice[id={1, “latitude”}, indice=200, API=ROWS]\n" +
-            "  └─ DimensionSlice[id={“time”}, indice=20]"), param.toString());
+            "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
+            "  ├─ DimensionSlice[id={“longitude”}, sliceIndex=100, API=COLUMNS]\n" +
+            "  └─ DimensionSlice[id={“latitude”}, sliceIndex=200, API=ROWS]"), param.toString());
     }
 }

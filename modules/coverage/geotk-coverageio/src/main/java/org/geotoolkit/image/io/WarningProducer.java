@@ -30,21 +30,24 @@ import org.geotoolkit.util.logging.Logging;
  * Interface for objects that may produce warnings for recoverable failures. The warnings
  * are encapsulated in {@link LogRecord} objects and given to the {@link #warningOccurred
  * warningOccurred} method. Then there is a choice:
- * <p>
- * <ul>
- *   <li>If there is at least one {@link IIOReadWarningListener} or {@link IIOWriteWarningListener}
- *       reachable directly or indirectly, then the logging message is given to those listeners.</li>
- *   <li>Otherwise the record is logged using the {@link #LOGGER} declared in this interface.</li>
- * </ul>
- * <p>
+ *
+ * <ol>
+ *   <li><p>If there is at least one listener ({@link IIOReadWarningListener} or
+ *     {@link IIOWriteWarningListener}) reachable directly or indirectly, then the logging message
+ *     is given to those listeners.</p></li>
+ *
+ *   <li><p>Otherwise the record is logged using the {@link #LOGGER} declared in this interface.</p></li>
+ * </ol>
+ *
  * Warnings are localized in a {@linkplain java.util.Locale locale} that can be specified
- * to the {@link javax.imageio.ImageReader} or {@link javax.imageio.ImageWriter} plugin.
+ * with the {@code setLocale} method defined the {@link javax.imageio.ImageReader} or
+ * {@link javax.imageio.ImageWriter} class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
  *
- * @see ImageReader#warningOccurred(LogRecord)
- * @see ImageWriter#warningOccurred(LogRecord)
+ * @see SpatialImageReader#warningOccurred(LogRecord)
+ * @see SpatialImageWriter#warningOccurred(LogRecord)
  * @see org.geotoolkit.image.io.metadata.SpatialMetadata#warningOccurred(LogRecord)
  * @see org.geotoolkit.image.io.metadata.MetadataAccessor#warningOccurred(LogRecord)
  *
@@ -60,7 +63,16 @@ public interface WarningProducer extends Localized {
     /**
      * Invoked when a warning occured. This method is typically invoked by the class implementing
      * this {@code WarningProducer} interface. However it can also be invoked by other classes that
-     * just forward the warnings to this class. This method is public for that raison.
+     * forward their warnings, like below:
+     *
+     * <blockquote>
+     * {@link org.geotoolkit.image.io.metadata.ReferencingBuilder} &rarr;
+     * {@link org.geotoolkit.image.io.metadata.MetadataAccessor} &rarr;
+     * {@link org.geotoolkit.image.io.metadata.SpatialMetadata} &rarr;
+     * ({@link SpatialImageReader} or {@link SpatialImageWriter})
+     * </blockquote>
+     * 
+     * This method is public for allowing such forwarding.
      *
      * @param  record The warning that occured.
      * @return {@code true} if the message has been sent to at least one warning listener,

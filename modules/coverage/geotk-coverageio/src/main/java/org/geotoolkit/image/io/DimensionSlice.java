@@ -18,6 +18,9 @@
 package org.geotoolkit.image.io;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.logging.LogRecord;
 import java.awt.Point;
@@ -37,58 +40,61 @@ import org.geotoolkit.internal.image.io.Warnings;
 
 
 /**
- * Selects the indice of the data to read/write along an arbitrary dimension. This class is relevant
- * only for <var>n</var>-dimensional datasets where <var>n</var>&gt;2. Each {@code DimensionSlice}
- * instance applies to only one dimension. If the indices of a slice need to be specified for more
- * than one dimension, then many instances of {@code DimensionSlice} are required.
+ * Tupple of a <cite>dimension identifier</cite> and index in that dimension for a slice to read
+ * or write in a data file. This class is relevant mostly for <var>n</var>-dimensional datasets
+ * where <var>n</var>&gt;2. Each {@code DimensionSlice} instance applies to only one dimension;
+ * if the indices of a slice need to be specified for more than one dimension, then many instances
+ * of {@code DimensionSlice} will be required.
  *
  * {@note The <code>DimensionSlice</code> name is used in the WCS 2.0 specification for the same
  * purpose. The semantic of attributes are similar but not identical: the <code>getDimensionIds()</code>
  * method in this class is equivalent to the <code>dimension</code> attribute in WCS 2.0, and the
- * <code>getIndice()</code> method is close to the <code>slicePoint</code> attribute. The main
+ * <code>getSliceIndex()</code> method is close to the <code>slicePoint</code> attribute. The main
  * differences compared to WCS 2.0 are:
  * <p>
  * <ul>
- *   <li>The dimension can be identified by index or by axis direction, in addition to the name.</li>
- *   <li>The dimension can have more than one identifier; the additional identifiers are aliases.</li>
- *   <li>The slice point is an indice in the discrete coverage, instead than a value in
- *       the continuous coverge.</li>
+ *   <li>The dimension can be identified by an index type, by an axis direction or by the name
+ *       type as used in WCS 2.0.</li>
+ *   <li>The dimension can be identified by more than one identifier, with conflicts trigging
+ *       a warning.</li>
+ *   <li>The slice point is an index offset in the discrete coverage, rather than a metric
+ *       value in the continuous dimension.</li>
  * </ul>}
  *
  * This class refers always to the indices in the file: when used with {@link SpatialImageReadParam},
- * this class contains the indice of the section to read from the file (the <cite>source region</cite>).
- * When used with {@link SpatialImageWriteParam}, this class contains the indice of the section to
- * write in the file (the <cite>destination region</cite>).
+ * this class contains the index of the section to read from the file (the <cite>source region</cite>).
+ * When used with {@link SpatialImageWriteParam}, this class contains the index of the section to
+ * write in the file (the <cite>destination offset</cite>).
  * <p>
- * In addition of the indice from which to read the data or where to write the data,
- * {@code DimensionSlice} specifies also the dimension on which the above indice applies.
- * The dimension can be identified in any of the following ways:
+ * In addition to the index, {@code DimensionSlice} also specifies the dimension on which the
+ * index applies. The dimension can be identified in any of the following ways:
  *
  * <ul>
- *   <li><p>A zero-based index as an {@link Integer}. This is the most straightforward approach
+ *   <li><p>As a zero-based index using an {@link Integer}. This is the most straightforward approach
  *     when the set of dimensions is known. For example if the dimensions are known to be
  *     (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>), then the <var>t</var> dimension
  *     is at index 3.</p></li>
  *
- *   <li><p>A dimension name as a {@link String}. This is a better approach than indexes when each
- *     dimension has a known name, but the list of available dimensions and their order may vary.
+ *   <li><p>As a dimension name using a {@link String}. This is a better approach than indexes when
+ *     each dimension has a known name, but the list of available dimensions and their order may vary.
  *     For example if the list of dimensions can be either ({@code "longitude"}, {@code "latitude"},
  *     {@code "depth"}, {@code "time"}) or ({@code "longitude"}, {@code "latitude"}, {@code "time"}),
  *     then the index of the time dimension can be either 2 or 3. It is better to identify the time
- *     dimension by its {@code "time"} name, which is insensitive to whatever the depth dimension
- *     exists or not.</p></li>
+ *     dimension by its {@code "time"} name, which is insensitive to position, wheter the depth
+ *     dimension exists or not.</p></li>
  *
- *   <li><p>An axis direction as an {@link AxisDirection}. This provides similar benefit to named
- *     dimension, but can work without knowledge of the actual name and can be used with file
- *     formats that don't support named dimensions.</p></li>
+ *   <li><p>As a direction using an {@link AxisDirection}. This provides similar benefit to using
+ *     a named dimension, but can work without knowledge of the actual name or can be used with
+ *     file formats that don't support named dimensions.</p></li>
  * </ul>
  *
- * More than one identifier can be used in order to increase the chance to find the dimension.
+ * More than one identifier can be used in order to increase the chance of finding the dimension.
  * For example in order to fetch the <var>z</var> dimension, it may be necessary to specify both
  * the {@code "height"} and {@code "depth"} names. In case of ambiguity, a
- * {@linkplain SpatialImageReader#warningOccurred warning will be emitted}
- * at image reading time (see the example #2 below).
- * <p>
+ * {@linkplain SpatialImageReader#warningOccurred warning will be emitted} to any registered
+ * listeners at image reading time (see the example #3 below).
+ *
+ * {@section Example 1: Setting the indices in the time and depth dimensions}
  * Instances of {@code DimensionSlice} can be created and used as below:
  *
  * {@preformat java
@@ -96,17 +102,17 @@ import org.geotoolkit.internal.image.io.Warnings;
  *
  *     DimensionSlice timeSlice = parameters.newDimensionSlice();
  *     timeSlice.addDimensionId("time");
- *     timeSlice.setIndice(25);
+ *     timeSlice.setSliceIndex(25);
  *
  *     DimensionSlice depthSlice = parameters.newDimensionSlice();
  *     depthSlice.addDimensionId("depth");
- *     depthSlice.setIndice(40);
+ *     depthSlice.setSliceIndex(40);
  *
  *     // Read the (x,y) plane at time[25] and depth[40]
  *     BufferedImage image = imageReader.read(0, parameters);
  * }
  *
- * {@section Example 1}
+ * {@section Example 2: Setting the indices in the third dimension}
  * In a 4-D dataset having (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>) dimensions
  * when the time is known to be the dimension at index 3 (0-based numbering), read the
  * (<var>x</var>, <var>y</var>) plane at time <var>t</var><sub>25</sub>:
@@ -114,16 +120,15 @@ import org.geotoolkit.internal.image.io.Warnings;
  * {@preformat java
  *     DimensionSlice timeSlice = parameters.newDimensionSlice();
  *     timeSlice.addDimensionId(3);
- *     timeSlice.setIndice(25);
+ *     timeSlice.setSliceIndex(25);
  * }
  *
- * If no {@code setIndice(int)} method is invoked, then the default value is 0.
- * This means that for the above-cited 4-D dataset, only the image at the first
- * time (<var>t</var><sub>0</sub>) and first altitude (<var>z</var><sub>0</sub>)
+ * If no {@code setSliceIndex(int)} method is invoked, then the default value is 0. This means that
+ * for the above-cited 4-D dataset, only the image at the first time (<var>t</var><sub>0</sub>)
  * is selected by default. See <cite>Handling more than two dimensions</cite> in
  * {@link SpatialImageReadParam} javadoc for more details.
  *
- * {@section Example 2}
+ * {@section Example 3: Setting the index of the vertical axis}
  * Read the (<var>x</var>, <var>y</var>) plane at elevation <var>z</var><sub>25</sub>,
  * where the index of the <var>z</var> dimension is unknown. We don't even known if the
  * <var>z</var> dimension is actually a height or a depth. We can identify the dimension
@@ -135,12 +140,12 @@ import org.geotoolkit.internal.image.io.Warnings;
  *     DimensionSlice elevationSlice = parameters.newDimensionSlice();
  *     elevationSlice.addDimensionId("height", "depth");
  *     elevationSlice.addDimensionId(AxisDirection.UP, AxisDirection.DOWN);
- *     elevationSlice.setIndice(25);
+ *     elevationSlice.setSliceIndex(25);
  * }
  *
  * If there is ambiguity (for example if both a dimension named {@code "height"} and an other
  * dimension named {@code "depth"} exist), then a {@linkplain SpatialImageReader#warningOccurred
- * warning will be emitted} at reading time and the indice 25 will be set to the dimension named
+ * warning will be emitted} at reading time and the index 25 will be set to the dimension named
  * {@code "height"} because that name has been specified first.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -152,7 +157,7 @@ import org.geotoolkit.internal.image.io.Warnings;
 public class DimensionSlice implements WarningProducer {
     /**
      * The standard Java API used for selecting the slice to read or write.
-     * The selection can be performed in the first 3 or 4 dimensions by:
+     * The selection can be performed in 3 or 4 dimensions by:
      *
      * <ul>
      *   <li><p>When reading:</p></li>
@@ -227,13 +232,7 @@ public class DimensionSlice implements WarningProducer {
         NONE;
 
         /**
-         * The ordinal of the first non-reserved enumeration. All enumeration having an ordinal
-         * value below that value are "reserved" API.
-         */
-        static final int RESERVED = 2;
-
-        /**
-         * All valid API except {@link #NONE}. The indice of each element in the
+         * All valid API except {@link #NONE}. The index of each element in the
          * array shall be equals to the ordinal value.
          */
         static final API[] VALIDS = new API[] {
@@ -257,10 +256,10 @@ public class DimensionSlice implements WarningProducer {
     private final DimensionSlice[] apiMapping;
 
     /**
-     * The indice of the region to read along the dimension that this
+     * The index of the region to read along the dimension that this
      * {@code DimensionSlice} object represents.
      */
-    private int indice;
+    private int index;
 
     /**
      * Creates a new {@code DimensionSlice} instance. The arguments given to this method
@@ -319,7 +318,7 @@ public class DimensionSlice implements WarningProducer {
         this.parameters = original.parameters;
         this.paramMap   = original.paramMap;
         this.apiMapping = original.apiMapping;
-        this.indice     = original.indice;
+        this.index      = original.index;
     }
 
     /**
@@ -382,7 +381,7 @@ public class DimensionSlice implements WarningProducer {
      *
      * {@preformat java
      *     addDimensionId(3);
-     *     setIndice(25);
+     *     setSliceIndex(25);
      * }
      *
      * @param  index The index of the dimension. Must be non-negative.
@@ -390,7 +389,7 @@ public class DimensionSlice implements WarningProducer {
      *         or already assigned to an other {@code DimensionSlice} instance.
      */
     public void addDimensionId(final int index) throws IllegalArgumentException {
-        if (index < API.RESERVED) {
+        if (index < 0) {
             throw new IllegalArgumentException(getErrorResources().getString(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "index", index));
         }
@@ -407,11 +406,11 @@ public class DimensionSlice implements WarningProducer {
      *
      * {@preformat java
      *     addDimensionId("time");
-     *     setIndice(25);
+     *     setSliceIndex(25);
      * }
      *
      * More than one name can be specified if they should be considered as possible identifiers
-     * for the same dimension. For example in order to set the indice for the <var>z</var> dimension,
+     * for the same dimension. For example in order to set the index for the <var>z</var> dimension,
      * it may be necessary to specify both the {@code "height"} and {@code "depth"} names.
      *
      * @param  names The names of the dimension.
@@ -432,11 +431,11 @@ public class DimensionSlice implements WarningProducer {
      *
      * {@preformat java
      *     addDimensionId(AxisDirection.FUTURE);
-     *     setIndice(25);
+     *     setSliceIndex(25);
      * }
      *
      * More than one direction can be specified if they should be considered as possible identifiers
-     * for the same dimension. For example in order to set the indice for the <var>z</var> dimension,
+     * for the same dimension. For example in order to set the index for the <var>z</var> dimension,
      * it may be necessary to specify both the {@link AxisDirection#UP UP} and
      * {@link AxisDirection#DOWN DOWN} directions.
      *
@@ -457,32 +456,11 @@ public class DimensionSlice implements WarningProducer {
      */
     public void removeDimensionId(final Object... identifiers) {
         for (final Object identifier : identifiers) {
-            if (identifier instanceof Integer) {
-                // In the special case of dimension index, don't touch to reserved dimensions.
-                if (isReserved((Integer) identifier)) {
-                    continue;
-                }
-            }
             final DimensionSlice old = paramMap.remove(identifier);
             if (old != null && !equals(old)) {
                 paramMap.put(identifier, old); // Restore the previous state.
             }
         }
-    }
-
-    /**
-     * Returns {@code true} if the given API can not be assigned to a new dimension.
-     */
-    static boolean isReserved(final API api) {
-        return api.ordinal() < API.RESERVED;
-    }
-
-    /**
-     * Returns {@code true} if the given identifier is for a reserved dimension.
-     */
-    static boolean isReserved(final Integer id) {
-        final int n = id;
-        return n >= 0 && n < API.RESERVED;
     }
 
     /**
@@ -508,9 +486,10 @@ public class DimensionSlice implements WarningProducer {
      * other {@code DimensionSlice} instance, then the API of the other dimension is set
      * to {@link API#NONE NONE}.
      * <p>
-     * In the current implementation, the {@link API#COLUMNS COLUMNS} and {@link API#ROWS ROWS}
-     * API can not be set because those dimensions are typically hard-coded in image readers and
-     * writers.
+     * Note that many plugins don't allow usage of {@link API#COLUMNS COLUMNS} and
+     * {@link API#ROWS ROWS} API for anything else than dimensions 0 and 1 respectively.
+     * If the given APi can not be set to this dimension slice, then an exception may be
+     * thrown at image reading or writing time.
      *
      * @param  newAPI The standard Java API to use for the dimension.
      * @throws IllegalArgumentException If the given API can not be used with this dimension.
@@ -520,11 +499,7 @@ public class DimensionSlice implements WarningProducer {
     public void setAPI(final API newAPI) throws IllegalArgumentException {
         final API api = getAPI();
         if (!newAPI.equals(api)) { // We want a NullPointerException if newAPI is null.
-            if (isReserved(newAPI) || isReserved(api)) {
-                throw new IllegalArgumentException(getErrorResources().getString(
-                        Errors.Keys.BAD_PARAMETER_$2, "newAPI", newAPI));
-            }
-            final int indice = getIndice(api);
+            final int index = getSliceIndex(api);
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     apiMapping[i] = null;
@@ -534,12 +509,33 @@ public class DimensionSlice implements WarningProducer {
                 apiMapping[newAPI.ordinal()] = this;
             }
             assert newAPI.equals(getAPI()) : newAPI;
-            setIndice(newAPI, indice);
+            setSliceIndex(newAPI, index, index == 0);
         }
     }
 
     /**
-     * Returns the indice of the section to read or write along the dimension
+     * Implementation of {@link SpatialImageReadParam#getDimensionSliceForAPI(API)},
+     * also shared with {@link SpatialImageWriteParam}.
+     *
+     * @param  caller The instance which is invoking this method.
+     * @param  apiMapping The mapping of API to dimension slices, or {@code null}.
+     * @param  api The API for which to test if a dimension slice has been assigned.
+     * @return The dimension slice assigned to the given API, or {@code null} if none.
+     */
+    static DimensionSlice getDimensionSliceForAPI(final Localized caller,
+            final DimensionSlice[] apiMapping, final API api)
+    {
+        if (api == null) {
+            throw new NullArgumentException(Warnings.message(caller, Errors.Keys.NULL_ARGUMENT_$1, "api"));
+        }
+        if (!api.equals(API.NONE) && apiMapping != null) {
+            return apiMapping[api.ordinal()];
+        }
+        return null;
+    }
+
+    /**
+     * Returns the index of the section to read or write along the dimension
      * represented by this object. This method applies the following rules:
      * <p>
      * <ul>
@@ -548,44 +544,44 @@ public class DimensionSlice implements WarningProducer {
      *         invokes {@link IIOParam#getSourceRegion()} and returns the {@link Rectangle#x x} or
      *         {@link Rectangle#y y} attribute respectively, or 0 if the source region is not set.</li>
      *     <li>Otherwise if the API is {@link API#BANDS BANDS}, then this method invokes
-     *         {@link IIOParam#getSourceBands()} and returns the indice of the first band,
+     *         {@link IIOParam#getSourceBands()} and returns the index of the first band,
      *         or 0 if the source bands are not set.</li>
      *     <li>Otherwise this method returns the value set by the last call to
-     *         {@link #setIndice(int)}.</li>
+     *         {@link #setSliceIndex(int)}.</li>
      *   </ul></li>
      *   <li>For {@link SpatialImageWriteParam}:<ul>
      *     <li>If the API is {@link API#COLUMNS COLUMNS} or {@link API#ROWS ROWS}, then this method
      *         invokes {@link IIOParam#getDestinationOffset()} and returns the {@link Point#x x} or
      *         {@link Point#y y} attribute respectively, or 0 if the offset is not set.</li>
      *     <li>Otherwise this method returns the value set by the last call to
-     *         {@link #setIndice(int)}.</li>
+     *         {@link #setSliceIndex(int)}.</li>
      *   </ul></li>
      * </ul>
      *
-     * {@note This method could have been named <code>getFirstIndice()</code> because it returns
-     * the indice of the <em>first</em> element to read (often the lower indice, but not always).
-     * However there would be no <code>getLastIndice()</code> method, because the default values
+     * {@note This method could have been named <code>getFirstIndex()</code> because it returns
+     * the index of the <em>first</em> element to read (often the lower index, but not always).
+     * However there would be no <code>getLastIndex()</code> method, because the default values
      * to return when the source region or source bands are unspecified depend on information known
      * only to the <code>ImageReader</code> when the input is set. This is probably not a major
-     * issue since the main purpose of this method is to get the indice in extra dimensions where
+     * issue since the main purpose of this method is to get the index in extra dimensions where
      * no standard Java API is available.}
      *
-     * @return The indice of the first element to read/write in the dimension represented by this
+     * @return The index of the first element to read/write in the dimension represented by this
      *         object.
      *
-     * @see SpatialImageReadParam#getSourceIndiceForDimension(Object[])
+     * @see SpatialImageReadParam#getSliceIndex(Object[])
      */
-    public int getIndice() {
-        return getIndice(getAPI());
+    public int getSliceIndex() {
+        return getSliceIndex(getAPI());
     }
 
     /**
-     * Implementation of {@link #getIndice()}.
+     * Implementation of {@link #getSliceIndex()}.
      *
      * @param api The value of {@link #getAPI()}.
      */
     @SuppressWarnings("fallthrough")
-    private int getIndice(final API api) {
+    private int getSliceIndex(final API api) {
         final boolean isY;
         switch (api) {
             case COLUMNS: {
@@ -604,7 +600,7 @@ public class DimensionSlice implements WarningProducer {
                 // Fall through
             }
             default: {
-                return indice;
+                return index;
             }
         }
         /*
@@ -625,42 +621,42 @@ public class DimensionSlice implements WarningProducer {
     }
 
     /**
-     * Sets the indice of the region to read along the dimension represented by this object.
+     * Sets the index of the region to read along the dimension represented by this object.
      * This method applies the following rules:
      * <p>
      * <ul>
      *   <li>For {@link SpatialImageReadParam}:<ul>
      *     <li>If the API is {@link API#COLUMNS COLUMNS} or {@link API#ROWS ROWS}, then this method
      *         invokes {@link IIOParam#setSourceRegion(Rectangle)} with a {@link Rectangle#x x} or
-     *         {@link Rectangle#y y} attribute set to the given indice, and the corresponding width
+     *         {@link Rectangle#y y} attribute set to the given index, and the corresponding width
      *         or height attribute set to 1.</li>
      *     <li>Otherwise if the API is {@link API#BANDS BANDS}, then this method invokes
-     *         {@link IIOParam#setSourceBands(int[])} with the given indice.</li>
-     *     <li>Otherwise this method stores the given indice.</li>
+     *         {@link IIOParam#setSourceBands(int[])} with the given index.</li>
+     *     <li>Otherwise this method stores the given index.</li>
      *   </ul></li>
      *   <li>For {@link SpatialImageWriteParam}:<ul>
      *     <li>If the API is {@link API#COLUMNS COLUMNS} or {@link API#ROWS ROWS}, then this method
      *         invokes {@link IIOParam#setDestinationOffset(Point)} with a {@link Point#x x} or
-     *         {@link Point#y y} attribute set to the given indice.</li>
-     *     <li>Otherwise this method stores the given indice.</li>
+     *         {@link Point#y y} attribute set to the given index.</li>
+     *     <li>Otherwise this method stores the given index.</li>
      *   </ul></li>
      * </ul>
      *
-     * @param indice The slice point to read/write in the dimension represented by this object.
+     * @param index The slice point to read/write in the dimension represented by this object.
      *
-     * @see SpatialImageReadParam#getSourceIndiceForDimension(Object[])
+     * @see SpatialImageReadParam#getSourceIndexForDimension(Object[])
      */
-    public void setIndice(final int indice) {
-        setIndice(getAPI(), indice);
+    public void setSliceIndex(final int index) {
+        setSliceIndex(getAPI(), index, false);
     }
 
     /**
-     * Implementation of {@link #getIndice()}.
+     * Implementation of {@link #getSliceIndex()}.
      *
      * @param api The value of {@link #getAPI()}.
      */
     @SuppressWarnings("fallthrough")
-    private void setIndice(final API api, final int indice) {
+    private void setSliceIndex(final API api, final int index, final boolean noCreate) {
         final boolean isY;
         switch (api) {
             case COLUMNS: {
@@ -673,13 +669,13 @@ public class DimensionSlice implements WarningProducer {
             }
             case BANDS: {
                 if (!isWrite()) {
-                    parameters.setSourceBands(new int[] {indice});
+                    parameters.setSourceBands(new int[] {index});
                     return;
                 }
                 // Fall through
             }
             default: {
-                this.indice = indice;
+                this.index = index;
                 return;
             }
         }
@@ -689,25 +685,240 @@ public class DimensionSlice implements WarningProducer {
         if (isWrite()) {
             final Point offset = parameters.getDestinationOffset();
             if (isY) {
-                offset.y = indice;
+                offset.y = index;
             } else {
-                offset.x = indice;
+                offset.x = index;
             }
             parameters.setDestinationOffset(offset);
         } else {
             Rectangle region = parameters.getSourceRegion();
             if (region == null) {
+                if (noCreate) {
+                    return;
+                }
                 region = new Rectangle(1,1);
             }
             if (isY) {
-                region.y = indice;
+                region.y = index;
                 region.height = 1;
             } else {
-                region.x = indice;
+                region.x = index;
                 region.width = 1;
             }
             parameters.setSourceRegion(region);
         }
+    }
+
+    /**
+     * Implementation of {@link SpatialImageReadParam#getSliceIndex(Object[])},
+     * also shared with {@link SpatialImageWriteParam}.
+     *
+     * @param  slicesForDimensions The map stored in the parameters, or {@code null}.
+     * @param  caller      The instance which is invoking this method.
+     * @param  callerClass The class which is invoking this method, used for logging purpose.
+     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
+     *         that identify the dimension for which the slice is desired.
+     * @return The index set in the first slice found for the given dimension identifiers,
+     *         or 0 if none.
+     */
+    static int getSliceIndex(final Map<Object,DimensionSlice> slicesForDimensions,
+            final WarningProducer caller, final Class<? extends WarningProducer> callerClass,
+            final Object... dimensionIds)
+    {
+        if (slicesForDimensions != null) {
+            Map<Integer,Object> found = null;
+            for (final Object id : dimensionIds) {
+                final DimensionSlice source = slicesForDimensions.get(id);
+                if (source != null) {
+                    final Integer index = source.getSliceIndex();
+                    if (found == null) {
+                        found = new LinkedHashMap<Integer,Object>(4);
+                    }
+                    final Object old = found.put(index, id);
+                    if (old != null) {
+                        found.put(index, old); // Keep the old value.
+                    }
+                }
+            }
+            final Integer index = first(found, caller, callerClass, "getSliceIndex");
+            if (index != null) {
+                return index;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Implementation of {@link SpatialImageReadParam#getDimensionSlice(Object[])},
+     * also shared with {@link SpatialImageWriteParam}.
+     *
+     * @param  slicesForDimensions The map stored in the parameters, or {@code null}.
+     * @param  caller      The instance which is invoking this method.
+     * @param  callerClass The class which is invoking this method, used for logging purpose.
+     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
+     *         that identify the dimension for which the slice is desired.
+     * @return The first slice found for the given dimension identifiers, or {@code null} if none.
+     */
+    static DimensionSlice getDimensionSlice(final Map<Object,DimensionSlice> slicesForDimensions,
+            final WarningProducer caller, final Class<? extends WarningProducer> callerClass,
+            final Object... dimensionIds)
+    {
+        if (slicesForDimensions != null) {
+            Map<DimensionSlice,Object> found = null;
+            for (final Object id : dimensionIds) {
+                final DimensionSlice slice = slicesForDimensions.get(id);
+                if (slice != null) {
+                    if (found == null) {
+                        found = new LinkedHashMap<DimensionSlice,Object>(4);
+                    }
+                    final Object old = found.put(slice, id);
+                    if (old != null) {
+                        found.put(slice, old); // Keep the old value.
+                    }
+                }
+            }
+            final DimensionSlice slice = first(found, caller, callerClass, "getDimensionSlice");
+            if (slice != null) {
+                return slice;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the index of this dimension in a data file. This method is invoked by some
+     * {@link SpatialImageReader} or {@link SpatialImageWriter} subclasses when a dataset
+     * is about to be read from a file, or written to a file. The caller needs to know the
+     * set of dimensions that exist in the file dataset, which may not be identical to the set
+     * of dimensions declared in {@link SpatialImageReadParam} or {@link SpatialImageWriteParam}.
+     * <p>
+     * The default implementation makes the following choice:
+     *
+     * <ol>
+     *   <li><p>If {@link #addDimensionId(int)} has been invoked, then the value specified to
+     *       that method is returned regardeless the {@code properties} argument value.</p></li>
+     *   <li><p>Otherwise if an other {@link #addDimensionId(String[]) addDimensionId(...)} method
+     *       has been invoked and the {@code properties} argument is non-null, then this method
+     *       iterates over the given properties. The iteration must return exactly one element
+     *       for each dimension, in order. If an element is equals to a value specified to a
+     *       {@code addDimensionId(...)} method, then the position of that element in the
+     *       {@code properties} iteration is returned.</p></li>
+     *   <li><p>Otherwise this method returns -1.</p></li>
+     * </ol>
+     *
+     * If more than one dimension match, then a {@linkplain SpatialImageReader#warningOccurred
+     * warning is emitted} and this method returns the index of the first property matching an
+     * identifier.
+     *
+     * @param  properties Contains one property (the dimension name as a {@link String} or the axis
+     *         direction as an {@link AxisDirection}) for each dimension in the dataset being read
+     *         or written. The iteration order shall be the order of dimensions in the dataset. This
+     *         argument can be {@code null} if no such properties are available.
+     * @return The index of the dimension, or -1 if none.
+     */
+    public int findDimensionIndex(final Iterable<?> properties) {
+        /*
+         * Get all identifiers for the slice. If an explicit dimension
+         * index is found in the process, it will be returned immediately.
+         */
+        Set<Object> identifiers = null;
+        for (final Map.Entry<Object,DimensionSlice> entry : paramMap.entrySet()) {
+            if (equals(entry.getValue())) {
+                final Object key = entry.getKey();
+                if (key instanceof Integer) {
+                    return (Integer) key;
+                }
+                if (identifiers == null) {
+                    identifiers = new HashSet<Object>(8);
+                }
+                identifiers.add(key);
+            }
+        }
+        /*
+         * No explicit dimension found. Now searchs for an element from the
+         * given iterator which would be one of the declared identifiers.
+         */
+        if (properties != null && identifiers != null) {
+            Map<Integer,Object> found = null;
+            int position = 0;
+            for (Object property : properties) {
+                /*
+                 * Undocumented (for now) feature: if we have Map.Entry<?,Integer>,
+                 * the value will be the dimension. This allow us to pass more than
+                 * one property per dimension.
+                 */
+                if (property instanceof Map.Entry<?,?>) {
+                    final Map.Entry<?,?> entry = (Map.Entry<?,?>) property;
+                    property = entry.getKey();
+                    position = (Integer) entry.getValue();
+                }
+                if (identifiers.contains(property)) {
+                    if (found == null) {
+                        found = new LinkedHashMap<Integer,Object>(4);
+                    }
+                    final Object old = found.put(position, property);
+                    if (old != null) {
+                        found.put(position, old); // Keep the first value.
+                    }
+                }
+                position++;
+            }
+            final Integer dimension = first(found, this, DimensionSlice.class, "findDimensionIndex");
+            if (dimension != null) {
+                return dimension;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the first key in the given map. If the map has more than one entry,
+     * a warning is emitted. If the map is empty, {@code null} is returned. This
+     * method is used for determining the {@link DimensionSlice} instance to use
+     * after we have iterated over the properties of all axes in a coordinate system.
+     *
+     * @param  <T>         Either {@link Integer} or {@link API}.
+     * @param  found       The map from which to extract the first key.
+     * @param  caller      The instance which is invoking this method.
+     * @param  callerClass The class which is invoking this method, used for logging purpose.
+     * @param  methodName  The method which is invoking this method, used for logging purpose.
+     * @return The first key in the given map, or {@code null} if none.
+     */
+    private static <T> T first(final Map<T,?> found, final WarningProducer caller,
+            final Class<? extends WarningProducer> callerClass, final String methodName)
+    {
+        if (found != null) {
+            final int size = found.size();
+            if (size != 0) {
+                /*
+                 * At least one (source, property) pair has been found.  We will return the
+                 * index. However if we found more than one pair, we have an ambiguity. In
+                 * the later case, we will log a warning before to return the first index.
+                 */
+                if (size > 1) {
+                    final StringBuilder buffer = new StringBuilder();
+                    for (final Object value : found.values()) {
+                        if (buffer.length() != 0) {
+                            buffer.append(" | ");
+                        }
+                        buffer.append(value);
+                    }
+                    String message = Warnings.message(caller, Errors.Keys.AMBIGIOUS_VALUE_$1, buffer);
+                    buffer.setLength(0);
+                    buffer.append(message);
+                    for (final T source : found.keySet()) {
+                        if (buffer.length() != 0) {
+                            buffer.append(',');
+                        }
+                        buffer.append(' ').append(source);
+                    }
+                    message = buffer.toString();
+                    Warnings.log(caller, null, callerClass, methodName, message);
+                }
+                return found.keySet().iterator().next();
+            }
+        }
+        return null;
     }
 
     /**
@@ -732,7 +943,7 @@ public class DimensionSlice implements WarningProducer {
     /**
      * Returns a string representation of this object. The default implementation
      * formats on a single line the class name, the list of dimension identifiers,
-     * the {@linkplain #getIndice() indice} and the {@linkplain #getAPI() API} (if any).
+     * the {@linkplain #getSliceIndex() index} and the {@linkplain #getAPI() API} (if any).
      *
      * @see SpatialImageReadParam#toString()
      */
@@ -760,7 +971,7 @@ public class DimensionSlice implements WarningProducer {
                 addSeparator = true;
             }
         }
-        buffer.append("}, indice=").append(getIndice());
+        buffer.append("}, sliceIndex=").append(getSliceIndex());
         final API api = getAPI();
         if (!API.NONE.equals(api)) {
             buffer.append(", API=").append(api.name());

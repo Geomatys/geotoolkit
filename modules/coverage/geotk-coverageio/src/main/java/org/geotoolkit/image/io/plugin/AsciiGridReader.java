@@ -299,7 +299,7 @@ public class AsciiGridReader extends TextImageReader {
             if (value != null) {
                 binaryType = DataTypes.getDataBufferType(value);
                 if (binaryType == DataBuffer.TYPE_UNDEFINED) {
-                    Warnings.log(this, AsciiGridReader.class, "readHeader",
+                    Warnings.log(this, null, AsciiGridReader.class, "readHeader",
                             Errors.Keys.BAD_PARAMETER_$2, "BINARY_TYPE", value);
                 }
             }
@@ -308,7 +308,7 @@ public class AsciiGridReader extends TextImageReader {
              * We should not have any entry left.
              */
             for (final String extra : header.keySet()) {
-                Warnings.log(this, AsciiGridReader.class, "readHeader",
+                Warnings.log(this, null, AsciiGridReader.class, "readHeader",
                         Errors.Keys.UNKNOW_PARAMETER_$1, extra);
             }
         }
@@ -758,7 +758,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         try {
             binaryStream = IOUtilities.open(binaryInput);
         } catch (IOException e) {
-            Warnings.log(this, AsciiGridReader.class, "readBinary", e);
+            Warnings.log(this, null, AsciiGridReader.class, "readBinary", e);
             return null;
         }
         /*

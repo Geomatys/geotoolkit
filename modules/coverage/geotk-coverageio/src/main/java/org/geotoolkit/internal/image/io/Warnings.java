@@ -72,14 +72,15 @@ public final class Warnings {
      * not provide a localized message, or that message is made of only one word.
      *
      * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  level  The logging level, or {@code null} for the default one.
      * @param  caller The public class which is invoking this method.
      * @param  method The public method which is invoking this method.
      * @param  exception The exception to log.
      * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
      *         or {@link SpatialImageWriter}.
      */
-    public static void log(final WarningProducer plugin, final Class<?> caller, final String method,
-            final Exception exception)
+    public static void log(final WarningProducer plugin, Level level,
+            final Class<?> caller, final String method, final Exception exception)
     {
         String message = exception.getLocalizedMessage();
         if (message == null || ((message = message.trim()).indexOf(' ') < 0)) {
@@ -89,23 +90,27 @@ public final class Warnings {
                 message = message + ": " + word;
             }
         }
-        log(plugin, caller, method, message);
+        log(plugin, level, caller, method, message);
     }
 
     /**
      * Convenience method for logging a warning from the given message.
      *
      * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  level  The logging level, or {@code null} for the default one.
      * @param  caller The public class which is invoking this method.
      * @param  method The public method which is invoking this method.
      * @param  message The message to log.
      * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
      *         or {@link SpatialImageWriter}.
      */
-    public static void log(final WarningProducer plugin, final Class<?> caller, final String method,
-            final String message)
+    public static void log(final WarningProducer plugin, Level level,
+            final Class<?> caller, final String method, final String message)
     {
-        final LogRecord record = new LogRecord(Level.WARNING, message);
+        if (level == null) {
+            level = Level.WARNING;
+        }
+        final LogRecord record = new LogRecord(level, message);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);
         plugin.warningOccurred(record);
@@ -115,6 +120,7 @@ public final class Warnings {
      * Convenience method for logging a warning from the given method.
      *
      * @param  plugin The {@link SpatialImageReader} or {@link SpatialImageWriter} invoking this method.
+     * @param  level  The logging level, or {@code null} for the default one.
      * @param  caller The public class which is invoking this method.
      * @param  method The public method which is invoking this method.
      * @param  key The key from the error resource bundle to use for creating a message.
@@ -122,11 +128,14 @@ public final class Warnings {
      * @throws ClassCastException If the given plugin is not an {@link SpatialImageReader}
      *         or {@link SpatialImageWriter}.
      */
-    public static void log(final WarningProducer plugin, final Class<?> caller,
-            final String method, final int key, final Object... arguments)
+    public static void log(final WarningProducer plugin, Level level,
+            final Class<?> caller, final String method, final int key, final Object... arguments)
     {
+        if (level == null) {
+            level = Level.WARNING;
+        }
         final LogRecord record = Errors.getResources(plugin.getLocale())
-                .getLogRecord(Level.WARNING, key, arguments);
+                .getLogRecord(level, key, arguments);
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(method);
         plugin.warningOccurred(record);
