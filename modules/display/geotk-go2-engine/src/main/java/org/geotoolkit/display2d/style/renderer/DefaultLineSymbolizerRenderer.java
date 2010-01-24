@@ -71,7 +71,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
      */
     @Override
     public CachedLineSymbolizer createCachedSymbolizer(LineSymbolizer symbol) {
-        return new CachedLineSymbolizer(symbol);
+        return new CachedLineSymbolizer(symbol,this);
     }
 
     /**

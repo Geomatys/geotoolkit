@@ -117,7 +117,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
      */
     @Override
     public CachedRasterSymbolizer createCachedSymbolizer(RasterSymbolizer symbol) {
-        return new CachedRasterSymbolizer(symbol);
+        return new CachedRasterSymbolizer(symbol,this);
     }
 
     /**

@@ -72,7 +72,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      */
     @Override
     public CachedPolygonSymbolizer createCachedSymbolizer(PolygonSymbolizer symbol) {
-        return new CachedPolygonSymbolizer(symbol);
+        return new CachedPolygonSymbolizer(symbol,this);
     }
 
     /**

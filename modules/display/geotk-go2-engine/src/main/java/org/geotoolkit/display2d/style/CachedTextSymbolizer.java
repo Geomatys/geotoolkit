@@ -24,6 +24,7 @@ import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.RenderingHints;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -50,8 +51,9 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     
     private String label = null;
 
-    public CachedTextSymbolizer(TextSymbolizer symbolizer){
-        super(symbolizer);
+    public CachedTextSymbolizer(TextSymbolizer symbolizer,
+            SymbolizerRenderer<TextSymbolizer,? extends CachedSymbolizer<TextSymbolizer>> renderer){
+        super(symbolizer,renderer);
         
         final org.opengis.style.Font font = styleElement.getFont();
         cachedFont = new CachedFont(font);

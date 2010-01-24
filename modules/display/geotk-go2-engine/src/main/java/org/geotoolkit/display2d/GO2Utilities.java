@@ -27,6 +27,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import java.awt.AlphaComposite;
 
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -125,7 +126,7 @@ public final class GO2Utilities {
     public static final FilterFactory2 FILTER_FACTORY;
     public static final float SELECTION_LOWER_ALPHA = 0.09f;
     public static final int SELECTION_PIXEL_MARGIN = 2;
-
+    
     static{
         final ServiceLoader<SymbolizerRenderer> loader = ServiceLoader.load(SymbolizerRenderer.class);
         for(SymbolizerRenderer renderer : loader){

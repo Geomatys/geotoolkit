@@ -85,7 +85,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
      */
     @Override
     public CachedTextSymbolizer createCachedSymbolizer(TextSymbolizer symbol) {
-        return new CachedTextSymbolizer(symbol);
+        return new CachedTextSymbolizer(symbol,this);
     }
 
     /**

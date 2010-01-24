@@ -228,10 +228,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
                         painted = true;
                         for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                            final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
-                            if(renderer != null){
-                                renderer.portray(projectedFeature, symbol, renderingContext);
-                            }
+                            symbol.getRenderer().portray(projectedFeature, symbol, renderingContext);
                         }
                     }
                 }
@@ -244,10 +241,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
                             for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                                final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol);
-                                if(renderer != null){
-                                    renderer.portray(projectedFeature, symbol, renderingContext);
-                                }
+                                symbol.getRenderer().portray(projectedFeature, symbol, renderingContext);
                             }
                         }
                     }
@@ -265,7 +259,6 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
 
-        final CanvasMonitor monitor = renderingContext.getMonitor();
         final Query query = prepareQuery(renderingContext, layer, rules);
 
         final FeatureCollection<SimpleFeature> features;

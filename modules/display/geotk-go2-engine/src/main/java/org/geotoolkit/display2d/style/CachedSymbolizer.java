@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.style;
 
 
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.opengis.feature.Feature;
 import org.opengis.style.Symbolizer;
 
@@ -34,11 +35,21 @@ import org.opengis.style.Symbolizer;
  * @module pending
  */
 public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
-       
-    public CachedSymbolizer(T styleElement){
+
+    private final SymbolizerRenderer<T,? extends CachedSymbolizer<T>> renderer;
+
+    public CachedSymbolizer(T styleElement, SymbolizerRenderer<T,? extends CachedSymbolizer<T>> renderer){
         super(styleElement);
+        this.renderer =  renderer;
     }
-            
+
+    /**
+     * @return the renderer that created this cache, also the renderer which can render it.
+     */
+    public SymbolizerRenderer<T,? extends CachedSymbolizer<T>> getRenderer(){
+        return renderer;
+    }
+
     /**
      * Get the maximum size of the symbol for the given feature.
      * This is used to calculate the display boundingbox of a feature.

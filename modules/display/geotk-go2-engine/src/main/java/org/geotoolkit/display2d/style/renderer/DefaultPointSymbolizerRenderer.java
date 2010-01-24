@@ -79,7 +79,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
      */
     @Override
     public CachedPointSymbolizer createCachedSymbolizer(PointSymbolizer symbol) {
-        return new CachedPointSymbolizer(symbol);
+        return new CachedPointSymbolizer(symbol,this);
     }
 
     /**
