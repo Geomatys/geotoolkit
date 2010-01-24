@@ -31,6 +31,7 @@ import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.display2d.GO2Utilities;
 
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -129,7 +130,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         }else{
             //we clear the buffer if it exists
             final Graphics2D g2D = (Graphics2D) buffer.getGraphics();
-            g2D.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+            g2D.setComposite(GO2Utilities.ALPHA_COMPOSITE_0F);
             g2D.fillRect(0,0,dim.width,dim.height);
         }
 

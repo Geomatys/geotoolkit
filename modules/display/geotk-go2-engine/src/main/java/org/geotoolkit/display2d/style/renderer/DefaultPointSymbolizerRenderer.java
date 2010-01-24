@@ -100,7 +100,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
 
             final Graphics2D g2 = context.getGraphics();
             final RenderingHints hints = g2.getRenderingHints();
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+            g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 

@@ -202,7 +202,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
 
                     final Object before = g2.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
                     g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+                    g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 //                    g2.setComposite(AlphaComposite.SrcAtop);
                     g2.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
 

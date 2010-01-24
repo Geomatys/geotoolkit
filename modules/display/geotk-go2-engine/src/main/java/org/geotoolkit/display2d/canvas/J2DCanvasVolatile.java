@@ -38,6 +38,7 @@ import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.display.shape.XRectangle2D;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
@@ -163,18 +164,18 @@ public class J2DCanvasVolatile extends J2DCanvas{
                 buffer = createBackBuffer();
                 buffer.setAccelerationPriority(1);
                 output = (Graphics2D) buffer.getGraphics();
-                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+                output.setComposite(GO2Utilities.ALPHA_COMPOSITE_0F);
                 output.fillRect(0,0,dim.width,dim.height);
             }else{
                 buffer = buffer0;
                 //we clear the buffer part if it exists
                 output = (Graphics2D) buffer0.getGraphics();
-                output.setComposite( AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));
+                output.setComposite(GO2Utilities.ALPHA_COMPOSITE_0F);
                 output.fill(paintingDisplayShape);
             }
 
             buffer0 = buffer;
-            output.setComposite( AlphaComposite.getInstance(AlphaComposite.SRC_OVER,1.0f));
+            output.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
 
     //        Rectangle clipBounds = output.getClipBounds();

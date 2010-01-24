@@ -126,7 +126,10 @@ public final class GO2Utilities {
     public static final FilterFactory2 FILTER_FACTORY;
     public static final float SELECTION_LOWER_ALPHA = 0.09f;
     public static final int SELECTION_PIXEL_MARGIN = 2;
-    
+    public static final AlphaComposite ALPHA_COMPOSITE_0F = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);
+    public static final AlphaComposite ALPHA_COMPOSITE_1F = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+
+
     static{
         final ServiceLoader<SymbolizerRenderer> loader = ServiceLoader.load(SymbolizerRenderer.class);
         for(SymbolizerRenderer renderer : loader){
