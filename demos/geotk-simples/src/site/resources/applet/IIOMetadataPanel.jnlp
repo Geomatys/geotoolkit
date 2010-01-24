@@ -12,15 +12,15 @@
 
   <resources>
     <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="geotk-simples-3.06.jar" main="true"/>
-    <jar href="geotk-widgets-swing-3.06.jar"/>
-    <jar href="geotk-display-3.06.jar" download="lazy"/>
-    <jar href="geotk-coverageio-3.06.jar" download="lazy"/>
-    <jar href="geotk-coverage-3.06.jar" download="lazy"/>
-    <jar href="geotk-referencing-3.06.jar" download="lazy"/>
-    <jar href="geotk-metadata-3.06.jar" download="lazy"/>
-    <jar href="geotk-utility-3.06.jar" download="lazy"/>
-    <jar href="geoapi-pending-2.3-M6.jar" download="lazy"/>
+    <jar href="geotk-simples-3.07.jar" main="true"/>
+    <jar href="geotk-widgets-swing-3.07.jar"/>
+    <jar href="geotk-display-3.07.jar" download="lazy"/>
+    <jar href="geotk-coverageio-3.07.jar" download="lazy"/>
+    <jar href="geotk-coverage-3.07.jar" download="lazy"/>
+    <jar href="geotk-referencing-3.07.jar" download="lazy"/>
+    <jar href="geotk-metadata-3.07.jar" download="lazy"/>
+    <jar href="geotk-utility-3.07.jar" download="lazy"/>
+    <jar href="geoapi-pending-2.3-M7.jar" download="lazy"/>
     <jar href="vecmath-1.5.2.jar" download="lazy"/>
     <jar href="jsr-275-0.9.3.jar" download="lazy"/>
     <jar href="swingx-1.6.jar" download="lazy"/>
