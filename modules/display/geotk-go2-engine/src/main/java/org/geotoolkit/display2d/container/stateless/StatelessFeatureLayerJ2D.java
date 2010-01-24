@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -51,7 +52,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
@@ -59,6 +59,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
@@ -215,6 +217,17 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         try{
+            //performance routine
+            if(rules.length == 1
+               && (rules[0].getFilter() == null || rules[0].getFilter() == Filter.INCLUDE)
+               && rules[0].symbolizers().length == 1){
+
+                final GraphicIterator ite = new GraphicIterator(iterator, projectedFeature);
+                final CachedSymbolizer symbol = rules[0].symbolizers()[0];
+                symbol.getRenderer().portray(ite, symbol, renderingContext);
+                return;
+            }
+
             while(iterator.hasNext()){
                 if(monitor.stopRequested()) return;
                 final SimpleFeature feature = iterator.next();
@@ -561,6 +574,34 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
         
         return params;
+    }
+
+    protected static class GraphicIterator implements Iterator<ProjectedFeature>{
+
+        private final FeatureIterator<SimpleFeature> ite;
+        private final StatefullProjectedFeature projected;
+
+        public GraphicIterator(FeatureIterator<SimpleFeature> ite, StatefullProjectedFeature projected) {
+            this.ite = ite;
+            this.projected = projected;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return ite.hasNext();
+        }
+
+        @Override
+        public ProjectedFeature next() {
+            projected.setFeature(ite.next());
+            return projected;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
     }
 
 }

@@ -25,9 +25,13 @@ import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
+import java.util.Iterator;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -91,6 +95,14 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
                  textLine.lineTo(xtPoints[index], ytPoints[index]);
         }
         TEXT = textLine;
+    }
+
+    @Override
+    public void portray(Iterator<ProjectedFeature> graphics, C symbol,
+            RenderingContext2D context) throws PortrayalException {
+        while(graphics.hasNext()){
+            portray(graphics.next(), symbol, context);
+        }
     }
 
     /**

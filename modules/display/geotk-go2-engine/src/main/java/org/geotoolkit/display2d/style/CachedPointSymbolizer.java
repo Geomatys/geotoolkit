@@ -108,15 +108,15 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(Feature feature){
-        return cachedGraphic.getDisplacement(feature);
+    public float[] getDisplacement(Feature feature, float[] buffer){
+        return cachedGraphic.getDisplacement(feature, buffer);
     }
     
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(Feature feature){
-        return cachedGraphic.getAnchor(feature);
+    public float[] getAnchor(Feature feature, float[] buffer){
+        return cachedGraphic.getAnchor(feature,buffer);
     }
     
 }

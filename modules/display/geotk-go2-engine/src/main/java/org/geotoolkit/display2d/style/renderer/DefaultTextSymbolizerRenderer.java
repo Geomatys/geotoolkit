@@ -62,7 +62,7 @@ import org.opengis.style.TextSymbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSymbolizer, CachedTextSymbolizer>{
+public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<TextSymbolizer, CachedTextSymbolizer>{
 
     /**
      * {@inheritDoc }

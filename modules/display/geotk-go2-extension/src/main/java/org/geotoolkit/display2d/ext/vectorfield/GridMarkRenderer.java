@@ -27,12 +27,12 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
+
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
@@ -42,7 +42,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolizer,CachedVectorFieldSymbolizer>{
+public class GridMarkRenderer extends AbstractSymbolizerRenderer<VectorFieldSymbolizer,CachedVectorFieldSymbolizer>{
 
     @Override
     public Class<VectorFieldSymbolizer> getSymbolizerClass() {

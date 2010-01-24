@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -80,6 +81,17 @@ public interface SymbolizerRenderer<S extends Symbolizer, C extends CachedSymbol
      * @throws PortrayalException
      */
     void portray(ProjectedFeature graphic, C symbol,
+            RenderingContext2D context) throws PortrayalException;
+
+    /**
+     * Paint in one iteration a complete set of features.
+     * 
+     * @param graphics : iterator over all graphics to render
+     * @param symbol : cached symbolizer to use
+     * @param context : rendering context contains the java2d rendering parameters
+     * @throws PortrayalException
+     */
+    void portray(Iterator<ProjectedFeature> graphics, C symbol, 
             RenderingContext2D context) throws PortrayalException;
 
     /**

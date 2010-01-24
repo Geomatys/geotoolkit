@@ -40,7 +40,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
@@ -60,7 +60,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
+public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
 
     private static final Logger LOGGER = Logging.getLogger(DimRangeRenderer.class);
     @Override

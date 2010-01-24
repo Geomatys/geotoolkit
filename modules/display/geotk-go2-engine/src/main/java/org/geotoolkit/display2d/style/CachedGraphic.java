@@ -447,56 +447,58 @@ public class CachedGraphic extends Cache<Graphic>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(Feature feature){
+    public float[] getDisplacement(Feature feature, float[] buffer){
         evaluate();
-        
-        final float[] disps = new float[2];
+
+        if(buffer == null) buffer = new float[2];
                 
         if(Float.isNaN(cachedDispX)){
             //if dispX is Float.NaN it means it is dynamic
             final Expression dispX = styleElement.getDisplacement().getDisplacementX();
-            disps[0] = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
+            buffer[0] = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
         } else {
-            disps[0] = cachedDispX;
+            buffer[0] = cachedDispX;
         }
         
         if(Float.isNaN(cachedDispY)){
             //if dispY is Float.NaN it means it is dynamic
             final Expression dispY = styleElement.getDisplacement().getDisplacementY();
-            disps[1] = GO2Utilities.evaluate(dispY, null, Float.class, 0f);
+            buffer[1] = GO2Utilities.evaluate(dispY, null, Float.class, 0f);
         } else {
-            disps[1] = cachedDispY;
+            buffer[1] = cachedDispY;
         }
         
         
-        return disps;
+        return buffer;
     }
     
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(Feature feature){
+    public float[] getAnchor(Feature feature, float[] buffer){
         evaluate();
         
-        final float[] anchors = new float[2];
+        if(buffer == null){
+            buffer = new float[2];
+        }
         
         if(Float.isNaN(cachedAnchorX)){
             //if dispX is null it means it is dynamic
             final Expression anchorX = styleElement.getAnchorPoint().getAnchorPointX();
-            anchors[0] = GO2Utilities.evaluate(anchorX, null, Float.class, 0.5f);
+            buffer[0] = GO2Utilities.evaluate(anchorX, null, Float.class, 0.5f);
         } else {
-            anchors[0] = cachedAnchorX;
+            buffer[0] = cachedAnchorX;
         }
         
         if(Float.isNaN(cachedAnchorY)){
             //if dispY is null it means it is dynamic
             final Expression anchorY = styleElement.getDisplacement().getDisplacementY();
-            anchors[1] = GO2Utilities.evaluate(anchorY, null, Float.class, 0.5f);
+            buffer[1] = GO2Utilities.evaluate(anchorY, null, Float.class, 0.5f);
         } else {
-            anchors[1] = cachedAnchorY;
+            buffer[1] = cachedAnchorY;
         }
         
-        return anchors;
+        return buffer;
     }
     
     /**

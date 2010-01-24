@@ -17,6 +17,7 @@
 
 package org.geotoolkit.display2d.style.renderer;
 
+import java.util.Iterator;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -37,6 +38,11 @@ public abstract class AbstractCoverageRenderer<S extends Symbolizer, C extends C
      */
     @Override
     public void portray(ProjectedFeature graphic, C symbol, RenderingContext2D context) throws PortrayalException{
+        //nothing to portray on features
+    }
+
+    @Override
+    public void portray(Iterator<ProjectedFeature> graphics, C symbol, RenderingContext2D context) {
         //nothing to portray on features
     }
 
