@@ -99,7 +99,7 @@ public class DefaultTextSymbolizerRenderer implements SymbolizerRenderer<TextSym
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
             final Graphics2D g2 = context.getGraphics();
-            final RenderingHints hints = g2.getRenderingHints();
+            final RenderingHints hints = context.getRenderingHints();
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
             

@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.canvas;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
@@ -74,7 +75,14 @@ public interface RenderingContext2D extends RenderingContext{
      * {@linkplain #switchToDisplayCRS() } and {@linkplain #switchToObjectiveCRS() }.
      */
     Graphics2D getGraphics();
-    
+
+    /**
+     * Use this methods rather send getGraphics().getRenderingHints.
+     * This method cases the result for better performances.
+     * @return rendering hints of the graphics 2D.
+     */
+    RenderingHints getRenderingHints();
+
     /**
      * Like the Graphics class, this create method makes a clone of the current
      * Rendering context. this may be use in multithread to avoid several object to work

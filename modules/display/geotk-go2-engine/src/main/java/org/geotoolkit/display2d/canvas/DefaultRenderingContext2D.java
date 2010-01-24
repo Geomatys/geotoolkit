@@ -20,6 +20,7 @@ package org.geotoolkit.display2d.canvas;
 import java.awt.Shape;
 import java.awt.Rectangle;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Date;
@@ -110,6 +111,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * @see #getGraphics
      */
     private Graphics2D graphics = null;
+
+    /*
+     * cache of the Graphics2D rendering hints.
+     */
+    private RenderingHints renderingHints = null;
 
     /**
      * A snapshot of {@link ReferencedCanvas#getObjectiveCRS} at the time of painting. This is the
@@ -284,6 +290,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     public void initGraphic(final Graphics2D graphics){
         this.graphics           = graphics;
+        this.renderingHints     = graphics.getRenderingHints();
         this.displayToDevice    = (graphics != null) ? graphics.getTransform() : null;
         this.objectiveToDevice  = (displayToDevice != null) ? new AffineTransform(displayToDevice) : new AffineTransform();
         this.objectiveToDevice.concatenate(objectiveToDisplay);
@@ -296,6 +303,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.canvasDisplayShape = null;
         this.displayToDevice = null;
         this.graphics = null;
+        this.renderingHints = null;
         this.labelRenderer = null;
         this.monitor = null;
         this.canvasObjectiveBBox = null;
@@ -646,6 +654,11 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     @Override
     public Double[] getElevationRange() {
         return elevationRange;
+    }
+
+    @Override
+    public RenderingHints getRenderingHints() {
+        return renderingHints;
     }
 
 }

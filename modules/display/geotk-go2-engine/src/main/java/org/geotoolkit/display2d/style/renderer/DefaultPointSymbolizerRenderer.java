@@ -99,7 +99,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             if(projectedGeometry == null) return;
 
             final Graphics2D g2 = context.getGraphics();
-            final RenderingHints hints = g2.getRenderingHints();
+            final RenderingHints hints = context.getRenderingHints();
             g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();

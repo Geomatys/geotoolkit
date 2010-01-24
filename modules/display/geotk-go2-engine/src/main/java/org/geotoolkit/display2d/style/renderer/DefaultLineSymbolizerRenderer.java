@@ -113,7 +113,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
             ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
 
         final Graphics2D g2 = context.getGraphics();
-        final RenderingHints hints = g2.getRenderingHints();
+        final RenderingHints hints = context.getRenderingHints();
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
         final float coeff = context.getUnitCoefficient(symbolUnit);
