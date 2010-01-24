@@ -286,6 +286,8 @@ public final class Registry {
         setNativeCodecAllowed("BMP",   ImageWriterSpi.class, false);
         setNativeCodecAllowed("WBMP",  ImageReaderSpi.class, false);
         setNativeCodecAllowed("WBMP",  ImageWriterSpi.class, false);
+        setNativeCodecAllowed("JPEG",  ImageReaderSpi.class, false);
+        setNativeCodecAllowed("JPEG",  ImageWriterSpi.class, false);
         setNativeCodecAllowed("TIFF",  ImageReaderSpi.class, true);
         setNativeCodecAllowed("TIFF",  ImageWriterSpi.class, true);
     }
