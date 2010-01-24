@@ -30,6 +30,7 @@ import java.util.Map;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.process.Process;
@@ -53,8 +54,9 @@ import org.opengis.style.Symbolizer;
  */
 public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>{
 
-    public CachedPatternSymbolizer(PatternSymbolizer symbol){
-        super(symbol);
+    public CachedPatternSymbolizer(PatternSymbolizer symbol,
+            SymbolizerRenderer<PatternSymbolizer,? extends CachedSymbolizer<PatternSymbolizer>> renderer){
+        super(symbol,renderer);
     }
 
     public Map<SimpleFeature,List<CachedSymbolizer>> getMasks(GridCoverage2D coverage) throws IOException, TransformException{

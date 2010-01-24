@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.ext.vectorfield;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.opengis.feature.Feature;
 
 /**
@@ -27,8 +28,9 @@ import org.opengis.feature.Feature;
  */
 public class CachedVectorFieldSymbolizer extends CachedSymbolizer<VectorFieldSymbolizer>{
 
-    public CachedVectorFieldSymbolizer(VectorFieldSymbolizer symbol) {
-        super(symbol);
+    public CachedVectorFieldSymbolizer(VectorFieldSymbolizer symbol,
+            SymbolizerRenderer<VectorFieldSymbolizer,? extends CachedSymbolizer<VectorFieldSymbolizer>> renderer){
+        super(symbol,renderer);
     }
 
     /**

@@ -88,7 +88,7 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
      */
     @Override
     public CachedPatternSymbolizer createCachedSymbolizer(PatternSymbolizer symbol) {
-        return new CachedPatternSymbolizer(symbol);
+        return new CachedPatternSymbolizer(symbol,this);
     }
 
     /**

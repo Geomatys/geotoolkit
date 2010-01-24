@@ -75,7 +75,7 @@ public class DimRangeRenderer implements SymbolizerRenderer<DimRangeSymbolizer,C
 
     @Override
     public CachedDimRangeSymbolizer createCachedSymbolizer(DimRangeSymbolizer symbol) {
-        return new CachedDimRangeSymbolizer(symbol);
+        return new CachedDimRangeSymbolizer(symbol,this);
     }
 
     @Override

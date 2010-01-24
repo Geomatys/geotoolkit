@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.ext.dimrange;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 
 import org.opengis.feature.Feature;
 
@@ -28,8 +29,9 @@ import org.opengis.feature.Feature;
  */
 public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolizer>{
 
-    public CachedDimRangeSymbolizer(DimRangeSymbolizer sym){
-        super(sym);
+    public CachedDimRangeSymbolizer(DimRangeSymbolizer sym,
+            SymbolizerRenderer<DimRangeSymbolizer,? extends CachedSymbolizer<DimRangeSymbolizer>> renderer){
+        super(sym,renderer);
     }
 
     @Override

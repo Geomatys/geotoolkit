@@ -56,7 +56,7 @@ public class GridMarkRenderer implements SymbolizerRenderer<VectorFieldSymbolize
 
     @Override
     public CachedVectorFieldSymbolizer createCachedSymbolizer(VectorFieldSymbolizer symbol) {
-        return new CachedVectorFieldSymbolizer(symbol);
+        return new CachedVectorFieldSymbolizer(symbol,this);
     }
 
     @Override
