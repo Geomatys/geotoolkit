@@ -176,153 +176,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return;
         }
 
-        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
-        final FeatureType schema                                 = fs.getFeatureType();
-        final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
-        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
-        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final CanvasMonitor monitor                              = renderingContext.getMonitor();
-        final CoordinateReferenceSystem layerCRS                 = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
-        
-        if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
-            //BBox and layer bounds have different CRS. reproject bbox bounds
-            Envelope env;
-            
-            try{
-                env = CRS.transform(bbox, layerCRS);
-            }catch(TransformException ex){
-                //TODO is fixed in geotidy, the result envelope will have infinte values where needed
-                //TODO should do something about this, since canvas bounds may be over the crs bounds
-                monitor.exceptionOccured(ex, Level.WARNING);
-                env = new Envelope2D();
-            }catch(IllegalArgumentException ex){
-                //looks like the coordinate of the bbox are outside of the crs valide area.
-                //some crs raise this error, other not.
-                //if so we should reduce our bbox to the valide extent of the crs.
-                monitor.exceptionOccured(ex, Level.WARNING);
-
-                final GeographicBoundingBox gbox = CRS.getGeographicBoundingBox(layerCRS);
-
-                if(gbox == null){
-                    env = new GeneralEnvelope(layerCRS);
-                }else{
-                    env = new GeneralEnvelope(gbox);
-                }
-                
-            }catch(Exception ex){
-                //we should not catch this but we must not block the canvas
-                monitor.exceptionOccured(ex, Level.SEVERE);
-                return;
-            }
-            
-            //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
-            //fix CRS classes method and remove the two next lines.
-            env = new GeneralEnvelope(env);
-            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
-
-            bbox = new DefaultBoundingBox(env);
-        }
-
-        Filter filter;
-
-        //final Envelope layerBounds = layer.getBounds();
-        //we better not do any call to the layer bounding box before since it can be
-        //really expensive, the datastore is the best placed to check if he might
-        //optimize the filter.
-        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
-            //the layer bounds overlaps the bbox, no need for a spatial filter
-        //   filter = Filter.INCLUDE;
-        //}else{
-        //make a bbox filter
-        filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-        //}
-        
-        //concatenate geographique filter with data filter if there is one
-        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
-            filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
-        }
-
-
-        //concatenate with temporal range if needed ----------------------------
-        final Filter temporalFilter;
-        final Date[] temporal = renderingContext.getTemporalRange().clone();
-        final Expression[] layerTemporalRange = layer.getTemporalRange().clone();
-
-        if(temporal[0] == null){
-            temporal[0] = new Date(Long.MIN_VALUE);
-        }
-        if(temporal[1] == null){
-            temporal[1] = new Date(Long.MAX_VALUE);
-        }
-
-        if(layerTemporalRange[0] != null && layerTemporalRange[1] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerTemporalRange[0] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerTemporalRange[1] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else{
-            temporalFilter = Filter.INCLUDE;
-        }
-
-        if(temporalFilter != Filter.INCLUDE){
-            filter = FILTER_FACTORY.and(filter,temporalFilter);
-        }
-
-        //concatenate with elevation range if needed ---------------------------
-        final Filter verticalFilter;
-        final Double[] vertical = renderingContext.getElevationRange().clone();
-        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
-        
-        if(vertical[0] == null){
-            vertical[0] = Double.NEGATIVE_INFINITY;
-        }
-        if(vertical[1] == null){
-            vertical[1] = Double.POSITIVE_INFINITY;
-        }
-
-        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
-        }else if(layerVerticalRange[0] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
-        }else if(layerVerticalRange[1] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
-        }else{
-            verticalFilter = Filter.INCLUDE;
-        }
-
-        if(verticalFilter != Filter.INCLUDE){
-            filter = FILTER_FACTORY.and(filter,verticalFilter);
-        }
-
-
-        final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
-        final Set<String> copy = new HashSet<String>(attributs);
-        copy.add(geomAttName);
-        final String[] atts = copy.toArray(new String[copy.size()]);
-        final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(schema.getName());
-        qb.setFilter(filter);
-        qb.setProperties(atts);
-        final Query query = qb.buildQuery();
+        final CanvasMonitor monitor = renderingContext.getMonitor();
+        final Query query = prepareQuery(renderingContext, layer, rules);
 
         if(monitor.stopRequested()) return;
         
         final FeatureCollection<SimpleFeature> features;
         try{
-            features = fs.subCollection(query);
+            features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
             //can not continue this layer with this error
@@ -331,24 +192,13 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
-        
-        final CoordinateReferenceSystem dataCRS      = features.getFeatureType().getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
-        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
-        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
 
-
-        final StatefullContextParams params = new StatefullContextParams(getCanvas(),layer);
-        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
-        params.displayCRS = displayCRS;
-        params.objectiveToDisplay.setTransform(objtoDisp);
-        params.updateGeneralizationFactor(renderingContext, dataCRS);
+        final StatefullContextParams params;
         try {
-            params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-            params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
-            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
+            params = prepareContextParams(renderingContext, features.getFeatureType().getCoordinateReferenceSystem(), null);
         } catch (FactoryException ex) {
             monitor.exceptionOccured(ex, Level.SEVERE);
+            return;
         }
 
         //sort the rules
@@ -363,6 +213,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return;
         }
 
+        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         try{
             while(iterator.hasNext()){
                 if(monitor.stopRequested()) return;
@@ -414,59 +265,12 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
 
-        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
-        final FeatureType schema                                 = fs.getFeatureType();
-        final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
-        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
-        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
-        final Envelope layerBounds                               = layer.getBounds();
+        final CanvasMonitor monitor = renderingContext.getMonitor();
+        final Query query = prepareQuery(renderingContext, layer, rules);
 
-        if( !CRS.equalsIgnoreMetadata(layerBounds.getCoordinateReferenceSystem(),bboxCRS)){
-            //BBox and layer bounds have different CRS. reproject bbox bounds
-            Envelope env;
-
-            try{
-                env = CRS.transform(bbox, layerBounds.getCoordinateReferenceSystem());
-            }catch(TransformException ex){
-                renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
-                env = new Envelope2D();
-            }
-
-            //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
-            //fix CRS classes method and remove the two next lines.
-            env = new GeneralEnvelope(env);
-            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerBounds.getCoordinateReferenceSystem());
-
-            bbox = new DefaultBoundingBox(env);
-        }
-
-        Filter filter;
-        if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
-            //the layer bounds overlaps the bbox, no need for a spatial filter
-            filter = Filter.INCLUDE;
-        }else{
-            //make a bbox filter
-            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
-        }
-
-        //concatenate geographique filter with data filter if there is one
-        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
-            filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
-        }
-
-        final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
-        final Set<String> copy = new HashSet<String>(attributs);
-        copy.add(geomAttName);
-        final String[] atts = copy.toArray(new String[copy.size()]);
-        final QueryBuilder builder = new QueryBuilder();
-        builder.setTypeName(schema.getName());
-        builder.setFilter(filter);
-        builder.setProperties(atts);
-        final Query query = builder.buildQuery();
-        
         final FeatureCollection<SimpleFeature> features;
         try{
-            features = fs.subCollection(query);
+            features = ((FeatureCollection<SimpleFeature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             renderingContext.getMonitor().exceptionOccured(ex, Level.SEVERE);
             //can not continue this layer with this error
@@ -476,45 +280,29 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final CoordinateReferenceSystem dataCRS      = features.getFeatureType().getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
-        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
-        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
-
-
-        final StatefullContextParams params = new StatefullContextParams(getCanvas(),layer);
-        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
-        params.displayCRS = displayCRS;
-        params.objectiveToDisplay.setTransform(objtoDisp);
-        params.updateGeneralizationFactor(renderingContext, dataCRS);
+        final StatefullContextParams params;
         try {
-            params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-            params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
-            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
+            params = prepareContextParams(renderingContext, features.getFeatureType().getCoordinateReferenceSystem(), null);
         } catch (FactoryException ex) {
             ex.printStackTrace();
             return graphics;
         }
 
 
+
         // iterate and find the first graphic that hit the given point
-        final FeatureIterator<SimpleFeature> iterator = features.iterator();
-//        final StatelessProjectedFeature graphic = new StatelessProjectedFeature(getCanvas(), getCanvas().getObjectiveCRS());
-
-//        try {
-//            MathTransform dataToDisp = CRS.findMathTransform(dataCRS, displayCRS,true);
-//            MathTransform dataToObj = CRS.findMathTransform(dataCRS, objectiveCRS,true);
-//            graphic.initContext(dataToDisp, dataToObj);
-//        } catch (FactoryException ex) {
-//            ex.printStackTrace();
-//            return graphics;
-//        }
-
+        final FeatureIterator<SimpleFeature> iterator;
+        try{
+            iterator = features.iterator();
+        }catch(DataStoreRuntimeException ex){
+            ex.printStackTrace();
+            return graphics;
+        }
 
         //sort the rules
         final int elseRuleIndex = sortByElseRule(rules);
 
-
+        final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         try{
             while(iterator.hasNext()){
                 SimpleFeature feature = iterator.next();
@@ -614,6 +402,172 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
         return elseRuleIndex;
+    }
+
+    protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
+
+        final FeatureCollection<SimpleFeature> fs                = (FeatureCollection<SimpleFeature>) layer.getCollection();
+        final FeatureType schema                                 = fs.getFeatureType();
+        final String geomAttName                                 = schema.getGeometryDescriptor().getLocalName();
+        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
+        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
+        final CanvasMonitor monitor                              = renderingContext.getMonitor();
+        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
+
+        if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+            //BBox and layer bounds have different CRS. reproject bbox bounds
+            Envelope env;
+
+            try{
+                env = CRS.transform(bbox, layerCRS);
+            }catch(TransformException ex){
+                //TODO is fixed in geotidy, the result envelope will have infinte values where needed
+                //TODO should do something about this, since canvas bounds may be over the crs bounds
+                monitor.exceptionOccured(ex, Level.WARNING);
+                env = new Envelope2D();
+            }catch(IllegalArgumentException ex){
+                //looks like the coordinate of the bbox are outside of the crs valide area.
+                //some crs raise this error, other not.
+                //if so we should reduce our bbox to the valide extent of the crs.
+                monitor.exceptionOccured(ex, Level.WARNING);
+
+                final GeographicBoundingBox gbox = CRS.getGeographicBoundingBox(layerCRS);
+
+                if(gbox == null){
+                    env = new GeneralEnvelope(layerCRS);
+                }else{
+                    env = new GeneralEnvelope(gbox);
+                }
+
+            }catch(Exception ex){
+                //we should not catch this but we must not block the canvas
+                monitor.exceptionOccured(ex, Level.SEVERE);
+                return null;
+            }
+
+            //TODO looks like the envelope after transform operation doesnt have always exactly the same CRS.
+            //fix CRS classes method and remove the two next lines.
+            env = new GeneralEnvelope(env);
+            ((GeneralEnvelope)env).setCoordinateReferenceSystem(layerCRS);
+
+            bbox = new DefaultBoundingBox(env);
+        }
+
+        Filter filter;
+
+        //final Envelope layerBounds = layer.getBounds();
+        //we better not do any call to the layer bounding box before since it can be
+        //really expensive, the datastore is the best placed to check if he might
+        //optimize the filter.
+        //if( ((BoundingBox)bbox).contains(new DefaultBoundingBox(layerBounds))){
+            //the layer bounds overlaps the bbox, no need for a spatial filter
+        //   filter = Filter.INCLUDE;
+        //}else{
+        //make a bbox filter
+        filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+        //}
+
+        //concatenate geographique filter with data filter if there is one
+        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
+            filter = FILTER_FACTORY.and(filter,layer.getQuery().getFilter());
+        }
+
+
+        //concatenate with temporal range if needed ----------------------------
+        final Filter temporalFilter;
+        final Date[] temporal = renderingContext.getTemporalRange().clone();
+        final Expression[] layerTemporalRange = layer.getTemporalRange().clone();
+
+        if(temporal[0] == null){
+            temporal[0] = new Date(Long.MIN_VALUE);
+        }
+        if(temporal[1] == null){
+            temporal[1] = new Date(Long.MAX_VALUE);
+        }
+
+        if(layerTemporalRange[0] != null && layerTemporalRange[1] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerTemporalRange[0] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerTemporalRange[1] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else{
+            temporalFilter = Filter.INCLUDE;
+        }
+
+        if(temporalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,temporalFilter);
+        }
+
+        //concatenate with elevation range if needed ---------------------------
+        final Filter verticalFilter;
+        final Double[] vertical = renderingContext.getElevationRange().clone();
+        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
+
+        if(vertical[0] == null){
+            vertical[0] = Double.NEGATIVE_INFINITY;
+        }
+        if(vertical[1] == null){
+            vertical[1] = Double.POSITIVE_INFINITY;
+        }
+
+        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[0] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else{
+            verticalFilter = Filter.INCLUDE;
+        }
+
+        if(verticalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,verticalFilter);
+        }
+
+
+        final Set<String> attributs = GO2Utilities.propertiesCachedNames(rules);
+        final Set<String> copy = new HashSet<String>(attributs);
+        copy.add(geomAttName);
+        final String[] atts = copy.toArray(new String[copy.size()]);
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(schema.getName());
+        qb.setFilter(filter);
+        qb.setProperties(atts);
+        final Query query = qb.buildQuery();
+        return query;
+    }
+
+    protected StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
+            CoordinateReferenceSystem dataCRS, StatefullContextParams params) throws FactoryException{
+        final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
+        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
+        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
+
+        if(params == null){
+            params = new StatefullContextParams(getCanvas(),layer);
+        }
+
+        params.displayCRS = displayCRS;
+        params.objectiveToDisplay.setTransform(objtoDisp);
+        params.updateGeneralizationFactor(renderingContext, dataCRS);
+        params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
+        params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
+        params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
+        
+        return params;
     }
 
 }
