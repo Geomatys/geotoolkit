@@ -40,8 +40,8 @@ import org.geotoolkit.internal.image.io.Warnings;
 
 
 /**
- * Tupple of a <cite>dimension identifier</cite> and index in that dimension for a slice to read
- * or write in a data file. This class is relevant mostly for <var>n</var>-dimensional datasets
+ * Tupple of a <cite>dimension identifier</cite> and <cite>index</cite> in that dimension for a slice
+ * to read or write in a data file. This class is relevant mostly for <var>n</var>-dimensional datasets
  * where <var>n</var>&gt;2. Each {@code DimensionSlice} instance applies to only one dimension;
  * if the indices of a slice need to be specified for more than one dimension, then many instances
  * of {@code DimensionSlice} will be required.

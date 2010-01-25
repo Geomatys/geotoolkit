@@ -48,6 +48,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.image.io.TextImageReader;
 import org.geotoolkit.image.io.SampleConverter;
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.stream.ChannelImageInputStream;
@@ -324,7 +325,7 @@ public class AsciiGridReader extends TextImageReader {
      */
     private String ensureDefined(final String name, final String value) throws IIOException {
         if (value == null || value.length() == 0) {
-            throw new IIOException(Warnings.message(this, Errors.Keys.MISSING_PARAMETER_$1, name));
+            throw new ImageMetadataException(Warnings.message(this, Errors.Keys.MISSING_PARAMETER_$1, name));
         }
         return value;
     }
@@ -362,7 +363,8 @@ readLine:   while (true) {
                     final int pos = buffer.position();
                     final int capacity = buffer.capacity();
                     if (pos >= capacity) {
-                        throw new IIOException(Errors.format(Errors.Keys.HEADER_UNEXPECTED_LENGTH_$1, capacity));
+                        throw new ImageMetadataException(Errors.format(
+                                Errors.Keys.HEADER_UNEXPECTED_LENGTH_$1, capacity));
                     }
                     /*
                      * Arbitrary read a block of 512 bytes for starting, because the header is
@@ -430,7 +432,8 @@ readLine:   while (true) {
                 }
                 final Object old = header.put(key, value);
                 if (old != null && !old.equals(value)) {
-                    throw new IIOException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, key));
+                    throw new ImageMetadataException(Errors.format(
+                            Errors.Keys.VALUE_ALREADY_DEFINED_$1, key));
                 }
             }
         }

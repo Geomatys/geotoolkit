@@ -46,7 +46,7 @@ import org.geotoolkit.util.collection.CheckedCollection;
  * and vis-versa.
  * <p>
  * Vectors can be created over a subrange of an array, provides a view of the elements in reverse
- * order, <i>etc.</i>. The example below creates a view over a subrange:
+ * order, <i>etc</i>. The example below creates a view over a subrange:
  *
  * {@preformat java
  *     Vector v = Vector.create(array).subList(lower, upper)

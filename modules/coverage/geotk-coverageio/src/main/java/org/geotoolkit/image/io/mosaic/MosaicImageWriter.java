@@ -58,6 +58,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.image.io.InvalidImageStoreException;
+import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Compressions;
 import org.geotoolkit.internal.image.io.SupportFiles;
@@ -247,7 +249,7 @@ public class MosaicImageWriter extends ImageWriter {
             }
             return;
         }
-        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
     }
 
     /**
@@ -331,7 +333,7 @@ public class MosaicImageWriter extends ImageWriter {
             }
         }
         if (onlyOneImage) {
-            throw new IIOException(Errors.format(Errors.Keys.INVALID_MOSAIC_INPUT));
+            throw new InvalidImageStoreException(Errors.format(Errors.Keys.INVALID_MOSAIC_INPUT));
         }
         return success;
     }
@@ -1271,7 +1273,7 @@ search: for (final Tile tile : tiles) {
             if (reader == null) {
                 final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("raw");
                 if (!it.hasNext()) {
-                    throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+                    throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
                 }
                 reader = it.next();
             }
@@ -1360,7 +1362,7 @@ search: for (final Tile tile : tiles) {
         if (stream != null) {
             stream.close();
         }
-        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
     }
 
     /**
@@ -1569,7 +1571,7 @@ search: for (final Tile tile : tiles) {
         if (stream != null) {
             stream.close();
         }
-        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
     }
 
     /**

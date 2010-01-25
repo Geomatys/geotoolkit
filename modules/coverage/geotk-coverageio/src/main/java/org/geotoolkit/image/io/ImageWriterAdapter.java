@@ -27,7 +27,6 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
-import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -222,7 +221,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         if (main.getOutput() == null) {
             final Object mainOutput = createOutput("main");
             if (mainOutput == null) {
-                throw new IIOException(getErrorResources().getString(
+                throw new InvalidImageStoreException(getErrorResources().getString(
                         Errors.Keys.UNKNOW_TYPE_$1, output.getClass()));
             }
             main.setOutput(mainOutput);

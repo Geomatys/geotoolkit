@@ -307,7 +307,7 @@ public final class XImageIO {
                 stream.close();
             }
         }
-        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
     }
 
     /**
@@ -537,7 +537,7 @@ public final class XImageIO {
                 return createWriterInstance(fallback, stream);
             }
         }
-        throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
     }
 
     /**

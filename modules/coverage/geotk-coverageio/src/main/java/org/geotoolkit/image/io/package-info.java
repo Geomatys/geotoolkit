@@ -17,17 +17,9 @@
  */
 
 /**
- * Base classes for extensions to
- * {@link javax.imageio.ImageReader} /
- * {@link javax.imageio.ImageWriter}
- * for spatial data. The base classes for reading / writing raster data are
- * {@link org.geotoolkit.image.io.SpatialImageReader} /
- * {@link org.geotoolkit.image.io.SpatialImageWriter},
- * completed by specialized {@link javax.imageio.IIOParam} classes for parameters
- * ({@link org.geotoolkit.image.io.SpatialImageReadParam} /
- *  {@link org.geotoolkit.image.io.SpatialImageWriteParam}) and a specialized {@code IIOMetadata}
- * class for metadata ({@link org.geotoolkit.image.io.metadata.SpatialMetadata}). This package
- * provides different specialization of {@code ImageReader} and {@code ImageWriter}, listed below:
+ * Base classes for extensions to {@link javax.imageio.ImageReader} and
+ * {@link javax.imageio.ImageWriter} for spatial data. This package provides the
+ * following abstract classes which can be used as a base for plugin implementations:
  * <p>
  * <table border="3" cellpadding="6">
  *   <tr bgcolor="lightblue">
@@ -63,6 +55,15 @@
  *         processed by the standard readers/writers.</td>
  *   </tr>
  * </table>
+ * <p>
+ * Those abstract classes are completed by the following support classes:
+ * <ul>
+ *   <li>{@link org.geotoolkit.image.io.SpatialImageReadParam} and
+ *     {@link org.geotoolkit.image.io.SpatialImageWriteParam}, which are
+ *     specializations of the standard {@link javax.imageio.IIOParam} class.</li>
+ *   <li>{@link org.geotoolkit.image.io.metadata.SpatialMetadata}, which is
+ *     a specialization of the standard {@link javax.imageio.metadata.IIOMetadata}.</li>
+ * </ul>
  * <p>
  * Concrete implementations are provided in the {@linkplain org.geotoolkit.image.io.plugin plugin}
  * and {@linkplain org.geotoolkit.image.io.mosaic mosaic} sub-packages.

@@ -39,7 +39,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.IIOException;
 
 import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 
@@ -51,6 +50,7 @@ import org.geotoolkit.internal.io.ObjectStream;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.rmi.ShareableTask;
 import org.geotoolkit.internal.image.io.RawFile;
+import org.geotoolkit.image.io.UnsupportedImageFormatException;
 
 
 /**
@@ -98,7 +98,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
     private static ImageWriter getTemporaryTileWriter() throws IOException {
         final Iterator<ImageWriter> it = ImageIO.getImageWritersByFormatName("raw");
         if (!it.hasNext()) {
-            throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+            throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
         }
         return it.next();
     }

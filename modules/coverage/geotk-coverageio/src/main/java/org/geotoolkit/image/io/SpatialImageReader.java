@@ -53,41 +53,63 @@ import org.geotoolkit.internal.image.io.Warnings;
 
 
 /**
- * Base class for readers of spatial (usually geographic) data. The default implementation assumes
- * that only one {@linkplain ImageTypeSpecifier image type} is supported (as opposed to the arbitrary
- * number allowed by the standard {@link ImageReader}). It also provides a default image type built
- * automatically from a color palette and a range of valid values.
+ * Base class for readers of spatial (usually geographic) data. This class extends the standard
+ * {@link ImageReader} class in order to improve the support of file formats having the following
+ * characteristics:
  * <p>
- * More specifically, this class provides the following conveniences to implementors:
- *
  * <ul>
- *   <li><p>Provides default {@link #getNumImages} and {@link #getNumBands} implementations,
- *       which return 1. This default behavior matches simple image formats like flat binary
- *       files or ASCII files. Those methods need to be overrided for more complex image
- *       formats.</p></li>
- *
- *   <li><p>Provides {@link #checkImageIndex} and {@link #checkBandIndex} convenience methods.
- *       Those methods are invoked by most implementation of public methods. They perform their
- *       checks based on the informations provided by the above-cited {@link #getNumImages} and
- *       {@link #getNumBands} methods.</p></li>
- *
- *   <li><p>Provides default implementations of {@link #getImageTypes} and {@link #getRawImageType},
- *       which assume that only one {@linkplain ImageTypeSpecifier image type} is supported. The
- *       default image type is created from the informations provided by {@link #getRawDataType}
- *       and {@link #getImageMetadata}.</p></li>
- *
- *   <li><p>Provides {@link #getStreamMetadata} and {@link #getImageMetadata} default
- *       implementations, which return {@code null} as authorized by the specification.
- *       Note that subclasses should consider returning {@link SpatialMetadata} instances.</p></li>
+ *   <li>Images may have metadata information that can be represented as ISO 19115-2 objects.</li>
+ *   <li>Images may have no color information (e.g. RAW, ASCII or NetCDF files), in which case a
+ *       colors palette can be specified in {@linkplain SpatialImageReadParam parameters}.</li>
+ *   <li>Pixel values may be signed integers, in which case an offset needs to be applied
+ *       since {@link java.awt.image.IndexColorModel} does not support negative values.</li>
+ *   <li>Pixel values may be floating point values, in which case a non-standard color space
+ *       is required.</li>
  * </ul>
  *
- * Images may be flat binary or ASCII files with no meta-data and no color information.
- * Their pixel values may be floating point values instead of integers. The default
- * implementation assumes floating point values and uses a grayscale color space scaled
- * to fit the range of values. Displaying such an image may be very slow. Consequently,
- * users who want to display image are encouraged to change data type and color space with
- * <a href="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</a>
- * operators after reading.
+ * {@section New API}
+ * This class provides the following API, which are new compared to the standard {@link ImageReader}
+ * class:
+ * <p>
+ * <ul>
+ *   <li>The return type of {@link #getStreamMetadata()} and {@link #getImageMetadata(int)} is
+ *     restricted to {@link SpatialMetadata}.</li>
+ *   <li>The return type of {@link #getDefaultReadParam()} is restricted to
+ *     {@link SpatialImageReadParam}.</li>
+ *   <li>A new method, {@link #getNumBands(int)}, returns the number of bands in the specified
+ *     image. Note that the bands may not contain color components in scientific dataset.</li>
+ *   <li>A new method, {@link #getDimension(int)}, returns the dimension of the given image.
+ *     In some formats like NetCDF, an "image" is actually a dataset which may have more than
+ *     2 dimensions.</li>
+ * </ul>
+ *
+ * {@section Services for implementors}
+ * This class provides the following conveniences for implementors. Note that the default behavior
+ * described below assumes the simpliest file format: one image made of one band of floating point
+ * values using a grayscale color palette scaled to fit the range of sample values. This behavior
+ * can be changed by overriding the methods listed below.
+ *
+ * <ul>
+ *   <li><p>Provides default {@link #getNumImages(boolean)} and {@link #getNumBands(int)}
+ *     implementations, which return 1. This default behavior matches simple image formats
+ *     like {@linkplain org.geotoolkit.image.io.plugin.RawImageReader RAW} or
+ *     {@linkplain org.geotoolkit.image.io.plugin.AsciiGridReader ASCII} files.
+ *     Those methods need to be overriden for more complex image formats.</p></li>
+ *
+ *   <li><p>Provides {@link #checkImageIndex(int)} and {@link #checkBandIndex(int,int)} convenience
+ *     methods. Those methods are invoked by most implementation of public methods. They perform
+ *     their checks based on the informations provided by the above-cited {@link #getNumImages(boolean)}
+ *     and {@link #getNumBands(int)} methods.</p></li>
+ *
+ *   <li><p>Provides default implementations of {@link #getImageTypes(int)} and
+ *     {@link #getRawImageType(int)} methods, which assume that only one image type is offered.
+ *     The offered type is described by a default {@linkplain ImageTypeSpecifier image type
+ *     specifier} created from the informations provided by {@link #getRawDataType(int)} and
+ *     {@link #getImageMetadata(int)}.</p></li>
+ *
+ *   <li><p>Provides {@link #getStreamMetadata()} and {@link #getImageMetadata(int)} default
+ *     implementations, which return {@code null} as authorized by the specification.</p></li>
+ * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.08

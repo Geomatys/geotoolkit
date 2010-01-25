@@ -43,6 +43,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.TextImageWriter;
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -200,7 +201,7 @@ public class AsciiGridWriter extends TextImageWriter {
             } else if (ptInPixel.equals(PixelOrientation.valueOf("LEFT"))) {
                 xll = "XLLCENTER";
             } else {
-                throw new IIOException(Warnings.message(this,
+                throw new ImageMetadataException(Warnings.message(this,
                         Errors.Keys.BAD_PARAMETER_$2, "pointInPixel", ptInPixel));
             }
         }

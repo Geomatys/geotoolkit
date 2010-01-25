@@ -91,9 +91,6 @@ import org.geotoolkit.util.converter.Classes;
  *     thirdDimension.setAPI(DimensionSlice.API.BANDS);
  * }
  *
- * Some {@link SpatialImageReader} plugins may perform the above work in their
- * {@link SpatialImageReader#getDefaultReadParam() getDefaultReadParam()} implementation.
- * <p>
  * Note that the above code has the side-effect to initialize the {@linkplain #sourceBands source
  * bands} array to {@code {0}} (meaning to load only the first band by default), which is desired
  * since the number of bands in NetCDF files is typically large and those bands are not color
@@ -268,7 +265,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * identifiers. This method is equivalent to the code below, except that a warning is emitted
      * only if index values are ambiguous:
      *
-     * {@preformat
+     * {@preformat java
      *     DimensionSlice slice = getDimensionSlice(dimensionIds);
      *     return (slice != null) ? slice.getSliceIndex() : 0;
      * }

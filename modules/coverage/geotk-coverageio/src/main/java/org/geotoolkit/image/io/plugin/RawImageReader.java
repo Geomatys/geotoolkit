@@ -55,6 +55,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.image.io.UnsupportedImageFormatException;
 
 
 /**
@@ -244,7 +245,7 @@ public class RawImageReader extends SpatialImageReader {
         final ImageTypeSpecifier imageType   = getRawImageType(imageIndex);
         final SampleModel        streamModel = imageType.getSampleModel();
         if (SampleModels.getPixelStride(streamModel) != 1) {
-            throw new IIOException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_$1,
+            throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_FILE_TYPE_$1,
                     Classes.getShortClassName(streamModel) + "[pixelStride = " +
                     SampleModels.getPixelStride(streamModel) + ']'));
         }
@@ -373,7 +374,7 @@ public class RawImageReader extends SpatialImageReader {
                         case DataBuffer.TYPE_INT:    {int   [] array = ((DataBufferInt)    buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
                         case DataBuffer.TYPE_FLOAT:  {float [] array = ((DataBufferFloat)  buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
                         case DataBuffer.TYPE_DOUBLE: {double[] array = ((DataBufferDouble) buffer).getData(bank); input.readFully(array, offset, length); converter.convert        (array, offset, length); break;}
-                        default: throw new IIOException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                        default: throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
                     }
                     position += bytesPerRow * sourceYSubsampling;
                     offset   += dstScanline;
@@ -411,7 +412,7 @@ public class RawImageReader extends SpatialImageReader {
                         case DataBuffer.TYPE_INT:    iter.setSample(converter.convert(input.readInt()));           break;
                         case DataBuffer.TYPE_FLOAT:  iter.setSample(converter.convert(input.readFloat()));         break;
                         case DataBuffer.TYPE_DOUBLE: iter.setSample(converter.convert(input.readDouble()));        break;
-                        default: throw new IIOException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                        default: throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE));
                     }
                     if (iter.nextPixelDone()) {
                         break;

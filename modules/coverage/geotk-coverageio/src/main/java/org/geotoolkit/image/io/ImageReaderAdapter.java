@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.awt.image.Raster;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -218,7 +217,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         if (main.getInput() == null) {
             final Object mainInput = createInput("main");
             if (mainInput == null) {
-                throw new IIOException(getErrorResources().getString(
+                throw new InvalidImageStoreException(getErrorResources().getString(
                         Errors.Keys.UNKNOW_TYPE_$1, input.getClass()));
             }
             main.setInput(mainInput, seekForwardOnly, ignoreMetadata);

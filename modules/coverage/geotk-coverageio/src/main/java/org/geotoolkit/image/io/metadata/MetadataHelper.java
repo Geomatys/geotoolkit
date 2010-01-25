@@ -22,7 +22,6 @@ import java.util.List;
 import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
 import javax.imageio.IIOParam;
-import javax.imageio.IIOException;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.geometry.DirectPosition;
@@ -33,6 +32,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.display.shape.DoubleDimension2D;
+import org.geotoolkit.image.io.ImageMetadataException;
 
 
 /**
@@ -40,7 +40,7 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.07
  * @module
@@ -74,7 +74,7 @@ public class MetadataHelper {
     /**
      * Returns the error message from the given resource key and arguments.
      * The key shall be one of the {@link Errors.Key} constants. This is used
-     * for formatting the message in {@link IIOException}.
+     * for formatting the message in {@link ImageMetadataException}.
      */
     private String error(final int key, final Object... arguments) {
         return Errors.getResources(owner != null ? owner.getLocale() : null).getString(key, arguments);
@@ -87,14 +87,14 @@ public class MetadataHelper {
      * @param  name  The name of the metadata attribute.
      * @param  index The index to append to {@code name}, or -1 if none.
      * @param  value The value extracted from the metadata.
-     * @throws IIOException If the given value is null.
+     * @throws ImageMetadataException If the given value is null.
      */
-    private void ensureMetadataExists(String name, int index, Object value) throws IIOException {
+    private void ensureMetadataExists(String name, int index, Object value) throws ImageMetadataException {
         if (value == null) {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new IIOException(error(Errors.Keys.MISSING_PARAMETER_$1, name));
+            throw new ImageMetadataException(error(Errors.Keys.MISSING_PARAMETER_$1, name));
         }
     }
 
@@ -104,14 +104,14 @@ public class MetadataHelper {
      * @param  name      The name of the parameter being verified.
      * @param  index     The index to append to {@code name}, or -1 if none.
      * @param  dimension The dimension which shall be equals to 2.
-     * @throws IIOException If the given dimension is not equals to 2.
+     * @throws ImageMetadataException If the given dimension is not equals to 2.
      */
-    private void ensureTwoDimensional(String name, int index, int dimension) throws IIOException {
+    private void ensureTwoDimensional(String name, int index, int dimension) throws ImageMetadataException {
         if (dimension != 2) {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new IIOException(error(Errors.Keys.MISMATCHED_DIMENSION_$3, name, dimension, 2));
+            throw new ImageMetadataException(error(Errors.Keys.MISMATCHED_DIMENSION_$3, name, dimension, 2));
         }
     }
 
@@ -206,11 +206,11 @@ public class MetadataHelper {
      * @param  domain The domain from which to extract the origin and offset vectors.
      * @param  param Optional Image I/O parameters, or {@code null} if none.
      * @return The affine transform extracted from the given domain.
-     * @throws IIOException If a mandatory attribute is missing from the given domain,
+     * @throws ImageMetadataException If a mandatory attribute is missing from the given domain,
      *         or is not two dimensional.
      */
     public AffineTransform getAffineTransform(final RectifiedGrid domain, final IIOParam param)
-            throws IIOException
+            throws ImageMetadataException
     {
         final DirectPosition origin = domain.getOrigin();
         ensureMetadataExists("origin", -1, origin);
@@ -218,7 +218,7 @@ public class MetadataHelper {
         final List<double[]> vectors = domain.getOffsetVectors();
         ensureMetadataExists("OffsetVectors", -1, vectors);
         if (vectors.isEmpty()) {
-            throw new IIOException(error(Errors.Keys.MISSING_PARAMETER_VALUE_$1, "OffsetVectors"));
+            throw new ImageMetadataException(error(Errors.Keys.MISSING_PARAMETER_VALUE_$1, "OffsetVectors"));
         }
         ensureTwoDimensional("OffsetVectors", -1, vectors.size());
         final double matrix[] = new double[6];
@@ -272,9 +272,9 @@ public class MetadataHelper {
      *
      * @param  gridToCRS The affine transform from which to extract the cell size.
      * @return The cell size as a positive and non-null value.
-     * @throws IIOException If the affine transform does not comply with the above cited conditions.
+     * @throws ImageMetadataException If the affine transform does not comply with the above cited conditions.
      */
-    public double getCellSize(final AffineTransform gridToCRS) throws IIOException {
+    public double getCellSize(final AffineTransform gridToCRS) throws ImageMetadataException {
         final double size = gridToCRS.getScaleX();
         if (size > 0) {
             final double tol = size * EPS;
@@ -285,7 +285,7 @@ public class MetadataHelper {
                 return size;
             }
         }
-        throw new IIOException(error(Errors.Keys.PIXELS_NOT_SQUARE_OR_ROTATED_IMAGE));
+        throw new ImageMetadataException(error(Errors.Keys.PIXELS_NOT_SQUARE_OR_ROTATED_IMAGE));
     }
 
     /**
