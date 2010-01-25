@@ -18,7 +18,6 @@ package org.geotoolkit.swe.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -70,6 +69,23 @@ public class DataRecordType extends AbstractDataRecordType {
             field = new ArrayList<DataComponentPropertyType>();
         }
         return this.field;
+    }
+
+    /**
+     * Gets the value of the field property.
+     */
+    public void setField(List<DataComponentPropertyType> field) {
+        this.field = field;
+    }
+
+    /**
+     * Gets the value of the field property.
+     */
+    public void setField(DataComponentPropertyType field) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(field);
     }
 
     @Override

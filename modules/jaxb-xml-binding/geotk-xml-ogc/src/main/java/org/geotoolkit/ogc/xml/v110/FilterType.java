@@ -17,7 +17,6 @@
 package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -71,7 +70,7 @@ public class FilterType implements Filter {
     @XmlElementRef(name = "logicOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private JAXBElement<? extends LogicOpsType> logicOps;
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
-    private List<JAXBElement<AbstractIdType>> id;
+    private List<JAXBElement<? extends AbstractIdType>> id;
 
     /**
      * a transient factory to build JAXBelement
@@ -102,7 +101,12 @@ public class FilterType implements Filter {
         // spatial operator    
         } else if (obj instanceof SpatialOpsType) {
             this.spatialOps = createSpatialOps((SpatialOpsType) obj);
-        
+
+        // id operator
+        } else if (obj instanceof AbstractIdType) {
+            this.id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
+            this.id.add(createIdOps((AbstractIdType) obj));
+
         } else {
             throw new IllegalArgumentException("This kind of object is not allowed:" + obj.getClass().getSimpleName());
         }
@@ -174,9 +178,9 @@ public class FilterType implements Filter {
     /**
      * Gets the value of the id property.
      */
-    public List<JAXBElement<AbstractIdType>> getId() {
+    public List<JAXBElement<? extends AbstractIdType>> getId() {
         if (id == null) {
-            id = new ArrayList<JAXBElement<AbstractIdType>>();
+            id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
         }
         return id;
     }
@@ -276,6 +280,17 @@ public class FilterType implements Filter {
             return FACTORY.createWithin((WithinType) operator);
         } else if (operator instanceof SpatialOpsType) {
             return FACTORY.createSpatialOps((SpatialOpsType) operator);
+        } else {
+            return null;
+        }
+    }
+
+    public static JAXBElement<? extends AbstractIdType> createIdOps(AbstractIdType operator) {
+
+        if (operator instanceof FeatureIdType) {
+            return FACTORY.createFeatureId((FeatureIdType) operator);
+        } else if (operator instanceof GmlObjectIdType) {
+            return FACTORY.createGmlObjectId((GmlObjectIdType) operator);
         } else {
             return null;
         }

@@ -137,7 +137,7 @@ public class GeometrytoJTS {
             throws NoSuchAuthorityCodeException, FactoryException{
 
         if (gml instanceof PointType){
-            return toJTS((PointType)gml);
+            return toJTS((PointType)gml, -1);
         } else if(gml instanceof LineStringType){
             return toJTS((LineStringType)gml);
         } else if(gml instanceof PolygonType){
@@ -161,11 +161,16 @@ public class GeometrytoJTS {
 
     }
 
-    public static Point toJTS(PointType gmlPoint) throws NoSuchAuthorityCodeException, FactoryException{
-        final String crsName = gmlPoint.getSrsName();
+    public static Point toJTS(PointType gmlPoint, int parentSrid) throws NoSuchAuthorityCodeException, FactoryException{
+        final String crsName;
+        if (parentSrid == -1) {
+            crsName = gmlPoint.getSrsName();
 
-        if (crsName == null) {
-            throw new IllegalArgumentException("A GML point must specify Coordinate Reference System.");
+            if (crsName == null) {
+                throw new IllegalArgumentException("A GML point must specify Coordinate Reference System.");
+            }
+        } else {
+            crsName = null;
         }
 
         //we get the coordinate of the point (if they are present)
@@ -193,9 +198,13 @@ public class GeometrytoJTS {
             throw new IllegalArgumentException("The GML point is malformed.");
         }
 
-
-        final CoordinateReferenceSystem crs = CRS.decode(crsName, true);
-        final int srid = SRIDGenerator.toSRID(crs, Version.V1);
+        final int srid;
+        if (crsName != null) {
+            final CoordinateReferenceSystem crs = CRS.decode(crsName, true);
+            srid = SRIDGenerator.toSRID(crs, Version.V1);
+        } else {
+            srid = parentSrid;
+        }
 
         final com.vividsolutions.jts.geom.Point pt =
                 GF.createPoint(new Coordinate(coordinates[0], coordinates[1]));
@@ -275,23 +284,27 @@ public class GeometrytoJTS {
         return coords;
     }
 
-    public static MultiPoint toJTS(MultiPointType gml)
-            throws NoSuchAuthorityCodeException, FactoryException{
+    public static MultiPoint toJTS(MultiPointType gml) throws NoSuchAuthorityCodeException, FactoryException{
         final List<PointPropertyType> pos = gml.getPointMember();
         final Point[] members = new Point[pos.size()];
 
+        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
+        final int srid;
+        if (crs != null){
+            srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+        } else {
+            srid = -1;
+        }
+
         for(int i=0,n=pos.size(); i<n; i++){
-            members[i] = toJTS(pos.get(i).getPoint());
+            members[i] = toJTS(pos.get(i).getPoint(), srid);
         }
         
         final MultiPoint geom = GF.createMultiPoint(members);
-
-        final CoordinateReferenceSystem crs = gml.getCoordinateReferenceSystem();
-        if(crs != null){
-            final int srid = SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1);
+        if (srid != -1){
             geom.setSRID(srid);
         }
-        
+
         return geom;
     }
 

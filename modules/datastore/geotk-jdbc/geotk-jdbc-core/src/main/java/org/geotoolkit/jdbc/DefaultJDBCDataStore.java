@@ -567,9 +567,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                     }
                 }
                 Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
-                for (Name n: allAttributeArray) {
-                    System.out.println("allattributeArray:" + n);
-                }
                 querySchema = SimpleFeatureTypeBuilder.retype(type, allAttributeArray);
             }
         }
