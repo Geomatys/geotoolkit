@@ -363,7 +363,7 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD IDS Filter v1.1 in GT filter.
      */
-    public Filter visitIds(List<JAXBElement<AbstractIdType>> lst){
+    public Filter visitIds(List<JAXBElement<? extends AbstractIdType>> lst){
         final Set<Identifier> ids = new HashSet<Identifier>();
         
         for(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.AbstractIdType> id : lst){

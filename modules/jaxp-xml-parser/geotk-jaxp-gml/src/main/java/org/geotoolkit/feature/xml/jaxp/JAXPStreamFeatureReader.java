@@ -41,6 +41,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.internal.jaxb.LineStringPosListType;
 import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.simple.SimpleFeature;
@@ -225,10 +226,13 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                 if (event == XMLEvent.START_ELEMENT) {
                     nbAttribute++;
                     final QName q              = streamReader.getName();
+                    if ("boundedBy".equals(q.getLocalPart())) {
+                        continue;
+                    }
                     final String nameAttribute = streamReader.getAttributeValue(null, "name");
                     final PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q).getLocalPart());
 
-                    if(pdesc == null){
+                    if (pdesc == null){
                         final StringBuilder exp = new StringBuilder("expected ones are:").append('\n');
                         for (PropertyDescriptor pd : featureType.getDescriptors()) {
                             exp.append(pd.getName().getLocalPart()).append('\n');
@@ -236,7 +240,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                         throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart() + '\n' + exp.toString());
                     }
 
-                    if(pdesc instanceof GeometryDescriptor){
+                    if (pdesc instanceof GeometryDescriptor){
                         event = streamReader.next();
                         while (event != XMLEvent.START_ELEMENT) {
                             event = streamReader.next();
@@ -249,6 +253,8 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                                 isoGeom = (JTSGeometry) geometry;
                             } else if (geometry instanceof PolygonType) {
                                 isoGeom = ((PolygonType)geometry).getJTSPolygon();
+                            } else if (geometry instanceof LineStringPosListType) {
+                                isoGeom = ((LineStringPosListType)geometry).getJTSLineString();
                             } else {
                                 throw new IllegalArgumentException("unexpected geometry type:" + geometry);
                             }

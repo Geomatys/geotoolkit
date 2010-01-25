@@ -95,6 +95,13 @@ public class PositionList implements AbstractPositionList {
     }
 
     /**
+     * Gets the value of the position property.
+     */
+    public void setPosition(List<Position> position) {
+        this.position = position;
+    }
+
+    /**
      * Gets the value of the timePosition property.
      *
      * @return

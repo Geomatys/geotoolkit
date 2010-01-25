@@ -61,7 +61,8 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetFeatureType", propOrder = {
-    "query"
+    "query",
+    "featureId"
 })
 @XmlRootElement(name = "GetFeature")
 public class GetFeatureType extends BaseRequestType {
@@ -80,6 +81,9 @@ public class GetFeatureType extends BaseRequestType {
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
     private Integer traverseXlinkExpiry;
+    private String featureId;
+    
+
 
     public GetFeatureType() {
 
@@ -92,6 +96,16 @@ public class GetFeatureType extends BaseRequestType {
         this.query        = query;
         this.resultType   = resultType;
         this.outputFormat = outputformat;
+    }
+
+    public GetFeatureType(String service, String version, String handle, Integer maxFeatures,
+            String featureId, List<QueryType> query, ResultTypeType resultType, String outputformat) {
+        super(service, version, handle);
+        this.maxFeatures  = maxFeatures;
+        this.featureId    = featureId;
+        this.resultType   = resultType;
+        this.outputFormat = outputformat;
+        this.query        = query;
     }
 
     public GetFeatureType(String service, String version, String handle, Integer maxFeatures,
@@ -241,6 +255,20 @@ public class GetFeatureType extends BaseRequestType {
      */
     public void setTraverseXlinkExpiry(Integer value) {
         this.traverseXlinkExpiry = value;
+    }
+
+    /**
+     * @return the featureId
+     */
+    public String getFeatureId() {
+        return featureId;
+    }
+
+    /**
+     * @param featureId the featureId to set
+     */
+    public void setFeatureId(String featureId) {
+        this.featureId = featureId;
     }
 
 }
