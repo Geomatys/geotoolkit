@@ -29,6 +29,7 @@ import java.util.Iterator;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -100,7 +101,9 @@ public abstract class AbstractSymbolizerRenderer<S extends Symbolizer, C extends
     @Override
     public void portray(Iterator<ProjectedFeature> graphics, C symbol,
             RenderingContext2D context) throws PortrayalException {
+        final CanvasMonitor monitor = context.getMonitor();
         while(graphics.hasNext()){
+            if(monitor.stopRequested()) return;
             portray(graphics.next(), symbol, context);
         }
     }

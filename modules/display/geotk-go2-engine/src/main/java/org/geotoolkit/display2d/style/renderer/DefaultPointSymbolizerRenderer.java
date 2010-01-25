@@ -34,6 +34,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -176,6 +177,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
     public void portray(Iterator<ProjectedFeature> graphics, CachedPointSymbolizer symbol, RenderingContext2D context) throws PortrayalException {
 
         final Graphics2D g2 = context.getGraphics();
+        final CanvasMonitor monitor = context.getMonitor();
         final RenderingHints hints = context.getRenderingHints();
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
@@ -210,6 +212,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
 
 
         while(graphics.hasNext()){
+            if(monitor.stopRequested()) return;
+
             projectedFeature = graphics.next();
             feature = projectedFeature.getFeature();
 
