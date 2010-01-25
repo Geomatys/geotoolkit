@@ -24,6 +24,7 @@ import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -69,7 +70,10 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
         layer.addLayerListener(listener);
 
         try{
-            setEnvelope(CRS.getEnvelope(canvas.getObjectiveCRS()));
+            Envelope env = CRS.getEnvelope(canvas.getObjectiveCRS());
+            if(env != null){
+                setEnvelope(env);
+            }
             //todo we do not use the layer envelope since it can be reallllly long to calculate
             //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
             //setEnvelope(layer.getBounds());

@@ -46,6 +46,7 @@ import org.geotoolkit.style.CollectionChangeEvent;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -113,7 +114,10 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D{
         this.context = context;
 
         try {
-            setEnvelope(CRS.getEnvelope(canvas.getObjectiveCRS()));
+            Envelope env = CRS.getEnvelope(canvas.getObjectiveCRS());
+            if(env != null){
+                setEnvelope(env);
+            }
             //todo we do not use the context envelope since it can be reallllly long to calculate
             //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
             //setEnvelope(context.getBounds());
