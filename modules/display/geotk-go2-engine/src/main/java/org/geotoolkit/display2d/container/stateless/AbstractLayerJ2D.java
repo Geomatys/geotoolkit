@@ -62,6 +62,10 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     protected final T layer;
 
     public AbstractLayerJ2D(final ReferencedCanvas2D canvas, final T layer){
+        this(canvas, layer, false);
+    }
+
+    public AbstractLayerJ2D(final ReferencedCanvas2D canvas, final T layer, final boolean useLayerEnv){
         //do not use layer crs here, to long to calculate
         super(canvas, canvas.getObjectiveCRS());
         //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
@@ -70,13 +74,17 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
         layer.addLayerListener(listener);
 
         try{
-            Envelope env = CRS.getEnvelope(canvas.getObjectiveCRS());
-            if(env != null){
-                setEnvelope(env);
+            if (useLayerEnv) {
+                setEnvelope(layer.getBounds());
+            } else {
+                Envelope env = CRS.getEnvelope(canvas.getObjectiveCRS());
+                if(env != null){
+                    setEnvelope(env);
+                }
+                //todo we do not use the layer envelope since it can be reallllly long to calculate
+                //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
+                //setEnvelope(layer.getBounds());
             }
-            //todo we do not use the layer envelope since it can be reallllly long to calculate
-            //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
-            //setEnvelope(layer.getBounds());
         }catch(TransformException ex){
             ex.printStackTrace();
         }

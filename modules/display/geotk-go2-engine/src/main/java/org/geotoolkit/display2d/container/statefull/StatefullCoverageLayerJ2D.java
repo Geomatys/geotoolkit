@@ -60,7 +60,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(ReferencedCanvas2D canvas, CoverageMapLayer layer){
-        super(canvas, layer);
+        super(canvas, layer, true);
 
         this.dataCRS = layer.getCoverageReader().getCoverageBounds().getCoordinateReferenceSystem();
 
