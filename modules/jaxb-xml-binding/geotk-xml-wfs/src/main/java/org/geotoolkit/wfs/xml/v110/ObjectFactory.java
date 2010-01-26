@@ -42,6 +42,7 @@ public class ObjectFactory {
 
     private static final QName _GetFeature_QNAME = new QName("http://www.opengis.net/wfs", "GetFeature");
     private static final QName _Property_QNAME = new QName("http://www.opengis.net/wfs", "Property");
+    private static final QName _Value_QNAME = new QName("http://www.opengis.net/wfs", "Value");
     private static final QName _DescribeFeatureType_QNAME = new QName("http://www.opengis.net/wfs", "DescribeFeatureType");
     private static final QName _FeatureTypeList_QNAME = new QName("http://www.opengis.net/wfs", "FeatureTypeList");
     private static final QName _LockFeature_QNAME = new QName("http://www.opengis.net/wfs", "LockFeature");
@@ -529,6 +530,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Delete")
     public JAXBElement<DeleteElementType> createDelete(DeleteElementType value) {
         return new JAXBElement<DeleteElementType>(_Delete_QNAME, DeleteElementType.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteElementType }{@code >}}
+     *
+     */
+    @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Value" , substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
+    public JAXBElement<Object> createValue(Object value) {
+        return new JAXBElement<Object>(_Value_QNAME, Object.class, null, value);
     }
 
     /**

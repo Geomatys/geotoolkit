@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -231,4 +232,59 @@ public class UpdateElementType {
         this.srsName = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[UpdateElementType]\n");
+        if (handle != null) {
+            sb.append("handle=").append(handle).append('\n');
+        }
+        if (filter != null) {
+            sb.append("filter=").append(filter).append('\n');
+        }
+        if (inputFormat != null) {
+            sb.append("inputFormat=").append(inputFormat).append('\n');
+        }
+        if (srsName != null) {
+            sb.append("srsName=").append(srsName).append('\n');
+        }
+        if (typeName != null) {
+            sb.append("typeName=").append(typeName).append('\n');
+        }
+        if (property != null) {
+            sb.append("properties:").append('\n');
+            for (PropertyType obj : property) {
+                sb.append(obj).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof UpdateElementType) {
+            final UpdateElementType that = (UpdateElementType) object;
+            return  Utilities.equals(this.handle, that.handle) &&
+                    Utilities.equals(this.filter, that.filter) &&
+                    Utilities.equals(this.inputFormat, that.inputFormat) &&
+                    Utilities.equals(this.property, that.property) &&
+                    Utilities.equals(this.srsName, that.srsName)  &&
+                    Utilities.equals(this.typeName, that.typeName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.property != null ? this.property.hashCode() : 0);
+        hash = 41 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 41 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        hash = 41 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
+        hash = 41 * hash + (this.inputFormat != null ? this.inputFormat.hashCode() : 0);
+        hash = 41 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        return hash;
+    }
 }

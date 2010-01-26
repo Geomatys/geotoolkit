@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.wfs.xml.RequestBase;
 
@@ -156,4 +157,41 @@ public abstract class BaseRequestType implements RequestBase {
         this.handle = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
+        if (handle != null) {
+            sb.append("handle=").append(handle).append('\n');
+        }
+        if (version != null) {
+            sb.append("version=").append(version).append('\n');
+        }
+        if (service != null) {
+            sb.append("service=").append(service).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof BaseRequestType) {
+            final BaseRequestType that = (BaseRequestType) object;
+            return  Utilities.equals(this.handle, that.handle) &&
+                    Utilities.equals(this.service, that.service) &&
+                    Utilities.equals(this.version, that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 73 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 73 * hash + (this.version != null ? this.version.hashCode() : 0);
+        hash = 73 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        return hash;
+    }
 }

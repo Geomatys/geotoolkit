@@ -99,6 +99,18 @@ public class GeometryPropertyType {
             abstractGeometry = factory.createLineString((LineStringType) value);
         } else if (value instanceof PolyhedralSurfaceType) {
             abstractGeometry = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
+        } else if (value instanceof MultiCurveType) {
+            abstractGeometry = factory.createMultiCurve((MultiCurveType) value);
+        } else if (value instanceof MultiLineStringType) {
+            abstractGeometry = factory.createMultiLineString((MultiLineStringType) value);
+        } else if (value instanceof MultiPointType) {
+            abstractGeometry = factory.createMultiPoint((MultiPointType) value);
+        } else if (value instanceof MultiPolygonType) {
+            abstractGeometry = factory.createMultiPolygon((MultiPolygonType) value);
+        } else if (value instanceof MultiSolidType) {
+            abstractGeometry = factory.createMultiSolid((MultiSolidType) value);
+        } else if (value instanceof MultiSurfaceType) {
+            abstractGeometry = factory.createMultiSurface((MultiSurfaceType) value);
         } else {
             throw new IllegalArgumentException("unexpected geometry type:" + value);
         }

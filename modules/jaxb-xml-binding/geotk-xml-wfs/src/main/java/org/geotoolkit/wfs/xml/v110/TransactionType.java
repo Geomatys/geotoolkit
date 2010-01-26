@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -171,4 +172,44 @@ public class TransactionType extends BaseRequestType {
         this.releaseAction = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (lockId != null) {
+            sb.append("lockId=").append(lockId).append('\n');
+        }
+        if (releaseAction != null) {
+            sb.append("releaseAction=").append(releaseAction).append('\n');
+        }
+        if (insertOrUpdateOrDelete != null) {
+            sb.append("insertOrUpdateOrDelete:").append('\n');
+            for (Object obj : insertOrUpdateOrDelete) {
+                sb.append(obj).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TransactionType && super.equals(object)) {
+            final TransactionType that = (TransactionType) object;
+            return  Utilities.equals(this.insertOrUpdateOrDelete, that.insertOrUpdateOrDelete) &&
+                    Utilities.equals(this.lockId, that.lockId) &&
+                    Utilities.equals(this.releaseAction, that.releaseAction);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.lockId != null ? this.lockId.hashCode() : 0);
+        hash = 37 * hash + (this.insertOrUpdateOrDelete != null ? this.insertOrUpdateOrDelete.hashCode() : 0);
+        hash = 37 * hash + (this.releaseAction != null ? this.releaseAction.hashCode() : 0);
+        return hash;
+    }
 }

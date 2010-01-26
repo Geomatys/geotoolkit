@@ -18,6 +18,7 @@ package org.geotoolkit.gml.xml.v311;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
@@ -59,6 +60,7 @@ import org.opengis.geometry.primitive.Point;
     "pos",
     "coordinates"
 })
+@XmlRootElement(name="Point")
 public class PointType extends AbstractGeometricPrimitiveType implements Point {
 
     protected DirectPositionType pos;
@@ -179,11 +181,10 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      */
     @Override
     public String toString() {
-        StringBuilder s =new StringBuilder("id = ").append(this.getId()).append('\n');
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
         if (pos != null) {
             s.append("position : ").append(pos.toString()).append('\n');
         }
-
         if (coordinates != null) {
             s.append(" coordinates : ").append(coordinates.toString()).append('\n');
         }
@@ -199,7 +200,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
         if (object == this) {
             return true;
         }
-        if (super.equals(object)) {
+        if (object instanceof PointType && super.equals(object)) {
             final PointType that = (PointType) object;
             return  Utilities.equals(this.pos, that.pos) &&
                     Utilities.equals(this.coordinates, that.coordinates);

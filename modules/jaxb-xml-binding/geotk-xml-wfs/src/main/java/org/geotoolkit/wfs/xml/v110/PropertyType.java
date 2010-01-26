@@ -16,12 +16,16 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.apache.xerces.dom.ElementNSImpl;
+import org.geotoolkit.util.Utilities;
 import org.w3c.dom.Node;
 
 /**
@@ -54,14 +58,15 @@ public class PropertyType {
 
     @XmlElement(name = "Name", required = true)
     private QName name;
-    @XmlElement(name = "Value")
-    private Object value;
+
+    @XmlElement(name="Value")
+    private ValueType value;
 
     public PropertyType() {
 
     }
 
-    public PropertyType(QName name, Object value) {
+    public PropertyType(QName name, ValueType value) {
         this.name  = name;
         this.value = value;
     }
@@ -84,14 +89,50 @@ public class PropertyType {
      * Gets the value of the value property.
      */
     public Object getValue() {
+        if (value != null) {
+            return value.getValue();
+        }
         return value;
     }
 
     /**
      * Sets the value of the value property.
      */
-    public void setValue(Object value) {
+    public void setValue(ValueType value) {
         this.value = value;
     }
 
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
+        if (name != null) {
+            sb.append("name=").append(name).append('\n');
+        }
+        if (value != null) {
+            sb.append("value=").append(value).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof PropertyType) {
+            final PropertyType that = (PropertyType) object;
+            return  Utilities.equals(this.name, that.name) &&
+                    Utilities.equals(this.value, that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 97 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
 }
