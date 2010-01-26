@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotk-datastore-core</artifactId>
   <packaging>jar</packaging>
-  <name>DataStore Core</name>
+  <name>Datastore Core</name>
 
 
   <!-- =========================================================== -->
