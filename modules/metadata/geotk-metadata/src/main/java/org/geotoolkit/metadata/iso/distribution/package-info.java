@@ -50,17 +50,17 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
-    @XmlJavaTypeAdapter(MediumAdapter.class),
-    @XmlJavaTypeAdapter(FormatAdapter.class),
-    @XmlJavaTypeAdapter(DistributorAdapter.class),
-    @XmlJavaTypeAdapter(DigitalTransferOptionsAdapter.class),
-    @XmlJavaTypeAdapter(StandardOrderProcessAdapter.class),
-    @XmlJavaTypeAdapter(MediumNameAdapter.class),
-    @XmlJavaTypeAdapter(UnitAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(MediumFormatAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(DigitalTransferOptionsAdapter.class),
+    @XmlJavaTypeAdapter(DistributorAdapter.class),
+    @XmlJavaTypeAdapter(FormatAdapter.class),
+    @XmlJavaTypeAdapter(MediumAdapter.class),
+    @XmlJavaTypeAdapter(MediumFormatAdapter.class),
+    @XmlJavaTypeAdapter(MediumNameAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
+    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
+    @XmlJavaTypeAdapter(StandardOrderProcessAdapter.class),
+    @XmlJavaTypeAdapter(UnitAdapter.class),
 
     // Primitive type handling
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),

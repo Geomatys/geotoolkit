@@ -50,8 +50,8 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(RestrictionAdapter.class),
-    @XmlJavaTypeAdapter(ClassificationAdapter.class)
+    @XmlJavaTypeAdapter(ClassificationAdapter.class),
+    @XmlJavaTypeAdapter(RestrictionAdapter.class)
 })
 package org.geotoolkit.metadata.iso.constraint;
 

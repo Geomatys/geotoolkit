@@ -50,22 +50,23 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(LineageAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(ElementAdapter.class),
+    @XmlJavaTypeAdapter(EvaluationMethodTypeAdapter.class),
+    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(IdentifierAdapter.class),
+    @XmlJavaTypeAdapter(LineageAdapter.class),
+    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
+    @XmlJavaTypeAdapter(ResultAdapter.class),
     @XmlJavaTypeAdapter(ScopeAdapter.class),
     @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
     @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(EvaluationMethodTypeAdapter.class),
-    @XmlJavaTypeAdapter(ResultAdapter.class),
-    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
     @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(ElementAdapter.class)
+    @XmlJavaTypeAdapter(UnitAdapter.class)
 })
 package org.geotoolkit.metadata.iso.quality;
 
@@ -80,6 +81,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.uom.DateAdapter;
+import org.geotoolkit.internal.jaxb.uom.UnitAdapter;
 import org.geotoolkit.internal.jaxb.code.EvaluationMethodTypeAdapter;
 import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;

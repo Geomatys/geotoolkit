@@ -48,21 +48,21 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(RoleAdapter.class),
-    @XmlJavaTypeAdapter(CitationDateAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(PresentationFormAdapter.class),
-    @XmlJavaTypeAdapter(SeriesAdapter.class),
-    @XmlJavaTypeAdapter(ContactAdapter.class),
-    @XmlJavaTypeAdapter(DateTypeAdapter.class),
     @XmlJavaTypeAdapter(AddressAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
-    @XmlJavaTypeAdapter(TelephoneAdapter.class),
-    @XmlJavaTypeAdapter(OnLineFunctionAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(CitationDateAdapter.class),
+    @XmlJavaTypeAdapter(ContactAdapter.class),
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(DateTypeAdapter.class),
+    @XmlJavaTypeAdapter(IdentifierAdapter.class),
+    @XmlJavaTypeAdapter(OnLineFunctionAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
+    @XmlJavaTypeAdapter(PresentationFormAdapter.class),
+    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
+    @XmlJavaTypeAdapter(RoleAdapter.class),
+    @XmlJavaTypeAdapter(SeriesAdapter.class),
+    @XmlJavaTypeAdapter(TelephoneAdapter.class),
     @XmlJavaTypeAdapter(URIAdapter.class)
 })
 package org.geotoolkit.metadata.iso.citation;

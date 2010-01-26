@@ -60,25 +60,25 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(CoverageContentTypeAdapter.class),
-    @XmlJavaTypeAdapter(RangeDimensionAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(LocaleAdapter.class),
-    @XmlJavaTypeAdapter(ImagingConditionAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(GenericNameAdapter.class),
-    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
-    @XmlJavaTypeAdapter(RangeElementDescriptionAdapter.class),
     @XmlJavaTypeAdapter(BandDefinitionAdapter.class),
+    @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(CoverageContentTypeAdapter.class),
+    @XmlJavaTypeAdapter(GenericNameAdapter.class),
+    @XmlJavaTypeAdapter(IdentifierAdapter.class),
+    @XmlJavaTypeAdapter(ImagingConditionAdapter.class),
+    @XmlJavaTypeAdapter(LocaleAdapter.class),
     @XmlJavaTypeAdapter(PolarizationOrientationAdapter.class),
+    @XmlJavaTypeAdapter(RangeDimensionAdapter.class),
+    @XmlJavaTypeAdapter(RangeElementDescriptionAdapter.class),
+    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
     @XmlJavaTypeAdapter(TransferFunctionTypeAdapter.class),
 
     // Primitive type handling
+    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class),
-    @XmlJavaTypeAdapter(LongAdapter.class),    @XmlJavaTypeAdapter(type=long.class,    value=LongAdapter.class),
-    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
+    @XmlJavaTypeAdapter(LongAdapter.class),    @XmlJavaTypeAdapter(type=long.class,    value=LongAdapter.class)
 })
 package org.geotoolkit.metadata.iso.content;
 

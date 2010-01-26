@@ -49,19 +49,19 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
+    @XmlJavaTypeAdapter(AlgorithmAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(ProcessStepAdapter.class),
-    @XmlJavaTypeAdapter(SourceAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(RepresentativeFractionAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
     @XmlJavaTypeAdapter(CitationAdapter.class),
     @XmlJavaTypeAdapter(DateTimeAdapter.class),
+    @XmlJavaTypeAdapter(ExtentAdapter.class),
     @XmlJavaTypeAdapter(IdentifierAdapter.class),
     @XmlJavaTypeAdapter(NominalResolutionAdapter.class),
-    @XmlJavaTypeAdapter(ProcessingAdapter.class),
+    @XmlJavaTypeAdapter(ProcessStepAdapter.class),
     @XmlJavaTypeAdapter(ProcessStepReportAdapter.class),
-    @XmlJavaTypeAdapter(AlgorithmAdapter.class)
+    @XmlJavaTypeAdapter(ProcessingAdapter.class),
+    @XmlJavaTypeAdapter(RepresentativeFractionAdapter.class),
+    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
+    @XmlJavaTypeAdapter(SourceAdapter.class)
 })
 package org.geotoolkit.metadata.iso.lineage;
 

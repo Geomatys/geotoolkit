@@ -49,35 +49,35 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(DatatypeAdapter.class),
-    @XmlJavaTypeAdapter(LocaleAdapter.class),
-    @XmlJavaTypeAdapter(CharacterSetAdapter.class),
-    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(ReferenceSystemAdapter.class),
-    @XmlJavaTypeAdapter(SpatialRepresentationAdapter.class),
-    @XmlJavaTypeAdapter(MetadataExtensionInformationAdapter.class),
-    @XmlJavaTypeAdapter(IdentificationAdapter.class),
-    @XmlJavaTypeAdapter(ContentInformationAdapter.class),
-    @XmlJavaTypeAdapter(DistributionAdapter.class),
-    @XmlJavaTypeAdapter(DataQualityAdapter.class),
-    @XmlJavaTypeAdapter(PortrayalCatalogueReferenceAdapter.class),
-    @XmlJavaTypeAdapter(ConstraintsAdapter.class),
+    @XmlJavaTypeAdapter(AcquisitionInformationAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
     @XmlJavaTypeAdapter(ApplicationSchemaInformationAdapter.class),
-    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
+    @XmlJavaTypeAdapter(CharacterSetAdapter.class),
+    @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(ConstraintsAdapter.class),
+    @XmlJavaTypeAdapter(ContentInformationAdapter.class),
+    @XmlJavaTypeAdapter(DataQualityAdapter.class),
+    @XmlJavaTypeAdapter(DatatypeAdapter.class),
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(DistributionAdapter.class),
     @XmlJavaTypeAdapter(ExtendedElementInformationAdapter.class),
     @XmlJavaTypeAdapter(FeatureTypeListAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(AcquisitionInformationAdapter.class),
+    @XmlJavaTypeAdapter(IdentificationAdapter.class),
+    @XmlJavaTypeAdapter(LocaleAdapter.class),
+    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
+    @XmlJavaTypeAdapter(MetadataExtensionInformationAdapter.class),
     @XmlJavaTypeAdapter(ObligationAdapter.class),
+    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
+    @XmlJavaTypeAdapter(PortrayalCatalogueReferenceAdapter.class),
+    @XmlJavaTypeAdapter(ReferenceSystemAdapter.class),
+    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
+    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
+    @XmlJavaTypeAdapter(SpatialRepresentationAdapter.class),
 
     // Primitive type handling
-    @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class),
-    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
+    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class),
+    @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class)
 })
 package org.geotoolkit.metadata.iso;
 

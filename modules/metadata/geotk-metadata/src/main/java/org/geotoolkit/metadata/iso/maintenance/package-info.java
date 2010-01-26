@@ -49,14 +49,14 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
-    @XmlJavaTypeAdapter(MaintenanceFrequencyAdapter.class),
-    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
+    @XmlJavaTypeAdapter(MaintenanceFrequencyAdapter.class),
+    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
+    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
+    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
+    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class)
 })
 package org.geotoolkit.metadata.iso.maintenance;
 

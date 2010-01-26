@@ -49,17 +49,17 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(VerticalExtentAdapter.class),
-    @XmlJavaTypeAdapter(TemporalExtentAdapter.class),
-    @XmlJavaTypeAdapter(TemporalPrimitiveAdapter.class),
+    @XmlJavaTypeAdapter(GeographicBoundingBoxAdapter.class),
     @XmlJavaTypeAdapter(GeographicExtentAdapter.class),
     @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(GeographicBoundingBoxAdapter.class),
+    @XmlJavaTypeAdapter(TemporalExtentAdapter.class),
+    @XmlJavaTypeAdapter(TemporalPrimitiveAdapter.class),
     @XmlJavaTypeAdapter(VerticalCRSAdapter.class),
+    @XmlJavaTypeAdapter(VerticalExtentAdapter.class),
 
     // Primitive type handling
-    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
-    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
+    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class),
+    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class)
 })
 package org.geotoolkit.metadata.iso.extent;
 

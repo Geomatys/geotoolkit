@@ -50,19 +50,19 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(DimensionNameTypeAdapter.class),
-    @XmlJavaTypeAdapter(GeometricObjectTypeAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(PixelOrientationAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(DimensionAdapter.class),
     @XmlJavaTypeAdapter(CellGeometryAdapter.class),
-    @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
-    @XmlJavaTypeAdapter(GeometricObjectsAdapter.class),
-    @XmlJavaTypeAdapter(GeolocationInformationAdapter.class),
-    @XmlJavaTypeAdapter(GCPAdapter.class),
-    @XmlJavaTypeAdapter(ElementAdapter.class),
+    @XmlJavaTypeAdapter(CitationAdapter.class),
     @XmlJavaTypeAdapter(DataQualityAdapter.class),
+    @XmlJavaTypeAdapter(DimensionAdapter.class),
+    @XmlJavaTypeAdapter(DimensionNameTypeAdapter.class),
+    @XmlJavaTypeAdapter(ElementAdapter.class),
+    @XmlJavaTypeAdapter(GCPAdapter.class),
+    @XmlJavaTypeAdapter(GeolocationInformationAdapter.class),
+    @XmlJavaTypeAdapter(GeometricObjectTypeAdapter.class),
+    @XmlJavaTypeAdapter(GeometricObjectsAdapter.class),
+    @XmlJavaTypeAdapter(PixelOrientationAdapter.class),
+    @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
 
     // Primitive type handling
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class)
