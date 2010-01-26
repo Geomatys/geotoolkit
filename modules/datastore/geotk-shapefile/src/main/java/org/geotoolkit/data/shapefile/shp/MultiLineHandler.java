@@ -40,7 +40,7 @@ public class MultiLineHandler implements ShapeHandler {
 
     private final ShapeType shapeType;
 
-    private static final CSBuilder BUILDER = CSBuilderFactory.getDefaultBuilder();
+    private final CSBuilder BUILDER = CSBuilderFactory.getDefaultBuilder();
 
     private double[] x;
 
