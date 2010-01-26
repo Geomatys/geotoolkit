@@ -38,8 +38,8 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
 import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.display2d.style.labeling.decimate.DecimationLabelRenderer;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -470,7 +470,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                     LOGGER.log(Level.SEVERE, null, ex);
                 }
             }else{
-                labelRenderer = new DefaultLabelRenderer();
+                labelRenderer = new DecimationLabelRenderer();
                 labelRenderer.setRenderingContext(this);
             }
         }
