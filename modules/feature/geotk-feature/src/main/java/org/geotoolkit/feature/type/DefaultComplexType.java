@@ -16,11 +16,17 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.io.TableWriter;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -176,32 +182,44 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             sb.append(" extends ");
             sb.append(superType.getName().getLocalPart());
         }
-        if (List.class.isAssignableFrom(binding)) {
-            sb.append("[");
-        } else {
-            sb.append("(");
-        }
+
         boolean first = true;
+
+        //make
+        final StringWriter writer = new StringWriter();
+        final TableWriter tablewriter = new TableWriter(writer);
+        tablewriter.nextLine('-');
+        tablewriter.write("name\t min\t max\t nillable\t type\n");
+        tablewriter.nextLine('-');
+
         for (PropertyDescriptor property : getDescriptors()) {
-            sb.append("\n| ");
-            if (first) {
-                first = false;
-            }
-            sb.append(property.getName().getURI());
-            sb.append(":");
-            sb.append(property.getType().getName().getLocalPart());
-            sb.append(" \t ").append(property.getType().getBinding());
+            tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
+            tablewriter.write("\t");
+            tablewriter.write(Integer.toString(property.getMinOccurs()));
+            tablewriter.write("\t");
+            tablewriter.write(Integer.toString(property.getMaxOccurs()));
+            tablewriter.write("\t");
+            tablewriter.write(Boolean.toString(property.isNillable()));
+            tablewriter.write("\t");
+            tablewriter.write(property.getType().getBinding().getSimpleName());
+            tablewriter.write("\n");
         }
+        tablewriter.nextLine('-');
+        try {
+            tablewriter.flush();
+            writer.flush();
+        } catch (IOException ex) {
+            //will never happen is this case
+            ex.printStackTrace();
+        }
+        sb.append('\n');
+        sb.append(writer.getBuffer().toString());
+
 
         if(!getDescriptors().isEmpty()){
             sb.append("\n");
         }
 
-        if (List.class.isAssignableFrom(binding)) {
-            sb.append("]");
-        } else {
-            sb.append(")");
-        }
         if (description != null) {
             sb.append("\n\tdescription=");
             sb.append(description);
