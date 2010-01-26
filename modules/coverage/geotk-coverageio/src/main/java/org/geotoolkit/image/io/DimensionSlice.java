@@ -33,7 +33,6 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
-import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -241,19 +240,9 @@ public class DimensionSlice implements WarningProducer {
     }
 
     /**
-     * The parameters that created this object.
+     * The collection that created this object.
      */
-    private final IIOParam parameters;
-
-    /**
-     * A reference to the {@code slicesForDimensions} map in the {@link #parameters}.
-     */
-    private final Map<Object,DimensionSlice> paramMap;
-
-    /**
-     * A reference to the {@code apiMapping} array in the {@link #parameters}.
-     */
-    private final DimensionSlice[] apiMapping;
+    private final DimensionSlices owner;
 
     /**
      * The index of the region to read along the dimension that this
@@ -262,28 +251,12 @@ public class DimensionSlice implements WarningProducer {
     private int index;
 
     /**
-     * Creates a new {@code DimensionSlice} instance. The arguments given to this method
-     * are direct references to the internal objects of {@link SpatialImageReadParam} and
-     * are shared by every instances of {@code DimensionSlice} for a given parameters.
-     * This is intentional, since changing the state of this {@code DimensionSlice} may
-     * impact the state of other {@code DimensionSlice}s for a given parameters (for example
-     * only one {@code DimensionSlice} can be assigned to the bands API). Consequently this
-     * constructor can be invoked by {@link SpatialImageReadParam#newSourceSelection()} only,
-     * because we want to make sure that the right {@code DimensionSlice} are getting the
-     * references to the right internal objects.
-     * <p>
-     * The same rational applies to {@link SpatialImageWriteParam}.
+     * Creates a new {@code DimensionSlice} instance.
      *
-     * @param parameters The parameters that created this object.
-     * @param paramMap   A reference to the map in the parameters object.
-     * @param apiMapping A reference to the array in the parameters object.
+     * @param owner The collection that created this object.
      */
-    DimensionSlice(final IIOParam parameters, final Map<Object,DimensionSlice> paramMap,
-            final DimensionSlice[] apiMapping)
-    {
-        this.parameters = parameters;
-        this.paramMap   = paramMap;
-        this.apiMapping = apiMapping;
+    DimensionSlice(final DimensionSlices owner) {
+        this.owner = owner;
     }
 
     /**
@@ -315,17 +288,8 @@ public class DimensionSlice implements WarningProducer {
      * @param original The instance to copy.
      */
     protected DimensionSlice(final DimensionSlice original) {
-        this.parameters = original.parameters;
-        this.paramMap   = original.paramMap;
-        this.apiMapping = original.apiMapping;
-        this.index      = original.index;
-    }
-
-    /**
-     * Returns {@code true} if the parameters are for writting an image.
-     */
-    private boolean isWrite() {
-        return (parameters instanceof ImageWriteParam);
+        this.owner = original.owner;
+        this.index = original.index;
     }
 
     /**
@@ -333,22 +297,6 @@ public class DimensionSlice implements WarningProducer {
      */
     private IndexedResourceBundle getErrorResources() {
         return Errors.getResources(getLocale());
-    }
-
-    /**
-     * Adds an identifier for the dimension represented by this object.
-     *
-     * @param  identifier The identifier to add.
-     * @throws IllegalArgumentException If the given identifier is already assigned
-     *         to an other {@code DimensionSlice} instance.
-     */
-    private void add(final Object identifier) throws IllegalArgumentException {
-        final DimensionSlice old = paramMap.put(identifier, this);
-        if (old != null && !equals(old)) {
-            paramMap.put(identifier, old); // Restore the previous value.
-            throw new IllegalArgumentException(getErrorResources().getString(
-                    Errors.Keys.VALUE_ALREADY_DEFINED_$1, identifier));
-        }
     }
 
     /**
@@ -368,7 +316,7 @@ public class DimensionSlice implements WarningProducer {
                 throw new NullArgumentException(getErrorResources().getString(
                         Errors.Keys.NULL_ARGUMENT_$1, argName + '[' + i + ']'));
             }
-            add(identifier);
+            owner.addDimensionId(this, identifier);
         }
     }
 
@@ -393,7 +341,7 @@ public class DimensionSlice implements WarningProducer {
             throw new IllegalArgumentException(getErrorResources().getString(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "index", index));
         }
-        add(index);
+        owner.addDimensionId(this, index);
     }
 
     /**
@@ -455,12 +403,16 @@ public class DimensionSlice implements WarningProducer {
      * @param identifiers The identifiers to remove.
      */
     public void removeDimensionId(final Object... identifiers) {
-        for (final Object identifier : identifiers) {
-            final DimensionSlice old = paramMap.remove(identifier);
-            if (old != null && !equals(old)) {
-                paramMap.put(identifier, old); // Restore the previous state.
+        final Map<Object,DimensionSlice> identifiersMap = owner.identifiersMap;
+        if (identifiersMap != null) {
+            for (final Object identifier : identifiers) {
+                final DimensionSlice old = identifiersMap.remove(identifier);
+                if (old != null && !equals(old)) {
+                    identifiersMap.put(identifier, old); // Restore the previous state.
+                }
             }
         }
+        owner.refresh();
     }
 
     /**
@@ -472,9 +424,12 @@ public class DimensionSlice implements WarningProducer {
      * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
      */
     public final API getAPI() {
-        for (int i=apiMapping.length; --i>=0;) {
-            if (apiMapping[i] == this) {
-                return API.VALIDS[i];
+        final DimensionSlice[] apiMapping = owner.apiMapping;
+        if (apiMapping != null) {
+            for (int i=apiMapping.length; --i>=0;) {
+                if (apiMapping[i] == this) {
+                    return API.VALIDS[i];
+                }
             }
         }
         return API.NONE;
@@ -500,6 +455,10 @@ public class DimensionSlice implements WarningProducer {
         final API api = getAPI();
         if (!newAPI.equals(api)) { // We want a NullPointerException if newAPI is null.
             final int index = getSliceIndex(api);
+            DimensionSlice[] apiMapping = owner.apiMapping;
+            if (apiMapping == null) {
+                owner.apiMapping = apiMapping = new DimensionSlice[API.VALIDS.length];
+            }
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     apiMapping[i] = null;
@@ -511,27 +470,6 @@ public class DimensionSlice implements WarningProducer {
             assert newAPI.equals(getAPI()) : newAPI;
             setSliceIndex(newAPI, index, index == 0);
         }
-    }
-
-    /**
-     * Implementation of {@link SpatialImageReadParam#getDimensionSliceForAPI(API)},
-     * also shared with {@link SpatialImageWriteParam}.
-     *
-     * @param  caller The instance which is invoking this method.
-     * @param  apiMapping The mapping of API to dimension slices, or {@code null}.
-     * @param  api The API for which to test if a dimension slice has been assigned.
-     * @return The dimension slice assigned to the given API, or {@code null} if none.
-     */
-    static DimensionSlice getDimensionSliceForAPI(final Localized caller,
-            final DimensionSlice[] apiMapping, final API api)
-    {
-        if (api == null) {
-            throw new NullArgumentException(Warnings.message(caller, Errors.Keys.NULL_ARGUMENT_$1, "api"));
-        }
-        if (!api.equals(API.NONE) && apiMapping != null) {
-            return apiMapping[api.ordinal()];
-        }
-        return null;
     }
 
     /**
@@ -593,7 +531,8 @@ public class DimensionSlice implements WarningProducer {
                 break;
             }
             case BANDS: {
-                if (!isWrite()) {
+                final IIOParam parameters = owner.parameters;
+                if (!(parameters instanceof ImageWriteParam)) {
                     final int[] sourceBands = parameters.getSourceBands();
                     return (sourceBands != null && sourceBands.length != 0) ? sourceBands[0] : 0;
                 }
@@ -606,7 +545,8 @@ public class DimensionSlice implements WarningProducer {
         /*
          * COLUMNS and ROWS cases.
          */
-        if (isWrite()) {
+        final IIOParam parameters = owner.parameters;
+        if (parameters instanceof ImageWriteParam) {
             final Point offset = parameters.getDestinationOffset();
             if (offset != null) {
                 return isY ? offset.y : offset.x;
@@ -668,7 +608,8 @@ public class DimensionSlice implements WarningProducer {
                 break;
             }
             case BANDS: {
-                if (!isWrite()) {
+                final IIOParam parameters = owner.parameters;
+                if (!(parameters instanceof ImageWriteParam)) {
                     parameters.setSourceBands(new int[] {index});
                     return;
                 }
@@ -682,7 +623,8 @@ public class DimensionSlice implements WarningProducer {
         /*
          * COLUMNS and ROWS cases.
          */
-        if (isWrite()) {
+        final IIOParam parameters = owner.parameters;
+        if (parameters instanceof ImageWriteParam) {
             final Point offset = parameters.getDestinationOffset();
             if (isY) {
                 offset.y = index;
@@ -707,82 +649,6 @@ public class DimensionSlice implements WarningProducer {
             }
             parameters.setSourceRegion(region);
         }
-    }
-
-    /**
-     * Implementation of {@link SpatialImageReadParam#getSliceIndex(Object[])},
-     * also shared with {@link SpatialImageWriteParam}.
-     *
-     * @param  slicesForDimensions The map stored in the parameters, or {@code null}.
-     * @param  caller      The instance which is invoking this method.
-     * @param  callerClass The class which is invoking this method, used for logging purpose.
-     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
-     *         that identify the dimension for which the slice is desired.
-     * @return The index set in the first slice found for the given dimension identifiers,
-     *         or 0 if none.
-     */
-    static int getSliceIndex(final Map<Object,DimensionSlice> slicesForDimensions,
-            final WarningProducer caller, final Class<? extends WarningProducer> callerClass,
-            final Object... dimensionIds)
-    {
-        if (slicesForDimensions != null) {
-            Map<Integer,Object> found = null;
-            for (final Object id : dimensionIds) {
-                final DimensionSlice source = slicesForDimensions.get(id);
-                if (source != null) {
-                    final Integer index = source.getSliceIndex();
-                    if (found == null) {
-                        found = new LinkedHashMap<Integer,Object>(4);
-                    }
-                    final Object old = found.put(index, id);
-                    if (old != null) {
-                        found.put(index, old); // Keep the old value.
-                    }
-                }
-            }
-            final Integer index = first(found, caller, callerClass, "getSliceIndex");
-            if (index != null) {
-                return index;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Implementation of {@link SpatialImageReadParam#getDimensionSlice(Object[])},
-     * also shared with {@link SpatialImageWriteParam}.
-     *
-     * @param  slicesForDimensions The map stored in the parameters, or {@code null}.
-     * @param  caller      The instance which is invoking this method.
-     * @param  callerClass The class which is invoking this method, used for logging purpose.
-     * @param  dimensionIds {@link Integer}, {@link String} or {@link AxisDirection}
-     *         that identify the dimension for which the slice is desired.
-     * @return The first slice found for the given dimension identifiers, or {@code null} if none.
-     */
-    static DimensionSlice getDimensionSlice(final Map<Object,DimensionSlice> slicesForDimensions,
-            final WarningProducer caller, final Class<? extends WarningProducer> callerClass,
-            final Object... dimensionIds)
-    {
-        if (slicesForDimensions != null) {
-            Map<DimensionSlice,Object> found = null;
-            for (final Object id : dimensionIds) {
-                final DimensionSlice slice = slicesForDimensions.get(id);
-                if (slice != null) {
-                    if (found == null) {
-                        found = new LinkedHashMap<DimensionSlice,Object>(4);
-                    }
-                    final Object old = found.put(slice, id);
-                    if (old != null) {
-                        found.put(slice, old); // Keep the old value.
-                    }
-                }
-            }
-            final DimensionSlice slice = first(found, caller, callerClass, "getDimensionSlice");
-            if (slice != null) {
-                return slice;
-            }
-        }
-        return null;
     }
 
     /**
@@ -822,7 +688,7 @@ public class DimensionSlice implements WarningProducer {
          * index is found in the process, it will be returned immediately.
          */
         Set<Object> identifiers = null;
-        for (final Map.Entry<Object,DimensionSlice> entry : paramMap.entrySet()) {
+        for (final Map.Entry<Object,DimensionSlice> entry : owner.identifiersMap.entrySet()) {
             if (equals(entry.getValue())) {
                 final Object key = entry.getKey();
                 if (key instanceof Integer) {
@@ -863,7 +729,7 @@ public class DimensionSlice implements WarningProducer {
                 }
                 position++;
             }
-            final Integer dimension = first(found, this, DimensionSlice.class, "findDimensionIndex");
+            final Integer dimension = DimensionSlices.first(found, this, DimensionSlice.class, "findDimensionIndex");
             if (dimension != null) {
                 return dimension;
             }
@@ -872,61 +738,11 @@ public class DimensionSlice implements WarningProducer {
     }
 
     /**
-     * Returns the first key in the given map. If the map has more than one entry,
-     * a warning is emitted. If the map is empty, {@code null} is returned. This
-     * method is used for determining the {@link DimensionSlice} instance to use
-     * after we have iterated over the properties of all axes in a coordinate system.
-     *
-     * @param  <T>         Either {@link Integer} or {@link API}.
-     * @param  found       The map from which to extract the first key.
-     * @param  caller      The instance which is invoking this method.
-     * @param  callerClass The class which is invoking this method, used for logging purpose.
-     * @param  methodName  The method which is invoking this method, used for logging purpose.
-     * @return The first key in the given map, or {@code null} if none.
-     */
-    private static <T> T first(final Map<T,?> found, final WarningProducer caller,
-            final Class<? extends WarningProducer> callerClass, final String methodName)
-    {
-        if (found != null) {
-            final int size = found.size();
-            if (size != 0) {
-                /*
-                 * At least one (source, property) pair has been found.  We will return the
-                 * index. However if we found more than one pair, we have an ambiguity. In
-                 * the later case, we will log a warning before to return the first index.
-                 */
-                if (size > 1) {
-                    final StringBuilder buffer = new StringBuilder();
-                    for (final Object value : found.values()) {
-                        if (buffer.length() != 0) {
-                            buffer.append(" | ");
-                        }
-                        buffer.append(value);
-                    }
-                    String message = Warnings.message(caller, Errors.Keys.AMBIGIOUS_VALUE_$1, buffer);
-                    buffer.setLength(0);
-                    buffer.append(message);
-                    for (final T source : found.keySet()) {
-                        if (buffer.length() != 0) {
-                            buffer.append(',');
-                        }
-                        buffer.append(' ').append(source);
-                    }
-                    message = buffer.toString();
-                    Warnings.log(caller, null, callerClass, methodName, message);
-                }
-                return found.keySet().iterator().next();
-            }
-        }
-        return null;
-    }
-
-    /**
      * Returns the locale used for formatting error messages, or {@code null} if none.
      */
     @Override
     public Locale getLocale() {
-        return (parameters instanceof Localized) ? ((Localized) parameters).getLocale() : null;
+        return owner.getLocale();
     }
 
     /**
@@ -937,7 +753,7 @@ public class DimensionSlice implements WarningProducer {
      */
     @Override
     public boolean warningOccurred(final LogRecord record) {
-        return Warnings.log(parameters, record);
+        return Warnings.log(owner.parameters, record);
     }
 
     /**
@@ -951,7 +767,7 @@ public class DimensionSlice implements WarningProducer {
     public String toString() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append("[id={");
         boolean addSeparator = false;
-        for (final Map.Entry<Object,DimensionSlice> entry : paramMap.entrySet()) {
+        for (final Map.Entry<Object,DimensionSlice> entry : owner.identifiersMap.entrySet()) {
             if (entry.getValue() == this) {
                 Object key = entry.getKey();
                 final boolean addQuotes = (key instanceof CharSequence);

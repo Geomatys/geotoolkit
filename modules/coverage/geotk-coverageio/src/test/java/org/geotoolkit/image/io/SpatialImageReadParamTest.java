@@ -20,6 +20,7 @@ package org.geotoolkit.image.io;
 import java.awt.Point;
 import java.util.List;
 import java.util.Arrays;
+import java.util.Set;
 
 import org.junit.*;
 
@@ -73,13 +74,20 @@ public final class SpatialImageReadParamTest {
     @Test
     public void testDimensionSlice() {
         final SpatialImageReadParam param = new SpatialImageReadParam(null);
+        final Set<DimensionSlice> slices = param.getDimensionSlices();
+        assertTrue(slices.isEmpty());
+
         final DimensionSlice timeSlice = param.newDimensionSlice();
         timeSlice.addDimensionId("time");
         timeSlice.setSliceIndex(20);
+        assertFalse(slices.isEmpty());
+        assertEquals(1, slices.size());
 
         final DimensionSlice depthSlice = param.newDimensionSlice();
         depthSlice.addDimensionId("depth");
         depthSlice.setSliceIndex(25);
+        assertEquals(2, slices.size());
+        assertArrayEquals(new DimensionSlice[] {timeSlice, depthSlice}, slices.toArray());
 
         assertSame(timeSlice,  param.getDimensionSlice("time"));
         assertSame(depthSlice, param.getDimensionSlice("depth"));

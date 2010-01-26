@@ -18,9 +18,9 @@
 package org.geotoolkit.image.io;
 
 import java.awt.Point;
+import java.util.Set;
 import java.util.Map;
 import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.logging.LogRecord;
 import java.awt.Rectangle;
@@ -140,21 +140,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     public static final String DEFAULT_PALETTE_NAME = "grayscale";
 
     /**
-     * For <var>n</var>-dimensional images where <var>n</var>&gt;2, the data to
-     * select in arbitrary dimensions. Will be created only when first needed.
+     * The set of {@link DimensionSlice} instances, which contains also the
+     * implementation of public API exposed in {@code SpatialImageReadParam}.
      *
      * @since 3.08
      */
-    private Map<Object,DimensionSlice> slicesForDimensions;
-
-    /**
-     * For <var>n</var>-dimensional images, the standard Java API to use for setting the index.
-     * Will be created only when first needed. The length of this array shall be equals to the
-     * length of the {@link DimensionSlice.API#VALIDS} array.
-     *
-     * @since 3.08
-     */
-    private DimensionSlice[] apiMapping;
+    private DimensionSlices dimensionSlices;
 
     /**
      * The name of the color palette.
@@ -206,11 +197,29 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.08
      */
     public DimensionSlice newDimensionSlice() {
-        if (slicesForDimensions == null) {
-            slicesForDimensions = new LinkedHashMap<Object,DimensionSlice>();
-            apiMapping = new DimensionSlice[DimensionSlice.API.VALIDS.length];
+        if (dimensionSlices == null) {
+            dimensionSlices = new DimensionSlices(this);
         }
-        return new DimensionSlice(this, slicesForDimensions, apiMapping);
+        return new DimensionSlice(dimensionSlices);
+    }
+
+    /**
+     * Returns all {@code DimensionSlice} instances known to this parameters block. They are
+     * the instances created by {@link #newDimensionSlice()} and for which at least one
+     * {@linkplain DimensionSlice#addDimensionId(String[]) identifier has been added}.
+     * <p>
+     * The returned collection is <cite>live</cite>: if {@linkplain #newDimensionSlice() new
+     * dimension slices} are created, they will appear dynamically in the returned set.
+     *
+     * @return The dimensions registered in this parameters, or an empty set if none.
+     *
+     * @since 3.08
+     */
+    public Set<DimensionSlice> getDimensionSlices() {
+        if (dimensionSlices == null) {
+            dimensionSlices = new DimensionSlices(this);
+        }
+        return dimensionSlices;
     }
 
     /**
@@ -230,7 +239,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.08
      */
     public DimensionSlice getDimensionSliceForAPI(final DimensionSlice.API api) {
-        return DimensionSlice.getDimensionSliceForAPI(this, apiMapping, api);
+        return (dimensionSlices != null) ? dimensionSlices.getDimensionSliceForAPI(this, api) : null;
     }
 
     /**
@@ -256,8 +265,8 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.08
      */
     public DimensionSlice getDimensionSlice(final Object... dimensionIds) {
-        return DimensionSlice.getDimensionSlice(slicesForDimensions, this,
-                SpatialImageReadParam.class, dimensionIds);
+        return (dimensionSlices != null) ? dimensionSlices.getDimensionSlice(this,
+                SpatialImageReadParam.class, dimensionIds) : null;
     }
 
     /**
@@ -294,8 +303,8 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.08
      */
     public int getSliceIndex(final Object... dimensionIds) {
-        return DimensionSlice.getSliceIndex(slicesForDimensions, this,
-                SpatialImageReadParam.class, dimensionIds);
+        return (dimensionSlices != null) ? dimensionSlices.getSliceIndex(this,
+                SpatialImageReadParam.class, dimensionIds) : 0;
     }
 
     /**
@@ -449,7 +458,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
         if (palette != null) {
             buffer.append("palette=\"").append(palette).append('"');
         }
-        return toStringEnd(buffer, slicesForDimensions);
+        return toStringEnd(buffer, dimensionSlices != null ? dimensionSlices.identifiersMap : null);
     }
 
     /**
@@ -457,15 +466,15 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * in the given buffer is a space, then this method removes the two last characters on the
      * assumption that they are {@code ", "}. Then the closing {@code ']'} character is appended.
      */
-    static String toStringEnd(final StringBuilder buffer, final Map<Object,DimensionSlice> slicesForDimensions) {
+    static String toStringEnd(final StringBuilder buffer, final Map<Object,DimensionSlice> identifiersMap) {
         final int length = buffer.length();
         if (buffer.charAt(length - 1) == ' ') {
             buffer.setLength(length - 2);
         }
         buffer.append(']');
-        if (slicesForDimensions != null) {
+        if (identifiersMap != null) {
             int last = 0;
-            for (final DimensionSlice slice : new LinkedHashSet<DimensionSlice>(slicesForDimensions.values())) {
+            for (final DimensionSlice slice : new LinkedHashSet<DimensionSlice>(identifiersMap.values())) {
                 last = buffer.append("\n\u00A0\u00A0\u251C\u2500\u00A0").length();
                 buffer.append(slice);
             }
