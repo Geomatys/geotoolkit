@@ -33,8 +33,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;

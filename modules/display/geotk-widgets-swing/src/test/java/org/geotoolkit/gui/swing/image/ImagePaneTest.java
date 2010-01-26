@@ -22,7 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 import org.geotoolkit.internal.SwingUtilities;
 
 

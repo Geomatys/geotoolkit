@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing;
 
 import java.util.Locale;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

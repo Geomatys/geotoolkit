@@ -21,6 +21,7 @@ import org.junit.*;
 import org.geotoolkit.gui.swing.*;
 import org.geotoolkit.gui.swing.image.*;
 import org.geotoolkit.gui.swing.referencing.*;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.referencing;
 
 import org.opengis.referencing.FactoryException;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 

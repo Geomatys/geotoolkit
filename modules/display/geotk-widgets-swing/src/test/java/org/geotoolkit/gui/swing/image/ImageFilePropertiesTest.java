@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.image;
 import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

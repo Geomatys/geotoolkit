@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

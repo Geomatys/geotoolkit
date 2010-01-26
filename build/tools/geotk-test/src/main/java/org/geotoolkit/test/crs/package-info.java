@@ -17,17 +17,11 @@
  */
 
 /**
- * Tools for Geotk test suites on widgets. The base class provided in this package
- * manage a {@link javax.swing.JDesktopPane} with menu for a few actions like taking
- * a screenshot of the active internal frame.
- * <p>
- * By default the tests display nothing; it merely checks that no exception is thrown during
- * widget construction. However if the "{@code org.geotoolkit.showWidgetTests}" system property
- * is set to "{@code true}", then the widgets will be shown as an internal frame in the desktop.
+ * Tools for Geotk test suites on referencing objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.08
  *
- * @since 3.05
+ * @since 3.08
  */
-package org.geotoolkit.gui.test;
+package org.geotoolkit.test.crs;

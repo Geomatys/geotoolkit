@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.test;
+package org.geotoolkit.test.gui;
 
 import java.io.File;
 import javax.imageio.ImageIO;
@@ -171,7 +171,7 @@ public abstract class SwingBase<T extends JComponent> {
      * @return {@code true} if the component has been shown.
      * @throws PropertyVetoException Should not happen.
      */
-    static synchronized boolean show(final SwingBase<?> testCase, final JComponent component)
+    protected static synchronized boolean show(final SwingBase<?> testCase, final JComponent component)
             throws PropertyVetoException
     {
         if (desktop != null) {

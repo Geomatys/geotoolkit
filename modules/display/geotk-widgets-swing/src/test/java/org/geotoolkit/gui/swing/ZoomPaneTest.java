@@ -23,7 +23,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import static java.awt.Color.*;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

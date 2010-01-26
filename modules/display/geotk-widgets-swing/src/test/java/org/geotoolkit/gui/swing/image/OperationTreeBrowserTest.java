@@ -28,7 +28,7 @@ import javax.media.jai.operator.ConstantDescriptor;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
 import javax.media.jai.operator.MultiplyConstDescriptor;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

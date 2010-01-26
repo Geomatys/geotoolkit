@@ -21,7 +21,7 @@ import java.util.Random;
 import javax.swing.JComponent;
 import org.geotoolkit.test.Depend;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 
 
 /**

@@ -776,7 +776,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
         /**
          * A copy of {@link Axis2D#hints}. A copy is required because some hints (especially
          * {@link Graduation#VISUAL_AXIS_LENGTH} and {@link Graduation#VISUAL_TICK_SPACING})
-         * are going to be overwriten. This map may also contains additional hints provided
+         * are going to be overwritten. This map may also contains additional hints provided
          * by {@link Graphics2D} in the {@link Axis2D#paint} method. This object will never
          * be {@code null}.
          */

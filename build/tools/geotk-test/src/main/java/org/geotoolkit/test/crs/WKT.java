@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing;
+package org.geotoolkit.test.crs;
 
 import static org.geotoolkit.test.Commons.decodeQuotes;
 

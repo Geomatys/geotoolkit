@@ -100,7 +100,7 @@ public class MosaicChooser extends JPanel implements Dialog {
     private static final String INPUT_DIRECTORY = "InputTilesDirectory";
 
     /**
-     * The preference name for the directory of tiles to be writen. This is not used by this
+     * The preference name for the directory of tiles to be written. This is not used by this
      * class ({@link MosaicBuilderEditor} uses it), but is defined here for keeping it close
      * to {@link #INPUT_DIRECTORY}.
      */

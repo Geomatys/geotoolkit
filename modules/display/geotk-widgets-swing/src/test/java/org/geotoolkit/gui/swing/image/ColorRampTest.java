@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.image;
 import java.awt.Color;
 import static java.awt.Color.*;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 import org.geotoolkit.internal.image.ColorUtilities;
 
 

@@ -31,7 +31,7 @@ import javax.imageio.metadata.IIOMetadata;
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.WKT;
+import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;

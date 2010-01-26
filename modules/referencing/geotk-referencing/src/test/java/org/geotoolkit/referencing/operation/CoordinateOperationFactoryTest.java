@@ -30,8 +30,8 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.Transformation;
 
+import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;

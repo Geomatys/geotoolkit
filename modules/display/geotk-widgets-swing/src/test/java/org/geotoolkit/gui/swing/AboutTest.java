@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing;
 
-import org.geotoolkit.gui.test.SwingBase;
+import org.geotoolkit.test.gui.SwingBase;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;

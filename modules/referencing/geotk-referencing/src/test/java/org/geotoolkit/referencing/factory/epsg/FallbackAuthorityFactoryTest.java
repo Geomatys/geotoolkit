@@ -26,9 +26,9 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;

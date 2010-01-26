@@ -21,15 +21,15 @@ import javax.imageio.IIOException;
 
 
 /**
- * Thrown by {@link NamedImageReader} implementations when no image is found for the
- * names specified to {@link NamedImageReader#setImageNames(String[]) setImageNames(...)}.
- * This exception may be thrown at {@code setImageNames(...)} invocation time, or when an
- * {@link ImageReader} method expecting an <cite>image index</cite> argument is invoked.
+ * Thrown by {@link NamedImageStore} implementations when no image is found for a given name.
+ * This exception may occur at {@link NamedImageStore#setImageNames(String[])} invocation time,
+ * or later - when a {@link javax.imageio.ImageReader} or {@link javax.imageio.ImageWriter} method
+ * expecting an <cite>image index</cite> argument is invoked.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
  *
- * @see NamedImageReader
+ * @see NamedImageStore
  *
  * @since 3.08
  * @module

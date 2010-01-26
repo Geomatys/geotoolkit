@@ -32,7 +32,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.referencing.WKT;
+import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.AbstractCRS;

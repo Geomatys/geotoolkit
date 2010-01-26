@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.test;
+package org.geotoolkit.test.gui;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;

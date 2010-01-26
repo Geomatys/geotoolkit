@@ -234,7 +234,7 @@ public class Mercator extends UnitaryProjection {
      * Converts a list of coordinate point ordinal values.
      *
      * {@note We override the super-class method only as an optimization in the special case
-     *        where the target coordinates are writen at the same locations than the source
+     *        where the target coordinates are written at the same locations than the source
      *        coordinates. In such case, we can take advantage of the fact that the lambda
      *        value is not modified by the unitary Mercator projection.}
      */
