@@ -226,9 +226,21 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                 if (event == XMLEvent.START_ELEMENT) {
                     nbAttribute++;
                     final QName q              = streamReader.getName();
+
+                    // we skip the boundedby attribute if it's present
                     if ("boundedBy".equals(q.getLocalPart())) {
-                        continue;
+                         while (streamReader.hasNext()) {
+                             event = streamReader.next();
+                             if (event == XMLEvent.END_ELEMENT) {
+                                final QName name = streamReader.getName();
+                                if ("boundedBy".equals(name.getLocalPart())) {
+                                    break;
+                                }
+                             }
+                         }
+                         continue;
                     }
+                    
                     final String nameAttribute = streamReader.getAttributeValue(null, "name");
                     final PropertyDescriptor pdesc = featureType.getDescriptor(Utils.getNameFromQname(q).getLocalPart());
 

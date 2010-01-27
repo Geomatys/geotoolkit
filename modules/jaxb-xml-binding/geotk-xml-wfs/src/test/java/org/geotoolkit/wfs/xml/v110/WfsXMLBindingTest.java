@@ -114,7 +114,7 @@ public class WfsXMLBindingTest {
         DirectPositionType dp = new DirectPositionType(21400.0,2001368.0);
         PointType pt = new PointType(null, dp);
         pt.setSrsName("urn:ogc:def:crs:epsg:7.4:27582");
-        PropertyType property = new PropertyType(new QName("the_geom"), pt);
+        PropertyType property = new PropertyType(new QName("the_geom"), new ValueType(pt));
         UpdateElementType update = new UpdateElementType(Arrays.asList(property), filter, new QName("http://www.opengis.net/gml", "NamedPlaces"), null);
         transac.getInsertOrUpdateOrDelete().add(update);
 
