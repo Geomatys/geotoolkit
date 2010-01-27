@@ -112,7 +112,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         StringBuilder s = new StringBuilder();
         if (abstractRecord != null && abstractRecord.size() != 0) {
             s.append("records:").append('\n');
-            for (AbstractRecordType ar : abstractRecord) {
+            for (Object ar : abstractRecord) {
                 s.append(ar.toString()).append('\n');
             }
         }

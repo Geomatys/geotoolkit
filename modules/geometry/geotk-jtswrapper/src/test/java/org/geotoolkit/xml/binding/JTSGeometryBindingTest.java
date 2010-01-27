@@ -35,6 +35,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
@@ -643,6 +644,159 @@ public class JTSGeometryBindingTest {
         "    </gml:curveMember>"                                                                              + '\n' +
         "</gml:CompositeCurve>"                                                                               + '\n';
 
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test Composite curve Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+   @Test
+    public void MultiCurveMarshalingTest() throws Exception {
+
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.4:4326");
+        assertTrue(crs != null);
+
+        DirectPosition p1 = new GeneralDirectPosition(crs);
+        p1.setOrdinate(0, 35.840973);
+        p1.setOrdinate(1, 0.14967346);
+
+
+        DirectPosition p2 = new GeneralDirectPosition(crs);
+        p2.setOrdinate(0, 44.11891);
+        p2.setOrdinate(1, 3.6755037);
+
+
+        JTSLineString l1 = new JTSLineString();
+        l1.getControlPoints().add(p1);
+        l1.getControlPoints().add(p2);
+
+        JTSCurve c2 = new JTSCurve(crs);
+        c2.getSegments().add(l1);
+
+        JTSCurve c1 = new JTSCurve(crs);
+        JTSLineString l2 = new JTSLineString();
+        DirectPosition p21 = new GeneralDirectPosition(crs);
+        p21.setOrdinate(0, 51.174034);
+        p21.setOrdinate(1, 12.365124);
+        DirectPosition p22 = new GeneralDirectPosition(crs);
+        p22.setOrdinate(0, 55.288635);
+        p22.setOrdinate(1, 7.583888);
+        DirectPosition p23 = new GeneralDirectPosition(crs);
+        p23.setOrdinate(0, 56.534782);
+        p23.setOrdinate(1, 4.1457024);
+
+        l2.getControlPoints().add(p21);
+        l2.getControlPoints().add(p22);
+        l2.getControlPoints().add(p23);
+
+        c1.getSegments().add(l2);
+
+        JTSMultiCurve multiCurve = new JTSMultiCurve(crs);
+        multiCurve.getElements().add(c2);
+        multiCurve.getElements().add(c1);
+
+
+        StringWriter sw = new StringWriter();
+        m.marshal(factory.createJTSMultiCurve(multiCurve), sw);
+        String result = removeXmlns(sw.toString());
+
+        String expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<gml:MultiCurve srsName=\"urn:ogc:def:crs:epsg:7.4:4326\" >" + '\n' +
+        "    <gml:curveMember>" + '\n' +
+        "        <gml:LineString>" + '\n' +
+        "            <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>" + '\n' +
+        "        </gml:LineString>" + '\n' +
+        "    </gml:curveMember>" + '\n' +
+        "    <gml:curveMember>" + '\n' +
+        "        <gml:LineString>" + '\n' +
+        "            <gml:posList>51.174034 12.365124 55.288635 7.583888 56.534782 4.1457024</gml:posList>" + '\n' +
+        "        </gml:LineString>" + '\n' +
+        "    </gml:curveMember>" + '\n' +
+        "</gml:MultiCurve>"                                                                               + '\n';
+
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test Composite curve Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+   @Test
+    public void MultiCurveUnMarshalingTest() throws Exception {
+
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:7.4:4326");
+        assertTrue(crs != null);
+
+        DirectPosition p1 = new GeneralDirectPosition(crs);
+        p1.setOrdinate(0, 35.840973);
+        p1.setOrdinate(1, 0.14967346);
+
+
+        DirectPosition p2 = new GeneralDirectPosition(crs);
+        p2.setOrdinate(0, 44.11891);
+        p2.setOrdinate(1, 3.6755037);
+
+
+        JTSLineString l1 = new JTSLineString(crs);
+        l1.getControlPoints().add(p1);
+        l1.getControlPoints().add(p2);
+
+        JTSCurve c2 = new JTSCurve(crs);
+        c2.getSegments().add(l1);
+
+        JTSCurve c1 = new JTSCurve(crs);
+        JTSLineString l2 = new JTSLineString(crs);
+        DirectPosition p21 = new GeneralDirectPosition(crs);
+        p21.setOrdinate(0, 51.174034);
+        p21.setOrdinate(1, 12.365124);
+        DirectPosition p22 = new GeneralDirectPosition(crs);
+        p22.setOrdinate(0, 55.288635);
+        p22.setOrdinate(1, 7.583888);
+        DirectPosition p23 = new GeneralDirectPosition(crs);
+        p23.setOrdinate(0, 56.534782);
+        p23.setOrdinate(1, 4.1457024);
+
+        l2.getControlPoints().add(p21);
+        l2.getControlPoints().add(p22);
+        l2.getControlPoints().add(p23);
+
+        c1.getSegments().add(l2);
+
+        JTSMultiCurve expResult = new JTSMultiCurve(crs);
+        expResult.getElements().add(c2);
+        expResult.getElements().add(c1);
+
+        String xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
+        "<gml:MultiCurve srsName=\"urn:ogc:def:crs:epsg:7.4:4326\" xmlns:gml=\"http://www.opengis.net/gml\">" + '\n' +
+        "    <gml:curveMember>" + '\n' +
+        "        <gml:LineString>" + '\n' +
+        "            <gml:posList>35.840973 0.14967346 44.11891 3.6755037</gml:posList>" + '\n' +
+        "        </gml:LineString>" + '\n' +
+        "    </gml:curveMember>" + '\n' +
+        "    <gml:curveMember>" + '\n' +
+        "        <gml:LineString>" + '\n' +
+        "            <gml:posList>51.174034 12.365124 55.288635 7.583888 56.534782 4.1457024</gml:posList>" + '\n' +
+        "        </gml:LineString>" + '\n' +
+        "    </gml:curveMember>" + '\n' +
+        "</gml:MultiCurve>"                                                                               + '\n';
+
+        JTSMultiCurve result = (JTSMultiCurve) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
+        result.applyCRSonChild();
+
+        assertEquals(expResult.getElements().iterator().next().getCoordinateReferenceSystem(), result.getElements().iterator().next().getCoordinateReferenceSystem());
+        assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().getCoordinateReferenceSystem(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().getCoordinateReferenceSystem());
+        assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0).getDirectPosition().getCoordinateReferenceSystem(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0).getDirectPosition().getCoordinateReferenceSystem());
+        assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints().get(0));
+        assertEquals(((JTSLineString)((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0)).getControlPoints(), ((JTSLineString)((JTSCurve)result.getElements().iterator().next()).getSegments().get(0)).getControlPoints());
+        assertEquals(((JTSCurve)expResult.getElements().iterator().next()).getSegments().get(0), ((JTSCurve)result.getElements().iterator().next()).getSegments().get(0));
+        assertEquals(((JTSCurve)expResult.getElements().iterator().next()).getSegments(), ((JTSCurve)result.getElements().iterator().next()).getSegments());
+        assertEquals(expResult.getElements().iterator().next(), result.getElements().iterator().next());
+        assertEquals(expResult.getCoordinateReferenceSystem(), result.getCoordinateReferenceSystem());
         assertEquals(expResult, result);
     }
 

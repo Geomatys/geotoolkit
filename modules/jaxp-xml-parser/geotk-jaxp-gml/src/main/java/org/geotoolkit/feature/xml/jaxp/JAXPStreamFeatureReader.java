@@ -39,7 +39,9 @@ import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
+import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.internal.jaxb.LineStringPosListType;
 import org.geotoolkit.internal.jaxb.PolygonType;
@@ -260,9 +262,13 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
                         try {
                             JTSGeometry isoGeom;
+                            unmarshaller.setEventHandler(new JAXBEventHandler());
                             Object geometry = ((JAXBElement) unmarshaller.unmarshal(streamReader)).getValue();
                             if (geometry instanceof JTSGeometry) {
                                 isoGeom = (JTSGeometry) geometry;
+                                if (isoGeom instanceof JTSMultiCurve) {
+                                    ((JTSMultiCurve)isoGeom).applyCRSonChild();
+                                }
                             } else if (geometry instanceof PolygonType) {
                                 isoGeom = ((PolygonType)geometry).getJTSPolygon();
                             } else if (geometry instanceof LineStringPosListType) {
@@ -273,8 +279,11 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                             Geometry jtsGeom = isoGeom.getJTSGeometry();
                             values.put(q, jtsGeom);
                         } catch (JAXBException ex) {
-                            LOGGER.severe("JAXB exception while reading the feature geometry: " + ex.getMessage());
-                            ex.printStackTrace();
+                            String msg = ex.getMessage();
+                            if (msg == null && ex.getLinkedException() != null) {
+                                msg = ex.getLinkedException().getMessage();
+                            }
+                            throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg);
                         }
 
                     }else{

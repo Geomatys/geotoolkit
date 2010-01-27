@@ -31,8 +31,8 @@ public class JTSMultiSurface extends AbstractJTSAggregate<OrientableSurface> imp
      * {@inheritDoc }
      */
     @Override
-    public JTSMultiCurve clone() {
-        return (JTSMultiCurve) super.clone();
+    public JTSMultiSurface clone() {
+        return (JTSMultiSurface) super.clone();
     }
 
     @XmlElement(name="surfaceMember", namespace = "http://www.opengis.net/gml")
