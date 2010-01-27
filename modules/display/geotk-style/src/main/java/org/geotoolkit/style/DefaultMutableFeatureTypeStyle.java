@@ -22,6 +22,7 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.Set;
 import javax.swing.event.EventListenerList;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
@@ -295,6 +296,13 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
         return visitor.visit(this,extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return Trees.toString(StyleUtilities.asTreeNode(this));
+    }
     
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------

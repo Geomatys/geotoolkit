@@ -20,6 +20,7 @@ import java.beans.PropertyChangeEvent;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.event.EventListenerList;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
@@ -313,12 +314,21 @@ public class DefaultMutableRule implements MutableRule{
         firePropertyChange(ONLINE_PROPERTY, oldOnline, this.online);
     }
 
-    
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public Object accept(StyleVisitor visitor, Object extraData) {
         return visitor.visit(this,extraData);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String toString() {
+        return Trees.toString(StyleUtilities.asTreeNode(this));
+    }
     
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
