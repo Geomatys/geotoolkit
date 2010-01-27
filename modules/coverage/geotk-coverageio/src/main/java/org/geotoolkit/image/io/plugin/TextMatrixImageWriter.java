@@ -130,7 +130,7 @@ public class TextMatrixImageWriter extends TextImageWriter {
 
 
     /**
-     * Service provider interface (SPI) for {@link TextMatrixImageWriter}s. This SPI provides
+     * Service provider interface (SPI) for {@code TextMatrixImageWriter}s. This SPI provides
      * necessary implementation for creating default {@link TextMatrixImageWriter} using default
      * locale and character set. The default constructor initializes the fields to the values
      * listed below:

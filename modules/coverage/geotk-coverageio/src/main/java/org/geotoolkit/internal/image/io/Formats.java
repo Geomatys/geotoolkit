@@ -302,8 +302,7 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
      */
     private static boolean hasUpperCase(final String name) {
         for (int i=name.length(); --i>=0;) {
-            final char c = name.charAt(i);
-            if (Character.toUpperCase(c) == c) {
+            if (Character.isUpperCase(name.charAt(i))) {
                 return true;
             }
         }

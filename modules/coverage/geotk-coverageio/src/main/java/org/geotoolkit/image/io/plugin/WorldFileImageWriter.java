@@ -183,7 +183,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
 
 
     /**
-     * Service provider interface (SPI) for {@link WorldFileImageWriter}s. This provider wraps
+     * Service provider interface (SPI) for {@code WorldFileImageWriter}s. This provider wraps
      * an other provider (typically for the TIFF, JPEG or PNG formats), which shall be specified
      * at construction time. The legal {@linkplain #outputTypes output types} are {@link String},
      * {@link File}, {@link java.net.URI} and {@link java.net.URL} in order to allow the image

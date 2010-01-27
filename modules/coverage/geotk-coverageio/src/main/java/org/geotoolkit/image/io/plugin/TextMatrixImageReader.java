@@ -411,7 +411,7 @@ public class TextMatrixImageReader extends TextImageReader {
 
 
     /**
-     * Service provider interface (SPI) for {@link TextMatrixImageReader}s. This SPI provides
+     * Service provider interface (SPI) for {@code TextMatrixImageReader}s. This SPI provides
      * the necessary implementation for creating default {@link TextMatrixImageReader} using
      * default locale and character set. The default constructor initializes the fields to the
      * values listed below:

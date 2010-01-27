@@ -432,7 +432,7 @@ public class RawImageReader extends SpatialImageReader {
 
 
     /**
-     * Service provider interface (SPI) for {@link RawImageReader}s. This SPI provides
+     * Service provider interface (SPI) for {@code RawImageReader}s. This SPI provides
      * necessary implementation for creating default {@link RawImageReader}.
      * <p>
      * The default constructor initializes the fields to the values listed below.

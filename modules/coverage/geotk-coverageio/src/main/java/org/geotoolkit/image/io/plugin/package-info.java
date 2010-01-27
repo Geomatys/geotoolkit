@@ -21,7 +21,7 @@
  * files and text files. The {@code geotk-coverageio.jar} and {@code geotk-coverageio-netcdf.jar}
  * files declare service providers for the following formats:
  * <p>
- * <table border="1" cellspacing="0">
+ * <table border="1" cellspacing="0" cellpadding="4">
  *   <tr bgcolor="lightblue">
  *     <th>{@link javax.imageio.ImageReader} subclass</th>
  *     <th>{@link javax.imageio.ImageWriter} subclass</th>

@@ -638,7 +638,7 @@ public class TextRecordImageReader extends TextImageReader {
 
 
     /**
-     * Service provider interface (SPI) for {@link TextRecordImageReader}s. This SPI provides
+     * Service provider interface (SPI) for {@code TextRecordImageReader}s. This SPI provides
      * necessary implementation for creating default {@link TextRecordImageReader} using default
      * locale and character set. The default constructor initializes the fields to the values
      * listed below:

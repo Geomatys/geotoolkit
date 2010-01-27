@@ -886,7 +886,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
 
 
     /**
-     * Service provider interface (SPI) for {@link AsciiGridReader}s. This SPI provides
+     * Service provider interface (SPI) for {@code AsciiGridReader}s. This SPI provides
      * the necessary implementation for creating default {@link AsciiGridReader}s using
      * US locale and ASCII character set. The {@linkplain #locale locale} and
      * {@linkplain #charset charset} fields are ignored by the default implementation.
