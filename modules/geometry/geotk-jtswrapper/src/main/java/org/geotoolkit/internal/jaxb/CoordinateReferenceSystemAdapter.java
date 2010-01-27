@@ -39,7 +39,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
                 if (srsName == null && !CoordinateReferenceSystemAdapter.cachedIdentifier.containsKey(crs)) {
                     srsName = CRS.lookupIdentifier(Citations.URN_OGC, crs, false);
                     if (srsName == null) {
-                        srsName = CRS.toSRS(crs);
+                        srsName = CRS.getDeclaredIdentifier(crs);
                     }
                     CoordinateReferenceSystemAdapter.cachedIdentifier.put(crs, srsName);
 

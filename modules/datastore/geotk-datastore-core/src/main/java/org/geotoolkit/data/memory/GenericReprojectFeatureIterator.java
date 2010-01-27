@@ -148,9 +148,13 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     /**
      * Wrap a FeatureReader with a reprojection.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            FeatureReader<T,F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException{
-        return new GenericReprojectFeatureReader(reader, crs);
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
+            FeatureReader<T, F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException {
+        if (reader.getFeatureType().getGeometryDescriptor() != null) {
+            return new GenericReprojectFeatureReader(reader, crs);
+        } else {
+            return reader;
+        }
     }
 
 }
