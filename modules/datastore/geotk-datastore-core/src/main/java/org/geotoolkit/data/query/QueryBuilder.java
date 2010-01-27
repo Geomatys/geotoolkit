@@ -202,4 +202,18 @@ public class QueryBuilder {
         return new DefaultQuery(name, NO_PROPERTIES);
     }
 
+    /**
+     * Create a simple query with only a reproject crs.
+     *
+     * @param name
+     * @param filter
+     * @return Immutable query
+     */
+    public static Query reprojected(Name name, CoordinateReferenceSystem crs){
+        final QueryBuilder builder = new QueryBuilder();
+        builder.setTypeName(name);
+        builder.setCRS(crs);
+        return builder.buildQuery();
+    }
+
 }

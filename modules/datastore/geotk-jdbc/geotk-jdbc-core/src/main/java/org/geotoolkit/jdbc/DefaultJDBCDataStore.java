@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.feature.SchemaException;
 
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
@@ -60,6 +62,7 @@ import org.geotoolkit.data.jdbc.FilterToSQLException;
 import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
 import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -98,6 +101,7 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.jdbc.MetaDataConstants.*;
@@ -616,6 +620,17 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             reader = GenericFilterFeatureIterator.wrap(reader, postFilter);
             if(!returnedSchema.equals(querySchema))
                 reader = GenericRetypeFeatureIterator.wrap(reader, returnedSchema);
+        }
+
+        final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
+        if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,type.getCoordinateReferenceSystem())){
+            try {
+                reader = GenericReprojectFeatureIterator.wrap(reader, reproject);
+            } catch (FactoryException ex) {
+                throw new DataStoreException(ex);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
         }
 
         return reader;

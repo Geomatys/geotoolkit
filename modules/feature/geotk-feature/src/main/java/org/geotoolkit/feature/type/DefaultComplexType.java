@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.referencing.CRS;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -35,9 +36,11 @@ import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.referencing.FactoryException;
 import org.opengis.util.InternationalString;
 
 
@@ -189,7 +192,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final StringWriter writer = new StringWriter();
         final TableWriter tablewriter = new TableWriter(writer);
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("name\t min\t max\t nillable\t type\n");
+        tablewriter.write("name\t min\t max\t nillable\t type\t CRS\n");
         tablewriter.nextLine('-');
 
         for (PropertyDescriptor property : getDescriptors()) {
@@ -202,6 +205,19 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             tablewriter.write(Boolean.toString(property.isNillable()));
             tablewriter.write("\t");
             tablewriter.write(property.getType().getBinding().getSimpleName());
+            tablewriter.write("\t");
+
+            if(property instanceof GeometryDescriptor){
+                GeometryDescriptor desc = (GeometryDescriptor) property;
+                try {
+                    tablewriter.write(String.valueOf(CRS.lookupIdentifier(desc.getCoordinateReferenceSystem(), true)));
+                } catch (FactoryException ex) {
+                    tablewriter.write("Error getting identifier");
+                }
+            }else{
+                tablewriter.write("");
+            }
+
             tablewriter.write("\n");
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);

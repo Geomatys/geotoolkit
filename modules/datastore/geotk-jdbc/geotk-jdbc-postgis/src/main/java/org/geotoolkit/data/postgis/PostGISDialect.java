@@ -606,11 +606,14 @@ public class PostGISDialect extends BasicSQLDialect {
 
     @Override
     public CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException {
-        if (srid == 4326) {
-            LOGGER.fine("POSTGIS SRID 4326 : Inverting axes ");
-            return DefaultGeographicCRS.WGS84;
+        try {
+            return CRS.decode("EPSG:" + srid,true);
+        } catch(Exception e) {
+            if(LOGGER.isLoggable(Level.FINE)) {
+                LOGGER.log(Level.FINE, "Could not decode " + srid + " using the built-in EPSG database", e);
+            }
+            return null;
         }
-        return super.createCRS(srid, cx);
     }
 
 

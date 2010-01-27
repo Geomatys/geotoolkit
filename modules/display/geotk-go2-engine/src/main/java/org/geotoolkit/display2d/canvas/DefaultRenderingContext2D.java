@@ -522,7 +522,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
             final Envelope env;
             try {
-                env = CRS.transform(canvasObjectiveBBox, crs);
+                env = CRS.transform(canvasObjectiveBBox2D, crs);
                 final Rectangle2D canvasCRSBounds = new Rectangle2D.Double(0, 0, env.getSpan(0), env.getSpan(1));
                 res[0] = Math.abs(canvasCRSBounds.getWidth()/canvasDisplaybounds.getWidth());
                 res[1] = Math.abs(canvasCRSBounds.getHeight()/canvasDisplaybounds.getHeight());

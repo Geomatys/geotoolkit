@@ -27,6 +27,7 @@ import java.util.Map;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.PreparedFilterToSQL;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
+
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
@@ -35,6 +36,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.io.WKBWriter;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class PostGISPSDialect extends PreparedStatementSQLDialect {
 
@@ -196,4 +198,10 @@ public class PostGISPSDialect extends PreparedStatementSQLDialect {
     public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
         delegate.applyLimitOffset(sql, limit, offset);
     }
+
+    @Override
+    public CoordinateReferenceSystem createCRS(int srid, Connection cx) throws SQLException {
+        return delegate.createCRS(srid, cx);
+    }
+
 }
