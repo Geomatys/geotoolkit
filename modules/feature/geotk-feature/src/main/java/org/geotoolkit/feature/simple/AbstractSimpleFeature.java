@@ -340,7 +340,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
         for(Property prop : getProperties()){
             tablewriter.write(DefaultName.toJCRExtendedForm(prop.getName()));
             tablewriter.write("\t");
-            tablewriter.write(prop.getValue().toString());
+            tablewriter.write(String.valueOf(prop.getValue()));
             tablewriter.write("\n");
         }
         
