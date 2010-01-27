@@ -1,8 +1,6 @@
 
 package org.geotoolkit.internal.jaxb;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.geotoolkit.metadata.iso.citation.Citations;

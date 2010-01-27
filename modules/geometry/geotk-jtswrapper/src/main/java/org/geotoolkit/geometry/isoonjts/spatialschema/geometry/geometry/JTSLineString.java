@@ -10,6 +10,7 @@
 package org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -312,6 +313,20 @@ public class JTSLineString extends AbstractJTSGenericCurve
     @Override
     public DirectPosition forParam(double s) {
         return null;
+    }
+
+    public void applyCRSOnChild() {
+        if (controlPoints != null) {
+            List<Position> newPositions = new ArrayList<Position>();
+            for (Position pos : controlPoints.positions()) {
+                if (pos instanceof GeneralDirectPosition) {
+                    ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(getCoordinateReferenceSystem());
+                    newPositions.add(pos);
+                } 
+            }
+            controlPoints.clear();
+            controlPoints.addAll(newPositions);
+        }
     }
 
     @XmlElement(name="pos", namespace="http://www.opengis.net/gml")

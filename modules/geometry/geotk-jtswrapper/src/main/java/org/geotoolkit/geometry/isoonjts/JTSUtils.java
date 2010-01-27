@@ -33,6 +33,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMult
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSGeometryFactory;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPrimitiveFactory;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,20 +43,15 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.Geometry;
 import org.opengis.geometry.PositionFactory;
-import org.opengis.geometry.aggregate.Aggregate;
-import org.opengis.geometry.aggregate.MultiPoint;
-import org.opengis.geometry.aggregate.MultiPrimitive;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.coordinate.LineString;
 import org.opengis.geometry.coordinate.Polygon;
-import org.opengis.geometry.coordinate.PolyhedralSurface;
 import org.opengis.geometry.primitive.Curve;
 import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.primitive.Ring;
 import org.opengis.geometry.primitive.SurfaceBoundary;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;
-import org.opengis.geometry.primitive.CurveSegment;
 
 /**
  * Class with static methods to help the conversion process between JTS
@@ -157,7 +153,14 @@ public final class JTSUtils {
                 Set elements = result.getElements();
                 for (int i = 0, n = jtsCollection.getNumGeometries(); i < n; i++) {
                     //result.getElements().add(jtsToGo1(jtsCollection.getGeometryN(i), crs));
-                    elements.add(toISO(jtsCollection.getGeometryN(i), crs));
+                    Geometry element = toISO(jtsCollection.getGeometryN(i), crs);
+                    if (element instanceof JTSLineString) {
+                        JTSCurve curve = new JTSCurve(crs);
+                        curve.getSegments().add((JTSLineString) element);
+                        element = curve;
+
+                    }
+                    elements.add(element);
                 }
             }  else if (multiSurface) {
                 result = new JTSMultiSurface(crs);

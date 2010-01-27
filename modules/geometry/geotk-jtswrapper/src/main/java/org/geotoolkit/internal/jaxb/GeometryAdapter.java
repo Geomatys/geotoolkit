@@ -8,8 +8,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolygon;
@@ -38,8 +40,14 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
     @XmlElementRef(name="MultiPoint", namespace = "http://www.opengis.net/gml")
     private JAXBElement<JTSMultiPoint> multiPoint;
 
-    @XmlElementRef(name="MultiGeometry", namespace = "http://www.opengis.net/gml")
+    @XmlElementRef(name="MultiSurface", namespace = "http://www.opengis.net/gml")
+    private JAXBElement<JTSMultiSurface> multiSurface;
+
+    @XmlElementRef(name="MultiCurve", namespace = "http://www.opengis.net/gml")
     private JAXBElement<JTSMultiPrimitive> multiPrimitive;
+
+    @XmlElementRef(name="MultiCurve", namespace = "http://www.opengis.net/gml")
+    private JAXBElement<JTSMultiCurve> multiCurve;
 
     @XmlElementRef(name="CompositeCurve", namespace = "http://www.opengis.net/gml")
     private JAXBElement<JTSCompositeCurve> compositeCurve;
@@ -69,6 +77,10 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
             this.lineString = FACTORY.createLineStringPosListType(new LineStringPosListType((JTSLineString)geom));
         } else if (geom instanceof JTSMultiPoint) {
             this.multiPoint = FACTORY.createJTSMultiPoint((JTSMultiPoint) geom);
+        } else if (geom instanceof JTSMultiCurve) {
+            this.multiCurve = FACTORY.createJTSMultiCurve((JTSMultiCurve) geom);
+        } else if (geom instanceof JTSMultiSurface) {
+            this.multiSurface = FACTORY.createJTSMultiSurface((JTSMultiSurface) geom);
         } else if (geom instanceof JTSCompositeCurve) {
             this.compositeCurve = FACTORY.createJTSCompositeCurve((JTSCompositeCurve) geom);
         } else if (geom instanceof JTSEnvelope) {
@@ -103,6 +115,12 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
         } else if (v != null && v.multiPoint != null) {
             return (Geometry) v.multiPoint.getValue();
+
+        } else if (v != null && v.multiSurface != null) {
+            return (Geometry) v.multiSurface.getValue();
+
+        } else if (v != null && v.multiCurve != null) {
+            return (Geometry) v.multiCurve.getValue();
 
         } else if (v != null && v.envelope != null) {
             return (Geometry) v.envelope.getValue();
@@ -155,6 +173,13 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
         }
         if (multiPoint != null) {
             sb.append(multiPoint.getValue());
+
+        }
+        if (multiCurve != null) {
+            sb.append(multiCurve.getValue());
+
+        }if (multiSurface != null) {
+            sb.append(multiSurface.getValue());
 
         }
         if (envelope != null) {
