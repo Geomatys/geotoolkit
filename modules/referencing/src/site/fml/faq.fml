@@ -17,6 +17,37 @@
 
   <part id="crs">
     <title>Coordinate Reference Systems</title>
+    <faq id="Google">
+      <question>
+        How do I instantiate a Google projection?
+      </question>
+      <answer>
+        <p>The Google projection is a Mercator projection that <em>pretends</em> to be defined on
+        the WGS84 datum, but actually ignores the ellipsoid nature of that datum and uses the
+        simplier spherical formulas instead. In Geotk this behavior can be obtained for any
+        projections (not only the Mercator one used by Google) with explicit declarations of
+        <code>"semi_major"</code> and <code>"semi_minor"</code> parameter values, like in the
+        example below. Those parameters are usually infered from the datum, but explicit
+        declarations override the inferred values.</p>
+
+<blockquote><pre>PROJCS["Google Mercator",
+  GEOGCS["WGS 84",
+    DATUM["World Geodetic System 1984",
+      SPHEROID["WGS 84", 6378137, 298.257223563]],
+    PRIMEM["Greenwich", 0],
+    UNIT["degree", 0.017453292519943295]],
+  PROJECTION["Mercator (1SP)"],
+  <b>PARAMETER["semi_major", 6378137]</b>,
+  <b>PARAMETER["semi_minor", 6378137]</b>,
+  UNIT["m", 1]]</pre></blockquote>
+
+        <p>Since version 6.15 of the <a href="http://www.epsg.org">EPSG</a> database, it is also
+        possible to simply invoke <code>CRS.decode("EPSG:3857")</code>. The result of that method
+        call is slightly different in that the <code>"semi_minor"</code> parameter is not modified.
+        Instead EPSG handles that projection with a new Operation Method called "<cite>Popular
+        Visualisation Pseudo Mercator</cite>".</p>
+      </answer>
+    </faq>
     <faq id="JavaDB">
       <question>
         How to fix the "No suitable driver found for jdbc:derby" exception?
@@ -65,37 +96,6 @@
         be ignored when it should not, the code snippet provided in the
         <code><a href="../../apidocs/org/geotoolkit/referencing/factory/FactoryDependencies.html">FactoryDependencies</a></code>
         javadoc may provide useful informations for debugging purpose.</p>
-      </answer>
-    </faq>
-    <faq id="Google">
-      <question>
-        How do I instantiate a Google projection?
-      </question>
-      <answer>
-        <p>The Google projection is a Mercator projection that <em>pretends</em> to be defined on
-        the WGS84 datum, but actually ignores the ellipsoid nature of that datum and uses the
-        simplier spherical formulas instead. In Geotk this behavior can be obtained for any
-        projections (not only the Mercator one used by Google) with explicit declarations of
-        <code>"semi_major"</code> and <code>"semi_minor"</code> parameter values, like in the
-        example below. Those parameters are usually infered from the datum, but explicit
-        declarations override the inferred values.</p>
-
-<blockquote><pre>PROJCS["Google Mercator",
-  GEOGCS["WGS 84",
-    DATUM["World Geodetic System 1984",
-      SPHEROID["WGS 84", 6378137, 298.257223563]],
-    PRIMEM["Greenwich", 0],
-    UNIT["degree", 0.017453292519943295]],
-  PROJECTION["Mercator (1SP)"],
-  <b>PARAMETER["semi_major", 6378137]</b>,
-  <b>PARAMETER["semi_minor", 6378137]</b>,
-  UNIT["m", 1]]</pre></blockquote>
-
-        <p>Since version 6.15 of the <a href="http://www.epsg.org">EPSG</a> database, it is also
-        possible to simply invoke <code>CRS.decode("EPSG:3857")</code>. The result of that method
-        call is slightly different in that the <code>"semi_minor"</code> parameter is not modified.
-        Instead EPSG handles that projection with a new Operation Method called "<cite>Popular
-        Visualisation Pseudo Mercator</cite>".</p>
       </answer>
     </faq>
     <faq id="lookupIdentifier">
@@ -150,6 +150,38 @@ if (identifier != null) {
       <p>The boolean argument can be set to <code>true</code> for allowing a database scan (see the
       FAQ item above), and the authority can also be <code>HTTP_OGC</code> for a URL of the form
       <code>"http://www.opengis.net/gml/srs/epsg.xml#4326"</code>.</p>
+      </answer>
+    </faq>
+    <faq id="lookupReliability">
+      <question>
+        Can I rely on <code>CRS.lookupEpsgCode(...)</code> to work correctly as the inverse of
+        <code>CRS.decode(...)</code>?
+      </question>
+      <answer>
+        <p>For CRS created from the EPSG database, usually yes. Note however that
+        <code>CRS.getDeclaredIdentifier(...)</code> is cheaper and insensitive to the details of
+        CRS definition, since it never query the database. But it works only if the CRS declares
+        explicitly its code, which is the case for CRS created from the EPSG database or parsed
+        from a <cite>Well Known Text</cite> (WKT) having an <code>AUTHORITY</code> element. The
+        <code>lookupEpsgCode(...)</code> method on the other hand is robust to erroneous code
+        declaration, since it always compares the CRS with the database content. But it fails
+        if there is slight mistmatch (for example rounding errors in projection parameters)
+        between the supplied CRS and the CRS found in the database.</p>
+      </answer>
+    </faq>
+    <faq id="hashCode">
+      <question>
+        Are CRS objects safe for use as keys in <code>HashMap</code>?
+      </question>
+      <answer>
+        <p>Yes, every classes defined in the <code>org.geotoolkit.referencing.crs</code>,
+        <code>cs</code> and <code>datum</code> packages define properly their <code>equals(Object)</code>
+        and <code>hashCode()</code> methods. The Geotk library itself uses CRS objects in
+        <code>HashMap</code>-like containers for caching purpose.</p>
+
+        <p>As a side note, instances created by the Geotk <code>ReferencingObjectFactory</code> are
+        unique, so even the identity check (<code>==</code>) works in a majority of cases. However
+        the recommanded approach still the use of <code>equals(Object)</code>.</p>
       </answer>
     </faq>
   </part>
@@ -265,6 +297,23 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         OGC 01-009 specification. In order to get the ESRI behavior with such projections, axis
         orientation must be explicitly specified in Geotk, for example with <code>AXIS</code>
         elements in Well Known Text (WKT) format.</p>
+      </answer>
+    </faq>
+    <faq id="toWGS84">
+      <question>
+        Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?
+      </question>
+      <answer>
+        <p>For 2D horizontal CRS created from the EPSG database, calls to
+        <code>CRS.findMathTransform(..., true)</code> - where the <code>true</code> argument is
+        for <cite>lenient datum shift</cite> - should generally succeed. For 3D CRS having any
+        kind of height different than <cite>ellipsoid height</cite>, or for a 2D CRS of type
+        <code>EngineeringCRS</code>, it may fail.</p>
+
+        <p>Note however that even if the call to <code>Math.findMathTransform(...)</code> succeed,
+        the call to <code>MathTransform.transform(...)</code> may fail or produce <code>NaN</code>
+        or infinity values if the coordinate to transform is far from the map projection area of
+        validity.</p>
       </answer>
     </faq>
   </part>

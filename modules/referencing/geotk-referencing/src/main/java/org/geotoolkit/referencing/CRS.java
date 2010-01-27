@@ -880,7 +880,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * Returns the declared identifier, or {@code null} if none. This method searchs for the first
      * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
      * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
-     * <em>This method does not verify the identifier validity</em>.
+     * <em>this method does not verify the identifier validity</em>.
      * <p>
      * More specifically, this method uses the first non-null element found in
      * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
@@ -918,7 +918,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * @see AbstractIdentifiedObject#getIdentifier(IdentifiedObject, Citation)
      *
      * @category information
-     * @since 3.6 (derived from 2.5)
+     * @since 3.06 (derived from 2.5)
      */
     public static String getDeclaredIdentifier(final IdentifiedObject object) {
         if (object != null) {
