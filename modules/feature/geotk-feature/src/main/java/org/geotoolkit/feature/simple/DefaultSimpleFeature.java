@@ -18,12 +18,15 @@
 package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import java.util.Map.Entry;
+import org.geotoolkit.io.TableWriter;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -215,24 +218,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         }
 
         return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder("[").append(this.getClass().getName()).append(']').append('\n');
-        if (id != null) {
-            sb.append("id:").append(id).append('\n');
-        }
-        if (featureType != null) {
-            sb.append("featureType:").append(featureType).append('\n');
-        }
-        sb.append("values:").append('\n');
-        if (index != null && values != null) {
-            for (Entry<String, Integer> entry: index.entrySet()) {
-                sb.append(entry.getKey()).append(":").append(values[entry.getValue()]).append('\n');
-            }
-        }
-        return sb.toString();
     }
 
     @Override

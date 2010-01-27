@@ -18,6 +18,8 @@
 package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,6 +31,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.opengis.feature.GeometryAttribute;
@@ -38,6 +41,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
@@ -314,6 +318,43 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
     @Override
     public boolean isNillable() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+
+        final StringWriter writer = new StringWriter();
+        writer.append(this.getClass().getName());
+        writer.append('\n');
+
+        final FeatureType featureType = getFeatureType();
+        if (featureType != null) {
+            writer.append("featureType:").append(featureType.getName().toString()).append('\n');
+        }
+
+        //make a nice table to display
+        final TableWriter tablewriter = new TableWriter(writer);
+        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        tablewriter.write("@id\t"+getID()+"\n");
+
+        for(Property prop : getProperties()){
+            tablewriter.write(DefaultName.toJCRExtendedForm(prop.getName()));
+            tablewriter.write("\t");
+            tablewriter.write(prop.getValue().toString());
+            tablewriter.write("\n");
+        }
+        
+        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        
+        try {
+            tablewriter.flush();
+            writer.flush();
+        } catch (IOException ex) {
+            //will never happen is this case
+            ex.printStackTrace();
+        }
+
+        return writer.toString();
     }
 
 

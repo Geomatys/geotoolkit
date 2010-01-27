@@ -185,10 +185,10 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
 
         boolean first = true;
 
-        //make
+        //make a nice table to display
         final StringWriter writer = new StringWriter();
         final TableWriter tablewriter = new TableWriter(writer);
-        tablewriter.nextLine('-');
+        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         tablewriter.write("name\t min\t max\t nillable\t type\n");
         tablewriter.nextLine('-');
 
@@ -204,7 +204,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             tablewriter.write(property.getType().getBinding().getSimpleName());
             tablewriter.write("\n");
         }
-        tablewriter.nextLine('-');
+        tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
             tablewriter.flush();
             writer.flush();
