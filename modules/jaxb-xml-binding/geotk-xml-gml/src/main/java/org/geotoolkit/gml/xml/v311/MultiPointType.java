@@ -52,34 +52,22 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "pointMember",
     "pointMembers"
 })
-public class MultiPointType
-    extends AbstractGeometricAggregateType
-{
+public class MultiPointType extends AbstractGeometricAggregateType {
 
-    protected List<PointPropertyType> pointMember;
-    protected PointArrayPropertyType pointMembers;
+    private List<PointPropertyType> pointMember;
+    private PointArrayPropertyType pointMembers;
+
+    public MultiPointType() {
+
+    }
+
+    public MultiPointType(String srsName, List<PointPropertyType> pointMember) {
+        super(srsName);
+        this.pointMember = pointMember;
+    }
 
     /**
      * Gets the value of the pointMember property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the pointMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPointMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link PointPropertyType }
-     * 
-     * 
      */
     public List<PointPropertyType> getPointMember() {
         if (pointMember == null) {

@@ -193,7 +193,7 @@ public class GeometrytoJTS {
             }
         } else if (gmlPoint.getPos().getValue() != null && gmlPoint.getPos().getValue().size() == 2){
             coordinates[0] = gmlPoint.getPos().getValue().get(0);
-            coordinates[0] = gmlPoint.getPos().getValue().get(1);
+            coordinates[1] = gmlPoint.getPos().getValue().get(1);
         } else {
             throw new IllegalArgumentException("The GML point is malformed.");
         }

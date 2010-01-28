@@ -103,6 +103,10 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
         this.uomLabels    = uomLabels;
     }
 
+    public AbstractGeometryType(String srsName){
+        this.srsName      = srsName;
+    }
+
     /**
      * Gets the value of the gid property.
      * 
