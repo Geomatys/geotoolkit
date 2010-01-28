@@ -17,27 +17,35 @@
 package org.geotoolkit.feature;
 
 
-import junit.framework.TestCase;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.DefaultFilterFactory2;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
+import org.geotoolkit.referencing.CRS;
 import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.filter.FilterFactory;
+import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
+import org.opengis.filter.spatial.Equals;
 
 import static org.junit.Assert.*;
 
 
 public class FeatureFilterTest {
 
-    private static final FilterFactory FF = new DefaultFilterFactory2();
+    private static final FilterFactory2 FF = new DefaultFilterFactory2();
 
     public FeatureFilterTest() {
     }
@@ -248,5 +256,61 @@ public class FeatureFilterTest {
 
     }
 
+
+    /**
+     * Test that we get acces attributs without knowing the namespace
+     */
+    @Test
+    public void testSpatialFilter() throws Exception {
+
+        final Name description = new DefaultName("http://www.opengis.net/gml", "description");
+        final Name name = new DefaultName("http://www.opengis.net/gml", "name");
+        final Name multiPointProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
+        final Name multiCurveProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiCurveProperty");
+        final Name multiSurfaceProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiSurfaceProperty");
+        final Name doubleProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "doubleProperty");
+        final Name intRangeProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "intRangeProperty");
+        final Name strProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "strProperty");
+        final Name featureCode = new DefaultName("http://cite.opengeospatial.org/gmlsf", "featureCode");
+        final Name id = new DefaultName("http://cite.opengeospatial.org/gmlsf", "id");
+
+
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName(new DefaultName("http://cite.opengeospatial.org/gmlsf", "AggregateGeoFeature"));
+        sftb.add(description, String.class);
+        sftb.add(name, String.class);
+        sftb.add(multiPointProperty, MultiPoint.class, CRS.decode("EPSG:4326"));
+        sftb.add(multiCurveProperty, MultiLineString.class, CRS.decode("EPSG:4326"));
+        sftb.add(multiSurfaceProperty, MultiPolygon.class, CRS.decode("EPSG:4326"));
+        sftb.add(doubleProperty, Double.class);
+        sftb.add(intRangeProperty, String.class);
+        sftb.add(strProperty, String.class);
+        sftb.add(featureCode, String.class);
+        sftb.add(id, String.class);
+
+        final SimpleFeatureType sft = sftb.buildFeatureType();
+
+        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
+        sfb.set(description, "description-f005");
+        sfb.set(name, "name-f005");
+        GeometryFactory factory = new GeometryFactory();
+        Point[] points = new Point[3];
+        points[0] = factory.createPoint(new Coordinate(70.83, 29.86));
+        points[1] = factory.createPoint(new Coordinate(68.87, 31.08));
+        points[2] = factory.createPoint(new Coordinate(71.96, 32.19));
+        sfb.set(multiPointProperty, factory.createMultiPoint(points));
+        sfb.set(doubleProperty, 2012.78);
+        sfb.set(strProperty, "Ma quande lingues coalesce...");
+        sfb.set(featureCode, "BK030");
+        sfb.set(id, "f005");
+
+        final SimpleFeature sf = sfb.buildFeature("id");
+
+        Literal geometry = FF.literal(factory.createMultiPoint(points));
+        PropertyName property = FF.property(multiPointProperty);
+        Equals filter = FF.equal(property, geometry);
+        boolean match = filter.evaluate(sf);
+        assertTrue(match);
+    }
 
 }

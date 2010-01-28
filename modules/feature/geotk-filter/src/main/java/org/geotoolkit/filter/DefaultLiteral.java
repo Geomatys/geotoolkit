@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.filter;
 
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
 import org.geotoolkit.util.Converters;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Literal;
+import org.opengis.geometry.Geometry;
 
 /**
  * Immutable generic Literal.
@@ -42,6 +44,20 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
     public T evaluate(Object feature) {
         return value;
     }
+
+    @Override
+    public <T> T evaluate(Object candidate, Class<T> target) {
+
+        if(value instanceof Geometry && com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(target)){
+            final Geometry geo = (Geometry) value;
+            if(geo instanceof AbstractJTSGeometry) {
+                return super.evaluate(((AbstractJTSGeometry)geo).getJTSGeometry(), target);
+            }
+        }
+        return super.evaluate(candidate, target);
+    }
+
+
 
     /**
      * {@inheritDoc }
