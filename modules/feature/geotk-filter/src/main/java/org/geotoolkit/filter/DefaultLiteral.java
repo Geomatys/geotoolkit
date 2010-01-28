@@ -51,7 +51,8 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
         if(value instanceof Geometry && com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(target)){
             final Geometry geo = (Geometry) value;
             if(geo instanceof AbstractJTSGeometry) {
-                return super.evaluate(((AbstractJTSGeometry)geo).getJTSGeometry(), target);
+                com.vividsolutions.jts.geom.Geometry jts = ((AbstractJTSGeometry)geo).getJTSGeometry();
+                return Converters.convert(jts, target);
             }
         }
         return super.evaluate(candidate, target);
