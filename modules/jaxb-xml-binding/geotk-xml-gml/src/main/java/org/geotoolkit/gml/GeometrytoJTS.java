@@ -152,11 +152,12 @@ public class GeometrytoJTS {
             return toJTS((MultiPolygonType)gml);
         } else if(gml instanceof MultiSurfaceType){
             return toJTS((MultiSurfaceType)gml);
-        }
+        
+        } else if(gml instanceof LinearRingType){
+            return toJTS((LinearRingType)gml);
 
-        else{
-            Logging.getLogger(GeometrytoJTS.class).log(Level.SEVERE, "Unssupported geometry type : " + gml);
-            return GF.createPoint(new Coordinate(0, 0));
+        } else {
+            throw new IllegalArgumentException("Unssupported geometry type : " + gml);
         }
 
     }
