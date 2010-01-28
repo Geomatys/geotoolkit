@@ -55,6 +55,7 @@ import ucar.nc2.util.CancelTask;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
+import ucar.nc2.NetcdfFile;
 
 import org.geotoolkit.image.io.Protocol;
 import org.geotoolkit.image.io.DimensionSlice;
@@ -354,7 +355,8 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
                             // Will be caught in the enclosing method.
                             throw new UndeclaredThrowableException(e);
                         }
-                        return (axes != null) ? new NetcdfAxesIterator(axes) : null;
+                        return (axes != null) ? new NetcdfAxesIterator(axes) :
+                                Collections.<Map.Entry<?,Integer>>emptySet().iterator();
                     }
                 });
             } catch (UndeclaredThrowableException e) {
@@ -639,8 +641,8 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * @throws IOException If an error occured while reading the NetCDF file.
      */
     protected boolean prepareVariable(final int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
         if (variable == null || variableIndex != imageIndex) {
+            checkImageIndex(imageIndex);
             ensureFileOpen();
             final String name = selectedNames.get(imageIndex);
             final Variable candidate = findVariable(name);
@@ -913,8 +915,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *   <tr><td>&nbsp;{@link #pluginClassName} &nbsp;</td><td>&nbsp;{@code "org.geotoolkit.image.io.plugin.NetcdfImageReader"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #vendorName}      &nbsp;</td><td>&nbsp;{@code "Geotoolkit.org"}&nbsp;</td></tr>
      *   <tr><td>&nbsp;{@link #version}         &nbsp;</td><td>&nbsp;{@link Version#GEOTOOLKIT}&nbsp;</td></tr>
-     *   <tr><td colspan="2" align="center">See
-     *   {@linkplain org.geotoolkit.image.io.FileImageReader.Spi super-class javadoc} for remaining fields</td></tr>
+     *   <tr><td colspan="2" align="center">See super-class javadoc for remaining fields</td></tr>
      * </table>
      *
      * @author Martin Desruisseaux (Geomatys)
@@ -968,16 +969,22 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         }
 
         /**
-         * Checks if the specified input seems to be a readeable NetCDF file.
-         * This method is only for indication purpose. Current implementation
-         * conservatively returns {@code false}.
+         * Checks if the specified input seems to be a readeable NetCDF file. If the given
+         * input is a stream like {@link javax.imageio.stream.ImageInputStream}, then this
+         * method conservatively returns {@code false} because testing this stream would
+         * require copying it to a temporary file.
          *
-         * @throws IOException If an error occured while reading the NetCDF file.
-         *
-         * @todo Implements a more advanced check.
+         * @param  source the object (typically a {@link File}) to be decoded.
+         * @return {@code true} if it is likely that the given source can be decoded.
+         * @throws IOException If an error occured while opening the file.
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
+            if (source instanceof CharSequence || source instanceof File ||
+                source instanceof URL || source instanceof URI)
+            {
+                return NetcdfFile.canOpen(source.toString());
+            }
             return false;
         }
 

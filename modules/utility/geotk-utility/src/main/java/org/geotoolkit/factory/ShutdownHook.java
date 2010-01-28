@@ -86,8 +86,10 @@ final class ShutdownHook extends Thread {
          * but a search on Threads.SHUTDOWN_HOOKS and Threads.executor(boolean) is helpful.
          */
         if (!Threads.shutdown()) {
-            // We can't use java.util.logging at this point since we are shutting down.
-            System.err.println("NOTE: Some background threads didn't completed.");
+            if (false) { // Disabled because it occurs most of the time during shutdown.
+                // We can't use java.util.logging at this point since we are shutting down.
+                System.err.println("NOTE: Some background threads didn't completed.");
+            }
         }
     }
 }

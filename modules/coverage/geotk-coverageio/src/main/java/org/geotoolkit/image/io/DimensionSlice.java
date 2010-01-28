@@ -584,7 +584,7 @@ public class DimensionSlice implements WarningProducer {
      *
      * @param index The slice point to read/write in the dimension represented by this object.
      *
-     * @see SpatialImageReadParam#getSourceIndexForDimension(Object[])
+     * @see SpatialImageReadParam#getSliceIndex(Object[])
      */
     public void setSliceIndex(final int index) {
         setSliceIndex(getAPI(), index, false);

@@ -218,10 +218,24 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     public String getLabel() {
         if (label == null) {
             final StringBuilder buffer = StringUtilities.separateWords(getName());
-            if (buffer.length() != 0) {
+            /*
+             * The above line separated the words on the basis of character case.
+             * For example "transfertFunctionType" became "transfert function type".
+             * This works fine for ISO 19115 naming. Now the loop below replaces '_'
+             * by a space in order to take in account the other naming convention,
+             * which is to use '_' as a word separator as in "project_name". This
+             * convention is used by NetCDF attributes.
+             */
+            final int length = buffer.length();
+            for (int i=0; i<length; i++) {
+                if (buffer.charAt(i) == '_') {
+                    buffer.setCharAt(i, ' ');
+                }
+            }
+            if (length != 0) {
                 buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
             }
-            label = buffer.toString();
+            label = buffer.toString().trim();
         }
         return label;
     }

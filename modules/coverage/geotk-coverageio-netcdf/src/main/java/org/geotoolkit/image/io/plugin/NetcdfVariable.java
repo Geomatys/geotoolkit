@@ -26,6 +26,7 @@ import ucar.ma2.DataType;
 import ucar.nc2.Attribute;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dataset.EnhanceScaleMissing;
 
 import org.geotoolkit.util.XArrays;
@@ -134,7 +135,19 @@ final class NetcdfVariable {
      *
      * @param variable The variable to extract metadata from.
      */
-    public NetcdfVariable(final VariableIF variable) {
+    public NetcdfVariable(VariableIF variable) {
+        /*
+         * If the variable is enhanced, get the original variable. This is necessary in order
+         * to get access to the low-level attributes like "scale_factor", which are hidden by
+         * VariableEnhanced.
+         */
+        while (variable instanceof VariableEnhanced) {
+            final VariableIF candidate = ((VariableEnhanced) variable).getOriginalVariable();
+            if (candidate == null) {
+                break;
+            }
+            variable = candidate;
+        }
         final DataType dataType, scaleType, rangeType;
         /*
          * Gets the scale factors, if present. Also remember its type

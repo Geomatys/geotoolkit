@@ -917,27 +917,6 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     }
 
     /**
-     * Reads the image indexed by {@code imageIndex} using a default {@link ImageReadParam}.
-     * This is a convenience method that calls <code>{@linkplain #read(int,ImageReadParam)
-     * read}(imageIndex, {@linkplain #getDefaultReadParam})</code>.
-     * <p>
-     * The default Java implementation passed a {@code null} parameter. This implementation
-     * passes the default parameter instead in order to improve consistency when a subclass
-     * overrides {@link #getDefaultReadParam}.
-     *
-     * @param imageIndex the index of the image to be retrieved.
-     * @return the desired portion of the image.
-     *
-     * @throws IllegalStateException if the input source has not been set.
-     * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws IOException if an error occurs during reading.
-     */
-    @Override
-    public BufferedImage read(final int imageIndex) throws IOException {
-        return read(imageIndex, getDefaultReadParam());
-    }
-
-    /**
      * Modifies the given {@code srcRegion} before reading an image which is vertically flipped.
      * This is a helper method for handling file formats where the <var>y</var> pixel ordinates
      * are increasing upward, while the Image I/O API expects <var>y</var> pixel ordinates to be

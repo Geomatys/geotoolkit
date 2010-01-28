@@ -115,7 +115,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * @throws ClassCastException If at least one axis is not an instance of the
      *         {@link CoordinateAxis1D} subclass.
      */
-    public static NetcdfCRS create(final CoordinateSystem netcdfCS) throws ClassCastException {
+    public static NetcdfCRS wrap(final CoordinateSystem netcdfCS) throws ClassCastException {
         if (netcdfCS == null) {
             return null;
         }
