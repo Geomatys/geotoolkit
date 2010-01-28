@@ -473,7 +473,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');
         if (identifier != null) {
             s.append("identifier: ").append(identifier).append('\n');
         }

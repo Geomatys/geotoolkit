@@ -902,6 +902,104 @@ public class CswXMLBindingTest {
         
  
     }
+
+    /**
+     * Test getRecordById request Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void getRecordByIdResponseUnMarshalingTest() throws JAXBException {
+
+         /*
+         * Test marshalling csw getRecordByIdResponse v2.0.2
+         */
+
+        SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
+        SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
+        SimpleLiteral type       = new SimpleLiteral("clearinghouse");
+
+        List<SimpleLiteral> subject = new ArrayList<SimpleLiteral>();
+        subject.add(new SimpleLiteral("oceans elevation NASA/JPL/JASON-1"));
+        subject.add(new SimpleLiteral("oceans elevation 2"));
+
+        SimpleLiteral modified   = new SimpleLiteral("2007-11-15 21:26:49");
+        SimpleLiteral Abstract   = new SimpleLiteral("Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.");
+        SimpleLiteral references = new SimpleLiteral("http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml");
+        SimpleLiteral spatial    = new SimpleLiteral("northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;");
+
+        List<BoundingBoxType> bbox = new ArrayList<BoundingBoxType>();
+        bbox.add(new WGS84BoundingBoxType(180, -66.0000000558794, -180, 65.9999999720603));
+
+        RecordType record           = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
+        BriefRecordType briefRecord = new BriefRecordType(id, title, type, bbox);
+        SummaryRecordType sumRecord = new SummaryRecordType(id, title, type, bbox, subject, null, modified, Abstract);
+
+        List<AbstractRecordType> records = new ArrayList<AbstractRecordType>();
+        records.add(record);
+        records.add(briefRecord);
+        records.add(sumRecord);
+        
+        GetRecordByIdResponse expResult = new GetRecordByIdResponseType(records, null);
+
+
+        String xml =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<csw:GetRecordByIdResponse xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:ows=\"http://www.opengis.net/ows\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" xmlns:dct=\"http://purl.org/dc/terms/\">" + '\n' +
+        "    <csw:Record>"                                                              + '\n' +
+        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
+        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
+        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
+        "        <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
+        "        <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
+        "        <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
+        "        <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
+        "        <dct:references>http://keel.esri.com/output/TOOLKIT_Browse_Metadata_P7540_T8020_D1098.xml</dct:references>" + '\n' +
+        "        <dct:spatial>northlimit=65.9999999720603; eastlimit=180; southlimit=-66.0000000558794; westlimit=-180;</dct:spatial>" + '\n' +
+        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
+        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
+        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
+        "        </ows:WGS84BoundingBox>"                                               + '\n' +
+        "    </csw:Record>"                                                             + '\n' +
+        "    <csw:BriefRecord>"                                                         + '\n' +
+        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
+        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
+        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
+        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
+        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
+        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
+        "        </ows:WGS84BoundingBox>"                                               + '\n' +
+        "    </csw:BriefRecord>"                                                        + '\n' +
+        "    <csw:SummaryRecord>"                                                              + '\n' +
+        "        <dc:identifier>{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}</dc:identifier>" + '\n' +
+        "        <dc:title>(JASON-1)</dc:title>"                                        + '\n' +
+        "        <dc:type>clearinghouse</dc:type>"                                      + '\n' +
+        "        <dc:subject>oceans elevation NASA/JPL/JASON-1</dc:subject>"            + '\n' +
+        "        <dc:subject>oceans elevation 2</dc:subject>"                           + '\n' +
+        "        <dct:modified>2007-11-15 21:26:49</dct:modified>"                      + '\n' +
+        "        <dct:abstract>Jason-1 is the first follow-on to the highly successful TOPEX/Poseidonmission that measured ocean surface topography to an accuracy of 4.2cm.</dct:abstract>" + '\n' +
+        "        <ows:WGS84BoundingBox dimensions=\"2\">"                               + '\n' +
+        "            <ows:LowerCorner>180.0 -66.0000000558794</ows:LowerCorner>"        + '\n' +
+        "            <ows:UpperCorner>-180.0 65.9999999720603</ows:UpperCorner>"        + '\n' +
+        "        </ows:WGS84BoundingBox>"                                               + '\n' +
+        "    </csw:SummaryRecord>"                                                             + '\n' +
+        "</csw:GetRecordByIdResponse>" + '\n';
+
+        
+        GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) recordUnmarshaller202.unmarshal(new StringReader(xml))).getValue();
+
+        assertTrue(result.getAbstractRecord() instanceof List);
+        List<? extends AbstractRecordType> resultList = (List<? extends AbstractRecordType>) result.getAbstractRecord();
+        List<? extends AbstractRecordType> expResultList = (List<? extends AbstractRecordType>) expResult.getAbstractRecord();
+        assertEquals(resultList.get(0), expResultList.get(0));
+        assertEquals(resultList.get(1), expResultList.get(1));
+        assertEquals(resultList.get(2), expResultList.get(2));
+        assertEquals(resultList, expResultList);
+        assertEquals(expResult.getAbstractRecord(), result.getAbstractRecord());
+        assertEquals(expResult, result);
+
+
+    }
     
     /**
      * Test simple Record Marshalling. 

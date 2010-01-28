@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordByIdResponse;
+import org.geotoolkit.util.Utilities;
 
 /**
  * Returns a representation of the matching entry. If there is no 
@@ -62,7 +63,7 @@ import org.geotoolkit.csw.xml.GetRecordByIdResponse;
 @XmlRootElement(name = "GetRecordByIdResponse")
 public class GetRecordByIdResponseType implements GetRecordByIdResponse {
 
-    @XmlElementRef(name = "AbstractRecord", namespace = "http://www.opengis.net/cat/csw/2.0.2", type = JAXBElement.class)
+    @XmlElementRef(name = "AbstractRecord", namespace = "http://www.opengis.net/cat/csw/2.0.2", type = AbstractRecordType.class)
     private List<? extends AbstractRecordType> abstractRecord;
     @XmlAnyElement(lax = true)
     private List<? extends Object> any;
@@ -126,5 +127,27 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
         }
 
         return s.toString();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof GetRecordByIdResponseType) {
+            final GetRecordByIdResponseType that = (GetRecordByIdResponseType) object;
+            return Utilities.equals(this.abstractRecord, that.abstractRecord) &&
+                   Utilities.equals(this.any,            that.any);
+        }
+        return false;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.abstractRecord != null ? this.abstractRecord.hashCode() : 0);
+        hash = 97 * hash + (this.any != null ? this.any.hashCode() : 0);
+        return hash;
     }
 }

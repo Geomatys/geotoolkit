@@ -138,9 +138,10 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         }
         this.subject = subject;
         
-        this.format = new ArrayList<SimpleLiteral>();
-        if (format != null)
+        if (format != null) {
+            this.format = new ArrayList<SimpleLiteral>();
             this.format.add(format);
+        }
         
         this.modified = new ArrayList<SimpleLiteral>();
         if (modified != null)
