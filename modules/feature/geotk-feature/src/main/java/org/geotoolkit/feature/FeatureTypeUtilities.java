@@ -251,6 +251,10 @@ public class FeatureTypeUtilities {
         for (int i = 0; i < properties.length; i++) {
             types[i] = featureType.getDescriptor(properties[i]);
 
+            if (types[i] == null) {
+                throw new IllegalArgumentException("No property "+ properties[i] +
+                        " for feature type :\n"+ featureType.toString());
+            }
             if ((override != null) && types[i] instanceof GeometryDescriptor) {
 
                 final AttributeTypeBuilder ab = new AttributeTypeBuilder();
