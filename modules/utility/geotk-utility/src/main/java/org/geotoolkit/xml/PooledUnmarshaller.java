@@ -75,11 +75,11 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
      *
      * @param  key The property to reset.
      * @param  value The initial value to give to the property.
-     * @throws PropertyException If an error occured while restoring a property.
+     * @throws JAXBException If an error occured while restoring a property.
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    protected void reset(final Object key, final Object value) throws PropertyException {
+    protected void reset(final Object key, final Object value) throws JAXBException {
         if (key instanceof String) {
             unmarshaller.setProperty((String) key, value);
         } else if (AttachmentUnmarshaller.class.equals(key)) {
@@ -88,6 +88,8 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
             unmarshaller.setSchema((Schema) value);
         } else if (Listener.class.equals(key)) {
             unmarshaller.setListener((Listener) value);
+        } else if (ValidationEventHandler.class.equals(key)) {
+            unmarshaller.setEventHandler((ValidationEventHandler) value);
         } else {
             unmarshaller.setAdapter((Class) key, (XmlAdapter) value);
         }

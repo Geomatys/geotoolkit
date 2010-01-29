@@ -71,11 +71,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
      *
      * @param  key The property to reset.
      * @param  value The initial value to give to the property.
-     * @throws PropertyException If an error occured while restoring a property.
+     * @throws JAXBException If an error occured while restoring a property.
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
-    protected void reset(final Object key, Object value) throws PropertyException {
+    protected void reset(final Object key, Object value) throws JAXBException {
         if (key instanceof String) {
             final String k = (String) key;
             if (value == null && (k.endsWith(".xmlHeaders") || k.equals(JAXB_SCHEMA_LOCATION))) {
@@ -88,6 +88,8 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
             marshaller.setSchema((Schema) value);
         } else if (Listener.class.equals(key)) {
             marshaller.setListener((Listener) value);
+        } else if (ValidationEventHandler.class.equals(key)) {
+            marshaller.setEventHandler((ValidationEventHandler) value);
         } else {
             marshaller.setAdapter((Class) key, (XmlAdapter) value);
         }
