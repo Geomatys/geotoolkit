@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
@@ -492,14 +493,21 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          */
         @Override
         protected void done() {
-            if (worker == this) {
-                worker = null;
-                try {
-                    get();
-                } catch (Exception e) {
-                    setImage((RenderedImage) null);
-                    processBackgroundMessages(this, Collections.singletonList(e.getLocalizedMessage()));
+            if (worker == this) try {
+                get();
+            } catch (final Exception e) {
+                Throwable cause = e;
+                if (e instanceof ExecutionException) {
+                    cause = e.getCause();
+                    if (cause == null) {
+                        cause = e;
+                    }
                 }
+                setImage((RenderedImage) null);
+                processBackgroundMessages(this, Collections.singletonList(e.getLocalizedMessage()));
+                viewer.setError(cause);
+            } finally {
+                worker = null; // Must be last.
             }
         }
     }

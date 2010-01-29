@@ -242,6 +242,12 @@ final class NetcdfMetadata extends SpatialMetadata {
                         case LONG:    // Fall through
                         case DOUBLE:  return DATATYPE_DOUBLE;
                     }
+                } else {
+                    final String name = attribute.getNodeName();
+                    // TODO: Use switch on String when we will be allowed to use JDK 7.
+                    if (NetcdfVariable.VALID_MIN.equals(name) || NetcdfVariable.VALID_MAX.equals(name)) {
+                        return DATATYPE_DOUBLE;
+                    }
                 }
             }
             return DATATYPE_STRING;
@@ -281,8 +287,8 @@ final class NetcdfMetadata extends SpatialMetadata {
                 node.setAttribute("data_type", String.valueOf(var.getDataType()));
                 if (var instanceof EnhanceScaleMissing) {
                     final EnhanceScaleMissing eh = (EnhanceScaleMissing) netcdf;
-                    node.setAttribute("valid_min", String.valueOf(eh.getValidMin()));
-                    node.setAttribute("valid_max", String.valueOf(eh.getValidMax()));
+                    node.setAttribute(NetcdfVariable.VALID_MIN, String.valueOf(eh.getValidMin()));
+                    node.setAttribute(NetcdfVariable.VALID_MAX, String.valueOf(eh.getValidMax()));
                 }
             } else {
                 buildTree(((NetcdfFile) netcdf).getRootGroup(), node);

@@ -41,27 +41,21 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.metadata.MetadataTreeNode;
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.swing.ComboBoxRenderer;
 
 
 /**
  * A panel showing the content of an {@link IIOMetadata} instance. This panel contains three parts:
  * <p>
  * <ul>
- *  <li>At the top, a few fields allow to select which metadata to display:
+ *  <li>At the top, a field allowing to select which metadata to display:
  *   <ul>
- *    <li>The metadata format, typically one of:
- *     <ul>
- *      <li>{@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}</li>
- *      <li>{@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}</li>
- *     </ul>
+ *    <li>The metadata format, typically
+ *        {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} or
+ *        {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}.
  *    </li>
- *    <li>The metadata part to display:
- *     <ul>
- *      <li><cite>Stream</cite> metadata which apply to a file as a whole.</li>
- *      <li>At least one <cite>image</cite> metadata which apply to an individual image in the
- *          file. More than one image metadata may be present if the file contains many images.</li>
- *     </ul>
- *    </li>
+ *    <li>The metadata part to display: <cite>stream</cite> metadata or one of the
+ *        <cite>image</cite> metadata.</li>
  *   </ul>
  *  </li>
  *  <li>At the center, the metadata as a {@linkplain JXTreeTable tree table}.
@@ -91,7 +85,7 @@ import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.08
  *
  * @see MetadataTreeTable
  *
@@ -106,13 +100,6 @@ public class IIOMetadataPanel extends JPanel {
      * {@value javax.imageio.metadata.IIOMetadataFormatImpl#standardMetadataFormatName}.
      */
     private final DefaultComboBoxModel formatChoices;
-
-    /**
-     * The choices of metadata parts. There is typically a <cite>stream</cite> metadata
-     * and at least one <cite>image</cite> metadata. More image metadata may be present
-     * if a stream contains many images.
-     */
-    private final DefaultComboBoxModel partChoices;
 
     /**
      * The properties of the currently selected metadata node.
@@ -140,23 +127,20 @@ public class IIOMetadataPanel extends JPanel {
          * Add the control button on top of the metadata table.
          */
         formatChoices = new DefaultComboBoxModel();
-        partChoices   = new DefaultComboBoxModel();
         final JComboBox formats = new JComboBox(formatChoices);
-        final JComboBox parts   = new JComboBox(partChoices);
-        formats.setName("Formats"); // This name is expected by Controller.
-        parts  .setName("Parts");
+        ComboBoxRenderer.install(formats);
+        formats.setName("Formats");
         if (true) {
             final JPanel controls = new JPanel(new GridBagLayout());
             final GridBagConstraints c = new GridBagConstraints();
             final Insets ci = c.insets;
             ci.left = 12;
+            c.gridy=0; ci.top=6; ci.bottom=0;
             c.gridx=0; c.weightx=0; c.anchor=GridBagConstraints.WEST;
-            c.gridy=0; ci.top=6; ci.bottom=0; controls.add(label(resources, Vocabulary.Keys.FORMAT, formats), c);
-            c.gridy++; ci.top=0; ci.bottom=6; controls.add(label(resources, Vocabulary.Keys.PART,   parts),   c);
+            controls.add(label(resources, Vocabulary.Keys.FORMAT, formats), c);
             c.insets.right = 12; c.insets.left = 0;
             c.gridx=1; c.weightx=1; c.fill=GridBagConstraints.BOTH;
-            c.gridy=0; ci.top=6; ci.bottom=0; controls.add(formats, c);
-            c.gridy++; ci.top=0; ci.bottom=6; controls.add(parts,   c);
+            controls.add(formats, c);
             add(controls, BorderLayout.NORTH);
         }
         /*
@@ -180,7 +164,6 @@ public class IIOMetadataPanel extends JPanel {
          */
         controller = new Controller(tables);
         formats.addActionListener(controller);
-        parts  .addActionListener(controller);
     }
 
     /**
@@ -198,7 +181,7 @@ public class IIOMetadataPanel extends JPanel {
      * instance of this class is created for an instance of {@code IIOMetdataPanel}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.05
+     * @version 3.08
      *
      * @since 3.05
      * @module
@@ -219,13 +202,6 @@ public class IIOMetadataPanel extends JPanel {
          * The table which is currently visible, or {@code null} if none.
          */
         private IIOMetadataTreeTable visibleTable;
-
-        /**
-         * {@code true} if the metadata selection is in process of being adjusted.
-         * This is used for ignoring redundant events and process only when all
-         * fields have been assigned appropriate values for the new selection.
-         */
-        private transient boolean isAdjusting;
 
         /**
          * Creates a new instance.
@@ -249,56 +225,31 @@ public class IIOMetadataPanel extends JPanel {
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
-            if (isAdjusting) {
-                return;
-            }
             final JComboBox choices = (JComboBox) event.getSource();
             final IIOMetadataChoice oldFormat = selectedFormat;
-            /*
-             * The case when a new format is selected.
-             */
-            if ("Formats".equals(choices.getName())) {
-                final IIOMetadataChoice newFormat = (IIOMetadataChoice) choices.getSelectedItem();
-                if (newFormat == null) {
-                    /*
-                     * 'f' may be null if the user selected the choice which was already selected,
-                     * which have the effect of unselecting it. We want the current format to stay
-                     * selected.
-                     */
-                    choices.setSelectedItem(oldFormat);
-                    return;
-                }
-                if (newFormat == oldFormat) {
-                    return;
-                }
-                selectedFormat = newFormat;
-                isAdjusting = true;
-                try {
-                    newFormat.fillPartChoices(partChoices);
-                } finally {
-                    isAdjusting = false;
-                }
-            } else {
+            final Object selected = choices.getSelectedItem();
+            if (!(selected instanceof IIOMetadataChoice)) {
                 /*
-                 * The case when the format still the same and a new part is selected.
-                 * Note that 'oldFormat' can not be null since this block can be run
-                 * only after some items have been made available by the block above.
+                 * This happen if the user selected the separator.
                  */
-                final String oldPart = oldFormat.getSelectedPart();
-                final String newPart = (String) choices.getSelectedItem();
-                if (newPart == null) {
-                    choices.setSelectedItem(oldPart);
-                    return;
-                }
-                if (newPart == oldPart) {
-                    return;
-                }
-                oldFormat.setSelectedPart(newPart);
+                choices.setSelectedItem(oldFormat);
+                return;
             }
-            /*
-             * Make visible the new format or the new part.
-             */
-            visibleTable = selectedFormat.show(tables, this, visibleTable);
+            final IIOMetadataChoice newFormat = (IIOMetadataChoice) selected;
+            if (newFormat == null) {
+                /*
+                 * May be null if the user selected the choice which was already selected,
+                 * which have the effect of unselecting it. We want the current format to
+                 * stay selected.
+                 */
+                choices.setSelectedItem(oldFormat);
+                return;
+            }
+            if (newFormat == oldFormat) {
+                return;
+            }
+            selectedFormat = newFormat;
+            visibleTable = newFormat.show(tables, this, visibleTable);
             showProperties(visibleTable.selectedNode);
         }
 
@@ -376,7 +327,6 @@ public class IIOMetadataPanel extends JPanel {
      */
     public void clear() {
         formatChoices.removeAllElements();
-        partChoices  .removeAllElements();
         controller   .reset();
     }
 
@@ -385,7 +335,7 @@ public class IIOMetadataPanel extends JPanel {
      * Note that this method is typically invoked alone; there is no need to invoke
      * {@link #addMetadataFormat addMetadataFormat} prior this method.
      *
-     * @param stream The stream metadata (mandatory).
+     * @param stream The stream metadata, or {@code null} if none.
      * @param image  The image metadata for each image in a file.
      */
     public void addMetadata(final IIOMetadata stream, final IIOMetadata... image) {
@@ -399,7 +349,15 @@ public class IIOMetadataPanel extends JPanel {
         }
         final Locale locale = getLocale();
         for (final Map.Entry<String, List<IIOMetadata>> entry : metadataForNames.entrySet()) {
-            formatChoices.addElement(new IIOMetadataChoice(locale, entry.getKey(), stream, entry.getValue()));
+            final String formatName = entry.getKey();
+            if (formatChoices.getSize() != 0) {
+                formatChoices.addElement(ComboBoxRenderer.SEPARATOR);
+            }
+            int imageIndex = 0;
+            for (final IIOMetadata metadata : entry.getValue()) {
+                formatChoices.addElement(new IIOMetadataChoice(locale, formatName, metadata,
+                        (metadata == stream) ? -1 : imageIndex++));
+            }
         }
     }
 
@@ -412,14 +370,14 @@ public class IIOMetadataPanel extends JPanel {
             final Map<String, List<IIOMetadata>> metadataForNames)
     {
         if (metadata != null) {
-            final String[] formats = metadata.getMetadataFormatNames();
-            moveAtEnd(formats, IIOMetadataFormatImpl.standardMetadataFormatName);
-            moveAtEnd(formats, metadata.getNativeMetadataFormatName());
-            for (final String format : formats) {
-                List<IIOMetadata> list = metadataForNames.get(format);
+            final String[] formatNames = metadata.getMetadataFormatNames();
+            moveAtEnd(formatNames, IIOMetadataFormatImpl.standardMetadataFormatName);
+            moveAtEnd(formatNames, metadata.getNativeMetadataFormatName());
+            for (final String formatName : formatNames) {
+                List<IIOMetadata> list = metadataForNames.get(formatName);
                 if (list == null) {
                     list = new ArrayList<IIOMetadata>();
-                    metadataForNames.put(format, list);
+                    metadataForNames.put(formatName, list);
                 }
                 list.add(metadata);
             }
@@ -447,12 +405,16 @@ public class IIOMetadataPanel extends JPanel {
      * metadata formats. The descriptions contain no metadata value, only the name of the
      * nodes together with a few additional information (type, valid values, <i>etc.</i>).
      *
-     * @param stream The stream metadata format (mandatory).
+     * @param stream The stream metadata format, or {@code null} if none.
      * @param image  The image metadata format, or {@code null} if none.
      */
     public void addMetadataFormat(final IIOMetadataFormat stream, final IIOMetadataFormat image) {
-        if (stream != null || image != null) {
-            formatChoices.addElement(new IIOMetadataChoice(getLocale(), stream, image));
+        final Locale locale = getLocale();
+        if (stream != null) {
+            formatChoices.addElement(new IIOMetadataChoice(locale, stream, true));
+        }
+        if (image != null) {
+            formatChoices.addElement(new IIOMetadataChoice(locale, image, false));
         }
     }
 

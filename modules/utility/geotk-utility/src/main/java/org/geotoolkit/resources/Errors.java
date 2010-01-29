@@ -796,6 +796,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_SOURCE_AXIS_$1 = 145;
 
         /**
+         * No attribute named "{0}" has been found.
+         */
+        public static final int NO_SUCH_ATTRIBUTE_$1 = 226;
+
+        /**
          * No object of type "{0}" has been found for code "{1}".
          */
         public static final int NO_SUCH_AUTHORITY_CODE_$2 = 146;
@@ -804,6 +809,11 @@ public final class Errors extends IndexedResourceBundle {
          * No code "{0}" from authority "{1}" found for object of type "{2}".
          */
         public static final int NO_SUCH_AUTHORITY_CODE_$3 = 147;
+
+        /**
+         * No element named "{0}" has been found.
+         */
+        public static final int NO_SUCH_ELEMENT_$1 = 227;
 
         /**
          * No two-dimensional transform available for this geometry.

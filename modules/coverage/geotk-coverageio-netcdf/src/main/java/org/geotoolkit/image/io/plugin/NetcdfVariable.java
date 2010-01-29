@@ -56,6 +56,18 @@ import org.geotoolkit.util.XArrays;
  */
 final class NetcdfVariable {
     /**
+     * NetCDF attributes processed by this class.
+     */
+    static final String
+            VALID_MIN     = "valid_min",
+            VALID_MAX     = "valid_max",
+            VALID_RANGE   = "valid_range",
+            SCALE_FACTOR  = "scale_factor",
+            ADD_OFFSET    = "add_offset",
+            MISSING_VALUE = "missing_value",
+            FILL_VALUE    = "_FillValue";
+
+    /**
      * The data type to accept in images. Used for automatic detection of which variables
      * to assign to images.
      *
@@ -155,8 +167,8 @@ final class NetcdfVariable {
          */
         imageType  = getRawDataType(variable);
         dataType   = widestType = variable.getDataType();
-        scale      = attribute(variable, "scale_factor");
-        offset     = attribute(variable, "add_offset");
+        scale      = attribute(variable, SCALE_FACTOR);
+        offset     = attribute(variable, ADD_OFFSET);
         scaleType  = widestType;
         widestType = dataType; // Reset before we scan the other attributes.
         /*
@@ -165,7 +177,7 @@ final class NetcdfVariable {
          */
         double minimum = Double.NaN;
         double maximum = Double.NaN;
-        Attribute attribute = variable.findAttributeIgnoreCase("valid_range");
+        Attribute attribute = variable.findAttributeIgnoreCase(VALID_RANGE);
         if (attribute != null) {
             widestType = widest(attribute.getDataType(), widestType);
             Number value = attribute.getNumericValue(0);
@@ -178,10 +190,10 @@ final class NetcdfVariable {
             }
         }
         if (Double.isNaN(minimum)) {
-            minimum = attribute(variable, "valid_min");
+            minimum = attribute(variable, VALID_MIN);
         }
         if (Double.isNaN(maximum)) {
-            maximum = attribute(variable, "valid_max");
+            maximum = attribute(variable, VALID_MAX);
         }
         rangeType  = widestType;
         widestType = dataType; // Reset before we scan the other attributes.
@@ -212,8 +224,8 @@ final class NetcdfVariable {
          * duplicated values.
          */
         widestType = dataType;
-        attribute = variable.findAttributeIgnoreCase("missing_value");
-        final double fillValue    = attribute(variable, "_FillValue");
+        attribute = variable.findAttributeIgnoreCase(MISSING_VALUE);
+        final double fillValue    = attribute(variable, FILL_VALUE);
         final int    fillCount    = Double.isNaN(fillValue) ? 0 : 1;
         final int    missingCount = (attribute != null) ? attribute.getLength() : 0;
         final double[] missings   = new double[fillCount + missingCount];

@@ -640,6 +640,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int GEOPHYSICS = 116;
 
         /**
+         * Geospatial
+         */
+        public static final int GEOSPATIAL = 310;
+
+        /**
          * Greenwich Mean Time (GMT)
          */
         public static final int GMT = 117;
@@ -1140,6 +1145,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int PIXELS = 210;
 
         /**
+         * Pixel size
+         */
+        public static final int PIXEL_SIZE = 312;
+
+        /**
          * {0} points on a {1} × {2} grid.
          */
         public static final int POINT_COUNT_IN_GRID_$3 = 211;
@@ -1345,6 +1355,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int SPHERICAL_LONGITUDE = 251;
 
         /**
+         * Standard
+         */
+        public static final int STANDARD = 311;
+
+        /**
          * Started
          */
         public static final int STARTED = 252;
@@ -1528,6 +1543,11 @@ public final class Vocabulary extends IndexedResourceBundle {
          * Value
          */
         public static final int VALUE = 286;
+
+        /**
+         * Value range
+         */
+        public static final int VALUE_RANGE = 313;
 
         /**
          * Vendor

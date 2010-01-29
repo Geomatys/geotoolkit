@@ -116,13 +116,32 @@ public class MetadataHelper {
     }
 
     /**
+     * Returns the range of geophysics values defined in the given {@code SampleDimension} object.
+     * This method tries to build the range from the
+     * {@linkplain SampleDimension#getMinValue() minimum value},
+     * {@linkplain SampleDimension#getMaxValue() maximum value},
+     * {@linkplain SampleDimension#getScaleFactor() scale factor},
+     * {@linkplain SampleDimension#getOffset() offset} and the
+     * {@linkplain SampleDimension#getFillSampleValues() fill sample values} metadata attributes.
+     *
+     * @param  dimension The object from which to extract the range.
+     * @return The range of geophysics values, or {@code null}.
+     *
+     * @since 3.08
+     */
+    public NumberRange<?> getValidValues(final SampleDimension dimension) {
+        if (dimension == null) {
+            return null;
+        }
+        return getSampleValues(dimension, dimension.getFillSampleValues(), true);
+    }
+
+    /**
      * Returns the range of sample values defined in the given {@code SampleDimension} object. This
      * method first looks at the value returned by {@link SampleDimension#getValidSampleValues()}.
      * If the later returns {@code null}, then this method tries to build the range from the
-     * {@linkplain SampleDimension#getMinValue() minimum value}
-     * {@linkplain SampleDimension#getMaxValue() maximum value}
-     * {@linkplain SampleDimension#getScaleFactor() scale factor},
-     * {@linkplain SampleDimension#getOffset() offset} and the
+     * {@linkplain SampleDimension#getMinValue() minimum value},
+     * {@linkplain SampleDimension#getMaxValue() maximum value} and the
      * {@linkplain SampleDimension#getFillSampleValues() fill sample values} metadata attributes.
      * <p>
      * The fill sample values are used in order to determine if the minimum and maximum values
@@ -154,26 +173,38 @@ public class MetadataHelper {
         if (dimension != null) {
             range = dimension.getValidSampleValues();
             if (range == null) {
-                Double minimum = dimension.getMinValue();
-                Double maximum = dimension.getMaxValue();
-                boolean isMinInclusive = true;
-                boolean isMaxInclusive = true;
-                if (fillSampleValues != null) {
-                    isMinInclusive = inclusive(minimum, fillSampleValues);
-                    isMaxInclusive = inclusive(maximum, fillSampleValues);
-                }
-                Double n = dimension.getScaleFactor();
-                final double scale = (n != null) ? n : 1;
-                n = dimension.getOffset();
-                final double offset = (n != null) ? n : 0;
-                if (scale != 1 || offset != 0) {
-                    if (minimum != null) minimum = minimum * scale + offset;
-                    if (maximum != null) maximum = maximum * scale + offset;
-                }
-                range = NumberRange.createBestFit(minimum, isMinInclusive, maximum, isMaxInclusive);
+                range = getSampleValues(dimension, fillSampleValues, false);
             }
         }
         return range;
+    }
+
+    /**
+     * Calculates the range of values. This is the range of geophysics values if
+     * {@code geophysics} if {@code true}, or the range of sample values otherwise.
+     */
+    private NumberRange<?> getSampleValues(final SampleDimension dimension,
+            final double[] fillSampleValues, final boolean geophysics)
+    {
+        Double minimum = dimension.getMinValue();
+        Double maximum = dimension.getMaxValue();
+        boolean isMinInclusive = true;
+        boolean isMaxInclusive = true;
+        if (fillSampleValues != null) {
+            isMinInclusive = inclusive(minimum, fillSampleValues);
+            isMaxInclusive = inclusive(maximum, fillSampleValues);
+        }
+        if (geophysics) {
+            Double n = dimension.getScaleFactor();
+            final double scale = (n != null) ? n : 1;
+            n = dimension.getOffset();
+            final double offset = (n != null) ? n : 0;
+            if (scale != 1 || offset != 0) {
+                if (minimum != null) minimum = minimum * scale + offset;
+                if (maximum != null) maximum = maximum * scale + offset;
+            }
+        }
+        return NumberRange.createBestFit(minimum, isMinInclusive, maximum, isMaxInclusive);
     }
 
     /**

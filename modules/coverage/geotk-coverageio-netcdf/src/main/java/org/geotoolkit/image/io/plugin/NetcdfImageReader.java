@@ -69,6 +69,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -983,7 +984,12 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
             if (source instanceof CharSequence || source instanceof File ||
                 source instanceof URL || source instanceof URI)
             {
-                return NetcdfFile.canOpen(source.toString());
+                try {
+                    return NetcdfFile.canOpen(source.toString());
+                } catch (NoClassDefFoundError e) {
+                    // May happen if an optional JAR file (e.g. the VisAD library) is not present.
+                    Logging.unexpectedException(LOGGER, Spi.class, "canDecodeInput", e);
+                }
             }
             return false;
         }

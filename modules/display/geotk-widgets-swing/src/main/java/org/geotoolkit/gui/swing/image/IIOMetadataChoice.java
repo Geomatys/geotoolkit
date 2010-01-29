@@ -17,28 +17,26 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import java.util.List;
 import java.util.Locale;
 import java.awt.CardLayout;
 import java.io.Serializable;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.TreeSelectionListener;
-import javax.imageio.metadata.IIOMetadataFormat;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataFormat;
+import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.resources.Vocabulary;
 
 
 /**
- * A choice in the "Format" combo box. An instance of {@code IIOMetadataChoice} contains the
- * <cite>stream</cite> metadata with an arbitrary amount of the <cite>image</cite> metadata.
- * At least one of stream metadata and image metadata shall be non-null.
+ * A choice in the "Format" combo box.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.08
  *
  * @since 3.05
  * @module
@@ -52,149 +50,76 @@ final class IIOMetadataChoice implements Serializable {
     private final String label;
 
     /**
-     * {@code true} if this object contains a stream metadata in addition
-     * of image metadata.
+     * The image index of the metadata, or -1 for stream metadata.
      */
-    private final boolean hasStreamMetadata;
+    private final int imageIndex;
 
     /**
-     * The trees for the stream metadata (if any) and each image metadata.
-     * All elements in this array are non-null.
+     * The trees for the metadata.
      */
-    private final MetadataTreeTable[] metadata;
+    private final MetadataTreeTable metadataTable;
 
     /**
-     * The tables for the stream metadata (if any) and each image metadata.
-     * Elements in this array are {@code null} if not yet created.
+     * The table for the metadata. Created when first needed.
      */
-    private final IIOMetadataTreeTable[] tables;
-
-    /**
-     * The name of the various metadata parts (stream metadata, image metadata, <i>etc/</i>).
-     */
-    private final String[] parts;
-
-    /**
-     * The index of the selected element in {@link #parts}.
-     */
-    private int selectedPart;
+    private transient IIOMetadataTreeTable metadataPanel;
 
     /**
      * Creates a new instance for the given {@link IIOMetadataFormat}.
-     * At least one of {@code stream} and {@code image} shall be non-null.
      *
-     * @param locale The locale to use for formatting the node names.
-     * @param stream The stream metadata format, or {@code null} if none.
-     * @param image  The image metadata format, or {@code null} if none.
+     * @param locale   The locale to use for formatting the node names.
+     * @param metadata The metadata format.
+     * @param isStream {@code true} for stream metadata, or {@code false} for image metadata.
      */
-    IIOMetadataChoice(final Locale locale, final IIOMetadataFormat stream, final IIOMetadataFormat image) {
-        hasStreamMetadata = (stream != null);
-        int count = hasStreamMetadata ? 1 : 0;
-        if (image != null) {
-            count++;
-        }
-        metadata = new MetadataTreeTable   [count];
-        tables   = new IIOMetadataTreeTable[count];
-        parts    = new String              [count];
-        final Vocabulary resources = Vocabulary.getResources(locale);
-        count = 0;
-        if (hasStreamMetadata) {
-            final MetadataTreeTable tree = new MetadataTreeTable(stream);
-            tree.setLocale(locale);
-            metadata[count] = tree;
-            parts[count++] = resources.getString(Vocabulary.Keys.FILE);
-        }
-        if (image != null) {
-            final MetadataTreeTable tree = new MetadataTreeTable(image);
-            tree.setLocale(locale);
-            metadata[count] = tree;
-            parts[count++] = resources.getString(Vocabulary.Keys.IMAGES);
-        }
-        label = label(metadata);
+    IIOMetadataChoice(final Locale locale, final IIOMetadataFormat metadata, final boolean isStream) {
+        metadataTable = new MetadataTreeTable(metadata);
+        metadataTable.setLocale(locale);
+        imageIndex = isStream ? -1 : 0;
+        label = label(locale, true);
     }
 
     /**
-     * Creates a new instance for the given {@link IIOMetadata}. The metadata list can not
-     * be empty. If the list contains the stream metadata, then it must be first in the list.
+     * Creates a new instance for the given {@link IIOMetadata}.
      *
-     * @param locale The locale to use for formatting the node names.
-     * @param format The format name.
-     * @param stream The stream metadata, or {@code null} if none.
-     * @param all    All metadata, <strong>including the stream one</strong>.
+     * @param locale     The locale to use for formatting the node names.
+     * @param format     The format name.
+     * @param metadata   The metadata.
+     * @param imageIndex The image index of the metadata, or -1 for stream metadata.
      */
     IIOMetadataChoice(final Locale locale, final String format,
-            final IIOMetadata stream, final List<IIOMetadata> all)
+            final IIOMetadata metadata, final int imageIndex)
     {
-        final int count = all.size();
-        hasStreamMetadata = (all.get(0) == stream);
-        metadata = new MetadataTreeTable   [count];
-        tables   = new IIOMetadataTreeTable[count];
-        parts    = new String              [count];
-        final Vocabulary resources = Vocabulary.getResources(locale);
-        for (int i=0; i<count; i++) {
-            final IIOMetadata im = all.get(i);
-            final MetadataTreeTable tree = new MetadataTreeTable(im.getMetadataFormat(format));
-            tree.setMetadata(im);
-            tree.setLocale(locale);
-            tree.setSimplificationAllowed(true);
-            metadata[i] = tree;
-            final String name;
-            if (im == stream) {
-                name = resources.getString(Vocabulary.Keys.FILE);
-            } else {
-                int n = i;
-                if (!hasStreamMetadata) {
-                    n++; // Number images starting with 1.
-                }
-                name = resources.getString(Vocabulary.Keys.IMAGE_$1, n);
-            }
-            parts[i] = name;
-        }
-        label = label(metadata);
+        metadataTable = new MetadataTreeTable(metadata.getMetadataFormat(format));
+        metadataTable.setMetadata(metadata);
+        metadataTable.setLocale(locale);
+        metadataTable.setSimplificationAllowed(true);
+        this.imageIndex = imageIndex;
+        label = label(locale, false);
     }
 
     /**
      * Returns the label to use in the Swing widget,
      * which is inferred from the metadata format.
      */
-    private static String label(final MetadataTreeTable[] metadata) {
-        return metadata[0].getMetadataFormat().getRootName().replace('_', ' ').trim();
-    }
-
-    /**
-     * Returns the name of the currently selected metadata part (stream, image, <i>etc.</i>).
-     */
-    final String getSelectedPart() {
-        return parts[selectedPart];
-    }
-
-    /**
-     * Fills the given combo box model with the list of metadata parts allowed for this format choice.
-     * This method is invoked when the {@code IIOMetadataChoice} to show in {@link IIOMetadataPanel}
-     * changed, but not when only the metadata part to show changed.
-     *
-     * @param  partChoices The combox box model in which to put the list of available metadata parts.
-     */
-    final void fillPartChoices(final DefaultComboBoxModel partChoices) {
-        partChoices.removeAllElements();
-        for (final String part : parts) {
-            partChoices.addElement(part);
+    private String label(final Locale locale, final boolean isFormat) {
+        final Vocabulary resources = Vocabulary.getResources(locale);
+        final String part;
+        if (imageIndex < 0) {
+            part = resources.getString(Vocabulary.Keys.FILE);
+        } else if (isFormat) {
+            part = resources.getString(Vocabulary.Keys.IMAGES);
+        } else {
+            part = resources.getString(Vocabulary.Keys.IMAGE_$1, imageIndex + 1);
         }
-        partChoices.setSelectedItem(getSelectedPart());
-    }
-
-    /**
-     * Sets the selected part to the given value. This method should be invoked before
-     * {@link #show} in order to make a new metadata part visible.
-     */
-    final void setSelectedPart(final String part) {
-        for (int i=0; i<parts.length; i++) {
-            if (part.equals(parts[i])) {
-                selectedPart = i;
-                return;
-            }
+        String rootName = metadataTable.getMetadataFormat().getRootName();
+        if (rootName.equals(SpatialMetadataFormat.FORMAT_NAME)) {
+            rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
+        } else if (rootName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {
+            rootName = resources.getString(Vocabulary.Keys.STANDARD);
+        } else {
+            rootName = rootName.replace('_', ' ').trim();
         }
-        throw new IllegalArgumentException(part); // Should never happen.
+        return "<html><b>" + rootName + "</b> \u00A0\u2014\u00A0 " + part + "</html>";
     }
 
     /**
@@ -213,30 +138,25 @@ final class IIOMetadataChoice implements Serializable {
     final IIOMetadataTreeTable show(final JComponent panel, final TreeSelectionListener listener,
             final IIOMetadataTreeTable visibleTable) throws IndexOutOfBoundsException
     {
-        final int index = selectedPart;
-        IIOMetadataTreeTable table = tables[index];
-        if (table == null) {
+        if (metadataPanel == null) {
             /*
              * A new table needs to be created. Constructs an identifier to be used
              * for locating the JTable in the java.awt.Container with CardLayout.
              */
-            final MetadataTreeTable metadata = this.metadata[index];
-            String identifier = metadata.getMetadataFormat().getRootName();
-            final int offset = hasStreamMetadata ? 1 : 0;
-            if (index >= offset) {
-                identifier = identifier + ':' + (index - offset + 1);
+            String identifier = metadataTable.getMetadataFormat().getRootName();
+            if (imageIndex >= 0) {
+                identifier = identifier + ':' + imageIndex;
             }
             /*
              * Create the table and register the listener, which is for displaying
              * the properties of the selected node in the widget bottom.
              */
-            table = new IIOMetadataTreeTable(identifier, metadata.getRootNode(), visibleTable);
-            panel.add(new JScrollPane(table), identifier);
-            table.getTreeSelectionModel().addTreeSelectionListener(listener);
-            tables[index] = table;
+            metadataPanel = new IIOMetadataTreeTable(identifier, metadataTable.getRootNode(), visibleTable);
+            panel.add(new JScrollPane(metadataPanel), identifier);
+            metadataPanel.getTreeSelectionModel().addTreeSelectionListener(listener);
         }
-        ((CardLayout) panel.getLayout()).show(panel, table.identifier);
-        return table;
+        ((CardLayout) panel.getLayout()).show(panel, metadataPanel.identifier);
+        return metadataPanel;
     }
 
     /**

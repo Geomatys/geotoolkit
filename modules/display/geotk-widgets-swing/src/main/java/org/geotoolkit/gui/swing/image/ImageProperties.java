@@ -362,6 +362,7 @@ public class ImageProperties extends JPanel implements Dialog {
         dataType   .setText(null);
         sampleModel.setText(null);
         colorModel .setText(null);
+        colorSpace .setText(null);
         colorRamp  .setColors((IndexColorModel)null);
     }
 
