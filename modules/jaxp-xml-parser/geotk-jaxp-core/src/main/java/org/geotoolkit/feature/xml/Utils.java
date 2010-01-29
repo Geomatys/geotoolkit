@@ -242,7 +242,7 @@ public class Utils {
 
         } else if (obj instanceof java.sql.Date) {
             String dValue  = dateFormatter.format((java.sql.Date) obj);
-            return dValue;
+            return dValue + 'Z';
 
         } else if (obj instanceof java.util.Date) {
             String dValue  = dateFormatter.format((java.util.Date) obj);

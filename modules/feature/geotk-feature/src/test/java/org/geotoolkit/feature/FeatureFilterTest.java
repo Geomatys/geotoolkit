@@ -18,7 +18,9 @@ package org.geotoolkit.feature;
 
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
@@ -39,6 +41,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.Equals;
+import org.opengis.filter.spatial.Intersects;
 
 import static org.junit.Assert.*;
 
@@ -263,6 +266,12 @@ public class FeatureFilterTest {
     @Test
     public void testSpatialFilter() throws Exception {
 
+        /*********************************************************************************************
+         *                                                                                           *
+         *                            AggregateGeoFeature                                            *
+         *                                                                                           *
+         *********************************************************************************************/
+        
         final Name description = new DefaultName("http://www.opengis.net/gml", "description");
         final Name name = new DefaultName("http://www.opengis.net/gml", "name");
         final Name multiPointProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "multiPointProperty");
@@ -290,7 +299,10 @@ public class FeatureFilterTest {
 
         final SimpleFeatureType sft = sftb.buildFeatureType();
 
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
+        /*********************************************************************************************
+         *                            AggregateGeoFeature 1                                          *
+         *********************************************************************************************/
+        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
         sfb.set(description, "description-f005");
         sfb.set(name, "name-f005");
         GeometryFactory factory = new GeometryFactory();
@@ -306,11 +318,153 @@ public class FeatureFilterTest {
 
         final SimpleFeature sf = sfb.buildFeature("id");
 
+        /*********************************************************************************************
+         *                                                                                           *
+         *                            EntitéGénérique                                                *
+         *                                                                                           *
+         *********************************************************************************************/
+        final Name attributGeometrie  = new DefaultName("http://cite.opengeospatial.org/gmlsf", "attribut.Géométrie");
+        final Name boolProperty = new DefaultName("http://cite.opengeospatial.org/gmlsf", "boolProperty");
+        final Name str4Property = new DefaultName("http://cite.opengeospatial.org/gmlsf", "str4Property");
+        final Name featureRef = new DefaultName("http://cite.opengeospatial.org/gmlsf", "featureRef");
+
+        sftb.reset();
+
+        sftb.setName(new DefaultName("http://cite.opengeospatial.org/gmlsf", "EntitéGénérique"));
+        sftb.add(description, String.class);
+        sftb.add(name, String.class);
+        sftb.add(attributGeometrie, Geometry.class, CRS.decode("EPSG:4326"));
+        sftb.add(boolProperty, Boolean.class);
+        sftb.add(str4Property, String.class);
+        sftb.add(featureRef, String.class);
+        sftb.add(id, String.class);
+
+        final SimpleFeatureType entiteGeneriqueType = sftb.buildFeatureType();
+
+        sfb = new SimpleFeatureBuilder(entiteGeneriqueType);
+
+        /*********************************************************************************************
+         *                            EntitéGénérique 1                                              *
+         *********************************************************************************************/
+        sfb.set(description, "description-f004");
+        sfb.set(name, "name-f004");
+
+        Coordinate[] exteriorCoord = new Coordinate[5];
+        exteriorCoord[0] = new Coordinate(60.5, 0);
+        exteriorCoord[1] = new Coordinate(64, 0);
+        exteriorCoord[2] = new Coordinate(64, 6.25);
+        exteriorCoord[3] = new Coordinate(60.5, 6.25);
+        exteriorCoord[4] = new Coordinate(60.5, 0);
+
+        LinearRing exterior = factory.createLinearRing(exteriorCoord);
+
+        Coordinate[] interiorCoord = new Coordinate[4];
+        interiorCoord[0] = new Coordinate(61.5, 2);
+        interiorCoord[1] = new Coordinate(62.5, 2);
+        interiorCoord[2] = new Coordinate(62, 4);
+        interiorCoord[3] = new Coordinate(61.5, 2);
+
+        LinearRing interior = factory.createLinearRing(interiorCoord);
+        LinearRing[] interiors = new LinearRing[1];
+        interiors[0] = interior;
+
+        sfb.set(attributGeometrie, factory.createPolygon(exterior, interiors));
+        sfb.set(boolProperty, false);
+        sfb.set(str4Property, "abc3");
+        sfb.set(featureRef, "name-f003");
+        sfb.set(id, "f004");
+
+        final SimpleFeature entiteGenerique1 = sfb.buildFeature("f004");
+
+        sfb.reset();
+
+        /*********************************************************************************************
+         *                            EntitéGénérique 2                                              *
+         *********************************************************************************************/
+
+        sfb.set(description, "description-f007");
+        sfb.set(name, "name-f007");
+
+        Coordinate[] exteriorCoord2 = new Coordinate[6];
+        exteriorCoord2[0] = new Coordinate(35, 15);
+        exteriorCoord2[1] = new Coordinate(40, 16);
+        exteriorCoord2[2] = new Coordinate(39, 20);
+        exteriorCoord2[3] = new Coordinate(37, 22.5);
+        exteriorCoord2[4] = new Coordinate(36, 18);
+        exteriorCoord2[5] = new Coordinate(35, 15);
+
+        LinearRing exterior2 = factory.createLinearRing(exteriorCoord);
+
+        Coordinate[] interiorCoord2 = new Coordinate[7];
+        interiorCoord2[0] = new Coordinate(37.1, 17.5);
+        interiorCoord2[1] = new Coordinate(37.2, 17.6);
+        interiorCoord2[2] = new Coordinate(37.3, 17.7);
+        interiorCoord2[3] = new Coordinate(37.4, 17.8);
+        interiorCoord2[4] = new Coordinate(37.5, 17.9);
+        interiorCoord2[5] = new Coordinate(37,   17.9);
+        interiorCoord2[6] = new Coordinate(37.1, 17.5);
+
+        LinearRing interior2 = factory.createLinearRing(interiorCoord);
+        LinearRing[] interiors2 = new LinearRing[1];
+        interiors2[0] = interior;
+
+        sfb.set(attributGeometrie, factory.createPolygon(exterior2, interiors2));
+        sfb.set(boolProperty, false);
+        sfb.set(str4Property, "def4");
+        sfb.set(id, "f007");
+
+        final SimpleFeature entiteGenerique2 = sfb.buildFeature("f007");
+
+        sfb.reset();
+
+        /*********************************************************************************************
+         *                            EntitéGénérique 3                                              *
+         *********************************************************************************************/
+        sfb.set(description, "description-f017");
+        sfb.set(name, "name-f017");
+
+        Coordinate[] lineCoord = new Coordinate[5];
+        lineCoord[0] = new Coordinate(50.174, 4.899);
+        lineCoord[1] = new Coordinate(52.652, 5.466);
+        lineCoord[2] = new Coordinate(53.891, 6.899);
+        lineCoord[3] = new Coordinate(54.382, 7.780);
+        lineCoord[4] = new Coordinate(54.982, 8.879);
+
+
+        sfb.set(attributGeometrie, factory.createLineString(lineCoord));
+        sfb.set(boolProperty, false);
+        sfb.set(str4Property, "qrst");
+        sfb.set(featureRef, "name-f015");
+        sfb.set(id, "f017");
+
+        final SimpleFeature entiteGenerique3 = sfb.buildFeature("f017");
+        
         Literal geometry = FF.literal(factory.createMultiPoint(points));
         PropertyName property = FF.property(multiPointProperty);
         Equals filter = FF.equal(property, geometry);
         boolean match = filter.evaluate(sf);
         assertTrue(match);
+
+
+        /*
+         * Filter intersects on entitiGenerique*
+         */
+
+        Point[] filterPoints = new Point[2];
+        filterPoints[0] = factory.createPoint(new Coordinate(38.83, 16.22));
+        filterPoints[1] = factory.createPoint(new Coordinate(62.07, 2.48));
+
+        geometry = FF.literal(factory.createMultiPoint(filterPoints));
+        property = FF.property(attributGeometrie);
+        Intersects intfilter = FF.intersects(property, geometry);
+        match = intfilter.evaluate(entiteGenerique1);
+        assertFalse(match);
+
+        match = intfilter.evaluate(entiteGenerique2);
+        assertFalse(match);
+
+        match = intfilter.evaluate(entiteGenerique3);
+        assertFalse(match);
     }
 
 }

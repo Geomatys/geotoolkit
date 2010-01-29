@@ -175,6 +175,21 @@ public class FilterType implements Filter {
         this.logicOps = createLogicOps(logicOps);
     }
 
+    private void verifyIdFilter() {
+        boolean fid = false;
+        boolean gid = false;
+        for (JAXBElement<? extends AbstractIdType> jb : id) {
+            AbstractIdType idfilter = jb.getValue();
+            if (idfilter instanceof FeatureIdType) {
+                fid = true;
+            } else if (idfilter instanceof GmlObjectIdType) {
+                gid = true;
+            }
+        }
+        if (fid && gid) {
+            throw new IllegalArgumentException("A filter expression may include only one type of identifier element.");
+        }
+    }
     /**
      * Gets the value of the id property.
      */
@@ -182,6 +197,7 @@ public class FilterType implements Filter {
         if (id == null) {
             id = new ArrayList<JAXBElement<? extends AbstractIdType>>();
         }
+        verifyIdFilter();
         return id;
     }
     
