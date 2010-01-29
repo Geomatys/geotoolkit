@@ -114,6 +114,30 @@ public final class Packer implements FilenameFilter {
                 throw new IllegalArgumentException("Non-existant pack: " + parent);
             }
         }
+        /*
+         * If there is wildcard, replace the wildcard by the full name.
+         * We allows only one name (the wildcard should be used for the
+         * version number only, and we don't allow many versions of the
+         * same file).
+         */
+        for (int i=0; i<jars.length; i++) {
+            final String jarFile = jars[i];
+            final int w = jarFile.lastIndexOf('*');
+            if (w >= 0) {
+                final String prefix = jarFile.substring(0, w);
+                final String suffix = jarFile.substring(w+1);
+                final String[] f = new File(targetDirectory, JAR_DIRECTORY).list(new FilenameFilter() {
+                    @Override public boolean accept(final File directory, final String name) {
+                        return name.startsWith(prefix) && name.endsWith(suffix);
+                    }
+                });
+                switch (f.length) {
+                    case 1:  jars[i] = f[0]; break;
+                    case 0:  throw new IllegalArgumentException("No file found for pattern: " + jarFile);
+                    default: throw new IllegalArgumentException("Duplicated files: " + f[0] + " and " + f[1]);
+                }
+            }
+        }
         p = new PackOutput(this, p, jars);
         if (outputs.put(pack, p) != null) {
             throw new IllegalArgumentException("Duplicated pack: " + pack);

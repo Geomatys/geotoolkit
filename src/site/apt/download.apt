@@ -98,35 +98,49 @@ Downloading Geotoolkit.org Binaries
   {{{dependency-management.html}dependency management}} page for version numbers).
   Choose <<only one>> of the following <<<pack.gz>>> files:
 
-*----------------------------------------+----------------------------------+-------------------------------+
-|| File                                  || Content                         || Prerequites                 ||
-*----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle-referencing.pack.gz>>> | \u2022 vecmath.jar               | \u2022 Java 6                 |
-|                                        | \u2022 jsr-275.jar               | \u2022 JavaDB (<optional>)    |
-|                                        | \u2022 geoapi-pending.jar        |                               |
-|                                        | \u2022 geotk-utility.jar         |                               |
-|                                        | \u2022 geotk-metadata.jar        |                               |
-|                                        | \u2022 geotk-referencing.jar     |                               |
-|                                        | \u2022 geotk-epsg.jar            |                               |
-*----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:> | \u2022 Java 6                 |
-|                                        | \u2022 geotk-coverage.jar        | \u2022 Java Advanced Imaging  |
-|                                        | \u2022 geotk-coverageio.jar      | \u2022 Image I/O extensions   |
-*----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>    | \u2022 Java 6                 |
-|                                        | \u2022 geotk-metadata-sql.jar    | \u2022 Java Advanced Imaging  |
-|                                        | \u2022 geotk-epsg-javadb.jar     | \u2022 Image I/O extensions   |
-|                                        | \u2022 derby.jar                 |                               |
-*----------------------------------------+----------------------------------+-------------------------------+
-| <<<geotk-bundle.pack.gz>>>             | <All the storage pack plus:>     | \u2022 Java 6                 |
-|                                        | \u2022 jlfgr.jar                 | \u2022 Java Advanced Imaging  |
-|                                        | \u2022 swingx.jar                | \u2022 Image I/O extensions   |
-|                                        | \u2022 wizard.jar                |                               |
-|                                        | \u2022 geotk-setup.jar           |                               |
-|                                        | \u2022 geotk-display.jar         |                               |
-|                                        | \u2022 geotk-widgets-swing.jar   |                               |
-|                                        | \u2022 geotk-wizards-swing.jar   |                               |
-*----------------------------------------+----------------------------------+-------------------------------+
+*----------------------------------------+------------------------------------+-------------------------------+
+|| File                                  || Content                           || Prerequites                 ||
+*----------------------------------------+------------------------------------+-------------------------------+
+| <<<geotk-bundle-referencing.pack.gz>>> | \u2022 vecmath.jar                 | \u2022 Java 6                 |
+|                                        | \u2022 jsr-275.jar                 | \u2022 JavaDB (<optional>)    |
+|                                        | \u2022 geoapi-pending.jar          |                               |
+|                                        | \u2022 geotk-utility.jar           |                               |
+|                                        | \u2022 geotk-metadata.jar          |                               |
+|                                        | \u2022 geotk-referencing.jar       |                               |
+|                                        | \u2022 geotk-epsg.jar              |                               |
+*----------------------------------------+------------------------------------+-------------------------------+
+| <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:>   | \u2022 Java 6                 |
+|                                        | \u2022 geotk-coverage.jar          | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-coverageio.jar        | \u2022 Image I/O extensions   |
+|                                        | \u2022 geotk-coverageio-netcdf.jar | \u2022 JavaDB (<optional>)    |
+|                                        | \u2022 netcdf.jar                  |                               |
+|                                        | \u2022 opendap.jar                 |                               |
+|                                        | \u2022 bufrTables.jar              |                               |
+|                                        | \u2022 jdom.jar                    |                               |
+|                                        | \u2022 commons-codec.jar           |                               |
+|                                        | \u2022 commons-httpclient.jar      |                               |
+|                                        | \u2022 commons-logging.jar         |                               |
+|                                        | \u2022 log4j.jar                   |                               |
+|                                        | \u2022 slf4j-api.jar               |                               |
+|                                        | \u2022 slf4j-jdk14.jar             |                               |
+*----------------------------------------+------------------------------------+-------------------------------+
+| <<<geotk-bundle-storage.pack.gz>>>     | <All the coverage pack plus:>      | \u2022 Java 6                 |
+|                                        | \u2022 geotk-metadata-sql.jar      | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-epsg-javadb.jar       | \u2022 Image I/O extensions   |
+|                                        | \u2022 derby.jar                   |                               |
+|                                        | \u2022 derbyLocale_*.jar           |                               |
+*----------------------------------------+------------------------------------+-------------------------------+
+| <<<geotk-bundle.pack.gz>>>             | <All the storage pack plus:>       | \u2022 Java 6                 |
+|                                        | \u2022 geotk-setup.jar             | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-display.jar           | \u2022 Image I/O extensions   |
+|                                        | \u2022 geotk-widgets-swing.jar     |                               |
+|                                        | \u2022 geotk-wizards-swing.jar     |                               |
+|                                        | \u2022 wizard.jar                  |                               |
+|                                        | \u2022 swingx.jar                  |                               |
+|                                        | \u2022 swing-worker.jar            |                               |
+|                                        | \u2022 filters.jar                 |                               |
+|                                        | \u2022 jlfgr.jar                   |                               |
+*----------------------------------------+------------------------------------+-------------------------------+
 
   Those files can be unpacked using the <<<unpack200>>> executable provided in the Java
   installation directory.

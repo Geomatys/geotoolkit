@@ -51,11 +51,6 @@ public class PackerSpecificMojo extends AbstractMojo {
     private static final String VERSION = "SNAPSHOT";
 
     /**
-     * The JavaDB version.
-     */
-    private static final String DERBY_VERSION = "10.5.3.0_1";
-
-    /**
      * The Maven project running this plugin.
      *
      * @parameter expression="${project}"
@@ -89,42 +84,53 @@ public class PackerSpecificMojo extends AbstractMojo {
             final String all         = "geotk-bundle-"             + VERSION + ".jar";
             final Packer packer = new Packer(targetDirectory, VERSION);
             packer.addPack(null, referencing, new String[] {
-                    "vecmath-1.5.2.jar",
-                    "jsr-275-0.9.3.jar",
-                    "geoapi-pending-2.3-SNAPSHOT.jar",
+                    "vecmath-*.jar",
+                    "jsr-275-*.jar",
+                    "geoapi-pending-*.jar",
                     "geotk-epsg-"        + VERSION + ".jar",
                     "geotk-utility-"     + VERSION + ".jar",
                     "geotk-metadata-"    + VERSION + ".jar",
                     "geotk-referencing-" + VERSION + ".jar" // Last in order to pickup its main class.
             });
             packer.addPack(referencing, coverage, new String[] {
-                    "geotk-coverage-"   + VERSION + ".jar",
-                    "geotk-coverageio-" + VERSION + ".jar"
+                    "geotk-coverage-"          + VERSION + ".jar",
+                    "geotk-coverageio-"        + VERSION + ".jar",
+                    "geotk-coverageio-netcdf-" + VERSION + ".jar",
+                    "netcdf-*.jar",
+                    "opendap-*.jar",
+                    "bufrTables-*.jar",
+                    "jdom-*.jar",
+                    "commons-codec-*.jar",
+                    "commons-httpclient-*.jar",
+                    "commons-logging-*.jar",
+                    "log4j-*.jar",
+                    "slf4j-api-*.jar",
+                    "slf4j-jdk14-*.jar"
             });
             packer.addPack(coverage, storage, new String[] {
                     "geotk-metadata-sql-" + VERSION + ".jar",
                     "geotk-epsg-javadb-"  + VERSION + ".jar",
-                    "derby-"             + DERBY_VERSION + ".jar",
-                    "derbyLocale_cs-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_de_DE-" + DERBY_VERSION + ".jar",
-                    "derbyLocale_es-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_fr-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_hu-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_it-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_ja_JP-" + DERBY_VERSION + ".jar",
-                    "derbyLocale_ko_KR-" + DERBY_VERSION + ".jar",
-                    "derbyLocale_pl-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_pt_BR-" + DERBY_VERSION + ".jar",
-                    "derbyLocale_ru-"    + DERBY_VERSION + ".jar",
-                    "derbyLocale_zh_CN-" + DERBY_VERSION + ".jar",
-                    "derbyLocale_zh_TW-" + DERBY_VERSION + ".jar"
+                    "derby-*.jar",
+                    "derbyLocale_cs-*.jar",
+                    "derbyLocale_de_DE-*.jar",
+                    "derbyLocale_es-*.jar",
+                    "derbyLocale_fr-*.jar",
+                    "derbyLocale_hu-*.jar",
+                    "derbyLocale_it-*.jar",
+                    "derbyLocale_ja_JP-*.jar",
+                    "derbyLocale_ko_KR-*.jar",
+                    "derbyLocale_pl-*.jar",
+                    "derbyLocale_pt_BR-*.jar",
+                    "derbyLocale_ru-*.jar",
+                    "derbyLocale_zh_CN-*.jar",
+                    "derbyLocale_zh_TW-*.jar"
             });
             packer.addPack(storage, all, new String[] {
-                    "jlfgr-1.0.jar",
-                    "swingx-1.6.jar",
-                    "wizard-0.998.1.jar",
-                    "swing-worker-1.1.jar",
-                    "filters-2.0.235.jar",
+                    "jlfgr-*.jar",
+                    "swingx-*.jar",
+                    "wizard-*.jar",
+                    "swing-worker-*.jar",
+                    "filters-*.jar",
                     "geotk-setup-"         + VERSION + ".jar",
                     "geotk-display-"       + VERSION + ".jar",
                     "geotk-widgets-swing-" + VERSION + ".jar",
