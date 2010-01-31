@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -35,7 +36,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.metadata.IIOMetadataFormat;
-import javax.imageio.metadata.IIOMetadataFormatImpl;
 import javax.imageio.metadata.IIOInvalidTreeException;
 import org.w3c.dom.Node;
 
@@ -44,10 +44,9 @@ import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.LoggedFormat;
 import org.geotoolkit.util.NullArgumentException;
@@ -56,6 +55,8 @@ import org.geotoolkit.image.io.SpatialImageWriter;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.measure.RangeFormat;
+import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -127,7 +128,7 @@ import org.geotoolkit.measure.RangeFormat;
  * to treat some warnings as fatal errors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @see SpatialMetadataFormat
  *
@@ -196,6 +197,16 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * {@link MetadataAccessor} objects created for this metadata.
      */
     private Level warningLevel = Level.WARNING;
+
+    /**
+     * {@code true} if this {@code SpatialMetadata} is read-only.
+     * The default value is {@code false}.
+     *
+     * @see #isReadOnly()
+     *
+     * @since 3.08
+     */
+    private boolean isReadOnly;
 
     /**
      * Creates a metadata with no format. This constructor
@@ -312,10 +323,11 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *       given type. Exactly one element is expected, otherwise an {@link IllegalArgumentException}
      *       is thrown.</p></li>
      *
-     *   <li><p><b>Create a <code>new {@linkplain MetadataAccessor#MetadataAccessor(IIOMetadata, String, String, String)
-     *       MetadataAccessor}(this, {@linkplain #format}.getRootName(), path, "#auto")</code>:</b><br>
+     *   <li><p><b>Create a <code>new {@linkplain MetadataAccessor#MetadataAccessor(IIOMetadata,
+     *       String, String, String) MetadataAccessor}(this, {@linkplain #format}.getRootName(),
+     *       path, "#auto")</code>:</b><br>
      *
-     *       Create a new metadata accessor for the singleton path found at the previous step.</p></li>
+     *       Create a new metadata accessor for the single path found at the previous step.</p></li>
      *
      *   <li><p><b>Invoke <code>{@linkplain MetadataAccessor#getUserObject(Class)
      *       MetadataAccessor.getUserObject}(type)</code>:</b><br>
@@ -329,9 +341,13 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *       methods by a code that fetch the value from the corresponding attribute.</p></li>
      * </ol>
      *
+     * If this {@code SpatialMetadata} does not contain a node for the given type, then this
+     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
+     * is read only}, or create the missing nodes otherwise.
+     *
      * @param  <T> The compile-time type specified as the {@code type} argument.
      * @param  type The interface implemented by the instance to fetch.
-     * @return An implementation of the given interface.
+     * @return An implementation of the given interface, or {@code null} if none.
      * @throws IllegalArgumentException If the given type is not a valid interface,
      *         or if no element or more than one element exist for the given type.
      *
@@ -346,7 +362,32 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         @SuppressWarnings("unchecked")
         T object = (T) instances.get(type);
         if (object == null) {
-            object = getInstanceForType(type, new MetadataAccessor(this, null, type));
+            /*
+             * No previous instance in the cache. Before to create a new instance,
+             * check for the special case of CRS objects. This special case will
+             * create "real" Geotk CRS objects, not proxies that use reflection.
+             */
+            if (CoordinateReferenceSystem.class.isAssignableFrom(type)) {
+                final ReferencingBuilder builder;
+                try {
+                    builder = new ReferencingBuilder(this);
+                } catch (NoSuchElementException e) {
+                    return null; // As of method contract.
+                }
+                object = type.cast(builder.getOptionalCRS());
+            } else {
+                /*
+                 * For the general case (typically ISO 19115-2 metadata), create
+                 * a proxy which will fetch attribute values using reflections.
+                 */
+                final MetadataAccessor accessor;
+                try {
+                    accessor = new MetadataAccessor(this, null, type);
+                } catch (NoSuchElementException e) {
+                    return null; // As of method contract.
+                }
+                object = getInstanceForType(type, accessor);
+            }
             instances.put(type, object);
         }
         return object;
@@ -363,6 +404,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *     EnvironmentalRecord er = getInstanceForType(EnvironmentalRecord.class, "AcquisitionMetadata/EnvironmentalConditions");
      * }
      *
+     * If this {@code SpatialMetadata} does not contain a node for the given path, then this
+     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
+     * is read only}, or create the missing nodes otherwise.
+     *
      * {@note At the opposite of <code>getInstanceForType(Class)</code>, the current implementation
      *        of this method does not cache the returned proxy. Caching may be implemented in a
      *        future version.}
@@ -370,13 +415,25 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @param  <T> The compile-time type specified as the {@code type} argument.
      * @param  type The interface implemented by the instance to fetch.
      * @param  path The path where to fetch the metadata.
-     * @return An implementation of the given interface.
+     * @return An implementation of the given interface, or {@code null} if none.
      * @throws IllegalArgumentException If the given type is not a valid interface.
      *
      * @since 3.07
      */
     public <T> T getInstanceForType(final Class<T> type, final String path) throws IllegalArgumentException {
-        return getInstanceForType(type, new MetadataAccessor(this, null, path, "#auto"));
+        // Handle CRS in the same special way than getInstanceForType(Class).
+        final boolean isCRS = CoordinateReferenceSystem.class.isAssignableFrom(type);
+        final MetadataAccessor accessor;
+        try {
+            accessor = new MetadataAccessor(this, null, path, isCRS ? null : "#auto");
+        } catch (NoSuchElementException e) {
+            return null; // As of method contract.
+        }
+        if (isCRS) {
+            return type.cast(new ReferencingBuilder(accessor).getOptionalCRS());
+        } else {
+            return getInstanceForType(type, accessor);
+        }
     }
 
     /**
@@ -391,7 +448,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         if (accessor.allowsChildren()) {
             final List<T> list = getListForType(type);
             if (list.isEmpty()) {
-                accessor.appendChild();
+                return null;
             }
             object = list.get(0);
         } else {
@@ -408,10 +465,18 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * Returns a list of instances of the given type extracted from this {@code IIOMetadata}.
      * This method performs the same work than {@link #getInstanceForType(Class)}, but for a
      * list.
+     * <p>
+     * If this {@code SpatialMetadata} does not contain a node for the given type, then this
+     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
+     * is read only}, or create the missing nodes otherwise.
+     * <p>
+     * Note that a {@code null} return value has a different meaning than an empty list:
+     * an empty list means that the node exists but have no children, while a {@code null}
+     * value means that the parent node does not exist.
      *
      * @param  <T> The compile-time type specified as the {@code type} argument.
      * @param  type The interface implemented by the elements of the list to fetch.
-     * @return A list of implementations of the given interface.
+     * @return A list of implementations of the given interface, or {@code null} if none.
      * @throws IllegalArgumentException If the given type is not a valid interface,
      *         or if no element or more than one element exist for the given type.
      *
@@ -426,7 +491,12 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         @SuppressWarnings("unchecked")
         List<T> list = (List<T>) lists.get(type);
         if (list == null) {
-            final MetadataAccessor accessor = new MetadataAccessor(this, null, type);
+            final MetadataAccessor accessor;
+            try {
+                accessor = new MetadataAccessor(this, null, type);
+            } catch (NoSuchElementException e) {
+                return null; // As of method contract.
+            }
             list = accessor.newProxyList(type);
             lists.put(type, list);
         }
@@ -445,6 +515,14 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *     Instrument it = getListForType(Instrument.class, "AcquisitionMetadata/Platform/Instruments", "Instrument");
      * }
      *
+     * If this {@code SpatialMetadata} does not contain a node for the given path, then this
+     * method returns {@code null} if this {@code SpatialMetadata} {@linkplain #isReadOnly()
+     * is read only}, or create the missing nodes otherwise.
+     * <p>
+     * Note that a {@code null} return value has a different meaning than an empty list:
+     * an empty list means that the node exists but have no children, while a {@code null}
+     * value means that the parent node does not exist.
+     *
      * {@note At the opposite of <code>getListForType(Class)</code>, the current implementation
      *        of this method does not cache the returned proxy. Caching may be implemented in a
      *        future version.}
@@ -453,7 +531,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @param  type The interface implemented by the elements of the list to fetch.
      * @param  path The path of the parent node where to fetch the metadata.
      * @param  children The name of children under the parent node.
-     * @return A list of implementations of the given interface.
+     * @return A list of implementations of the given interface, or {@code null} if none.
      * @throws IllegalArgumentException If the given type is not a valid interface.
      *
      * @since 3.07
@@ -461,7 +539,13 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     public <T> List<T> getListForType(final Class<T> type, final String path, final String children)
             throws IllegalArgumentException
     {
-        return new MetadataAccessor(this, null, path, children).newProxyList(type);
+        final MetadataAccessor accessor;
+        try {
+            accessor = new MetadataAccessor(this, null, path, children);
+        } catch (NoSuchElementException e) {
+            return null; // As of method contract.
+        }
+        return accessor.newProxyList(type);
     }
 
     /**
@@ -483,12 +567,20 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
+     * Returns the resources for formatting error messages.
+     */
+    private IndexedResourceBundle getErrorResources() {
+        return Errors.getResources(getLocale());
+    }
+
+    /**
      * Returns {@code true} if we should use the {@linkplain #format} given at construction
      * time, {@code false} if we should use the fallback, or thrown an exception otherwise.
      */
     private boolean isValidName(final String formatName) throws IllegalArgumentException {
         if (formatName == null || format == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "formatName"));
+            throw new IllegalArgumentException(getErrorResources()
+                    .getString(Errors.Keys.NULL_ARGUMENT_$1, "formatName"));
         }
         if (format.getRootName().equalsIgnoreCase(formatName)) {
             return true;
@@ -496,7 +588,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         if (fallback != null) {
             return false;
         }
-        throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(
+        throw new IllegalArgumentException(getErrorResources().getString(
                 Errors.Keys.ILLEGAL_ARGUMENT_$2, "formatName", formatName));
     }
 
@@ -565,11 +657,16 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *
      * @param  formatName The desired metadata format.
      * @param  root An XML DOM Node object forming the root of a tree.
+     * @throws IllegalStateException If this metadata is {@linkplain #isReadOnly() read only}.
      * @throws IIOInvalidTreeException If the tree cannot be parsed successfully using the
      *         rules of the given format.
      */
     @Override
     public void mergeTree(final String formatName, final Node root) throws IIOInvalidTreeException {
+        if (isReadOnly()) {
+            throw new IllegalStateException(getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+        }
         if (isValidName(formatName)) {
             this.root = root;
         } else {
@@ -589,7 +686,10 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *
      * @param  metadata The metadata to merge to this object.
      * @throws IIOInvalidTreeException If the metadata can not be merged.
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public void mergeTree(final IIOMetadata metadata) throws IIOInvalidTreeException {
         if (format == null) {
             throw new UnsupportedOperationException();
@@ -599,7 +699,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
         try {
             tree = metadata.getAsTree(formatName);
         } catch (IllegalArgumentException exception) {
-            throw new IIOInvalidTreeException(Errors.format(
+            throw new IIOInvalidTreeException(getErrorResources().getString(
                     Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_$1, "mergeTree"), exception, null);
         }
         mergeTree(formatName, tree);
@@ -621,88 +721,45 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      *
      * @throws IllegalStateException if {@code target} is read-only.
      * @throws IIOInvalidTreeException if the {@code source} tree cannot be parsed successfully.
+     *
+     * @deprecated No replacement.
      */
+    @Deprecated
     public static IIOMetadata merge(final IIOMetadata source, final IIOMetadata target)
             throws IllegalStateException, IIOInvalidTreeException
     {
-        if (source == null) {
-            return target;
-        }
-        if (target == null) {
-            return source;
-        }
-        final String format = commonFormatName(source, target);
-        if (format != null) {
-            target.mergeTree(format, source.getAsTree(format));
-        }
-        return null;
+        return org.geotoolkit.internal.image.io.MetadataUtilities.merge(source, target);
     }
 
     /**
-     * Returns the name of a format which is common to both metadata.
-     * The preferred formats are (in order):
-     * <p>
+     * Returns {@code true} if this object does not allows modification. The default value is
+     * {@code false}. If the read-only state is set to {@code true}, then:
+     *
      * <ul>
-     *   <li>The native format of target metadata.<li>
-     *   <li>The native format of source metadata.<li>
-     *   <li>A format supported by both metadata which is not the standard format.</li>
-     *   <li>The standard format is last resort, because it contains no geographic
-     *       data and we wanted to give the priority to geographic formats.</li>
+     *   <li><p>Calls to {@link #mergeTree mergeTree}, {@link #setFromTree setFromTree} and
+     *       {@link #reset reset} methods will throw an {@link IllegalStateException}, as
+     *       required by the standard {@link IIOMetadata} contract.</p></li>
+     *
+     *   <li><p>Creation of {@link MetadataAccessor}s will throw a {@link NoSuchElementException}
+     *       if the named element does not exist in this {@code SpatialMetadata} object. Note that
+     *       if the {@code SpatialMetadata} has not been declared read-only, then the default
+     *       {@code MetadataAccessor} behavior is to create any missing nodes.</p></li>
      * </ul>
-     * <p>
-     * If no common format is found, then this method returns {@code null}.
-     */
-    private static String commonFormatName(final IIOMetadata source, final IIOMetadata target) {
-        final String[] sourceFormats = source.getMetadataFormatNames();
-        String format = target.getNativeMetadataFormatName();
-        if (format != null) {
-            if (XArrays.contains(sourceFormats, format)) {
-                return format;
-            }
-        }
-        /*
-         * The target native format is not supported. Try the source native format. We will search
-         * only in extra names (not in all names) because we don't want to consider the standard
-         * format now, and because it is not worth to test again the target native format since we
-         * just did that in the block before.
-         */
-        final String[] targetFormats = target.getExtraMetadataFormatNames();
-        if (targetFormats != null) {
-            format = source.getNativeMetadataFormatName();
-            if (format != null) {
-                if (XArrays.contains(targetFormats, format)) {
-                    return format;
-                }
-            }
-            /*
-             * Checks if there is a target extra format supported by the source metadata.
-             */
-            for (int i=0; i<targetFormats.length; i++) {
-                format = targetFormats[i];
-                if (XArrays.contains(sourceFormats, format)) {
-                    return format;
-                }
-            }
-        }
-        /*
-         * The standard format is the only one left. We try it last because it contains no
-         * geographic information, and we wanted to give the priority to geographic formats.
-         */
-        if (source.isStandardMetadataFormatSupported() && target.isStandardMetadataFormatSupported()) {
-            return IIOMetadataFormatImpl.standardMetadataFormatName;
-        }
-        return null;
-    }
-
-    /**
-     * Returns {@code true} if this object does not support the {@link #mergeTree mergeTree},
-     * {@link #setFromTree setFromTree}, and {@link #reset reset} methods. The default
-     * implementation conservatively returns {@code true} if a fallback has been given
-     * to the constructor and that fallback is read only.
      */
     @Override
     public boolean isReadOnly() {
-        return (fallback == null) || fallback.isReadOnly();
+        return isReadOnly;
+    }
+
+    /**
+     * Sets whatever this {@code SpatialMetadata} should be read-only.
+     *
+     * @param ro The new read-only state of this metadata object.
+     *
+     * @since 3.08
+     */
+    public void setReadOnly(final boolean ro) {
+        isReadOnly = ro;
     }
 
     /**
@@ -752,7 +809,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * <ul>
      *   <li>{@link SpatialImageReader#warningOccurred(LogRecord)}</li>
      *   <li>{@link SpatialImageWriter#warningOccurred(LogRecord)}</li>
-     *   <li>Send the record to the {@code "org.geotoolkit.image.io"} logger otherwise.</li>
+     *   <li>Send the record to the {@link #LOGGER "org.geotoolkit.image.io"} logger otherwise.</li>
      * </ul>
      * <p>
      * Subclasses can override this method if more processing is wanted, or for
@@ -896,9 +953,15 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     /**
      * Resets all the data stored in this object to default values.
      * All nodes below the root node are discarted.
+     *
+     * @throws IllegalStateException If this metadata is {@linkplain #isReadOnly() read only}.
      */
     @Override
     public void reset() {
+        if (isReadOnly()) {
+            throw new IllegalStateException(getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+        }
         root = null;
         if (fallback != null) {
             fallback.reset();

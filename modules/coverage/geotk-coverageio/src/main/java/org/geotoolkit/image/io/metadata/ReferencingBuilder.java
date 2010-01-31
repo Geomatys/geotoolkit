@@ -20,6 +20,7 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
 import javax.measure.quantity.Angle;
@@ -134,10 +135,13 @@ public class ReferencingBuilder {
     /**
      * Creates a new metadata helper for the given metadata.
      *
-     * @param metadata The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                 sub-class is recommanded, but not mandatory.
+     * @param  metadata The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                  sub-class is recommanded, but not mandatory.
+     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
+     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
+     *         contains a node for the element to fetch.
      */
-    public ReferencingBuilder(final IIOMetadata metadata) {
+    public ReferencingBuilder(final IIOMetadata metadata) throws NoSuchElementException {
         this(new MetadataAccessor(metadata, FORMAT_NAME, "RectifiedGridDomain/CoordinateReferenceSystem", null));
     }
 
@@ -177,7 +181,11 @@ public class ReferencingBuilder {
             return getCoordinateReferenceSystem(SingleCRS.class);
         } catch (FactoryException e) {
             failure = e;
-        } catch (NullArgumentException e) { // Happen if a mandatory element is absents.
+        } catch (NoSuchElementException e) {
+            // Throws by MetadataAccessor if an element is absents and IIOMetadata is read only.
+            failure = e;
+        } catch (NullArgumentException e) {
+            // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
             failure = e;
         }
         accessor.warning(getClass(), "getOptionalCRS", failure);

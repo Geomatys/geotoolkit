@@ -44,7 +44,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.internal.image.io.MetadataUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -980,7 +980,7 @@ public class MosaicImageReader extends ImageReader {
                     final Object input = reader.getInput();
                     if (done.add(new ReaderInputPair(reader, input))) {
                         final IIOMetadata candidate = reader.getStreamMetadata();
-                        metadata = SpatialMetadata.merge(candidate, metadata);
+                        metadata = MetadataUtilities.merge(candidate, metadata);
                     }
                 }
             }
@@ -1008,7 +1008,7 @@ public class MosaicImageReader extends ImageReader {
                     final Object input = reader.getInput();
                     if (done.add(new ReaderInputPair(reader, input))) {
                         final IIOMetadata candidate = reader.getStreamMetadata(formatName, nodeNames);
-                        metadata = SpatialMetadata.merge(candidate, metadata);
+                        metadata = MetadataUtilities.merge(candidate, metadata);
                     }
                 }
             }
@@ -1033,7 +1033,7 @@ public class MosaicImageReader extends ImageReader {
         for (final Tile tile : getTileManager(imageIndex).getTiles()) {
             final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
             final IIOMetadata candidate = reader.getImageMetadata(tile.getImageIndex());
-            metadata = SpatialMetadata.merge(candidate, metadata);
+            metadata = MetadataUtilities.merge(candidate, metadata);
         }
         return metadata;
     }
@@ -1053,7 +1053,7 @@ public class MosaicImageReader extends ImageReader {
         for (final Tile tile : getTileManager(imageIndex).getTiles()) {
             final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
             final IIOMetadata candidate = reader.getImageMetadata(tile.getImageIndex(), formatName, nodeNames);
-            metadata = SpatialMetadata.merge(candidate, metadata);
+            metadata = MetadataUtilities.merge(candidate, metadata);
         }
         return metadata;
     }

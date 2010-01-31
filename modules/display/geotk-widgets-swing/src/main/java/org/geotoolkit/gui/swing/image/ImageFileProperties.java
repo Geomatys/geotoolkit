@@ -33,6 +33,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
 import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
 import javax.swing.JList;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -41,7 +42,15 @@ import javax.swing.DefaultListModel;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import org.geotoolkit.gui.swing.ExceptionMonitor;
+import org.geotoolkit.image.io.ImageMetadataException;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SampleDimension;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.SwingUtilities;
@@ -543,9 +552,24 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         private final ImageTypeSpecifier type;
 
         /**
-         * The metadata, or {@code null} if none.
+         * The image metadata, or {@code null} if none.
          */
         private final IIOMetadata metadata;
+
+        /**
+         * The coordinate reference system, or {@code null} if none.
+         */
+        private CoordinateReferenceSystem crs;
+
+        /**
+         * The conversion from grid to CRS, or {@code null} if none.
+         */
+        private AffineTransform gridToCRS;
+
+        /**
+         * The range of valid geophysics values, or {@code null} if none.
+         */
+        private NumberRange<?> valueRange;
 
         /**
          * Fetches the informations from the given image reader for the image at the given index.
@@ -559,6 +583,23 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
             tileHeight = reader.getTileHeight(index);
             type       = reader.getRawImageType(index);
             metadata   = reader.getImageMetadata(index);
+            if (metadata instanceof SpatialMetadata) {
+                final SpatialMetadata sm = (SpatialMetadata) metadata;
+                sm.setReadOnly(true);
+                crs = sm.getInstanceForType(CoordinateReferenceSystem.class);
+                final RectifiedGrid rg = sm.getInstanceForType(RectifiedGrid.class);
+                final MetadataHelper helper = new MetadataHelper(sm);
+                if (rg != null) try {
+                    gridToCRS = helper.getAffineTransform(rg, null);
+                } catch (ImageMetadataException e) {
+                    // Missing attributes in the metadata. Because we were looking
+                    // them for information purpose only, just ignore the exception.
+                }
+                final SampleDimension sd = sm.getInstanceForType(SampleDimension.class);
+                if (sd != null) {
+                    valueRange = helper.getValidValues(sd);
+                }
+            }
         }
 
         /**
@@ -613,7 +654,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         }
 
         /**
-         * Returns the metadata, or an empty array if none.
+         * Returns the image metadata, or an empty array if none.
          */
         final IIOMetadata[] getMetadata() {
             return (metadata != null) ? new IIOMetadata[] {metadata} : new IIOMetadata[0];
@@ -623,13 +664,14 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          * Shows the content of this {@code Info} object in the given properties pane.
          */
         final void show(final ImageFileProperties properties) {
-            properties.setDescription(
+            properties.setOperationDescription(provider);
+            properties.setImageDescription(
                     (type != null) ? type.getColorModel()  : null,
                     (type != null) ? type.getSampleModel() : null,
                     width, height, tileWidth, tileHeight,
                     (width  + tileWidth -1) / tileWidth,
                     (height + tileHeight-1) / tileHeight);
-            properties.setDescription(provider);
+            properties.setGeospatialDescription(crs, gridToCRS, valueRange);
         }
     }
 

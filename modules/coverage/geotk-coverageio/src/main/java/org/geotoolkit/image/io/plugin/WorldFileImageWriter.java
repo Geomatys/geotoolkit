@@ -36,7 +36,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.image.io.ImageWriterAdapter;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.Formats;
@@ -167,8 +166,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                     out.close();
                 }
             }
-            final ReferencingBuilder mh = new ReferencingBuilder(md);
-            final CoordinateReferenceSystem crs = mh.getOptionalCRS();
+            final CoordinateReferenceSystem crs = md.getInstanceForType(CoordinateReferenceSystem.class);
             if (crs != null) {
                 final Object path = createOutput("prj");
                 if (path != null) {

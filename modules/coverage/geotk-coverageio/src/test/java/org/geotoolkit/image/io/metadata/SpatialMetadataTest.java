@@ -37,13 +37,14 @@ import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.junit.*;
 
 import static org.junit.Assert.*;
+import static org.geotoolkit.test.Commons.*;
 
 
 /**
  * Tests {@link SpatialMetadata}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.06
  */
@@ -172,5 +173,31 @@ public final class SpatialMetadataTest {
         assertEquals(2, vectors.size());
         assertTrue(Arrays.equals(vector0, vectors.get(0)));
         assertTrue(Arrays.equals(vector1, vectors.get(1)));
+    }
+
+    /**
+     * Tests the {@link SpatialMetadata#getInstanceForType} method for non-existant elements.
+     *
+     * @since 3.08
+     */
+    @Test
+    public void testInexistantNode() {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        metadata.setReadOnly(true);
+        assertNull("SpatialMetadata can not return an instance of an inexistant node " +
+                   "if it was not allowed to create the missing nodes.",
+                   metadata.getListForType(SampleDimension.class));
+        assertMultilinesEquals("No node should have been created.",
+                SpatialMetadataFormat.FORMAT_NAME, metadata.toString());
+        /*
+         * Now allow the creation of empty nodes.
+         */
+        metadata.setReadOnly(false);
+        assertTrue(metadata.getListForType(SampleDimension.class).isEmpty());
+        assertNull(metadata.getInstanceForType(SampleDimension.class));
+        assertMultilinesEquals(SpatialMetadataFormat.FORMAT_NAME + "\n" +
+            "└───ImageDescription\n" +
+            "    └───Dimensions\n",
+            metadata.toString());
     }
 }

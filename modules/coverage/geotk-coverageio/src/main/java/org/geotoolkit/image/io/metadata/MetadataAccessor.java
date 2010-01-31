@@ -164,7 +164,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @see SpatialMetadata#getInstanceForType(Class)
  * @see SpatialMetadata#getListForType(Class)
@@ -277,9 +277,17 @@ public class MetadataAccessor implements WarningProducer {
      * @param childPath The path to the child {@linkplain Element elements}, or {@code null}
      *                  if none, or {@code "#auto"} for auto-detection.
      *
+     * @throws IllegalArgumentException if {@code childPath} is {@code "#auto"} but the childs
+     *         can not be inferred from the metadata format.
+     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
+     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
+     *         contains a node for the element to fetch.
+     *
      * @since 3.06
      */
-    public MetadataAccessor(final MetadataAccessor parent, final String path, final String childPath) {
+    public MetadataAccessor(MetadataAccessor parent, String path, String childPath)
+            throws IllegalArgumentException, NoSuchElementException
+    {
         this(parent, parent.metadata, null, null, path, childPath);
     }
 
@@ -292,15 +300,19 @@ public class MetadataAccessor implements WarningProducer {
      *                     the given type.
      * @param  objectClass The {@linkplain IIOMetadataFormat#getObjectClass(String) class of user
      *                     object} to locate.
+     *
      * @throws IllegalArgumentException If no element accepting the given type was found,
      *         or if more than one element accepting that type was found.
+     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
+     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
+     *         contains a node for the element to fetch.
      *
      * @see #listPaths(IIOMetadataFormat, Class)
      *
      * @since 3.06
      */
-    public MetadataAccessor(final MetadataAccessor parent, final Class<?> objectClass)
-            throws IllegalArgumentException
+    public MetadataAccessor(MetadataAccessor parent, Class<?> objectClass)
+            throws IllegalArgumentException, NoSuchElementException
     {
         this(parent, parent.metadata, null, objectClass, null, "#auto");
     }
@@ -311,14 +323,20 @@ public class MetadataAccessor implements WarningProducer {
      * {@linkplain #MetadataAccessor(IIOMetadata, String, String, String) constructor below}
      * with {@code formatName} and {@code childPath} argument set to {@code "#auto"} value.
      *
-     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                    sub-class is recommanded, but not mandatory.
-     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
-     *                    if the {@code metadata} root node is directly the node of interest.
+     * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                     sub-class is recommanded, but not mandatory.
+     * @param  parentPath  The path to the {@linkplain Node node} of interest, or {@code null}
+     *                     if the {@code metadata} root node is directly the node of interest.
+     *
+     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
+     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
+     *         contains a node for the element to fetch.
      *
      * @since 3.06
      */
-    public MetadataAccessor(final IIOMetadata metadata, final String parentPath) {
+    public MetadataAccessor(IIOMetadata metadata, String parentPath)
+            throws NoSuchElementException
+    {
         this(metadata, "#auto", parentPath, "#auto");
     }
 
@@ -344,18 +362,22 @@ public class MetadataAccessor implements WarningProducer {
      *       or the first extra format.</li>
      * </ul>
      *
-     * @param  metadata   The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                    sub-class is recommanded, but not mandatory.
-     * @param  formatName The name of the {@linkplain IIOMetadata#getMetadataFormat(String) format
-     *                    to use}, or {@code null} or {@code "#auto"} for an automatic selection.
-     * @param  parentPath The path to the {@linkplain Node node} of interest, or {@code null}
-     *                    if the {@code metadata} root node is directly the node of interest.
-     * @param  childPath  The path (relative to {@code parentPath}) to the child
-     *                    {@linkplain Element elements}, or {@code null} if none,
-     *                    or {@code "#auto"} for auto-detection.
+     * @param  metadata    The Image I/O metadata. An instance of the {@link SpatialMetadata}
+     *                     sub-class is recommanded, but not mandatory.
+     * @param  formatName  The name of the {@linkplain IIOMetadata#getMetadataFormat(String) format
+     *                     to use}, or {@code null} or {@code "#auto"} for an automatic selection.
+     * @param  parentPath  The path to the {@linkplain Node node} of interest, or {@code null}
+     *                     if the {@code metadata} root node is directly the node of interest.
+     * @param  childPath   The path (relative to {@code parentPath}) to the child
+     *                     {@linkplain Element elements}, or {@code null} if none,
+     *                     or {@code "#auto"} for auto-detection.
+     *
+     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
+     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
+     *         contains a node for the element to fetch.
      */
-    public MetadataAccessor(final IIOMetadata metadata, final String formatName,
-            final String parentPath, final String childPath)
+    public MetadataAccessor(IIOMetadata metadata, String formatName, String parentPath,
+            String childPath) throws NoSuchElementException
     {
         this(null, metadata, formatName, null, parentPath, childPath);
     }
@@ -382,15 +404,19 @@ public class MetadataAccessor implements WarningProducer {
      *                     to use}, or {@code null} or {@code "#auto"} for an automatic selection.
      * @param  objectClass The {@linkplain IIOMetadataFormat#getObjectClass(String) class of user
      *                     object} to locate.
+     *
      * @throws IllegalArgumentException If no element accepting the given type was found,
      *         or if more than one element accepting that type was found.
+     * @throws NoSuchElementException If the underlying {@code IIOMetadata}
+     *         {@linkplain IIOMetadata#isReadOnly() is read only} and doesn't
+     *         contains a node for the element to fetch.
      *
      * @see #listPaths(IIOMetadataFormat, Class)
      *
      * @since 3.06
      */
-    public MetadataAccessor(final IIOMetadata metadata, final String formatName, final Class<?> objectClass)
-            throws IllegalArgumentException
+    public MetadataAccessor(IIOMetadata metadata, String formatName, Class<?> objectClass)
+            throws IllegalArgumentException, NoSuchElementException
     {
         this(null, metadata, formatName, objectClass, null, "#auto");
     }
@@ -402,7 +428,7 @@ public class MetadataAccessor implements WarningProducer {
     @SuppressWarnings("fallthrough")
     private MetadataAccessor(final MetadataAccessor parentAccessor, final IIOMetadata metadata,
             String formatName, final Class<?> type, String parentPath, String childPath)
-            throws IllegalArgumentException
+            throws IllegalArgumentException, NoSuchElementException
     {
         ensureNonNull("metadata", metadata);
         this.metadata = metadata;
@@ -429,7 +455,8 @@ public class MetadataAccessor implements WarningProducer {
             root   = metadata.getAsTree(formatName);
         }
         if (format == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNDEFINED_FORMAT_$1, formatName));
+            throw new IllegalArgumentException(getErrorResources().getString(
+                    Errors.Keys.UNDEFINED_FORMAT_$1, formatName));
         }
         if (warningLevel == null) {
             warningLevel = (metadata instanceof SpatialMetadata) ?
@@ -444,7 +471,8 @@ public class MetadataAccessor implements WarningProducer {
             listPaths(format, type, root.getNodeName(), new StringBuilder(), paths);
             switch (paths.size()) {
                 case 0: {
-                    throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+                    throw new IllegalArgumentException(getErrorResources()
+                            .getString(Errors.Keys.UNKNOW_TYPE_$1, type));
                 }
                 case 1: {
                     parentPath = paths.get(0);
@@ -452,7 +480,7 @@ public class MetadataAccessor implements WarningProducer {
                 }
                 default: {
                     final String lineSeparator = System.getProperty("line.separator", "\n");
-                    final StringBuilder buffer = new StringBuilder(Errors.format(
+                    final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
                             Errors.Keys.AMBIGIOUS_VALUE_$1, type)).append(lineSeparator);
                     for (final String path : paths) {
                         buffer.append("  \u2022 ").append(path).append(lineSeparator);
@@ -480,6 +508,10 @@ public class MetadataAccessor implements WarningProducer {
                     break;
                 }
                 case 0: {
+                    if (metadata.isReadOnly()) {
+                        throw new NoSuchElementException(getErrorResources().getString(
+                                Errors.Keys.NO_SUCH_ELEMENT_$1, parentPath));
+                    }
                     parent = appendChild(root, parentPath);
                     break;
                 }
@@ -718,6 +750,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * @see #selectChild
      */
     public int appendChild() throws UnsupportedOperationException {
+        if (metadata.isReadOnly()) {
+            throw new UnsupportedOperationException(getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+        }
         final int size = childs.size();
         final Node child = appendChild(parent, childPath);
         if (child instanceof Element) {
@@ -1423,8 +1459,8 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         if (element instanceof IIOMetadataNode) {
             ((IIOMetadataNode) element).setUserObject(value);
         } else if (value!=null && asText==null) {
-            throw new UnsupportedImplementationException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                    Classes.getClass(element), IIOMetadataNode.class));
+            throw new UnsupportedImplementationException(getErrorResources().getString(
+                    Errors.Keys.ILLEGAL_CLASS_$2, Classes.getClass(element), IIOMetadataNode.class));
         }
         element.setNodeValue(asText);
     }
@@ -1444,6 +1480,10 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     public void setAttribute(final String attribute, String value) {
         ensureNonNull("attribute", attribute);
+        if (metadata.isReadOnly()) {
+            throw new UnsupportedOperationException(getErrorResources()
+                    .getString(Errors.Keys.UNMODIFIABLE_METADATA));
+        }
         final Element element = currentElement();
         if (value == null || (value=value.trim()).length() == 0) {
             if (element.hasAttribute(attribute)) {
@@ -1705,7 +1745,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     final void warning(final String method, final int key, final Object value) {
         if (!Level.OFF.equals(warningLevel)) {
-            warning(MetadataAccessor.class, method, Errors.getResources(getLocale()), key, value);
+            warning(MetadataAccessor.class, method, getErrorResources(), key, value);
         }
     }
 
@@ -1826,6 +1866,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     @Deprecated
     public Level setWarningsLevel(final Level level) {
         return setWarningLevel(level);
+    }
+
+    /**
+     * Returns the resources for formatting error messages.
+     */
+    private IndexedResourceBundle getErrorResources() {
+        return Errors.getResources(getLocale());
     }
 
     /**
