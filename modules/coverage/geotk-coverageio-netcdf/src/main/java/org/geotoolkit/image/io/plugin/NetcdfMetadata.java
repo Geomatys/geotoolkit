@@ -43,6 +43,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
@@ -176,6 +177,8 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
             }
         }
+        final ReferencingBuilder helper = new ReferencingBuilder(this);
+        helper.setCoordinateReferenceSystem(crs);
     }
 
     /**

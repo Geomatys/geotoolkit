@@ -38,7 +38,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.00
  * @module
@@ -187,6 +187,19 @@ public final class IOUtilities {
             }
         }
         return path;
+    }
+
+    /**
+     * Returns {@code true} if the method in this class can process the given object as a path.
+     *
+     * @param  path The object to test, or {@code null}.
+     * @return {@code true} If the given object is non-null and can be processed like a path.
+     *
+     * @since 3.08
+     */
+    public static boolean canProcessAsPath(final Object path) {
+        return (path instanceof CharSequence) || (path instanceof File) ||
+                (path instanceof URL) || (path instanceof URI);
     }
 
     /**

@@ -329,9 +329,11 @@ public class WorldFileImageReader extends ImageReaderAdapter {
          */
         @Override
         public boolean canDecodeInput(Object source) throws IOException {
-            source = IOUtilities.tryToFile(source);
-            if (!exists(source, "tfw") && !exists(source, "prj")) {
-                return false;
+            if (IOUtilities.canProcessAsPath(source)) {
+                source = IOUtilities.tryToFile(source);
+                if (!exists(source, "tfw") && !exists(source, "prj")) {
+                    return false;
+                }
             }
             return super.canDecodeInput(source);
         }

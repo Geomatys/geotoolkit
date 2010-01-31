@@ -528,6 +528,7 @@ public class ImageProperties extends JPanel implements Dialog {
             text = crs.getName().getCode();
         }
         crsName.setText(text);
+        text = null;
         if (gridToCRS != null) {
             final double scaleX = XAffineTransform.getScaleX0(gridToCRS);
             final double scaleY = XAffineTransform.getScaleX0(gridToCRS);

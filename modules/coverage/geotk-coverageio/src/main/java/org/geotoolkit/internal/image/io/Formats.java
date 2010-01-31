@@ -18,6 +18,8 @@
 package org.geotoolkit.internal.image.io;
 
 import java.util.Locale;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Iterator;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,13 +37,14 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.08
  *
  * @since 3.01
  * @module
@@ -106,17 +109,83 @@ public final class Formats {
     public static void selectImageReader(final Object input, final Locale locale, final ReadCall callback)
             throws IOException
     {
-        boolean     success = false;
-        IOException failure = null;
-        Object      stream  = input;
-attmpt: while (stream != null) { // This loop will be executed at most twice.
-            final Iterator<ImageReader> it = ImageIO.getImageReaders(stream);
+        /*
+         * If the given input is a file, URL or URI with a suffix, extract the suffix.
+         * We will try the ImageReader for that suffix before to try any other readers.
+         */
+        final String suffix = IOUtilities.extension(input);
+        boolean useSuffix = (suffix != null && suffix.length() != 0);
+        int nextProviderForSuffix = 0; // Used for sorting first the providers for the suffix.
+        /*
+         * The list of providers that we have found during the first execution of the
+         * loop below. For every loop execution after the first one, we will use that
+         * list instead of the IIORegistry iterator.
+         */
+        final List<ImageReaderSpi> providers = new LinkedList<ImageReaderSpi>();
+        boolean useProvidersList = false;
+        /*
+         * The state of this method (whatever we have found a reader, or failed).
+         */
+        boolean         success = false;
+        IOException     failure = null;
+        ImageInputStream stream = null;
+        Object    inputOrStream = input;
+attmpt: while (true) {
+            /*
+             * On first execution, iterate over the provider given by IIORegistry.
+             * For all other execution, iterate over the providers in our list.
+             */
+            int index = 0;
+            final Iterator<ImageReaderSpi> it = useProvidersList ? providers.iterator() :
+                    IIORegistry.getDefaultInstance().getServiceProviders(ImageReaderSpi.class, true);
             while (it.hasNext()) {
-                if (stream instanceof ImageInputStream) {
-                    ((ImageInputStream) stream).mark();
+                final ImageReaderSpi provider = it.next();
+                /*
+                 * If this is the first iteration, then add the provider in the list. We add
+                 * the providers in iteration order, except if the suffixes match in which case
+                 * we add the providers at the begining of the list (so we try them first if we
+                 * perform an other iteration later).
+                 *
+                 * Note: useSuffix and useProvidersList are not modified in this inner loop.
+                 */
+                if (!useProvidersList) {
+                    if (!useSuffix) {
+                        providers.add(provider);
+                    } else if (XArrays.contains(provider.getFileSuffixes(), suffix)) {
+                        providers.add(nextProviderForSuffix++, provider);
+                    } else {
+                        providers.add(provider);
+                        continue; // Suffixes doesn't match: skip (for now) this provider.
+                    }
+                } else if (useSuffix) {
+                    /*
+                     * This block is executed during the second iteration. We are still trying
+                     * the ImageReader for the suffix, but this time using an ImageInputStream
+                     * input. Remove the providers since we will not try them again in case of
+                     * failure.
+                     */
+                    if (index++ == nextProviderForSuffix) {
+                        break; // Reached the first provider which doesn't have the right suffix.
+                    }
+                    it.remove();
                 }
-                final ImageReader reader = it.next();
-                reader.setInput(stream, true, false);
+                /*
+                 * If the provider thinks that the input can't be read, skip it for now.
+                 * It may be tried again with a different input in the next loop execution.
+                 */
+                if (!provider.canDecodeInput(inputOrStream)) {
+                    continue;
+                }
+                /*
+                 * Configure the ImageReader, then tries to read the image. In case of success,
+                 * we are done and will exit from the loop. In case of failure, we will report
+                 * the error and continue with the next providers.
+                 */
+                final ImageReader reader = provider.createReaderInstance();
+                if (inputOrStream instanceof ImageInputStream) {
+                    ((ImageInputStream) inputOrStream).mark();
+                }
+                reader.setInput(inputOrStream, true, false);
                 if (locale != null) try {
                     reader.setLocale(locale);
                 } catch (IllegalArgumentException e) {
@@ -131,40 +200,85 @@ attmpt: while (stream != null) { // This loop will be executed at most twice.
                         failure = e; // Remember only the first failure.
                     }
                 } finally {
+                    /*
+                     * Reset the stream to its initial state if:
+                     *
+                     * - There is a failure, because we will need the
+                     *   stream again for trying the next ImageReaders.
+                     *
+                     * - Or if the stream was provided by the caller,
+                     *   because the caller may want to use it again.
+                     */
                     reader.dispose();
-                    // Don't bother to reset the stream if we succeeded
-                    // and the stream was created by ourself.
-                    if (!success || stream == input) {
-                        if (stream instanceof ImageInputStream) try {
-                            ((ImageInputStream) stream).reset();
+                    if (!success || inputOrStream == input) {
+                        if (inputOrStream instanceof ImageInputStream) try {
+                            ((ImageInputStream) inputOrStream).reset();
                         } catch (IOException e) {
-                            if (stream == input) {
+                            // If the stream was provided by the caller, we can not
+                            // create a new one. So consider the error as fatal.
+                            if (inputOrStream == input) {
                                 throw e;
                             }
                             // Failed to reset the stream, but we created
                             // it ourself. So let just create an other one.
                             callback.recoverableException(e);
-                            ((ImageInputStream) stream).close();
-                            stream = ImageIO.createImageInputStream(input);
+                            ((ImageInputStream) inputOrStream).close();
+                            inputOrStream = stream = ImageIO.createImageInputStream(input);
                         }
                     }
                 }
             }
             /*
-             * If we have tried every image readers for the given input, wraps the
-             * input in an ImageInputStream (if not already done) and try again.
+             * At this point we finished to iterate over every ImageReader providers, but
+             * we didn't found any suitable one. Switch the function to the next state,
+             * which are in order:
+             *
+             *   1) Only ImageReaders for the suffix, using the input supplied by the caller.
+             *   2) Only ImageReaders for the suffix, using a new ImageInputStream input.
+             *   3) All ImageReaders, using the input supplied by the caller.
+             *   4) All ImageReaders, using the ImageInputStream created at step 2.
+             *   5) End of the attempts: failure.
+             *
+             * The next state is inferred from the previous state. A simple 'switch' statement
+             * using a state number is not convenient because any of the above states may be
+             * skipped, for example if no ImageReaders were found for the suffix (in which case
+             * we try immediately all ImageReaders), or if the caller input is already an
+             * ImageInputStream.
              */
-            if (stream instanceof ImageInputStream) {
-                break;
+            if (inputOrStream instanceof ImageInputStream) {
+                if (!useSuffix) {
+                    // We have run the most extensive case (all ImageReaders
+                    // with an ImageInputStream input). Give up.
+                    break;
+                }
+                // Try again using all ImageReaders. Note that when we switched the
+                // 'useSuffix' flag to 'false', we never switch it back to 'true'.
+                useSuffix = false;
+                if (inputOrStream != input) {
+                    inputOrStream = input;
+                    // If we were using an ImageInputStream, try with the original
+                    // input before to try again with the ImageInputStream.
+                }
+            } else if (useSuffix && nextProviderForSuffix == 0) {
+                // They were no ImageReader for the suffix, so do not
+                // create the stream yet. Let try every ImageReaders first.
+                useSuffix = false;
+            } else {
+                // Failed to read the image using the caller input.
+                // Wraps it in an ImageInputStream and try again.
+                if (stream == null) {
+                    stream = ImageIO.createImageInputStream(input);
+                }
+                inputOrStream = stream;
             }
-            stream = ImageIO.createImageInputStream(input);
+            useProvidersList = true;
         }
         /*
-         * We got a success, or we tried every image readers.
-         * Closes the stream only if we created it ourself.
+         * We got a success, or we tried every image readers. Close the
+         * stream only if we created it ourself (i.e. inputOrStream != input).
          */
-        if (stream != input && stream instanceof ImageInputStream) {
-            ((ImageInputStream) stream).close();
+        if (stream != null) {
+            stream.close();
         }
         if (!success) {
             if (failure == null) {
