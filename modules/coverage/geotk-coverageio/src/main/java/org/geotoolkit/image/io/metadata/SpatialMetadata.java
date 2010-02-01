@@ -675,63 +675,6 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
     }
 
     /**
-     * Alters the internal state of this metadata from a tree defined by the specified metadata.
-     * The default implementation is equivalent to the code below (omitting exception handling)
-     * where {@link #format} is the metadata format given at construction time:
-     *
-     * {@preformat java
-     *     String formatName = format.getRootName();
-     *     mergeTree(formatName, metadata.getAsTree(formatName);
-     * }
-     *
-     * @param  metadata The metadata to merge to this object.
-     * @throws IIOInvalidTreeException If the metadata can not be merged.
-     *
-     * @deprecated No replacement.
-     */
-    @Deprecated
-    public void mergeTree(final IIOMetadata metadata) throws IIOInvalidTreeException {
-        if (format == null) {
-            throw new UnsupportedOperationException();
-        }
-        final String formatName = format.getRootName();
-        final Node tree;
-        try {
-            tree = metadata.getAsTree(formatName);
-        } catch (IllegalArgumentException exception) {
-            throw new IIOInvalidTreeException(getErrorResources().getString(
-                    Errors.Keys.GEOTOOLKIT_EXTENSION_REQUIRED_$1, "mergeTree"), exception, null);
-        }
-        mergeTree(formatName, tree);
-    }
-
-    /**
-     * Merges the two specified trees. If both source and target metadata are non-null,
-     * then this method performs the following steps:
-     * <p>
-     * <ul>
-     *   <li>Searches for a format name which is common to both metadata;</li>
-     *   <li>invokes {@link IIOMetadata#getAsTree(String)} on the source metadata;</li>
-     *   <li>invokes {@link IIOMetadata#mergeTree(String, Node)} on the target metadata.</li>
-     * </ul>
-     *
-     * @param  source The source metadata, or {@code null}.
-     * @param  target The target metadata, or {@code null}.
-     * @return {@code source} if {@code target} was null, or {@code target} otherwise.
-     *
-     * @throws IllegalStateException if {@code target} is read-only.
-     * @throws IIOInvalidTreeException if the {@code source} tree cannot be parsed successfully.
-     *
-     * @deprecated No replacement.
-     */
-    @Deprecated
-    public static IIOMetadata merge(final IIOMetadata source, final IIOMetadata target)
-            throws IllegalStateException, IIOInvalidTreeException
-    {
-        return org.geotoolkit.internal.image.io.MetadataUtilities.merge(source, target);
-    }
-
-    /**
      * Returns {@code true} if this object does not allows modification. The default value is
      * {@code false}. If the read-only state is set to {@code true}, then:
      *

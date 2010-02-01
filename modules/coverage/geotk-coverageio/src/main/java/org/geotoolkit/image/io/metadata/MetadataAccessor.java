@@ -1513,28 +1513,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * Sets the attribute to the specified enumeration value,
-     * or remove the attribute if the value is null.
-     *
-     * @param attribute The attribute name.
-     * @param value     The attribute value.
-     * @param enums     The set of allowed values, or {@code null} if unknown.
-     */
-    @Deprecated
-    final void setAttribute(final String attribute, String value, final Collection<String> enums) {
-        if (value != null) {
-            value = value.replace('_', ' ').trim();
-            for (final String e : enums) {
-                if (value.equalsIgnoreCase(e)) {
-                    value = e;
-                    break;
-                }
-            }
-        }
-        setAttribute(attribute, value);
-    }
-
-    /**
      * Sets the attribute to the specified code value, or remove the attribute if the value is null.
      *
      * @param attribute The attribute name.
@@ -1824,16 +1802,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     }
 
     /**
-     * @deprecated Renamed {@link #getWarningLevel()}.
-     *
-     * @return The current level at which warnings are emitted.
-     */
-    @Deprecated
-    public Level getWarningsLevel() {
-        return getWarningLevel();
-    }
-
-    /**
      * Sets the warning level, or disable warnings. By default, warnings are enabled and set to
      * the {@link Level#WARNING WARNING} level. Subclasses way want to temporarily disable the
      * warnings (using the {@link Level#OFF} argument value) when failures are expected as the
@@ -1855,17 +1823,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final Level old = warningLevel;
         warningLevel = level;
         return old;
-    }
-
-    /**
-     * @deprecated Renamed {@link #setWarningLevel(Level)}.
-     *
-     * @param  level {@link Level#OFF} for disabling warnings, or an other value for enabling them.
-     * @return The previous state before this method has been invoked.
-     */
-    @Deprecated
-    public Level setWarningsLevel(final Level level) {
-        return setWarningLevel(level);
     }
 
     /**

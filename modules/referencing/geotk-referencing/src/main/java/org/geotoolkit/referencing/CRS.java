@@ -835,48 +835,6 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
     }
 
     /**
-     * Returns the <cite>Spatial Reference System</cite> identifier, or {@code null} if none. OGC
-     * Web Services have the concept of a Spatial Reference System identifier used to communicate
-     * CRS information between systems.
-     * <p>
-     * Examples of Spatial Reference System (SRS) values:
-     * <ul>
-     *   <li>{@code EPSG:4326} - this was understood to mean <cite>force XY axis order</cite> in
-     *       old Web Map Services (WMS). Note that latest WMS specifications require the respect
-     *       of axis order as declared in the EPSG database, which is (<var>latitude</var>,
-     *       <var>longitude</var>).</li>
-     *   <li>{@code urn:ogc:def:crs:EPSG:4326} - understood to match the EPSG database axis order
-     *       in all cases, no matter the WMS version.</li>
-     *   <li>{@code AUTO:43200} - without the parameters that are specific to AUTO codes.</li>
-     * </ul>
-     *
-     * {@section Comparison with other methods}
-     * Note that this method returns the code of an arbitrary authority. More specifically it uses
-     * the first non-null element found in {@code crs.getIdentifiers()}, or if there is none it uses
-     * {@code crs.getName()} - which is not garanteed to be a valid identifier. If the code of a
-     * specific authority is wanted (typically EPSG), then consider using the static methods defined
-     * in {@link AbstractIdentifiedObject} instead.
-     * <p>
-     * Note also that this method uses only the metadata defined in the given CRS; it does not
-     * scan any database for fetching the missing identifiers. For a more exhaustive scan, use
-     * one of the lookup methods defined below.
-     *
-     * @param  crs The coordinate reference system, or {@code null}.
-     * @return SRS represented as a string for communication between systems, or {@code null}.
-     *
-     * @see #lookupIdentifier(IdentifiedObject, boolean)
-     * @see AbstractIdentifiedObject#getIdentifier(IdentifiedObject, Citation)
-     *
-     * @since 2.5
-     *
-     * @deprecated Renamed as {@code getDeclaredIdentifier(crs)}.
-     */
-    @Deprecated
-    public static String toSRS(final CoordinateReferenceSystem crs) {
-         return getDeclaredIdentifier(crs);
-    }
-
-    /**
      * Returns the declared identifier, or {@code null} if none. This method searchs for the first
      * identifier (which is usually the main one) explicitly declared in the {@link IdentifiedObject}.
      * At the opposite of {@link #lookupIdentifier(IdentifiedObject, boolean) lookupIdentifier},
