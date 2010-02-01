@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================
+        Maven Project Configuration File
+
+        The Geotoolkit.org Project
+            http://www.geotoolkit.org/
+     ======================================================================= -->
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                               http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geotoolkit</groupId>
+    <artifactId>analytics</artifactId>
+    <version>SNAPSHOT</version>
+  </parent>
+
+
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>org.geotoolkit</groupId>
+  <artifactId>geotk-openoffice</artifactId>
+  <packaging>jar</packaging>
+  <name>Bridges to OpenOffice suite</name>
+
+  <description>
+    Provides some Geotk's fonctionalities as OpenOffice plugins. For
+    example, the plugin provides coordinate operation services as formulas
+    inside the Calc spreadsheet.
+  </description>
+
+  <properties>
+    <openoffice.version>3.1.0</openoffice.version>
+  </properties>
+
+
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
+  <developers>
+    <developer>
+      <name>Martin Desruisseaux</name>
+      <id>desruisseaux</id>
+      <email>desruisseaux@users.sourceforge.net</email>
+      <organization>Geomatys</organization>
+      <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java Developer</role>
+        <role>Module Maintainer</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <contributors>
+    <contributor>
+      <name>Richard Deplanque</name>
+      <organization>Université de Nouvelle-Calédonie</organization>
+      <timezone>+11</timezone>
+      <roles>
+        <role>Java Developer</role>
+      </roles>
+    </contributor>
+  </contributors>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-referencing</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-nature</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>juh</artifactId>
+      <version>${openoffice.version}</version>
+      <scope>provided</scope>  <!-- Already included in OpenOffice runtime environment -->
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>jurt</artifactId>
+      <version>${openoffice.version}</version>
+      <scope>provided</scope>  <!-- Already included in OpenOffice runtime environment -->
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>ridl</artifactId>
+      <version>${openoffice.version}</version>
+      <scope>provided</scope>  <!-- Already included in OpenOffice runtime environment -->
+    </dependency>
+    <dependency>
+      <groupId>org.openoffice</groupId>
+      <artifactId>unoil</artifactId>
+      <version>${openoffice.version}</version>
+      <scope>provided</scope>  <!-- Already included in OpenOffice runtime environment -->
+    </dependency>
+  </dependencies>
+
+</project>

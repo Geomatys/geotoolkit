@@ -1,0 +1,138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <title>Utilisation des fonctions supplémentaires</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  </head>
+  <body>
+  <h1>Utilisation des fonctions supplémentaires</h1>
+  <p align="justify">Les formules suivantes accompagnent les <a href="referencing.html">formules de
+  transformations de coordonnées</a>, mais sont considérées comme annexes. Elles consomment peu de
+  ressources comparativement aux formules de transformations, mais leurs résultats doivent être
+  considérés comme approximatifs. Les formules calculant des propriétés de l'eau de mer sont une
+  réminiscence de l'origine océanographique du projet ayant mené aux autres formules. La catégorie
+  de formules est appelée <cite>Nature</cite> car leurs algorithmes tentent de prédire des observations
+  de phénomènes naturels.</p>
+  
+  <table border="1" cellpadding="6" bgcolor="ghostwhite">
+  <tr bgcolor="lightblue">
+    <th nowrap>Catégorie</th>
+    <th nowrap>Fonction (nom français)</th>
+    <th nowrap>Fonction (nom anglais)</th>
+  </tr>
+  <tr>
+    <td nowrap><b>Nature</b></td>
+    <td nowrap>(...à faire...)</td>
+    <td nowrap><code>
+      <a href="#NOON.TIME">NOON.TIME</a><br>
+      <a href="#SEAWATER.DENSITY">SEAWATER.DENSITY</a><br>
+      <a href="#SEAWATER.MELTING.POINT">SEAWATER.MELTING.POINT</a><br>
+      <a href="#SEAWATER.OXYGEN.SATURATION">SEAWATER.OXYGEN.SATURATION</a><br>
+      <a href="#SEAWATER.SOUND.VELOCITY">SEAWATER.SOUND.VELOCITY</a><br>
+      <a href="#SUN.ELEVATION">SUN.ELEVATION</a><br>
+      <a href="#SUN.AZIMUTH">SUN.AZIMUTH</a><br>
+      <a href="#SYNODIC.MONTH.LENGTH">SYNODIC.MONTH.LENGTH</a><br>
+      <a href="#TROPICAL.YEAR.LENGTH">TROPICAL.YEAR.LENGTH</a>
+    </code></td>
+  </tr>
+  </table>
+  <p><strong>Notes:</strong></p>
+  <ul>
+    <li>Au moment d'écrire ces lignes, OpenOffice ne permettait pas encore de créer de
+        nouvelles catégories. La catégorie <cite>Nature</cite> apparaît donc pour
+        l'instant dans la catégorie <cite>Add-in</cite>.</li>
+  </ul>
+  <p align="justify">Il est à noter que toutes les dates utilisées et retournées par ces formules
+  sont en heures GMT (<cite>Greenwich Mean Time</cite>). L'utilisateur a la charge des conversions
+  à partir de son fuseau horaire local. L'heure GMT est requise car sinon, les valeurs calculées
+  varieraient en fonction du fuseau horaire de la personne qui ouvre la feuille de calculs.</p>
+
+
+  <p>&nbsp;</p>
+  <hr noshade size="6">
+  <p>&nbsp;</p>
+  <h2>Fonctions de la catégorie <cite>Nature</cite></h2>
+  <h3><a name="NOON.TIME">NOON.TIME</a></h3>
+  <p align="justify">Retourne l'heure à laquelle le soleil est au plus haut. L'heure est
+  retournée en nombre jours écoulés depuis le debut de la journée (minuit) en heure GMT.
+  Les arguments attendus par cette fonction sont dans l'ordre: <cite>latitude</cite>,
+  <cite>longitude</cite> et <cite>date GMT</cite>.</p>
+
+  <hr>
+  <h3><a name="SUN.ELEVATION">SUN.ELEVATION</a></h3>
+  <p align="justify">Retourne l'élévation du Soleil au dessus de l'horizon (en degrés), tel
+  que vue de la position spécifiée et à la date et heure spécifiées. Les arguments attendus
+  par cette fonction sont dans l'ordre: <cite>latitude</cite>, <cite>longitude</cite> et
+  <cite>date et heure GMT</cite>.</p>
+
+  <hr>
+  <h3><a name="SUN.AZIMUTH">SUN.AZIMUTH</a></h3>
+  <p align="justify">Retourne l'azimut du Soleil (en degrés), tel que vu de la position spécifiée
+  et à la date et heure spécifiées. Les arguments attendus par cette fonction sont dans l'ordre:
+  <cite>latitude</cite>, <cite>longitude</cite> et <cite>date et heure GMT</cite>.</p>
+
+  <hr>
+  <h3><a name="SYNODIC.MONTH.LENGTH">SYNODIC.MONTH.LENGTH</a></h3>
+  <p align="justify">Retourne la longueur du mois synodique. Le mois synodique est l'intervalle
+  de temps moyen entre deux conjonctions de la lune et du soleil. Il correspond au cycle des phases
+  de la lune. Cette fonction attend comme unique argument une date contenant l'année et le mois dont
+  on veut la longueur. Elle retourne un interval de temps <strong>moyen</strong>. Un cycle réel peut
+  s'écarter de plusieurs heures de cette moyenne.</p>
+
+  <hr>
+  <h3><a name="TROPICAL.YEAR.LENGTH">TROPICAL.YEAR.LENGTH</a></h3>
+  <p align="justify">Retourne la longueur de l'année tropicale. L'année tropicale est définie comme
+  l'intervalle moyen entre deux équinoxes vernales (autour du 21 mars dans l'hémisphère nord). Il
+  correspond au cycle des saisons. Ce cycle astronomique n'est pas constant. Par exemple, l'année
+  tropicale était d'environ 365,242196 jours en 1900 et devrait être d'environ 365,242184 jours en
+  2100, soit un changement d'environ 1 seconde.</p>
+ 
+  <p align="justify">Cette fonction attend comme unique argument une date contenant l'année dont on
+  veut la longueur. Elle retourne une <strong>moyenne</strong>. Un cycle réel peut s'écarter
+  de plusieurs minutes de cette moyenne. Notez aussi qu'une année tropicale n'est pas identique à une
+  année sidérale, qui est le temps requis par la Terre pour compléter une orbite autour du Soleil. En
+  l'an 2000, l'année tropicale avait une longueur d'environ 365,2422 jours tandis que l'année sidérale
+  avait une longueur de 365,2564 jours.</p>
+
+  <hr>
+  <h3><a name="SEAWATER.DENSITY">SEAWATER.DENSITY</a></h3>
+  <p align="justify">Calcule la densité de l'eau de mer (kg/m³) à partir de sa salinité, température et
+  de la pression. L'algorithme de calcul est celui de l'UNESCO (1983), <cite>Unesco technical papers in marine
+  science #44</cite>. Les arguments attendus sont:</p>
+  <ul>
+    <li>Salinité PSS-78 (0 à 42).</li>
+    <li>Température ITS-68 (-2 à 40°C).</li>
+    <li>Pression en décibars (0 à 100&nbsp;000 décibars), n'incluant pas la pression atmosphérique.<br>
+        Un décibar correspond très approximativement à un mètre de profondeur.</li>
+  </ul>
+
+  <hr>
+  <h3><a name="SEAWATER.MELTING.POINT">SEAWATER.MELTING.POINT</a></h3>
+  <p align="justify">Calcule la température de fusion de l'eau de mer (°C) à partir de sa salinité et de la
+  pression. Les arguments attendus sont:</p>
+  <ul>
+    <li>Salinité PSS-78.</li>
+    <li>Pression en décibars, n'incluant pas la pression atmosphérique.</li>
+  </ul>
+
+  <hr>
+  <h3><a name="SEAWATER.SOUND.VELOCITY">SEAWATER.SOUND.VELOCITY</a></h3>
+  <p align="justify">Calcule la vitesse du son (m/s) dans l'eau de mer en fonction de la salinité,
+  température et pression. Les arguments attendus sont:</p>
+  <ul>
+    <li>Salinité PSS-78.</li>
+    <li>Température ITS-68.</li>
+    <li>Pression en décibars, n'incluant pas la pression atmosphérique.</li>
+  </ul>
+
+  <hr>
+  <h3><a name="SEAWATER.OXYGEN.SATURATION">SEAWATER.OXYGEN.SATURATION</a></h3>
+  <p align="justify">Calcule la concentration d'oxygène dans l'eau de mer (µmol/kg) qui correspond
+  à une saturation pour la salinité et température spécifiées. Les arguments attendus sont:</p>
+  <ul>
+    <li>Salinité PSS-78.</li>
+    <li>Température ITS-68.</li>
+  </ul>
+  </body>
+</html>

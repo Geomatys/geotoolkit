@@ -1,0 +1,139 @@
+/*
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2005-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+
+// Guard against multiple includes
+#ifndef _org_geotoolkit_openoffice_XNature_
+#define _org_geotoolkit_openoffice_XNature_
+
+// Must be included always for compatibility reasons
+#include <com/sun/star/uno/XInterface.idl>
+#include <com/sun/star/beans/XPropertySet.idl>
+#include <com/sun/star/sheet/AddIn.idl>
+
+
+module org {
+  module geotoolkit {
+    module openoffice {
+      /// Methods from the org.geotoolkit.nature package to make available to OpenOffice.
+      interface XNature : com::sun::star::uno::XInterface {
+        /// Returns the noon time (in GMT) when the Sun reach its highest point.
+        double getNoonTime(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// The latitude of observation point, in degrees.
+          [in] double latitude,
+          /// The longitude of observation point, in degrees.
+          [in] double longitude,
+          /// The observation date.
+          [in] double time
+        );
+
+        /// Returns the Sun''s elevation angle in degrees.
+        double getElevation(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// The latitude of observation point, in degrees.
+          [in] double latitude,
+          /// The longitude of observation point, in degrees.
+          [in] double longitude,
+          /// The observation date and time, in GMT.
+          [in] double time
+        );
+
+        /// Returns the Sun''s azimuth in degrees.
+        double getAzimuth(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// The latitude of observation point, in degrees.
+          [in] double latitude,
+          /// The longitude of observation point, in degrees.
+          [in] double longitude,
+          /// The observation date and time, in GMT.
+          [in] double time
+        );
+
+        /// Returns the tropical year length in days.
+        double getTropicalYearLength(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// A date that contains the year.
+          [in] double time
+        );
+
+        /// Returns the synodic month length in days.
+        double getSynodicMonthLength(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// A date that contains the month.
+          [in] double time
+        );
+
+        /// Computes sea water density as a function of salinity, temperature and pressure.
+        double getSeaWaterDensity(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// Salinity PSS-78 (0 to 42).
+          [in] double salinity,
+          /// Temperature ITS-68 (-2 to 40 degC).
+          [in] double temperature,
+          /// Pressure in decibars (0 to 10^5 dbar), not including atmospheric pressure.
+          [in] double pressure
+        );
+
+        /// Computes the fusion temperature (melting point) as a function of salinity and pressure.
+        double getSeaWaterMeltingPoint(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// Salinity PSS-78.
+          [in] double salinity,
+          /// Pressure in decibars, not including atmospheric pressure.
+          [in] double pressure
+        );
+
+        /// Computes the sound velocity in sea water as a function of salinity, temperature and pressure.
+        double getSeaWaterSoundVelocity(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// Salinity PSS-78.
+          [in] double salinity,
+          /// Temperature ITS-68.
+          [in] double temperature,
+          /// Pressure in decibars, not including atmospheric pressure.
+          [in] double pressure
+        );
+
+        /// Computes the saturation in disolved oxygen as a function of salinity and temperature.
+        double getSeaWaterSaturationO2(
+          [in] com::sun::star::beans::XPropertySet xOptions,
+          /// Salinity PSS-78.
+          [in] double salinity,
+          /// Temperature ITS-68.
+          [in] double temperature
+        );
+      };
+
+      /*
+       * Exported interfaces:
+       * This is where we put all interfaces that this service exports.
+       */
+      service Nature {
+        interface XNature;
+
+        /*
+         * Necessary base service.
+         * All add-ins must implement this service
+         */
+        service com::sun::star::sheet::AddIn;
+      };
+    };
+  };
+};
+
+#endif

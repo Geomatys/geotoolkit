@@ -54,6 +54,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-nature</module>
+    <module>geotk-openoffice</module>
   </modules>
 
 </project>

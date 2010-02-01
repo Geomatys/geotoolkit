@@ -1,0 +1,484 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <title>Utilisation des fonctions de transformations de coordonnées</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  </head>
+  <body>
+  <h1>Utilisation des fonctions de transformations de coordonnées</h1>
+  <p align="justify">L'extension Geotoolkit.org (abrégée Geotk) pour OpenOffice.org fournit de
+  nouvelles fonctions réparties dans 2 catégories: <cite>Texte</cite> et <cite>Add-in</cite>.
+  Cette page suppose que l'<a href="install.html">installation de l'extension Geotk</a> s'est
+  déroulée correctement.</p>
+  
+  <table border="1" cellpadding="6" bgcolor="ghostwhite">
+  <tr bgcolor="lightblue">
+    <th nowrap>Catégorie</th>
+    <th nowrap>Fonction (nom français)</th>
+    <th nowrap>Fonction (nom anglais)</th>
+  </tr>
+  <tr>
+    <td nowrap><b>Texte</b></td>
+    <td nowrap>(...à faire...)</td>
+    <td nowrap><code>
+      <a href="#TEXT.ANGLE">TEXT.ANGLE</a><br>
+      <a href="#TEXT.LATITUDE">TEXT.LATITUDE</a><br>
+      <a href="#TEXT.LONGITUDE">TEXT.LONGITUDE</a><br>
+      <a href="#VALUE.ANGLE">VALUE.ANGLE</a>
+    </code></td>
+  </tr>
+  <tr>
+    <td nowrap><b>Referencing</b></td>
+    <td nowrap>(...à faire...)</td>
+    <td nowrap><code>
+      <a href="#CRS.AXIS">CRS.AXIS</a><br>
+      <a href="#CRS.BOUNDING.BOX">CRS.BOUNDING.BOX</a><br>
+      <a href="#CRS.DESCRIPTION">CRS.DESCRIPTION</a><br>
+      <a href="#CRS.REMARKS">CRS.REMARKS</a><br>
+      <a href="#CRS.SCOPE">CRS.SCOPE</a><br>
+      <a href="#CRS.VALID.AREA">CRS.VALID.AREA</a><br>
+      <a href="#CRS.WKT">CRS.WKT</a><br>
+      <a href="#ORTHODROMIC.DISTANCE">ORTHODROMIC.DISTANCE</a><br>
+      <a href="#ORTHODROMIC.FORWARD">ORTHODROMIC.FORWARD</a><br>
+      <a href="#TRANSFORM.ACCURACY">TRANSFORM.ACCURACY</a><br>
+      <a href="#TRANSFORM.COORD">TRANSFORM.COORD</a><br>
+      <a href="#TRANSFORM.WKT">TRANSFORM.WKT</a>
+    </code></td>
+  </tr>
+  </table>
+  <p><strong>Notes:</strong></p>
+  <ul>
+    <li>Au moment d'écrire ces lignes, OpenOffice ne permettait pas encore de créer de
+        nouvelles catégories. La catégorie <cite>Referencing</cite> apparaît donc pour
+        l'instant dans la catégorie <cite>Add-in</cite>.</li>
+  
+    <li>L'abréviation «&nbsp;CRS&nbsp;» est pour l'expression anglaise <cite>Coordinate Reference System</cite>.</li>
+  </ul>
+
+  <p align="justify">Le principe de base des fonctions de la catégorie <cite>Referencing</cite> est
+  le suivant: chaque système de référence des coordonnées est identifié par un code numérique de la
+  <a href="http://www.epsg.org/">base de données EPSG</a>. Cette base de données recense plus de
+  3000 systèmes en usage sur la planète, ainsi que des paramètres permettant d'effectuer des transformations
+  d'un système vers un autre. Certaines fonctions de la catégories <cite>Referencing</cite> permettent d'obtenir
+  des informations sur un système de référence en particulier (par exemple <code><a href="#CRS.DESCRIPTION">CRS.DESCRIPTION</a></code>);
+  ces fonctions n'attendent qu'un seul code EPSG en paramètre. D'autres fonctions agissent non pas à partir
+  d'un système de référence seul, mais plutôt à partir d'une transformation passant d'un système vers un autre
+  (par exemple <code><a href="#TRANSFORM.ACCURACY">TRANSFORM.ACCURACY</a></code>). Ces fonctions attendent deux codes EPSG
+  en paramètres, chacun correspondant à un système de référence différent. Le premier code définit le système source, et le
+  second code définit le système destination. La transformation est définit par l'algorithme permettant de passer des
+  coordonnées du système source vers celles du système destination.</p>
+
+  <p align="justify">Le tableau suivant donne quelques exemples de codes EPSG. Une liste complète peut être obtenue
+  en téléchargeant la base de données directement du site <a href="http://www.epsg.org/">www.epsg.org</a>. L'extension
+  Geotk pour OpenOffice est livrée avec sa propre copie de la base de données EPSG, mais nous n'avons pas encore prévu
+  d'interface graphique permettant d'y naviguer. Ça sera peut-être fait dans une version future.</p>
+
+  <table border="1" cellpadding="6" bgcolor="ghostwhite">
+  <tr bgcolor="lightblue">
+    <th nowrap>Code</th>
+    <th nowrap>Type de système</th>
+    <th nowrap>Nom</th>
+  </tr>
+  <tr>
+    <td nowrap>
+      EPSG:4326<br>
+      EPSG:4807<br>
+      EPSG:27572<br>
+      EPSG:2011<br>
+      EPSG:3060<br>
+      EPSG:4181<br>
+    </td>
+    <td nowrap>
+      Géographique 2D<br>
+      Géographique 2D<br>
+      Projeté<br>
+      Projeté<br>
+      Projeté<br>
+      Géographique 2D<br>
+    </td>
+    <td nowrap>
+      WGS 84<br>
+      NTF (Paris)<br>
+      NTF (Paris) / Lambert zone II<br>
+      NAD27(CGQ77) / SCoPQ zone 5<br>
+      IGN72 Grande Terre / UTM zone 58S<br>
+      Luxembourg 1930<br>
+    </td>
+  </tr>
+  </table>
+  
+  <p align="justify">La plupart des fonctions opérant sur des coordonnées sont des fonctions matricielles.
+  Leurs sorties nécessitent plusieurs colonnes, autant qu'il y a de dimensions dans le système de référence
+  utilisé. Par exemple si une fonction doit retourner une coordonnée à trois dimensions, alors il faut
+  sélectionner trois colonnes avant d'entrer la fonction, et valider cette dernière en appuyant sur
+  <code>[Ctrl]</code> + <code>[Shift]</code> + <code>Entrée</code>.</p>
+
+  <p align="justify">Bien qu'il soit possible d'utiliser une fonction par ligne et de la recopier sur
+  de nouvelles lignes autant de fois qu'il y a de coordonnées à transformer, il est beaucoup plus efficace
+  de profiter là aussi du caractère matriciel des fonctions. En plus d'avoir sélectionné le nombre de colonnes
+  nécessaires, sélectionnez autant de lignes qu'il y a de coordonnées à transformer. Cela permet à Geotk
+  de récupérer les informations associées aux codes EPSG une seule fois pour toutes les lignes de la matrice,
+  plutôt que de recommencer cette opération pour chaque fonction recopiée.</p>
+
+
+  <p>&nbsp;</p>
+  <hr noshade size="6">
+  <p>&nbsp;</p>
+  <h2>Fonctions de la catégorie <cite>Texte</cite></h2>
+  <h3><a name="TEXT.ANGLE">TEXT.ANGLE</a></h3>
+  <p align="justify">Convertit une valeur numérique en chaîne de caractères représentant un angle.
+  La valeur numérique doit être un angle en degrés décimaux (par exemple 12,5 pour 12°30'). La chaîne
+  retournée peut être un angle sexagésimal, en fonction du modèle donné en argument. Ce modèle comprend
+  six caractères spéciaux : <var>D</var>, <var>M</var>, <var>S</var>, <var>d</var>, <var>m</var> et <var>s</var>.
+  Le caractère <var>D</var> représente la partie entière des degrés, et <var>d</var> la partie fractionnaire.
+  Le symbole <var>M</var> représente la partie entière des minutes, et <var>m</var> la partie fractionnaire.
+  Enfin le symbole <var>S</var> représente la partie entière des secondes, et <var>s</var> la partie fractionnaire.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>TEXT.ANGLE(167,1590; "DD°")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap>167°</td>
+    </tr>
+    <tr>
+      <td nowrap>&nbsp;</td>
+      <td nowrap><code>TEXT.ANGLE(167,1590; "DD°MM'")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap>167°10'</td>
+    </tr>
+    <tr>
+      <td nowrap>&nbsp;</td>
+      <td nowrap><code>TEXT.ANGLE(167,1590; "DD°MM'SS""")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap>167°09'32"</td>
+    </tr>
+    <tr>
+      <td nowrap>&nbsp;</td>
+      <td nowrap><code>TEXT.ANGLE(167,1590; "DD°MM'SS.s""")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap>167°09'32,4"</td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="TEXT.LATITUDE">TEXT.LATITUDE</a></h3>
+  <p align="justify">Convertit une valeur numérique en chaîne de caractères représentant une latitude. Cette
+  fonction est identique à <code><a href="#TEXT.ANGLE">TEXT.ANGLE</a></code>, excepté qu'elle remplace le signe
+  (positif ou négatif) de l'angle par le symbole de l'hémisphère (<cite>N</cite> ou <cite>S</cite> pour Nord et
+  Sud respectivement) placé après l'angle.</p>
+
+  <hr>
+  <h3><a name="TEXT.LONGITUDE">TEXT.LONGITUDE</a></h3>
+  <p align="justify">Convertit une valeur numérique en chaîne de caractères représentant une longitude. Cette
+  fonction est identique à <code><a href="#TEXT.ANGLE">TEXT.ANGLE</a></code>, excepté qu'elle remplace le signe
+  (positif ou négatif) de l'angle par le symbole de l'hémisphère (<cite>E</cite> ou <cite>W</cite> pour Est et
+  Ouest respectivement) placé après l'angle.</p>
+
+  <hr>
+  <h3><a name="VALUE.ANGLE">VALUE.ANGLE</a></h3>
+  <p align="justify">Convertit en valeur numérique une chaîne de caractères représentant un angle. Cette
+  fonction est l'inverse de <code><a href="#TEXT.ANGLE">TEXT.ANGLE</a></code>. La chaîne de caractères peut
+  représenter un angle sexagésimal, à la condition que les symboles °, ' et " soient correctement utilisés
+  pour identifier les degrés, minutes et secondes respectivement. L'hémisphère (<cite>N</cite>, <cite>S</cite>,
+  <cite>E</cite> ou <cite>W</cite>) est optionnel. L'angle retourné est toujours exprimé en degrés décimaux.</p>
+  
+  <p align="justify">Les symboles °, ' et " n'ont pas besoin d'être tous présents. Ils peuvent être complètement
+  omis si un modèle approprié est donné en argument. Par exemple si le modèle est <cite>DDMM</cite>, alors cette
+  fonction traduira le texte 0430 en la valeur 4,5°. Excepté pour de tels cas où les symboles différentiateurs de
+  champs sont complètement absents, le modèle donné à la fonction <code>VALUE.ANGLE</code> est plutôt à titre
+  indicatif. Cette fonction est assez tolérante et devrait interpréter correctement des chaînes de caractères
+  qui ne correspondent pas exactement au modèle.</p>
+
+  <p>&nbsp;</p>
+  <hr noshade size="6">
+  <p>&nbsp;</p>
+  <h2>Fonctions de la catégorie <cite>Referencing</cite></h2>
+  <h3><a name="CRS.DESCRIPTION">CRS.DESCRIPTION</a></h3>
+  <p align="justify">Renvoie la description (le libellé) correspondant au système de référence spécifié.
+  Le code du système est l'unique argument attendu par cette fonction.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>CRS.DESCRIPTION("EPSG:3060")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>IGN72 Grande Terre / UTM zone 58S</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.DESCRIPTION("EPSG:3061")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Porto Santo 1995 / UTM zone 28N</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.DESCRIPTION("EPSG:4326")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>WGS84</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.DESCRIPTION("EPSG:4327")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>WGS84 (geographic 3D)</cite></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="CRS.REMARKS">CRS.REMARKS</a></h3>
+  <p align="justify">Retourne des remarques à propos du système de référence spécifié. Ces remarques
+  indiquent parfois qu'un système a été déprécié et est remplacé par un autre. Cette information est
+  habituellement fournit par une phrase ressemblant à «&nbsp;<cite>Superseded by X</cite>&nbsp;» ou <cite>X</cite>
+  est le nom et code du nouveau système à utiliser. À ne pas confondre avec «&nbsp;<cite>Supersedes Y</cite>&nbsp;»
+  qui indiquent justement que ce système en remplace un autre! Enfin, certains systèmes de référence n'ont aucune
+  remarque associée.</p>
+
+  <hr>
+  <h3><a name="CRS.SCOPE">CRS.SCOPE</a></h3>
+  <p align="justify">Retourne l'utilisation principale que l'on fait du système de référence spécifié.
+  Le code du système est l'unique argument attendu par cette fonction.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>CRS.SCOPE("EPSG:3060")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Large and medium scale topographic mapping and engineering survey.</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.SCOPE("EPSG:4327")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Used by GPS satellite navigation system.</cite></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="CRS.VALID.AREA">CRS.VALID.AREA</a></h3>
+  <p align="justify">Retourne une description textuelle de la région dans laquelle un système
+  de référence est valide. Cette description comprend habituellement les noms des pays ou provinces
+  pour lesquels le système a été conçu.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>CRS.VALID.AREA("EPSG:3060")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>New Caledonia - Grande Terre.</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.VALID.AREA("EPSG:4327")</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>World.</cite></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="CRS.BOUNDING.BOX">CRS.BOUNDING.BOX</a></h3>
+  <p align="justify">Retourne dans une plage de cellule de taille 2&times;2 les coordonnées géographiques
+  de la région dans laquelle un système de référence est valide. L'unique argument de cette méthode est le
+  code EPSG du système dont on veut la région de validité. La sortie contient les coordonnées géographiques
+  (toujours en degrés décimaux de <var>latitude</var>, <var>longitude</var>) du coin supérieur gauche sur la
+  première ligne, et du coin inférieur droit sur la seconde ligne. En d'autres termes, les valeurs retournées
+  par cette fonction se répartissent comme suit:</p>
+  
+  <table align="center" border="1">
+    <tr><td>&nbsp;Nord&nbsp;</td> <td>&nbsp;Ouest&nbsp;</td></tr>
+    <tr><td>&nbsp;Sud&nbsp;</td>  <td>&nbsp;Est&nbsp;</td></tr>
+  </table>
+
+  <hr>
+  <h3><a name="CRS.AXIS">CRS.AXIS</a></h3>
+  <p align="justify">Retourne le nom d'un axe d'un système de référence de coordonnées. Cette fonction attend en
+  arguments le code EPSG d'un système de référence, suivit de l'index d'un de ses axes. Les index sont numérotés de
+  1 jusqu'au nombre de dimensions du système de référence, inclusivement. Cette fonction est particulièrement utile
+  pour obtenir le libellé des colonnes qui contiendront les coordonnées.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>CRS.AXIS("EPSG:4326";  1)</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Geodetic latitude</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.AXIS("EPSG:4326";  2)</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Geodetic longitude</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.AXIS("EPSG:32758"; 1)</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Easting</cite></td>
+    </tr>
+    <tr>
+      <td>&nbsp;</td>
+      <td nowrap><code>CRS.AXIS("EPSG:32758"; 2)</code>
+      <td nowrap>&nbsp;&nbsp;&nbsp;retourne&nbsp;&nbsp;&nbsp;</td>
+      <td nowrap><cite>Northing</cite></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="TRANSFORM.COORD">TRANSFORM.COORD</a></h3>
+  <p align="justify">Applique un changement (transformation ou conversion) de coordonnées. Les coordonnées
+  à transformer doivent être disposées sous forme de tableau avec une coordonnée par ligne et autant de colonnes
+  qu'il y a de dimensions dans leur système de référence (habituellement deux ou trois). La sortie aura une
+  disposition similaire. Cette fonction attend trois arguments:</p>
+  <ul>
+    <li>La plage de coordonnées à transformer.</li>
+    <li>Le code du système de référence source.</li>
+    <li>Le code du système de référence destination.</li>
+  </ul>
+  <p align="justify">L'ordre et le nombre de colonnes dans la plage de coordonnées à transformer dépendent
+  du système de référence source. L'ordre et le nombre de colonnes des coordonnées transformer (la sortie
+  de cette méthode) dépendent du système de référence destination. Pour s'y retrouver, il est pratique
+  d'utiliser la fonction <code><a href="#CRS.AXIS">CRS.AXIS</a></code> pour le libellé des colonnes.</p>
+
+  <p align="justify">Toutes les transformations de coordonnées n'ont pas la même précision. Pour obtenir une
+  estimation de l'erreur, on peut utiliser la fonction <code><a href="#TRANSFORM.ACCURACY">TRANSFORM.ACCURACY</a></code>
+  avec en arguments les mêmes codes EPSG que ceux qui auront été spécifiés à <code>TRANSFORM.COORD</code>.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap valign="top"><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><img src="images/TRANSFORM.COORD.png" alt="Fonction TRANSFORM.COORD"></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="TRANSFORM.ACCURACY">TRANSFORM.ACCURACY</a></h3>
+  <p align="justify">Retourne une <strong>estimation</strong> de la précision des transformations de coordonnées entre
+  deux systèmes de référence. Cette fonction attend en argument les codes de deux systèmes de référence, habituellement
+  ceux qui seront spécifiés à la fonction <code><a href="#TRANSFORM.COORD">TRANSFORM.COORD</a></code>. Elle retourne une
+  estimation de l'erreur induite par la transformation de coordonnées, toujours en mètres. Il ne s'agit pas de l'erreur due
+  aux éventuelles imprécisions des algorithmes de Geotk, mais plutôt de l'erreur due à la nature stochastique des
+  paramètres dès qu'un changement de référentiel est impliqué (ces paramètres sont déterminés empiriquement à partir
+  d'un ensemble de points exprimés selon les deux systèmes de références).</p>
+
+  <p align="justify">Des incertitudes sur les coordonnées calculées surviennent dès qu'il y a eu changement de
+  référentiel, auquel cas on parle de <cite>transformation de coordonnées</cite> selon la terminologie de la
+  norme ISO 19111. Lorsque le calcul consiste par exemple à appliquer une projection cartographique sans changer
+  de référentiel, on parle alors de <cite>conversion de coordonnées</cite> (toujours selon la terminologie de la
+  norme ISO). Dans ce dernier cas, la fonction <code>TRANSFORM.ACCURACY</code> peut retourner 0, ce qui signifie
+  en fait que les changements de coordonnées se feront aux erreurs d'arrondissements près et selon les limites de
+  la précision des algorithmes de Geotk. L'erreur ne sera donc <em>pas réellement</em> nulle, mais devrait
+  être faible.</p>
+
+  <hr>
+  <h3><a name="TRANSFORM.WKT">TRANSFORM.WKT</a></h3>
+  <p align="justify">Retourne une description au format <cite>Well Known Text</cite> (WKT) de la transformation
+  entre deux systèmes de référence des coordonnées. Cette information permet de vérifier quel chemin a suivit
+  Geotk pour transformer les coordonnées avec <code><a href="#TRANSFORM.COORD">TRANSFORM.COORD</a></code>
+  par exemple. Cette fonction attend en argument les codes des systèmes de référence source et destination.
+  Voyez <code><a href="#CRS.WKT">CRS.WKT</a></code> pour quelques détails sur ce format.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap valign="top"><strong>Exemple:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>TRANSFORM.WKT("EPSG:4326", "EPSG:32759", "OGC")</code></td>
+    </tr><tr>
+      <td nowrap valign="top"><strong>retourne:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><pre>CONCAT_MT[PARAM_MT["Affine",
+    PARAMETER["num_row", 3],
+    PARAMETER["num_col", 3],
+    PARAMETER["elt_0_0", 0.0],
+    PARAMETER["elt_0_1", 1.0],
+    PARAMETER["elt_1_0", 1.0],
+    PARAMETER["elt_1_1", 0.0]],
+  PARAM_MT["Transverse_Mercator",
+    PARAMETER["semi_major", 6378137.0],
+    PARAMETER["semi_minor", 6356752.314245179],
+    PARAMETER["central_meridian", 171.0],
+    PARAMETER["latitude_of_origin", 0.0],
+    PARAMETER["scale_factor", 0.9996],
+    PARAMETER["false_easting", 500000.0],
+    PARAMETER["false_northing", 10000000.0]]],
+AUTHORITY["EPSG","16159"]]</pre></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="CRS.WKT">CRS.WKT</a></h3>
+  <p align="justify">Retourne une description au format <cite>Well Known Text</cite> (WKT) du système de référence
+  spécifié. Le format WKT est un format standardisé par le <a href="http://www.opengeospatial.org">consortium Open
+  Geospatial</a> (OGC) pour l'échange d'informations à propos de systèmes de référence des coordonnées. En plus de
+  contenir le code EPSG d'un système de référence, il contient aussi le strict minimum d'informations nécessaires pour
+  pouvoir utiliser ce système de manière autonome, c'est-à-dire sans qu'une connexion à une base de données EPSG ou autre
+  ne soit nécessaire. Il s'agit bien d'un strict minimum; la chaîne retournée ne dit rien sur la région de validité
+  du système de référence, son usage, ses remarques, <cite>etc.</cite> Le format WKT est utilisé par certains services
+  web, ainsi que par certains logiciels commerciaux, pour spécifier le système de référence des coordonnées (souvent
+  dans un petit fichier texte portant l'extension <code>.prj</code>) d'une série de données.</p>
+
+  <p align="justify">La syntaxe du format WKT est <a href="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">définie
+  en utilisant la notation de Backus Naur étendue</a>. Le dernier argument indique quelle autorité utiliser pour
+  le choix des noms des paramètres apparaissant dans la sortie. Sa valeur est habituellement <code>"OGC"</code>
+  (pour <cite>Open Geospatial Consortium</cite>). Une autre valeur courante est <code>"GeoTIFF"</code>.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap valign="top"><strong>Exemple:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><code>CRS.WKT("EPSG:27572", "OGC")</code></td>
+    </tr><tr>
+      <td nowrap valign="top"><strong>retourne:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><pre>PROJCS["NTF (Paris) / Lambert zone II",
+  GEOGCS["NTF (Paris)",
+    DATUM["Nouvelle Triangulation Francaise (Paris)",
+      SPHEROID["Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, AUTHORITY["EPSG","7011"]],
+      AUTHORITY["EPSG","6807"]],
+    PRIMEM["Paris", 2.5969213, AUTHORITY["EPSG","8903"]],
+    UNIT["grade", 0.015707963267948967],
+    AXIS["Geodetic latitude", NORTH, AUTHORITY["EPSG","58"]],
+    AXIS["Geodetic longitude", EAST, AUTHORITY["EPSG","59"]],
+    AUTHORITY["EPSG","4807"]],
+  PROJECTION["Lambert Conic Conformal (1SP)", AUTHORITY["EPSG","9801"]],
+  PARAMETER["central_meridian", 0.0],
+  PARAMETER["latitude_of_origin", 52.0],
+  PARAMETER["scale_factor", 0.99987742],
+  PARAMETER["false_easting", 600000.0],
+  PARAMETER["false_northing", 2200000.0],
+  UNIT["m", 1.0],
+  AXIS["Easting", EAST],
+  AXIS["Northing", NORTH],
+  AUTHORITY["EPSG","27572"]]</pre></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="ORTHODROMIC.DISTANCE">ORTHODROMIC.DISTANCE</a></h3>
+  <p align="justify">Calcule la distance orthodromique entre deux coordonnées exprimées selon le système de
+  référence spécifié. La distance orthodromique est la plus courte distance entre deux points à la surface d'un
+  ellipsoïde. Pour une sphère, son chemin correspond toujours à un arc de grand cercle.</p>
+
+  <p align="justify">Une autre façon de calculer la distance entre deux points serait de convertir les coordonnées
+  selon une projection plane, et de calculer la distance par une simple relation de Pythagore. Toutefois, toute
+  projection induit des déformations. Ces dernières sont négligeables sur des distances de centaines de kilomètres,
+  mais peuvent devenir perceptibles sur des distances de milliers de kilomètres. Le calcul de la distance orthodromique
+  tient compte de la courbure de la Terre pour donner une réponse plus précise que la relation de Pythagore sur de
+  grandes distances.</p>
+
+  <p align="justify">Cette fonction attend trois arguments, soit dans l'ordre: les coordonnées du premier point
+  (habituellement sur deux colonnes), les coordonnées du second point (habituellement sur deux colonnes), et le
+  code du système de référence selon lequel ces coordonnées sont exprimées. Si deux colonnes sont sélectionnées
+  pour la sortie, alors la deuxième colonne contiendra l'azimut pour aller du premier point au second. La première
+  colonne contiendra la distance orthodromique dans tous les cas.</p>
+
+  <blockquote><table cellpadding="0" cellspacing="0">
+    <tr>
+      <td nowrap valign="top"><strong>Exemples:&nbsp;&nbsp;&nbsp;</strong></td>
+      <td nowrap><img src="images/ORTHODROMIC.DISTANCE.png" alt="Fonction ORTHODROMIC.DISTANCE"></td>
+    </tr>
+  </table></blockquote>
+
+  <hr>
+  <h3><a name="ORTHODROMIC.FORWARD">ORTHODROMIC.FORWARD</a></h3>
+  <p align="justify">Calcule un point d'arrivé à partir d'un point de départ, une distance orthodromique et d'un azimuth.
+  Cette fonction est l'inverse de <code><a href="#ORTHODROMIC.DISTANCE">ORTHODROMIC.DISTANCE</a></code>.</p>
+
+  </body>
+</html>

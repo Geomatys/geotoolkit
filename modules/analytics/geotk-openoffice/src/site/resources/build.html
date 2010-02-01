@@ -1,0 +1,87 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+  <HEAD>
+    <TITLE>Compilation and deployment instruction</TITLE>
+    <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </HEAD>
+  <BODY>
+    <H1>Compilation and deployment instruction</H1>
+    <P ALIGN="justify">All <code>XFoo</code> Java interfaces are generated from IDL files with the same
+    name. As long as <code>XFoo</code> Java/IDL interfaces are not modified, there is no need for the
+    OpenOffice SDK. But if any <code>XFoo</code> interface is modified, then steps 1 to 3 below must
+    be done. Steps 5 to 7 are performed by Maven, but are cited here for completness. Step 8 must
+    be executed on the client machine (users can also use the "<CITE>Tools / Package manager</CITE>"
+    menu from OpenOffice GUI).</P>
+
+    <TABLE><TR VALIGN="top"><TD>
+      <TABLE><TR><TD>
+        <TABLE BORDER='1' CELLPADDING='0' CELLSPACING='0'>
+          <TR BGCOLOR="lightblue"><TH>Tool</TH>           <TH NOWRAP>Provided with</TH></TR>
+          <TR><TD><CODE>&nbsp;idlc&nbsp;</CODE></TD>      <TD NOWRAP>&nbsp;OpenOffice SDK&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;regmerge&nbsp;</CODE></TD>  <TD NOWRAP>&nbsp;OpenOffice SDK&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;javamaker&nbsp;</CODE></TD> <TD NOWRAP>&nbsp;OpenOffice SDK&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;javap&nbsp;</CODE></TD>     <TD NOWRAP>&nbsp;Java SDK&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;javac&nbsp;</CODE></TD>     <TD NOWRAP>&nbsp;Java SDK&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;jar&nbsp;</CODE></TD>       <TD NOWRAP>&nbsp;Java SDK&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;zip&nbsp;</CODE></TD>       <TD NOWRAP>&nbsp;Unix distribution&nbsp;</TD></TR>
+          <TR><TD><CODE>&nbsp;unopkg&nbsp;</CODE></TD>    <TD NOWRAP>&nbsp;OpenOffice suite&nbsp;</TD></TR>
+        </TABLE>
+        </TD></TR><TR><TD>
+        <P>&nbsp;</P>
+        <TABLE>
+          <TR><TH>Required OOo JARs</TH></TR>
+          <TR><TD><CODE>ridl.jar</CODE></TD></TR>
+          <TR><TD><CODE>unoil.jar</CODE></TD></TR>
+          <TR><TD><CODE>jurt.jar</CODE></TD></TR>
+          <TR><TD><CODE>juh.jar</CODE></TD></TR>
+        </TABLE>
+      </TABLE>
+      </TD><TD><OL>
+        <LI><P>Compiles the UNO <code>.urd</code> binary file</P>
+        <BLOCKQUOTE><CODE>
+        idlc -C -cid -w -I $OO_SDK_HOME/idl org/geotoolkit/openoffice/XReferencing.idl
+        </CODE></BLOCKQUOTE></LI>
+
+        <LI><P>Compiles the UNO <code>.rdb</code> registry file</P>
+        <BLOCKQUOTE><CODE>
+        regmerge geotoolkit.rdb /UCR org/geotoolkit/openoffice/XReferencing.urd
+        </CODE></BLOCKQUOTE></LI>
+
+        <LI><P>Creates the <code>.class</code> file for Java interfaces</P>
+        <BLOCKQUOTE><CODE>
+        javamaker -BUCR -nD -Torg.geotoolkit.openoffice.XReferencing geotoolkit.rdb $OFFICE_PROGRAM_PATH/types.rdb
+        </CODE></BLOCKQUOTE></LI>
+
+        <LI><P>Derives a <code>.java</code> source from the <code>.class</code> file</P>
+        <BLOCKQUOTE><CODE>
+        javap org.geotoolkit.openoffice.XReferencing
+        </CODE></BLOCKQUOTE></LI>
+
+        <HR>
+
+        <LI><P>Compiles <code>.java</code> source files</P>
+        <BLOCKQUOTE><CODE>
+        javac org/geotoolkit/openoffice/*.java
+        </CODE></BLOCKQUOTE></LI>
+
+        <LI><P>Creates the <code>.jar</code> file</P>
+        <BLOCKQUOTE><CODE>
+        jar -cfm0 openoffice-2.3-SNAPSHOT.jar META-INF/MANIFEST.MF org/geotoolkit/openoffice/*.class
+        </CODE></BLOCKQUOTE></LI>
+
+        <LI><P>Creates the <code>.pkg</code> file</P>
+        <BLOCKQUOTE><CODE>
+        zip -9 geotoolkit.uno.pkg geotoolkit.rdb openoffice-2.3-SNAPSHOT.jar META-INF/manifest.xml
+        </CODE></BLOCKQUOTE></LI>
+
+        <HR>
+
+        <LI><P>Register the component to OpenOffice</P>
+        <BLOCKQUOTE><CODE>
+        unopkg add geotoolkit.uno.pkg
+        </CODE></BLOCKQUOTE></LI>
+      </OL></TD></TR>
+    </TABLE>
+  </BODY>
+</HTML>
