@@ -97,7 +97,7 @@ public class Axis extends MetadataAccessor {
      * @param direction The axis direction, or {@code null} if none.
      */
     public void setDirection(final String direction) {
-        setAttribute("direction", direction, GeographicMetadataFormat.DIRECTIONS);
+        GeographicMetadata.setAttribute(this, "direction", direction, GeographicMetadataFormat.DIRECTIONS);
     }
 
     /**

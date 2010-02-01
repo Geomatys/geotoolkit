@@ -294,7 +294,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
             propertyName = ((PropertyNameType)geometry).getPropertyName();
         }
         if (bounds.getCoordinateReferenceSystem() != null) {
-            CRSName = CRS.toSRS(bounds.getCoordinateReferenceSystem());
+            CRSName = CRS.getDeclaredIdentifier(bounds.getCoordinateReferenceSystem());
         } else {
             CRSName = "EPSG:4326";
         }

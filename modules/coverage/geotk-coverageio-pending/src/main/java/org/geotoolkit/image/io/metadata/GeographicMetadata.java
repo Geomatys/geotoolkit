@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Collection;
 import java.util.Date;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
@@ -170,7 +171,31 @@ public class GeographicMetadata extends SpatialMetadata {
      * @param type The sample type, or {@code null} if none.
      */
     public void setSampleType(final String type) {
-        getBands().setAttribute("type", type, GeographicMetadataFormat.SAMPLE_TYPES);
+        setAttribute(getBands(), "type", type, GeographicMetadataFormat.SAMPLE_TYPES);
+    }
+
+    /**
+     * Sets the attribute to the specified enumeration value,
+     * or remove the attribute if the value is null.
+     *
+     * @param attribute The attribute name.
+     * @param value     The attribute value.
+     * @param enums     The set of allowed values, or {@code null} if unknown.
+     */
+    @Deprecated
+    static void setAttribute(final MetadataAccessor accessor,
+            final String attribute, String value, final Collection<String> enums)
+    {
+        if (value != null) {
+            value = value.replace('_', ' ').trim();
+            for (final String e : enums) {
+                if (value.equalsIgnoreCase(e)) {
+                    value = e;
+                    break;
+                }
+            }
+        }
+        accessor.setAttribute(attribute, value);
     }
 
     /**
@@ -223,7 +248,6 @@ public class GeographicMetadata extends SpatialMetadata {
      * @param  metadata The metadata to merge to this object.
      * @throws IIOInvalidTreeException If the metadata can not be merged.
      */
-    @Override
     public void mergeTree(final IIOMetadata metadata) throws IIOInvalidTreeException {
         final Node tree;
         try {

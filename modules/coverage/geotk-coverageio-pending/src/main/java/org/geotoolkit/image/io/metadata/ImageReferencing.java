@@ -126,7 +126,7 @@ public class ImageReferencing extends MetadataAccessor {
      */
     public void setCoordinateReferenceSystem(final String name, final String type) {
         setAttribute("name", name);
-        setAttribute  ("type", type, GeographicMetadataFormat.CRS_TYPES);
+        GeographicMetadata.setAttribute(this, "type", type, GeographicMetadataFormat.CRS_TYPES);
     }
 
     /**
@@ -155,7 +155,7 @@ public class ImageReferencing extends MetadataAccessor {
     public void setDatum(final String name, final String type) {
         final MetadataAccessor datum = getDatumAccessor();
         datum.setAttribute("name", name);
-        datum.setAttribute  ("type", type, GeographicMetadataFormat.DATUM_TYPES);
+        GeographicMetadata.setAttribute(datum, "type", type, GeographicMetadataFormat.DATUM_TYPES);
     }
 
     /**
@@ -368,7 +368,7 @@ public class ImageReferencing extends MetadataAccessor {
     public void setCoordinateSystem(final String name, final String type) {
         final MetadataAccessor cs = getCoordinateSystemAccessor();
         cs.setAttribute("name", name);
-        cs.setAttribute  ("type", type, GeographicMetadataFormat.CS_TYPES);
+        GeographicMetadata.setAttribute(cs, "type", type, GeographicMetadataFormat.CS_TYPES);
     }
 
     /**
