@@ -33,6 +33,7 @@ import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
+import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordSysBuilderIF;
 import ucar.nc2.dataset.EnhanceScaleMissing;
@@ -46,6 +47,7 @@ import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.resources.Errors;
@@ -177,8 +179,34 @@ final class NetcdfMetadata extends SpatialMetadata {
                 }
             }
         }
+        /*
+         * The above was only a check. Now perform the metadata writing.
+         */
+        final GridDomainAccessor accessor = new GridDomainAccessor(this);
         final ReferencingBuilder helper = new ReferencingBuilder(this);
         helper.setCoordinateReferenceSystem(crs);
+        final int dim = crs.getDimension();
+        final int[]    lower  = new int   [dim];
+        final int[]    upper  = new int   [dim];
+        final double[] origin = new double[dim];
+        final double[] vector = new double[dim];
+        boolean isRegular = true; // Will stop offset vectors at the first irregular axis.
+        for (int i=0; i<dim; i++) {
+            final CoordinateAxis1D axis = crs.getAxis(i).delegate();
+            upper [i] = axis.getDimension(0).getLength() - 1;
+            origin[i] = axis.getStart();
+            if (isRegular) {
+                if (axis.isRegular()) {
+                    vector[i] = axis.getIncrement();
+                    accessor.addOffsetVector(vector);
+                    vector[i] = 0;
+                } else {
+                    isRegular = false;
+                }
+            }
+        }
+        accessor.setOrigin(origin);
+        accessor.setLimits(lower, upper);
     }
 
     /**

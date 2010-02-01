@@ -24,11 +24,13 @@
  * <table border="3" cellpadding="6">
  *   <tr bgcolor="lightblue">
  *     <th>Library</th>
- *     <th>Main external class</th>
+ *     <th>Main library class</th>
+ *     <th>Geotk wrapper</th>
  *     <th>Defined in module</th>
  *   </tr><tr>
  *     <td><a href="http://www.unidata.ucar.edu/software/netcdf-java">NetCDF</a></td>
  *     <td>{@link ucar.nc2.dataset.CoordinateSystem}</td>
+ *     <td>{@link org.geotoolkit.referencing.adapters.NetcdfCRS}</td>
  *     <td>{@code geotk-coverageio-netcdf}</td>
  *   </tr>
  * </table>

@@ -235,6 +235,8 @@ public class ImageProperties extends JPanel implements Dialog {
             c.gridy++; panel.add(colorRampLabel, c);
 
             if (metadata != null) {
+                c.gridy++; panel.add(getLabel(Vocabulary.Keys.VALUE_RANGE, resources), c);
+
                 // Use HTML style instead than setting the fonts in order to a have consistent looks.
                 final JXTitledSeparator title = new JXTitledSeparator("<html><h3>" +
                         resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM) + "</h3></html>");
@@ -244,7 +246,6 @@ public class ImageProperties extends JPanel implements Dialog {
                 c.gridwidth=1; c.insets.left=40;
                 c.gridy++; panel.add(getLabel(Vocabulary.Keys.DESCRIPTION, resources), c);
                 c.gridy++; panel.add(getLabel(Vocabulary.Keys.PIXEL_SIZE,  resources), c);
-                c.gridy++; panel.add(getLabel(Vocabulary.Keys.VALUE_RANGE, resources), c);
             }
 
             c.gridx=1; c.gridy=ytop; c.weightx=1; c.insets.left=9;
@@ -260,11 +261,11 @@ public class ImageProperties extends JPanel implements Dialog {
             tabs.addTab(resources.getString(Vocabulary.Keys.INFORMATIONS), panel);
 
             if (metadata != null) {
+                c.gridy++; panel.add(valueRange, c);
                 c.gridy++; // Skip the title.
                 c.anchor=WEST; c.insets.right=0; c.insets.bottom=0;
                 c.gridy++; panel.add(crsName,    c);
                 c.gridy++; panel.add(pixelSize,  c);
-                c.gridy++; panel.add(valueRange, c);
             }
         }
         /*

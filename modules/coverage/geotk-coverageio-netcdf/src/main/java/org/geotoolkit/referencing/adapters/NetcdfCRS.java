@@ -24,7 +24,9 @@ import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateSystem;
 
 import org.opengis.metadata.extent.Extent;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Projection;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
@@ -35,19 +37,19 @@ import org.opengis.referencing.datum.GeodeticDatum;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.resources.Errors;
 
 
 /**
- * Wraps a NetCDF {@link CoordinateSystem} as an implementation of GeoAPI interfaces. This class
- * assumes that the list of NetCDF axes returned by {@link CoordinateSystem#getCoordinateAxes()}
- * is stable during the lifetime of the wrapped NetCDF {@code CoordinateSystem}.
- * <p>
- * This class implements both the {@link org.opengis.referencing.cs.CoordinateSystem} and
- * {@link CoordinateReferenceSystem} GeoAPI interfaces because the NetCDF {@link CoordinateSystem}
+ * Wraps a NetCDF {@link CoordinateSystem} as an implementation of GeoAPI interfaces.
+ * This class implements both the GeoAPI {@link org.opengis.referencing.cs.CoordinateSystem} and
+ * {@link CoordinateReferenceSystem} interfaces because the NetCDF {@link CoordinateSystem}
  * object combines the concepts of both of them.
- *
- * {@section Restrictions}
- * This class supports only axis of kind {@link CoordinateAxis1D}.
+ * <p>
+ * In addition, this class provides a {@link #getGridToCRS()} method since NetCDF coordinate
+ * systems contain this information.
  *
  * {@section Axis order}
  * The order of axes returned by {@link #getAxis(int)} is reversed compared to the order of axes
@@ -56,10 +58,21 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
  * the Geotk referencing framework typically uses the (<var>longitude</var>, <var>latitude</var>,
  * <var>height</var>, <var>time</var>) order.
  *
- * {@section Datum}
- * As of writting, the NetCDF API doesn't specify the CRS datum. Consequently the current
- * {@code NetcdfCRS} implementation assumes that all instances use the
- * {@linkplain DefaultGeodeticDatum#WGS84 WGS84} geodetic datum.
+ * {@section Restrictions}
+ * Current implementation has the following restrictions:
+ * <ul>
+ *   <li><p>This class supports only axes of kind {@link CoordinateAxis1D}. Callers can verify this
+ *       condition with a call to the {@link CoordinateSystem#isProductSet() isProductSet()} method
+ *       on the wrapped NetCDF coordinate system, which shall returns {@code true}.</p></li>
+ *
+ *   <li><p>At the time of writing, the NetCDF API doesn't specify the CRS datum. Consequently the
+ *       current implementation assumes that all {@code NetcdfCRS} instances use the
+ *       {@linkplain DefaultGeodeticDatum#WGS84 WGS84} geodetic datum.</p></li>
+ *
+ *   <li><p>This class assumes that the list of NetCDF axes returned by
+ *       {@link CoordinateSystem#getCoordinateAxes() getCoordinateAxes()} is stable during the
+ *       lifetime of this {@code NetcdfCRS} instance.</p></li>
+ * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.08
@@ -179,6 +192,70 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     @Override
     public NetcdfAxis getAxis(final int dimension) throws IndexOutOfBoundsException {
         return axes[dimension];
+    }
+
+    /**
+     * Returns the transform from grid coordinates to this CRS coordinates, or {@code null} if
+     * none. The returned transform is often specialized in two ways:
+     * <p>
+     * <ul>
+     *   <li>If the underlying NetCDF coordinate system {@linkplain CoordinateSystem#isRegular()
+     *       is regular}, then the returned transform implements the
+     *       {@link org.geotoolkit.referencing.operation.transform.LinearTransform} interface.</li>
+     *   <li>If in addition of being regular this CRS is also two-dimensional, then the returned
+     *       transform is also an instance of Java2D {@link java.awt.geom.AffineTransform}.</li>
+     * </ul>
+     *
+     * {@section Limitation}
+     * Current implementation can build a transform only for regular coordinate systems.
+     * A future implementation may be more general.
+     *
+     * @return The transform from grid to this CRS, or {@code null} if none.
+     */
+    public MathTransform getGridToCRS() {
+        return getGridToCRS(0, axes.length);
+    }
+
+    /**
+     * Returns the transform from grid coordinates to this CRS coordinates in the given
+     * range of dimensions. The returned transform is often specialized in two ways:
+     * <p>
+     * <ul>
+     *   <li>If every NetCDF axes in the given range of dimensions are
+     *       {@linkplain CoordinateAxis1D#isRegular() regular}, then the returned transform implements
+     *       the {@link org.geotoolkit.referencing.operation.transform.LinearTransform} interface.</li>
+     *   <li>If in addition of the above the range spans two dimensions (i.e. {@code upperDimension}
+     *       - {@code lowerDimension} == 2), then the returned transform is also an instance of Java2D
+     *       {@link java.awt.geom.AffineTransform}.</li>
+     * </ul>
+     *
+     * {@section Limitation}
+     * Current implementation can build a transform only for regular axes.
+     * A future implementation may be more general.
+     *
+     * @param  lowerDimension Index of the first dimension for which to get the transform.
+     * @param  upperDimension Index after the last dimension for which to get the transform.
+     * @return The transform from grid to this CRS in the given range of dimensions, or
+     *         {@code null} if none.
+     * @throws IllegalArgumentException If the given dimensions are not in the
+     *         [0 &hellip; {@linkplain #getDimension() dimension}] range.
+     */
+    public MathTransform getGridToCRS(final int lowerDimension, final int upperDimension) {
+        if (lowerDimension < 0 || upperDimension > axes.length || upperDimension < lowerDimension) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.BAD_RANGE_$2, lowerDimension, upperDimension));
+        }
+        final int numDimensions = upperDimension - lowerDimension;
+        final Matrix matrix = MatrixFactory.create(numDimensions + 1);
+        for (int i=0; i<numDimensions; i++) {
+            final CoordinateAxis1D axis = axes[lowerDimension + i].delegate();
+            if (!axis.isRegular()) {
+                return null;
+            }
+            matrix.setElement(i, i, axis.getIncrement());
+            matrix.setElement(i, numDimensions, axis.getStart());
+        }
+        return ProjectiveTransform.create(matrix);
     }
 
     /**
