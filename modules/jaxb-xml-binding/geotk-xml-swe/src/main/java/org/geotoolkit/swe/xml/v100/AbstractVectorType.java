@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -66,7 +67,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
 
     }
 
-    public AbstractVectorType(String definition) {
+    public AbstractVectorType(URI definition) {
         super(definition);
     }
 

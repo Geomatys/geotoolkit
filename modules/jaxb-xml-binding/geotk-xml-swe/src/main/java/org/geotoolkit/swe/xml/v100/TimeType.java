@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -80,7 +81,7 @@ public class TimeType extends AbstractDataComponentType {
 
     }
 
-    public TimeType(String definition, UomPropertyType uom) {
+    public TimeType(URI definition, UomPropertyType uom) {
         super(definition);
         this.uom = uom;
     }

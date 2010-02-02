@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -71,13 +72,13 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
     private java.lang.Boolean fixed;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private String definition;
+    private URI definition;
 
     public AbstractDataComponentType() {
 
     }
 
-    public AbstractDataComponentType(String definition) {
+    public AbstractDataComponentType(URI definition) {
         this.definition = definition;
     }
 
@@ -104,14 +105,14 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
      * Gets the value of the definition property.
      */
     @Override
-    public String getDefinition() {
+    public URI getDefinition() {
         return definition;
     }
 
     /**
      * Sets the value of the definition property.
       */
-    public void setDefinition(String value) {
+    public void setDefinition(URI value) {
         this.definition = value;
     }
 

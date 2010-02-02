@@ -112,6 +112,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getDefinition() {
         return definition;
     }
@@ -119,6 +120,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
     /**
      * {@inheritDoc}
      */
+    @Override
     public boolean isFixed() {
         return fixed;
     }

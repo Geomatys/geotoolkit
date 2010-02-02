@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -55,7 +56,7 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType {
 
     }
 
-    public AbstractDataRecordType(String definition) {
+    public AbstractDataRecordType(URI definition) {
         super(definition);
     }
 

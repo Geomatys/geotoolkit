@@ -167,6 +167,33 @@ public class QuantityRange extends AbstractDataComponentType {
         this.axisID = value;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (uom != null) {
+            s.append("uom = ").append(uom).append('\n');
+        }
+        if (constraint != null) {
+            s.append(" constraint = ").append(constraint).append('\n');
+        }
+        if (quality != null) {
+            s.append(" quality = ").append(quality).append('\n');
+        }
+        if (value != null) {
+            s.append(" value (").append(value.size()).append(") :\n");
+            for (double v : value) {
+                s.append(v).append('\n');
+            }
+        }
+        if (referenceFrame != null) {
+            s.append(" referenceFrame = ").append(referenceFrame).append('\n');
+        }
+        if (axisID != null) {
+            s.append(" axisID = ").append(axisID).append('\n');
+        }
+        return s.toString();
+    }
+
     /**
      * Verify if this entry is identical to specified object.
      */
@@ -187,6 +214,18 @@ public class QuantityRange extends AbstractDataComponentType {
                    Utilities.equals(this.constraint,  that.constraint);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + (this.uom != null ? this.uom.hashCode() : 0);
+        hash = 41 * hash + (this.constraint != null ? this.constraint.hashCode() : 0);
+        hash = 41 * hash + (this.quality != null ? this.quality.hashCode() : 0);
+        hash = 41 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 41 * hash + (this.referenceFrame != null ? this.referenceFrame.hashCode() : 0);
+        hash = 41 * hash + (this.axisID != null ? this.axisID.hashCode() : 0);
+        return hash;
     }
 
 }

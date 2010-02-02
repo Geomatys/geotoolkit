@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml;
 
+import java.net.URI;
 import java.util.List;
 
 
@@ -80,7 +81,8 @@ public class SweFactory {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
-            return new org.geotoolkit.swe.xml.v100.QuantityType(definition,
+            URI def = URI.create(definition);
+            return new org.geotoolkit.swe.xml.v100.QuantityType(def,
                                                                 (org.geotoolkit.swe.xml.v100.UomPropertyType)uom,
                                                                 value);
 
@@ -110,8 +112,9 @@ public class SweFactory {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for uomProperty object.");
             }
+            URI def = URI.create(definition);
             return new org.geotoolkit.swe.xml.v100.QuantityType(axisID,
-                                                               definition,
+                                                               def,
                                                                (org.geotoolkit.swe.xml.v100.UomPropertyType)uom,
                                                                 value);
 
@@ -198,7 +201,8 @@ public class SweFactory {
      */
     public Vector createVector(String definition, List<? extends Coordinate> coordinates) {
         if ("1.0.0".equals(version)) {
-            return new org.geotoolkit.swe.xml.v100.VectorType(definition,
+            URI def = URI.create(definition);
+            return new org.geotoolkit.swe.xml.v100.VectorType(def,
                                                              (List<org.geotoolkit.swe.xml.v100.CoordinateType>)coordinates);
         } else if ("1.0.1".equals(version)) {
            return new org.geotoolkit.swe.xml.v101.VectorType(definition,

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -79,7 +80,7 @@ public class Category extends AbstractDataComponentType {
 
     }
 
-    public Category(String definition, String value) {
+    public Category(URI definition, String value) {
         super(definition);
         this.value = value;
     }

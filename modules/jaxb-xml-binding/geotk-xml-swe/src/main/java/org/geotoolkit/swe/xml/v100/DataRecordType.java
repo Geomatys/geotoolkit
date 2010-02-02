@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -56,7 +57,7 @@ public class DataRecordType extends AbstractDataRecordType {
 
     }
 
-    public DataRecordType(String definition, List<DataComponentPropertyType> field) {
+    public DataRecordType(URI definition, List<DataComponentPropertyType> field) {
         super(definition);
         this.field = field;
     }

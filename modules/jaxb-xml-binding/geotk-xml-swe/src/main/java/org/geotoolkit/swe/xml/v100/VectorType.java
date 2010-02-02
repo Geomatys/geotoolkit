@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -73,7 +74,7 @@ public class VectorType extends AbstractVectorType implements Vector {
         this.coordinate = coordinate;
     }
 
-    public VectorType(String definition, List<CoordinateType> coordinate) {
+    public VectorType(URI definition, List<CoordinateType> coordinate) {
         super(definition);
         this.coordinate = coordinate;
     }

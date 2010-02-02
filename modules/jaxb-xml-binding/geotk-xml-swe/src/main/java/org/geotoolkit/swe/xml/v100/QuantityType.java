@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -80,13 +81,13 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
 
     }
 
-    public QuantityType(String definition, UomPropertyType uom, Double value) {
+    public QuantityType(URI definition, UomPropertyType uom, Double value) {
         super(definition);
         this.uom   = uom;
         this.value = value;
     }
 
-    public QuantityType(String axisID, String definition, UomPropertyType uom, Double value) {
+    public QuantityType(String axisID, URI definition, UomPropertyType uom, Double value) {
         super(definition);
         this.axisID = axisID;
         this.uom    = uom;

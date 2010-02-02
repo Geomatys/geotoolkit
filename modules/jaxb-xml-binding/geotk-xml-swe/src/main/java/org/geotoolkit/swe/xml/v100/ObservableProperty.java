@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -48,7 +49,7 @@ public class ObservableProperty extends AbstractDataComponentType {
 
     }
 
-    public ObservableProperty(String definition) {
+    public ObservableProperty(URI definition) {
         super(definition);
     }
 

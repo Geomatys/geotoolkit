@@ -69,6 +69,7 @@ import org.geotoolkit.sml.xml.v100.Components;
 import org.geotoolkit.sml.xml.v100.OnlineResource;
 import org.geotoolkit.sml.xml.v100.Parameters;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -214,7 +215,7 @@ public class SmlXMLBindingTest {
         CapabilitiesSML capabilities = new CapabilitiesSML();
         TimeRange timeRange = new TimeRange(Arrays.asList("1987-04-23", "now"));
         DataComponentPropertyType field = new DataComponentPropertyType("periodOfData", "urn:x-brgm:def:property:periodOfData", timeRange);
-        DataRecordType record = new DataRecordType("urn:x-brgm:def:property:periodOfData", Arrays.asList(field));
+        DataRecordType record = new DataRecordType(URI.create("urn:x-brgm:def:property:periodOfData"), Arrays.asList(field));
         JAXBElement<? extends AbstractDataRecordType> jbRecord = swe100Factory.createDataRecord(record);
         capabilities.setAbstractDataRecord(jbRecord);
         component.setCapabilities(capabilities);
@@ -225,23 +226,23 @@ public class SmlXMLBindingTest {
         Position position = new Position("conductivitePosition", "piezometer#piezoPosition");
         component.setPosition(position);
 
-        IoComponentPropertyType io = new IoComponentPropertyType("level", new ObservableProperty("urn:x-ogc:def:phenomenon:OGC:level"));
+        IoComponentPropertyType io = new IoComponentPropertyType("level", new ObservableProperty(URI.create("urn:x-ogc:def:phenomenon:OGC:level")));
         InputList inputList = new InputList(Arrays.asList(io));
         Inputs inputs = new Inputs(inputList);
         component.setInputs(inputs);
 
-        IoComponentPropertyType io2 = new IoComponentPropertyType("depth", new ObservableProperty("urn:x-ogc:def:phenomenon:OGC:depth"));
+        IoComponentPropertyType io2 = new IoComponentPropertyType("depth", new ObservableProperty(URI.create("urn:x-ogc:def:phenomenon:OGC:depth")));
         OutputList outputList = new OutputList(Arrays.asList(io2));
         Outputs outputs = new Outputs(outputList);
         component.setOutputs(outputs);
 
         List<DataComponentPropertyType> params = new ArrayList<DataComponentPropertyType>();
         UomPropertyType uom = new UomPropertyType(null, "urn:ogc:unit:minuts");
-        QuantityType quantity1 = new QuantityType("urn:x-ogc:def:property:frequency", uom, 60.0);
+        QuantityType quantity1 = new QuantityType(URI.create("urn:x-ogc:def:property:frequency"), uom, 60.0);
         DataComponentPropertyType p1 = new DataComponentPropertyType("frequency", "urn:x-ogc:def:property:frequency", quantity1);
         params.add(p1);
         UomPropertyType uom2 = new UomPropertyType("m", null);
-        QuantityType quantity2 = new QuantityType("urn:x-ogc:def:property:precision", uom2, 0.05);
+        QuantityType quantity2 = new QuantityType(URI.create("urn:x-ogc:def:property:precision"), uom2, 0.05);
         DataComponentPropertyType p2 = new DataComponentPropertyType("precision", "urn:x-ogc:def:property:precision", quantity2);
         params.add(p2);
         QuantityRange quantityRange = new QuantityRange(uom2, Arrays.asList(0.0, 10.0));
@@ -400,16 +401,16 @@ public class SmlXMLBindingTest {
 
         CapabilitiesSML capabilities = new CapabilitiesSML();
         List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
-        QuantityType quantity = new QuantityType("urn:x-ogc:def:property:temperature", new UomPropertyType(null, "urn:ogc:unit:degree:celsius"), 0.1);
+        QuantityType quantity = new QuantityType(URI.create("urn:x-ogc:def:property:temperature"), new UomPropertyType(null, "urn:ogc:unit:degree:celsius"), 0.1);
         DataComponentPropertyType field1 = new DataComponentPropertyType("resolution", "urn:x-ogc:def:property:resolution", quantity);
         fields.add(field1);
 
         QuantityRange quantityR = new QuantityRange(new UomPropertyType(null, "urn:ogc:unit:percent"), Arrays.asList(-0.5, 0.5));
-        quantityR.setDefinition("urn:x-ogc:def:property:absoluteAccuracy");
+        quantityR.setDefinition(URI.create("urn:x-ogc:def:property:absoluteAccuracy"));
         DataComponentPropertyType field2 = new DataComponentPropertyType("accuracy", "urn:x-ogc:def:property:accuracy", quantityR);
         fields.add(field2);
 
-        DataRecordType record = new DataRecordType("urn:x-ogc:def:property:measurementProperties", fields);
+        DataRecordType record = new DataRecordType(URI.create("urn:x-ogc:def:property:measurementProperties"), fields);
         record.setDescription("Toutes les informations sur les  contraintes sur les donnees");
         JAXBElement<? extends AbstractDataRecordType> jbRecord = swe100Factory.createDataRecord(record);
         capabilities.setAbstractDataRecord(jbRecord);
@@ -427,20 +428,20 @@ public class SmlXMLBindingTest {
 
         system.setContact(Arrays.asList(contact1, contact2));
 
-        IoComponentPropertyType io = new IoComponentPropertyType("level", new ObservableProperty("urn:x-ogc:def:phenomenon:OGC:level"));
+        IoComponentPropertyType io = new IoComponentPropertyType("level", new ObservableProperty(URI.create("urn:x-ogc:def:phenomenon:OGC:level")));
         InputList inputList = new InputList(Arrays.asList(io));
         Inputs inputs = new Inputs(inputList);
         system.setInputs(inputs);
 
 
         fields = new ArrayList<DataComponentPropertyType>();
-        TimeType time = new TimeType("urn:x-ogc:def:phenomenon:observationTime", new UomPropertyType(null, "urn:x-ogc:def:unit:ISO8601"));
+        TimeType time = new TimeType(URI.create("urn:x-ogc:def:phenomenon:observationTime"), new UomPropertyType(null, "urn:x-ogc:def:unit:ISO8601"));
         fields.add(new DataComponentPropertyType("time", null, time));
 
-        QuantityType q = new QuantityType("urn:x-ogc:def:phenomenon:OGC:depth", new UomPropertyType("m", null), null);
+        QuantityType q = new QuantityType(URI.create("urn:x-ogc:def:phenomenon:OGC:depth"), new UomPropertyType("m", null), null);
         fields.add(new DataComponentPropertyType("depth", null, q));
 
-        BooleanType b = new BooleanType("urn:x-ogc:def:phenomenon:BRGM:validity");
+        BooleanType b = new BooleanType(URI.create("urn:x-ogc:def:phenomenon:BRGM:validity"));
         fields.add(new DataComponentPropertyType("validity", null, b));
 
         DataRecordType outRecord = new DataRecordType(null, fields);
@@ -452,14 +453,14 @@ public class SmlXMLBindingTest {
 
 
         fields = new ArrayList<DataComponentPropertyType>();
-        q = new QuantityType("urn:x-ogc:def:property:depth", new UomPropertyType(null, "urn:ogc:unit:m"), 166.0);
+        q = new QuantityType(URI.create("urn:x-ogc:def:property:depth"), new UomPropertyType(null, "urn:ogc:unit:m"), 166.0);
         fields.add(new DataComponentPropertyType("MaxDepth", null, q));
         DataRecordType charRecord = new DataRecordType(null, fields);
 
         List<DataComponentPropertyType> fields2 = new ArrayList<DataComponentPropertyType>();
         fields2.add(new DataComponentPropertyType("physicalProperties", null, swe100Factory.createDataRecord(charRecord)));
 
-        DataRecordType ccharRecord = new DataRecordType("urn:x-ogc:def:property:physicalProperties", fields2);
+        DataRecordType ccharRecord = new DataRecordType(URI.create("urn:x-ogc:def:property:physicalProperties"), fields2);
 
         Characteristics characteristics = new Characteristics();
         characteristics.setAbstractDataRecord(swe100Factory.createDataRecord(ccharRecord));
@@ -491,15 +492,15 @@ public class SmlXMLBindingTest {
         system.setComponents(components);
 
         List<CoordinateType> coordinates = new ArrayList<CoordinateType>();
-        QuantityType xQuant = new QuantityType("urn:ogc:def:phenomenon:distance", new UomPropertyType("m", null), 0.0);
+        QuantityType xQuant = new QuantityType(URI.create("urn:ogc:def:phenomenon:distance"), new UomPropertyType("m", null), 0.0);
         xQuant.setAxisID("X");
         CoordinateType xcoord = new CoordinateType("x", xQuant);
 
-        QuantityType yQuant = new QuantityType("urn:ogc:def:phenomenon:distance", new UomPropertyType("m", null), 0.0);
+        QuantityType yQuant = new QuantityType(URI.create("urn:ogc:def:phenomenon:distance"), new UomPropertyType("m", null), 0.0);
         yQuant.setAxisID("Y");
         CoordinateType ycoord = new CoordinateType("y", yQuant);
 
-        QuantityType zQuant = new QuantityType("urn:ogc:def:phenomenon:distance", new UomPropertyType("m", null), 0.0);
+        QuantityType zQuant = new QuantityType(URI.create("urn:ogc:def:phenomenon:distance"), new UomPropertyType("m", null), 0.0);
         zQuant.setAxisID("Z");
         CoordinateType zcoord = new CoordinateType("z", zQuant);
 
@@ -507,7 +508,7 @@ public class SmlXMLBindingTest {
         coordinates.add(ycoord);
         coordinates.add(zcoord);
 
-        VectorType vect = new VectorType("urn:ogc:def:phenomenon:location", coordinates);
+        VectorType vect = new VectorType(URI.create("urn:ogc:def:phenomenon:location"), coordinates);
         VectorPropertyType vectP = new VectorPropertyType(vect);
         PositionType Sposition = new PositionType("#REFERENCE_POINT", "#PIEZOMETER_FRAME", vectP, null);
         Position position = new Position("piezoPosition", Sposition);
@@ -530,8 +531,8 @@ public class SmlXMLBindingTest {
         system.setConnections(connections);
 
 
-        LayerPropertyType applicationLayer = new LayerPropertyType(new Category("urn:ogc:def:protocol:applicationLink", "urn:x-brgm:def:protocol:hydrasIRIS"));
-        LayerPropertyType dataLinkLayer    = new LayerPropertyType(new Category("urn:ogc:def:protocol:dataLink", "urn:x-brgm:def:dataLink:RTC"));
+        LayerPropertyType applicationLayer = new LayerPropertyType(new Category(URI.create("urn:ogc:def:protocol:applicationLink"), "urn:x-brgm:def:protocol:hydrasIRIS"));
+        LayerPropertyType dataLinkLayer    = new LayerPropertyType(new Category(URI.create("urn:ogc:def:protocol:dataLink"), "urn:x-brgm:def:dataLink:RTC"));
         InterfaceDefinition definition = new InterfaceDefinition(null, applicationLayer, dataLinkLayer);
         Interface i1 = new Interface("RS-232", definition);
         List<Interface> interfaceL = new ArrayList<Interface>();
