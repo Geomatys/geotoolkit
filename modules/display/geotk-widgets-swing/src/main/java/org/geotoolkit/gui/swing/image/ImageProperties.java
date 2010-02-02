@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.AbstractTableModel;
@@ -37,6 +38,7 @@ import java.awt.geom.AffineTransform;
 import java.lang.reflect.Array;
 
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.color.ColorSpace;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
@@ -94,7 +96,7 @@ import static java.awt.GridBagConstraints.*;
  * emitted from any thread - it doesn't need to be the <cite>Swing</cite> thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @see ImageFileProperties
  * @see OperationTreeBrowser
@@ -105,59 +107,45 @@ import static java.awt.GridBagConstraints.*;
 @SuppressWarnings("serial")
 public class ImageProperties extends JPanel implements Dialog {
     /**
-     * The operation name, version and description. If the image is not an instance of
-     * {@link OperationNode}, then the class name is used. If this panel is an instance
-     * of {@link ImageFileProperties}, then this will rather be the file name.
+     * Index in the {@link #descriptions} array for the text area of the operation name,
+     * version and description. If the image is not an instance of {@link OperationNode},
+     * then the class name is used. If this panel is an instance of {@link ImageFileProperties},
+     * then this will rather be the file name.
      */
-    private final JLabel description;
+    private static final int DESCRIPTION = 0;
 
     /**
-     * The text area for image size.
+     * Index in the {@link #descriptions} array for the text area of an image property.
      */
-    private final JLabel imageSize;
+    private static final int IMAGE_SIZE=1, TILE_SIZE=2, DATA_TYPE=3, SAMPLE_MODEL=4,
+            COLOR_MODEL=5, COLOR_SPACE=6, COLOR_RAMP=7, VALUE_RANGE=8, CRS_NAME=9,
+            PIXEL_SIZE=10;
 
     /**
-     * The text area for tile size.
+     * The last {@link #descriptions} index plus one. This is the maximal array length.
      */
-    private final JLabel tileSize;
+    private static final int LAST = 11, LAST_NO_METADATA = VALUE_RANGE;
 
     /**
-     * The text area for sample type (e.g. "8 bits unsigned integer".
+     * The first item which may not be present. The labels for all items
+     * starting at this index can be enabled or disabled.
      */
-    private final JLabel dataType;
+    private static final int FIRST_OPTIONAL = COLOR_RAMP;
 
     /**
-     * The text area for the sample model.
+     * An array of length {@link #LAST} (at most) of text areas for various image properties.
      */
-    private final JLabel sampleModel;
+    private final JLabel[] descriptions;
 
     /**
-     * The text area for the color model.
+     * The label of optional descriptions. Those label may be enabled or disabled.
      */
-    private final JLabel colorModel;
-
-    /**
-     * The text area for the color space.
-     */
-    private final JLabel colorSpace;
+    private final JLabel[] labelOptionals;
 
     /**
      * The color bar for {@link IndexColorModel}.
      */
     private final ColorRamp colorRamp;
-
-    /**
-     * The label for {@link #colorRamp}.
-     */
-    private final JLabel colorRampLabel;
-
-    /**
-     * The text area for the CRS, pixel size and range of values,
-     * or {@code null} if there is no metadata to show.
-     *
-     * @since 3.08
-     */
-    private final JLabel crsName, pixelSize, valueRange;
 
     /**
      * The table model for image's properties.
@@ -194,80 +182,83 @@ public class ImageProperties extends JPanel implements Dialog {
      */
     ImageProperties(final JPanel metadata) {
         super(new BorderLayout());
-        description = new JLabel(" ");
-        imageSize   = new JLabel();
-        tileSize    = new JLabel();
-        dataType    = new JLabel();
-        sampleModel = new JLabel();
-        colorModel  = new JLabel();
-        colorSpace  = new JLabel();
-        colorRamp   = new ColorRamp();
-        tabs        = new JTabbedPane();
-        if (metadata != null) {
-            crsName    = new JLabel();
-            pixelSize  = new JLabel();
-            valueRange = new JLabel();
-        } else {
-            crsName    = null;
-            pixelSize  = null;
-            valueRange = null;
-        }
         final Vocabulary resources = Vocabulary.getResources(getLocale());
-        final GridBagConstraints c = new GridBagConstraints();
-        colorRampLabel = getLabel(Vocabulary.Keys.COLORS, resources);
+        tabs           = new JTabbedPane();
+        colorRamp      = new ColorRamp();
+        descriptions   = new JLabel[(metadata != null) ? LAST : LAST_NO_METADATA];
+        labelOptionals = new JLabel[descriptions.length - FIRST_OPTIONAL];
         /*
-         * Build the informations tab.
+         * Build the informations tab. We use a two-columns layout, with the labels on
+         * the left side and the values on the right side. We use a loop because all
+         * rows are processed in the same way, with a few exceptions for example in order
+         * to add a separator before CRS informations.
          */
-        if (true) {
-            final JPanel panel = new JPanel(new GridBagLayout());
-            c.anchor=WEST; c.fill=HORIZONTAL; c.insets.left=9;
-            c.gridx=0; c.gridwidth=2; c.weightx=1; c.insets.bottom=15;
-            c.gridy=0; panel.add(description, c);
-
-            final int ytop = c.gridy;
-            c.gridwidth=1; c.weightx=0; c.insets.bottom=0; c.insets.left=40;
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.IMAGE_SIZE,   resources), c);
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.TILES_SIZE,   resources), c);
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.DATA_TYPE,    resources), c);
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.SAMPLE_MODEL, resources), c);
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLOR_MODEL,  resources), c);
-            c.gridy++; panel.add(getLabel(Vocabulary.Keys.COLOR_SPACE,  resources), c);
-            c.gridy++; panel.add(colorRampLabel, c);
-
-            if (metadata != null) {
-                c.gridy++; panel.add(getLabel(Vocabulary.Keys.VALUE_RANGE, resources), c);
-
-                // Use HTML style instead than setting the fonts in order to a have consistent looks.
-                final JXTitledSeparator title = new JXTitledSeparator("<html><h3>" +
-                        resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM) + "</h3></html>");
-
-                c.gridwidth=2; c.insets.left=9;
-                c.gridy++; panel.add(title, c);
-                c.gridwidth=1; c.insets.left=40;
-                c.gridy++; panel.add(getLabel(Vocabulary.Keys.DESCRIPTION, resources), c);
-                c.gridy++; panel.add(getLabel(Vocabulary.Keys.PIXEL_SIZE,  resources), c);
+        final JPanel info = new JPanel(new GridBagLayout());
+        final GridBagConstraints c = new GridBagConstraints();
+        final Insets insets = c.insets;
+        c.gridy=0; c.anchor=WEST; c.fill=HORIZONTAL;
+        for (int i=0; i<descriptions.length; i++) {
+            c.gridx=0;
+            final int labelKey;
+            switch (i) {
+                case DESCRIPTION: {
+                    c.insets.left=9; c.weightx=1;    // No need to reset those particular settings.
+                    c.gridwidth=2; insets.bottom=15; info.add(descriptions[i] = new JLabel(" "), c);
+                    c.gridwidth=1; insets.bottom= 0; // Need to be reset for the next loop execution.
+                    continue; // Do not add label.
+                }
+                case IMAGE_SIZE:   labelKey = Vocabulary.Keys.IMAGE_SIZE;   break;
+                case TILE_SIZE:    labelKey = Vocabulary.Keys.TILES_SIZE;   break;
+                case DATA_TYPE:    labelKey = Vocabulary.Keys.DATA_TYPE;    break;
+                case SAMPLE_MODEL: labelKey = Vocabulary.Keys.SAMPLE_MODEL; break;
+                case COLOR_MODEL:  labelKey = Vocabulary.Keys.COLOR_MODEL;  break;
+                case COLOR_SPACE:  labelKey = Vocabulary.Keys.COLOR_SPACE;  break;
+                case COLOR_RAMP:   labelKey = Vocabulary.Keys.COLORS;       break;
+                case VALUE_RANGE:  labelKey = Vocabulary.Keys.VALUE_RANGE;  break;
+                case PIXEL_SIZE:   labelKey = Vocabulary.Keys.PIXEL_SIZE;   break;
+                case CRS_NAME: {
+                    // Add a separator using HTML style instead than setting
+                    // the fonts in order to a have consistent looks.
+                    final JXTitledSeparator title = new JXTitledSeparator("<html><h3>" +
+                            resources.getString(Vocabulary.Keys.COORDINATE_REFERENCE_SYSTEM) + "</h3></html>");
+                    c.gridy++;
+                    insets.left=9; // No need to reset this particular setting.
+                    c.gridwidth=2; info.add(title, c);
+                    c.gridwidth=1; // Need to be reset before to add the label.
+                    labelKey = Vocabulary.Keys.DESCRIPTION;
+                    break;
+                }
+                case LAST: // Just for a compile-time check of wrong values.
+                default: throw new AssertionError(i);
             }
-
-            c.gridx=1; c.gridy=ytop; c.weightx=1; c.insets.left=9;
-            c.gridy++; panel.add(imageSize,   c);
-            c.gridy++; panel.add(tileSize,    c);
-            c.gridy++; panel.add(dataType,    c);
-            c.gridy++; panel.add(sampleModel, c);
-            c.gridy++; panel.add(colorModel,  c);
-            c.gridy++; panel.add(colorSpace,  c);
-            c.gridy++; c.anchor=CENTER; c.insets.right=6;
-
-            panel.add(colorRamp, c);
-            tabs.addTab(resources.getString(Vocabulary.Keys.INFORMATIONS), panel);
-
-            if (metadata != null) {
-                c.gridy++; panel.add(valueRange, c);
-                c.gridy++; // Skip the title.
-                c.anchor=WEST; c.insets.right=0; c.insets.bottom=0;
-                c.gridy++; panel.add(crsName,    c);
-                c.gridy++; panel.add(pixelSize,  c);
+            final JLabel label = new JLabel(resources.getLabel(labelKey));
+            if (i >= FIRST_OPTIONAL) {
+                labelOptionals[i - FIRST_OPTIONAL] = label;
             }
+            /*
+             * At this point we are ready to add the (label, value) pair.
+             * We will make a special case for the color ramp, where the
+             * value is not a label.
+             */
+            c.gridy++; c.weightx=0; insets.left=40; info.add(label, c);
+            c.gridx=1; c.weightx=1; insets.left= 9;
+            final JComponent description;
+            switch (i) {
+                case COLOR_RAMP: {
+                    c.anchor=CENTER; insets.right=6;
+                    description = colorRamp;
+                    break;
+                }
+                default: {
+                    description = descriptions[i] = new JLabel();
+                    break;
+                }
+            }
+            info.add(description, c);
+            label.setLabelFor(description);
+            c.anchor=WEST; insets.right=0;
         }
+        tabs.addTab(resources.getString(Vocabulary.Keys.INFORMATIONS), info);
         /*
          * Build the image's properties tab and the image sample value tab.
          * In the particular case of ImageFileProperties, those two tabs
@@ -288,20 +279,12 @@ public class ImageProperties extends JPanel implements Dialog {
         /*
          * Build the image preview tab.
          */
-        if (true) {
-            viewer = new ImagePane();
-            viewer.setPaintingWhileAdjusting(true);
-            tabs.addTab(resources.getString(Vocabulary.Keys.PREVIEW), viewer.createScrollPane());
-        }
+        viewer = new ImagePane();
+        viewer.setPaintingWhileAdjusting(true);
+        tabs.addTab(resources.getString(Vocabulary.Keys.PREVIEW), viewer.createScrollPane());
+
         add(tabs, BorderLayout.CENTER);
         setPreferredSize(new Dimension(600, 400));
-    }
-
-    /**
-     * Returns the localized label for the given key.
-     */
-    private static JLabel getLabel(final int key, final Vocabulary resources) {
-        return new JLabel(resources.getLabel(key));
     }
 
     /**
@@ -398,26 +381,24 @@ public class ImageProperties extends JPanel implements Dialog {
         if (extra != null) {
             html.append("<p>").append(extra).append("</p>");
         }
-        this.description.setText(html.append("</html>").toString());
+        descriptions[DESCRIPTION].setText(html.append("</html>").toString());
     }
 
     /**
-     * Set all text fields to {@code null}. This method do not set the {@link #properties}
+     * Sets all text fields to {@code null}. This method do not set the {@link #properties}
      * table; this is left to the caller.
      */
     void clear() {
-        imageSize  .setText(null);
-        tileSize   .setText(null);
-        dataType   .setText(null);
-        sampleModel.setText(null);
-        colorModel .setText(null);
-        colorSpace .setText(null);
-        colorRamp  .setColors((IndexColorModel)null);
-        if (crsName != null) {
-            crsName   .setText(null);
-            pixelSize .setText(null);
-            valueRange.setText(null);
+        for (int i=0; i<descriptions.length; i++) {
+            final JLabel description = descriptions[i];
+            if (description != null) {
+                description.setText(null);
+            }
         }
+        for (int i=0; i<labelOptionals.length; i++) {
+            labelOptionals[i].setEnabled(false);
+        }
+        colorRamp.setColors((IndexColorModel) null);
     }
 
     /**
@@ -455,8 +436,8 @@ public class ImageProperties extends JPanel implements Dialog {
         clear();
         if (image != null) {
             final Vocabulary resources = Vocabulary.getResources(getLocale());
-            imageSize.setText(resources.getString(Vocabulary.Keys.SIZE_$2,
-                    image.getWidth(), image.getHeight()));
+            descriptions[IMAGE_SIZE].setText(resources.getString(
+                    Vocabulary.Keys.SIZE_$2, image.getWidth(), image.getHeight()));
         }
         setOperationDescription(image);
         if (properties != null) {
@@ -498,15 +479,40 @@ public class ImageProperties extends JPanel implements Dialog {
     {
         final Vocabulary resources = Vocabulary.getResources(getLocale());
         final IndexColorModel icm = (cm instanceof IndexColorModel) ? (IndexColorModel) cm : null;
-        imageSize  .setText(resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height,
-                (sm != null) ? sm.getNumBands() : resources.getString(Vocabulary.Keys.UNDEFINED)));
-        tileSize   .setText(resources.getString(Vocabulary.Keys.TILE_SIZE_$4, numXTiles, numYTiles, tileWidth, tileHeight));
-        dataType   .setText(getDataType(sm != null ? sm.getDataType() : DataBuffer.TYPE_UNDEFINED, cm, resources));
-        sampleModel.setText(formatClassName(sm, resources));
-        colorModel .setText(formatClassName(cm, resources));
-        colorSpace .setText(getColorSpace  (cm, resources));
-        colorRamp  .setColors(icm);
-        colorRampLabel.setEnabled(icm != null);
+        for (int i=IMAGE_SIZE; i<COLOR_RAMP; i++) {
+            final String text;
+            switch (i) {
+                case IMAGE_SIZE: {
+                    final Object numBands = (sm != null) ? sm.getNumBands() : resources.getString(Vocabulary.Keys.UNDEFINED);
+                    text = resources.getString(Vocabulary.Keys.IMAGE_SIZE_$3, width, height, numBands);
+                    break;
+                }
+                case TILE_SIZE: {
+                    text = resources.getString(Vocabulary.Keys.TILE_SIZE_$4, numXTiles, numYTiles, tileWidth, tileHeight);
+                    break;
+                }
+                case DATA_TYPE: {
+                    text = getDataType(sm != null ? sm.getDataType() : DataBuffer.TYPE_UNDEFINED, cm, resources);
+                    break;
+                }
+                case SAMPLE_MODEL: {
+                    text = formatClassName(sm, resources);
+                    break;
+                }
+                case COLOR_MODEL: {
+                    text = formatClassName(cm, resources);
+                    break;
+                }
+                case COLOR_SPACE: {
+                    text = getColorSpace(cm, resources);
+                    break;
+                }
+                default: throw new AssertionError(i);
+            }
+            descriptions[i].setText(text);
+        }
+        colorRamp.setColors(icm);
+        labelOptionals[COLOR_RAMP - FIRST_OPTIONAL].setEnabled(icm != null);
     }
 
     /**
@@ -524,41 +530,64 @@ public class ImageProperties extends JPanel implements Dialog {
     final void setGeospatialDescription(final CoordinateReferenceSystem crs,
             final AffineTransform gridToCRS, final NumberRange<?> values)
     {
-        String text = null;
-        if (crs != null) {
-            text = crs.getName().getCode();
-        }
-        crsName.setText(text);
-        text = null;
-        if (gridToCRS != null) {
-            final double scaleX = XAffineTransform.getScaleX0(gridToCRS);
-            final double scaleY = XAffineTransform.getScaleX0(gridToCRS);
-            Unit<?> xUnit = null, yUnit = null;
-            if (crs != null) {
-                final CoordinateSystem cs = crs.getCoordinateSystem();
-                if (cs != null) switch (cs.getDimension()) {
-                    default: yUnit = cs.getAxis(1).getUnit(); // Fall through
-                    case 1:  xUnit = cs.getAxis(0).getUnit(); // Fall through
-                    case 0:  break;
+        for (int i=VALUE_RANGE; i<LAST; i++) {
+            String text = null;
+            switch (i) {
+                case VALUE_RANGE: {
+                    if (values != null) {
+                        text = values.toString();
+                    }
+                    break;
+                }
+                case CRS_NAME: {
+                    if (crs != null) {
+                        text = crs.getName().getCode();
+                    }
+                    break;
+                }
+                case PIXEL_SIZE: {
+                    if (gridToCRS != null) {
+                        final double scaleX = XAffineTransform.getScaleX0(gridToCRS);
+                        final double scaleY = XAffineTransform.getScaleX0(gridToCRS);
+                        Unit<?> xUnit = null, yUnit = null;
+                        if (crs != null) {
+                            final CoordinateSystem cs = crs.getCoordinateSystem();
+                            if (cs != null) switch (cs.getDimension()) {
+                                default: yUnit = cs.getAxis(1).getUnit(); // Fall through
+                                case 1:  xUnit = cs.getAxis(0).getUnit(); // Fall through
+                                case 0:  break;
+                            }
+                        }
+                        final boolean sameUnits = Utilities.equals(xUnit, yUnit);
+                        final StringBuilder buffer = new StringBuilder();
+                        if (scaleX != scaleY || !sameUnits) {
+                            buffer.append(scaleX);
+                            if (!sameUnits && xUnit != null) {
+                                buffer.append(' ').append(xUnit);
+                            }
+                            buffer.append(" × ");
+                        }
+                        buffer.append(scaleY);
+                        if (yUnit != null) {
+                            buffer.append(' ').append(yUnit);
+                        }
+                        text = buffer.toString();
+                    }
                 }
             }
-            final boolean sameUnits = Utilities.equals(xUnit, yUnit);
-            final StringBuilder buffer = new StringBuilder();
-            if (scaleX != scaleY || !sameUnits) {
-                buffer.append(scaleX);
-                if (!sameUnits && xUnit != null) {
-                    buffer.append(' ').append(xUnit);
-                }
-                buffer.append(" × ");
-            }
-            buffer.append(scaleY);
-            if (yUnit != null) {
-                buffer.append(' ').append(yUnit);
-            }
-            text = buffer.toString();
+            descriptions[i].setText(text);
+            labelOptionals[i - FIRST_OPTIONAL].setEnabled(true);
         }
-        pixelSize.setText(text);
-        valueRange.setText(values != null ? values.toString() : null);
+    }
+
+    /**
+     * Sets whatever the geospatial descriptions are enabled or not.
+     * Note that this is automatically set to {@code true} by the above method.
+     */
+    final void setGeospatialDescription(final boolean enabled) {
+        for (int i=VALUE_RANGE; i<LAST; i++) {
+            labelOptionals[i - FIRST_OPTIONAL].setEnabled(enabled);
+        }
     }
 
     /**

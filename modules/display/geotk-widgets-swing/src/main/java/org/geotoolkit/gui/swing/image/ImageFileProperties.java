@@ -242,8 +242,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
                 info.show(ImageFileProperties.this);
-                metadata.clear();
-                metadata.addMetadata(streamMetadata, info.getMetadata());
+                metadata.setMetadata(streamMetadata, info.getMetadata());
             }
         });
         /*
@@ -526,7 +525,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * image in a stream.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.05
+     * @version 3.09
      *
      * @see ImageProperties
      *
@@ -671,7 +670,11 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                     width, height, tileWidth, tileHeight,
                     (width  + tileWidth -1) / tileWidth,
                     (height + tileHeight-1) / tileHeight);
+
             properties.setGeospatialDescription(crs, gridToCRS, valueRange);
+            if (!(metadata instanceof SpatialMetadata)) {
+                properties.setGeospatialDescription(false);
+            }
         }
     }
 

@@ -36,7 +36,7 @@ import org.geotoolkit.resources.Vocabulary;
  * A choice in the "Format" combo box.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.05
  * @module
@@ -50,17 +50,23 @@ final class IIOMetadataChoice implements Serializable {
     private final String label;
 
     /**
+     * The identifier for the table view. Each table in a {@link IIOMetadataPanel}
+     * shall have an unique identifier.
+     */
+    private final String identifier;
+
+    /**
      * The image index of the metadata, or -1 for stream metadata.
      */
     private final int imageIndex;
 
     /**
-     * The trees for the metadata.
+     * The table model for the metadata.
      */
     private final MetadataTreeTable metadataTable;
 
     /**
-     * The table for the metadata. Created when first needed.
+     * The table view for the metadata. Created when first needed.
      */
     private transient IIOMetadataTreeTable metadataPanel;
 
@@ -68,33 +74,45 @@ final class IIOMetadataChoice implements Serializable {
      * Creates a new instance for the given {@link IIOMetadataFormat}.
      *
      * @param locale   The locale to use for formatting the node names.
-     * @param metadata The metadata format.
+     * @param format   The metadata format.
      * @param isStream {@code true} for stream metadata, or {@code false} for image metadata.
      */
-    IIOMetadataChoice(final Locale locale, final IIOMetadataFormat metadata, final boolean isStream) {
-        metadataTable = new MetadataTreeTable(metadata);
+    IIOMetadataChoice(final Locale locale, final IIOMetadataFormat format, final boolean isStream) {
+        metadataTable = new MetadataTreeTable(format);
         metadataTable.setLocale(locale);
         imageIndex = isStream ? -1 : 0;
-        label = label(locale, true);
+        identifier = identifier();
+        label      = label(locale, true);
     }
 
     /**
      * Creates a new instance for the given {@link IIOMetadata}.
      *
-     * @param locale     The locale to use for formatting the node names.
-     * @param format     The format name.
-     * @param metadata   The metadata.
-     * @param imageIndex The image index of the metadata, or -1 for stream metadata.
+     * @param locale   The locale to use for formatting the node names.
+     * @param format   The format name.
+     * @param metadata The metadata.
+     * @param index    The image index of the metadata, or -1 for stream metadata.
      */
-    IIOMetadataChoice(final Locale locale, final String format,
-            final IIOMetadata metadata, final int imageIndex)
-    {
+    IIOMetadataChoice(final Locale locale, final String format, final IIOMetadata metadata, final int index) {
         metadataTable = new MetadataTreeTable(metadata.getMetadataFormat(format));
         metadataTable.setMetadata(metadata);
         metadataTable.setLocale(locale);
         metadataTable.setSimplificationAllowed(true);
-        this.imageIndex = imageIndex;
-        label = label(locale, false);
+        imageIndex = index;
+        identifier = identifier();
+        label      = label(locale, false);
+    }
+
+    /**
+     * Constructs an identifier to be used for locating the {@link IIOMetadataTreeTable}
+     * in the {@link java.awt.Container} with {@link java.awt.CardLayout}.
+     */
+    private String identifier() {
+        String identifier = metadataTable.getMetadataFormat().getRootName();
+        if (imageIndex >= 0) {
+            identifier = identifier + ':' + imageIndex;
+        }
+        return identifier;
     }
 
     /**
@@ -140,23 +158,36 @@ final class IIOMetadataChoice implements Serializable {
     {
         if (metadataPanel == null) {
             /*
-             * A new table needs to be created. Constructs an identifier to be used
-             * for locating the JTable in the java.awt.Container with CardLayout.
-             */
-            String identifier = metadataTable.getMetadataFormat().getRootName();
-            if (imageIndex >= 0) {
-                identifier = identifier + ':' + imageIndex;
-            }
-            /*
              * Create the table and register the listener, which is for displaying
              * the properties of the selected node in the widget bottom.
              */
-            metadataPanel = new IIOMetadataTreeTable(identifier, metadataTable.getRootNode(), visibleTable);
+            metadataPanel = new IIOMetadataTreeTable(metadataTable.getRootNode(), visibleTable);
             panel.add(new JScrollPane(metadataPanel), identifier);
             metadataPanel.getTreeSelectionModel().addTreeSelectionListener(listener);
         }
-        ((CardLayout) panel.getLayout()).show(panel, metadataPanel.identifier);
+        ((CardLayout) panel.getLayout()).show(panel, identifier);
         return metadataPanel;
+    }
+
+    /**
+     * Returns {@code true} if the given object is a choice for the same format at the same image
+     * index than this choice. This is required by {@link IIOMetadataPanel#setMetadata} which will
+     * search for the index of an old choice in a list of new choices.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object instanceof IIOMetadataChoice) {
+            return identifier.equals(((IIOMetadataChoice) object).identifier);
+        }
+        return false;
+    }
+
+    /**
+     * Overriden for consistency with {@link #equals(Object)}, but not used.
+     */
+    @Override
+    public int hashCode() {
+        return identifier.hashCode();
     }
 
     /**

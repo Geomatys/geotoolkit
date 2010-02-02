@@ -85,7 +85,7 @@ import org.geotoolkit.internal.swing.ComboBoxRenderer;
  * </td></tr></table>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @see MetadataTreeTable
  *
@@ -191,7 +191,7 @@ public class IIOMetadataPanel extends JPanel {
          * The component which hold every tables. This is the component that appear in the center of
          * this {@code IIOMetadataPanel}. Its layout manager must be an instance of {@link CardLayout}.
          */
-        final JComponent tables;
+        private final JComponent tables;
 
         /**
          * The selected format, or {@code null} if none.
@@ -214,13 +214,15 @@ public class IIOMetadataPanel extends JPanel {
          * Resets this controller in the same state than after construction.
          */
         final void reset() {
+            // Do not set visibleTable to null, because we want to copy its layout
+            // when a new table will be created even if the previous table was for
+            // an other image.
             selectedFormat = null;
-            visibleTable   = null;
             tables.removeAll();
         }
 
         /**
-         * Invoked when a new format or a new part has been selected in a combo box.
+         * Invoked when a new format has been selected in the combo box.
          * When a change is detected, the tree is immediately updated.
          */
         @Override
@@ -248,6 +250,15 @@ public class IIOMetadataPanel extends JPanel {
             if (newFormat == oldFormat) {
                 return;
             }
+            show(newFormat);
+        }
+
+        /**
+         * Shows the {@code TreeTable} associated with the given choice.
+         * It is the caller's responsability to ensure that the given
+         * format is the one selected in the combo box.
+         */
+        final void show(final IIOMetadataChoice newFormat) {
             selectedFormat = newFormat;
             visibleTable = newFormat.show(tables, this, visibleTable);
             showProperties(visibleTable.selectedNode);
@@ -328,6 +339,32 @@ public class IIOMetadataPanel extends JPanel {
     public void clear() {
         formatChoices.removeAllElements();
         controller   .reset();
+    }
+
+    /**
+     * Clears the previous metadata content and adds the values of the given <em>stream</em> and
+     * <em>image</em> metadata. Invoking this method is equivalent to invoking {@link #clear()}
+     * followed by {@link #addMetadata(IIOMetadata, IIOMetadata[]) addMetadata(...)}, except that
+     * the metadata initially show will be for the same format than the one currently selected,
+     * if this format exists in the new metadata.
+     *
+     * @param stream The stream metadata, or {@code null} if none.
+     * @param image  The image metadata for each image in a file.
+     *
+     * @since 3.09
+     */
+    public void setMetadata(final IIOMetadata stream, final IIOMetadata... image) {
+        final Object selected = formatChoices.getSelectedItem();
+        clear();
+        addMetadata(stream, image);
+        final int index = formatChoices.getIndexOf(selected);
+        if (index > 0) { // Intentionnaly skip the first choice, since it is already selected.
+            final Object newFormat = formatChoices.getElementAt(index);
+            if (newFormat instanceof IIOMetadataChoice) {
+                formatChoices.setSelectedItem(newFormat);
+                controller.show((IIOMetadataChoice) newFormat);
+            }
+        }
     }
 
     /**

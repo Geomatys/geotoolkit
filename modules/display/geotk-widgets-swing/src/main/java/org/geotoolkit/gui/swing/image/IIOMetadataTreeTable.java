@@ -45,7 +45,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  * The {@code TreeTable} implementation for {@link IIOMetadataPanel}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @see MetadataTreeTable
  *
@@ -54,12 +54,6 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  */
 @SuppressWarnings("serial")
 final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
-    /**
-     * The identifier for this table. Each table in a {@link IIOMetadataPanel}
-     * shall have an unique identifier.
-     */
-    final String identifier;
-
     /**
      * The currently selected tree node. This is read and set by {@link IIMetadataPanel} in
      * order to remember the selected item of that particular view when we switch between
@@ -77,19 +71,14 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
      * the value returned by {@link MetadataTreeTable#getRootNode()}, or something having
      * the same structure.
      *
-     * @param identifier An identifier, which must be unique for a given {@link IIOMetadataPanel}.
      * @param root The output of {@link MetadataTreeTable#getRootNode()}.
      * @param visibleTable The table which was show prior the invocation of this constructor, or
      *        {@code null} if none. This is used for copying some properties like the columns
      *        positions.
      */
-    IIOMetadataTreeTable(final String identifier, final TreeTableNode root,
-            final IIOMetadataTreeTable visibleTable)
-    {
+    IIOMetadataTreeTable(final TreeTableNode root, final IIOMetadataTreeTable visibleTable) {
         super(new Model(root));
-        final Model model = (Model) getTreeTableModel();
-        model.owner       = this;
-        this.identifier   = identifier;
+        ((Model) getTreeTableModel()).owner = this;
         setRootVisible(false);
         setColumnControlVisible(true);
         setDefaultRenderer(Class.class, new DefaultTableRenderer(this));
