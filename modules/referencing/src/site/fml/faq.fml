@@ -310,10 +310,9 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         kind of height different than <cite>ellipsoid height</cite>, or for a 2D CRS of type
         <code>EngineeringCRS</code>, it may fail.</p>
 
-        <p>Note however that even if the call to <code>Math.findMathTransform(...)</code> succeed,
+        <p>Note however that even if the call to <code>CRS.findMathTransform(...)</code> succeed,
         the call to <code>MathTransform.transform(...)</code> may fail or produce <code>NaN</code>
-        or infinity values if the coordinate to transform is far from the map projection area of
-        validity.</p>
+        or infinity values if the coordinate to transform is far from the projection area of validity.</p>
       </answer>
     </faq>
   </part>
