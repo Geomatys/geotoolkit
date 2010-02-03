@@ -29,6 +29,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.Unit;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
@@ -70,7 +72,7 @@ import org.geotoolkit.resources.Errors;
  * @param <T> The metadata interface implemented by the proxy.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.09
  *
  * @since 3.06
  * @module
@@ -317,6 +319,10 @@ final class MetadataProxy<T> implements InvocationHandler {
         if (targetType.isAssignableFrom(Citation   .class)) return accessor.getAttributeAsCitation(name);
         if (targetType.isAssignableFrom(InternationalString.class)) {
             return SimpleInternationalString.wrap(accessor.getAttribute(name));
+        }
+        if (targetType.isAssignableFrom(Unit.class)) {
+            final Class<?> bounds = Classes.boundOfParameterizedAttribute(method);
+            return accessor.getAttributeAsUnit(name, Classes.asSubclass(bounds, Quantity.class));
         }
         if (SPECIAL_CASE && Character.isLowerCase(name.charAt(0))) {
             /*

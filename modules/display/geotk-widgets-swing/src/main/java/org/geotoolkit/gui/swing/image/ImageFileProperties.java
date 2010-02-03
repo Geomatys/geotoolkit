@@ -19,9 +19,12 @@ package org.geotoolkit.gui.swing.image;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicReference;
+import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageTypeSpecifier;
@@ -33,7 +36,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.awt.EventQueue;
 import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
 import javax.swing.JList;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -46,7 +48,6 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.ExceptionMonitor;
-import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -170,8 +171,8 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
-     * Processes the messages sent by the background process. The behavior depends on the
-     * object type:
+     * Processes the messages sent by the background process. This method shall be invoked
+     * in the Swing thread only. The method behavior depends on the object type:
      * <p>
      * <ul>
      *   <li>{@link Boolean#TRUE} means that the reading process started.</li>
@@ -217,6 +218,15 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
     }
 
     /**
+     * Returns {@code true} if the running task has been cancelled.
+     *
+     * @param worker The worker which was set when the task has begun.
+     */
+    static boolean isCancelled(final Worker worker) {
+        return worker != null && worker.isCancelled();
+    }
+
+    /**
      * Sets the specified {@linkplain ImageReader image reader} as the source of metadata
      * and thumbnails, reading the information at the given image index. The information
      * are extracted immediately and no reference to the given image reader is retained.
@@ -231,29 +241,94 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
      * @since 3.07
      */
     public void setImage(final ImageReader reader, final int imageIndex) throws IOException {
-        warnings.clear();
-        tabs.setEnabledAt(warningsTab, false);
+        final AtomicReference<Worker> ref = new AtomicReference<Worker>();
+        SwingUtilities.invokeAndWait(new Runnable() {
+            @Override public void run() {
+                ref.set(worker);
+                warnings.clear();
+                tabs.setEnabledAt(warningsTab, false);
+            }
+        });
+        final Worker worker = ref.get();
         /*
-         * Reads only the metadata, and refresh the information panel
-         * as soon as those metadata are available.
+         * Read only the metadata, and refresh the information panel as soon as those metadata
+         * are available. Note that the list of metadata may contains null elements, which are
+         * necessary in order to have metadata for image 'i' stored in the list at index 'i'.
          */
         final IIOMetadata streamMetadata = reader.getStreamMetadata();
+        final List<IIOMetadata> imageMetadata = new ArrayList<IIOMetadata>();
+        for (int i=0; i<imageIndex; i++) {
+            if (isCancelled(worker)) return;
+            imageMetadata.add(reader.getImageMetadata(i));
+        }
+        if (isCancelled(worker)) return;
         final Info info = new Info(reader, imageIndex);
+        imageMetadata.add(info.metadata);
+        /*
+         * Update the Swing widget in the Swing thread. Note that we need to take a snapshot
+         * of the list content - do not pass the list directly, because it is not thread safe.
+         */
+        final IIOMetadata[] snapshot = imageMetadata.toArray(new IIOMetadata[imageMetadata.size()]);
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
-                info.show(ImageFileProperties.this);
-                metadata.setMetadata(streamMetadata, info.getMetadata());
+                if (!isCancelled(worker)) {
+                    info.show(ImageFileProperties.this);
+                    metadata.setMetadata(streamMetadata, snapshot);
+                }
             }
         });
         /*
-         * Reads the thumbnail or the image now.
+         * Read the thumbnail or the image now.
          */
+        if (isCancelled(worker)) return;
         final BufferedImage thumbnail = info.readThumbnail(reader, imageIndex, preferredThumbnailSize);
         EventQueue.invokeLater(new Runnable() {
             @Override public void run() {
-                viewer.setImage(thumbnail);
+                if (!isCancelled(worker)) {
+                    viewer.setImage(thumbnail);
+                }
             }
         });
+        /*
+         * Read metadata for the remaining images, if any. If the number of image is unknown,
+         * we will read every image until we get an IndexOutOfBoundsException. Otherwise such
+         * exception will be considered as an error.
+         */
+        int index = imageIndex;
+        boolean hasMore = false;
+        final int numImages = reader.getNumImages(false);
+        while (++index < numImages || numImages < 0) {
+            if (isCancelled(worker)) return;
+            final IIOMetadata md;
+            try {
+                md = reader.getImageMetadata(index);
+            } catch (IndexOutOfBoundsException e) {
+                if (numImages >= 0) {
+                    // This exception is unexpected if the number of images was known.
+                    throw new IIOException(e.getLocalizedMessage(), e);
+                }
+                break;
+            }
+            imageMetadata.add(md);
+            hasMore |=  (md != null);
+        }
+        /*
+         * Set metadata for the remaining images, if any. We need to set the previous
+         * content of the list to 'null' in order to avoid adding the same metadata twice.
+         */
+        if (hasMore) {
+            for (int i=0; i<=imageIndex; i++) {
+                imageMetadata.set(i, null);
+            }
+            final IIOMetadata[] md = imageMetadata.toArray(new IIOMetadata[imageMetadata.size()]);
+            EventQueue.invokeLater(new Runnable() {
+                @Override public void run() {
+                    if (!isCancelled(worker)) {
+                        metadata.addMetadata(null, md);
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -553,7 +628,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         /**
          * The image metadata, or {@code null} if none.
          */
-        private final IIOMetadata metadata;
+        final IIOMetadata metadata;
 
         /**
          * The coordinate reference system, or {@code null} if none.
@@ -561,9 +636,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         private CoordinateReferenceSystem crs;
 
         /**
-         * The conversion from grid to CRS, or {@code null} if none.
+         * The cell size as a string, or {@code null} if none.
          */
-        private AffineTransform gridToCRS;
+        private String cellSize;
 
         /**
          * The range of valid geophysics values, or {@code null} if none.
@@ -588,11 +663,9 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                 crs = sm.getInstanceForType(CoordinateReferenceSystem.class);
                 final RectifiedGrid rg = sm.getInstanceForType(RectifiedGrid.class);
                 final MetadataHelper helper = new MetadataHelper(sm);
-                if (rg != null) try {
-                    gridToCRS = helper.getAffineTransform(rg, null);
-                } catch (ImageMetadataException e) {
-                    // Missing attributes in the metadata. Because we were looking
-                    // them for information purpose only, just ignore the exception.
+                if (rg != null) {
+                    cellSize = helper.getCellDimensionAsText(rg,
+                            (crs != null) ? crs.getCoordinateSystem() : null);
                 }
                 final SampleDimension sd = sm.getInstanceForType(SampleDimension.class);
                 if (sd != null) {
@@ -653,13 +726,6 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
         }
 
         /**
-         * Returns the image metadata, or an empty array if none.
-         */
-        final IIOMetadata[] getMetadata() {
-            return (metadata != null) ? new IIOMetadata[] {metadata} : new IIOMetadata[0];
-        }
-
-        /**
          * Shows the content of this {@code Info} object in the given properties pane.
          */
         final void show(final ImageFileProperties properties) {
@@ -671,7 +737,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                     (width  + tileWidth -1) / tileWidth,
                     (height + tileHeight-1) / tileHeight);
 
-            properties.setGeospatialDescription(crs, gridToCRS, valueRange);
+            properties.setGeospatialDescription(crs, cellSize, valueRange);
             if (!(metadata instanceof SpatialMetadata)) {
                 properties.setGeospatialDescription(false);
             }

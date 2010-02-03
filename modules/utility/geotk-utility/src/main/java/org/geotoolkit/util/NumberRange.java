@@ -47,8 +47,8 @@ import static org.geotoolkit.util.converter.Classes.widestClass;
 public class NumberRange<T extends Number & Comparable<? super T>> extends Range<T> {
     //
     // IMPLEMENTATION NOTE: This class is full of @SuppressWarnings("unchecked") annotations.
-    // Nevertheless we should never get ClassCastException - if we get some this is a bug in
-    // this implementation. Users may get IllegalArgumentException however.
+    // Nevertheless we should never get ClassCastException - if we get some, this would be a
+    // bug in this implementation. Users may get IllegalArgumentException however.
     //
 
     /**

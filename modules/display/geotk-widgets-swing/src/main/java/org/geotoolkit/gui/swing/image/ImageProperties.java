@@ -34,7 +34,6 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
 import java.lang.reflect.Array;
 
 import java.awt.Image;
@@ -53,21 +52,18 @@ import javax.media.jai.PropertySource;
 import javax.media.jai.PropertyChangeEmitter;
 import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.OperationDescriptor;
-import javax.measure.unit.Unit;
 
 import org.jdesktop.swingx.JXTitledSeparator;
 
-import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.SwingUtilities;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.measure.RangeFormat;
+import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
 
@@ -166,6 +162,11 @@ public class ImageProperties extends JPanel implements Dialog {
      * The panel which contains the tabs.
      */
     final JTabbedPane tabs;
+
+    /**
+     * The range format. Will be created when first needed.
+     */
+    private transient RangeFormat rangeFormat;
 
     /**
      * Creates a new instance of {@code ImageProperties} with no image.
@@ -521,21 +522,25 @@ public class ImageProperties extends JPanel implements Dialog {
      * the geospatial information part. Those informations are typically extracted from the
      * image metadata.
      *
-     * @param gridToCRS The transform from grid coordinates to CRS coordinates, or {@code null}.
+     * @param crs The coordinate reference system, or {@code null}.
+     * @param cellSize The cell size as a string, or {@code null}.
      * @param values The range of geophysics values, or {@code null} if none.
      *
      * @since 3.08
      */
     @SuppressWarnings("fallthrough")
     final void setGeospatialDescription(final CoordinateReferenceSystem crs,
-            final AffineTransform gridToCRS, final NumberRange<?> values)
+            final String cellSize, final NumberRange<?> values)
     {
         for (int i=VALUE_RANGE; i<LAST; i++) {
             String text = null;
             switch (i) {
                 case VALUE_RANGE: {
                     if (values != null) {
-                        text = values.toString();
+                        if (rangeFormat == null) {
+                            rangeFormat = new RangeFormat(getLocale());
+                        }
+                        text = rangeFormat.format(values);
                     }
                     break;
                 }
@@ -546,33 +551,8 @@ public class ImageProperties extends JPanel implements Dialog {
                     break;
                 }
                 case PIXEL_SIZE: {
-                    if (gridToCRS != null) {
-                        final double scaleX = XAffineTransform.getScaleX0(gridToCRS);
-                        final double scaleY = XAffineTransform.getScaleX0(gridToCRS);
-                        Unit<?> xUnit = null, yUnit = null;
-                        if (crs != null) {
-                            final CoordinateSystem cs = crs.getCoordinateSystem();
-                            if (cs != null) switch (cs.getDimension()) {
-                                default: yUnit = cs.getAxis(1).getUnit(); // Fall through
-                                case 1:  xUnit = cs.getAxis(0).getUnit(); // Fall through
-                                case 0:  break;
-                            }
-                        }
-                        final boolean sameUnits = Utilities.equals(xUnit, yUnit);
-                        final StringBuilder buffer = new StringBuilder();
-                        if (scaleX != scaleY || !sameUnits) {
-                            buffer.append(scaleX);
-                            if (!sameUnits && xUnit != null) {
-                                buffer.append(' ').append(xUnit);
-                            }
-                            buffer.append(" × ");
-                        }
-                        buffer.append(scaleY);
-                        if (yUnit != null) {
-                            buffer.append(' ').append(yUnit);
-                        }
-                        text = buffer.toString();
-                    }
+                    text = cellSize;
+                    break;
                 }
             }
             descriptions[i].setText(text);

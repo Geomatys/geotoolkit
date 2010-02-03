@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.IdentityHashMap;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -376,24 +377,48 @@ public class IIOMetadataPanel extends JPanel {
      * @param image  The image metadata for each image in a file.
      */
     public void addMetadata(final IIOMetadata stream, final IIOMetadata... image) {
+        final Map<IIOMetadata,Integer> imageIndex = new IdentityHashMap<IIOMetadata,Integer>();
         final Map<String, List<IIOMetadata>> metadataForNames =
                 new LinkedHashMap<String, List<IIOMetadata>>();
         addFormatNames(stream, metadataForNames);
+        imageIndex.put(stream, -1);
         if (image != null) {
-            for (final IIOMetadata metadata : image) {
+            for (int i=0; i<image.length; i++) {
+                final IIOMetadata metadata = image[i];
                 addFormatNames(metadata, metadataForNames);
+                imageIndex.put(metadata, i);
             }
         }
+        /*
+         * At this point, we grouped every metadata by format name and we remember the
+         * image index for each metadata. Now process to the addition to the combo box.
+         * If the format is already present in the combo box, insert right after the
+         * existing format.
+         */
         final Locale locale = getLocale();
         for (final Map.Entry<String, List<IIOMetadata>> entry : metadataForNames.entrySet()) {
+            int insertAt = -1; // Where to insert, or -1 for adding to the end of the list.
             final String formatName = entry.getKey();
-            if (formatChoices.getSize() != 0) {
+            for (int i=formatChoices.getSize(); --i>=0;) {
+                final Object existing = formatChoices.getElementAt(i);
+                if (existing instanceof IIOMetadataChoice) {
+                    if (formatName.equals(((IIOMetadataChoice) existing).getFormatName())) {
+                        insertAt = i;
+                        break;
+                    }
+                }
+            }
+            if (insertAt < 0 && formatChoices.getSize() != 0) {
                 formatChoices.addElement(ComboBoxRenderer.SEPARATOR);
             }
-            int imageIndex = 0;
             for (final IIOMetadata metadata : entry.getValue()) {
-                formatChoices.addElement(new IIOMetadataChoice(locale, formatName, metadata,
-                        (metadata == stream) ? -1 : imageIndex++));
+                final Integer index = imageIndex.get(metadata); // Should never be null.
+                final IIOMetadataChoice choice = new IIOMetadataChoice(locale, formatName, metadata, index);
+                if (insertAt >= 0) {
+                    formatChoices.insertElementAt(choice, ++insertAt);
+                } else {
+                    formatChoices.addElement(choice);
+                }
             }
         }
     }

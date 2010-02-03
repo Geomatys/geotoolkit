@@ -104,11 +104,18 @@ final class IIOMetadataChoice implements Serializable {
     }
 
     /**
+     * Returns the name of the metadata format.
+     */
+    final String getFormatName() {
+        return metadataTable.getMetadataFormat().getRootName();
+    }
+
+    /**
      * Constructs an identifier to be used for locating the {@link IIOMetadataTreeTable}
      * in the {@link java.awt.Container} with {@link java.awt.CardLayout}.
      */
     private String identifier() {
-        String identifier = metadataTable.getMetadataFormat().getRootName();
+        String identifier = getFormatName();
         if (imageIndex >= 0) {
             identifier = identifier + ':' + imageIndex;
         }
@@ -129,7 +136,7 @@ final class IIOMetadataChoice implements Serializable {
         } else {
             part = resources.getString(Vocabulary.Keys.IMAGE_$1, imageIndex + 1);
         }
-        String rootName = metadataTable.getMetadataFormat().getRootName();
+        String rootName = getFormatName();
         if (rootName.equals(SpatialMetadataFormat.FORMAT_NAME)) {
             rootName = resources.getString(Vocabulary.Keys.GEOSPATIAL);
         } else if (rootName.equals(IIOMetadataFormatImpl.standardMetadataFormatName)) {

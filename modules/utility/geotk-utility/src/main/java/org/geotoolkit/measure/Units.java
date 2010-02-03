@@ -32,13 +32,14 @@ import javax.measure.quantity.Quantity;
 import javax.measure.converter.UnitConverter;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
 
 
 /**
  * A set of units to use in addition of {@link SI} and {@link NonSI}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.09
  *
  * @since 2.1
  * @module
@@ -311,7 +312,9 @@ public final class Units {
         uom = uom.trim();
         if (equalsIgnorePlural(uom, "pixel")) {
             return NonSI.PIXEL;
-        } else if (uom.equalsIgnoreCase("deg") || equalsIgnorePlural(uom, "degree") || uom.equals("°")) {
+        } else if (uom.equalsIgnoreCase("deg") || equalsIgnorePlural(uom, "degree") ||
+                equalsIgnorePlural(uom, "decimal_degree") || uom.equals("°"))
+        {
             return NonSI.DEGREE_ANGLE;
         } else if (uom.equalsIgnoreCase("rad") || equalsIgnorePlural(uom, "radian")) {
             return SI.RADIAN;
@@ -327,8 +330,18 @@ public final class Units {
             return Unit.ONE;
         } else if (uom.equalsIgnoreCase("level")) { // Sigma level
             return Unit.ONE;
+        } else if (uom.equalsIgnoreCase("degree_Celsius")) {
+            return SI.CELSIUS;
         } else {
-            return canonicalize(Unit.valueOf(uom));
+            final Unit<?> unit;
+            try {
+                unit = Unit.valueOf(uom);
+            } catch (IllegalArgumentException e) {
+                // Provides a better error message than the default JSR-275 0.9.4 implementation.
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "uom", uom), e);
+            }
+            return canonicalize(unit);
         }
     }
 

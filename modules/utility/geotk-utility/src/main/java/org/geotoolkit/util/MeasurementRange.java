@@ -33,7 +33,7 @@ import org.geotoolkit.util.converter.Classes;
  * @param <T> The type of range elements as a subclass of {@link Number}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @see org.geotoolkit.measure
  * @see org.geotoolkit.measure.RangeFormat
@@ -115,6 +115,34 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
         return new MeasurementRange<Double>(Double.class,
                 Double.valueOf(minimum), isMinIncluded,
                 Double.valueOf(maximum), isMaxIncluded, units);
+    }
+
+    /**
+     * Constructs a range using the smallest type of {@link Number} that can hold the given values.
+     * This method performs the same work than {@link NumberRange#createBestFit
+     * NumberRange.createBestFit(...)} with an additional {@code units} argument.
+     *
+     * @param  minimum        The minimum value, or {@code null} for negative infinity.
+     * @param  isMinIncluded  Defines whether the minimum value is included in the range.
+     * @param  maximum        The maximum value, or {@code null} for positive infinity.
+     * @param  isMaxIncluded  Defines whether the maximum value is included in the range.
+     * @param  units          The units of measurement, or {@code null} if unknown.
+     * @return The new range, or {@code null} if both {@code minimum} and {@code maximum}
+     *         are {@code null}.
+     *
+     * @see NumberRange#createBestFit(Number, boolean, Number, boolean)
+     *
+     * @since 3.09
+     */
+    @SuppressWarnings({"rawtypes","unchecked"})
+    public static MeasurementRange<?> createBestFit(final Number minimum, final boolean isMinIncluded,
+            final Number maximum, final boolean isMaxIncluded, final Unit<?> units)
+    {
+        final Class<? extends Number> type = Classes.widestClass(
+                Classes.finestClass(minimum), Classes.finestClass(maximum));
+        return (type == null) ? null :
+            new MeasurementRange(type, Classes.cast(minimum, type), isMinIncluded,
+                                  Classes.cast(maximum, type), isMaxIncluded, units);
     }
 
     /**

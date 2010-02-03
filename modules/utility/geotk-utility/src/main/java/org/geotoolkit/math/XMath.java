@@ -28,7 +28,7 @@ import org.geotoolkit.resources.Errors;
  * Simple mathematical functions in addition to the ones provided in {@link Math}.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 1.0
  * @module
@@ -68,6 +68,52 @@ public final class XMath {
      * Do not allow instantiation of this class.
      */
     private XMath() {
+    }
+
+    /**
+     * Returns the magnitude of the given vector. This is defined by:
+     *
+     * <blockquote>sqrt(vector[0]² + vector[1]² + … + vector[length-1]²)</blockquote>
+     *
+     * {@section Implementation note}
+     * In the special case where only one element is different than zero, this method
+     * returns directly the {@linkplain Math#abs(double) absolute value} of that element
+     * without computing {@code sqrt(v²)}, in order to avoid rounding error. This special case
+     * has been implemente because this method is often invoked for computing the length of
+     * {@linkplain org.opengis.coverage.grid.RectifiedGrid#getOffsetVectors() offset vectors},
+     * typically aligned with the axes of a {@linkplain org.opengis.referencing.cs.CartesianCS
+     * cartesian coordinate system}.
+     *
+     * @param  vector The vector for which to compute the magnitude.
+     * @return The magnitude of the given vector.
+     *
+     * @since 3.09
+     */
+    public static double magnitude(final double... vector) {
+        int i = vector.length;
+
+        // If every elements in the array are zero, returns zero.
+        double sum;
+        do if (i == 0) return 0;
+        while ((sum = vector[--i]) == 0);
+
+        // We have found a non-zero element. If it is the only one, returns it directly.
+        double v;
+        do if (i == 0) return Math.abs(sum);
+        while ((v = vector[--i]) == 0);
+
+        // If there is exactly 2 elements, use Math.hypot which is more robust than our algorithm.
+        double v2;
+        do if (i == 0) return Math.hypot(sum, v);
+        while ((v2 = vector[--i]) == 0);
+
+        // Usual magnitude computation.
+        sum = sum*sum + v*v + v2*v2;
+        while (i != 0) {
+            v = vector[--i];
+            sum += v*v;
+        }
+        return Math.sqrt(sum);
     }
 
     /**

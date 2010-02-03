@@ -49,7 +49,7 @@ import org.geotoolkit.util.XArrays;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -111,6 +111,11 @@ final class NetcdfVariable {
     public final double[] fillValues;
 
     /**
+     * The units as an unparsed string, or {@code null} if unknown.
+     */
+    public final String units;
+
+    /**
      * The widest type found in attributes scanned by the {@link #attribute} method
      * since the last time this field was set. This is a temporary variable used by
      * the constructor only.
@@ -123,7 +128,14 @@ final class NetcdfVariable {
      * only for comparing our own results with the results from the UCAR's API.
      */
     public NetcdfVariable(final EnhanceScaleMissing variable) {
-        imageType  = (variable instanceof VariableIF) ? getRawDataType((VariableIF) variable) : DataBuffer.TYPE_DOUBLE;
+        if (variable instanceof VariableIF) {
+            final VariableIF vif = (VariableIF) variable;
+            imageType = getRawDataType(vif);
+            units     = vif.getUnitsString();
+        } else {
+            imageType = DataBuffer.TYPE_DOUBLE;
+            units     = null;
+        }
         offset     =  variable.convertScaleOffsetMissing(0.0);
         scale      =  variable.convertScaleOffsetMissing(1.0) - offset;
         minimum    = (variable.getValidMin() - offset) / scale;
@@ -167,6 +179,7 @@ final class NetcdfVariable {
          */
         imageType  = getRawDataType(variable);
         dataType   = widestType = variable.getDataType();
+        units      = variable.getUnitsString();
         scale      = attribute(variable, SCALE_FACTOR);
         offset     = attribute(variable, ADD_OFFSET);
         scaleType  = widestType;

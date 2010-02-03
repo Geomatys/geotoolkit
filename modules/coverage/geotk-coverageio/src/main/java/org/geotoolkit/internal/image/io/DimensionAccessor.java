@@ -56,6 +56,15 @@ public final class DimensionAccessor extends MetadataAccessor {
     }
 
     /**
+     * Sets the {@code "units"} attribute to the given value.
+     *
+     * @param units The units, or {@code null} if none.
+     */
+    public void setUnits(final String units) {
+        setAttribute("units", units);
+    }
+
+    /**
      * Sets the {@code "minValue"} and {@code "maxValue"} attributes to the given range.
      * They are the geophysical value, already transformed by the transfert function if
      * there is one.

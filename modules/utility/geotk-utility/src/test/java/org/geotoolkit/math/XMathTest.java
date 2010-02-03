@@ -29,11 +29,29 @@ import static org.junit.Assert.*;
  * Tests the {@link XMath} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 2.5
  */
 public final class XMathTest {
+    /**
+     * Small number for floating point comparisons.
+     */
+    private static final double EPS = 1E-12;
+
+    /**
+     * Tests the {@link XMath#magnitude} method.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testMagnitude() {
+        assertEquals(0, XMath.magnitude(), EPS);
+        assertEquals(4, XMath.magnitude(0, -4, 0), EPS);
+        assertEquals(5, XMath.magnitude(0, -4, 0, 3, 0), EPS);
+        assertEquals(5, XMath.magnitude(3, 1, -2, 1, -3, -1), EPS);
+    }
+
     /**
      * Tests the {@link XMath#pow10} method.
      */

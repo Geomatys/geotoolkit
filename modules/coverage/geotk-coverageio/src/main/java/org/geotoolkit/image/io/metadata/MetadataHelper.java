@@ -19,18 +19,26 @@ package org.geotoolkit.image.io.metadata;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.Locale;
+import java.text.NumberFormat;
+import java.text.FieldPosition;
 import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
-import javax.imageio.IIOParam;
 import java.awt.geom.AffineTransform;
+import javax.imageio.IIOParam;
+import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.cs.CoordinateSystem;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 
@@ -40,12 +48,12 @@ import org.geotoolkit.image.io.ImageMetadataException;
  * Instances of ISO 19115-2 metadata are typically obtained from {@link SpatialMetadata} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.07
  * @module
  */
-public class MetadataHelper {
+public class MetadataHelper implements Localized {
     /**
      * The default instance.
      */
@@ -77,7 +85,7 @@ public class MetadataHelper {
      * for formatting the message in {@link ImageMetadataException}.
      */
     private String error(final int key, final Object... arguments) {
-        return Errors.getResources(owner != null ? owner.getLocale() : null).getString(key, arguments);
+        return Errors.getResources(getLocale()).getString(key, arguments);
     }
 
     /**
@@ -202,6 +210,10 @@ public class MetadataHelper {
             if (scale != 1 || offset != 0) {
                 if (minimum != null) minimum = minimum * scale + offset;
                 if (maximum != null) maximum = maximum * scale + offset;
+            }
+            final Unit<?> units = dimension.getUnits();
+            if (units != null) {
+                return MeasurementRange.createBestFit(minimum, isMinInclusive, maximum, isMaxInclusive, units);
             }
         }
         return NumberRange.createBestFit(minimum, isMinInclusive, maximum, isMaxInclusive);
@@ -352,6 +364,103 @@ public class MetadataHelper {
     }
 
     /**
+     * Returns the dimension of pixels as a text, or {@code null} if none. This method computes
+     * the dimension from the {@linkplain RectifiedGrid#getOffsetVectors() offset vectors} and
+     * appends the axis units, if any.
+     *
+     * @param  domain The domain from which to compute the cell dimensions.
+     * @param  cs The "real world" coordinate system, or {@code null} if unknown.
+     * @return A text representation of the cell dimension, or {@code null} if there is no
+     *         offset vectors.
+     *
+     * @since 3.09
+     */
+    public String getCellDimensionAsText(final RectifiedGrid domain, final CoordinateSystem cs) {
+        final List<double[]> offsetVectors = domain.getOffsetVectors();
+        if (offsetVectors == null) {
+            return null;
+        }
+        /*
+         * Get the pixel sizes, and verify if they are the same for all axes.
+         */
+        final double[] sizes = new double[offsetVectors.size()];
+        for (int i=0; i<sizes.length; i++) {
+            sizes[i] = adjustForRoundingError(XMath.magnitude(offsetVectors.get(i)));
+        }
+        boolean sameSize = true;
+        for (int i=1; i<sizes.length; i++) {
+            if (sizes[i-1] != sizes[i]) {
+                sameSize = false;
+                break;
+            }
+        }
+        /*
+         * Get the units, and verify if they are the same for all axes.
+         */
+        boolean sameUnits = true;
+        Unit<?>[] units = null;
+        if (cs != null) {
+            units = new Unit<?>[Math.min(sizes.length, cs.getDimension())];
+            for (int i=0; i<units.length; i++) {
+                units[i] = cs.getAxis(i).getUnit();
+            }
+            for (int i=1; i<units.length; i++) {
+                if (!Utilities.equals(units[i-1], units[i])) {
+                    sameUnits = false;
+                    break;
+                }
+            }
+        }
+        final Unit<?> commonUnit = (sameUnits && units != null && units.length != 0) ? units[0] : null;
+        /*
+         * Now format the string.
+         */
+        final StringBuffer  buffer = new StringBuffer();
+        final Locale        locale = getLocale();
+        final FieldPosition pos    = new FieldPosition(0);
+        final NumberFormat  nf;
+        final UnitFormat    uf;
+        if (locale != null) {
+            nf = NumberFormat.getInstance(locale);
+            uf = UnitFormat  .getInstance(locale);
+        } else {
+            nf = NumberFormat.getInstance();
+            uf = UnitFormat  .getInstance();
+        }
+        nf.setMaximumFractionDigits(6);
+        if (sameSize && sameUnits) {
+            if (sizes.length != 0) {
+                nf.format(sizes[0], buffer, pos);
+            }
+        } else {
+            if (commonUnit != null) {
+                buffer.append('(');
+            }
+            boolean needsSeparator = false;
+            for (int i=0; i<sizes.length; i++) {
+                if (needsSeparator) {
+                    buffer.append(" × ");
+                }
+                needsSeparator = true;
+                nf.format(sizes[i], buffer, pos);
+                if (!sameUnits && units != null && i<units.length) {
+                    final Unit<?> unit = units[i];
+                    if (unit != null) {
+                        uf.format(unit, buffer.append(' '), pos);
+                    }
+                }
+            }
+        }
+        if (commonUnit != null) {
+            if (!sameSize) {
+                buffer.append(')');
+            }
+            uf.format(commonUnit, buffer.append(' '), pos);
+        }
+        return buffer.toString();
+    }
+
+    /**
      * Works around the rounding errors found in some metadata numbers. We usually don't try to
      * "fix" rounding errors, but {@linkplain AffineTransform affine transform} coefficients are
      * an exception because they have a very deep impact on performance, especially the scale
@@ -381,7 +490,20 @@ public class MetadataHelper {
      */
     public double adjustForRoundingError(final double value) {
         final double c1 = value * 360;
-        final double c2 = XMath.roundIfAlmostInteger(c1, 3);
+        final double c2 = XMath.roundIfAlmostInteger(c1, 16);
+        // The above threshold (16) has been determined empirically from IFREMER data.
         return (c1 != c2) ? c2/360 : value;
+    }
+
+    /**
+     * Returns the locale used by this helper, or {@code null} for the default locale. This is
+     * used for text formatting in {@link #getCellDimensionAsText getCellDimensionAsText} and
+     * for error messages.
+     *
+     * @since 3.09
+     */
+    @Override
+    public Locale getLocale() {
+        return (owner != null) ? owner.getLocale() : null;
     }
 }

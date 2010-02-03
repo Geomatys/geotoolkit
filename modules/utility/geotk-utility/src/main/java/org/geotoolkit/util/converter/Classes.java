@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.09
  *
  * @since 2.5
  * @module
@@ -274,6 +274,31 @@ public final class Classes {
             }
         }
         return null;
+    }
+
+    /**
+     * Casts the {@code type} class to represent a subclass of the class represented by the
+     * {@code sub} argument. Checks that the cast is valid, and returns {@code null} if it
+     * is not.
+     * <p>
+     * This method performs the same work than
+     * <code>type.{@linkplain Class#asSubclass(Class) asSubclass}(sub)</code>,
+     * except that {@code null} is returned instead than throwing an exception
+     * if the cast is not valid or if any of the argument is {@code null}.
+     *
+     * @param  <U>  The compile-time bounds of the {@code sub} argument.
+     * @param  type The class to cast to a sub-class, or {@code null}.
+     * @param  sub  The subclass to cast to, or {@code null}.
+     * @return The {@code type} argument casted to a subclass of the {@code sub} argument,
+     *         or {@code null} if this cast can not be performed.
+     *
+     * @see Class#asSubclass(Class)
+     *
+     * @since 3.09
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    public static <U> Class<? extends U> asSubclass(final Class<?> type, final Class<U> sub) {
+        return (type != null && sub != null && sub.isAssignableFrom(type)) ? (Class) type : null;
     }
 
     /**
