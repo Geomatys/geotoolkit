@@ -130,9 +130,17 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.timeRange = timeRange;
     }
 
+    public DataComponentPropertyType(TimeRange timeRange) {
+        this.timeRange = timeRange;
+    }
+
     public DataComponentPropertyType(String name, String role, TimeType time) {
         this.name      = name;
         this.role      = role;
+        this.time      = time;
+    }
+
+    public DataComponentPropertyType(TimeType time) {
         this.time      = time;
     }
 
@@ -142,9 +150,17 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.quantity  = quantity;
     }
 
+    public DataComponentPropertyType(QuantityType quantity) {
+        this.quantity  = quantity;
+    }
+
     public DataComponentPropertyType(String name, String role, BooleanType bool) {
         this.name      = name;
         this.role      = role;
+        this._boolean  = bool;
+    }
+
+    public DataComponentPropertyType(BooleanType bool) {
         this._boolean  = bool;
     }
 
@@ -153,10 +169,19 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this.role      = role;
         this.abstractDataRecord = dataRecord;
     }
+
+    public DataComponentPropertyType(DataRecordType dataRecord) {
+        ObjectFactory factory = new ObjectFactory();
+        this.abstractDataRecord = factory.createDataRecord(dataRecord);
+    }
     
     public DataComponentPropertyType(String name, String role, QuantityRange quantityRange) {
         this.name      = name;
         this.role      = role;
+        this.quantityRange = quantityRange;
+    }
+
+    public DataComponentPropertyType(QuantityRange quantityRange) {
         this.quantityRange = quantityRange;
     }
 

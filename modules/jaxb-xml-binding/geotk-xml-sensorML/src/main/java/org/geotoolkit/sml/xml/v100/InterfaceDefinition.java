@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.util.Utilities;
 
 
@@ -109,6 +110,14 @@ public class InterfaceDefinition {
     }
 
     /**
+     * Sets the value of the serviceLayer property.
+     */
+    public void setServiceLayer(Category value) {
+        this.serviceLayer = new LayerPropertyType(value);
+    }
+
+
+    /**
      * Gets the value of the applicationLayer property.
      */
     public LayerPropertyType getApplicationLayer() {
@@ -120,6 +129,13 @@ public class InterfaceDefinition {
      */
     public void setApplicationLayer(LayerPropertyType value) {
         this.applicationLayer = value;
+    }
+
+    /**
+     * Sets the value of the applicationLayer property.
+     */
+    public void setApplicationLayer(Category value) {
+        this.applicationLayer = new LayerPropertyType(value);
     }
 
     /**
@@ -137,6 +153,13 @@ public class InterfaceDefinition {
     }
 
     /**
+     * Sets the value of the applicationLayer property.
+     */
+    public void setPresentationLayer(Category value) {
+        this.presentationLayer = new PresentationLayerPropertyType(value);
+    }
+
+    /**
      * Gets the value of the sessionLayer property.
      */
     public LayerPropertyType getSessionLayer() {
@@ -148,6 +171,13 @@ public class InterfaceDefinition {
      */
     public void setSessionLayer(LayerPropertyType value) {
         this.sessionLayer = value;
+    }
+
+    /**
+     * Sets the value of the sessionLayer property.
+     */
+    public void setSessionLayer(Category value) {
+        this.sessionLayer = new LayerPropertyType(value);
     }
 
     /**
@@ -165,6 +195,13 @@ public class InterfaceDefinition {
     }
 
     /**
+     * Sets the value of the transportLayer property.
+     */
+    public void setTransportLayer(Category value) {
+        this.transportLayer = new LayerPropertyType(value);
+    }
+
+    /**
      * Gets the value of the networkLayer property.
      */
     public LayerPropertyType getNetworkLayer() {
@@ -176,6 +213,13 @@ public class InterfaceDefinition {
      */
     public void setNetworkLayer(LayerPropertyType value) {
         this.networkLayer = value;
+    }
+
+    /**
+     * Sets the value of the networkLayer property.
+     */
+    public void setNetworkLayer(Category value) {
+        this.networkLayer = new LayerPropertyType(value);
     }
 
     /**
@@ -193,6 +237,13 @@ public class InterfaceDefinition {
     }
 
     /**
+     * Sets the value of the dataLinkLayer property.
+     */
+    public void setDataLinkLayer(Category value) {
+        this.dataLinkLayer = new LayerPropertyType(value);
+    }
+
+    /**
      * Gets the value of the physicalLayer property.
      */
     public LayerPropertyType getPhysicalLayer() {
@@ -207,6 +258,13 @@ public class InterfaceDefinition {
     }
 
     /**
+     * Sets the value of the physicalLayer property.
+     */
+    public void setPhysicalLayer(Category value) {
+        this.physicalLayer = new LayerPropertyType(value);
+    }
+
+    /**
      * Gets the value of the mechanicalLayer property.
      */
     public LayerPropertyType getMechanicalLayer() {
@@ -218,6 +276,13 @@ public class InterfaceDefinition {
      */
     public void setMechanicalLayer(LayerPropertyType value) {
         this.mechanicalLayer = value;
+    }
+
+    /**
+     * Sets the value of the mechanicalLayer property.
+     */
+    public void setMechanicalLayer(Category value) {
+        this.mechanicalLayer = new LayerPropertyType(value);
     }
 
     /**

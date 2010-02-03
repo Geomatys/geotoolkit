@@ -244,6 +244,43 @@ public class SensorML extends AbstractSensorML {
     }
 
     /**
+     * Gets the value of the member property.
+     */
+    public void setMember(List<SensorML.Member> member) {
+        this.member = member;
+    }
+
+    /**
+     * Gets the value of the member property.
+     */
+    public void setMember(SensorML.Member member) {
+        if (this.member == null) {
+            this.member = new ArrayList<SensorML.Member>();
+        }
+        this.member.add(member);
+    }
+
+    /**
+     * Gets the value of the member property.
+     */
+    public void setMember(SystemType member) {
+        if (this.member == null) {
+            this.member = new ArrayList<SensorML.Member>();
+        }
+        this.member.add(new Member(member));
+    }
+
+    /**
+     * Gets the value of the member property.
+     */
+    public void setMember(ComponentType member) {
+        if (this.member == null) {
+            this.member = new ArrayList<SensorML.Member>();
+        }
+        this.member.add(new Member(member));
+    }
+
+    /**
      * Gets the value of the version property.
      * 
      * @return
@@ -442,6 +479,20 @@ public class SensorML extends AbstractSensorML {
         private String title;
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String type;
+
+        public Member() {
+
+        }
+
+        public Member(SystemType system) {
+            ObjectFactory factory = new ObjectFactory();
+            this.process = factory.createSystem(system);
+        }
+
+        public Member(ComponentType compo) {
+            ObjectFactory factory = new ObjectFactory();
+            this.process = factory.createComponent(compo);
+        }
 
         /**
          * Gets the value of the process property.

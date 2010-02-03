@@ -92,6 +92,10 @@ public class Contact {
         this.responsibleParty = responsibleParty;
     }
 
+    public Contact(ResponsibleParty responsibleParty) {
+        this.responsibleParty = responsibleParty;
+    }
+
     /**
      * Gets the value of the person property.
      */
@@ -132,6 +136,19 @@ public class Contact {
      */
     public void setContactList(ContactList value) {
         this.contactList = value;
+    }
+
+    /**
+     * Sets the value of the contactList property.
+     */
+    public void setContactList(ResponsibleParty value) {
+        this.contactList = new ContactList(value);
+    }
+    /**
+     * Sets the value of the contactList property.
+     */
+    public void setContactList(Person value) {
+        this.contactList = new ContactList(value);
     }
 
     /**

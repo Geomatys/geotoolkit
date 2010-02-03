@@ -62,6 +62,10 @@ public class Classifier implements AbstractClassifier {
     public Classifier() {
     }
 
+    public Classifier(Term term) {
+        this.term = term;
+    }
+    
     public Classifier(String name, Term term) {
         this.name = name;
         this.term = term;

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -64,19 +65,19 @@ public class Term implements AbstractTerm {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String value;
     @XmlAttribute
-    private String definition;
+    private URI definition;
 
     public Term() {
 
     }
 
-    public Term(String value, String definition) {
+    public Term(String value, URI definition) {
         this.codeSpace  = null;
         this.definition = definition;
         this.value      = value;
     }
 
-    public Term(CodeSpacePropertyType codeSpace, String value, String definition) {
+    public Term(CodeSpacePropertyType codeSpace, String value, URI definition) {
         this.codeSpace  = codeSpace;
         this.definition = definition;
         this.value      = value;
@@ -113,14 +114,14 @@ public class Term implements AbstractTerm {
     /**
      * Gets the value of the definition property.
      */
-    public String getDefinition() {
+    public URI getDefinition() {
         return definition;
     }
 
     /**
      * Sets the value of the definition property.
      */
-    public void setDefinition(String value) {
+    public void setDefinition(URI value) {
         this.definition = value;
     }
 

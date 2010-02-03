@@ -84,6 +84,18 @@ public class CoordinateType implements Coordinate {
         this.time = time;
     }
 
+    public CoordinateType(QuantityType quantity) {
+        this.quantity = quantity;
+    }
+
+    public CoordinateType(Count count) {
+        this.count = count;
+    }
+
+    public CoordinateType(TimeType time) {
+        this.time = time;
+    }
+
     /**
      * Gets the value of the count property.
      */

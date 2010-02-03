@@ -91,6 +91,14 @@ public class PresentationLayerPropertyType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public PresentationLayerPropertyType() {
+
+    }
+
+    public PresentationLayerPropertyType(Category category) {
+        this.category = category;
+    }
+
     /**
      * Gets the value of the abstractDataRecord property.
      */

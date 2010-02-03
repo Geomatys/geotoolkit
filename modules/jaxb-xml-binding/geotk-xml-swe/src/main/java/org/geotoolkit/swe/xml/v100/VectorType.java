@@ -94,6 +94,53 @@ public class VectorType extends AbstractVectorType implements Vector {
     }
 
     /**
+     * Gets the value of the coordinate property.
+     */
+    public void setCoordinate(List<CoordinateType> coordinate) {
+        this.coordinate = coordinate;
+    }
+
+    /**
+     * Gets the value of the coordinate property.
+     */
+    public void setCoordinate(CoordinateType coordinate) {
+        if (this.coordinate == null) {
+            this.coordinate = new ArrayList<CoordinateType>();
+        }
+        this.coordinate.add(coordinate);
+    }
+
+    /**
+     * Gets the value of the coordinate property.
+     */
+    public void setCoordinate(QuantityType coordinate) {
+        if (this.coordinate == null) {
+            this.coordinate = new ArrayList<CoordinateType>();
+        }
+        this.coordinate.add(new CoordinateType(coordinate));
+    }
+
+    /**
+     * Gets the value of the coordinate property.
+     */
+    public void setCoordinate(Count coordinate) {
+        if (this.coordinate == null) {
+            this.coordinate = new ArrayList<CoordinateType>();
+        }
+        this.coordinate.add(new CoordinateType(coordinate));
+    }
+
+    /**
+     * Gets the value of the coordinate property.
+     */
+    public void setCoordinate(TimeType coordinate) {
+        if (this.coordinate == null) {
+            this.coordinate = new ArrayList<CoordinateType>();
+        }
+        this.coordinate.add(new CoordinateType(coordinate));
+    }
+
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override

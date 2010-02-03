@@ -139,6 +139,25 @@ public class QuantityRange extends AbstractDataComponentType {
     }
 
     /**
+     * Gets the value of the value property.
+     *
+     */
+    public void setValue(List<Double> value) {
+        this.value = value;
+    }
+
+    /**
+     * Gets the value of the value property.
+     *
+     */
+    public void setValue(Double value) {
+        if (this.value == null) {
+            this.value = new ArrayList<Double>();
+        }
+        this.value.add(value);
+    }
+
+    /**
      * Gets the value of the referenceFrame property.
      */
     public String getReferenceFrame() {

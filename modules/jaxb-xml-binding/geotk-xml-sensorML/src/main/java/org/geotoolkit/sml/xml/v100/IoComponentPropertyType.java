@@ -41,6 +41,7 @@ import org.geotoolkit.swe.xml.v100.Text;
 import org.geotoolkit.swe.xml.v100.TimeType;
 import org.geotoolkit.swe.xml.v100.TimeRange;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 import org.geotoolkit.util.Utilities;
 
@@ -148,14 +149,30 @@ public class IoComponentPropertyType implements IoComponent {
         this.quantity = quantity;
     }
 
-    public IoComponentPropertyType(String name, JAXBElement<? extends AbstractDataRecordType> abstractDataRecord) {
-        this.name = name;
-        this.abstractDataRecord = abstractDataRecord;
-    }
-
     public IoComponentPropertyType(String name, SimpleDataRecordType abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
+    }
+
+    public IoComponentPropertyType(ObservableProperty observableProperty) {
+        this.observableProperty = observableProperty;
+    }
+
+    public IoComponentPropertyType(QuantityType quantity) {
+        this.quantity = quantity;
+    }
+
+    public IoComponentPropertyType(SimpleDataRecordType abstractDataRecord) {
+        this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
+    }
+
+    public IoComponentPropertyType(DataRecordType abstractDataRecord) {
+        this.abstractDataRecord = factory.createDataRecord(abstractDataRecord);
+    }
+
+    public IoComponentPropertyType(String name, JAXBElement<? extends AbstractDataRecordType> abstractDataRecord) {
+        this.name = name;
+        this.abstractDataRecord = abstractDataRecord;
     }
 
     /**

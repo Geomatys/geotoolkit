@@ -94,6 +94,36 @@ public class ClassifierList implements AbstractClassifierList {
     }
 
     /**
+     * Gets the value of the classifier property.
+     *
+     */
+    public void setClassifier(Classifier classifier) {
+        if (this.classifier == null) {
+            this.classifier = new ArrayList<Classifier>();
+        }
+        this.classifier.add(classifier);
+    }
+
+    /**
+     * Gets the value of the classifier property.
+     *
+     */
+    public void setClassifier(Term classifier) {
+        if (this.classifier == null) {
+            this.classifier = new ArrayList<Classifier>();
+        }
+        this.classifier.add(new Classifier(classifier));
+    }
+
+    /**
+     * Gets the value of the classifier property.
+     *
+     */
+    public void setClassifier(List<Classifier> classifier) {
+        this.classifier = classifier;
+    }
+    
+    /**
      * Gets the value of the id property.
      */
     public String getId() {

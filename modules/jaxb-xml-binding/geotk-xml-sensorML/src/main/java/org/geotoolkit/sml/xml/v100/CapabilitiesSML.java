@@ -18,7 +18,6 @@ package org.geotoolkit.sml.xml.v100;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -78,6 +78,15 @@ public class CapabilitiesSML {
     private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
+
+    public CapabilitiesSML() {
+
+    }
+
+    public CapabilitiesSML(DataRecordType dataRecord) {
+        org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
+        this.abstractDataRecord = facto.createDataRecord(dataRecord);
+    }
 
     /**
      * Gets the value of the abstractDataRecord property.

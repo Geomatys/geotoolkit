@@ -95,6 +95,24 @@ public class AddressType {
     }
 
     /**
+     * Gets the value of the deliveryPoint property.
+     *
+     */
+    public void setDeliveryPoint(String deliveryPoint) {
+        if (this.deliveryPoint == null) {
+            this.deliveryPoint = new ArrayList<String>();
+        }
+        this.deliveryPoint.add(deliveryPoint);
+    }
+
+    /**
+     * Gets the value of the deliveryPoint property.
+     *
+     */
+    public void setDeliveryPoint(List<String> deliveryPoint) {
+        this.deliveryPoint = deliveryPoint;
+    }
+    /**
      * Gets the value of the city property.
      *
      */

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -78,6 +79,15 @@ public class Characteristics {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String type;
 
+    public Characteristics() {
+
+    }
+
+    public Characteristics(DataRecordType dataRecord) {
+        org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
+        this.abstractDataRecord = facto.createDataRecord(dataRecord);
+    }
+    
     /**
      * Gets the value of the abstractDataRecord property.
      */

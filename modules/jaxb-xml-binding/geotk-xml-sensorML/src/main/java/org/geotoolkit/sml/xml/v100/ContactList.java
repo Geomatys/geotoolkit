@@ -79,6 +79,20 @@ public class ContactList {
     @XmlID
     private String id;
 
+    public ContactList() {
+
+    }
+
+    public ContactList(ResponsibleParty resp) {
+        this.member = new ArrayList<Member>();
+        this.member.add(new Member(resp));
+    }
+
+    public ContactList(Person person) {
+        this.member = new ArrayList<Member>();
+        this.member.add(new Member(person));
+    }
+
     /**
      * Gets the value of the description property.
      */
@@ -188,6 +202,18 @@ public class ContactList {
         private String title;
         @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
         private String type;
+
+        public Member() {
+
+        }
+
+        public Member(Person person) {
+            this.person = person;
+        }
+
+        public Member(ResponsibleParty responsibleParty) {
+            this.responsibleParty = responsibleParty;
+        }
 
         /**
          * Gets the value of the person property.

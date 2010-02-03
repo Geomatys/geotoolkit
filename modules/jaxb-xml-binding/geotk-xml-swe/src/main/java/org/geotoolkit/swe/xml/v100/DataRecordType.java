@@ -89,6 +89,66 @@ public class DataRecordType extends AbstractDataRecordType {
         this.field.add(field);
     }
 
+    /**
+     * Sets the value of the field property.
+     */
+    public void setField(QuantityType Quantity) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(new DataComponentPropertyType(Quantity));
+    }
+
+    /**
+     * Sets the value of the field property.
+     */
+    public void setField(DataRecordType record) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(new DataComponentPropertyType(record));
+    }
+
+    /**
+     * Sets the value of the field property.
+     */
+    public void setField(TimeType time) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(new DataComponentPropertyType(time));
+    }
+
+    /**
+     * Sets the value of the field property.
+     */
+    public void setField(TimeRange time) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(new DataComponentPropertyType(time));
+    }
+
+    /**
+     * Sets the value of the field property.
+     */
+    public void setField(QuantityRange qr) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(new DataComponentPropertyType(qr));
+    }
+
+    /**
+     * Sets the value of the field property.
+     */
+    public void setField(BooleanType boo) {
+        if (this.field == null) {
+            this.field = new ArrayList<DataComponentPropertyType>();
+        }
+        this.field.add(new DataComponentPropertyType(boo));
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString()).append('\n');

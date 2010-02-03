@@ -112,6 +112,13 @@ public class Document {
     }
 
     /**
+     * Sets the value of the description property.
+     */
+    public void setDescription(String value) {
+        this.description = new StringOrRefType(value);
+    }
+
+    /**
      * Gets the value of the date property.
      */
     public String getDate() {

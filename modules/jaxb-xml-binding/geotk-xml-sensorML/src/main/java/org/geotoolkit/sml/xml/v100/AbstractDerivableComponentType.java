@@ -224,4 +224,11 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         this.interfaces = interfaces;
     }
 
+    /**
+     * @param interfaces the interfaces to set
+     */
+    public void setInterfaces(InterfaceList interfaces) {
+        this.interfaces = new Interfaces(interfaces);
+    }
+
 }

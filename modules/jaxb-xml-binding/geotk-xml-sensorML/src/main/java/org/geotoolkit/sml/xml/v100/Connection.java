@@ -69,6 +69,10 @@ public class Connection {
 
     }
 
+    public Connection(Link link) {
+        this.link = link;
+    }
+
     public Connection(String name, Link link) {
         this.name = name;
         this.link = link;

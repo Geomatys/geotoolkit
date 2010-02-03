@@ -62,6 +62,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     /**
      * @return the inputs
      */
+    @Override
     public Inputs getInputs() {
         return inputs;
     }
@@ -69,13 +70,22 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     /**
      * @param inputs the inputs to set
      */
+    @Override
     public void setInputs(AbstractInputs inputs) {
+        this.inputs = new Inputs(inputs);
+    }
+
+    /**
+     * @param inputs the inputs to set
+     */
+    public void setInputs(InputList inputs) {
         this.inputs = new Inputs(inputs);
     }
 
     /**
      * @return the outputs
      */
+    @Override
     public Outputs getOutputs() {
         return outputs;
     }
@@ -83,7 +93,12 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     /**
      * @param outputs the outputs to set
      */
+    @Override
     public void setOutputs(AbstractOutputs outputs) {
+        this.outputs = new Outputs(outputs);
+    }
+
+    public void setOutputs(OutputList outputs) {
         this.outputs = new Outputs(outputs);
     }
 

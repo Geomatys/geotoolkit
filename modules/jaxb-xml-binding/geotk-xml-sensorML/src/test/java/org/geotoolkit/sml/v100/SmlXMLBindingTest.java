@@ -188,9 +188,9 @@ public class SmlXMLBindingTest {
         Keywords keywords = new Keywords(new KeywordList("urn:x-brgm:def:gcmd:keywords", kw));
         component.setKeywords(keywords);
 
-        Classifier cl1 = new Classifier("intendedApplication", new Term("eaux souterraines", "urn:x-ogc:def:classifier:OGC:application"));
+        Classifier cl1 = new Classifier("intendedApplication", new Term("eaux souterraines", URI.create("urn:x-ogc:def:classifier:OGC:application")));
         CodeSpacePropertyType cs = new CodeSpacePropertyType("urn:x-brgm:def:GeoPoint:bss");
-        Classifier cl2 = new Classifier("sensorType", new Term(cs, "Profondeur", "urn:sensor:classifier:sensorType"));
+        Classifier cl2 = new Classifier("sensorType", new Term(cs, "Profondeur", URI.create("urn:sensor:classifier:sensorType")));
         List<Classifier> cls = new ArrayList<Classifier>();
         cls.add(cl1);
         cls.add(cl2);
@@ -200,8 +200,8 @@ public class SmlXMLBindingTest {
 
         List<Identifier> identifiers = new ArrayList<Identifier>();
         cs = new CodeSpacePropertyType("urn:x-brgm:def:sensorSystem:hydras");
-        Identifier id1 = new Identifier("supervisorCode", new Term(cs, "00ARGLELES_2000", "urn:x-ogc:def:identifier:OGC:modelNumber"));
-        Identifier id2 = new Identifier("longName", new Term("Madofil II", "urn:x-ogc:def:identifier:OGC:longname"));
+        Identifier id1 = new Identifier("supervisorCode", new Term(cs, "00ARGLELES_2000", URI.create("urn:x-ogc:def:identifier:OGC:modelNumber")));
+        Identifier id2 = new Identifier("longName", new Term("Madofil II", URI.create("urn:x-ogc:def:identifier:OGC:longname")));
         identifiers.add(id1);
         identifiers.add(id2);
         IdentifierList identifierList = new IdentifierList(null, identifiers);
@@ -345,34 +345,34 @@ public class SmlXMLBindingTest {
         Keywords keywords = new Keywords(new KeywordList("urn:x-brgm:def:gcmd:keywords", kw));
         system.setKeywords(keywords);
 
-        Classifier cl1 = new Classifier("intendedApplication", new Term("eaux souterraines", "urn:x-ogc:def:classifier:OGC:application"));
+        Classifier cl1 = new Classifier("intendedApplication", new Term("eaux souterraines", URI.create("urn:x-ogc:def:classifier:OGC:application")));
 
         CodeSpacePropertyType cs = new CodeSpacePropertyType("urn:x-brgm:def:GeoPoint:bss");
-        Classifier cl2 = new Classifier("sensorType", new Term(cs, "piezometer", "urn:sensor:classifier:sensorType"));
+        Classifier cl2 = new Classifier("sensorType", new Term(cs, "piezometer", URI.create("urn:sensor:classifier:sensorType")));
 
         CodeSpacePropertyType cs3 = new CodeSpacePropertyType("urn:x-sandre:def:mdo:identifier");
-        Classifier cl3 = new Classifier("waterBody", new Term(cs3, "FR6221", "urn:sensor:classifier:references"));
+        Classifier cl3 = new Classifier("waterBody", new Term(cs3, "FR6221", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs4 = new CodeSpacePropertyType("urn:x-sandre:def:mdo:name");
-        Classifier cl4 = new Classifier("waterBody", new Term(cs4, "Multicouche pliocene et alluvions quaternaires du Roussillon", "urn:sensor:classifier:references"));
+        Classifier cl4 = new Classifier("waterBody", new Term(cs4, "Multicouche pliocene et alluvions quaternaires du Roussillon", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs5 = new CodeSpacePropertyType("urn:x-sandre:def:bdhrf:identifier");
-        Classifier cl5 = new Classifier("hydrologicalEntity", new Term(cs5, "225", "urn:sensor:classifier:references"));
+        Classifier cl5 = new Classifier("hydrologicalEntity", new Term(cs5, "225", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs6 = new CodeSpacePropertyType("urn:x-sandre:def:bdhrf:name");
-        Classifier cl6 = new Classifier("hydrologicalEntity", new Term(cs6, "Pliocene du Roussillon", "urn:sensor:classifier:references"));
+        Classifier cl6 = new Classifier("hydrologicalEntity", new Term(cs6, "Pliocene du Roussillon", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs7 = new CodeSpacePropertyType("urn:x-insee:def:commune:identifier");
-        Classifier cl7 = new Classifier("commune", new Term(cs7, "66008", "urn:sensor:classifier:references"));
+        Classifier cl7 = new Classifier("commune", new Term(cs7, "66008", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs8 = new CodeSpacePropertyType("urn:x-insee:def:commune:name");
-        Classifier cl8 = new Classifier("commune", new Term(cs8, "ARGELES SUR MER", "urn:sensor:classifier:references"));
+        Classifier cl8 = new Classifier("commune", new Term(cs8, "ARGELES SUR MER", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs9 = new CodeSpacePropertyType("urn:x-sandre:def:network:identifier");
-        Classifier cl9 = new Classifier("network", new Term(cs9, "600000221", "urn:sensor:classifier:references"));
+        Classifier cl9 = new Classifier("network", new Term(cs9, "600000221", URI.create("urn:sensor:classifier:references")));
 
         CodeSpacePropertyType cs10 = new CodeSpacePropertyType("urn:x-sandre:def:network:identifier");
-        Classifier cl10 = new Classifier("network", new Term(cs10, "600000025", "urn:sensor:classifier:references"));
+        Classifier cl10 = new Classifier("network", new Term(cs10, "600000025",URI.create("urn:sensor:classifier:references")));
 
         List<Classifier> cls = new ArrayList<Classifier>();
         cls.add(cl1);cls.add(cl2);cls.add(cl3);cls.add(cl4);cls.add(cl5);
@@ -386,11 +386,11 @@ public class SmlXMLBindingTest {
 
 
         cs = new CodeSpacePropertyType("urn:x-brgm:def:samplingStation:bss");
-        Identifier id1 = new Identifier("bssCode", new Term(cs, "10972X0137/PONT", "urn:x-ogc:def:identifier:OGC:modelNumber"));
+        Identifier id1 = new Identifier("bssCode", new Term(cs, "10972X0137/PONT", URI.create("urn:x-ogc:def:identifier:OGC:modelNumber")));
 
         cs = new CodeSpacePropertyType("urn:x-brgm:def:sensorSystem:hydras");
-        Identifier id2 = new Identifier("supervisorCode", new Term(cs, "00ARGLELES", "urn:x-ogc:def:identifier:OGC:modelNumber"));
-        Identifier id3 = new Identifier("longName", new Term("ARGELES", "urn:x-ogc:def:identifier:OGC:longname"));
+        Identifier id2 = new Identifier("supervisorCode", new Term(cs, "00ARGLELES", URI.create("urn:x-ogc:def:identifier:OGC:modelNumber")));
+        Identifier id3 = new Identifier("longName", new Term("ARGELES", URI.create("urn:x-ogc:def:identifier:OGC:longname")));
 
         identifiers.add(id1);
         identifiers.add(id2);

@@ -94,6 +94,11 @@ public class ComponentPropertyType implements ComponentProperty {
         this.process = process;
     }
 
+    public ComponentPropertyType(ComponentType process) {
+        ObjectFactory factory = new ObjectFactory();
+        this.process = factory.createComponent(process);
+    }
+
     public ComponentPropertyType(String name, String role, String href) {
         this.name    = name;
         this.href    = href;

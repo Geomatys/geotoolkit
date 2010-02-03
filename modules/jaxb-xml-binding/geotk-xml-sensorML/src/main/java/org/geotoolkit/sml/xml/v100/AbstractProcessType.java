@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -107,6 +108,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     }
 
     /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setKeywords(KeywordList keywords) {
+        if (this.keywords == null) {
+            this.keywords = new ArrayList<Keywords>();
+        }
+        this.keywords.add(new Keywords(keywords));
+    }
+
+    /**
      * Gets the value of the identification property.
      * 
      */
@@ -136,6 +148,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
             this.identification = new ArrayList<Identification>();
         }
         this.identification.add(identification);
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setIdentification(IdentifierList identification) {
+        if (this.identification == null) {
+            this.identification = new ArrayList<Identification>();
+        }
+        this.identification.add(new Identification(identification));
     }
 
 
@@ -168,6 +191,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
             this.classification = new ArrayList<Classification>();
         }
         this.classification.add(classification);
+    }
+
+    /**
+     * Sets the value of the keywords property.
+     *
+     */
+    public void setClassification(ClassifierList classification) {
+        if (this.classification == null) {
+            this.classification = new ArrayList<Classification>();
+        }
+        this.classification.add(new Classification(classification));
     }
 
     /**
@@ -211,6 +245,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Gets the value of the legalConstraint property.
      *
      */
+    public void setLegalConstraint(Rights legalConstraint) {
+        if (this.legalConstraint == null) {
+            this.legalConstraint = new ArrayList<LegalConstraint>();
+        }
+        this.legalConstraint.add(new LegalConstraint(legalConstraint));
+    }
+
+    /**
+     * Gets the value of the legalConstraint property.
+     *
+     */
     public void setLegalConstraint(List<LegalConstraint> legalConstraint) {
         this.legalConstraint = legalConstraint;
     }
@@ -239,9 +284,21 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      *
      */
     public void setCharacteristics(Characteristics characteristics) {
-        if (this.characteristics == null)
+        if (this.characteristics == null) {
             this.characteristics = new ArrayList<Characteristics>();
+        }
         this.characteristics.add(characteristics);
+    }
+
+    /**
+     * Sets the value of the characteristics property.
+     *
+     */
+    public void setCharacteristics(DataRecordType characteristics) {
+        if (this.characteristics == null) {
+            this.characteristics = new ArrayList<Characteristics>();
+        }
+        this.characteristics.add(new Characteristics(characteristics));
     }
 
     /**
@@ -264,6 +321,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
             this.capabilities = new ArrayList<CapabilitiesSML>();
         }
         this.capabilities.add(capabilties);
+    }
+
+    /**
+     * Sets the value of the capabilities property.
+     *
+     */
+    public void setCapabilities(DataRecordType capabilties) {
+        if (this.capabilities == null) {
+            this.capabilities = new ArrayList<CapabilitiesSML>();
+        }
+        this.capabilities.add(new CapabilitiesSML(capabilties));
     }
 
     /**
@@ -297,6 +365,17 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
     }
 
     /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setContact(ResponsibleParty contact) {
+        if (this.contact == null) {
+            this.contact = new ArrayList<Contact>();
+        }
+        this.contact.add(new Contact(contact));
+    }
+
+    /**
      * sets the value of the contact property.
      *
      */
@@ -319,11 +398,22 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Sets the value of the contact property.
      *
      */
-    public void setDocumention(Documentation documentation) {
+    public void setDocumentation(Documentation documentation) {
         if (this.documentation == null) {
             this.documentation = new ArrayList<Documentation>();
         }
         this.documentation.add(documentation);
+    }
+
+    /**
+     * Sets the value of the contact property.
+     *
+     */
+    public void setDocumentation(Document documentation) {
+        if (this.documentation == null) {
+            this.documentation = new ArrayList<Documentation>();
+        }
+        this.documentation.add(new Documentation(documentation));
     }
 
     /**

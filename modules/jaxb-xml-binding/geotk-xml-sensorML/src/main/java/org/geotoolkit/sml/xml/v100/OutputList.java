@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.AbstractOutputList;
+import org.geotoolkit.swe.xml.v100.DataRecordType;
+import org.geotoolkit.swe.xml.v100.ObservableProperty;
+import org.geotoolkit.swe.xml.v100.QuantityType;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -78,6 +81,7 @@ public class OutputList implements AbstractOutputList {
     /**
      * Gets the value of the output property.
      */
+    @Override
     public List<IoComponentPropertyType> getOutput() {
         if (output == null) {
             output = new ArrayList<IoComponentPropertyType>();
@@ -86,8 +90,56 @@ public class OutputList implements AbstractOutputList {
     }
 
     /**
+     * Gets the value of the output property.
+     */
+    public void setOutput(List<IoComponentPropertyType> output) {
+        this.output = output;
+    }
+
+    /**
+     * Gets the value of the output property.
+     */
+    public void setOutput(IoComponentPropertyType output) {
+        if (this.output == null) {
+            this.output = new ArrayList<IoComponentPropertyType>();
+        }
+        this.output.add(output);
+    }
+
+    /**
+     * Gets the value of the output property.
+     */
+    public void setOutput(ObservableProperty output) {
+        if (this.output == null) {
+            this.output = new ArrayList<IoComponentPropertyType>();
+        }
+        this.output.add(new IoComponentPropertyType(output));
+    }
+
+    /**
+     * Gets the value of the output property.
+     */
+    public void setOutput(QuantityType output) {
+        if (this.output == null) {
+            this.output = new ArrayList<IoComponentPropertyType>();
+        }
+        this.output.add(new IoComponentPropertyType(output));
+    }
+
+    /**
+     * Gets the value of the output property.
+     */
+    public void setOutput(DataRecordType output) {
+        if (this.output == null) {
+            this.output = new ArrayList<IoComponentPropertyType>();
+        }
+        this.output.add(new IoComponentPropertyType(output));
+    }
+
+    /**
      * Gets the value of the id property.
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -95,6 +147,7 @@ public class OutputList implements AbstractOutputList {
     /**
      * Sets the value of the id property.
      */
+    @Override
     public void setId(String value) {
         this.id = value;
     }

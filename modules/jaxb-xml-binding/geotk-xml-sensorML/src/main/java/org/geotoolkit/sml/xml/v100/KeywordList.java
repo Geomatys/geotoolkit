@@ -85,6 +85,34 @@ public class KeywordList {
     }
 
     /**
+     * Gets the value of the keyword property.
+     */
+    public void setKeyword(List<JAXBElement<String>> keyword) {
+        this.keyword = keyword;
+    }
+
+    /**
+     * Gets the value of the keyword property.
+     */
+    public void setKeyword(JAXBElement<String> keyword) {
+        if (this.keyword == null) {
+            this.keyword = new ArrayList<JAXBElement<String>>();
+        }
+        this.keyword.add(keyword);
+    }
+
+    /**
+     * Gets the value of the keyword property.
+     */
+    public void setKeyword(String keyword) {
+        if (this.keyword == null) {
+            this.keyword = new ArrayList<JAXBElement<String>>();
+        }
+        ObjectFactory factory = new ObjectFactory();
+        this.keyword.add(factory.createKeywordsKeywordListKeyword(keyword));
+    }
+
+    /**
      * Gets the value of the codeSpace property.
      */
     public String getCodeSpace() {

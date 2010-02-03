@@ -89,6 +89,35 @@ public class ComponentList implements AbstractComponentList {
         return this.component;
     }
 
+    /**
+     * Gets the value of the component property.
+     *
+     */
+    public void setComponent(List<ComponentPropertyType> component) {
+        this.component = component;
+    }
+
+    /**
+     * Gets the value of the component property.
+     *
+     */
+    public void setComponent(ComponentPropertyType component) {
+        if (this.component == null) {
+            this.component = new ArrayList<ComponentPropertyType>();
+        }
+        this.component.add(component);
+    }
+
+    /**
+     * Gets the value of the component property.
+     *
+     */
+    public void setComponent(ComponentType component) {
+        if (this.component == null) {
+            this.component = new ArrayList<ComponentPropertyType>();
+        }
+        this.component.add(new ComponentPropertyType(component));
+    }
 
     @Override
     public boolean equals(final Object object) {

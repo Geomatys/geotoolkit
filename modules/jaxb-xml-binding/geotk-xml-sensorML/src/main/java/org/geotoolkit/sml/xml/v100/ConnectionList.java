@@ -71,6 +71,33 @@ public class ConnectionList {
         return this.connection;
     }
 
+    /**
+     * Gets the value of the connection property.
+     */
+    public void setConnection(Connection connection) {
+        if (this.connection == null) {
+            this.connection = new ArrayList<Connection>();
+        }
+        this.connection.add(connection);
+    }
+
+    /**
+     * Gets the value of the connection property.
+     */
+    public void setConnection(List<Connection> connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * Gets the value of the connection property.
+     */
+    public void setConnection(Link connection) {
+        if (this.connection == null) {
+            this.connection = new ArrayList<Connection>();
+        }
+        this.connection.add(new Connection(connection));
+    }
+
     @Override
     public boolean equals(final Object object) {
         if (object == this) {

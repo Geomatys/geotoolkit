@@ -97,6 +97,13 @@ public class Rights {
     }
 
     /**
+     * Sets the value of the documentation property.
+     */
+    public void setDocumentation(Document value) {
+        this.documentation = new Documentation(value);
+    }
+
+    /**
      * Gets the value of the copyRights property.
      */
     public Boolean isCopyRights() {
