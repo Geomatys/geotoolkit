@@ -419,7 +419,7 @@
           <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
           <excludePackageNames>
-            org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra
+            org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra
           </excludePackageNames>
 
           <!-- Custom taglets implemented in Java. -->

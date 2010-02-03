@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotk-openoffice</artifactId>
   <packaging>jar</packaging>
-  <name>Bridges to OpenOffice suite</name>
+  <name>Bridges to OpenOffice</name>
 
   <description>
     Provides some Geotk's fonctionalities as OpenOffice plugins. For
