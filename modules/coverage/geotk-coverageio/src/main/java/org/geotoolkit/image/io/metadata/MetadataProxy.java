@@ -322,7 +322,7 @@ final class MetadataProxy<T> implements InvocationHandler {
         }
         if (targetType.isAssignableFrom(Unit.class)) {
             final Class<?> bounds = Classes.boundOfParameterizedAttribute(method);
-            return accessor.getAttributeAsUnit(name, Classes.asSubclass(bounds, Quantity.class));
+            return accessor.getAttributeAsUnit(name, Classes.asSubclassOrNull(bounds, Quantity.class));
         }
         if (SPECIAL_CASE && Character.isLowerCase(name.charAt(0))) {
             /*

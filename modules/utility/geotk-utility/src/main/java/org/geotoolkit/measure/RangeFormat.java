@@ -163,6 +163,29 @@ public class RangeFormat extends Format {
     private transient AnyConverter converter;
 
     /**
+     * Constructs a new {@code RangeFormat} for the default locale.
+     *
+     * @return A range format in the default locale.
+     *
+     * @since 3.09
+     */
+    public static RangeFormat getInstance() {
+        return new RangeFormat();
+    }
+
+    /**
+     * Constructs a new {@code RangeFormat} for the specified locale.
+     *
+     * @param locale The locale.
+     * @return A range format in the given locale.
+     *
+     * @since 3.09
+     */
+    public static RangeFormat getInstance(final Locale locale) {
+        return new RangeFormat(locale);
+    }
+
+    /**
      * Creates a new format for parsing and formatting {@linkplain NumberRange number ranges}
      * using the {@linkplain Locale#getDefault() default locale}.
      */

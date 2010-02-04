@@ -664,7 +664,7 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
                 final RectifiedGrid rg = sm.getInstanceForType(RectifiedGrid.class);
                 final MetadataHelper helper = new MetadataHelper(sm);
                 if (rg != null) {
-                    cellSize = helper.getCellDimensionAsText(rg,
+                    cellSize = helper.formatCellDimension(rg,
                             (crs != null) ? crs.getCoordinateSystem() : null);
                 }
                 final SampleDimension sd = sm.getInstanceForType(SampleDimension.class);

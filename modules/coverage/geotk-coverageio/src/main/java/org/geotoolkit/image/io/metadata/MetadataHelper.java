@@ -80,6 +80,20 @@ public class MetadataHelper implements Localized {
     }
 
     /**
+     * Returns the locale used by this helper, or {@code null} for the default locale. This is
+     * used for formatting text in methods like {@link #formatCellDimension formatCellDimension},
+     * and for localization of error messages when an exception is thrown.
+     *
+     * @return The locale, or {@code null} if unspecified.
+     *
+     * @since 3.09
+     */
+    @Override
+    public Locale getLocale() {
+        return (owner != null) ? owner.getLocale() : null;
+    }
+
+    /**
      * Returns the error message from the given resource key and arguments.
      * The key shall be one of the {@link Errors.Key} constants. This is used
      * for formatting the message in {@link ImageMetadataException}.
@@ -375,7 +389,7 @@ public class MetadataHelper implements Localized {
      *
      * @since 3.09
      */
-    public String getCellDimensionAsText(final RectifiedGrid domain, final CoordinateSystem cs) {
+    public String formatCellDimension(final RectifiedGrid domain, final CoordinateSystem cs) {
         final List<double[]> offsetVectors = domain.getOffsetVectors();
         if (offsetVectors == null) {
             return null;
@@ -493,17 +507,5 @@ public class MetadataHelper implements Localized {
         final double c2 = XMath.roundIfAlmostInteger(c1, 16);
         // The above threshold (16) has been determined empirically from IFREMER data.
         return (c1 != c2) ? c2/360 : value;
-    }
-
-    /**
-     * Returns the locale used by this helper, or {@code null} for the default locale. This is
-     * used for text formatting in {@link #getCellDimensionAsText getCellDimensionAsText} and
-     * for error messages.
-     *
-     * @since 3.09
-     */
-    @Override
-    public Locale getLocale() {
-        return (owner != null) ? owner.getLocale() : null;
     }
 }

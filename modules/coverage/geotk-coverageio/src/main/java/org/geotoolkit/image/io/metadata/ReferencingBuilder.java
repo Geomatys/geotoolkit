@@ -47,6 +47,7 @@ import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.referencing.CRS;
 
@@ -104,7 +105,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * </table>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.08 (derived from 3.07)
  * @module
@@ -131,6 +132,13 @@ public class ReferencingBuilder {
      * The metadata accessor for the {@code "CoordinateReferenceSystem"} node.
      */
     private final MetadataAccessor accessor;
+
+    /**
+     * {@code true} if this helper should not {@linkplain MetadataAccessor#getUserObject() get}
+     * or {@linkplain MetadataAccessor#setUserObject(Object) set} the user object property. The
+     * default value is {@code false}.
+     */
+    private boolean ignoreUserObject;
 
     /**
      * Creates a new metadata helper for the given metadata.
@@ -168,6 +176,75 @@ public class ReferencingBuilder {
     }
 
     /**
+     * Returns the user object of the given class, or {@code null} if none.
+     *
+     * @since 3.09
+     */
+    private <T extends IdentifiedObject> T getUserObject(final MetadataAccessor accessor, final Class<T> type) {
+        return (!ignoreUserObject) ? accessor.getUserObject(type) : null;
+    }
+
+    /**
+     * Sets the user object in the given accessor, if this operation is supported.
+     *
+     * @since 3.09
+     */
+    private void setUserObject(final MetadataAccessor accessor, final IdentifiedObject object) {
+        if (!ignoreUserObject) try {
+            accessor.setUserObject(object);
+        } catch (UnsupportedOperationException e) {
+            // The underlying node is not an instance of IIOMetadataNode.
+            // Ignore without warning, since this operation is optional.
+            Logging.recoverableException(MetadataAccessor.LOGGER,
+                    ReferencingBuilder.class, "setUserObject", e);
+        }
+    }
+
+    /**
+     * Returns {@code true} if this helper class should not
+     * {@linkplain MetadataAccessor#getUserObject() get} or
+     * {@linkplain MetadataAccessor#setUserObject(Object) set} the <cite>User Object</cite>
+     * node property. The default value is {@code false}, in which case:
+     * <p>
+     * <ul>
+     *   <li>Every call to a setter method in this {@code ReferencingBuilder} class will
+     *       {@linkplain MetadataAccessor#setUserObject(Object) set the user object} to
+     *       the given value, if possible.</li>
+     *   <li>Every call to a getter method in this {@code ReferencingBuilder} class will
+     *       {@linkplain MetadataAccessor#getUserObject() get the user object} and return
+     *       it if it exist.</li>
+     * </ul>
+     * <p>
+     * If this method returns {@code true}, then the above steps are skipped. This implies
+     * that every call to a getter method will create a new object from the values declared
+     * in node attributes.
+     *
+     * @return {@code true} if user objects should be ignored.
+     *
+     * @see javax.imageio.metadata.IIOMetadataNode#getUserObject()
+     * @see MetadataAccessor#getUserObject()
+     *
+     * @since 3.09
+     */
+    public boolean getIgnoreUserObject() {
+        return ignoreUserObject;
+    }
+
+    /**
+     * Sets whatever this helper class is allowed to
+     * {@linkplain MetadataAccessor#getUserObject() get} or
+     * {@linkplain MetadataAccessor#setUserObject(Object) set} the <cite>User Object</cite>
+     * node property. See {@link #getIgnoreUserObject()} for more information.
+     *
+     * @param ignore {@code true} if user objects should be ignored.
+     *
+     * @since 3.09
+     */
+    public void setIgnoreUserObject(final boolean ignore) {
+        ignoreUserObject = ignore;
+    }
+
+    /**
      * Returns the coordinate reference system, or {@code null} if it can not be created.
      * This method delegates to {@link #getCoordinateReferenceSystem(Class)} and catch the
      * exception. If an exception has been thrown, the exception is
@@ -178,7 +255,7 @@ public class ReferencingBuilder {
     public CoordinateReferenceSystem getOptionalCRS() {
         Exception failure;
         try {
-            return getCoordinateReferenceSystem(SingleCRS.class);
+            return getCoordinateReferenceSystem(CoordinateReferenceSystem.class);
         } catch (FactoryException e) {
             failure = e;
         } catch (NoSuchElementException e) {
@@ -207,7 +284,12 @@ public class ReferencingBuilder {
     public <T extends CoordinateReferenceSystem> T getCoordinateReferenceSystem(final Class<T> baseType)
             throws FactoryException
     {
-        final Class<? extends CoordinateReferenceSystem> type = getInterface("getCRS", baseType, accessor);
+        final T userObject = getUserObject(accessor, baseType);
+        if (userObject != null) {
+            return userObject;
+        }
+        final Class<? extends CoordinateReferenceSystem> type =
+                getInterface("getCoordinateReferenceSystem", baseType, accessor);
         if (type != null) {
             final Map<String,?> properties = getName(accessor);
             final CRSFactory factory = factories().getCRSFactory();
@@ -298,6 +380,7 @@ public class ReferencingBuilder {
             addParameter(new MetadataAccessor[] {opAccessor, null}, conversion.getParameterValues(),
                     CRS.getEllipsoid(crs));
         }
+        setUserObject(accessor, crs);
     }
 
     /**
@@ -391,6 +474,10 @@ public class ReferencingBuilder {
             throws FactoryException
     {
         final MetadataAccessor csAccessor = createMetadataAccessor(accessor, "CoordinateSystem", null);
+        final T userObject = getUserObject(csAccessor, baseType);
+        if (userObject != null) {
+            return userObject;
+        }
         final Class<? extends CoordinateSystem> type = getInterface("getCoordinateSystem", baseType, csAccessor);
         if (type != null) {
             final Map<String,?> properties = getName(csAccessor);
@@ -505,7 +592,9 @@ public class ReferencingBuilder {
                 axes.setAttribute("rangeMeaning", axis.getRangeMeaning());
             }
             axes.setAttribute("unit", axis.getUnit());
+            setUserObject(axes, axis);
         }
+        setUserObject(csAccessor, cs);
     }
 
     /**
@@ -526,6 +615,10 @@ public class ReferencingBuilder {
      */
     public <T extends Datum> T getDatum(final Class<T> baseType) throws FactoryException {
         final MetadataAccessor datumAccessor = createMetadataAccessor(accessor, "Datum", null);
+        final T userObject = getUserObject(datumAccessor, baseType);
+        if (userObject != null) {
+            return userObject;
+        }
         final Class<? extends Datum> type = getInterface("getDatum", baseType, datumAccessor);
         if (type != null) {
             final Map<String,?> properties = getName(datumAccessor);
@@ -565,6 +658,7 @@ public class ReferencingBuilder {
                 } else {
                     child.setAttribute("semiMinorAxis", ellipsoid.getSemiMinorAxis());
                 }
+                setUserObject(child, ellipsoid);
             }
             final PrimeMeridian pm = gd.getPrimeMeridian();
             if (pm != null) {
@@ -572,8 +666,10 @@ public class ReferencingBuilder {
                 setName(pm, child);
                 child.setAttribute("greenwichLongitude", pm.getGreenwichLongitude());
                 child.setAttribute("angularUnit", pm.getAngularUnit());
+                setUserObject(child, pm);
             }
         }
+        setUserObject(datumAccessor, datum);
     }
 
     /**
@@ -590,6 +686,10 @@ public class ReferencingBuilder {
      */
     protected Ellipsoid getEllipsoid(final MetadataAccessor datumAccessor) throws FactoryException {
         final MetadataAccessor ellipsoidAccessor = createMetadataAccessor(datumAccessor, "Ellipsoid", null);
+        final Ellipsoid userObject = getUserObject(ellipsoidAccessor, Ellipsoid.class);
+        if (userObject != null) {
+            return userObject;
+        }
         final Unit<Length> unit = ellipsoidAccessor.getAttributeAsUnit("axisUnit", Length.class);
         if (isNonNull("getEllipsoid", "axisUnit", unit)) {
             final Map<String,?> properties = getName(ellipsoidAccessor);
@@ -623,6 +723,10 @@ public class ReferencingBuilder {
      */
     protected PrimeMeridian getPrimeMeridian(final MetadataAccessor datumAccessor) throws FactoryException {
         final MetadataAccessor pmAccessor = createMetadataAccessor(datumAccessor, "PrimeMeridian", null);
+        final PrimeMeridian userObject = getUserObject(pmAccessor, PrimeMeridian.class);
+        if (userObject != null) {
+            return userObject;
+        }
         final Double greenwich = pmAccessor.getAttributeAsDouble("greenwichLongitude");
         if (isNonNull("getEllipsoid", "greenwichLongitude", greenwich)) {
             final Map<String,?> properties = getName(pmAccessor);

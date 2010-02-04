@@ -28,6 +28,12 @@ import java.awt.image.WritableRaster;
 import javax.imageio.IIOImage;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.datum.Datum;
+import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.datum.PrimeMeridian;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
@@ -35,6 +41,7 @@ import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 
@@ -45,7 +52,7 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageWriter} tests.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.06 (derived from 2.4)
  */
@@ -150,5 +157,29 @@ public abstract class TextImageWriterTestBase {
             }
         }
         return new IIOImage(new BufferedImage(cm, raster, false, null), null, createMetadata());
+    }
+
+    /**
+     * Clears the user objects in the given metadata.
+     * This is used for forcing recreation of objects, for testing this creation process.
+     *
+     * @param metadata The metadata in which to clear user objects.
+     *
+     * @since 3.09
+     */
+    protected static void clearUserObjects(final IIOMetadata metadata) {
+        clearUserObject(metadata, CoordinateReferenceSystem.class);
+        clearUserObject(metadata, CoordinateSystem.class);
+        clearUserObject(metadata, Datum.class);
+        clearUserObject(metadata, Ellipsoid.class);
+        clearUserObject(metadata, PrimeMeridian.class);
+    }
+
+    /**
+     * Clears the user object of the given type in the given metadata.
+     * This is used for forcing recreation of objects, for testing this creation process.
+     */
+    private static void clearUserObject(final IIOMetadata metadata, final Class<? extends IdentifiedObject> type) {
+        new MetadataAccessor(metadata, SpatialMetadataFormat.FORMAT_NAME, type).setUserObject(null);
     }
 }

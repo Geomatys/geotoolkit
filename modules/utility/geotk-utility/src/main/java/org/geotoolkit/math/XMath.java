@@ -73,7 +73,9 @@ public final class XMath {
     /**
      * Returns the magnitude of the given vector. This is defined by:
      *
-     * <blockquote>sqrt(vector[0]² + vector[1]² + … + vector[length-1]²)</blockquote>
+     * {@preformat math
+     *     sqrt(vector[0]² + vector[1]² + … + vector[length-1]²)
+     * }
      *
      * {@section Implementation note}
      * In the special case where only one element is different than zero, this method
@@ -86,6 +88,8 @@ public final class XMath {
      *
      * @param  vector The vector for which to compute the magnitude.
      * @return The magnitude of the given vector.
+     *
+     * @see Math#hypot(double, double)
      *
      * @since 3.09
      */
@@ -118,11 +122,15 @@ public final class XMath {
 
     /**
      * Computes 10 raised to the power of <var>x</var>. This method delegates to
-     * {@link #pow10(int)} if <var>x</var> is an integer, or to {@link Math#pow}
+     * <code>{@linkplain #pow10(int) pow10}((int) x)</code> if <var>x</var> is an
+     * integer, or to <code>{@linkplain Math#pow(double, double) Math.pow}(10, x)</code>
      * otherwise.
      *
      * @param x The exponent.
      * @return 10 raised to the given exponent.
+     *
+     * @see #pow10(int)
+     * @see Math#pow(double, double)
      */
     public static double pow10(final double x) {
         final int ix = (int) x;
@@ -265,9 +273,9 @@ public final class XMath {
 
     /**
      * Returns the first floating-point argument with the sign reversed if the second floating-point
-     * argument is negative. This method is similar to {@link Math#copySign(double,double)} except
-     * that the sign is combined with an <cite>exclusive or</cite> operation instead than being
-     * copied.
+     * argument is negative. This method is similar to <code>{@linkplain Math#copySign(double,double)
+     * Math.copySign}(value, sign)</code> except that the sign is combined with an <cite>exclusive
+     * or</cite> operation instead than being copied.
      * <p>
      * This method computes the same result than the formula below (using only standard functions
      * from {@link Math}) except that zeros and {@link Double#NaN} values for the {@code sign}
@@ -280,6 +288,8 @@ public final class XMath {
      * @param  value The parameter providing the value that may need a sign change.
      * @param  sign The parameter providing the sign to <cite>xor</cite> with the value.
      * @return The provided value with its sign reversed if the {@code sign} parameter is negative.
+     *
+     * @see Math#copySign(double, double)
      *
      * @since 3.00
      */

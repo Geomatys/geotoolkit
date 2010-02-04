@@ -116,6 +116,7 @@ public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
         assertMultilinesEquals(
             "   0.22  0.24\n", out.toString());
         out.close();
+        writer.dispose();
     }
 
     /**

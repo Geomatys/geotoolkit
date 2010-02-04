@@ -297,7 +297,10 @@ public final class Classes {
      * @since 3.09
      */
     @SuppressWarnings({"unchecked","rawtypes"})
-    public static <U> Class<? extends U> asSubclass(final Class<?> type, final Class<U> sub) {
+    public static <U> Class<? extends U> asSubclassOrNull(final Class<?> type, final Class<U> sub) {
+        // Design note: We are required to return null if 'sub' is null (not to return 'type'
+        // unchanged), because if we returned 'type', we would have an unsafe cast if this
+        // method is invoked indirectly from a parameterized method.
         return (type != null && sub != null && sub.isAssignableFrom(type)) ? (Class) type : null;
     }
 

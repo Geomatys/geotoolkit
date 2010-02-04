@@ -109,5 +109,6 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "└───SpatialRepresentation\n" +
                 "    ├───numberOfDimensions=“2”\n" +
                 "    └───centerPoint=“0.0 0.0”"), metadata.toString());
+        reader.dispose();
     }
 }

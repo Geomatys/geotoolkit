@@ -24,32 +24,33 @@ import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateSystem;
 
 import org.opengis.metadata.extent.Extent;
+import org.opengis.util.InternationalString;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.GeodeticDatum;
+import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.resources.Errors;
 
 
 /**
  * Wraps a NetCDF {@link CoordinateSystem} as an implementation of GeoAPI interfaces.
  * This class implements both the GeoAPI {@link org.opengis.referencing.cs.CoordinateSystem} and
- * {@link CoordinateReferenceSystem} interfaces because the NetCDF {@link CoordinateSystem}
- * object combines the concepts of both of them.
- * <p>
- * In addition, this class provides a {@link #getGridToCRS()} method since NetCDF coordinate
- * systems contain this information.
+ * {@link CoordinateReferenceSystem} interfaces because the NetCDF {@code CoordinateSystem}
+ * object combines the concepts of both of them. If also implements the {@link GridGeometry}
+ * interface since NetCDF Coordinate Systems contain all information related to the image grid.
  *
  * {@section Axis order}
  * The order of axes returned by {@link #getAxis(int)} is reversed compared to the order of axes
@@ -75,13 +76,13 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.08
  * @module
  */
 public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateReferenceSystem,
-        org.opengis.referencing.cs.CoordinateSystem
+        org.opengis.referencing.cs.CoordinateSystem, GridGeometry
 {
     /**
      * The NetCDF coordinate system wrapped by this {@code NetcdfCRS} instance.
@@ -92,6 +93,16 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      * The NetCDF axes.
      */
     private final NetcdfAxis[] axes;
+
+    /**
+     * The grid envelope, computed when first needed.
+     */
+    private transient GridEnvelope gridEnvelope;
+
+    /**
+     * The grid to CRS transform, computed when first needed.
+     */
+    private transient MathTransform gridToCRS;
 
     /**
      * Creates a new {@code NetcdfCRS} object wrapping the given NetCDF coordinate system.
@@ -195,6 +206,27 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     }
 
     /**
+     * Returns the valid coordinate range of the NetCDF grid coordinates.
+     * The lowest valid grid coordinate is zero.
+     *
+     * @return The valid coordinate range of a grid coverage.
+     *
+     * @since 3.09
+     */
+    @Override
+    public synchronized GridEnvelope getGridRange() {
+        if (gridEnvelope == null) {
+            final int[] lower = new int[axes.length];
+            final int[] upper = new int[axes.length];
+            for (int i=0; i<upper.length; i++) {
+                upper[i] = axes[i].delegate().getDimension(0).getLength();
+            }
+            gridEnvelope = new GeneralGridEnvelope(lower, upper, false);
+        }
+        return gridEnvelope;
+    }
+
+    /**
      * Returns the transform from grid coordinates to this CRS coordinates, or {@code null} if
      * none. The returned transform is often specialized in two ways:
      * <p>
@@ -212,8 +244,12 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *
      * @return The transform from grid to this CRS, or {@code null} if none.
      */
-    public MathTransform getGridToCRS() {
-        return getGridToCRS(0, axes.length);
+    @Override
+    public synchronized MathTransform getGridToCRS() {
+        if (gridToCRS == null) {
+            gridToCRS = getGridToCRS(0, axes.length);
+        }
+        return gridToCRS;
     }
 
     /**

@@ -164,7 +164,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @see SpatialMetadata#getInstanceForType(Class)
  * @see SpatialMetadata#getListForType(Class)
@@ -1012,8 +1012,8 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * a Number but not a CoordinateReferenceSystem.
      */
     private static boolean isFormattable(final Class<?> type) {
-        return CharSequence.class.isAssignableFrom(type) ||
-               Number.class.isAssignableFrom(Classes.primitiveToWrapper(type));
+        return (type != null) && (CharSequence.class.isAssignableFrom(type) ||
+               Number.class.isAssignableFrom(Classes.primitiveToWrapper(type)));
     }
 
     /**
@@ -1435,7 +1435,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * also {@linkplain IIOMetadataNode#setNodeValue sets the node value} as a string. This
      * is mostly a convenience for formatting purpose since {@link IIOMetadataNode} don't
      * use the node value. But it may help some libraries that are not designed to work with
-     * with user objects, since they are particular to Image I/O metadata.
+     * user objects, since they are particular to Image I/O metadata.
      *
      * @param  value The user object, or {@code null} if none.
      * @throws UnsupportedImplementationException if the selected element is not an instance of

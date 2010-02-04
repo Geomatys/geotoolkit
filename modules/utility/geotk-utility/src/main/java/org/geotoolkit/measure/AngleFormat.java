@@ -281,6 +281,17 @@ public class AngleFormat extends Format {
     }
 
     /**
+     * Constructs a new {@code AngleFormat} for the default locale.
+     *
+     * @return An angle format in the default locale.
+     *
+     * @since 3.09
+     */
+    public static AngleFormat getInstance() {
+        return new AngleFormat();
+    }
+
+    /**
      * Constructs a new {@code AngleFormat} for the specified locale.
      *
      * @param locale The locale.

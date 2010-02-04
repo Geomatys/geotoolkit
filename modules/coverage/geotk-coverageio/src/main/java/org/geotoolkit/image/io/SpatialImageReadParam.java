@@ -51,7 +51,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  *   <li><p>For images having more than one band where the bands are <strong>not</strong> color
  *       components, specify which band to use with the {@linkplain IndexColorModel Index
- *       Color Model}. Example: an image may contain <cite>Sea Surface Temperature</cite> (SST)
+ *       Color Model}. For example an image may contain <cite>Sea Surface Temperature</cite> (SST)
  *       measurements in the first band, and an estimation of the measurement errors in the second
  *       band. Users may want to read both bands for computation purpose, while applying a color
  *       palette using only the values in the first band.</p></li>

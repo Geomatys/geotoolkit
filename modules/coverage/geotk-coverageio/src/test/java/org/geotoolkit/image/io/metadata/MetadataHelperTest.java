@@ -17,15 +17,15 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Locale;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.coverage.grid.RectifiedGrid;
 
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
-
-import static org.geotoolkit.image.io.metadata.MetadataHelper.INSTANCE;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -39,11 +39,19 @@ import static org.junit.Assert.*;
  *
  * @since 3.09
  */
-public final class MetadataHelperTest {
+public final class MetadataHelperTest implements Localized {
     /**
      * Small number for floating point comparisons.
      */
     private static final double EPS = 1E-12;
+
+    /**
+     * Necessary for making the test locale-insensitive.
+     */
+    @Override
+    public Locale getLocale() {
+        return Locale.FRANCE;
+    }
 
     /**
      * Tests the {@link MetadataHelper#getAffineTransform} method.
@@ -61,22 +69,23 @@ public final class MetadataHelperTest {
         accessor.addOffsetVector(0, 8);
 
         // Tests the metadata.
+        final MetadataHelper hlp = new MetadataHelper(this);
         final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
-        final AffineTransform tr = INSTANCE.getAffineTransform(grid, null);
+        final AffineTransform tr = hlp.getAffineTransform(grid, null);
         assertEquals(-10, tr.getTranslateX(), EPS);
         assertEquals(-20, tr.getTranslateY(), EPS);
         assertEquals(  3, tr.getScaleX(),     EPS);
         assertEquals(  8, tr.getScaleY(),     EPS);
         assertEquals(  4, tr.getShearX(),     EPS);
         assertEquals(  0, tr.getShearY(),     EPS);
-        assertNull(INSTANCE.getCellDimension(tr));
+        assertNull(hlp.getCellDimension(tr));
         try {
-            INSTANCE.getCellSize(tr);
+            hlp.getCellSize(tr);
             fail("Should not allow to compute a cell size.");
         } catch (ImageMetadataException e) {
             // This is the expected exception.
         }
-        assertEquals("5 × 8", INSTANCE.getCellDimensionAsText(grid, null));
+        assertEquals("5 × 8", hlp.formatCellDimension(grid, null));
     }
 
     /**
@@ -94,16 +103,17 @@ public final class MetadataHelperTest {
         accessor.addOffsetVector(0, -4);
 
         // Tests the metadata.
+        final MetadataHelper hlp = new MetadataHelper(this);
         final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
-        final AffineTransform tr = INSTANCE.getAffineTransform(grid, null);
-        assertEquals(-10, tr.getTranslateX(), EPS);
-        assertEquals(-20, tr.getTranslateY(), EPS);
-        assertEquals(  4, tr.getScaleX(),     EPS);
-        assertEquals( -4, tr.getScaleY(),     EPS);
-        assertEquals(  0, tr.getShearX(),     EPS);
-        assertEquals(  0, tr.getShearY(),     EPS);
-        assertEquals(  4, INSTANCE.getCellSize(tr), EPS);
-        assertEquals(new DoubleDimension2D(4,4), INSTANCE.getCellDimension(tr));
-        assertEquals("4", INSTANCE.getCellDimensionAsText(grid, null));
+        final AffineTransform tr = hlp.getAffineTransform(grid, null);
+        assertEquals(-10, tr.getTranslateX(),  EPS);
+        assertEquals(-20, tr.getTranslateY(),  EPS);
+        assertEquals(  4, tr.getScaleX(),      EPS);
+        assertEquals( -4, tr.getScaleY(),      EPS);
+        assertEquals(  0, tr.getShearX(),      EPS);
+        assertEquals(  0, tr.getShearY(),      EPS);
+        assertEquals(  4, hlp.getCellSize(tr), EPS);
+        assertEquals(new DoubleDimension2D(4,4), hlp.getCellDimension(tr));
+        assertEquals("4", hlp.formatCellDimension(grid, null));
     }
 }

@@ -37,7 +37,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.07
  */
@@ -95,6 +95,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
     @Test
     public void testWrite() throws IOException {
         final IIOImage image = createImage(true);
+        clearUserObjects(image.getMetadata());
         final WorldFileImageWriter writer = createImageWriter();
         final File file = TemporaryFile.createTempFile("TEST", ".txt", null);
         File fileTFW = null, filePRJ = null;
@@ -145,5 +146,6 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
                 assertTrue(filePRJ.delete());
             }
         }
+        writer.dispose();
     }
 }

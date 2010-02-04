@@ -320,7 +320,7 @@ public class IndexedResourceBundle extends ResourceBundle {
      * object for the given key.
      *
      * @param key the key for the desired object
-     * @exception NullPointerException if {@code key} is {@code null}
+     * @throws NullPointerException if {@code key} is {@code null}
      * @return the object for the given key, or null
      */
     @Override

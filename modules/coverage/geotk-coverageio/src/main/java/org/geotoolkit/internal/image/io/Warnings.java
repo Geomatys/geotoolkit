@@ -52,7 +52,7 @@ public final class Warnings {
      * Logs the given record to the given object, which may or may not be an instance
      * of {@link WarningProducer}.
      *
-     * @param  target The object where to log the message.
+     * @param  target The object where to log the message, or {@code null}.
      * @param  record The message to log.
      * @return {@code true} if the message has been sent to at least one warning listener.
      */

@@ -86,6 +86,7 @@ public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
             "            ├───minValue=“-1.893”\n" +
             "            ├───maxValue=“31.14”\n" +
             "            └───fillSampleValues=“-9999.0”\n"), metadata.toString());
+        reader.dispose();
     }
 
     /**

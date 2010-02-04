@@ -290,8 +290,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     }
 
     /**
-     * Returns the number of dimensions in the image identified by the given index. This
-     * is the {@linkplain VariableIF#getRank()} of the corresponding {@linkplain #variable}.
+     * Returns the number of dimensions in the image identified by the given index.
+     * In the case of NetCDF files, this is the {@linkplain VariableIF#getRank() rank}
+     * of the {@linkplain #variable} associated to the given image index.
      *
      * @param  imageIndex The image index.
      * @return The number of dimension for the image at the given index.
@@ -468,9 +469,10 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
 
     /**
      * Returns the data type which most closely represents the "raw" internal data of the image.
-     * The default implementation invokes the {@linkplain VariableIF#getDataType()} method on the
-     * {@linkplain #variable} identified by the given index, then maps the returned type to one of
-     * the {@link DataBuffer} constants.
+     * In the case of NetCDF files, The raw type is determined from the value returned by the
+     * {@link VariableIF#getDataType()} method on the {@linkplain #variable} identified by the
+     * given index. The NetCDF {@link ucar.ma2.DataType} is then mapped to one of the
+     * {@link DataBuffer} constants.
      *
      * @param  imageIndex The index of the image to be queried.
      * @return The data type, or {@link DataBuffer#TYPE_UNDEFINED} if unknown.

@@ -20,6 +20,8 @@ package org.geotoolkit.image.io.metadata;
 import java.util.Locale;
 
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.datum.Datum;
+import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -46,7 +48,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests the {@link ReferencingBuilder} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.09
  *
  * @since 3.07
  */
@@ -252,9 +254,11 @@ public final class ReferencingBuilderTest {
 
     /**
      * Tests the parsing of the WGS84 CRS.
+     *
+     * @throws FactoryException Should never happen.
      */
     @Test
-    public void testParseGeographicCRS() {
+    public void testParseGeographicCRS() throws FactoryException {
         /*
          * Following should have been tested by testFormatGeographicCRS()
          */
@@ -264,10 +268,23 @@ public final class ReferencingBuilderTest {
         /*
          * Following is the purpose of this test suite.
          */
-        final CoordinateReferenceSystem crs = builder.getOptionalCRS();
-        assertNotSame("Should have created a new CRS.", DefaultGeographicCRS.WGS84, crs);
+        CoordinateReferenceSystem crs = builder.getOptionalCRS();
         assertEquals(DefaultGeographicCRS.class, crs.getClass());
-        final GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
+        GeodeticDatum datum = ((GeographicCRS) crs).getDatum();
+
+        assertSame(DefaultGeographicCRS.WGS84,       crs);
+        assertSame(DefaultEllipsoidalCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
+        assertSame(DefaultGeodeticDatum.WGS84,       builder.getDatum(Datum.class));
+
+        builder.setIgnoreUserObject(true);
+        crs = builder.getOptionalCRS();
+        assertEquals(DefaultGeographicCRS.class, crs.getClass());
+        datum = ((GeographicCRS) crs).getDatum();
+
+        assertNotSame(DefaultGeographicCRS.WGS84,       crs);
+        assertNotSame(DefaultEllipsoidalCS.GEODETIC_2D, builder.getCoordinateSystem(CoordinateSystem.class));
+        assertNotSame(DefaultGeodeticDatum.WGS84,       builder.getDatum(Datum.class));
+
         assertEqualsIgnoreMetadata("PrimeMeridian", DefaultPrimeMeridian.GREENWICH,   datum.getPrimeMeridian());
         assertEqualsIgnoreMetadata("Ellipsoid",     DefaultEllipsoid    .WGS84,       datum.getEllipsoid());
         assertEqualsIgnoreMetadata("Datum",         DefaultGeodeticDatum.WGS84,       datum);
@@ -285,17 +302,30 @@ public final class ReferencingBuilderTest {
         /*
          * Following should have been tested by testFormatProjectedCRS()
          */
-        final CoordinateReferenceSystem originalCRS = CRS.parseWKT(WKT.PROJCS_MERCATOR);
+        final ProjectedCRS originalCRS = (ProjectedCRS) CRS.parseWKT(WKT.PROJCS_MERCATOR);
         final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         final ReferencingBuilder builder = new ReferencingBuilder(metadata);
         builder.setCoordinateReferenceSystem(originalCRS);
         /*
          * Following is the purpose of this test suite.
          */
-        final CoordinateReferenceSystem crs = builder.getOptionalCRS();
-        assertNotSame("Should have created a new CRS.", originalCRS, crs);
+        CoordinateReferenceSystem crs = builder.getOptionalCRS();
         assertEquals(DefaultProjectedCRS.class, crs.getClass());
-        final GeodeticDatum datum = ((ProjectedCRS) crs).getDatum();
+        GeodeticDatum datum = ((ProjectedCRS) crs).getDatum();
+
+        assertSame(originalCRS, crs);
+        assertSame(originalCRS.getCoordinateSystem(), builder.getCoordinateSystem(CoordinateSystem.class));
+        assertSame(originalCRS.getDatum(),            builder.getDatum(Datum.class));
+
+        builder.setIgnoreUserObject(true);
+        crs = builder.getOptionalCRS();
+        assertEquals(DefaultProjectedCRS.class, crs.getClass());
+        datum = ((ProjectedCRS) crs).getDatum();
+
+        assertNotSame(originalCRS, crs);
+        assertNotSame(originalCRS.getCoordinateSystem(), builder.getCoordinateSystem(CoordinateSystem.class));
+        assertNotSame(originalCRS.getDatum(),            builder.getDatum(Datum.class));
+
         assertEqualsIgnoreMetadata("PrimeMeridian", DefaultPrimeMeridian.GREENWICH, datum.getPrimeMeridian());
         assertEqualsIgnoreMetadata("Ellipsoid",     DefaultEllipsoid    .WGS84,     datum.getEllipsoid());
         assertEqualsIgnoreMetadata("Datum",         DefaultGeodeticDatum.WGS84,     datum);

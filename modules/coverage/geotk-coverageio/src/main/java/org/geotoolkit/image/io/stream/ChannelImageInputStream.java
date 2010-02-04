@@ -310,7 +310,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      * Returns the current byte position of the stream.
      *
      * @return The position of the stream.
-     * @exception IOException if an I/O error occurs.
+     * @throws IOException if an I/O error occurs.
      */
     @Override
     public long getStreamPosition() throws IOException {

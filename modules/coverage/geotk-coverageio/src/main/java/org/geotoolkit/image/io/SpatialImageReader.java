@@ -412,7 +412,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * <ol>
      *   <li><p>The {@linkplain SampleDimension#getValidSampleValues() range of expected values}
      *       and the {@linkplain SampleDimension#getFillSampleValues() fill values} are extracted
-     *       from the {@linkplain #getSpatialMetadata spatial metadata}, if any.</p></li>
+     *       from the {@linkplain #getImageMetadata(int) image metadata}, if any.</p></li>
      *
      *   <li><p>If the given {@code parameters} argument is an instance of {@link SpatialImageReadParam},
      *       then the user-supplied {@linkplain SpatialImageReadParam#getPaletteName palette name}
@@ -427,8 +427,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *       a {@linkplain PaletteFactory#getContinuousPalette continuous palette} suitable for
      *       the range fetched at step 1. The data are assumed <cite>geophysics</cite> values
      *       rather than some packed values. Consequently, the {@linkplain SampleConverter sample
-     *       converters} will replace no-data values by {@linkplain Float#NaN NaN} with no other
-     *       changes.</p></li>
+     *       converters} will replace no-data values by {@linkplain Float#NaN NaN}, but no other
+     *       changes will be applied.</p></li>
      *
      *   <li><p>Otherwise, if the {@linkplain #getRawDataType raw data type} is a unsigned integer type
      *       like {@link DataBuffer#TYPE_BYTE TYPE_BYTE} or {@link DataBuffer#TYPE_USHORT TYPE_USHORT},
@@ -467,16 +467,15 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * </ol>
      *
      * {@section Overriding this method}
-     * Subclasses may override this method when a constant color {@linkplain Palette palette} is
-     * wanted for all images in a series, for example for all <cite>Sea Surface Temperature</cite>
-     * (SST) from the same provider. A constant color palette facilitates the visual comparison
-     * of different images at different time. The example below creates hard-coded objects:
+     * Subclasses can override this method for example if the color {@linkplain Palette palette}
+     * and range of values should be computed in a different way. The example below creates an
+     * image type using hard-coded objects:
      *
      * {@preformat java
      *     int minimum     = -2000;      // Minimal expected value
      *     int maximum     = +2300;      // Maximal expected value
      *     int fillValue   = -9999;      // Value for missing data
-     *     String colors   = "SST-Nasa"; // Named set of RGB colors
+     *     String colors   = "rainbow";  // Named set of RGB colors
      *     converters[0]   = SampleConverter.createOffset(1 - minimum, fillValue);
      *     Palette palette = PaletteFactory.getDefault().getPalettePadValueFirst(colors, maximum - minimum);
      *     return palette.getImageTypeSpecifier();
@@ -803,30 +802,42 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
 
     /**
      * Returns the data type which most closely represents the "raw" internal data of the image.
-     * It should be one of {@link DataBuffer} constants. The default {@code SpatialImageReader}
-     * implementation works better with the following types:
+     * It should be one of {@link DataBuffer} {@code TYPE_*} constants. This information is used
+     * by {@link #getImageType(int, ImageReadParam, SampleConverter[]) getImageType(...)} in order
+     * to create a default {@link ImageTypeSpecifier}.
+     * <p>
+     * The default {@code SpatialImageReader} implementation works better with
      *
      * {@link DataBuffer#TYPE_BYTE   TYPE_BYTE},
      * {@link DataBuffer#TYPE_SHORT  TYPE_SHORT},
      * {@link DataBuffer#TYPE_USHORT TYPE_USHORT} and
      * {@link DataBuffer#TYPE_FLOAT  TYPE_FLOAT}.
      *
-     * The default implementation returns {@link DataBuffer#TYPE_FLOAT TYPE_FLOAT} in every cases.
+     * Other types may work, but developers are advised to override the {@code getImageTypee(...)}
+     * method as well.
      * <p>
-     * <h3>Handling of negative integer values</h3>
-     * If the raw internal data contains negative values but this method still declares a unsigned
-     * integer type ({@link DataBuffer#TYPE_BYTE TYPE_BYTE} or {@link DataBuffer#TYPE_USHORT TYPE_USHORT}),
-     * then the values will be translated in order to fit in the range of strictly positive values.
-     * For example if the raw internal data range from -23000 to +23000, then there is a choice:
+     * The default implementation returns {@link DataBuffer#TYPE_FLOAT TYPE_FLOAT} in every cases.
+     *
+     * {@section The special case of negative integer sample values}
+     * If the {@linkplain SampleDimension#getValidSampleValues() range of sample values} contains
+     * negative values, then strictly speaking this method should return a signed type like
+     * {@link DataBuffer#TYPE_SHORT TYPE_SHORT} or {@link DataBuffer#TYPE_INT TYPE_INT}.
+     * If nevertheless this method return a unsigned integer type
+     * ({@link DataBuffer#TYPE_BYTE TYPE_BYTE} or {@link DataBuffer#TYPE_USHORT TYPE_USHORT}), then
+     * the default {@link #getImageType(int, ImageReadParam, SampleConverter[]) getImageType(...)}
+     * implementation will add an offset in order to fit all sample values in the range of strictly
+     * positive values. For example if range of sample value is [-23000 &hellip; +23000], then there
+     * is a choice:
      *
      * <ul>
      *   <li><p>If this method returns {@link DataBuffer#TYPE_SHORT}, then the data will be
      *       stored "as is" without transformation. However the {@linkplain IndexColorModel
      *       index color model} will have the maximal length allowed by 16 bits integers, with
      *       positive values in the [0 &hellip; {@value java.lang.Short#MAX_VALUE}] range and negative
-     *       values wrapped in the [32768 &hellip; 65535] range in two's complement binary form. The
-     *       results is a color model consuming 256 kilobytes in every cases. The space not used
-     *       by the [-23000 &hellip; +23000] range (in the above example) is lost.</p></li>
+     *       values wrapped in the [{@value java.lang.Short#MIN_VALUE} &hellip; 65535] range in
+     *       two's complement binary form. The results is a color model consuming 256 kilobytes
+     *       in every cases. The space not used by the [-23000 &hellip; +23000] range (in the
+     *       above example) is lost.</p></li>
      *
      *   <li><p>If this method returns {@link DataBuffer#TYPE_USHORT}, then the data will be
      *       translated to the smallest strictly positive range that can holds the data
@@ -849,7 +860,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     /**
      * Returns {@code true} if the no-data values should be collapsed to 0 in order to save memory.
      * This method is invoked automatically by the {@link #getImageType(int, ImageReadParam,
-     * SampleConverter[]) getImageType} method when it detected some unused space between the
+     * SampleConverter[]) getImageType(...)} method when it detected some unused space between the
      * {@linkplain SampleDimension#getValidSampleValues range of valid values} and at least one
      * {@linkplain SampleDimension#getFillSampleValues no-data value}.
      * <p>
@@ -865,7 +876,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      *          {@code true} if 0 is a valid value. If this method returns {@code true} while
      *          {@code isZeroValid} is {@code true}, then the {@linkplain SampleConverter sample
      *          converter} to be returned by {@link #getImageType(int, ImageReadParam,
-     *          SampleConverter[]) getImageType} will offset all valid values by 1.
+     *          SampleConverter[]) getImageType(...)} will offset all valid values by 1.
      * @param nodataValues
      *          The {@linkplain Arrays#sort(double[]) sorted}
      *          {@linkplain SampleDimension#getFillSampleValues no-data values} (never null and never empty).

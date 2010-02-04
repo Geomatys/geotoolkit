@@ -538,7 +538,7 @@ public class ImageProperties extends JPanel implements Dialog {
                 case VALUE_RANGE: {
                     if (values != null) {
                         if (rangeFormat == null) {
-                            rangeFormat = new RangeFormat(getLocale());
+                            rangeFormat = RangeFormat.getInstance(getLocale());
                         }
                         text = rangeFormat.format(values);
                     }

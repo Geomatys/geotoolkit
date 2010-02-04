@@ -112,6 +112,7 @@ public final class AsciiGridWriterTest extends TextImageWriterTestBase {
             "NODATA_VALUE  -9998\n" +
             "0.22 0.24\n", out.toString());
         out.close();
+        writer.dispose();
     }
 
     /**
