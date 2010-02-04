@@ -49,7 +49,7 @@ import org.geotoolkit.resources.Errors;
  * Wraps a NetCDF {@link CoordinateSystem} as an implementation of GeoAPI interfaces.
  * This class implements both the GeoAPI {@link org.opengis.referencing.cs.CoordinateSystem} and
  * {@link CoordinateReferenceSystem} interfaces because the NetCDF {@code CoordinateSystem}
- * object combines the concepts of both of them. If also implements the {@link GridGeometry}
+ * object combines the concepts of both of them. It also implements the {@link GridGeometry}
  * interface since NetCDF Coordinate Systems contain all information related to the image grid.
  *
  * {@section Axis order}

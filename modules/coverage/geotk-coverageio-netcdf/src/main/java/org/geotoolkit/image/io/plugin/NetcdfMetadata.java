@@ -40,6 +40,8 @@ import ucar.nc2.dataset.EnhanceScaleMissing;
 import ucar.nc2.dataset.Enhancements;
 
 import org.opengis.metadata.content.TransferFunctionType;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -48,8 +50,10 @@ import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.internal.image.io.SampleMetadataFormat;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.referencing.adapters.NetcdfAxis;
 import org.geotoolkit.referencing.adapters.NetcdfCRS;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -148,11 +152,34 @@ final class NetcdfMetadata extends SpatialMetadata {
         if (variable instanceof Enhancements) {
             final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
             if (systems != null && !systems.isEmpty()) {
-                setCoordinateSystem(systems.get(0));
+                CoordinateReferenceSystem crs = parseWKT(variable, "ESRI_pe_string");
+                setCoordinateSystem(systems.get(0), crs);
             }
         }
         addSampleDimension(variable);
         netcdf = variable;
+    }
+
+    /**
+     * Checks if the CRS is defined as a WKT string. This is not conform to CF
+     * convention, but ESRI does that.
+     *
+     * @param  variable The variable to look.
+     * @param  attributeName The attribute to look for.
+     * @return The CRS if the attribute has been found and successfuly parsed,
+     *         or {@code null} otherwise.
+     */
+    private CoordinateReferenceSystem parseWKT(final VariableIF variable, final String attributeName) {
+        final Attribute attribute = variable.findAttributeIgnoreCase(attributeName);
+        if (attribute != null) {
+            final String wkt = attribute.getStringValue();
+            if (wkt != null) try {
+                return CRS.parseWKT(wkt);
+            } catch (FactoryException e) {
+                Warnings.log(this, Level.WARNING, NetcdfMetadata.class, "parseWKT", e);
+            }
+        }
+        return null;
     }
 
     /**
@@ -162,12 +189,14 @@ final class NetcdfMetadata extends SpatialMetadata {
      * Coordinate Reference System} implementation.
      *
      * @param cs The coordinate system to define in metadata.
+     * @param crs Always {@code null}, unless an alternative CRS should be formatted
+     *        in replacement of the CRS built from the given NetCDF coordinate system.
      */
-    private void setCoordinateSystem(final CoordinateSystem cs) {
-        final NetcdfCRS crs = NetcdfCRS.wrap(cs);
-        final int dimension = crs.getDimension();
+    private void setCoordinateSystem(final CoordinateSystem cs, CoordinateReferenceSystem crs) {
+        final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs);
+        final int dimension = netcdfCRS.getDimension();
         for (int i=0; i<dimension; i++) {
-            final NetcdfAxis axis = crs.getAxis(i);
+            final NetcdfAxis axis = netcdfCRS.getAxis(i);
             final String units = axis.delegate().getUnitsString();
             final int offset = units.lastIndexOf('_');
             if (offset >= 0) {
@@ -182,17 +211,20 @@ final class NetcdfMetadata extends SpatialMetadata {
         /*
          * The above was only a check. Now perform the metadata writing.
          */
+        if (crs == null) {
+            crs = netcdfCRS;
+        }
         final GridDomainAccessor accessor = new GridDomainAccessor(this);
         final ReferencingBuilder helper = new ReferencingBuilder(this);
         helper.setCoordinateReferenceSystem(crs);
-        final int dim = crs.getDimension();
+        final int dim = netcdfCRS.getDimension();
         final int[]    lower  = new int   [dim];
         final int[]    upper  = new int   [dim];
         final double[] origin = new double[dim];
         final double[] vector = new double[dim];
         boolean isRegular = true; // Will stop offset vectors at the first irregular axis.
         for (int i=0; i<dim; i++) {
-            final CoordinateAxis1D axis = crs.getAxis(i).delegate();
+            final CoordinateAxis1D axis = netcdfCRS.getAxis(i).delegate();
             upper [i] = axis.getDimension(0).getLength() - 1;
             origin[i] = axis.getStart();
             if (isRegular) {
