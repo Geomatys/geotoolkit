@@ -29,6 +29,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
 
 import org.geotoolkit.image.io.metadata.MetadataTreeTable;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -82,7 +83,7 @@ final class IIOMetadataChoice implements Serializable {
         metadataTable.setLocale(locale);
         imageIndex = isStream ? -1 : 0;
         identifier = identifier();
-        label      = label(locale, true);
+        label      = label(locale, true, null);
     }
 
     /**
@@ -92,15 +93,18 @@ final class IIOMetadataChoice implements Serializable {
      * @param format   The format name.
      * @param metadata The metadata.
      * @param index    The image index of the metadata, or -1 for stream metadata.
+     * @param name     An optional image name, or {@code null} if none.
      */
-    IIOMetadataChoice(final Locale locale, final String format, final IIOMetadata metadata, final int index) {
+    IIOMetadataChoice(final Locale locale, final String format, final IIOMetadata metadata,
+            final int index, final String name)
+    {
         metadataTable = new MetadataTreeTable(metadata.getMetadataFormat(format));
         metadataTable.setMetadata(metadata);
         metadataTable.setLocale(locale);
         metadataTable.setSimplificationAllowed(true);
         imageIndex = index;
         identifier = identifier();
-        label      = label(locale, false);
+        label      = label(locale, false, name);
     }
 
     /**
@@ -126,7 +130,7 @@ final class IIOMetadataChoice implements Serializable {
      * Returns the label to use in the Swing widget,
      * which is inferred from the metadata format.
      */
-    private String label(final Locale locale, final boolean isFormat) {
+    private String label(final Locale locale, final boolean isFormat, final String name) {
         final Vocabulary resources = Vocabulary.getResources(locale);
         final String part;
         if (imageIndex < 0) {
@@ -144,7 +148,12 @@ final class IIOMetadataChoice implements Serializable {
         } else {
             rootName = rootName.replace('_', ' ').trim();
         }
-        return "<html><b>" + rootName + "</b> \u00A0\u2014\u00A0 " + part + "</html>";
+        final StringBuilder buffer = new StringBuilder("<html><b>").append(rootName)
+                .append("</b> \u00A0\u2014\u00A0 ").append(part);
+        if (name != null) {
+            buffer.append(" \u00A0(<i>").append(StringUtilities.makeSentence(name)).append("</i>)");
+        }
+        return buffer.append("</html>").toString();
     }
 
     /**

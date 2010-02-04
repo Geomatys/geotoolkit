@@ -215,14 +215,11 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
     @Override
     public TableCellRenderer getCellRenderer(final int row, final int column) {
         final Object value = getValueAt(row, column);
-        if (value != null) {
-            final Class<?> type = value.getClass();
-            if (Boolean.class.equals(type)) {
-                return booleanRenderer;
-            }
-            if (IdentifiedObject.class.isAssignableFrom(type)) {
-                return identifiedObjectRenderer;
-            }
+        if (value instanceof Boolean) {
+            return booleanRenderer;
+        }
+        if (value instanceof IdentifiedObject) {
+            return identifiedObjectRenderer;
         }
         return super.getCellRenderer(row, column);
     }

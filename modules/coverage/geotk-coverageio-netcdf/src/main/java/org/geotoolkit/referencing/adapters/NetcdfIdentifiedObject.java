@@ -159,7 +159,7 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
      */
     @Override
     public boolean equals(final Object other) {
-        if (other != this) {
+        if (other == this) {
             return true;
         }
         if (other != null && other.getClass().equals(getClass())) {

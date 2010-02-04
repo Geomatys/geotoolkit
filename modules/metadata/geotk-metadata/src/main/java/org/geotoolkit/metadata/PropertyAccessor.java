@@ -563,9 +563,7 @@ final class PropertyAccessor {
                     return getters[index].getName();
                 }
                 case SENTENCE: {
-                    final StringBuilder buffer = StringUtilities.separateWords(names[index]);
-                    buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
-                    return buffer.toString();
+                    return StringUtilities.makeSentence(names[index]);
                 }
             }
         }

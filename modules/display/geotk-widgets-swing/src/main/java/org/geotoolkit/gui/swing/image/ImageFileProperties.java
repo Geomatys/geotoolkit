@@ -48,6 +48,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.ExceptionMonitor;
+import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -255,6 +256,8 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
          * are available. Note that the list of metadata may contains null elements, which are
          * necessary in order to have metadata for image 'i' stored in the list at index 'i'.
          */
+        final List<String> imageNames = (reader instanceof NamedImageStore) ?
+                ((NamedImageStore) reader).getImageNames() : null;
         final IIOMetadata streamMetadata = reader.getStreamMetadata();
         final List<IIOMetadata> imageMetadata = new ArrayList<IIOMetadata>();
         for (int i=0; i<imageIndex; i++) {
@@ -273,7 +276,12 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
             @Override public void run() {
                 if (!isCancelled(worker)) {
                     info.show(ImageFileProperties.this);
-                    metadata.setMetadata(streamMetadata, snapshot);
+                    metadata.imageNames = imageNames;
+                    try {
+                        metadata.setMetadata(streamMetadata, snapshot);
+                    } finally {
+                        metadata.imageNames = null;
+                    }
                 }
             }
         });
@@ -324,7 +332,12 @@ public class ImageFileProperties extends ImageProperties implements PropertyChan
             EventQueue.invokeLater(new Runnable() {
                 @Override public void run() {
                     if (!isCancelled(worker)) {
-                        metadata.addMetadata(null, md);
+                        metadata.imageNames = imageNames;
+                        try {
+                            metadata.addMetadata(null, md);
+                        } finally {
+                            metadata.imageNames = null;
+                        }
                     }
                 }
             });

@@ -29,7 +29,7 @@ import org.geotoolkit.util.XArrays;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.09
  *
  * @since 3.00
  * @module
@@ -164,7 +164,7 @@ public final class StringUtilities {
      * example if the given identifier is {@code "PixelInterleavedSampleModel"}, then this
      * method returns {@code "Pixel interleaved sample model"}.
      *
-     * @param  identifier An identifier with no space, words beging with an upper-case character.
+     * @param  identifier An identifier with no space, words begin with an upper-case character.
      * @return The identifier with spaces inserted after what looks like words.
      *
      * @since 3.03
@@ -194,6 +194,40 @@ public final class StringUtilities {
             buffer.setLength(lg);
         }
         return buffer;
+    }
+
+    /**
+     * Makes a sentence from the given identifier. This methods performs the following steps:
+     *
+     * <ol>
+     *   <li><p>Invoke {@link #separateWords(CharSequence)}, which separate the words on
+     *     the basis of character case. For example {@code "transfertFunctionType"} become
+     *     {@code "transfert function type"}. This works fine for ISO 19115 naming.</p></li>
+     *
+     *   <li><p>Next this method replaces {@code '_'} by a space in order to take in account
+     *     the other naming convention, which is to use {@code '_'} as a word separator as in
+     *     {@code "project_name"}. This convention is used by NetCDF attributes.</p></li>
+     *
+     *   <li>Finally this method makes the first character an upper-case one.</li>
+     * </ol>
+     *
+     * @param  identifier An identifier with no space, words begin with an upper-case character.
+     * @return The identifier with spaces inserted after what looks like words.
+     *
+     * @since 3.09
+     */
+    public static String makeSentence(final CharSequence identifier) {
+        final StringBuilder buffer = separateWords(identifier);
+        final int length = buffer.length();
+        for (int i=0; i<length; i++) {
+            if (buffer.charAt(i) == '_') {
+                buffer.setCharAt(i, ' ');
+            }
+        }
+        if (length != 0) {
+            buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
+        }
+        return buffer.toString().trim();
     }
 
     /**

@@ -113,6 +113,11 @@ public class IIOMetadataPanel extends JPanel {
     private final Controller controller;
 
     /**
+     * The name of images for each index. This is an undocumented feature for now.
+     */
+    transient List<String> imageNames;
+
+    /**
      * Creates a panel with no initial metadata. One of the {@code addXXXMetadata} or
      * {@code addXXXMetadataFormat} methods should be invoked in order to display a content.
      */
@@ -411,9 +416,12 @@ public class IIOMetadataPanel extends JPanel {
             if (insertAt < 0 && formatChoices.getSize() != 0) {
                 formatChoices.addElement(ComboBoxRenderer.SEPARATOR);
             }
+            final List<String> names = imageNames;
+            final int namesCount = (names != null) ? names.size() : 0;
             for (final IIOMetadata metadata : entry.getValue()) {
-                final Integer index = imageIndex.get(metadata); // Should never be null.
-                final IIOMetadataChoice choice = new IIOMetadataChoice(locale, formatName, metadata, index);
+                final int index = imageIndex.get(metadata); // Should never be null.
+                final String name = (index >= 0 && index < namesCount) ? names.get(index) : null;
+                final IIOMetadataChoice choice = new IIOMetadataChoice(locale, formatName, metadata, index, name);
                 if (insertAt >= 0) {
                     formatChoices.insertElementAt(choice, ++insertAt);
                 } else {
