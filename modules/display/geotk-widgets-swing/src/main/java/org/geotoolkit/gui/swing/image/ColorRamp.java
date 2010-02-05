@@ -34,6 +34,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -73,7 +75,7 @@ import org.geotoolkit.resources.Errors;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.00
+ * @version 3.09
  *
  * @since 1.1
  * @module
@@ -84,11 +86,6 @@ public class ColorRamp extends JComponent {
      * Margin (in pixel) on each sides: top, left, right and bottom of the color ramp.
      */
     private static final int MARGIN = 10;
-
-    /**
-     * An empty list of colors.
-     */
-    private static final Color[] EMPTY = new Color[0];
 
     /**
      * The graduation to write over the color ramp.
@@ -102,9 +99,9 @@ public class ColorRamp extends JComponent {
     private String units;
 
     /**
-     * The colors to paint (never {@code null}).
+     * The colors to paint as ARGB values (never {@code null}).
      */
-    private Color[] colors = EMPTY;
+    private int[] colors = new int[0];
 
     /**
      * {@code true} if tick label must be display.
@@ -218,14 +215,36 @@ public class ColorRamp extends JComponent {
      * @return The colors (never {@code null}).
      */
     public Color[] getColors() {
-        return (colors.length!=0) ? colors.clone() : colors;
+        return getColors(colors, new HashMap<Integer,Color>());
     }
 
     /**
-     * Sets the colors to paint. This method fires a property change event
-     * with the {@code "colors"} name.
+     * Creates an array of {@link Color} values from the given array of ARGB values.
      *
-     * @param  colors The colors to paint.
+     * @param  ARGB  The array of ARGB values.
+     * @param  share A map of {@link Color} instances previously created, or an empty map if none.
+     * @return The array of color instances.
+     */
+    private static Color[] getColors(final int[] ARGB, final Map<Integer,Color> share) {
+        final Color[] colors = new Color[ARGB.length];
+        for (int i=0; i<colors.length; i++) {
+            final Integer value = ARGB[i];
+            Color ci = share.get(value);
+            if (ci == null) {
+                ci = new Color(value, true);
+                share.put(value, ci);
+            }
+            colors[i] = ci;
+        }
+        return colors;
+    }
+
+    /**
+     * Sets the colors to paint. If the new colors are different than the old ones, then this
+     * method fires a {@linkplain PropertyChangeEvent property change event} named {@code "colors"}
+     * with values of type {@code Color[]}.
+     *
+     * @param  colors The colors to paint, or {@code null} if none.
      * @return {@code true} if the state of this {@code ColorRamp} changed as a result of this call.
      *
      * @see #setColors(Coverage)
@@ -235,21 +254,65 @@ public class ColorRamp extends JComponent {
      * @see #getGraduation()
      */
     public boolean setColors(final Color[] colors) {
-        final Color[] oldColors = this.colors;
-        this.colors = (colors!=null && colors.length!=0) ? colors.clone() : EMPTY;
-        final boolean changed = !Arrays.equals(oldColors, this.colors);
-        if (changed) {
-            repaint();
+        final Map<Integer,Color> share = new HashMap<Integer,Color>();
+        int[] ARGB = null;
+        if (colors != null) {
+            ARGB = new int[colors.length];
+            for (int i=0; i<colors.length; i++) {
+                final Color c = colors[i];
+                share.put(ARGB[i] = c.getRGB(), c);
+            }
         }
-        firePropertyChange("colors", oldColors, colors);
-        return changed;
+        return setColors(ARGB, share);
+    }
+
+    /**
+     * Sets the colors to paint as an array of ARGB values. This method performs the same
+     * work than {@link #setColors(Color[])}, but is more efficient if the colors were
+     * already available as an array of ARGB values.
+     * <p>
+     * If the new colors are different than the old ones, then this method fires a
+     * {@linkplain PropertyChangeEvent property change event} named {@code "colors"}
+     * with values of type {@code Color[]} - not {@code int[]}.
+     *
+     * @param  colors The colors to paint, or {@code null} if none.
+     * @return {@code true} if the state of this {@code ColorRamp} changed as a result of this call.
+     *
+     * @since 3.09
+     */
+    public boolean setColors(final int[] colors) {
+        return setColors((colors != null) ? colors.clone() : null, null);
+    }
+
+    /**
+     * Sets the colors to paint as an array of ARGB values.
+     *
+     * @param  newColors The colors to paint, or {@code null} if none.
+     * @param  share A map of {@link Color} instances previously created, or {@code null} if none.
+     * @return {@code true} if the state of this {@code ColorRamp} changed as a result of this call.
+     */
+    private boolean setColors(int[] newColors, Map<Integer,Color> share) {
+        if (newColors == null) {
+            newColors = new int[0];
+        }
+        final int[] oldColors = colors;
+        colors = newColors;
+        if (Arrays.equals(oldColors, newColors)) {
+            return false;
+        }
+        repaint();
+        if (share == null) {
+            share = new HashMap<Integer,Color>();
+        }
+        firePropertyChange("colors", getColors(oldColors, share), getColors(newColors, share));
+        return true;
     }
 
     /**
      * Sets the colors to paint from an {@link IndexColorModel}. The default implementation
-     * fetches the colors from the index color model and invokes {@link #setColors(Color[])}.
+     * fetches the ARGB values from the index color model and invokes {@link #setColors(int[])}.
      *
-     * @param  model The colors to paint.
+     * @param  model The colors to paint, or {@code null} if none.
      * @return {@code true} if the state of this {@code ColorRamp} changed as a result of this call.
      *
      * @see #setColors(Coverage)
@@ -259,17 +322,10 @@ public class ColorRamp extends JComponent {
      * @see #getGraduation()
      */
     public boolean setColors(final IndexColorModel model) {
-        final Color[] colors;
-        if (model == null) {
-            colors = EMPTY;
-        } else {
-            colors = new Color[model.getMapSize()];
-            for (int i=0; i<colors.length; i++) {
-                colors[i] = new Color(model.getRed  (i),
-                                      model.getGreen(i),
-                                      model.getBlue (i),
-                                      model.getAlpha(i));
-            }
+        int[] colors = null;
+        if (model != null) {
+            colors = new int[model.getMapSize()];
+            model.getRGBs(colors);
         }
         return setColors(colors);
     }
@@ -280,7 +336,7 @@ public class ColorRamp extends JComponent {
      * from the supplied band, and then invokes {@link #setColors(Color[]) setColors} and
      * {@link #setGraduation setGraduation}.
      *
-     * @param  band The sample dimension, or {@code null}.
+     * @param  band The sample dimension, or {@code null} if none.
      * @return {@code true} if the state of this {@code ColorRamp} changed as a result of this call.
      *
      * @see #setColors(Coverage)
@@ -292,7 +348,7 @@ public class ColorRamp extends JComponent {
      */
     @SuppressWarnings("fallthrough")
     public boolean setColors(SampleDimension band) {
-        Color[] colors = EMPTY;
+        Color[] colors = null;
         Graduation graduation = null;
         /*
          * Gets the color palette, preferably from the "non-geophysics" view since it is usually
@@ -341,7 +397,7 @@ public class ColorRamp extends JComponent {
                     for (int i=0; i<colors.length; i++) {
                         int r=0, g=0, b=0, a=255;
                         final int[] c = palette[i+lower];
-                        if (c!=null) switch (c.length) {
+                        if (c != null) switch (c.length) {
                             default:        // Fall through
                             case 4: a=c[3]; // Fall through
                             case 3: b=c[2]; // Fall through
@@ -481,8 +537,11 @@ public class ColorRamp extends JComponent {
      * black or white, depending of the background color at the specified index.
      */
     private Color getForeground(final int colorIndex) {
-        final Color color = colors[colorIndex];
-        HSB = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), HSB);
+        final int color = colors[colorIndex];
+        final int R = ((color >>> 16) & 0xFF);
+        final int G = ((color >>>  8) & 0xFF);
+        final int B = ( color         & 0xFF);
+        HSB = Color.RGBtoHSB(R, G, B, HSB);
         return (HSB[2] >= 0.5f) ? Color.BLACK : Color.WHITE;
     }
 
@@ -496,21 +555,18 @@ public class ColorRamp extends JComponent {
      *                  behind them), or {@code null} if no label has been painted.
      */
     private Rectangle2D paint(final Graphics2D graphics, final Rectangle bounds) {
+        final int[] colors = this.colors;
         final int length = colors.length;
         final double dx, dy;
         if (length == 0) {
             dx = 0;
             dy = 0;
         } else {
-            dx = (double)(bounds.width  - 2*MARGIN) / length;
-            dy = (double)(bounds.height - 2*MARGIN) / length;
+            dx = (double) (bounds.width  - 2*MARGIN) / length;
+            dy = (double) (bounds.height - 2*MARGIN) / length;
             int i=0, lastIndex=0;
-            Color color = colors[i];
-            Color nextColor = color;
-            int R,G,B;
-            int nR = R = color.getRed  ();
-            int nG = G = color.getGreen();
-            int nB = B = color.getBlue ();
+            int color = colors[0];
+            int nextColor = color;
             final int ox = bounds.x + MARGIN;
             final int oy = bounds.y + bounds.height - MARGIN;
             final Rectangle2D.Double rect = new Rectangle2D.Double();
@@ -518,10 +574,7 @@ public class ColorRamp extends JComponent {
             while (++i <= length) {
                 if (i != length) {
                     nextColor = colors[i];
-                    nR = nextColor.getRed  ();
-                    nG = nextColor.getGreen();
-                    nB = nextColor.getBlue ();
-                    if (R==nR && G==nG && B==nB) {
+                    if (nextColor == color) {
                         continue;
                     }
                 }
@@ -546,13 +599,10 @@ public class ColorRamp extends JComponent {
                         rect.height += MARGIN;
                     }
                 }
-                graphics.setColor(color);
+                graphics.setColor(new Color(color, true));
                 graphics.fill(rect);
                 lastIndex = i;
                 color = nextColor;
-                R = nR;
-                G = nG;
-                B = nB;
             }
         }
         Rectangle2D labelBounds = null;
@@ -735,13 +785,14 @@ public class ColorRamp extends JComponent {
      */
     @Override
     public String toString() {
-        int count=0;
+        final int[] colors = this.colors;
+        int count = 0;
         int i = 0;
         if (i < colors.length) {
-            Color last = colors[i];
+            int last = colors[i];
             while (++i < colors.length) {
-                Color c = colors[i];
-                if (!c.equals(last)) {
+                int c = colors[i];
+                if (c != last) {
                     last = c;
                     count++;
                 }
