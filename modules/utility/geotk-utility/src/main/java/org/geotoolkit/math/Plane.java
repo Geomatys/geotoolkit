@@ -40,7 +40,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Martin Desruisseaux (MPO, IRD)
  * @author Howard Freeland (MPO, for algorithmic inspiration)
- * @version 3.00
+ * @version 3.09
  *
  * @since 1.0
  * @module
@@ -149,13 +149,13 @@ public class Plane implements Cloneable, Serializable {
     }
 
     /**
-     * Computes the plane's coefficients from a set of points. This method use
-     * a linear regression in the least-square sense. Result is undertermined
-     * if all points are colinear.
+     * Computes the plane's coefficients from a set of points. This convenience method
+     * wraps the given arrays in {@link Vector} objects and delegates to
+     * {@link #fit(Vector, Vector, Vector)}.
      *
-     * @param x vector of <var>x</var> coordinates
-     * @param y vector of <var>y</var> coordinates
-     * @param z vector of <var>z</var> values
+     * @param  x array of <var>x</var> coordinates
+     * @param  y array of <var>y</var> coordinates
+     * @param  z array of <var>z</var> values
      * @return An estimation of the Pearson correlation coefficient.
      * @throws MismatchedSizeException if <var>x</var>, <var>y</var> and <var>z</var>
      *         don't have the same length.
@@ -163,8 +163,52 @@ public class Plane implements Cloneable, Serializable {
     public double fit(final double[] x, final double[] y, final double[] z)
             throws MismatchedSizeException
     {
-        final int length = z.length;
-        if (length != x.length || length != y.length) {
+        return fit(new ArrayVector.Double(x),
+                   new ArrayVector.Double(y),
+                   new ArrayVector.Double(z));
+    }
+
+    /**
+     * Computes the plane's coefficients from a set of points. This convenience method
+     * wraps the given arrays in {@link Vector} objects and delegates to
+     * {@link #fit(Vector, Vector, Vector)}.
+     *
+     * @param  x array of <var>x</var> coordinates
+     * @param  y array of <var>y</var> coordinates
+     * @param  z array of <var>z</var> values
+     * @return An estimation of the Pearson correlation coefficient.
+     * @throws MismatchedSizeException if <var>x</var>, <var>y</var> and <var>z</var>
+     *         don't have the same length.
+     *
+     * @since 3.09
+     */
+    public double fit(final float[] x, final float[] y, final float[] z)
+            throws MismatchedSizeException
+    {
+        return fit(new ArrayVector.Float(x),
+                   new ArrayVector.Float(y),
+                   new ArrayVector.Float(z));
+    }
+
+    /**
+     * Computes the plane's coefficients from a set of points. This method uses
+     * a linear regression in the least-square sense. Result is undertermined
+     * if all points are colinear.
+     *
+     * @param  x vector of <var>x</var> coordinates
+     * @param  y vector of <var>y</var> coordinates
+     * @param  z vector of <var>z</var> values
+     * @return An estimation of the Pearson correlation coefficient.
+     * @throws MismatchedSizeException if <var>x</var>, <var>y</var> and <var>z</var>
+     *         don't have the same length.
+     *
+     * @since 3.09
+     */
+    public double fit(final Vector x, final Vector y, final Vector z)
+            throws MismatchedSizeException
+    {
+        final int length = z.size();
+        if (length != x.size() || length != y.size()) {
             throw new MismatchedSizeException();
         }
         int n = 0;
@@ -177,9 +221,9 @@ public class Plane implements Cloneable, Serializable {
         double sum_zx = 0, rzx = 0;
         double sum_zy = 0, rzy = 0;
         for (int i=0; i<length; i++) {
-            double xi = x[i]; if (Double.isNaN(xi)) continue;
-            double yi = y[i]; if (Double.isNaN(yi)) continue;
-            double zi = z[i]; if (Double.isNaN(zi)) continue;
+            double xi = x.doubleValue(i); if (Double.isNaN(xi)) continue;
+            double yi = y.doubleValue(i); if (Double.isNaN(yi)) continue;
+            double zi = z.doubleValue(i); if (Double.isNaN(zi)) continue;
             double xx = xi*xi;
             double yy = yi*yi;
             double xy = xi*yi;
@@ -220,13 +264,16 @@ public class Plane implements Cloneable, Serializable {
         sum_z /= n;
         double sx=0, sy=0, p=0;
         for (int i=0; i<length; i++) {
-            final double xi = z[i] - sum_z;
-            if (Double.isNaN(xi)) continue;
-            final double yi = cx*(x[i] - sum_x) + cy*(y[i] - sum_y);
-            if (Double.isNaN(yi)) continue;
-            sx += xi * xi;
-            sy += yi * yi;
-            p  += xi * yi;
+            final double xi = z.doubleValue(i) - sum_z;
+            if (!Double.isNaN(xi)) {
+                final double yi = cx * (x.doubleValue(i) - sum_x) +
+                                  cy * (y.doubleValue(i) - sum_y);
+                if (!Double.isNaN(yi)) {
+                    sx += xi * xi;
+                    sy += yi * yi;
+                    p  += xi * yi;
+                }
+            }
         }
         return p / Math.sqrt(sx * sy);
     }

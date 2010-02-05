@@ -85,6 +85,12 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         if (array == null || array instanceof Vector) {
             return (Vector) array;
         }
+        if (array instanceof double[]) {
+            return new ArrayVector.Double((double[]) array);
+        }
+        if (array instanceof float[]) {
+            return new ArrayVector.Float((float[]) array);
+        }
         final Class<?> type = array.getClass();
         Class<?> component = type.getComponentType();
         if (component != null) {

@@ -49,7 +49,7 @@ final class ArrayVector extends Vector implements Serializable {
     /**
      * Creates a new vector for the given array.
      */
-    public ArrayVector(final Object array) {
+    ArrayVector(final Object array) {
         this.array = array;
     }
 
@@ -84,7 +84,7 @@ final class ArrayVector extends Vector implements Serializable {
     @Override
     public boolean isNaN(final int index) throws IndexOutOfBoundsException {
         final Number n = get(index);
-        return (n == null) || Double.isNaN(n.doubleValue());
+        return (n == null) || java.lang.Double.isNaN(n.doubleValue());
     }
 
     /**
@@ -224,5 +224,171 @@ final class ArrayVector extends Vector implements Serializable {
             throw exception;
         }
         return old;
+    }
+
+
+
+
+    /**
+     * A vector backed by an array of type {@code double[]}. This class does not copy the
+     * array, so changes in the underlying array is reflected in this vector and vis-versa.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.09
+     *
+     * @since 3.09
+     * @module
+     */
+    static final class Double extends Vector implements Serializable {
+        /** For cross-version compatibility. */
+        private static final long serialVersionUID = -2900375382498345812L;
+
+        /** The backing array. */
+        private final double[] array;
+
+        /** Creates a new vector for the given array. */
+        Double(final double[] array) {
+            this.array = array;
+        }
+
+        /** Returns the type of elements in the backing array. */
+        @Override public Class<java.lang.Double> getElementType() {
+            return java.lang.Double.class;
+        }
+
+        /** Returns the length of the backing array. */
+        @Override public int size() {
+            return array.length;
+        }
+
+        /** Returns {@code true} if the value at the given index is {@code NaN}. */
+        @Override public boolean isNaN(final int index) throws ArrayIndexOutOfBoundsException {
+            return java.lang.Double.isNaN(array[index]);
+        }
+
+        /** Returns the value at the given index. */
+        @Override public double doubleValue(final int index) throws ArrayIndexOutOfBoundsException {
+            return array[index];
+        }
+
+        /**
+         * Returns the value casted as a {@code float}, since we may loose precision but the
+         * result of the cast is not completly wrong (at worst we get zero of infinity values
+         * if the magnitude of the {@code double} value was too small or too large).
+         */
+        @Override public float floatValue(int index) throws ArrayIndexOutOfBoundsException {
+            return (float) array[index];
+        }
+
+        /** Can not cast safely to integer values. */
+        @Override public long   longValue(int index) throws ClassCastException {throw cantConvert();}
+        @Override public int     intValue(int index) throws ClassCastException {throw cantConvert();}
+        @Override public short shortValue(int index) throws ClassCastException {throw cantConvert();}
+        @Override public byte   byteValue(int index) throws ClassCastException {throw cantConvert();}
+
+        /**
+         * Returns the exception to be thrown when the component type in the backing array can
+         * not be converted to the requested type through an identity or widening conversion.
+         */
+        private static ClassCastException cantConvert() {
+            return new ClassCastException(Errors.format(
+                    Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, Double.class));
+        }
+
+        /** Returns the value at the given index. */
+        @Override public java.lang.Double get(final int index) throws ArrayIndexOutOfBoundsException {
+            return array[index];
+        }
+
+        /** Sets the value at the given index. */
+        @Override public java.lang.Double set(final int index, final Number value) throws ArrayIndexOutOfBoundsException {
+            final double old = array[index];
+            array[index] = value.doubleValue();
+            return old;
+        }
+    }
+
+
+
+
+    /**
+     * A vector backed by an array of type {@code float[]}. This class does not copy the
+     * array, so changes in the underlying array is reflected in this vector and vis-versa.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.09
+     *
+     * @since 3.09
+     * @module
+     */
+    static final class Float extends Vector implements Serializable {
+        /**
+         * For cross-version compatibility.
+         */
+        private static final long serialVersionUID = 5395284704294981455L;
+
+        /**
+         * The backing array.
+         */
+        private final float[] array;
+
+        /**
+         * Creates a new vector for the given array.
+         */
+        Float(final float[] array) {
+            this.array = array;
+        }
+
+        /** Returns the type of elements in the backing array. */
+        @Override public Class<java.lang.Float> getElementType() {
+            return java.lang.Float.class;
+        }
+
+        /** Returns the length of the backing array. */
+        @Override public int size() {
+            return array.length;
+        }
+
+        /** Returns {@code true} if the value at the given index is {@code NaN}. */
+        @Override public boolean isNaN(final int index) throws ArrayIndexOutOfBoundsException {
+            return java.lang.Float.isNaN(array[index]);
+        }
+
+        /** Returns the value at the given index. */
+        @Override public double doubleValue(final int index) throws ArrayIndexOutOfBoundsException {
+            return array[index];
+        }
+
+        /** Returns the value at the given index. */
+        @Override public float floatValue(int index) throws ArrayIndexOutOfBoundsException {
+            return array[index];
+        }
+
+        /** Can not cast safely to integer values. */
+        @Override public long   longValue(int index) throws ClassCastException {throw cantConvert();}
+        @Override public int     intValue(int index) throws ClassCastException {throw cantConvert();}
+        @Override public short shortValue(int index) throws ClassCastException {throw cantConvert();}
+        @Override public byte   byteValue(int index) throws ClassCastException {throw cantConvert();}
+
+        /**
+         * Returns the exception to be thrown when the component type in the backing array can
+         * not be converted to the requested type through an identity or widening conversion.
+         */
+        private static ClassCastException cantConvert() {
+            return new ClassCastException(Errors.format(
+                    Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, Float.class));
+        }
+
+        /** Returns the value at the given index. */
+        @Override public java.lang.Float get(final int index) throws ArrayIndexOutOfBoundsException {
+            return array[index];
+        }
+
+        /** Sets the value at the given index. */
+        @Override public java.lang.Float set(final int index, final Number value) throws ArrayIndexOutOfBoundsException {
+            final float old = array[index];
+            array[index] = value.floatValue();
+            return old;
+        }
     }
 }

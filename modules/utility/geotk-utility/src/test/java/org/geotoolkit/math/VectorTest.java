@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  * Tests the {@link Vector} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 3.00
  */
@@ -54,22 +54,26 @@ public final class VectorTest {
 
     /**
      * Tests {@link ArrayVector} backed by an array of primitive type.
+     * We use the {@code short} type since it doesn't have specialized
+     * vector implementation.
      */
     @Test
     public void testPrimitiveTypeArray() {
-        final float[] array = new float[400];
+        final short[] array = new short[400];
         for (int i=0; i<array.length; i++) {
-            array[i] = (i + 100) * 10;
+            array[i] = (short) ((i + 100) * 10);
         }
         Vector vector = Vector.create(array);
         assertTrue(vector instanceof ArrayVector);
         assertSame(vector, Vector.create(vector));
         assertEquals(array.length, vector.size());
-        assertEquals(Float.class, vector.getElementType());
+        assertEquals(Short.class, vector.getElementType());
         /*
          * Tests element values.
          */
         for (int i=0; i<array.length; i++) {
+            assertEquals(array[i], vector.shortValue (i));
+            assertEquals(array[i], vector.intValue   (i));
             assertEquals(array[i], vector.floatValue (i), 0);
             assertEquals(array[i], vector.doubleValue(i), 0);
         }
@@ -83,7 +87,7 @@ public final class VectorTest {
             // This is the expected exception.
         }
         try {
-            vector.longValue(0);
+            vector.byteValue(0);
             fail("Expected a ClassCastException");
         } catch (ClassCastException e) {
             // This is the expected exception.
@@ -94,10 +98,10 @@ public final class VectorTest {
         vector = vector.subList(100, 2, 100);
         assertEquals(100, vector.size());
         for (int i=0; i<100; i++) {
-            assertEquals(array[i*2 + 100], vector.floatValue (i), 0);
+            assertEquals(array[i*2 + 100], vector.shortValue(i), 0);
         }
         try {
-            vector.floatValue(100);
+            vector.shortValue(100);
             fail("Expected an IndexOutOfBoundsException");
         } catch (IndexOutOfBoundsException e) {
             // This is the expected exception.
@@ -107,9 +111,59 @@ public final class VectorTest {
          */
         vector = vector.view(10, 20, 25);
         assertEquals(3, vector.size());
-        assertEquals(array[120], vector.floatValue(0), 0);
-        assertEquals(array[140], vector.floatValue(1), 0);
-        assertEquals(array[150], vector.floatValue(2), 0);
+        assertEquals(array[120], vector.shortValue(0), 0);
+        assertEquals(array[140], vector.shortValue(1), 0);
+        assertEquals(array[150], vector.shortValue(2), 0);
+    }
+
+    /**
+     * Tests {@link ArrayVector.Float} backed by an array of float type.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testFloatArray() {
+        final float[] array = new float[400];
+        for (int i=0; i<array.length; i++) {
+            array[i] = (i + 100) * 10;
+        }
+        Vector vector = Vector.create(array);
+        assertTrue(vector instanceof ArrayVector.Float);
+        assertSame(vector, Vector.create(vector));
+        assertEquals(array.length, vector.size());
+        assertEquals(Float.class, vector.getElementType());
+        /*
+         * Tests element values.
+         */
+        for (int i=0; i<array.length; i++) {
+            assertEquals(array[i], vector.floatValue (i), 0);
+            assertEquals(array[i], vector.doubleValue(i), 0);
+        }
+    }
+
+    /**
+     * Tests {@link ArrayVector.Double} backed by an array of double type.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testDoubleArray() {
+        final double[] array = new double[400];
+        for (int i=0; i<array.length; i++) {
+            array[i] = (i + 100) * 10;
+        }
+        Vector vector = Vector.create(array);
+        assertTrue(vector instanceof ArrayVector.Double);
+        assertSame(vector, Vector.create(vector));
+        assertEquals(array.length, vector.size());
+        assertEquals(Double.class, vector.getElementType());
+        /*
+         * Tests element values.
+         */
+        for (int i=0; i<array.length; i++) {
+            assertEquals(array[i], vector.floatValue (i), 0);
+            assertEquals(array[i], vector.doubleValue(i), 0);
+        }
     }
 
     /**
