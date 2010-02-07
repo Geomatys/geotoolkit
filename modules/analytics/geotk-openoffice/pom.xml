@@ -107,4 +107,46 @@
     </dependency>
   </dependencies>
 
+
+  <!-- =========================================================== -->
+  <!--     Build Configuration                                     -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+
+      <!-- Add a manifest entry for add-ins registration in OpenOffice -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <RegistrationClassName>
+                org.geotoolkit.openoffice.Registration
+              </RegistrationClassName>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- Copies the OpenOffice-generated .class files and Creates the oxt file -->
+      <plugin>
+        <groupId>org.geotoolkit.project</groupId>
+        <artifactId>geotk-unopkg</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <oxtName>geotk-${project.version}</oxtName>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>javamaker</goal>
+              <goal>unopkg</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
