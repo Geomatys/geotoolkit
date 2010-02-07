@@ -9,10 +9,9 @@
     <H1>Compilation and deployment instruction</H1>
     <P ALIGN="justify">All <code>XFoo</code> Java interfaces are generated from IDL files with the same
     name. As long as <code>XFoo</code> Java/IDL interfaces are not modified, there is no need for the
-    OpenOffice SDK. But if any <code>XFoo</code> interface is modified, then steps 1 to 3 below must
-    be done. Steps 5 to 7 are performed by Maven, but are cited here for completness. Step 8 must
-    be executed on the client machine (users can also use the "<CITE>Tools / Package manager</CITE>"
-    menu from OpenOffice GUI).</P>
+    OpenOffice SDK. But if any <code>XFoo</code> interface is modified, then steps 1 to 4 below must
+    be done. Step 5 shall be executed on the client machine (users can also use the
+    "<CITE>Tools / Package manager</CITE>" menu from OpenOffice GUI).</P>
 
     <TABLE><TR VALIGN="top"><TD>
       <TABLE><TR><TD>
@@ -39,48 +38,43 @@
       </TABLE>
       </TD><TD><OL>
         <LI><P>Compiles the UNO <code>.urd</code> binary file</P>
-        <BLOCKQUOTE><CODE>
-        idlc -C -cid -w -I $OO_SDK_HOME/idl org/geotoolkit/openoffice/XReferencing.idl
-        </CODE></BLOCKQUOTE></LI>
+        <BLOCKQUOTE>
+<PRE>cd modules/analytics/geotk-openoffice/src/main/java
+idlc -C -cid -w -I $OO_SDK_HOME/idl org/geotoolkit/openoffice/*.idl</PRE>
+        </BLOCKQUOTE></LI>
 
         <LI><P>Compiles the UNO <code>.rdb</code> registry file</P>
-        <BLOCKQUOTE><CODE>
-        regmerge geotoolkit.rdb /UCR org/geotoolkit/openoffice/XReferencing.urd
-        </CODE></BLOCKQUOTE></LI>
+        <BLOCKQUOTE>
+<PRE>regmerge ../unopkg/geotk.rdb /UCR org/geotoolkit/openoffice/*.urd
+rm org/geotoolkit/openoffice/*.urd
+cd ../unopkg</PRE>
+        </BLOCKQUOTE></LI>
 
         <LI><P>Creates the <code>.class</code> file for Java interfaces</P>
-        <BLOCKQUOTE><CODE>
-        javamaker -BUCR -nD -Torg.geotoolkit.openoffice.XReferencing geotoolkit.rdb $OFFICE_PROGRAM_PATH/types.rdb
-        </CODE></BLOCKQUOTE></LI>
+        <BLOCKQUOTE>
+<PRE>javamaker -BUCR -nD geotk.rdb $OFFICE_BASE_HOME/ure-link/share/misc/types.rdb \
+  -Torg.geotoolkit.openoffice.XNature \
+  -Torg.geotoolkit.openoffice.XReferencing</PRE>
+        </BLOCKQUOTE></LI>
 
         <LI><P>Derives a <code>.java</code> source from the <code>.class</code> file</P>
-        <BLOCKQUOTE><CODE>
-        javap org.geotoolkit.openoffice.XReferencing
-        </CODE></BLOCKQUOTE></LI>
+        <BLOCKQUOTE>
+<PRE>javap org.geotoolkit.openoffice.XNature org.geotoolkit.openoffice.XReferencing</PRE>
+        </BLOCKQUOTE></LI>
 
         <HR>
 
-        <LI><P>Compiles <code>.java</code> source files</P>
-        <BLOCKQUOTE><CODE>
-        javac org/geotoolkit/openoffice/*.java
-        </CODE></BLOCKQUOTE></LI>
-
-        <LI><P>Creates the <code>.jar</code> file</P>
-        <BLOCKQUOTE><CODE>
-        jar -cfm0 openoffice-2.3-SNAPSHOT.jar META-INF/MANIFEST.MF org/geotoolkit/openoffice/*.class
-        </CODE></BLOCKQUOTE></LI>
-
-        <LI><P>Creates the <code>.pkg</code> file</P>
-        <BLOCKQUOTE><CODE>
-        zip -9 geotoolkit.uno.pkg geotoolkit.rdb openoffice-2.3-SNAPSHOT.jar META-INF/manifest.xml
-        </CODE></BLOCKQUOTE></LI>
+        <LI><P>Build</P>
+        <BLOCKQUOTE>
+<PRE>mvn install</PRE>
+        </BLOCKQUOTE></LI>
 
         <HR>
 
         <LI><P>Register the component to OpenOffice</P>
-        <BLOCKQUOTE><CODE>
-        unopkg add geotoolkit.uno.pkg
-        </CODE></BLOCKQUOTE></LI>
+        <BLOCKQUOTE>
+<PRE>unopkg add geotk-SNAPSHOT.oxt</PRE>
+        </BLOCKQUOTE></LI>
       </OL></TD></TR>
     </TABLE>
   </BODY>

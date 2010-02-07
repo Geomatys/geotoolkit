@@ -16,11 +16,9 @@
  *    Lesser General Public License for more details.
  */
 
-// Guard against multiple includes
 #ifndef _org_geotoolkit_openoffice_XReferencing_
 #define _org_geotoolkit_openoffice_XReferencing_
 
-// Must be included always for compatibility reasons
 #include <com/sun/star/uno/XInterface.idl>
 #include <com/sun/star/beans/XPropertySet.idl>
 #include <com/sun/star/sheet/AddIn.idl>
