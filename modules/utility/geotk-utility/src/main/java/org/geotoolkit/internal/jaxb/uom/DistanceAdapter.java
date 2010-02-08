@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * The ISO-19103 {@code Distance} with a {@code unit of measure} defined, using the
- * {@code gco} namespace linked to the {@link http://www.isotc211.org/2005/gco} URL.
+ * {@code gco} namespace linked to the {@code http://www.isotc211.org/2005/gco} URL.
  * <p>
  * This class is identical to {@link MeasureAdapter} except for the name of the
  * element, which is {@code "Distance"}.

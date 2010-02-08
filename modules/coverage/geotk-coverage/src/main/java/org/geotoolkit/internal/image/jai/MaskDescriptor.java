@@ -21,6 +21,7 @@ import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.image.jai.Mask;
 import static org.geotoolkit.image.jai.Mask.OPERATION_NAME;
 
 

@@ -119,7 +119,7 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
         return this;
     }
 
-    /** Returns {@link VerticalDatumType#ELLIPSOIDAL} in all cases. */
+    /** Returns {@link VerticalDatumTypes#ELLIPSOIDAL} in all cases. */
     @Override
     public VerticalDatumType getVerticalDatumType() {
         return VerticalDatumTypes.ELLIPSOIDAL;

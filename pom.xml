@@ -6,8 +6,13 @@
             http://www.geotoolkit.org/
 
         Profiles available in this build:
-            - package   Performs additional packaging process like
-                        generating a JAR file for source code.
+
+          - package      Performs additional packaging process like
+                         generating a JAR file for source code and the
+                         openoffice add-in (geotk-SNAPSHOT.oxt file).
+          - javadoc-all  Includes the internal classes in the javadoc.
+                         This is sometime useful only to Geotk developers,
+                         since users should not depend on any internal API.
      ======================================================================= -->
   <project xmlns="http://maven.apache.org/POM/4.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -32,8 +37,8 @@
   <url>http://www.geotoolkit.org/</url>
 
   <description>
-    Geotoolkit.org (abridged Geotk) is a fork of GeoTools 2.6 with focus on code quality
-    and library-wide consistency.
+    Geotoolkit.org (abridged Geotk) is a free software, Java language library for developing
+    geospatial applications. The library can be used for desktop or server applications.
   </description>
 
   <!-- TODO: the information below is used by Maven for generating the copyright
@@ -106,6 +111,50 @@
 
 
   <!-- =========================================================== -->
+  <!--     Profiles that change the build process. We package the  -->
+  <!--     source code only when explicitly requested in order to  -->
+  <!--     make daily developer builds faster.                     -->
+  <!-- =========================================================== -->
+  <profiles>
+    <profile>
+      <id>package</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>javadoc-all</id>
+      <properties>
+        <javadoc.exclude>com</javadoc.exclude> <!-- Clears the exclusion list, except the com packages. -->
+      </properties>
+    </profile>
+  </profiles>
+
+  <properties>
+    <javadoc.exclude>
+      org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:com
+    </javadoc.exclude>
+    <derby.version>10.5.3.0_1</derby.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!-- TODO: Use <sourceEncoding>UTF-8</sourceEncoding> with Maven 3 -->
+  </properties>
+
+
+
+  <!-- =========================================================== -->
   <!--     Dependency Management                                   -->
   <!--     If a POM declares one of those dependencies, then it    -->
   <!--     will use the version specified here. Otherwise, those   -->
@@ -113,11 +162,6 @@
   <!--                                                             -->
   <!--     Reference: http://repo1.maven.org/maven2/               -->
   <!-- =========================================================== -->
-  <properties>
-    <derby.version>10.5.3.0_1</derby.version>
-    <!-- TODO: <sourceEncoding>UTF-8</sourceEncoding> in Maven 3 -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <dependencyManagement>
     <dependencies>
       <!-- GeoAPI and its dependencies -->
@@ -227,35 +271,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
-
-  <!-- =========================================================== -->
-  <!--     Profiles that change the build process. We package the  -->
-  <!--     source code only when explicitly requested in order to  -->
-  <!--     make daily developer builds faster.                     -->
-  <!-- =========================================================== -->
-  <profiles>
-    <profile>
-      <id>package</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 
 
@@ -418,9 +433,7 @@
           <quiet>true</quiet>              <!-- Shuts off non-error and non-warning messages.              -->
           <keywords>true</keywords>        <!-- Adds HTML meta keyword tags to the generated files.        -->
           <breakiterator>true</breakiterator>
-          <excludePackageNames>
-            org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra
-          </excludePackageNames>
+          <excludePackageNames>${javadoc.exclude}</excludePackageNames>
 
           <!-- Custom taglets implemented in Java. -->
           <taglets>
@@ -496,6 +509,23 @@
           <!-- custom block tag tagname in doc comments. Note: <placement/> -->
           <!-- should be a combinaison of the letters Xaoptcmf.             -->
           <tags>
+            <!-- Maven tags -->
+            <tag>
+              <name>goal</name>
+              <placement>t</placement>
+              <head>Maven goal:</head>
+            </tag>
+            <tag>
+              <name>phase</name>
+              <placement>t</placement>
+              <head>Maven phase:</head>
+            </tag>
+            <tag>
+              <name>description</name>
+              <placement>t</placement>
+              <head>Description:</head>
+            </tag>
+            <!-- Geotk tags -->
             <tag>
               <name>level</name>
               <placement>X</placement>

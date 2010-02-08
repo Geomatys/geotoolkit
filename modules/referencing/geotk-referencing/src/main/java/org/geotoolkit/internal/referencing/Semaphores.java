@@ -21,7 +21,7 @@ package org.geotoolkit.internal.referencing;
 /**
  * Semaphores that need to be shared accross different referencing packages. Each thread has
  * its own set of semaphores. The {@link #clear} method <strong>must</strong> be invoked after
- * the {@link #set} method in a {@code try ... finally} block.
+ * the {@link #queryAndSet} method in a {@code try ... finally} block.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
@@ -36,7 +36,7 @@ public final class Semaphores {
      * {@link org.geotoolkit.referencing.operation.AbstractCoordinateOperation}. It is set
      * to {@code true} when a comparison is in progress. This lock is necessary because
      * {@code AbstractDerivedCRS} objects contain a {@code conversionFromBase} field,
-     * which contains a {@link DefaultConversion.targetCRS} field referencing back the
+     * which contains a {@code DefaultConversion.targetCRS} field referencing back the
      * {@code AbstractDerivedCRS} object.
      */
     public static final int COMPARING = 1;

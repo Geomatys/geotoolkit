@@ -44,7 +44,7 @@ public final class VerticalDatumTypes {
      * <p>
      * Identifier {@code CS_DatumType.CS_VD_Ellipsoidal}
      *
-     * @see http://jira.codehaus.org/browse/GEO-133
+     * @see <a href="http://jira.codehaus.org/browse/GEO-133">GEO-133</a>
      */
     public static final VerticalDatumType ELLIPSOIDAL = VerticalDatumType.valueOf("ELLIPSOIDAL");
 

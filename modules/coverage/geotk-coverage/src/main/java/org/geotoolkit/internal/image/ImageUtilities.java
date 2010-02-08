@@ -67,7 +67,7 @@ public final class ImageUtilities {
     /**
      * The minimum tile size.
      */
-    private static final int MIN_TILE_SIZE = 256;
+    public static final int MIN_TILE_SIZE = 256;
 
     /**
      * Maximum tile width or height before to consider a tile as a stripe. It tile width or height
@@ -323,7 +323,8 @@ public final class ImageUtilities {
      * {@link ImageLayout#getMinX minX}, {@link ImageLayout#getMinY minY},
      * {@link ImageLayout#getWidth width} and {@link ImageLayout#getHeight height}
      * properties are not defined in the {@code layout}, then they will be inherited
-     * from the <strong>first</strong> source for consistency with {@link OpImage} constructor.
+     * from the <strong>first</strong> source for consistency with {@link javax.media.jai.OpImage}
+     * constructor.
      *
      * @param  layout The original layout. This object will not be modified.
      * @param  sources The list of sources {@link RenderedImage}.

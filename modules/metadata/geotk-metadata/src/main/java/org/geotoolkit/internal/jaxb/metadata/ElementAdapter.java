@@ -74,7 +74,7 @@ public final class ElementAdapter extends MetadataAdapter<ElementAdapter,Element
     }
 
     /**
-     * Sets the value for the {@link DefaultElement}. This method is systematically
+     * Sets the value for the {@link AbstractElement}. This method is systematically
      * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.

@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * Surrounds integer values by {@code <gco:Integer>}.
  * The ISO-19139 standard specifies that primitive types have to be surrounded by an element
  * which represents the type of the value, using the namespace {@code gco} linked to the
- * {@link http://www.isotc211.org/2005/gco} URL. The JAXB default behavior is to marshall
+ * {@code http://www.isotc211.org/2005/gco} URL. The JAXB default behavior is to marshall
  * primitive Java types directly "as is", without wrapping the value in the required element.
  * The role of this class is to add such wrapping.
  *

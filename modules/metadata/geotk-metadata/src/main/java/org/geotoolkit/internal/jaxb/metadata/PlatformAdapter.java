@@ -49,7 +49,7 @@ public final class PlatformAdapter extends MetadataAdapter<PlatformAdapter,Platf
     }
 
     /**
-     * Returns the PlatformPass value wrapped by a {@code MI_PlatformPass} element.
+     * Returns the value wrapped by a {@code MI_PlatformPass} element.
      *
      * @param value The value to marshall.
      * @return The adapter which wraps the metadata value.
@@ -60,7 +60,7 @@ public final class PlatformAdapter extends MetadataAdapter<PlatformAdapter,Platf
     }
 
     /**
-     * Returns the {@link DefaultPlatformPass} generated from the metadata value.
+     * Returns the {@link DefaultPlatform} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
@@ -74,7 +74,7 @@ public final class PlatformAdapter extends MetadataAdapter<PlatformAdapter,Platf
     }
 
     /**
-     * Sets the value for the {@link DefaultPlatformPass}. This method is systematically
+     * Sets the value for the {@link DefaultPlatform}. This method is systematically
      * called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.

@@ -144,7 +144,7 @@ public class IndexedResourceCompiler extends CommandLine implements FilenameFilt
      *          to process. This directory should contains {@code java} and {@code resources}
      *          sub-directories, followed by the usual directories for Java packages.
      * @param  resourcesToProcess The resource bundle base classes
-     *         (e.g. <code>{@linkplain org.geotoolkit.resources.i18n.Vocabulary}.class}</code>).
+     *         (e.g. <code>{@linkplain org.geotoolkit.resources.Vocabulary}.class}</code>).
      */
     public IndexedResourceCompiler(final String[] arguments, final File mainDirectory,
             final Class<? extends IndexedResourceBundle>[] resourcesToProcess)

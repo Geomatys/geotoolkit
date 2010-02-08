@@ -69,7 +69,7 @@ public final class CRSUtilities {
      * Returns the dimension within the coordinate system of the first occurrence of an axis
      * colinear with the specified axis. If an axis with the same
      * {@linkplain CoordinateSystemAxis#getDirection direction} or an
-     * {@linkplain AxisDirection#inverse opposite} direction than {@code axis}
+     * {@linkplain AxisDirection#opposite opposite} direction than {@code axis}
      * ocurs in the coordinate system, then the dimension of the first such occurrence
      * is returned. That is, the a value <var>k</var> such that:
      *

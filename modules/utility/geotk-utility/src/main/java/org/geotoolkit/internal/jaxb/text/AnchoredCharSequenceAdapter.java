@@ -61,7 +61,8 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
     public final AnchoredStringAdapter string;
 
     /**
-     * An adapter for {@link InternationalString} using the same anchors than this adapter.
+     * An adapter for {@link org.opengis.util.InternationalString}
+     * using the same anchors than this adapter.
      */
     public final AnchoredInternationalStringAdapter international;
 

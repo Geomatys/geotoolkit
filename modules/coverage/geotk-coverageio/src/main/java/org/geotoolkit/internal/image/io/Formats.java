@@ -95,7 +95,7 @@ public final class Formats {
 
     /**
      * Searchs {@link ImageReader}s that claim to be able to decode the given input, and call
-     * {@link ReadCall#filter(ImageReader)} for each of them until a call succeed. If every
+     * {@link ReadCall#read(ImageReader)} for each of them until a call succeed. If every
      * readers fail with an {@link IOException}, the exception of the first reader is rethrown
      * by this method.
      *

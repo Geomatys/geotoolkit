@@ -112,7 +112,7 @@ public class ObjectiveAnalysis {
 
     /**
      * Returns the number of points to be computed by this instance. This is the number
-     * of grid cells. The {@link #interpole interpole(...)} method will return an array
+     * of grid cells. The {@link #interpolate interpolate(...)} method will return an array
      * of this length.
      *
      * @return The number of points to be computed.

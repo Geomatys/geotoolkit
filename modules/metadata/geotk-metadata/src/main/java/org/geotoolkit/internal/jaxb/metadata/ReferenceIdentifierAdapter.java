@@ -68,7 +68,7 @@ public final class ReferenceIdentifierAdapter
     }
 
     /**
-     * Returns the {@link NamedIdentifier} generated from the metadata value.
+     * Returns the {@link DefaultReferenceIdentifier} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.
@@ -85,7 +85,7 @@ public final class ReferenceIdentifierAdapter
     }
 
     /**
-     * Sets the value for the {@link NamedIdentifier}.
+     * Sets the value for the {@link DefaultReferenceIdentifier}.
      * This method is systematically called at unmarshalling-time by JAXB.
      *
      * @param metadata The unmarshalled metadata.

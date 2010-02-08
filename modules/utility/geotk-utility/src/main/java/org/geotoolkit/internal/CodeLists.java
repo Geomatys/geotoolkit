@@ -150,7 +150,7 @@ public final class CodeLists implements CodeList.Filter {
      * @param name The name of the code to obtain.
      * @param canCreate {@code true} if this method is allowed to create new code.
      * @return A code matching the given name, or {@code null} if the name is null
-     *         or if no matching code is found and {@code canCreate} is {@code false).
+     *         or if no matching code is found and {@code canCreate} is {@code false}.
      *
      * @see CodeList#valueOf(Class, String)
      *

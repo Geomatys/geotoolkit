@@ -23,14 +23,14 @@
  * ISO-19139 specifies this kind of values has to be surrounded by elements representing
  * the data type. The role of these adapters is to add these elements around the value.
  * <p>
- * For example, a {@link String} value has to be marshalled this way:
+ * For example, a {@link java.lang.String} value has to be marshalled this way:
  *
  * {@preformat text
  *     <gco:CharacterString>my text</gco:CharacterString>
  * }
  *
- * In this example, {@code gco} is the prefix for the {@link http://www.isotc211.org/2005/gco}
- * namespace URL.</p>
+ * In this example, {@code gco} is the prefix for the {@code http://www.isotc211.org/2005/gco}
+ * namespace URL.
  *
  * @author Cédric Briançon (Geomatys)
  * @version 3.00

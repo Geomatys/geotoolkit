@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import org.opengis.util.InternationalString;
+
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;

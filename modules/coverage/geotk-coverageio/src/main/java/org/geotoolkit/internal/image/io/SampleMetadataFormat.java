@@ -41,7 +41,7 @@ import org.geotoolkit.image.io.metadata.MetadataTreeTable;
  * names are extracted from the node names. The type of attribute node ({@link #DATATYPE_STRING},
  * {@link #DATATYPE_DOUBLE}, <i>etc.</i>) can optionally be stored.
  * <p>
- * Subclasses can override the {@link #getDataType(Node)} method in order to specify the
+ * Subclasses can override the {@link #getDataType(Node, int)} method in order to specify the
  * {@code DATATYPE_*} constant to associate to an attribute.
  *
  * @author Martin Desruisseaux (Geomatys)

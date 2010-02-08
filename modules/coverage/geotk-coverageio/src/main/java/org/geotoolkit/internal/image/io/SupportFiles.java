@@ -21,6 +21,7 @@ import java.io.*;
 import javax.imageio.IIOException;
 import java.awt.geom.AffineTransform;
 import java.net.URL;
+import java.net.URI;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
@@ -139,7 +140,7 @@ public final class SupportFiles {
      * used only as a fallback if no file exist with the extension for <cite>World File</cite>.
      * <p>
      * While not mandatory, it is recommanded to invoke {@link IOUtilities#tryToFile(Object)}
-     * before this method in order to increase the chances to pass a {@link File) argument.
+     * before this method in order to increase the chances to pass a {@link File} argument.
      * This allows us to check if the file exists.
      *
      * @param  path The path as a {@link String}, {@link File}, {@link URL} or {@link URI}.

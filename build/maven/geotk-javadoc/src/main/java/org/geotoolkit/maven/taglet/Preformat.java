@@ -183,8 +183,9 @@ public final class Preformat implements Taglet {
         final boolean math  = format.equals("math");
         final boolean wkt   = format.equals("wkt");
         final boolean xml   = format.equals("xml");
+        final boolean sql   = format.equals("sql");
         final boolean shell = format.equals("shell");
-        if (!java && !math && !wkt && !xml && !shell && !format.equals("text")) {
+        if (!java && !math && !wkt && !xml && !sql && !shell && !format.equals("text")) {
             ConfigurationImpl.getInstance().root.printWarning(tag.position(), "Unknown format: " + format);
         }
         /*

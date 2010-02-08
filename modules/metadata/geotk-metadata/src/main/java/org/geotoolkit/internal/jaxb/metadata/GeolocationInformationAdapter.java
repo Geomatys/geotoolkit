@@ -60,7 +60,7 @@ public final class GeolocationInformationAdapter extends MetadataAdapter<Geoloca
     }
 
     /**
-     * Returns the {@link DefaultGeolocationInformation} generated from the metadata value.
+     * Returns the {@link AbstractGeolocationInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
@@ -74,8 +74,8 @@ public final class GeolocationInformationAdapter extends MetadataAdapter<Geoloca
     }
 
     /**
-     * Sets the value for the {@link DefaultGeolocationInformation}. This method is systematically
-     * called at unmarshalling time by JAXB.
+     * Sets the value for the {@link AbstractGeolocationInformation}.
+     * This method is systematically called at unmarshalling time by JAXB.
      *
      * @param metadata The unmarshalled metadata.
      */

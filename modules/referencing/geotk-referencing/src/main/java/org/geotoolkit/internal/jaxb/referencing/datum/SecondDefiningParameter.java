@@ -30,14 +30,9 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Stores the second defining parameter of an {@linkplain Ellipsoid ellipsoid}. If
- * {@link Ellipsoid#isIvfDefinitive} is {@code true}, the {@link #inverseFlattening}
- * value should be initialized. Otherwise it is the {@link #semiMinorAxis} parameter
- * that should have be defined.
- * <p>
+ * Stores the second defining parameter of an {@linkplain Ellipsoid ellipsoid}.
  * The goal of this class is to allow JAXB to handle a second defining parameter,
- * according to the kind of ellipsoid we are facing to. Exactly one field in this
- * class is non-null; all other fields shall be null.
+ * according to the kind of ellipsoid we are facing to.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)

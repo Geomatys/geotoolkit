@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
-import java.util.Locale;
 import java.util.logging.Level;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
@@ -41,7 +40,8 @@ import org.geotoolkit.resources.Wizards;
 
 
 /**
- * Guides the user through the steps of creating a set of {@linkplain Tile tiles}.
+ * Guides the user through the steps of creating a set of
+ * {@linkplain org.geotoolkit.image.io.mosaic.Tile tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)

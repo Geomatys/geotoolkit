@@ -20,6 +20,7 @@ package org.geotoolkit.internal.swing.table;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import org.jdesktop.swingx.table.TableColumnExt;

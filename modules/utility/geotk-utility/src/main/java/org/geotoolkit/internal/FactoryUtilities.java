@@ -21,6 +21,7 @@ import java.util.Map;
 import java.awt.RenderingHints;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.Factory;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Utilities;
 

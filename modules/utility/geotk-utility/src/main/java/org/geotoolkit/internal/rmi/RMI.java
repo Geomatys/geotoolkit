@@ -105,7 +105,7 @@ public final class RMI {
      * Returns the temporary directory, preferably visible to every nodes. By default this
      * method returns the value of {@code System.getProperty("java.io.tmpdir")}, which is usually
      * <strong>not</strong> a directory shared by every nodes. If a shared directory exists, it
-     * should have been declared by a call to {@link #setSharedTemporaryDirectory(String)}
+     * should have been declared by a call to {@link #setSharedTemporaryDirectory(File)}
      * before the call to this method.
      *
      * @return The temporary directory to use.

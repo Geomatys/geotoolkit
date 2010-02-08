@@ -214,7 +214,7 @@ public enum Installation {
     /**
      * Returns a {@link File} if possible, or an {@link URL} otherwise, from a resource name.
      * If the string is not an URL or an absolute path, then the file is searched on the classpath
-     * first, or in the directory given by {@link #directory()} if not found on the classpath.
+     * first, or in the directory given by {@link #directory(boolean)} if not found on the classpath.
      *
      * @param  caller The class to use for fetching resources, typically the caller class.
      * @param  path   A string representation of a filename or a URL.

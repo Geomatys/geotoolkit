@@ -279,8 +279,9 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }, 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, SI.METRE, true);
 
     /**
-     * The identifiers to be given to {@link MapProjection#createDescriptor} methods.
-     * The keys are the code and the values are the identifiers.
+     * The identifiers which can be declared to the descriptor. The keys are the code and the
+     * values are the identifiers. Only a subset of this collection will actually be used. The
+     * subset is specified by a call to a {@code select} method.
      */
     private final Map<String,NamedIdentifier> identifiers;
 

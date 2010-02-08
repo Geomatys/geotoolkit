@@ -143,8 +143,8 @@ public final class Warnings {
 
     /**
      * Returns the error message from the given resource key and arguments.
-     * The key shall be one of the {@link Errors.Key} constants. This is used
-     * for formatting the message in {@link IIOException}.
+     * The key shall be one of the {@link org.geotoolkit.resources.Errors.Keys} constants.
+     * This is used for formatting the message in {@link javax.imageio.IIOException}.
      *
      * @param  plugin The {@code SpatialImageReader} or {@code SpatialImageWriter} invoking this method.
      * @param  key The key from the error resource bundle to use for creating a message.

@@ -17,8 +17,12 @@
  */
 
 /**
- * For internal use by the Geotk coverage implementations.
- * <strong>Do not use</strong>.
+ * A set of helper classes for coverage handling in the Geotk implementation.
+ *
+ * <STRONG>Do not use!</STRONG>
+ *
+ * This package is for internal use by Geotk only. Classes in this package
+ * may change in incompatible ways in any future version without notice.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

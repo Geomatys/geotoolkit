@@ -60,8 +60,9 @@ public final class GridDomainAccessor extends MetadataAccessor {
     /**
      * Creates a new accessor for the given metadata.
      *
-     * @param metadata The Image I/O metadata. An instance of the {@link SpatialMetadata}
-     *                 sub-class is recommanded, but not mandatory.
+     * @param metadata The Image I/O metadata. An instance of the
+     *        {@link org.geotoolkit.image.io.metadata.SpatialMetadata}
+     *        sub-class is recommanded, but not mandatory.
      */
     public GridDomainAccessor(final IIOMetadata metadata) {
         super(metadata, FORMAT_NAME, "RectifiedGridDomain", null);
@@ -193,7 +194,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
      *   <li>{@link #addOffsetVector}</li>
      * </ul>
      *
-     * {@section Grid and CRS dimensions)
+     * {@section Grid and CRS dimensions}
      * The dimension of the grid (named {@code gridDim} below) is typically equals to the dimension
      * of the CRS (named {@code crsDim} below). But in some cases the CRS dimension may be greater
      * than the grid dimension (the converse is not allowed however).

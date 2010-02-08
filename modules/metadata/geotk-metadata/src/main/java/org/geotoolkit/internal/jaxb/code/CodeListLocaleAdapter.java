@@ -19,6 +19,8 @@ package org.geotoolkit.internal.jaxb.code;
 
 import java.util.Locale;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import org.opengis.util.CodeList;
 import org.geotoolkit.resources.Locales;
 
 

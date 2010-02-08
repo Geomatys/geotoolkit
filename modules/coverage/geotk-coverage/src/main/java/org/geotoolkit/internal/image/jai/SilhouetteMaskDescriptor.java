@@ -19,9 +19,10 @@ package org.geotoolkit.internal.image.jai;
 
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
-import static org.geotoolkit.image.jai.SilhouetteMask.OPERATION_NAME;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.image.jai.SilhouetteMask;
+import static org.geotoolkit.image.jai.SilhouetteMask.OPERATION_NAME;
 
 
 /**

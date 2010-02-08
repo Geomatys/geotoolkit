@@ -73,8 +73,8 @@ public final class IOUtilities {
 
     /**
      * Converts a {@link URL} to a {@link File}. Conceptually this work is performed by a call
-     * to {@link URL#toURI()} followed by a call to the {@link File(URI)} constructor. However
-     * this method adds the following functionalities:
+     * to {@link URL#toURI()} followed by a call to the {@link File#File(URI)} constructor.
+     * However this method adds the following functionalities:
      * <p>
      * <ul>
      *   <li>Optionally decodes the {@code "%XX"} sequences, where {@code "XX"} is a number.</li>

@@ -129,24 +129,48 @@
         </configuration>
       </plugin>
 
-      <!-- Copies the OpenOffice-generated .class files and Creates the oxt file -->
+      <!-- Copy the OpenOffice-generated .class files.
+           This is a subset of the plugin declared in the profile section below. -->
       <plugin>
         <groupId>org.geotoolkit.project</groupId>
         <artifactId>geotk-unopkg</artifactId>
         <version>${project.version}</version>
-        <configuration>
-          <oxtName>geotk-${project.version}</oxtName>
-        </configuration>
         <executions>
           <execution>
             <goals>
               <goal>javamaker</goal>
-              <goal>unopkg</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+
+  <!-- Create the oxt file, only if the "package" profile is enabled. -->
+  <profiles>
+    <profile>
+      <id>package</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.geotoolkit.project</groupId>
+            <artifactId>geotk-unopkg</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <oxtName>geotk-${project.version}</oxtName>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>javamaker</goal>
+                  <goal>unopkg</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

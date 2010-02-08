@@ -20,7 +20,7 @@
 /**
  * Javadoc taglets for processing custom tags in Geotoolkit source code comments.
  * Contains also helper tools for managing taglets in the Geotoolkit code base,
- * for example {@link org.geotoolkit.maven.tools.CommentUpdater}. The later is not
+ * for example {@link org.geotoolkit.maven.taglet.CommentUpdater}. The later is not
  * a Maven plugin, but is used for managing the source code.
  *
  * @author Martin Desruisseaux (IRD)

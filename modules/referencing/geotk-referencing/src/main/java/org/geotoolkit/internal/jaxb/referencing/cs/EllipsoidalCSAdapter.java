@@ -51,7 +51,7 @@ public final class EllipsoidalCSAdapter extends MetadataAdapter<EllipsoidalCSAda
     }
 
     /**
-     * Returns the {@link CartesianCS} value wrapped by a {@code gml:ellipsoidalCS} element.
+     * Returns the {@link EllipsoidalCS} value wrapped by a {@code gml:ellipsoidalCS} element.
      *
      * @param  value The value to marshall.
      * @return The adapter which wraps the metadata value.
@@ -62,7 +62,7 @@ public final class EllipsoidalCSAdapter extends MetadataAdapter<EllipsoidalCSAda
     }
 
     /**
-     * Returns the {@link DefaultCartesianCS} generated from the metadata value.
+     * Returns the {@link DefaultEllipsoidalCS} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *
      * @return The metadata to be marshalled.

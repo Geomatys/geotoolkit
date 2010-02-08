@@ -168,9 +168,9 @@ public final class CoverageUtilities {
      * data exists. An example is when you have raw data whose data type is float and you want
      * to render them using a palette. You usually do this by specifying a set of {@link Category}
      * object which will map some intervals of the raw data to some specific colors. The rendered
-     * version that we will create using the method {@link GridCoverage2D#geophysics(false)} will
-     * be backed by a RenderedImage with an IndexColorModel representing the colors provided in
-     * the Categories.
+     * version that we will create using the method {@code GridCoverage2D.view(ViewType.RENDERED)}
+     * will be backed by a RenderedImage with an IndexColorModel representing the colors provided
+     * in the Categories.
      *
      * @param gridCoverage
      *          to check for the existence of categories with tranformations
@@ -306,7 +306,7 @@ public final class CoverageUtilities {
      * @param hasFilter {@code true} if the operation we will apply is going to use a filter.
      * @param hints The hints to use when applying a certain operation.
      * @return {@link ViewType#SAME} if nothing has to be done on the provided coverage,
-     *         {@link ViewType.PHOTOGRAPHIC} if a color expansion has to be provided,
+     *         {@link ViewType#PHOTOGRAPHIC} if a color expansion has to be provided,
      *         {@link ViewType#GEOPHYSICS} if we need to employ the geophysics view of
      *         the provided coverage,
      *         {@link ViewType#NATIVE} if we suggest to employ the native (usually packed) view

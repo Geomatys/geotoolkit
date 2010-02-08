@@ -17,12 +17,12 @@
  */
 
 /**
- * A set of helper classes for Geotk implementation;
+ * A set of helper classes for I/O operations in the Geotk implementation.
  *
- * <STRONG>Do not use!</STRONG>.
+ * <STRONG>Do not use!</STRONG>
  *
- * This package is for internal use only. Classes in this package may change
- * in incompatible ways in any future version.
+ * This package is for internal use by Geotk only. Classes in this package
+ * may change in incompatible ways in any future version without notice.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
