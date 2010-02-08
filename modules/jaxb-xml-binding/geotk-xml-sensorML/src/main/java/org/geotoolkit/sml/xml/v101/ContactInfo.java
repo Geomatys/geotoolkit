@@ -22,6 +22,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractAddress;
+import org.geotoolkit.sml.xml.AbstractContactInfo;
+import org.geotoolkit.sml.xml.AbstractPhone;
 import org.geotoolkit.util.Utilities;
 
 
@@ -84,7 +87,7 @@ import org.geotoolkit.util.Utilities;
     "contactInstructions"
 })
 @XmlRootElement(name = "contactInfo")
-public class ContactInfo {
+public class ContactInfo implements AbstractContactInfo {
 
     private ContactInfo.Phone phone;
     private ContactInfo.Address address;
@@ -312,7 +315,7 @@ public class ContactInfo {
         "country",
         "electronicMailAddress"
     })
-    public static class Address {
+    public static class Address implements AbstractAddress {
 
         private List<String> deliveryPoint;
         private String city;
@@ -557,7 +560,7 @@ public class ContactInfo {
         "voice",
         "facsimile"
     })
-    public static class Phone {
+    public static class Phone implements AbstractPhone {
 
         private List<String> voice;
         private List<String> facsimile;

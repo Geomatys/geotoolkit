@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,27 +14,33 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sml.xml;
 
-import org.geotoolkit.gml.xml.v311.BoundingShapeEntry;
-import org.geotoolkit.gml.xml.v311.LocationPropertyType;
+
+package org.geotoolkit.sml.xml;
 
 /**
  *
- * @author Guilhem Legal (Geomatys)
- * @module pending
+ * @author Mehdi Sidhoum (Geomatys).
  */
-public interface System extends AbstractComponent {
+public interface AbstractDocumentation {
 
-    public AbstractComponents getComponents();
+    public AbstractDocument getDocument();
 
-    public void setComponents(AbstractComponents components);
+    public AbstractDocumentList getDocumentList();
 
-    public AbstractPositions getPositions();
+    public String getRemoteSchema();
 
-    public void setPositions(AbstractPositions positions);
+    public String getActuate();
 
-    public BoundingShapeEntry getBoundedBy();
+    public String getArcrole();
 
-    public LocationPropertyType getLocation();
+    public String getHref();
+
+    public String getRole();
+
+    public String getShow();
+
+    public String getTitle();
+
+    public String getType();
 }

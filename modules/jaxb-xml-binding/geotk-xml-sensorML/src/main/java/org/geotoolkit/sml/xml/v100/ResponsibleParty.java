@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractResponsibleParty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -59,7 +60,7 @@ import org.geotoolkit.util.Utilities;
     "contactInfo"
 })
 @XmlRootElement(name = "ResponsibleParty")
-public class ResponsibleParty {
+public class ResponsibleParty implements AbstractResponsibleParty {
 
     private String individualName;
     private String organizationName;

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractPhone;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -49,7 +50,7 @@ import org.geotoolkit.util.Utilities;
     "voice",
     "facsimile"
 })
-public class PhoneType {
+public class PhoneType implements AbstractPhone {
 
     private List<String> voice;
     private List<String> facsimile;

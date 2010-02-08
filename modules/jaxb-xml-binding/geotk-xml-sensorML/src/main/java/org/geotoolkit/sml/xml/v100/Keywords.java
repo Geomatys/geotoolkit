@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.util.Utilities;
 
 
@@ -65,7 +66,7 @@ import org.geotoolkit.util.Utilities;
     "keywordList"
 })
 @XmlRootElement(name = "keywords")
-public class Keywords {
+public class Keywords implements AbstractKeywords {
 
     @XmlElement(name = "KeywordList")
     private KeywordList keywordList;

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractPerson;
 
 
 /**
@@ -64,7 +65,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "email"
 })
 @XmlRootElement(name = "Person")
-public class Person {
+public class Person implements AbstractPerson {
 
     @XmlElement(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

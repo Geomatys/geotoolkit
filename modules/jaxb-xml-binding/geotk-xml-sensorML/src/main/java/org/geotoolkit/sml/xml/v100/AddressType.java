@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractAddress;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "country",
     "electronicMailAddress"
 })
-public class AddressType {
+public class AddressType implements AbstractAddress {
 
     private List<String> deliveryPoint;
     private String city;

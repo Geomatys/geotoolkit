@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
 
 
 /**
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     "documentList"
 })
 @XmlRootElement(name = "documentation")
-public class Documentation {
+public class Documentation implements AbstractDocumentation {
 
     @XmlElement(name = "Document")
     private Document document;

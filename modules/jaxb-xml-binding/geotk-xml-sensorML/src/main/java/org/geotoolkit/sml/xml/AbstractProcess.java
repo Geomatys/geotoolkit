@@ -32,4 +32,10 @@ public interface AbstractProcess extends AbstractSML {
     public AbstractValidTime getValidTime();
 
     public void setValidTime(AbstractValidTime validTime);
+
+    public List<? extends AbstractKeywords> getKeywords();
+
+    public List<? extends AbstractContact> getContact();
+
+    public List<? extends AbstractDocumentation> getDocumentation();
 }

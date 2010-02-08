@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractDocumentList;
+import org.geotoolkit.sml.xml.AbstractDocumentListMember;
 import org.geotoolkit.util.Utilities;
 
 
@@ -71,7 +73,7 @@ import org.geotoolkit.util.Utilities;
     "member"
 })
 @XmlRootElement(name = "DocumentList")
-public class DocumentList {
+public class DocumentList implements AbstractDocumentList {
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private StringOrRefType description;
@@ -203,7 +205,7 @@ public class DocumentList {
     @XmlType(name = "", propOrder = {
         "document"
     })
-    public static class Member {
+    public static class Member implements AbstractDocumentListMember {
 
         @XmlElement(name = "Document")
         private Document document;

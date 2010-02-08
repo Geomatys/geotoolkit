@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.EngineeringCRSType;
+import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
 import org.geotoolkit.util.Utilities;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.util.Utilities;
     "engineeringCRS"
 })
 @XmlRootElement(name = "spatialReferenceFrame")
-public class SpatialReferenceFrame {
+public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     @XmlElement(name = "EngineeringCRS", namespace = "http://www.opengis.net/gml", required = true)
     private EngineeringCRSType engineeringCRS;

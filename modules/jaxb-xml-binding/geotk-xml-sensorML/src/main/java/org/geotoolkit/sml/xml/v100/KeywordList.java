@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractKeywordList;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "keyword"
 })
-public class KeywordList {
+public class KeywordList implements AbstractKeywordList {
 
     @XmlElementRef(name = "keyword", namespace = "http://www.opengis.net/sensorML/1.0", type = JAXBElement.class)
     private List<JAXBElement<String>> keyword;
@@ -77,11 +78,15 @@ public class KeywordList {
     /**
      * Gets the value of the keyword property.
      */
-    public List<JAXBElement<String>> getKeyword() {
+    public List<String> getKeyword() {
         if (keyword == null) {
             keyword = new ArrayList<JAXBElement<String>>();
         }
-        return this.keyword;
+        List<String> result = new ArrayList<String>();
+        for (JAXBElement<String> kw : keyword) {
+            result.add(kw.getValue());
+        }
+        return result;
     }
 
     /**
@@ -168,20 +173,9 @@ public class KeywordList {
 
         if (object instanceof KeywordList) {
             final KeywordList that = (KeywordList) object;
-            boolean kw = false;
-            if (this.getKeyword().size() == that.getKeyword().size()) {
-                kw = true;
-                for (int i = 0; i < this.getKeyword().size(); i++) {
-                    JAXBElement<String> jb1 = this.getKeyword().get(i);
-                    JAXBElement<String> jb2 = that.getKeyword().get(i);
-                    if (!Utilities.equals(jb1.getValue(), jb2.getValue())) {
-                        kw = false;
-                    }
-                }
-            }
             return Utilities.equals(this.codeSpace, that.codeSpace) &&
                     Utilities.equals(this.id, that.id) &&
-                    kw;
+                    Utilities.equals(this.getKeyword(), that.getKeyword());
         }
         return false;
     }

@@ -180,7 +180,7 @@ public final class NIOUtilities {
         if (directory.isDirectory()) {
             for (File f : directory.listFiles()) {
                 if (f.isDirectory()) {
-                    deleteDirectory(directory);
+                    deleteDirectory(f);
                 } else {
                     final boolean deleted = f.delete();
                     if (!deleted) {

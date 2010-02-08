@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractContact;
 import org.geotoolkit.util.Utilities;
 
 
@@ -56,7 +57,7 @@ import org.geotoolkit.util.Utilities;
     "contactList"
 })
 @XmlRootElement(name = "contact")
-public class Contact {
+public class Contact implements AbstractContact {
 
     @XmlElement(name = "Person")
     private Person person;

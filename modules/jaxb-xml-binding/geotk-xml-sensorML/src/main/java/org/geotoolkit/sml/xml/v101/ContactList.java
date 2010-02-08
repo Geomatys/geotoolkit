@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractContactList;
+import org.geotoolkit.sml.xml.AbstractContactListMember;
 import org.geotoolkit.util.Utilities;
 
 
@@ -69,7 +71,7 @@ import org.geotoolkit.util.Utilities;
     "member"
 })
 @XmlRootElement(name = "ContactList")
-public class ContactList {
+public class ContactList implements AbstractContactList {
 
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private StringOrRefType description;
@@ -188,7 +190,7 @@ public class ContactList {
         "person",
         "responsibleParty"
     })
-    public static class Member {
+    public static class Member implements AbstractContactListMember {
 
         @XmlElement(name = "Person")
         private Person person;

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractOnlineResource;
 import org.geotoolkit.util.Utilities;
 
 
@@ -46,7 +47,7 @@ import org.geotoolkit.util.Utilities;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "onlineResource")
-public class OnlineResource {
+public class OnlineResource implements AbstractOnlineResource {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")

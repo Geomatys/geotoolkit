@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractKeywordList;
+import org.geotoolkit.sml.xml.AbstractKeywords;
 import org.geotoolkit.util.Utilities;
 
 
@@ -69,7 +71,7 @@ import org.geotoolkit.util.Utilities;
     "keywordList"
 })
 @XmlRootElement(name = "keywords")
-public class Keywords {
+public class Keywords implements AbstractKeywords {
 
     @XmlElement(name = "KeywordList")
     private Keywords.KeywordList keywordList;
@@ -388,7 +390,7 @@ public class Keywords {
     @XmlType(name = "", propOrder = {
         "keyword"
     })
-    public static class KeywordList {
+    public static class KeywordList implements AbstractKeywordList {
 
         @XmlElement(required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

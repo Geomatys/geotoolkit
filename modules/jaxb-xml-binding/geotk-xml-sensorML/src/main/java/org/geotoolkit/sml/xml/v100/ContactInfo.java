@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sml.xml.AbstractContactInfo;
 import org.geotoolkit.util.Utilities;
 
 
@@ -84,7 +85,7 @@ import org.geotoolkit.util.Utilities;
     "contactInstructions"
 })
 @XmlRootElement(name = "contactInfo")
-public class ContactInfo {
+public class ContactInfo implements AbstractContactInfo {
 
     private PhoneType phone;
     private AddressType address;

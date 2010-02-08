@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
+import org.geotoolkit.sml.xml.AbstractDocument;
 
 
 /**
@@ -66,7 +67,7 @@ import org.geotoolkit.gml.xml.v311.StringOrRefType;
     "onlineResource"
 })
 @XmlRootElement(name = "Document")
-public class Document {
+public class Document implements AbstractDocument {
 
     @XmlElement(namespace = "http://www.opengis.net/gml", required = true)
     private StringOrRefType description;

@@ -141,10 +141,7 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
                    Utilities.equals(this.base,                that.base) && 
                    Utilities.equals(this.component,           that.component);
        }
-        System.out.println("super not equalw");
        return false;
-        
-        
     }
    
     /**
