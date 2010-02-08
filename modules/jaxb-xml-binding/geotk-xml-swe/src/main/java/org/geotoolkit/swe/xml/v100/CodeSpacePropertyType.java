@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractCodeSpaceProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -46,7 +47,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CodeSpacePropertyType")
-public class CodeSpacePropertyType {
+public class CodeSpacePropertyType implements AbstractCodeSpaceProperty {
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")

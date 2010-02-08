@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractVectorProperty;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "VectorPropertyType", propOrder = {
     "vector"
 })
-public class VectorPropertyType {
+public class VectorPropertyType implements AbstractVectorProperty {
 
     @XmlElement(name = "Vector")
     private VectorType vector;

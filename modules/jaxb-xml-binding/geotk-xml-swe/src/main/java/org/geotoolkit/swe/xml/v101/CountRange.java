@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCountRange;
 
 
 /**
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "value"
 })
 @XmlRootElement(name = "CountRange")
-public class CountRange extends AbstractDataComponentEntry {
+public class CountRange extends AbstractDataComponentEntry implements AbstractCountRange {
 
     private AllowedValuesPropertyType constraint;
     private List<QualityPropertyType> quality;
@@ -75,31 +76,33 @@ public class CountRange extends AbstractDataComponentEntry {
 
     /**
      * Gets the value of the constraint property.
-     
+     */
     public AllowedValuesPropertyType getConstraint() {
         return constraint;
     }
 
     /**
      * Sets the value of the constraint property.
-    
+     */
     public void setConstraint(AllowedValuesPropertyType value) {
         this.constraint = value;
     }
 
     /**
      * Gets the value of the quality property.
-    
+     */
+    @Override
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
             quality = new ArrayList<QualityPropertyType>();
         }
         return this.quality;
-    } */
+    } 
 
     /**
      * Gets the value of the value property.
      */
+    @Override
     public List<Integer> getValue() {
         if (value == null) {
             value = new ArrayList<Integer>();
@@ -110,6 +113,7 @@ public class CountRange extends AbstractDataComponentEntry {
     /**
      * Gets the value of the referenceFrame property.
      */
+    @Override
     public String getReferenceFrame() {
         return referenceFrame;
     }
@@ -124,6 +128,7 @@ public class CountRange extends AbstractDataComponentEntry {
     /**
      * Gets the value of the axisID property.
      */
+    @Override
     public String getAxisID() {
         return axisID;
     }

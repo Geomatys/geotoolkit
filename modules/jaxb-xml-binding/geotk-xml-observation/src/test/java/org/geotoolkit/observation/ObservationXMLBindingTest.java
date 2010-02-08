@@ -102,7 +102,7 @@ public class ObservationXMLBindingTest {
 
         TextBlockEntry encoding            = new TextBlockEntry("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
-        AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("a text field", "some value"));
+        AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordEntry record       = new SimpleDataRecordEntry(fields);
         DataArrayEntry array               = new DataArrayEntry("array-001", 1, record, encoding, "somevalue");
@@ -161,7 +161,7 @@ public class ObservationXMLBindingTest {
                            "            <swe:elementType name=\"array-001\">" + '\n' +
                            "                <swe:SimpleDataRecord>" + '\n' +
                            "                    <swe:field name=\"text-field-001\">" + '\n' +
-                           "                        <swe:Text definition=\"a text field\">" + '\n' +
+                           "                        <swe:Text definition=\"urn:something\">" + '\n' +
                            "                            <swe:value>some value</swe:value>" + '\n' +
                            "                        </swe:Text>" + '\n' +
                            "                    </swe:field>" + '\n' +
@@ -308,7 +308,7 @@ public class ObservationXMLBindingTest {
                "            <swe:elementType name=\"array-001\">" + '\n' +
                "                <swe:SimpleDataRecord>" + '\n' +
                "                    <swe:field name=\"text-field-001\">" + '\n' +
-               "                        <swe:Text definition=\"a text field\">" + '\n' +
+               "                        <swe:Text definition=\"urn:something\">" + '\n' +
                "                            <swe:value>some value</swe:value>" + '\n' +
                "                        </swe:Text>" + '\n' +
                "                    </swe:field>" + '\n' +
@@ -337,7 +337,7 @@ public class ObservationXMLBindingTest {
 
         TextBlockEntry encoding            = new TextBlockEntry("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
-        AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("a text field", "some value"));
+        AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
         SimpleDataRecordEntry record       = new SimpleDataRecordEntry(fields);
         DataArrayEntry array               = new DataArrayEntry("array-001", 1, record, encoding, "somevalue");

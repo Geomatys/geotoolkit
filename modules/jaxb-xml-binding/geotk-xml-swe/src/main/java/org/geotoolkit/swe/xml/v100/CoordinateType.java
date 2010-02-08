@@ -99,6 +99,7 @@ public class CoordinateType implements Coordinate {
     /**
      * Gets the value of the count property.
      */
+    @Override
     public Count getCount() {
         return count;
     }
@@ -113,6 +114,7 @@ public class CoordinateType implements Coordinate {
     /**
      * Gets the value of the quantity property.
      */
+    @Override
     public QuantityType getQuantity() {
         return quantity;
     }
@@ -127,6 +129,7 @@ public class CoordinateType implements Coordinate {
     /**
      * Gets the value of the time property.
      */
+    @Override
     public TimeType getTime() {
         return time;
     }
@@ -142,6 +145,7 @@ public class CoordinateType implements Coordinate {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }

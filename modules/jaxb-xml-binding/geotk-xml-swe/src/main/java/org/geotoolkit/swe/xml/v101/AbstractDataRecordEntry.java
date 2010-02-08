@@ -18,6 +18,7 @@ package org.geotoolkit.swe.xml.v101;
 
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
 
 /**
  *
@@ -27,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlSeeAlso({SimpleDataRecordEntry.class})
 @XmlType(name="AbstractDataRecord")
-public class AbstractDataRecordEntry extends AbstractDataComponentEntry {
+public class AbstractDataRecordEntry extends AbstractDataComponentEntry implements AbstractDataRecord {
     
     /**
      * constructeur utilisé par jaxB.

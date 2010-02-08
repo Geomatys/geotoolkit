@@ -22,17 +22,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractQualityProperty;
 import org.geotoolkit.util.Utilities;
 
 
 /**
  * Allows for a simple quality assessment of the values carried by this component.
  * This value can be numerical or categorical thus allowing for things like accuracy, precision, tolerance, confidence level, etc...
- * 	      
  * The  meaning of the quality measure is indicated by the definition attribute of the chosen sub-component.
- * 	      
  * The use of the 'ref'attribute indicate that the value of accuracy is included itself in the data inside the referred component. 
- * 	      
  * This soft-typed Data Quality description may be replaced by ISO 19115/19139 DQ_DataQuality elements in later versions
  * 
  * <p>Java class for QualityPropertyType complex type.
@@ -65,7 +63,7 @@ import org.geotoolkit.util.Utilities;
     "category",
     "text"
 })
-public class QualityPropertyType {
+public class QualityPropertyType implements AbstractQualityProperty {
 
     @XmlElement(name = "Quantity")
     private QuantityType quantity;

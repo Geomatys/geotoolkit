@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.swe.xml.AbstractDataValueProperty;
 import org.w3c.dom.Element;
 
 
@@ -55,7 +56,7 @@ import org.w3c.dom.Element;
 @XmlType(name = "DataValuePropertyType", propOrder = {
     "any"
 })
-public class DataValuePropertyType {
+public class DataValuePropertyType implements AbstractDataValueProperty {
 
     @XmlAnyElement
     private List<Element> any;

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractTimeRange;
 
 
 /**
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
     "value"
 })
 @XmlRootElement(name = "TimeRange")
-public class TimeRange extends AbstractDataComponentEntry {
+public class TimeRange extends AbstractDataComponentEntry implements AbstractTimeRange {
 
     private UomPropertyType uom;
     private AllowedTimesPropertyType constraint;
@@ -82,10 +83,20 @@ public class TimeRange extends AbstractDataComponentEntry {
     public TimeRange(List<String> value) {
         this.value = value;
     }
+
+    /**
+     * Gets the value of the quality property.
+     *
+     */
+    @Override
+    public QualityPropertyType getQuality() {
+        return this.quality;
+    }
     
     /**
      * Gets the value of the uom property.
      */
+    @Override
     public UomPropertyType getUom() {
         return uom;
     }
@@ -100,6 +111,7 @@ public class TimeRange extends AbstractDataComponentEntry {
     /**
      * Gets the value of the value property.
      */
+    @Override
     public List<String> getValue() {
         if (value == null) {
             value = new ArrayList<String>();
@@ -110,6 +122,7 @@ public class TimeRange extends AbstractDataComponentEntry {
     /**
      * Gets the value of the referenceTime property.
      */
+    @Override
     public String getReferenceTime() {
         return referenceTime;
     }

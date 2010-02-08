@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.sml.xml.IoComponent;
 import org.geotoolkit.swe.xml.v101.AbstractDataArrayEntry;
 import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.BooleanType;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.Count;
 import org.geotoolkit.swe.xml.v101.CountRange;
@@ -93,7 +94,7 @@ public class IoComponentPropertyType implements IoComponent {
     @XmlElement(name = "Time", namespace = "http://www.opengis.net/swe/1.0.1")
     private TimeType time;
     @XmlElement(name = "Boolean", namespace = "http://www.opengis.net/swe/1.0.1")
-    private Boolean _boolean;
+    private BooleanType _boolean;
     @XmlElement(name = "Category", namespace = "http://www.opengis.net/swe/1.0.1")
     private Category category;
     @XmlElement(name = "Text", namespace = "http://www.opengis.net/swe/1.0.1")
@@ -242,7 +243,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Boolean }
      *     
      */
-    public Boolean getBoolean() {
+    public BooleanType getBoolean() {
         return _boolean;
     }
 
@@ -254,7 +255,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Boolean }
      *     
      */
-    public void setBoolean(Boolean value) {
+    public void setBoolean(BooleanType value) {
         this._boolean = value;
     }
 

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,6 +26,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCount;
 import org.geotoolkit.util.Utilities;
 
 
@@ -58,11 +60,11 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Count")
-public class Count extends AbstractDataComponentEntry {
+public class Count extends AbstractDataComponentEntry implements AbstractCount {
 
     private AllowedValuesPropertyType constraint;
     private List<QualityPropertyType> quality;
-    private int value;
+    private Integer value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String referenceFrame;
@@ -95,17 +97,30 @@ public class Count extends AbstractDataComponentEntry {
     public Count(int value) {
         this.value = value;
     }
+
+    /**
+     * Gets the value of the quality property.
+     */
+    @Override
+    public List<QualityPropertyType> getQuality() {
+        if (quality == null) {
+            quality = new ArrayList<QualityPropertyType>();
+        }
+        return this.quality;
+    }
     
     /**
      * Gets the value of the value property.
      */
-    public int getValue() {
+    @Override
+    public Integer getValue() {
         return value;
     }
 
     /**
      * Gets the value of the referenceFrame property.
      */
+    @Override
     public String getReferenceFrame() {
         return referenceFrame;
     }
@@ -113,6 +128,7 @@ public class Count extends AbstractDataComponentEntry {
     /**
      * Gets the value of the axisID property.
      */
+    @Override
     public String getAxisID() {
         return axisID;
     }

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractTime;
 import org.geotoolkit.util.Utilities;
 
 
@@ -32,7 +33,7 @@ import org.geotoolkit.util.Utilities;
     "uom",
     "value"
 })
-public class TimeType extends AbstractDataComponentEntry {
+public class TimeType extends AbstractDataComponentEntry implements AbstractTime {
 
     private UomPropertyType uom;
     //private AllowedTimesPropertyType constraint;

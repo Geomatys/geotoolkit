@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     AbstractConditionalType.class,
     AbstractVectorType.class
 })
-public abstract class AbstractDataRecordType extends AbstractDataComponentType {
+public abstract class AbstractDataRecordType extends AbstractDataComponentType implements AbstractDataRecord {
 
     public AbstractDataRecordType() {
 

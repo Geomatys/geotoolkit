@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCategory;
 import org.geotoolkit.util.Utilities;
 
 
@@ -59,7 +60,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Category")
-public class Category extends AbstractDataComponentEntry {
+public class Category extends AbstractDataComponentEntry  implements AbstractCategory {
 
     private CodeSpacePropertyType codeSpace;
     private AllowedTokensPropertyType constraint;
@@ -83,6 +84,36 @@ public class Category extends AbstractDataComponentEntry {
     public Category(String definition, String value) {
         super(definition);
         this.value = value;
+    }
+
+    /**
+     * Gets the value of the codeSpace property.
+     */
+    @Override
+    public CodeSpacePropertyType getCodeSpace() {
+        return codeSpace;
+    }
+
+    /**
+     * Sets the value of the codeSpace property.
+     */
+    public void setCodeSpace(CodeSpacePropertyType value) {
+        this.codeSpace = value;
+    }
+    
+    /**
+     * Gets the value of the quality property.
+     */
+    @Override
+    public QualityPropertyType getQuality() {
+        return quality;
+    }
+
+    /**
+     * Sets the value of the quality property.
+     */
+    public void setQuality(QualityPropertyType value) {
+        this.quality = value;
     }
     
     /**

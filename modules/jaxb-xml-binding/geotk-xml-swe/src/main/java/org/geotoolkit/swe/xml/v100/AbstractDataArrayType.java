@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataArray;
 import org.geotoolkit.util.Utilities;
 
 
@@ -64,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     DataArrayType.class,
     AbstractMatrixType.class
 })
-public abstract class AbstractDataArrayType extends AbstractDataComponentType {
+public abstract class AbstractDataArrayType extends AbstractDataComponentType implements AbstractDataArray {
 
     @XmlElement(required = true)
     private ElementCount elementCount;

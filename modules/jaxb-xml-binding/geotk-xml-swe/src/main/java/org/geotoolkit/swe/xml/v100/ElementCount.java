@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractElementCount;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -50,7 +51,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "count"
 })
-public class ElementCount {
+public class ElementCount implements AbstractElementCount {
 
     @XmlElement(name = "Count")
     private Count count;

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractText;
 
 
 /**
@@ -47,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "value"
 })
 @XmlRootElement(name = "Text")
-public class Text extends AbstractDataComponentType {
+public class Text extends AbstractDataComponentType implements AbstractText {
 
     private String value;
 

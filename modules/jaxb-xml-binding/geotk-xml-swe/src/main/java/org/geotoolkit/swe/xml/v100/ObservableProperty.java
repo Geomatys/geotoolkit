@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractObservableProperty;
 
 
 /**
@@ -43,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "ObservableProperty")
-public class ObservableProperty extends AbstractDataComponentType {
+public class ObservableProperty extends AbstractDataComponentType implements AbstractObservableProperty {
 
     public ObservableProperty() {
 

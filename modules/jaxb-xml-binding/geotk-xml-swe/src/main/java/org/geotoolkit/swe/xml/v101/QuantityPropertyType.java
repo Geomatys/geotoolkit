@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractQuantityProperty;
 
 
 /**
@@ -48,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "QuantityPropertyType", propOrder = {
     "quantity"
 })
-public class QuantityPropertyType {
+public class QuantityPropertyType implements AbstractQuantityProperty {
 
     @XmlElement(name = "Quantity", required = true)
     private QuantityType quantity;

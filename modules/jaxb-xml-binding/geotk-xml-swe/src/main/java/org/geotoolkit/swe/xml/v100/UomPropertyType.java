@@ -103,8 +103,8 @@ public class UomPropertyType implements UomProperty {
      *     {@link JAXBElement }{@code <}{@link BaseUnitType }{@code >}
      *     
      */
-    public JAXBElement<? extends UnitDefinitionType> getUnitDefinition() {
-        return unitDefinition;
+    public UnitDefinitionType getUnitDefinition() {
+        return (unitDefinition != null) ? unitDefinition.getValue() : null;
     }
 
     /**

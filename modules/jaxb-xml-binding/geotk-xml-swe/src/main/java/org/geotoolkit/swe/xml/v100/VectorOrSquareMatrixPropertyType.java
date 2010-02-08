@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractVectorOrSquareMatrixProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -51,7 +52,7 @@ import org.geotoolkit.util.Utilities;
     "vector",
     "squareMatrix"
 })
-public class VectorOrSquareMatrixPropertyType {
+public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareMatrixProperty {
 
     @XmlElement(name = "Vector")
     private VectorType vector;

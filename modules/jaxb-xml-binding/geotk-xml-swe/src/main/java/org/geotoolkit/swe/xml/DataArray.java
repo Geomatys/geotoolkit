@@ -21,7 +21,7 @@ package org.geotoolkit.swe.xml;
  * @author Guilhem Legal (Geomatys).
  * @module pending
  */
-public interface DataArray {
+public interface DataArray extends AbstractDataArray {
 
     public String getValues();
 

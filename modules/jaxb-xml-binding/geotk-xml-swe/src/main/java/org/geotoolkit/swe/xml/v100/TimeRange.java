@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractTimeRange;
 
 
 /**
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
     "value"
 })
 @XmlRootElement(name = "TimeRange")
-public class TimeRange extends AbstractDataComponentType {
+public class TimeRange extends AbstractDataComponentType implements AbstractTimeRange {
 
     private UomPropertyType uom;
     private AllowedTimesPropertyType constraint;

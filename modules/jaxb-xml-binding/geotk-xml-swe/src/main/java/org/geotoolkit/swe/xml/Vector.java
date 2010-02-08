@@ -16,11 +16,14 @@
  */
 package org.geotoolkit.swe.xml;
 
+import java.util.List;
+
 /**
  *
  * @author Guilhem Legal
  * @module pending
  */
-public interface Vector {
+public interface Vector extends AbstractVector {
 
+    public List<? extends Coordinate> getCoordinate();
 }

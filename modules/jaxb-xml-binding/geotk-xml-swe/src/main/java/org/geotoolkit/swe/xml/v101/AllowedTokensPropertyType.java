@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractAllowedTimesProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "AllowedTokensPropertyType", propOrder = {
     "allowedTokens"
 })
-public class AllowedTokensPropertyType {
+public class AllowedTokensPropertyType implements AbstractAllowedTimesProperty {
 
     @XmlElement(name = "AllowedTokens")
     private AllowedTokens allowedTokens;

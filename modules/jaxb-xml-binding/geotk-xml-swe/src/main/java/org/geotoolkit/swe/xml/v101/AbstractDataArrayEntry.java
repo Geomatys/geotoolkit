@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractDataArray;
+import org.geotoolkit.swe.xml.AbstractElementCount;
 import org.geotoolkit.util.Utilities;
 
 
@@ -65,7 +67,7 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({
     DataArrayEntry.class
 })
-public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry {
+public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry implements AbstractDataArray {
 
     @XmlElement(required = true)
     private AbstractDataArrayEntry.ElementCount elementCount;
@@ -160,7 +162,7 @@ public abstract class AbstractDataArrayEntry extends AbstractDataComponentEntry 
     @XmlType(name = "", propOrder = {
         "count"
     })
-    public static class ElementCount {
+    public static class ElementCount implements AbstractElementCount {
 
         @XmlElement(name = "Count")
         private Count count;

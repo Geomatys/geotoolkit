@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.swe.xml;
 
+import org.geotoolkit.gml.xml.v311.UnitDefinitionType;
+
 /**
  *
   * @author Guilhem Legal (Geomatys)
@@ -23,4 +25,23 @@ package org.geotoolkit.swe.xml;
  */
 public interface UomProperty {
 
+    public UnitDefinitionType getUnitDefinition();
+
+    public String getCode();
+
+    public String getRemoteSchema();
+
+    public String getType();
+
+    public String getHref();
+
+    public String getRole();
+
+    public String getArcrole();
+
+    public String getTitle();
+
+    public String getShow();
+
+    public String getActuate();
 }

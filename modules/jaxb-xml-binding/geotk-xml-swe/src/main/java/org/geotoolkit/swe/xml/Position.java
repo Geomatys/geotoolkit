@@ -21,6 +21,21 @@ package org.geotoolkit.swe.xml;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface Position {
+public interface Position extends AbstractVector {
+    
+    public AbstractTimeProperty getTime();
 
+    public AbstractVectorProperty getLocation();
+
+    public AbstractVectorOrSquareMatrixProperty getOrientation();
+
+    public AbstractVectorProperty getVelocity();
+
+    public AbstractVectorOrSquareMatrixProperty getAngularVelocity();
+
+    public AbstractVectorProperty getAcceleration();
+
+    public AbstractVectorOrSquareMatrixProperty getAngularAcceleration();
+
+    public AbstractVectorOrSquareMatrixProperty getState();
 }

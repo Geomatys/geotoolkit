@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractQuantityRange;
 import org.geotoolkit.util.Utilities;
 
 
@@ -63,7 +64,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "QuantityRange")
-public class QuantityRange extends AbstractDataComponentType {
+public class QuantityRange extends AbstractDataComponentType implements AbstractQuantityRange {
 
     private UomPropertyType uom;
     private AllowedValuesPropertyType constraint;
@@ -91,6 +92,7 @@ public class QuantityRange extends AbstractDataComponentType {
     /**
      * Gets the value of the uom property.
      */
+    @Override
     public UomPropertyType getUom() {
         return uom;
     }
@@ -120,6 +122,7 @@ public class QuantityRange extends AbstractDataComponentType {
      * Gets the value of the quality property.
      * 
      */
+    @Override
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
             quality = new ArrayList<QualityPropertyType>();
@@ -131,6 +134,7 @@ public class QuantityRange extends AbstractDataComponentType {
      * Gets the value of the value property.
      * 
      */
+    @Override
     public List<Double> getValue() {
         if (value == null) {
             value = new ArrayList<Double>();
@@ -175,6 +179,7 @@ public class QuantityRange extends AbstractDataComponentType {
     /**
      * Gets the value of the axisID property.
      */
+    @Override
     public String getAxisID() {
         return axisID;
     }

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractTimeProperty;
 import org.geotoolkit.util.Utilities;
 
 
@@ -49,7 +50,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "TimePropertyType", propOrder = {
     "time"
 })
-public class TimePropertyType {
+public class TimePropertyType implements AbstractTimeProperty {
 
     @XmlElement(name = "Time", required = true)
     private TimeType time;

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCount;
 
 
 /**
@@ -59,11 +60,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "value"
 })
 @XmlRootElement(name = "Count")
-public class Count extends AbstractDataComponentType {
+public class Count extends AbstractDataComponentType implements AbstractCount {
 
     private AllowedValuesPropertyType constraint;
     private List<QualityPropertyType> quality;
-    private BigInteger value;
+    private Integer value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String referenceFrame;
@@ -90,6 +91,7 @@ public class Count extends AbstractDataComponentType {
     /**
      * Gets the value of the quality property.
      */
+    @Override
     public List<QualityPropertyType> getQuality() {
         if (quality == null) {
             quality = new ArrayList<QualityPropertyType>();
@@ -100,20 +102,22 @@ public class Count extends AbstractDataComponentType {
     /**
      * Gets the value of the value property.
      */
-    public BigInteger getValue() {
+    @Override
+    public Integer getValue() {
         return value;
     }
 
     /**
      * Sets the value of the value property.
      */
-    public void setValue(BigInteger value) {
+    public void setValue(Integer value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the referenceFrame property.
      */
+    @Override
     public String getReferenceFrame() {
         return referenceFrame;
     }

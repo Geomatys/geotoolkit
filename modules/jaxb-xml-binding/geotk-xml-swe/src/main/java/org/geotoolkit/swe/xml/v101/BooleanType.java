@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractBoolean;
 import org.geotoolkit.util.Utilities;
 
 
@@ -29,7 +30,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "Boolean", propOrder = {
     "value"
 })
-public class BooleanType extends AbstractDataComponentEntry {
+public class BooleanType extends AbstractDataComponentEntry  implements AbstractBoolean {
 
     protected java.lang.Boolean value;
     @XmlAttribute

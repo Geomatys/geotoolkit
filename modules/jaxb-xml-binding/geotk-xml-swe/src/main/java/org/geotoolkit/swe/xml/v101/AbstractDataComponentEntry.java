@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v101;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,7 +63,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      * definition of the record.
      */
     @XmlAttribute
-    private String definition;
+    private URI definition;
     
     /**
      * Constructor used by jaxb.
@@ -76,7 +77,9 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
     }
 
     public AbstractDataComponentEntry(String definition) {
-        this.definition = definition;
+        if (definition != null) {
+            this.definition = URI.create(definition);
+        }
     }
     
     /**
@@ -84,7 +87,9 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      */
     public AbstractDataComponentEntry(String id, String definition, boolean fixed) {
         this.id         = id;
-        this.definition = definition;
+        if (definition != null) {
+            this.definition = URI.create(definition);
+        }
         this.fixed      = fixed;
     }
     
@@ -113,7 +118,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      * {@inheritDoc}
      */
     @Override
-    public String getDefinition() {
+    public URI getDefinition() {
         return definition;
     }
     
@@ -202,7 +207,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      * @param definition the definition to set
      */
     public void setDefinition(String definition) {
-        this.definition = definition;
+        this.definition = URI.create(definition);
     }
     
 }

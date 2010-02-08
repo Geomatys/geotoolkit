@@ -16,6 +16,20 @@
  */
 package org.geotoolkit.sml.xml;
 
+import javax.xml.bind.JAXBElement;
+import org.geotoolkit.swe.xml.AbstractCategory;
+import org.geotoolkit.swe.xml.AbstractCount;
+import org.geotoolkit.swe.xml.AbstractCountRange;
+import org.geotoolkit.swe.xml.AbstractBoolean;
+import org.geotoolkit.swe.xml.AbstractDataArray;
+import org.geotoolkit.swe.xml.AbstractDataRecord;
+import org.geotoolkit.swe.xml.AbstractObservableProperty;
+import org.geotoolkit.swe.xml.AbstractQuantityRange;
+import org.geotoolkit.swe.xml.AbstractText;
+import org.geotoolkit.swe.xml.AbstractTime;
+import org.geotoolkit.swe.xml.AbstractTimeRange;
+import org.geotoolkit.swe.xml.Quantity;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -23,4 +37,45 @@ package org.geotoolkit.sml.xml;
  */
 public interface IoComponent {
 
+    public AbstractCount getCount();
+
+    public Quantity getQuantity();
+
+    public AbstractTime getTime();
+
+    public AbstractBoolean getBoolean();
+
+    public AbstractCategory getCategory();
+
+    public AbstractText getText();
+
+    public AbstractQuantityRange getQuantityRange();
+
+    public AbstractCountRange getCountRange();
+
+    public AbstractTimeRange getTimeRange();
+
+    public JAXBElement<? extends AbstractDataRecord> getAbstractDataRecord();
+
+    public JAXBElement<? extends AbstractDataArray> getAbstractDataArray();
+
+    public AbstractObservableProperty getObservableProperty();
+
+    public String getName();
+
+    public String getRemoteSchema();
+
+    public String getActuate();
+
+    public String getArcrole();
+
+    public String getHref();
+
+    public String getRole();
+
+    public String getShow();
+
+    public String getTitle();
+
+    public String getType();
 }

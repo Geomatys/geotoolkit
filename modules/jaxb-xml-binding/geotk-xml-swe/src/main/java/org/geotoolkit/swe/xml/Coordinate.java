@@ -22,5 +22,11 @@ package org.geotoolkit.swe.xml;
  * @module pending
  */
 public interface Coordinate {
+    public AbstractCount getCount();
 
+    public Quantity getQuantity();
+
+    public AbstractTime getTime();
+
+    public String getName();
 }

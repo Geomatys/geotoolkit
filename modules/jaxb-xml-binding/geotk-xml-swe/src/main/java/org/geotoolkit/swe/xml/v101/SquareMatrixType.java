@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.swe.xml.AbstractSquareMatrix;
 
 
 /**
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "encoding",
     "values"
 })
-public class SquareMatrixType extends AbstractMatrixType {
+public class SquareMatrixType extends AbstractMatrixType implements AbstractSquareMatrix {
 
     @XmlElement(required = true)
     private QuantityPropertyType elementType;

@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.swe.xml.AbstractCountRange;
 
 
 /**
@@ -60,12 +60,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
     "value"
 })
 @XmlRootElement(name = "CountRange")
-public class CountRange extends AbstractDataComponentType {
+public class CountRange extends AbstractDataComponentType implements AbstractCountRange {
 
     private AllowedValuesPropertyType constraint;
     private List<QualityPropertyType> quality;
     @XmlList
-    private List<BigInteger> value;
+    private List<Integer> value;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String referenceFrame;
@@ -102,9 +102,9 @@ public class CountRange extends AbstractDataComponentType {
     /**
      * Gets the value of the value property.
      */
-    public List<BigInteger> getValue() {
+    public List<Integer> getValue() {
         if (value == null) {
-            value = new ArrayList<BigInteger>();
+            value = new ArrayList<Integer>();
         }
         return this.value;
     }

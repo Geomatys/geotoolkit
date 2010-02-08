@@ -21,7 +21,15 @@ package org.geotoolkit.swe.xml;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface Quantity {
+public interface Quantity  extends AbstractDataComponent {
 
     public void setAxisID(String value);
+
+    public UomProperty getUom();
+
+    public Double getValue();
+
+    public String getReferenceFrame();
+
+    public String getAxisID();
 }

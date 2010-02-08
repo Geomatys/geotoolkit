@@ -121,6 +121,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link TimePropertyType }
      *     
      */
+    @Override
     public TimePropertyType getTime() {
         return time;
     }
@@ -145,6 +146,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorPropertyType }
      *     
      */
+    @Override
     public VectorPropertyType getLocation() {
         return location;
     }
@@ -169,6 +171,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
+    @Override
     public VectorOrSquareMatrixPropertyType getOrientation() {
         return orientation;
     }
@@ -193,6 +196,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorPropertyType }
      *     
      */
+    @Override
     public VectorPropertyType getVelocity() {
         return velocity;
     }
@@ -217,6 +221,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
+    @Override
     public VectorOrSquareMatrixPropertyType getAngularVelocity() {
         return angularVelocity;
     }
@@ -241,6 +246,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorPropertyType }
      *     
      */
+    @Override
     public VectorPropertyType getAcceleration() {
         return acceleration;
     }
@@ -265,6 +271,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
+    @Override
     public VectorOrSquareMatrixPropertyType getAngularAcceleration() {
         return angularAcceleration;
     }
@@ -289,6 +296,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
+    @Override
     public VectorOrSquareMatrixPropertyType getState() {
         return state;
     }
