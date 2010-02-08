@@ -165,11 +165,7 @@ public class WCSCapabilityType {
      * Gets the value of the version property.
      */
     public String getVersion() {
-        if (version == null) {
-            return "1.0.0";
-        } else {
-            return version;
-        }
+        return version;
     }
 
     /**
@@ -177,6 +173,10 @@ public class WCSCapabilityType {
      */
     public String getUpdateSequence() {
         return updateSequence;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     /**

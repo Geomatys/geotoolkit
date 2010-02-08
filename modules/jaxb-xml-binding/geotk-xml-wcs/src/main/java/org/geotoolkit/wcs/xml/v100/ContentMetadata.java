@@ -89,6 +89,13 @@ public class ContentMetadata {
      */
     ContentMetadata() {
     }
+
+    /**
+     * Build a new content metaData, without version specified.
+     */
+    public ContentMetadata(List<CoverageOfferingBriefType> coverageOfferingBrief) {
+        this(null, coverageOfferingBrief);
+    }
     
     /**
      * Build a new content metaData.
@@ -114,11 +121,7 @@ public class ContentMetadata {
      * 
      */
     public String getVersion() {
-        if (version == null) {
-            return "1.0.0";
-        } else {
-            return version;
-        }
+        return version;
     }
 
    /**
@@ -188,5 +191,9 @@ public class ContentMetadata {
      */
     public String getActuate() {
         return actuate;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
