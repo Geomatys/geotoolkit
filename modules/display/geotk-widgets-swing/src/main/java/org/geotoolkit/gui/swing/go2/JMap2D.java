@@ -24,13 +24,12 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.canvas.control.AbstractCanvasMonitor;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;
@@ -89,7 +88,7 @@ public class JMap2D extends AbstractMap2D{
         } catch (TransformException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-                
+
     }
 
     @Override
@@ -127,13 +126,13 @@ public class JMap2D extends AbstractMap2D{
             final CanvasHandler old = this.handler;
 
             if (this.handler != null){
-                this.handler.uninstall(this);
+                this.handler.uninstall(geoComponent);
             }
 
             this.handler = handler;
 
             if (this.handler != null) {
-                this.handler.install(this);
+                this.handler.install(geoComponent);
             }
 
 //            propertyListeners.firePropertyChange(HANDLER_PROPERTY, old, handler);

@@ -58,9 +58,9 @@ public class PanHandler extends AbstractNavigationHandler {
     @Override
     public void install(Component component) {
         super.install(component);
-        map.getComponent().addMouseListener(mouseInputListener);
-        map.getComponent().addMouseMotionListener(mouseInputListener);
-        map.getComponent().addMouseWheelListener(mouseInputListener);
+        component.addMouseListener(mouseInputListener);
+        component.addMouseMotionListener(mouseInputListener);
+        component.addMouseWheelListener(mouseInputListener);
     }
 
     /**
@@ -69,9 +69,9 @@ public class PanHandler extends AbstractNavigationHandler {
     @Override
     public void uninstall(Component component) {
         super.uninstall(component);
-        map.getComponent().removeMouseListener(mouseInputListener);
-        map.getComponent().removeMouseMotionListener(mouseInputListener);
-        map.getComponent().removeMouseWheelListener(mouseInputListener);
+        component.removeMouseListener(mouseInputListener);
+        component.removeMouseMotionListener(mouseInputListener);
+        component.removeMouseWheelListener(mouseInputListener);
     }
     
     //---------------------PRIVATE CLASSES--------------------------------------

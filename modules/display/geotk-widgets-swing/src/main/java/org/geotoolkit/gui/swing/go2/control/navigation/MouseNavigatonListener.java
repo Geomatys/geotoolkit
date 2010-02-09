@@ -71,15 +71,15 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
     public void install(Component component){
         map.addDecoration(0,decorationPane);
-        map.getComponent().addMouseListener(this);
-        map.getComponent().addMouseMotionListener(this);
-        map.getComponent().addMouseWheelListener(this);
+        component.addMouseListener(this);
+        component.addMouseMotionListener(this);
+        component.addMouseWheelListener(this);
     }
 
     public void uninstall(Component component){
-        map.getComponent().removeMouseListener(this);
-        map.getComponent().removeMouseMotionListener(this);
-        map.getComponent().removeMouseWheelListener(this);
+        component.removeMouseListener(this);
+        component.removeMouseMotionListener(this);
+        component.removeMouseWheelListener(this);
         map.removeDecoration(decorationPane);
     }
 

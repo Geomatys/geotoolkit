@@ -56,9 +56,9 @@ public class InformationHandler extends AbstractNavigationHandler {
     public void install(Component component) {
         super.install(component);
         map.addDecoration(infoPane);
-        map.getComponent().addMouseListener(mouseInputListener);
-        map.getComponent().addMouseMotionListener(mouseInputListener);
-        map.getComponent().addMouseWheelListener(mouseInputListener);
+        component.addMouseListener(mouseInputListener);
+        component.addMouseMotionListener(mouseInputListener);
+        component.addMouseWheelListener(mouseInputListener);
     }
 
     /**
@@ -68,9 +68,9 @@ public class InformationHandler extends AbstractNavigationHandler {
     public void uninstall(Component component) {
         super.uninstall(component);
         map.removeDecoration(infoPane);
-        map.getComponent().removeMouseListener(mouseInputListener);
-        map.getComponent().removeMouseMotionListener(mouseInputListener);
-        map.getComponent().removeMouseWheelListener(mouseInputListener);
+        component.removeMouseListener(mouseInputListener);
+        component.removeMouseMotionListener(mouseInputListener);
+        component.removeMouseWheelListener(mouseInputListener);
     }
     
     private class MouseListen implements MouseInputListener, MouseWheelListener {

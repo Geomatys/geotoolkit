@@ -302,17 +302,17 @@ public class DefaultSelectionHandler implements CanvasHandler {
     @Override
     public void install(Component component) {
         map2D.addDecoration(selectionPane);
-        map2D.getComponent().addMouseListener(mouseInputListener);
-        map2D.getComponent().addMouseMotionListener(mouseInputListener);
-        map2D.getComponent().addKeyListener(mouseInputListener);
+        component.addMouseListener(mouseInputListener);
+        component.addMouseMotionListener(mouseInputListener);
+        component.addKeyListener(mouseInputListener);
     }
 
     @Override
     public void uninstall(Component component) {
         map2D.removeDecoration(selectionPane);
-        map2D.getComponent().removeMouseListener(mouseInputListener);
-        map2D.getComponent().removeMouseMotionListener(mouseInputListener);
-        map2D.getComponent().removeKeyListener(mouseInputListener);
+        component.removeMouseListener(mouseInputListener);
+        component.removeMouseMotionListener(mouseInputListener);
+        component.removeKeyListener(mouseInputListener);
     }
 
     private class EventListener implements MouseInputListener,KeyListener {
