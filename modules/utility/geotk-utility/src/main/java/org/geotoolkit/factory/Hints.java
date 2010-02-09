@@ -96,7 +96,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.util.NameFactory} instance to use.
      *
-     * @see FactoryFinder#getNameFactory
+     * @see FactoryFinder#getNameFactory(Hints)
      *
      * @since 3.00
      * @category Metadata
@@ -107,7 +107,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.metadata.citation.CitationFactory} instance to use.
      *
-     * @see FactoryFinder#getCitationFactory
+     * @see FactoryFinder#getCitationFactory(Hints)
      *
      * @since 3.00
      * @category Metadata
@@ -126,7 +126,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.crs.CRSAuthorityFactory} instance to use.
      *
-     * @see AuthorityFactoryFinder#getCRSAuthorityFactory
+     * @see AuthorityFactoryFinder#getCRSAuthorityFactory(String, Hints)
      * @category Referencing
      */
     public static final ClassKey CRS_AUTHORITY_FACTORY = new ClassKey(
@@ -135,7 +135,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.cs.CSAuthorityFactory} instance to use.
      *
-     * @see AuthorityFactoryFinder#getCSAuthorityFactory
+     * @see AuthorityFactoryFinder#getCSAuthorityFactory(String, Hints)
      * @category Referencing
      */
     public static final ClassKey CS_AUTHORITY_FACTORY = new ClassKey(
@@ -144,7 +144,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.datum.DatumAuthorityFactory} instance to use.
      *
-     * @see AuthorityFactoryFinder#getDatumAuthorityFactory
+     * @see AuthorityFactoryFinder#getDatumAuthorityFactory(String, factory.Hints)
      * @category Referencing
      */
     public static final ClassKey DATUM_AUTHORITY_FACTORY = new ClassKey(
@@ -153,7 +153,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.crs.CRSFactory} instance to use.
      *
-     * @see FactoryFinder#getCRSFactory
+     * @see FactoryFinder#getCRSFactory(Hints)
      * @category Referencing
      */
     public static final ClassKey CRS_FACTORY = new ClassKey(
@@ -162,7 +162,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.cs.CSFactory} instance to use.
      *
-     * @see FactoryFinder#getCSFactory
+     * @see FactoryFinder#getCSFactory(Hints)
      * @category Referencing
      */
     public static final ClassKey CS_FACTORY = new ClassKey(
@@ -171,7 +171,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.datum.DatumFactory} instance to use.
      *
-     * @see FactoryFinder#getDatumFactory
+     * @see FactoryFinder#getDatumFactory(Hints)
      * @category Referencing
      */
     public static final ClassKey DATUM_FACTORY = new ClassKey(
@@ -180,7 +180,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.operation.CoordinateOperationFactory} instance to use.
      *
-     * @see FactoryFinder#getCoordinateOperationFactory
+     * @see FactoryFinder#getCoordinateOperationFactory(Hints)
      * @category Referencing
      */
     public static final ClassKey COORDINATE_OPERATION_FACTORY = new ClassKey(
@@ -190,7 +190,7 @@ public class Hints extends RenderingHints {
      * The {@link org.opengis.referencing.operation.CoordinateOperationAuthorityFactory} instance
      * to use.
      *
-     * @see AuthorityFactoryFinder#getCoordinateOperationAuthorityFactory
+     * @see AuthorityFactoryFinder#getCoordinateOperationAuthorityFactory(String, Hints)
      * @category Referencing
      */
     public static final ClassKey COORDINATE_OPERATION_AUTHORITY_FACTORY = new ClassKey(
@@ -199,7 +199,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.operation.MathTransformFactory} instance to use.
      *
-     * @see FactoryFinder#getMathTransformFactory
+     * @see FactoryFinder#getMathTransformFactory(Hints)
      * @category Referencing
      */
     public static final ClassKey MATH_TRANSFORM_FACTORY = new ClassKey(
@@ -257,7 +257,7 @@ public class Hints extends RenderingHints {
      * Other values may be supplied if a {@linkplain MathTransform math transform} exists for that
      * name, but this is not guaranteed to work.
      *
-     * @see FactoryFinder#getCoordinateOperationFactory
+     * @see FactoryFinder#getCoordinateOperationFactory(Hints)
      * @category Referencing
      */
     public static final OptionKey DATUM_SHIFT_METHOD = new OptionKey(
@@ -281,7 +281,7 @@ public class Hints extends RenderingHints {
      * shift method available, and the transformed coordinates may have one kilometer error. The
      * application should warn the user (e.g. popup a message dialog box) in such case.
      *
-     * @see FactoryFinder#getCoordinateOperationFactory
+     * @see FactoryFinder#getCoordinateOperationFactory(Hints)
      * @category Referencing
      */
     public static final Key LENIENT_DATUM_SHIFT = new Key(Boolean.class);
@@ -303,8 +303,8 @@ public class Hints extends RenderingHints {
      * {@code "urn:ogc"} namespace. See {@link #FORCE_AXIS_ORDER_HONORING} for changing this
      * behavior.
      *
-     * @see AuthorityFactoryFinder#getCSAuthorityFactory
-     * @see AuthorityFactoryFinder#getCRSAuthorityFactory
+     * @see AuthorityFactoryFinder#getCSAuthorityFactory(String, Hints)
+     * @see AuthorityFactoryFinder#getCRSAuthorityFactory(String, Hints)
      * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory
      * @see org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
      *
@@ -357,8 +357,8 @@ public class Hints extends RenderingHints {
      * AuthorityFactoryFinder.getCRSAuthorityFactory}(...)</code>
      * method. Whatever this hint is supported or not is authority dependent.
      *
-     * @see FactoryFinder#getCSFactory
-     * @see FactoryFinder#getCRSFactory
+     * @see FactoryFinder#getCSFactory(Hints)
+     * @see FactoryFinder#getCRSFactory(Hints)
      * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory
      *
      * @since 2.3
@@ -378,8 +378,8 @@ public class Hints extends RenderingHints {
      * AuthorityFactoryFinder.getCRSAuthorityFactory}(...)</code> method. Whatever this hint is
      * supported or not is authority dependent.
      *
-     * @see FactoryFinder#getCSFactory
-     * @see FactoryFinder#getCRSFactory
+     * @see FactoryFinder#getCSFactory(Hints)
+     * @see FactoryFinder#getCRSFactory(Hints)
      * @see org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory
      *
      * @since 2.3
@@ -421,7 +421,7 @@ public class Hints extends RenderingHints {
      *
      * {@note We recommend to avoid the <code>"jpeg"</code> codec for grid coverages.}
      *
-     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getGridCoverageFactory
+     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getGridCoverageFactory(Hints)
      *
      * @since 2.3
      * @category Coverage
@@ -431,7 +431,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.coverage.processing.GridCoverageProcessor} instance to use.
      *
-     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getCoverageProcessor
+     * @see org.geotoolkit.coverage.CoverageFactoryFinder#getCoverageProcessor(Hints)
      *
      * @category Coverage
      */
@@ -478,7 +478,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.geometry.PositionFactory} instance to use.
      *
-     * @see FactoryFinder#getPositionFactory
+     * @see FactoryFinder#getPositionFactory(Hints)
      *
      * @category Geometry
      *
@@ -489,7 +489,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.geometry.primitive.PrimitiveFactory} instance to use.
      *
-     * @see FactoryFinder#getPrimitiveFactory
+     * @see FactoryFinder#getPrimitiveFactory(Hints)
      *
      * @category Geometry
      *
@@ -500,7 +500,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.geometry.coordinate.GeometryFactory} instance to use.
      *
-     * @see FactoryFinder#getGeometryFactory
+     * @see FactoryFinder#getGeometryFactory(Hints)
      *
      * @category Geometry
      *
@@ -511,7 +511,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.geometry.complex.ComplexFactory} instance to use.
      *
-     * @see FactoryFinder#getComplexFactory
+     * @see FactoryFinder#getComplexFactory(Hints)
      *
      * @category Geometry
      *
@@ -522,7 +522,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.geometry.aggregate.AggregateFactory} instance to use.
      *
-     * @see FactoryFinder#getAggregateFactory
+     * @see FactoryFinder#getAggregateFactory(Hints)
      *
      * @category Geometry
      *
@@ -541,7 +541,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.feature.FeatureFactory} instance to use.
      *
-     * @see FactoryFinder#getFeatureFactory
+     * @see FactoryFinder#getFeatureFactory(Hints)
      *
      * @category Feature
      *
@@ -552,7 +552,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.filter.FilterFactory} instance to use.
      *
-     * @see FactoryFinder#getFilterFactory
+     * @see FactoryFinder#getFilterFactory(Hints)
      *
      * @category Feature
      *
@@ -563,7 +563,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.style.StyleFactory} instance to use.
      *
-     * @see FactoryFinder#getStyleFactory
+     * @see FactoryFinder#getStyleFactory(Hints)
      *
      * @category Feature
      *
@@ -968,10 +968,10 @@ public class Hints extends RenderingHints {
          * @param value The object to test for validity.
          * @return {@code true} if the value is valid; {@code false} otherwise.
          *
-         * @see Hints.ClassKey#isCompatibleValue
-         * @see Hints.FileKey#isCompatibleValue
-         * @see Hints.IntegerKey#isCompatibleValue
-         * @see Hints.OptionKey#isCompatibleValue
+         * @see Hints.ClassKey#isCompatibleValue(Object)
+         * @see Hints.FileKey#isCompatibleValue(Object)
+         * @see Hints.IntegerKey#isCompatibleValue(Object)
+         * @see Hints.OptionKey#isCompatibleValue(Object)
          */
         @Override
         public boolean isCompatibleValue(final Object value) {
