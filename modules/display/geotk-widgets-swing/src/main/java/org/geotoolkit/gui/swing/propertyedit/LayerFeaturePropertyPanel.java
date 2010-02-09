@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -50,26 +49,28 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.FeatureCollection;
 
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.propertyedit.model.FeatureSourceModel;
+import org.geotoolkit.gui.swing.propertyedit.model.FeatureCollectionModel;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.LayerListener;
+import org.jdesktop.swingx.JXErrorPane;
 
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-
-import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.map.LayerListener;
 import org.jdesktop.swingx.table.DatePickerCellEditor;
+
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
@@ -102,6 +103,15 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             updateTableSelection();
         }
     };
+
+    private final TableModelListener tableListener = new TableModelListener() {
+
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            checkChanges();
+        }
+    };
+
 
     private final List<JComponent> actions = new ArrayList<JComponent>();
 
@@ -157,13 +167,34 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             public void mouseExited(MouseEvent arg0) {}
         });
 
+        checkChanges();
+    }
+
+    /**
+     * Check if there are changes in the current session and
+     * activate commit/rollback buttons.
+     */
+    private void checkChanges(){
+        boolean changes = false;
+
+        if(layer != null){
+            final FeatureCollection col = layer.getCollection();
+            final Session session = col.getSession();
+            if(session != null){
+                changes = session.hasPendingChanges();
+            }
+        }
+
+
+        guiCommit.setEnabled(changes);
+        guiRollback.setEnabled(changes);
     }
 
     private void updateLayerSelection(){
         tab_data.getSelectionModel().removeListSelectionListener(selectionListener);
         layer.removeLayerListener(layerListener);
 
-        FeatureSourceModel model = (FeatureSourceModel) tab_data.getModel();
+        FeatureCollectionModel model = (FeatureCollectionModel) tab_data.getModel();
 
         Id selection = layer.getSelectionFilter();
         String selected = "0";
@@ -191,7 +222,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         final int[] rows = tab_data.getSelectedRows();
 
-        FeatureSourceModel model = (FeatureSourceModel) tab_data.getModel();
+        FeatureCollectionModel model = (FeatureCollectionModel) tab_data.getModel();
 
         for(int i=0; i<rows.length; i++){
             rows[i] = tab_data.convertRowIndexToModel(rows[i]);
@@ -231,6 +262,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         jcb_edit = new JCheckBox();
         jbu_action = new JButton();
         guiCount = new JLabel();
+        guiRollback = new JButton();
+        guiCommit = new JButton();
 
         jScrollPane1.setViewportView(tab_data);
 
@@ -248,6 +281,20 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         guiCount.setHorizontalAlignment(SwingConstants.CENTER);
         guiCount.setText(" ");
 
+        guiRollback.setText(MessageBundle.getString("rollback")); // NOI18N
+        guiRollback.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiRollbackActionPerformed(evt);
+            }
+        });
+
+        guiCommit.setText(MessageBundle.getString("commit")); // NOI18N
+        guiCommit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiCommitActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -256,10 +303,14 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addContainerGap()
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
-                .addGap(89, 89, 89)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiCommit)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiRollback)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jbu_action))
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -269,7 +320,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jbu_action)
                     .addComponent(guiCount)
-                    .addComponent(jcb_edit)))
+                    .addComponent(jcb_edit)
+                    .addComponent(guiRollback)
+                    .addComponent(guiCommit)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -277,8 +330,33 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.setEditable(((JCheckBox) evt.getSource()).isSelected());
     }//GEN-LAST:event_actionEditer
 
+    private void guiCommitActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiCommitActionPerformed
+
+        if(layer != null){
+            try {
+                layer.getCollection().getSession().commit();
+            } catch (DataStoreException ex) {
+                JXErrorPane.showDialog(ex);
+            }
+        }
+        checkChanges();
+
+    }//GEN-LAST:event_guiCommitActionPerformed
+
+    private void guiRollbackActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRollbackActionPerformed
+
+        if(layer != null){
+            layer.getCollection().getSession().rollback();
+        }
+        checkChanges();
+        reset();
+
+    }//GEN-LAST:event_guiRollbackActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JButton guiCommit;
     private JLabel guiCount;
+    private JButton guiRollback;
     private JScrollPane jScrollPane1;
     private JButton jbu_action;
     private JCheckBox jcb_edit;
@@ -290,6 +368,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         if(layer != null){
             layer.removeLayerListener(layerListener);
+            tab_data.getModel().removeTableModelListener(tableListener);
         }
 
         if (target instanceof FeatureMapLayer) {
@@ -300,13 +379,16 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             
             jcb_edit.setEnabled(editable);
 
-            FeatureSourceModel m = new FeatureSourceModel(tab_data, layer);
+            FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer);
             tab_data.setModel(m);
             tab_data.packAll();
+            tab_data.getModel().addTableModelListener(tableListener);
             updateLayerSelection();
             
             layer.addLayerListener(layerListener);
         }
+
+        checkChanges();
 
     }
 

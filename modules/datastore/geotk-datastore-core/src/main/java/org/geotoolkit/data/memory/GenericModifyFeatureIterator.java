@@ -26,6 +26,7 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -93,7 +94,13 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
                 candidate = (F) SimpleFeatureBuilder.copy((SimpleFeature) candidate);
                 //must modify this feature
                 for(final Entry<PropertyDescriptor,Object> entry : values.entrySet()){
-                    candidate.getProperty(entry.getKey().getName()).setValue(entry.getValue());
+                    final Property prop = candidate.getProperty(entry.getKey().getName());
+                    if(prop != null){
+                        //the property might be null if the query didn't ask for this
+                        //dont raise an error, that's normal
+                        prop.setValue(entry.getValue());
+                    }
+                    
                 }
             }
 

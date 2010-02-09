@@ -126,7 +126,7 @@ public class DefaultSession extends AbstractSession {
             final Id modified;
 
             if(filter instanceof Id){
-                modified = (Id)filter;
+                modified = FF.id( ((Id)filter).getIdentifiers());
             }else{
                 final Set<Identifier> identifiers = new HashSet<Identifier>();
                 QueryBuilder qb = new QueryBuilder(groupName);

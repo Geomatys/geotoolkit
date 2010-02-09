@@ -44,12 +44,12 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 
 /**
- * Feature source model
+ * Feature collection model
  * 
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class FeatureSourceModel extends DefaultTableModel {
+public class FeatureCollectionModel extends DefaultTableModel {
 
     private final ArrayList<PropertyDescriptor> columns = new ArrayList<PropertyDescriptor>();
     private final ArrayList<Feature> features = new ArrayList<Feature>();
@@ -61,7 +61,7 @@ public class FeatureSourceModel extends DefaultTableModel {
      * @param tab
      * @param layer 
      */
-    public FeatureSourceModel(JXTable tab, FeatureMapLayer layer) {
+    public FeatureCollectionModel(JXTable tab, FeatureMapLayer layer) {
         super();
         this.tab = tab;
         this.layer = layer;
@@ -179,14 +179,13 @@ public class FeatureSourceModel extends DefaultTableModel {
 
             try {
                 collection.update(filter, NAME, aValue);
-                if(collection.getSession() != null){
-                    collection.getSession().commit();
-                }
             } catch (DataStoreException ex) {
                 ex.printStackTrace();
             }
 
             setQuery(query);
+
+            fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 
