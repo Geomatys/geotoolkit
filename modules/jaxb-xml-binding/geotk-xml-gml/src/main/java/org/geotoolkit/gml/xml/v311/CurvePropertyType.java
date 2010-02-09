@@ -23,12 +23,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * A property that has a curve as its value domain can either be an appropriate geometry element encapsulated in an 
- * 			element of this type or an XLink reference to a remote geometry element (where remote includes geometry elements located elsewhere 
- * 			in the same document). Either the reference or the contained element must be given, but neither both nor none.
+ * element of this type or an XLink reference to a remote geometry element
+ * (where remote includes geometry elements located elsewhere in the same document).
+ * Either the reference or the contained element must be given, but neither both nor none.
  * 
  * <p>Java class for CurvePropertyType complex type.
  * 
@@ -322,6 +324,86 @@ public class CurvePropertyType {
      */
     public void setActuate(String value) {
         this.actuate = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CurvePropertyType) {
+            final CurvePropertyType that = (CurvePropertyType) object;
+
+            boolean geom = false;
+            if (this.abstractCurve != null && that.abstractCurve != null) {
+                geom = Utilities.equals(this.abstractCurve.getValue(),   that.abstractCurve.getValue());
+            } else if (this.abstractCurve == null && that.abstractCurve == null) {
+                geom = true;
+            }
+
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title)            &&
+                   geom;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.abstractCurve != null ? this.abstractCurve.hashCode() : 0);
+        hash = 29 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 29 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 29 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 29 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 29 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 29 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 29 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 29 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[CurvePropertyType]");
+        if (abstractCurve != null && abstractCurve.getValue() != null)
+            s.append(abstractCurve.getValue().toString()).append('\n');
+
+        if(actuate != null) {
+            s.append("actuate=").append(actuate).append('\n');
+        }
+        if(arcrole != null) {
+            s.append("arcrole=").append(arcrole).append('\n');
+        }
+        if(href != null) {
+            s.append("href=").append(href).append('\n');
+        }
+        if(role != null) {
+            s.append("role=").append(role).append('\n');
+        }
+        if(show != null) {
+            s.append("show=").append(show).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        if(title != null) {
+            s.append("title=").append(title).append('\n');
+        }
+        return s.toString();
     }
 
 }

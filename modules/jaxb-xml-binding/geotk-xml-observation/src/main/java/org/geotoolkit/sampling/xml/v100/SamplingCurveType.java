@@ -22,7 +22,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CurvePropertyType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -61,13 +63,24 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
     private CurvePropertyType shape;
     private MeasureType length;
 
+    public SamplingCurveType() {
+
+    }
+
+    public SamplingCurveType(final String               id,
+                             final String               name,
+                             final String               description,
+                             final FeaturePropertyType sampledFeature,
+                             final CurvePropertyType shape,
+                             final MeasureType length){
+        super(id, name, description, sampledFeature);
+        this.length = length;
+        this.shape  = shape;
+    }
+
     /**
      * Gets the value of the shape property.
      * 
-     * @return
-     *     possible object is
-     *     {@link CurvePropertyType }
-     *     
      */
     public CurvePropertyType getShape() {
         return shape;
@@ -75,11 +88,6 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Sets the value of the shape property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CurvePropertyType }
-     *     
      */
     public void setShape(CurvePropertyType value) {
         this.shape = value;
@@ -87,11 +95,6 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Gets the value of the length property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link MeasureType }
-     *     
      */
     public MeasureType getLength() {
         return length;
@@ -99,14 +102,49 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
 
     /**
      * Sets the value of the length property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link MeasureType }
-     *     
      */
     public void setLength(MeasureType value) {
         this.length = value;
+    }
+
+    /**
+     * Vérifie que cette station est identique à l'objet spécifié
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof SamplingCurveType && super.equals(object)) {
+            final SamplingCurveType that = (SamplingCurveType) object;
+            return Utilities.equals(this.length, that.length)   &&
+                   Utilities.equals(this.shape,  that.shape);
+        } 
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.shape != null ? this.shape.hashCode() : 0);
+        hash = 37 * hash + (this.length != null ? this.length.hashCode() : 0);
+        return hash;
+    }
+
+   /**
+     * Retourne une chaine de charactere representant la station.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if (length != null) {
+            s.append("length = ").append(length).append('\n');
+        }
+        if (shape != null) {
+            s.append("shape = ").append(shape).append('\n');
+        }
+        return s.toString();
     }
 
 }

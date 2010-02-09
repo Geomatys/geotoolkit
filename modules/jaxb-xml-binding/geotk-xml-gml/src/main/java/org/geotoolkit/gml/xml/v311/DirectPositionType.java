@@ -402,7 +402,7 @@ public class DirectPositionType implements DirectPosition {
     public int hashCode() {
         int hash = 5;
         hash = 71 * hash + (this.value != null ? this.value.hashCode() : 0);
-        hash = 71 * hash + this.srsDimension.intValue();
+        hash = 71 * hash + (this.srsDimension != null ? this.srsDimension.intValue() : 0);
         hash = 71 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
         hash = 71 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
         hash = 71 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);

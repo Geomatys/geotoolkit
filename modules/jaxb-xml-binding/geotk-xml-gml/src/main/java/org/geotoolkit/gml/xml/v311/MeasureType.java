@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -63,10 +64,19 @@ import javax.xml.bind.annotation.XmlValue;
 public class MeasureType {
 
     @XmlValue
-    protected double value;
+    private double value;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")
-    protected String uom;
+    private String uom;
+
+    public MeasureType() {
+
+    }
+
+    public MeasureType(double value, String uom) {
+        this.uom   = uom;
+        this.value = value;
+    }
 
     /**
      * Gets the value of the value property.
@@ -108,4 +118,42 @@ public class MeasureType {
         this.uom = value;
     }
 
+    /**
+     * Vérifie que cette station est identique à l'objet spécifié
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+
+        if (object instanceof MeasureType) {
+            final MeasureType that = (MeasureType) object;
+            return Utilities.equals(this.uom,    that.uom)   &&
+                   Utilities.equals(this.value,  that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (int) (Double.doubleToLongBits(this.value) ^ (Double.doubleToLongBits(this.value) >>> 32));
+        hash = 23 * hash + (this.uom != null ? this.uom.hashCode() : 0);
+        return hash;
+    }
+
+    
+   /**
+     * Retourne une chaine de charactere representant la station.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (uom != null) {
+            s.append("uom = ").append(uom).append('\n');
+        }
+        s.append("value = ").append(value).append('\n');
+        return s.toString();
+    }
 }

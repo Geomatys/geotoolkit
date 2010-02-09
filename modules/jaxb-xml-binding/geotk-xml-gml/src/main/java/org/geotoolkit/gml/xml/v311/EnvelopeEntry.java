@@ -29,10 +29,9 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions. The first direct 
- * 			position is the "lower corner" (a coordinate position consisting of all the minimal ordinates for each dimension for all points within the envelope), 
- * 			the second one the "upper corner" (a coordinate position consisting of all the maximal ordinates for each dimension for all points within the 
- * 			envelope).
+ * Envelope defines an extent using a pair of positions defining opposite corners in arbitrary dimensions. 
+ * The first direct position is the "lower corner" (a coordinate position consisting of all the minimal ordinates for each dimension for all points within the envelope),
+ * the second one the "upper corner" (a coordinate position consisting of all the maximal ordinates for each dimension for all points within the envelope).
  * 
  * <p>Java class for EnvelopeType complex type.
  * 
@@ -62,7 +61,6 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EnvelopeType", propOrder = {
-    "id",
     "lowerCorner",
     "upperCorner",
     "pos",
@@ -73,6 +71,7 @@ import org.geotoolkit.util.Utilities;
 })
 public class EnvelopeEntry {
 
+    @XmlAttribute(namespace="http://www.opengis.net/gml")
     private String id;
     protected DirectPositionType lowerCorner;
     protected DirectPositionType upperCorner;
@@ -117,6 +116,9 @@ public class EnvelopeEntry {
         return id;
     }
 
+    public String getName() {
+        return id;
+    }
     /**
      * Gets the value of the lowerCorner property.
      * 

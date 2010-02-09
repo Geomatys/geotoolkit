@@ -51,6 +51,9 @@ import org.opengis.metadata.Metadata;
 // GeotoolKit dependencies
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
+import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
+import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.observation.Observation;
 import org.opengis.observation.Phenomenon;
@@ -221,6 +224,12 @@ public class ObservationEntry implements Observation {
         this.definition          = definition;
         if (featureOfInterest instanceof SamplingPointEntry) {
             this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingPoint((SamplingPointEntry)featureOfInterest));
+        } else if (featureOfInterest instanceof SamplingCurveType) {
+            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingCurve((SamplingCurveType)featureOfInterest));
+        } else if (featureOfInterest instanceof SamplingSolidType) {
+            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSolid((SamplingSolidType)featureOfInterest));
+        } else if (featureOfInterest instanceof SamplingSurfaceType) {
+            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
         this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         this.procedure           = procedure;
@@ -254,6 +263,12 @@ public class ObservationEntry implements Observation {
         this.definition          = definition;
         if (featureOfInterest instanceof SamplingPointEntry) {
             this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingPoint((SamplingPointEntry)featureOfInterest));
+        } else if (featureOfInterest instanceof SamplingCurveType) {
+            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingCurve((SamplingCurveType)featureOfInterest));
+        } else if (featureOfInterest instanceof SamplingSolidType) {
+            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSolid((SamplingSolidType)featureOfInterest));
+        } else if (featureOfInterest instanceof SamplingSurfaceType) {
+            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
         this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         this.procedure           = procedure;

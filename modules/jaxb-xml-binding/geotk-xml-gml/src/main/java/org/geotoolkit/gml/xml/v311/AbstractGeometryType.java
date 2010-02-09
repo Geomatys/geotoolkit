@@ -103,7 +103,12 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
         this.uomLabels    = uomLabels;
     }
 
-    public AbstractGeometryType(String srsName){
+    public AbstractGeometryType(String srsName) {
+        this.srsName      = srsName;
+    }
+
+    public AbstractGeometryType(String id, String srsName) {
+        super(id);
         this.srsName      = srsName;
     }
 

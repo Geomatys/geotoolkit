@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 
 
 /**
@@ -48,8 +49,15 @@ import javax.xml.bind.annotation.XmlType;
     SamplingSolidType.class,
     SamplingSurfaceType.class
 })
-public class SpatiallyExtensiveSamplingFeatureType extends SamplingFeatureEntry
-{
+public class SpatiallyExtensiveSamplingFeatureType extends SamplingFeatureEntry {
+
+    public SpatiallyExtensiveSamplingFeatureType() {
+        
+    }
+
+    public SpatiallyExtensiveSamplingFeatureType(String id, String name, String description,FeaturePropertyType sampledFeature) {
+        super(id, name, description, sampledFeature);
+    }
 
 
 }

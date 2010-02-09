@@ -49,9 +49,14 @@ import javax.xml.bind.annotation.XmlType;
     LineStringType.class,
     OrientableCurveType.class
 })
-public abstract class AbstractCurveType
-    extends AbstractGeometricPrimitiveType
-{
+public abstract class AbstractCurveType extends AbstractGeometricPrimitiveType {
 
+    public AbstractCurveType() {
+
+    }
+
+    public AbstractCurveType(String id, String srsName) {
+        super(id, srsName);
+    }
 
 }

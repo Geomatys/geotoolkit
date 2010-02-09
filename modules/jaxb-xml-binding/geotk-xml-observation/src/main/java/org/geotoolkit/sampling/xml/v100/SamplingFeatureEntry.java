@@ -74,7 +74,7 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
      * Les features designé
      */
     @XmlElement(required = true)
-    private Collection<FeaturePropertyType> sampledFeature;
+    private Collection<FeaturePropertyType> sampledFeature = new ArrayList<FeaturePropertyType>();
     
     /**
      * Connexion vers la table des "survey details"
@@ -106,7 +106,9 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
     {
         super(id, name, description);
         this.sampledFeature         = new ArrayList<FeaturePropertyType>();
-        this.sampledFeature.add(sampledFeature);
+        if (sampledFeature != null) {
+            this.sampledFeature.add(sampledFeature);
+        }
         
     }
     
@@ -169,11 +171,8 @@ public class SamplingFeatureEntry extends AbstractFeatureEntry implements Sampli
                    Utilities.equals(this.relatedObservation,     that.relatedObservation) &&
                    Utilities.equals(this.relatedSamplingFeature, that.relatedSamplingFeature) &&
                    Utilities.equals(this.sampledFeature,         that.sampledFeature);
-        } else {
-            System.out.println("AbstractFeatureEntry.equals=false");
         }
         return false;
-        
     }
 
     @Override
