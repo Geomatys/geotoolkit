@@ -117,7 +117,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
                 if (!that.field.contains(i.next()))
                     return false;
             }
-            return Utilities.equals(this.blockId,    that.blockId);
+            return true;
         }
         return false;
     }
