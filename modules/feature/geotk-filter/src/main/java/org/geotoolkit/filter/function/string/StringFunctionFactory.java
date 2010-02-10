@@ -24,7 +24,7 @@ import org.opengis.filter.expression.Literal;
 
 /**
  * Factory registering the string functions.
- * 
+ *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
@@ -45,6 +45,8 @@ public class StringFunctionFactory implements FunctionFactory{
     public static final String TO_LOWER_CASE = "strToLowerCase";
     public static final String TO_UPPER_CASE = "strToUpperCase";
     public static final String TRIM = "strTrim";
+    public static final String TRUNCATE_FIRST = "strTruncateFirst";
+    public static final String TRUNCATE_LAST = "strTruncateLast";
 
     private static final String[] NAMES;
 
@@ -52,7 +54,7 @@ public class StringFunctionFactory implements FunctionFactory{
         NAMES = new String[] {
                   CONCAT, ENDS_WITH, EQUALS_IGNORE_CASE, INDEX_OF, LAST_INDEX_OF, LENGTH,
                   MATCHES, REPLACE, STARTS_WITH, SUBSTRING, SUBSTRING_START, TO_LOWER_CASE,
-                  TO_UPPER_CASE, TRIM
+                  TO_UPPER_CASE, TRIM, TRUNCATE_FIRST, TRUNCATE_LAST
         };
     }
 
@@ -84,6 +86,8 @@ public class StringFunctionFactory implements FunctionFactory{
         if(name.equals(TO_LOWER_CASE)) return new ToLowerCaseFunction(parameters[0]);
         if(name.equals(TO_UPPER_CASE)) return new ToUpperCaseFunction(parameters[0]);
         if(name.equals(TRIM)) return new TrimFunction(parameters[0]);
+        if(name.equals(TRUNCATE_FIRST)) return new TruncateFirstFunction(parameters[0], parameters[1]);
+        if(name.equals(TRUNCATE_LAST)) return new TruncateLastFunction(parameters[0], parameters[1]);
 
         throw new IllegalArgumentException("Unknowed function name : "+ name);
     }
