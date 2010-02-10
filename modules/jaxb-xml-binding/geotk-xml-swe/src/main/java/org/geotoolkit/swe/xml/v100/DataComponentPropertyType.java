@@ -193,6 +193,42 @@ public class DataComponentPropertyType implements DataComponentProperty {
         }
     }
 
+    public void setValue(Object obj) {
+        if (obj instanceof Count) {
+            count = (Count) obj;
+        } else if (obj instanceof QuantityType) {
+            quantity = (QuantityType) obj;
+        } else if (obj instanceof TimeType) {
+            time = (TimeType) obj;
+        } else if (obj instanceof BooleanType) {
+            _boolean = (BooleanType) obj;
+        } else if (obj instanceof Category) {
+            category = (Category) obj;
+        } else if (obj instanceof Text) {
+            text = (Text) obj;
+        } else if (obj instanceof QuantityRange) {
+            quantityRange = (QuantityRange) obj;
+        } else if (obj instanceof CountRange) {
+            countRange = (CountRange) obj;
+        } else if (obj instanceof TimeRange) {
+            timeRange = (TimeRange) obj;
+        } else if (obj instanceof JAXBElement) {
+            ObjectFactory factory = new ObjectFactory();
+            obj = ((JAXBElement)obj).getValue();
+
+            if (obj instanceof SimpleDataRecordType) {
+                abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordType) obj);
+            } else if (obj instanceof DataRecordType) {
+                abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
+            } else if (obj instanceof DataArrayType) {
+                abstractDataArray = factory.createDataArray((DataArrayType) obj);
+            } else {
+                System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
+            }
+        }
+    }
+    
+
     /**
      * Gets the value of the count property.
      */

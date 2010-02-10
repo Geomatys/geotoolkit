@@ -82,6 +82,23 @@ public class InterfaceList {
     }
 
     /**
+     * Gets the value of the interface property.
+     */
+    public void setInterface(List<Interface> _interface) {
+        this._interface = _interface;
+    }
+
+    /**
+     * Gets the value of the interface property.
+     */
+    public void setInterface(Interface _interface) {
+        if (this._interface == null) {
+            this._interface = new ArrayList<Interface>();
+        }
+        this._interface.add(_interface);
+    }
+
+    /**
      * Gets the value of the id property.
      */
     public String getId() {
