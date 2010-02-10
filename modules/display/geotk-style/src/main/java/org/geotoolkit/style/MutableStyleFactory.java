@@ -119,7 +119,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     
     MutableStyle style(Symbolizer symbol);
     
-    MutableStyle style(Symbolizer[] symbols);
+    MutableStyle style(Symbolizer ... symbols);
 
     //change return type
     @Override
@@ -131,7 +131,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     
     MutableFeatureTypeStyle featureTypeStyle(Symbolizer symbol);
     
-    MutableFeatureTypeStyle featureTypeStyle(Symbolizer[] symbol);
+    MutableFeatureTypeStyle featureTypeStyle(Symbolizer ... symbol);
 
     //change return type
     @Override
@@ -143,7 +143,7 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     
     MutableRule rule(Symbolizer symbol);
     
-    MutableRule rule(Symbolizer[] symbol);
+    MutableRule rule(Symbolizer ... symbol);
 
     //change return type
     @Override
@@ -178,12 +178,12 @@ public interface MutableStyleFactory extends org.opengis.style.StyleFactory {
     RasterSymbolizer rasterSymbolizer(String geometryPropertyName, Expression opacity,
         ChannelSelection channel, OverlapBehavior overlap, ColorMap colorMap, ContrastEnhancement ce,
         ShadedRelief relief, Symbolizer outline);
-        
-    
+
+
     //--------------------------------------------------------------------------
     // Underneath Immutable objects creation methods ---------------------------
     //--------------------------------------------------------------------------
-    
+
     AnchorPoint     anchorPoint();
     
     AnchorPoint     anchorPoint(double x, double y);
