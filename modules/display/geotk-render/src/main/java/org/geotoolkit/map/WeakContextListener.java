@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,24 +20,32 @@ import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Method;
 
 import org.geotoolkit.style.CollectionChangeEvent;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.StyleListener;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WeakStyleListener extends WeakListener<StyleListener> implements StyleListener {
+public class WeakContextListener extends WeakListener<ContextListener> implements ContextListener {
 
 
-    public WeakStyleListener(StyleListener listener, Object src) {
+    public WeakContextListener(ContextListener listener, Object src) {
         super(listener,src);
     }
 
     @Override
+    public void layerChange(CollectionChangeEvent<MapLayer> evt) {
+        final ContextListener listener = listenerRef.get();
+        if (listener != null) {
+            listener.layerChange(evt);
+        }else{
+            removeListener();
+        }
+    }
+
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final StyleListener listener = listenerRef.get();
+        final ContextListener listener = listenerRef.get();
         if (listener != null) {
             listener.propertyChange(evt);
         }else{
@@ -47,19 +54,9 @@ public class WeakStyleListener extends WeakListener<StyleListener> implements St
     }
 
     @Override
-    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> evt) {
-        final StyleListener listener = listenerRef.get();
-        if (listener != null) {
-            listener.featureTypeStyleChange(evt);
-        }else{
-            removeListener();
-        }
-    }
-
-    @Override
     protected void removeListener() {
         try {
-            Method method = src.getClass().getMethod("removeListener", StyleListener.class);
+            Method method = src.getClass().getMethod("removeListener", ContextListener.class);
             method.invoke(src, this);
         } catch (Exception e) {
             e.printStackTrace();

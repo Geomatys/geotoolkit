@@ -61,17 +61,17 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import org.geotoolkit.display.exception.PortrayalException;
 
 import org.jdesktop.swingx.JXTree;
 
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.WeakContextListener;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -81,7 +81,7 @@ import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 
-public class JContextTree extends JScrollPane {
+public class JContextTree extends JScrollPane implements ContextListener {
 
     private static final DataFlavor LAYER_FLAVOR = new DataFlavor(org.geotoolkit.map.MapLayer.class, "geo/layer");
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
@@ -95,27 +95,9 @@ public class JContextTree extends JScrollPane {
     private final TreePopup popup = new TreePopup(this);
     private MapContext context = null;
 
-    private final ContextListener listener = new ContextListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-        }
-
-        @Override
-        public void layerChange(CollectionChangeEvent<MapLayer> event) {
-            if(event.getType() != CollectionChangeEvent.ITEM_CHANGED){
-                updateContent();
-
-            }else{
-                MapLayer layer = event.getItems().iterator().next();
-                updateLayer(layer);
-            }
-        }
-
-    };
-
     private final ContextCellRenderer editor = new ContextCellRenderer();
     private final ContextCellRenderer renderer = new ContextCellRenderer();
+    private WeakContextListener weakListener = null;
 
     public JContextTree() {
         add(tree);
@@ -145,13 +127,14 @@ public class JContextTree extends JScrollPane {
     }
 
     public void setContext(MapContext context) {
-        if(this.context != null){
-            context.removeContextListener(listener);
+        if(this.context != null && weakListener != null){
+            context.removeContextListener(weakListener);
         }
         this.context = context;
 
         if(this.context != null){
-            context.addContextListener(listener);
+            weakListener = new WeakContextListener(this, context);
+            context.addContextListener(weakListener);
         }
 
         updateContent();
@@ -352,6 +335,29 @@ public class JContextTree extends JScrollPane {
             }
         });
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //Layer listener ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+    }
+
+    @Override
+    public void layerChange(CollectionChangeEvent<MapLayer> event) {
+        if(event.getType() != CollectionChangeEvent.ITEM_CHANGED){
+            updateContent();
+
+        }else{
+            MapLayer layer = event.getItems().iterator().next();
+            updateLayer(layer);
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    //private classes //////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     private class ContextCellRenderer extends DefaultTreeCellRenderer implements TreeCellEditor {
 
@@ -657,5 +663,6 @@ public class JContextTree extends JScrollPane {
             }
         }
     }
+
 
 }

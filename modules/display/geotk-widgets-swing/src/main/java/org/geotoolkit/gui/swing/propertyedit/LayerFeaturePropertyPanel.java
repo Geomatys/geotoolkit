@@ -32,8 +32,6 @@ import java.util.Date;
 import java.util.EventObject;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -51,8 +49,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import org.geotoolkit.data.DataStoreException;
 
+import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
@@ -63,8 +61,9 @@ import org.geotoolkit.gui.swing.propertyedit.model.FeatureCollectionModel;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.LayerListener;
-import org.jdesktop.swingx.JXErrorPane;
+import org.geotoolkit.map.WeakLayerListener;
 
+import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.Highlighter;
 import org.jdesktop.swingx.decorator.HighlighterFactory;
@@ -82,19 +81,9 @@ import org.opengis.filter.identity.Identifier;
  * @author  Johann Sorel
  * @module pending
  */
-public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements PropertyPane {
+public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements PropertyPane, LayerListener {
 
-    private final LayerListener layerListener = new LayerListener() {
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
-                updateLayerSelection();
-            }
-        }
-        @Override
-        public void styleChange(MapLayer source, EventObject event) {
-        }
-    };
+
 
     private final ListSelectionListener selectionListener = new ListSelectionListener() {
 
@@ -117,6 +106,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     private FeatureMapLayer layer = null;
     private boolean editable = false;
+    private WeakLayerListener weakListener;
 
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
@@ -192,7 +182,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     private void updateLayerSelection(){
         tab_data.getSelectionModel().removeListSelectionListener(selectionListener);
-        layer.removeLayerListener(layerListener);
+        if(weakListener != null){
+            layer.removeLayerListener(weakListener);
+        }
 
         FeatureCollectionModel model = (FeatureCollectionModel) tab_data.getModel();
 
@@ -212,13 +204,16 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         guiCount.setText("Selection : "+ selected +" / "+String.valueOf(tab_data.getModel().getRowCount()));
 
-        layer.addLayerListener(layerListener);
+        weakListener = new WeakLayerListener(this, layer);
+        layer.addLayerListener(weakListener);
         tab_data.getSelectionModel().addListSelectionListener(selectionListener);
     }
 
     private void updateTableSelection(){
         tab_data.getSelectionModel().removeListSelectionListener(selectionListener);
-        layer.removeLayerListener(layerListener);
+        if(weakListener != null){
+            layer.removeLayerListener(weakListener);
+        }
 
         final int[] rows = tab_data.getSelectedRows();
 
@@ -241,7 +236,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             layer.setSelectionFilter(ff.id(ids));
         }
         
-        layer.addLayerListener(layerListener);
+        weakListener = new WeakLayerListener(this, layer);
+        layer.addLayerListener(weakListener);
         tab_data.getSelectionModel().addListSelectionListener(selectionListener);
     }
 
@@ -367,7 +363,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     public void setTarget(Object target) {
 
         if(layer != null){
-            layer.removeLayerListener(layerListener);
+            if(weakListener != null){
+                layer.removeLayerListener(weakListener);
+            }
             tab_data.getModel().removeTableModelListener(tableListener);
         }
 
@@ -384,8 +382,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             tab_data.packAll();
             tab_data.getModel().addTableModelListener(tableListener);
             updateLayerSelection();
-            
-            layer.addLayerListener(layerListener);
+
+            weakListener = new WeakLayerListener(this, layer);
+            layer.addLayerListener(weakListener);
         }
 
         checkChanges();
@@ -444,6 +443,21 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             super.setVisible(visible);
         }
 
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    //Layer listener ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
+            updateLayerSelection();
+        }
+    }
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
     }
 
 }

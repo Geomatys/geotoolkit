@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,26 +18,33 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.Method;
-
-import org.geotoolkit.style.CollectionChangeEvent;
-import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.style.StyleListener;
+import java.util.EventObject;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
+ * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class WeakStyleListener extends WeakListener<StyleListener> implements StyleListener {
+public class WeakLayerListener extends WeakListener<LayerListener> implements LayerListener {
 
 
-    public WeakStyleListener(StyleListener listener, Object src) {
+    public WeakLayerListener(LayerListener listener, Object src) {
         super(listener,src);
     }
 
     @Override
+    public void styleChange(MapLayer source, EventObject evt) {
+        final LayerListener listener = listenerRef.get();
+        if (listener != null) {
+            listener.styleChange(source,evt);
+        }else{
+            removeListener();
+        }
+    }
+
+    @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        final StyleListener listener = listenerRef.get();
+        final LayerListener listener = listenerRef.get();
         if (listener != null) {
             listener.propertyChange(evt);
         }else{
@@ -47,19 +53,9 @@ public class WeakStyleListener extends WeakListener<StyleListener> implements St
     }
 
     @Override
-    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> evt) {
-        final StyleListener listener = listenerRef.get();
-        if (listener != null) {
-            listener.featureTypeStyleChange(evt);
-        }else{
-            removeListener();
-        }
-    }
-
-    @Override
     protected void removeListener() {
         try {
-            Method method = src.getClass().getMethod("removeListener", StyleListener.class);
+            Method method = src.getClass().getMethod("removeListener", LayerListener.class);
             method.invoke(src, this);
         } catch (Exception e) {
             e.printStackTrace();
