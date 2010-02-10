@@ -123,8 +123,8 @@ public class CachedFill extends Cache<Fill>{
                 default : 
                     if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
             }
-            
-            requieredAttributs.addAll(cachedGraphic.getRequieredAttributsName());
+
+            cachedGraphic.getRequieredAttributsName(requieredAttributs);
 
         }else{
             final Expression expColor = styleElement.getColor();

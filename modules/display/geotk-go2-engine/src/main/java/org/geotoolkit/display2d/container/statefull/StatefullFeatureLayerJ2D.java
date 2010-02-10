@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,6 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
@@ -43,9 +41,7 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.GraphicBuilder;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
@@ -136,17 +132,6 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     @Override
     protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
         updateCache(context);
-
-        //search for a special graphic renderer---------------------------------
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
-            //this layer has a special graphic rendering, use it instead of normal rendering
-            final Collection<GraphicJ2D> graphics = builder.createGraphics(layer, canvas);
-            for(GraphicJ2D gra : graphics){
-                gra.paint(context);
-            }
-            return;
-        }
 
         final CanvasMonitor monitor = context.getMonitor();
         final Query query = prepareQuery(context, layer, rules);

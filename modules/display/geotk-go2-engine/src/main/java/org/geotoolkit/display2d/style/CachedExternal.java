@@ -17,15 +17,21 @@
  */
 package org.geotoolkit.display2d.style;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
+import org.geotoolkit.renderer.svg.SvgUtils;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Function;
@@ -43,6 +49,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
 
     //Cached values
     private BufferedImage cachedImage = null;
+    private boolean isSVG = false;
 
     public CachedExternal(ExternalGraphic external){
         super(external);
@@ -64,8 +71,8 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             isStaticVisible = VisibilityState.VISIBLE;
         }
         
+        isStatic = !isSVG;
         requieredAttributs = EMPTY_ATTRIBUTS;
-        isStatic = true;
         isNotEvaluated = false;
     }
 
@@ -90,10 +97,11 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         if(cachedImage == null){
             OnlineResource online = styleElement.getOnlineResource();
             if(online != null && online.getLinkage() != null){
-                
-                final URI path = styleElement.getOnlineResource().getLinkage();
 
-                if (path != null) {
+                final URI path = styleElement.getOnlineResource().getLinkage();
+                isSVG = path.toString().toLowerCase().endsWith(".svg");
+
+                if (!isSVG && path != null) {
                     File imageFile = new File(path);
                     if (imageFile != null && imageFile.exists()) {
                         try {
@@ -115,7 +123,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         }
 
         
-        return ! (cachedImage == null);        
+        return true;
     }
 
     /**
@@ -132,7 +140,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
      */
     public boolean isValid(){
         evaluate();
-        return cachedImage != null;
+        return isSVG || cachedImage != null;
     }
 
     /**
@@ -145,6 +153,55 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         evaluate();
 
         BufferedImage img = cachedImage;
+
+        if(cachedImage == null && isSVG){
+            final Dimension dim;
+            if(size == null || size.isNaN()){
+                dim = new Dimension(12, 12);
+            }else{
+                dim = new Dimension( size.intValue(), size.intValue());
+            }
+
+            final URI uri = styleElement.getOnlineResource().getLinkage();
+            InputStream stream = null;
+            try{
+                //try distant url
+                stream = uri.toURL().openStream();
+            }catch(Exception ex){
+                //try class loader
+                try{
+                    stream = CachedExternal.class.getResourceAsStream(uri.toString());
+                }catch(Exception e){
+                    Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }
+
+            if(stream != null){
+                try{
+                    BufferedImage buffer = (BufferedImage) SvgUtils.read(stream, dim, hints);
+                    return buffer;
+                }catch (Exception ex){
+                    Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, ex);
+                }finally{
+                    try {
+                        stream.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+//            final float aspect = (float)(cachedImage.getHeight()) / size.floatValue() ;
+//            final float maxwidth = cachedImage.getWidth() / aspect;
+//
+//            BufferedImage buffer = new BufferedImage( (int)(maxwidth+0.5f), (int)(size.floatValue()), BufferedImage.TYPE_INT_ARGB);
+//            Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+//            if(hints != null) g2.setRenderingHints(hints);
+//            g2.drawImage(cachedImage, 0, 0,buffer.getWidth(), buffer.getHeight(), 0, 0, cachedImage.getWidth(), cachedImage.getHeight(),null);
+//            g2.dispose();
+//            img = buffer;
+        }
+
 
         //resize image if necessary
         if(cachedImage != null && size != null && !size.isNaN()){

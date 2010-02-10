@@ -77,7 +77,7 @@ public class CachedRule extends Cache<Rule>{
         }
         
         for(CachedSymbolizer cached : symbols){
-            requieredAttributs.addAll(cached.getRequieredAttributsName());
+            cached.getRequieredAttributsName(requieredAttributs);
         }
 
         isNotEvaluated = false;

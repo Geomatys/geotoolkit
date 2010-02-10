@@ -44,6 +44,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractCoverageRenderer;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 
@@ -220,7 +221,7 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedPatternSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedPatternSymbolizer symbol,MapLayer layer) {
         return null;
     }
 
@@ -228,8 +229,8 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedPatternSymbolizer symbol) {
-        //no glyph
+    public void glyph(Graphics2D g, Rectangle2D rect, CachedPatternSymbolizer symbol,MapLayer layer) {
+        //todo glyph
     }
 
 }

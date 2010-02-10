@@ -28,6 +28,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.style.Symbolizer;
 
@@ -137,7 +138,7 @@ public interface SymbolizerRenderer<S extends Symbolizer, C extends CachedSymbol
      * @param symbol : cached symbolizer to use
      * @return the preferred size of this symbol, null if no preferred size.
      */
-    Rectangle2D glyphPreferredSize(C symbol);
+    Rectangle2D glyphPreferredSize(C symbol, MapLayer layer);
 
     /**
      * Paint the glyph of the given symbolizer.
@@ -146,6 +147,6 @@ public interface SymbolizerRenderer<S extends Symbolizer, C extends CachedSymbol
      * @param rect : rectangle where the glyph must be painted
      * @param symbol : cached symbolizer to use
      */
-    void glyph(Graphics2D g, Rectangle2D rect, C symbol);
+    void glyph(Graphics2D g, Rectangle2D rect, C symbol, MapLayer layer);
 
 }

@@ -129,12 +129,14 @@ public class DefaultLabelRenderer implements LabelRenderer{
         refY = refY + (label.getAnchorY()*textHeight);
 
         //paint halo------------------------------------------------------------
-        final FontRenderContext fontContext = g2.getFontRenderContext();
-        final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
-        final Shape shape = glyph.getOutline(refX,refY);
-        g2.setPaint(label.getHaloPaint());
-        g2.setStroke(new BasicStroke(label.getHaloWidth()*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
-        g2.draw(shape);
+        if(label.getHaloWidth() > 0){
+            final FontRenderContext fontContext = g2.getFontRenderContext();
+            final GlyphVector glyph = label.getTextFont().createGlyphVector(fontContext, label.getText());
+            final Shape shape = glyph.getOutline(refX,refY);
+            g2.setPaint(label.getHaloPaint());
+            g2.setStroke(new BasicStroke(label.getHaloWidth()*2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
+            g2.draw(shape);
+        }
 
         //paint text------------------------------------------------------------
         g2.setPaint(label.getTextPaint());
@@ -160,9 +162,11 @@ public class DefaultLabelRenderer implements LabelRenderer{
         final Shape shape = stroke.createStrokedShape(geom);
 
         //paint halo
-        g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
-        g2.setPaint(label.getHaloPaint());
-        g2.draw(shape);
+        if(label.getHaloWidth() > 0){
+            g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
+            g2.setPaint(label.getHaloPaint());
+            g2.draw(shape);
+        }
 
         //paint text
         g2.setStroke(new BasicStroke(0));

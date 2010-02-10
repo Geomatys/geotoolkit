@@ -142,11 +142,11 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
             GO2Utilities.getRequieredAttributsName(expLabel,requieredAttributs);
             isStatic = false;
         }
-        
-        requieredAttributs.addAll(cachedFont.getRequieredAttributsName());
-        requieredAttributs.addAll(cachedFill.getRequieredAttributsName());
-        requieredAttributs.addAll(cachedHalo.getRequieredAttributsName());
-        requieredAttributs.addAll(cachedPlacement.getRequieredAttributsName());
+
+        cachedFont.getRequieredAttributsName(requieredAttributs);
+        cachedFill.getRequieredAttributsName(requieredAttributs);
+        cachedHalo.getRequieredAttributsName(requieredAttributs);
+        cachedPlacement.getRequieredAttributsName(requieredAttributs);
         
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){

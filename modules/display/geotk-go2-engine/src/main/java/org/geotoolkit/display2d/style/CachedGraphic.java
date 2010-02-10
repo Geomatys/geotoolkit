@@ -49,10 +49,8 @@ public class CachedGraphic extends Cache<Graphic>{
     private float cachedOpacity = Float.NaN;
     private float cachedRotation = Float.NaN;
     private float cachedSize = Float.NaN;
-    private float cachedDispX = Float.NaN;
-    private float cachedDispY = Float.NaN;
-    private float cachedAnchorX = Float.NaN;
-    private float cachedAnchorY = Float.NaN;
+    private final CachedAnchorPoint cachedAnchor;
+    private final CachedDisplacement cachedDisplacement;
     private CachedMark cachedMark = null;
     private CachedExternal cachedExternal = null;
     
@@ -62,9 +60,10 @@ public class CachedGraphic extends Cache<Graphic>{
     
 
 
-
     public CachedGraphic(Graphic graphic){
         super(graphic);
+        this.cachedAnchor = CachedAnchorPoint.cache(graphic.getAnchorPoint());
+        this.cachedDisplacement = CachedDisplacement.cache(graphic.getDisplacement());
     }
 
     /**
@@ -74,25 +73,20 @@ public class CachedGraphic extends Cache<Graphic>{
     protected void evaluate(){
         if(!isNotEvaluated) return;
         
-        
         if(!evaluateGraphic()){
             //composite is completely translucent or paint is not visible
             //we cache nothing seens nothing can be render
             cachedOpacity = Float.NaN;
             cachedRotation = Float.NaN;
             cachedSize = Float.NaN;
-            cachedDispX = Float.NaN;
-            cachedDispY = Float.NaN;
-            cachedAnchorX = Float.NaN;
-            cachedAnchorY = Float.NaN;
             cachedMark = null;
             cachedExternal = null;
             requieredAttributs = EMPTY_ATTRIBUTS;
             isStatic = true;
         }else{
             //we can try to cache other parameters
-            evaluateDisplacement();
-            evaluateAnchor();
+            cachedAnchor.getRequieredAttributsName(requieredAttributs);
+            cachedDisplacement.getRequieredAttributsName(requieredAttributs);
 
             if(cachedMark != null){
                 isStatic = (
@@ -100,8 +94,7 @@ public class CachedGraphic extends Cache<Graphic>{
                         !Float.isNaN(cachedOpacity) &&
                         !Float.isNaN(cachedRotation) &&
                         !Float.isNaN(cachedSize) &&
-                        !Float.isNaN(cachedDispX) &&
-                        !Float.isNaN(cachedDispY)
+                        cachedDisplacement.isStatic()
                         );
             }else if(cachedExternal != null){
                 isStatic = (
@@ -109,8 +102,7 @@ public class CachedGraphic extends Cache<Graphic>{
                         !Float.isNaN(cachedOpacity) &&
                         !Float.isNaN(cachedRotation) &&
                         !Float.isNaN(cachedSize) &&
-                        !Float.isNaN(cachedDispX) &&
-                        !Float.isNaN(cachedDispY)
+                        cachedDisplacement.isStatic()
                         );
             }else{
                 throw new IllegalStateException("Inconsistent symbology graphic cache.");
@@ -201,8 +193,8 @@ public class CachedGraphic extends Cache<Graphic>{
                         if(!candidateMark.isStatic()) isStatic = false;
                         this.cachedMark = candidateMark;
                     }
-                                        
-                    requieredAttributs.addAll( candidateMark.getRequieredAttributsName() );
+
+                    candidateMark.getRequieredAttributsName(requieredAttributs);
                     found = true;
                     break graphicLoop;
                 }
@@ -227,8 +219,8 @@ public class CachedGraphic extends Cache<Graphic>{
                         isStatic = false;
                         this.cachedExternal = candidateExternal;
 //                    }
-                    
-                    requieredAttributs.addAll( candidateExternal.getRequieredAttributsName() );
+
+                    candidateExternal.getRequieredAttributsName(requieredAttributs);
                     found = true;
                     break graphicLoop;
                 }
@@ -295,63 +287,7 @@ public class CachedGraphic extends Cache<Graphic>{
 
         return true;
     }
-    
-    private void evaluateDisplacement(){
-        Displacement disp = styleElement.getDisplacement();
         
-        if(disp != null){
-            
-            final Expression dispX = disp.getDisplacementX();
-            final Expression dispY = disp.getDisplacementY();
-            
-            if(GO2Utilities.isStatic(dispX)){
-                cachedDispX = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
-            }else{
-                GO2Utilities.getRequieredAttributsName(dispX,requieredAttributs);
-            }
-            
-             if(GO2Utilities.isStatic(dispY)){
-                cachedDispY = GO2Utilities.evaluate(dispY, null, Float.class, 0f);
-            }else{
-                GO2Utilities.getRequieredAttributsName(dispY,requieredAttributs);
-            }
-            
-        }else{
-            //we can a disp X and Y of 0
-            cachedDispX = 0;
-            cachedDispY = 0;
-        }
-        
-    }
-    
-    private void evaluateAnchor(){
-       AnchorPoint anchor = styleElement.getAnchorPoint();
-        
-        if(anchor != null){
-            
-            final Expression anchorX = anchor.getAnchorPointX();
-            final Expression anchorY = anchor.getAnchorPointY();
-            
-            if(GO2Utilities.isStatic(anchorX)){
-                cachedAnchorX = GO2Utilities.evaluate(anchorX, null, Float.class, 0.5f);
-            }else{
-                GO2Utilities.getRequieredAttributsName(anchorX,requieredAttributs);
-            }
-            
-             if(GO2Utilities.isStatic(anchorY)){
-                cachedAnchorY = GO2Utilities.evaluate(anchorY, null, Float.class, 0.5f);
-            }else{
-                GO2Utilities.getRequieredAttributsName(anchorY,requieredAttributs);
-            }
-            
-        }else{
-            //we can cache anchor X and Y of 0.5
-           cachedAnchorX = 0.5f;
-           cachedAnchorY = 0.5f;
-        }
-        
-    }
-    
     /**
      * 
      * @return BufferedImage for a feature 
@@ -429,8 +365,11 @@ public class CachedGraphic extends Cache<Graphic>{
             maxSizeY = (int) trs.getBounds2D().getHeight();
         }
 
-        BufferedImage buffer = new BufferedImage( maxSizeX , maxSizeY, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+        final BufferedImage buffer = new BufferedImage( maxSizeX , maxSizeY, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g2 = (Graphics2D) buffer.getGraphics();
+        if(hints != null){
+            g2.setRenderingHints(hints);
+        }
 
         final Composite j2dComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, candidateOpacity);
         
@@ -448,57 +387,14 @@ public class CachedGraphic extends Cache<Graphic>{
      * return an Array of 2 floats always in display unit.
      */
     public float[] getDisplacement(Feature feature, float[] buffer){
-        evaluate();
-
-        if(buffer == null) buffer = new float[2];
-                
-        if(Float.isNaN(cachedDispX)){
-            //if dispX is Float.NaN it means it is dynamic
-            final Expression dispX = styleElement.getDisplacement().getDisplacementX();
-            buffer[0] = GO2Utilities.evaluate(dispX, null, Float.class, 0f);
-        } else {
-            buffer[0] = cachedDispX;
-        }
-        
-        if(Float.isNaN(cachedDispY)){
-            //if dispY is Float.NaN it means it is dynamic
-            final Expression dispY = styleElement.getDisplacement().getDisplacementY();
-            buffer[1] = GO2Utilities.evaluate(dispY, null, Float.class, 0f);
-        } else {
-            buffer[1] = cachedDispY;
-        }
-        
-        
-        return buffer;
+        return cachedDisplacement.getValues(feature, buffer);
     }
     
     /**
      * return an Array of 2 floats.
      */
     public float[] getAnchor(Feature feature, float[] buffer){
-        evaluate();
-        
-        if(buffer == null){
-            buffer = new float[2];
-        }
-        
-        if(Float.isNaN(cachedAnchorX)){
-            //if dispX is null it means it is dynamic
-            final Expression anchorX = styleElement.getAnchorPoint().getAnchorPointX();
-            buffer[0] = GO2Utilities.evaluate(anchorX, null, Float.class, 0.5f);
-        } else {
-            buffer[0] = cachedAnchorX;
-        }
-        
-        if(Float.isNaN(cachedAnchorY)){
-            //if dispY is null it means it is dynamic
-            final Expression anchorY = styleElement.getDisplacement().getDisplacementY();
-            buffer[1] = GO2Utilities.evaluate(anchorY, null, Float.class, 0.5f);
-        } else {
-            buffer[1] = cachedAnchorY;
-        }
-        
-        return buffer;
+        return cachedAnchor.getValues(feature, buffer);
     }
     
     /**

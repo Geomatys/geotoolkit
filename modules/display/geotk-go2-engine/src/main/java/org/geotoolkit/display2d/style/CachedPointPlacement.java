@@ -31,63 +31,28 @@ import org.opengis.style.PointPlacement;
 public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
 
     //caches
-    private float anchorX = Float.NaN;
-    private float anchorY = Float.NaN;
-    private float dispX = Float.NaN;
-    private float dispY = Float.NaN;
+    private final CachedAnchorPoint cachedAnchor;
+    private final CachedDisplacement cachedDisplacement;
     private float rotation = Float.NaN;
     
     public CachedPointPlacement(PointPlacement placement){
         super(placement);
+        this.cachedAnchor = CachedAnchorPoint.cache(placement.getAnchorPoint());
+        this.cachedDisplacement = CachedDisplacement.cache(placement.getDisplacement());
     }
     
-    public float getAnchorX(Feature feature){
-        evaluate();
-        
-        if(Float.isNaN(anchorX)){
-            //value is feature dynamic
-            final Expression exp = styleElement.getAnchorPoint().getAnchorPointX();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0.5f);
-        }else{
-            return anchorX;
-        }
-        
+    /**
+     * return an Array of 2 floats always in display unit.
+     */
+    public float[] getDisplacement(Feature feature, float[] buffer){
+        return cachedDisplacement.getValues(feature, buffer);
     }
-    
-    public float getAnchorY(Feature feature){
-        evaluate();
-        
-        if(Float.isNaN(anchorY)){
-            //value is feature dynamic
-            final Expression exp = styleElement.getAnchorPoint().getAnchorPointY();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0.5f);
-        }else{
-            return anchorY;
-        }
-    }
-    
-    public float getDisplacementX(Feature feature){
-        evaluate();
-        
-        if(Float.isNaN(dispX)){
-            //value is feature dynamic
-            final Expression exp = styleElement.getDisplacement().getDisplacementX();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0f);
-        }else{
-            return dispX;
-        }
-    }
-    
-    public float getDisplacementY(Feature feature){
-        evaluate();
-        
-        if(Float.isNaN(dispY)){
-            //value is feature dynamic
-            final Expression exp = styleElement.getDisplacement().getDisplacementY();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0f);
-        }else{
-            return dispY;
-        }
+
+    /**
+     * return an Array of 2 floats.
+     */
+    public float[] getAnchor(Feature feature, float[] buffer){
+        return cachedAnchor.getValues(feature, buffer);
     }
     
     public float getRotation(Feature feature){
@@ -106,42 +71,13 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     protected void evaluate() {
         if(!isNotEvaluated) return;
         
-        final Expression expAnchorX = styleElement.getAnchorPoint().getAnchorPointX();
-        final Expression expAnchorY = styleElement.getAnchorPoint().getAnchorPointY();
-        final Expression expDispX = styleElement.getDisplacement().getDisplacementX();
-        final Expression expDispY = styleElement.getDisplacement().getDisplacementY();
         final Expression expRotation = styleElement.getRotation();
         
         //we can not know so always visible
         isStaticVisible = VisibilityState.VISIBLE;
         
-        if(GO2Utilities.isStatic(expAnchorX)){
-            anchorX = GO2Utilities.evaluate(expAnchorX, null, Float.class, 0.5f);
-        }else{
-            GO2Utilities.getRequieredAttributsName(expAnchorX,requieredAttributs);
-            isStatic = false;
-        }
-        
-        if(GO2Utilities.isStatic(expAnchorY)){
-            anchorY = GO2Utilities.evaluate(expAnchorY, null, Float.class, 0.5f);
-        }else{
-            GO2Utilities.getRequieredAttributsName(expAnchorY,requieredAttributs);
-            isStatic = false;
-        }
-        
-        if(GO2Utilities.isStatic(expDispX)){
-            dispX = GO2Utilities.evaluate(expDispX, null, Float.class, 0f);
-        }else{
-            GO2Utilities.getRequieredAttributsName(expDispX,requieredAttributs);
-            isStatic = false;
-        }
-        
-        if(GO2Utilities.isStatic(expDispY)){
-            dispY = GO2Utilities.evaluate(expDispY, null, Float.class, 0f);
-        }else{
-            GO2Utilities.getRequieredAttributsName(expDispY,requieredAttributs);
-            isStatic = false;
-        }
+        cachedAnchor.getRequieredAttributsName(requieredAttributs);
+        cachedDisplacement.getRequieredAttributsName(requieredAttributs);
         
         if(GO2Utilities.isStatic(expRotation)){
             rotation = GO2Utilities.evaluate(expRotation, null, Float.class, 0f);
@@ -152,7 +88,10 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
         
         //no attributs needed replace with static empty list.
         if(requieredAttributs.isEmpty()){
+            isStatic = true;
             requieredAttributs = EMPTY_ATTRIBUTS;
+        }else{
+            isStatic = false;
         }
         
         isNotEvaluated = false;

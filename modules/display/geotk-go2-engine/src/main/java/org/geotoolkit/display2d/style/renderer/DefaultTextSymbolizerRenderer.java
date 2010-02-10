@@ -51,6 +51,7 @@ import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.feature.Feature;
@@ -175,17 +176,15 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
         if(placement instanceof CachedPointPlacement){
             final CachedPointPlacement pp = (CachedPointPlacement) placement;
             
-            final float anchorX = pp.getAnchorX(feature);
-            final float anchorY = pp.getAnchorY(feature);
-            final float dispX = pp.getDisplacementX(feature);
-            final float dispY = pp.getDisplacementY(feature);
+            final float[] anchor = pp.getAnchor(feature, null);
+            final float[] disp = pp.getDisplacement(feature,null);
             final float rotation = pp.getRotation(feature);
 
             final LabelDescriptor descriptor = new DefaultPointLabelDescriptor(
                 label, j2dFont, fontPaint,
                 haloWidth, haloPaint,
-                anchorX, anchorY,
-                dispX, dispY,
+                anchor[0], anchor[1],
+                disp[0], disp[1],
                 rotation, context.getDisplayCRS(),
                 projectedGeometry);
             layer.labels().add(descriptor);
@@ -246,7 +245,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedTextSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedTextSymbolizer symbol, MapLayer layer) {
         return null;
     }
 
@@ -254,7 +253,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedTextSymbolizer symbol) {
+    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedTextSymbolizer symbol, MapLayer layer) {
         g.setClip(rectangle);
 
         final String family;

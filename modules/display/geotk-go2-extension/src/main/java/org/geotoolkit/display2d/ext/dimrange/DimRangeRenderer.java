@@ -43,6 +43,7 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.MeasurementRange;
@@ -221,12 +222,12 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymboli
     }
 
     @Override
-    public Rectangle2D glyphPreferredSize(CachedDimRangeSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedDimRangeSymbolizer symbol,MapLayer layer) {
         return null;
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedDimRangeSymbolizer symbol) {
+    public void glyph(Graphics2D g, Rectangle2D rect, CachedDimRangeSymbolizer symbol, MapLayer layer) {
         //no glyph
     }
 

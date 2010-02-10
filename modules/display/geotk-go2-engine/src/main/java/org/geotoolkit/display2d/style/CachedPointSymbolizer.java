@@ -19,7 +19,7 @@ package org.geotoolkit.display2d.style;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Collection;
+
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 
@@ -64,15 +64,11 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
             cache = new UnSynchronizedCache<Float, BufferedImage>(5);
         }
 
+        cachedGraphic.getRequieredAttributsName(requieredAttributs);
         isStatic = cachedGraphic.isStatic();
         isStaticVisible = cachedGraphic.isStaticVisible();
 
         isNotEvaluated = false;
-    }
-
-    @Override
-    public Collection<String> getRequieredAttributsName() {
-        return cachedGraphic.getRequieredAttributsName();
     }
 
     /**

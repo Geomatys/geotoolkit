@@ -521,7 +521,6 @@ public final class GO2Utilities {
                 final double e2 = 1 - Math.pow((b/a),2);
 
                 //TODO not sure of this neither
-//                System.out.println(i);
                 final double phi = Math.toRadians((i==0)? pt.getY() : pt.getX());
                 double s = a * (Math.cos(phi)) / Math.sqrt( 1 - e2 * Math.pow(Math.sin(phi),2) );
 
@@ -668,7 +667,7 @@ public final class GO2Utilities {
     public static Set<String> propertiesCachedNames(final Collection<CachedRule> rules){
         final Set<String> atts = new HashSet<String>();
         for(final CachedRule r : rules){
-            atts.addAll(r.getRequieredAttributsName());
+            r.getRequieredAttributsName(atts);
         }
         return atts;
     }
@@ -676,7 +675,7 @@ public final class GO2Utilities {
     public static Set<String> propertiesCachedNames(final CachedRule[] rules){
         final Set<String> atts = new HashSet<String>();
         for(final CachedRule r : rules){
-            atts.addAll(r.getRequieredAttributsName());
+            r.getRequieredAttributsName(atts);
         }
         return atts;
     }

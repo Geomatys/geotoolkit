@@ -21,7 +21,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -32,6 +31,8 @@ import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.Stroke;
+
+import static org.geotoolkit.style.StyleConstants.*;
 
 /**
  * The cached stroke is like other cached symbol a class
@@ -134,8 +135,8 @@ public class CachedStroke extends Cache<Stroke>{
                 //this graphic is visible
                 if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
             }
-            
-            requieredAttributs.addAll(cachedGraphic.getRequieredAttributsName());
+
+            cachedGraphic.getRequieredAttributsName(requieredAttributs);
 
         }else{
             final Expression expColor = styleElement.getColor();
@@ -197,11 +198,11 @@ public class CachedStroke extends Cache<Stroke>{
 
         // line cap ---------------------------------------------
         if(GO2Utilities.isStatic(expLineCap)){
-            final String cap = GO2Utilities.evaluate(expLineCap, null, String.class, "butt");
-            if (cap.equalsIgnoreCase("butt"))        candidateCap = BasicStroke.CAP_BUTT;
-            else if (cap.equalsIgnoreCase("square")) candidateCap = BasicStroke.CAP_SQUARE;
-            else if (cap.equalsIgnoreCase("round"))  candidateCap = BasicStroke.CAP_ROUND;
-            else                                     candidateCap = BasicStroke.CAP_BUTT;
+            final String cap = GO2Utilities.evaluate(expLineCap, null, String.class, STROKE_CAP_BUTT_STRING);
+            if (STROKE_CAP_BUTT_STRING.equalsIgnoreCase(cap))        candidateCap = BasicStroke.CAP_BUTT;
+            else if (STROKE_CAP_SQUARE_STRING.equalsIgnoreCase(cap)) candidateCap = BasicStroke.CAP_SQUARE;
+            else if (STROKE_CAP_ROUND_STRING.equalsIgnoreCase(cap))  candidateCap = BasicStroke.CAP_ROUND;
+            else                                                     candidateCap = BasicStroke.CAP_BUTT;
         }else{
             strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expLineCap,requieredAttributs);
@@ -210,11 +211,11 @@ public class CachedStroke extends Cache<Stroke>{
 
         // line join --------------------------------------------
         if(GO2Utilities.isStatic(expLineJoin)){
-            final String join = GO2Utilities.evaluate(expLineJoin, null, String.class, "bevel");
-            if (join.equalsIgnoreCase("bevel"))      candidateJoin = BasicStroke.JOIN_BEVEL;
-            else if (join.equalsIgnoreCase("mitre")) candidateJoin = BasicStroke.JOIN_MITER;
-            else if (join.equalsIgnoreCase("round")) candidateJoin = BasicStroke.JOIN_ROUND;
-            else                                     candidateJoin = BasicStroke.JOIN_BEVEL;
+            final String join = GO2Utilities.evaluate(expLineJoin, null, String.class, STROKE_JOIN_BEVEL_STRING);
+            if (STROKE_JOIN_BEVEL_STRING.equalsIgnoreCase(join))       candidateJoin = BasicStroke.JOIN_BEVEL;
+            else if (STROKE_JOIN_MITRE_STRING.equalsIgnoreCase(join))  candidateJoin = BasicStroke.JOIN_MITER;
+            else if (STROKE_JOIN_ROUND_STRING.equalsIgnoreCase(join)) candidateJoin = BasicStroke.JOIN_ROUND;
+            else                                                      candidateJoin = BasicStroke.JOIN_BEVEL;
         }else{
             strokeStatic = false;
             GO2Utilities.getRequieredAttributsName(expLineJoin,requieredAttributs);
@@ -374,22 +375,20 @@ public class CachedStroke extends Cache<Stroke>{
 
             if(candidateCap == Integer.MAX_VALUE){
                 final Expression expCap = styleElement.getLineCap();
-                final String cap = GO2Utilities.evaluate(expCap, feature, String.class, "butt");
-
-                if (cap.equalsIgnoreCase("butt"))        candidateCap = BasicStroke.CAP_BUTT;
-                else if (cap.equalsIgnoreCase("square")) candidateCap = BasicStroke.CAP_SQUARE;
-                else if (cap.equalsIgnoreCase("round"))  candidateCap = BasicStroke.CAP_ROUND;
-                else                                     candidateCap = BasicStroke.CAP_BUTT;
+                final String cap = GO2Utilities.evaluate(expCap, null, String.class, STROKE_CAP_BUTT_STRING);
+                if (STROKE_CAP_BUTT_STRING.equalsIgnoreCase(cap))        candidateCap = BasicStroke.CAP_BUTT;
+                else if (STROKE_CAP_SQUARE_STRING.equalsIgnoreCase(cap)) candidateCap = BasicStroke.CAP_SQUARE;
+                else if (STROKE_CAP_ROUND_STRING.equalsIgnoreCase(cap))  candidateCap = BasicStroke.CAP_ROUND;
+                else                                                     candidateCap = BasicStroke.CAP_BUTT;
             }
 
             if(candidateJoin == Integer.MAX_VALUE){
                 final Expression expJoin = styleElement.getLineJoin();
-                final String join = GO2Utilities.evaluate(expJoin, feature, String.class, "bevel");
-
-                if (join.equalsIgnoreCase("bevel"))      candidateJoin = BasicStroke.JOIN_BEVEL;
-                else if (join.equalsIgnoreCase("mitre")) candidateJoin = BasicStroke.JOIN_MITER;
-                else if (join.equalsIgnoreCase("round")) candidateJoin = BasicStroke.JOIN_ROUND;
-                else                                     candidateJoin = BasicStroke.JOIN_BEVEL;
+                final String join = GO2Utilities.evaluate(expJoin, null, String.class, STROKE_JOIN_BEVEL_STRING);
+                if (STROKE_JOIN_BEVEL_STRING.equalsIgnoreCase(join))       candidateJoin = BasicStroke.JOIN_BEVEL;
+                else if (STROKE_JOIN_MITRE_STRING.equalsIgnoreCase(join))  candidateJoin = BasicStroke.JOIN_MITER;
+                else if (STROKE_JOIN_ROUND_STRING.equalsIgnoreCase(join)) candidateJoin = BasicStroke.JOIN_ROUND;
+                else                                                      candidateJoin = BasicStroke.JOIN_BEVEL;
             }
 
             if(Float.isNaN(candidateWidth)){

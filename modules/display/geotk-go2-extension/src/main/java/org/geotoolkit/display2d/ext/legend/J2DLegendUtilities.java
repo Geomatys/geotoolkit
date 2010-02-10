@@ -141,7 +141,7 @@ public class J2DLegendUtilities {
                     final String title = rule.getDescription().getTitle().toString();
                     rectangle.setRect(0, moveY, glyphWidth, glyphHeight);
 
-                    DefaultGlyphService.render(rule, rectangle, g2d);
+                    DefaultGlyphService.render(rule, rectangle, g2d,layer);
                     g2d.setFont(template.getRuleFont());
                     g2d.setColor(Color.BLACK);
 
@@ -195,7 +195,7 @@ public class J2DLegendUtilities {
         for(final Rule rule : rules){
             final String title = rule.getDescription().getTitle().toString();
             rectangle.setRect(X, Y, glyphWidth, glyphHeight);
-            DefaultGlyphService.render(rule, rectangle, g2d);
+            DefaultGlyphService.render(rule, rectangle, g2d, null);
             g2d.setFont(template.getRuleFont());
             g2d.setColor(Color.BLACK);
             g2d.drawString(title, X+glyphWidth+gapSize, Y+glyphHeight);

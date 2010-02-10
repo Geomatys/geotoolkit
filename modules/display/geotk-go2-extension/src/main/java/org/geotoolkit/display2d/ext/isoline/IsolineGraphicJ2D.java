@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,27 +18,23 @@
 package org.geotoolkit.display2d.ext.isoline;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.Stroke;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BandedSampleModel;
-import java.awt.image.DataBufferFloat;
+import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -52,23 +48,26 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
-import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.logging.Logging;
-
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.map.MapBuilder;
+import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -79,17 +78,57 @@ import org.opengis.geometry.Envelope;
 public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
     private static final Logger LOGGER = Logging.getLogger(IsolineGraphicJ2D.class);
-
-    private static final Font FONT = new Font("Arial", Font.BOLD, 13);
-    private static final Color TEXT_COLOR = Color.BLACK;
-    private static final Color HALO_COLOR = Color.WHITE;
-    private static final Stroke LINE_STROKE = new BasicStroke(1);
+    private static final GeometryFactory GF = new GeometryFactory();
 
     private final ValueExtractor extractor;
+    private final SimpleFeatureBuilder featureBuilder;
+    private MutableStyle isoLineStyle = null;
+    private MutableStyle coverageStyle = null;
+    private boolean interpolateCoverageColor = true;
+    private int step = 10;
 
     public IsolineGraphicJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer, ValueExtractor extractor) {
         super(canvas, layer);
         this.extractor = extractor;
+
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName("isoline");
+        sftb.add("geometry", LineString.class, layer.getCollection().getFeatureType().getCoordinateReferenceSystem());
+        sftb.add("value", Double.class);
+        sftb.setDefaultGeometry("geometry");
+        this.featureBuilder = new SimpleFeatureBuilder(sftb.buildFeatureType());
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
+
+    public double getStep() {
+        return step;
+    }
+
+    public void setCoverageStyle(MutableStyle coverageStyle) {
+        this.coverageStyle = coverageStyle;
+    }
+
+    public void setIsoLineStyle(MutableStyle isoLineStyle) {
+        this.isoLineStyle = isoLineStyle;
+    }
+
+    public MutableStyle getCoverageStyle() {
+        return coverageStyle;
+    }
+
+    public MutableStyle getIsoLineStyle() {
+        return isoLineStyle;
+    }
+
+    public void setInterpolateCoverageColor(boolean interpolateCoverageColor) {
+        this.interpolateCoverageColor = interpolateCoverageColor;
+    }
+
+    public boolean isInterpolateCoverageColor() {
+        return interpolateCoverageColor;
     }
 
     @Override
@@ -100,24 +139,16 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             return;
         }
 
-        Date end = context.getCanvas().getController().getTemporalRange()[1];
-        if (end == null) {
-            end = new Date();
-        }
-
-        //search obeservation from last hour to now
-        Date start = new Date(end.getTime() - 1000L*60L*60L);
-
         final Graphics2D g2 = context.getGraphics();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
-        final AffineTransform objToDisp = context.getObjectiveToDisplay();
+        g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
-        try {
-            final FeatureCollection<SimpleFeature> collection =
+        final FeatureCollection<SimpleFeature> collection =
                     (FeatureCollection<SimpleFeature>) layer.getCollection();
 
+        try {
             final FeatureIterator<SimpleFeature> iterator = collection.iterator();
             final List<Coordinate> coords = new ArrayList<Coordinate>();
             double minx = Double.POSITIVE_INFINITY;
@@ -139,17 +170,12 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 }
             }catch(IOException ex){
                 LOGGER.log(Level.WARNING, "Could not calculate isoline matrice",ex);
+                return;
             }finally {
                 iterator.close();
             }
 
             final int s = coords.size();
-
-            
-            final Integer iStep = (Integer) ((ContextContainer2D)context.getCanvas().getContainer())
-                    .getContext().getUserPropertie(IsolineGraphicBuilder.STEP_PROPERTY);
-            final int step = (iStep != null) ? iStep : 5 ;
-
             final Rectangle2D rect = new Rectangle2D.Double(minx,miny,maxx-minx,maxy-miny);
             final Envelope refEnv = layer.getBounds();
             final double[] x = new double[s];
@@ -177,6 +203,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
             final double[] cx = ob.getXs();
             final double[] cy = ob.getYs();
 
+            //find min and max values ------------------------------------------
             double zmax = Double.NEGATIVE_INFINITY;
             double zmin = Double.POSITIVE_INFINITY;
             for(int i=0;i<s;i++){
@@ -184,71 +211,61 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 if(z[i] < zmin) zmin = z[i];
             }
 
-            GeneralEnvelope env = new GeneralEnvelope(new Rectangle2D.Double(cx[0], cy[0], cx[cx.length-1]-cx[0], cy[cy.length-1]-cy[0]));
-            env.setCoordinateReferenceSystem(refEnv.getCoordinateReferenceSystem());
+            //calculate the coverage -------------------------------------------
+            if(coverageStyle != null || interpolateCoverageColor){
+                final GeneralEnvelope env = new GeneralEnvelope(new Rectangle2D.Double(cx[0], cy[0], cx[cx.length-1]-cx[0], cy[cy.length-1]-cy[0]));
+                env.setCoordinateReferenceSystem(refEnv.getCoordinateReferenceSystem());
 
-            GridCoverage2D coverage = toCoverage(computed, cx, cy, env, zmin, zmax);
-            coverage = coverage.view(ViewType.RENDERED);
+                GridCoverage2D coverage = toCoverage(computed, cx, cy, env, zmin, zmax);
 
-            context.switchToObjectiveCRS();
-            g2.drawRenderedImage(coverage.getRenderedImage(),(AffineTransform) coverage.getGridGeometry().getGridToCRS());
+                if(interpolateCoverageColor){
+                    coverage = coverage.view(ViewType.RENDERED);
 
-            context.switchToDisplayCRS();
-
-
-            final double[] palier = new double[(int)(zmax/step)];
-            for(int i=0;i<palier.length;i++){
-                palier[i] = i*step;
+                    final CoverageMapLayer covlayer = MapBuilder.createCoverageLayer(
+                            coverage, GO2Utilities.STYLE_FACTORY.style(GO2Utilities.STYLE_FACTORY.rasterSymbolizer()), "test");
+                    StatefullCoverageLayerJ2D graphic = new StatefullCoverageLayerJ2D(getCanvas(), covlayer);
+                    graphic.paint(context);
+                }else{
+                    final CoverageMapLayer covlayer = MapBuilder.createCoverageLayer(coverage, coverageStyle, "test");
+                    StatefullCoverageLayerJ2D graphic = new StatefullCoverageLayerJ2D(getCanvas(), covlayer);
+                    graphic.paint(context);
+                }
+               
             }
 
-            final Map<Point3d,List<Coordinate>> steps = ob.doContouring(cx, cy, computed,palier);
-            for(final Point3d p : steps.keySet()){
+            if(isoLineStyle != null){
+                //calculate the isolines -------------------------------------------
+                final double[] palier = new double[(int)(zmax/step)];
+                for(int i=0;i<palier.length;i++){
+                    palier[i] = i*step;
+                }
+                final Map<Point3d,List<Coordinate>> steps = ob.doContouring(cx, cy, computed, palier);
 
-                final List<Coordinate> cshps = steps.get(p);
+                //render the isolines ----------------------------------------------
+                final DefaultFeatureCollection col = new DefaultFeatureCollection(
+                        "id", featureBuilder.getFeatureType(), SimpleFeature.class);
+                int inc = 0;
 
-                GeneralPath isoline = null;
-                if(cshps.get(0).x <= cshps.get(cshps.size()-1).x){
-                    //the coordinates are going right, correct
-                    for(final Coordinate coord : cshps){
-                        if(isoline == null){
-                            isoline = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-                            isoline.moveTo(coord.x, coord.y);
-                        }else{
-                            isoline.lineTo(coord.x, coord.y);
-                        }
+                context.switchToDisplayCRS();
+                for(final Point3d p : steps.keySet()){
+                    final List<Coordinate> cshps = steps.get(p);
+
+                    if(cshps.get(0).x > cshps.get(cshps.size()-1).x){
+                        //the coordinates are going left, reverse order
+                        Collections.reverse(cshps);
                     }
-                }else{
-                    //the coordinates are going left, reverse order
-                    for(int i=cshps.size()-1;i>=0;i--){
-                        final Coordinate coord = cshps.get(i);
-                        if(isoline == null){
-                            isoline = new GeneralPath(GeneralPath.WIND_EVEN_ODD);
-                            isoline.moveTo(coord.x, coord.y);
-                        }else{
-                            isoline.lineTo(coord.x, coord.y);
-                        }
-                    }
+
+                    final LineString geometry = GF.createLineString(cshps.toArray(new Coordinate[cshps.size()]));
+                    final double value = p.z;
+
+                    featureBuilder.set("geometry", geometry);
+                    featureBuilder.set("value", value);
+                    col.add(featureBuilder.buildFeature(String.valueOf(inc++)));
                 }
 
-                Shape display = objToDisp.createTransformedShape(isoline);
-                
-                //line
-                g2.setColor(TEXT_COLOR);
-                g2.setStroke(LINE_STROKE);
-                g2.draw(display);
-
-                final TextStroke stroke = new TextStroke(String.valueOf(p.z), FONT, true, 0, 0, 600);
-                final Shape shape = stroke.createStrokedShape(display);
-
-                //paint halo
-                g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
-                g2.setPaint(HALO_COLOR);
-                g2.draw(shape);
-
-                //paint text
-                g2.setStroke(new BasicStroke(0));
-                g2.setPaint(TEXT_COLOR);
-                g2.fill(shape);
+                final FeatureMapLayer flayer = MapBuilder.createFeatureLayer(col, isoLineStyle);
+                final StatelessFeatureLayerJ2D graphic = new StatelessFeatureLayerJ2D(getCanvas(), flayer);
+                graphic.paint(context);
             }
 
         } catch (DataStoreRuntimeException ex) {
@@ -260,12 +277,19 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
             final Envelope env, double zmin, double zmax){
 
-        final float[] zs = new float[xs.length*ys.length];
+        final int lower = 1;
+        final int upper = 255;
+        final double scale = (zmax - zmin) / upper;
+        final double offset = zmin - scale*lower;
+
+        final byte[] zs = new byte[xs.length*ys.length];
 
 //        flip the matrix on y axi
         for(int i=0;i<xs.length;i++){
             for(int j=0;j<ys.length;j++){
-                zs[i + (ys.length-1-j) * xs.length] = (float) computed[i + j * xs.length];
+                double value = computed[i + j * xs.length];
+                value = (value - offset) / scale;
+                zs[i + (ys.length-1-j) * xs.length] = (byte) Math.round(value);
             }
         }
 
@@ -276,37 +300,29 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 //            }
 //        }
 
-        final DataBufferFloat buffer = new DataBufferFloat(zs, zs.length);
-        final SampleModel model = new BandedSampleModel(DataBufferDouble.TYPE_FLOAT, xs.length, ys.length, 1);
+        final DataBufferByte buffer = new DataBufferByte(zs, zs.length);
+        final SampleModel model = new BandedSampleModel(DataBufferDouble.TYPE_BYTE, xs.length, ys.length, 1);
 
         final WritableRaster raster = Raster.createWritableRaster(model, buffer, new Point(0,0));
 
-//        final Category cat = new Category("elevation",
-//                new Color[]{
-//                    new Color(0f,0f,1f,0.8f),
-//                    new Color(0f,1f,1f,0.5f),
-//                    new Color(1f,1f,1f,0f),
-//                    new Color(1f,1f,0f,0.5f),
-//                    new Color(1f,0f,0f,0.8f)},
-//                NumberRange.create(0, 255),
-//                NumberRange.create(zmin, zmax));
-
         if(zmax <= zmin) zmax = zmin+1;
 
-        final Category cat = new Category("elevation",
+        final Category cat = new Category("cat",
                 new Color[]{
-                    new Color(1f,1f,1f,0.01f),
-                    new Color(0f,1f,0f,0.2f),
-                    new Color(1f,1f,0f,0.4f),
-                    new Color(1f,0.5f,0f,0.6f),
-                    new Color(1f,0f,0f,0.7f)},
-                NumberRange.create(0, 255),
-                NumberRange.create(0, 30));
+                    new Color(0f,0f,1f,0.8f),
+                    new Color(0f,1f,1f,0.5f),
+                    new Color(1f,1f,1f,0f),
+                    new Color(1f,1f,0f,0.5f),
+                    new Color(1f,0f,0f,0.8f)},
+                NumberRange.create(lower, upper),
+                scale, offset);
 
-        final GridSampleDimension dim = new GridSampleDimension("elevation", new Category[]{cat},SI.METRE).geophysics(true);
-
+        final GridSampleDimension dim = new GridSampleDimension("cat", new Category[]{
+            Category.NODATA,
+            cat
+        },SI.METRE);
         final GridCoverageFactory gcf = new GridCoverageFactory();
-        return gcf.create("elevationgrid", raster, env, new GridSampleDimension[]{dim});
+        return gcf.create("catgrid", raster, env, new GridSampleDimension[]{dim});
     }
 
 }

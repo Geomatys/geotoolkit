@@ -77,7 +77,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
             buffer = null;
         }
         try {
-            buffer = SvgUtils.getInstance().read(svgFile, size);
+            buffer = SvgUtils.read(svgFile.openStream(), size);
         } catch (IOException ex) {
             ex.printStackTrace();
         }catch (TranscoderException ex) {

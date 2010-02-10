@@ -65,6 +65,7 @@ import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.resources.Errors;
@@ -263,7 +264,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol, MapLayer layer) {
         return null;
     }
 
@@ -271,7 +272,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol) {
+    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol, MapLayer layer) {
 
         final float[] fractions = new float[3];
         final Color[] colors = new Color[3];

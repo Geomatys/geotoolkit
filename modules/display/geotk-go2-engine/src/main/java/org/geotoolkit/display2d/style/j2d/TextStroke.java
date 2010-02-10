@@ -65,7 +65,7 @@ public class TextStroke implements Stroke {
         final GeneralPath result = new GeneralPath();
         final float[] points = new float[6];
         final int labelLength = glyphVector.getNumGlyphs();
-        
+
         //no label to paint
         if (labelLength == 0) return result;
         

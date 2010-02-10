@@ -34,7 +34,7 @@ public abstract class Cache<T extends Object> {
      * Empty collection used for attributs when the style needs
      * no feature attributs or if the style can not be visible.
      */
-    protected static final Collection<String> EMPTY_ATTRIBUTS = Collections.emptyList();
+    public static final Collection<String> EMPTY_ATTRIBUTS = Collections.emptyList();
     
     /**
      * flag used to see is the style has already been evaluate.
@@ -109,9 +109,14 @@ public abstract class Cache<T extends Object> {
      * 
      * @return Collection<String> : all requiered feature attributs name
      */
-    public Collection<String> getRequieredAttributsName(){
+    public Collection<String> getRequieredAttributsName(Collection<String> buffer){
         evaluate();
-        return requieredAttributs;
+        if(buffer != null){
+            buffer.addAll(requieredAttributs);
+            return buffer;
+        }else{
+            return requieredAttributs;
+        }
     }
     
     /**

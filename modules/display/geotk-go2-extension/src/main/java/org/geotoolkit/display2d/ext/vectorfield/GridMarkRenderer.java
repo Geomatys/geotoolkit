@@ -32,6 +32,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -107,12 +108,12 @@ public class GridMarkRenderer extends AbstractSymbolizerRenderer<VectorFieldSymb
     }
 
     @Override
-    public Rectangle2D glyphPreferredSize(CachedVectorFieldSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedVectorFieldSymbolizer symbol, MapLayer layer) {
         return null;
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedVectorFieldSymbolizer symbol) {
+    public void glyph(Graphics2D g, Rectangle2D rect, CachedVectorFieldSymbolizer symbol, MapLayer layer) {
         
     }
 

@@ -62,9 +62,9 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         //call this first seens more evaluation may clear the cache
         evaluateOffset();
         evaluateDisplacement();
-        
-        requieredAttributs.addAll(cacheStroke.getRequieredAttributsName());
-        requieredAttributs.addAll(cacheFill.getRequieredAttributsName());
+
+        cacheStroke.getRequieredAttributsName(requieredAttributs);
+        cacheFill.getRequieredAttributsName(requieredAttributs);
         
         if(requieredAttributs.isEmpty()) requieredAttributs = EMPTY_ATTRIBUTS;
         

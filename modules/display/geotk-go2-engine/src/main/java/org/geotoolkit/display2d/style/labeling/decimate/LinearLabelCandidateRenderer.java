@@ -69,9 +69,11 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
         final Shape shape = stroke.createStrokedShape(linearCandidate.getShape());
 
         //paint halo
-        g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
-        g2.setPaint(label.getHaloPaint());
-        g2.draw(shape);
+        if(label.getHaloWidth() > 0){
+            g2.setStroke(new BasicStroke(label.getHaloWidth(),BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND) );
+            g2.setPaint(label.getHaloPaint());
+            g2.draw(shape);
+        }
 
         //paint text
         g2.setStroke(new BasicStroke(0));

@@ -23,6 +23,7 @@ import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Font;
 
+import static org.geotoolkit.style.StyleConstants.*;
 
 /**
  *
@@ -56,21 +57,21 @@ public class CachedFont extends Cache<Font>{
             j2dStyle = fontStyle;
         }else{
             //style is dynamic
-            String style = GO2Utilities.evaluate(font.getStyle(), feature, String.class, "normal");
-            String weight = GO2Utilities.evaluate(font.getWeight(), feature, String.class, "normal");
+            String style = GO2Utilities.evaluate(font.getStyle(), feature, String.class, FONT_STYLE_NORMAL_STRING);
+            String weight = GO2Utilities.evaluate(font.getWeight(), feature, String.class, FONT_WEIGHT_NORMAL_STRING);
 
-            if (weight.equalsIgnoreCase("bold")) {
-                if (style.equalsIgnoreCase("italic")) {
+            if (FONT_WEIGHT_BOLD_STRING.equalsIgnoreCase(weight)) {
+                if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(style)) {
                     j2dStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
-                } else if (style.equalsIgnoreCase("oblique")) {
+                } else if (FONT_STYLE_OBLIQUE_STRING.equalsIgnoreCase(style)) {
                     j2dStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
                 } else {
                     j2dStyle = java.awt.Font.BOLD;
                 }
             } else {
-                if (style.equalsIgnoreCase("italic")) {
+                if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(style)) {
                     j2dStyle = java.awt.Font.ITALIC;
-                } else if (style.equalsIgnoreCase("oblique")) {
+                } else if (FONT_STYLE_OBLIQUE_STRING.equalsIgnoreCase(style)) {
                     j2dStyle = java.awt.Font.ITALIC;
                 } else {
                     j2dStyle = java.awt.Font.BOLD;
@@ -125,21 +126,21 @@ public class CachedFont extends Cache<Font>{
         }
         
         if(GO2Utilities.isStatic(expWeight) && GO2Utilities.isStatic(expStyle)){
-            String strWeight = GO2Utilities.evaluate(expWeight, null, String.class, "normal");
-            String strStyle = GO2Utilities.evaluate(expStyle, null, String.class, "normal");
+            String strWeight = GO2Utilities.evaluate(expWeight, null, String.class, FONT_STYLE_NORMAL_STRING);
+            String strStyle = GO2Utilities.evaluate(expStyle, null, String.class, FONT_WEIGHT_NORMAL_STRING);
             
-            if (strWeight.equalsIgnoreCase("bold")) {
-                if (strStyle.equalsIgnoreCase("italic")) {
+            if (FONT_WEIGHT_BOLD_STRING.equalsIgnoreCase(strWeight)) {
+                if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
-                } else if (strStyle.equalsIgnoreCase("oblique")) {
+                } else if (FONT_STYLE_OBLIQUE_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
                 } else {
                     fontStyle = java.awt.Font.BOLD;
                 }
             } else {
-                if (strStyle.equalsIgnoreCase("italic")) {
+                if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.ITALIC;
-                } else if (strStyle.equalsIgnoreCase("oblique")) {
+                } else if (FONT_STYLE_OBLIQUE_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.ITALIC;
                 } else {
                     fontStyle = java.awt.Font.BOLD;

@@ -36,6 +36,7 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -262,7 +263,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedLineSymbolizer symbol) {
+    public Rectangle2D glyphPreferredSize(CachedLineSymbolizer symbol, MapLayer layer) {
         return null;
     }
 
@@ -270,7 +271,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedLineSymbolizer symbol) {
+    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedLineSymbolizer symbol, MapLayer layer) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
                 rectangle.getHeight(), rectangle.getX(), rectangle.getY());
 

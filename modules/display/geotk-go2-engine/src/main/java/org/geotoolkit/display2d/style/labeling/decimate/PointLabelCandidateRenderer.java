@@ -110,12 +110,12 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
 
 
         //TODO draw a nice line if correction is important----------------------
-        g2.setColor(Color.RED);
-        g2.setStroke(new BasicStroke(1));
-        g2.drawLine((int)pointCandidate.x,
-                (int)pointCandidate.y,
-                (int)pointCandidate.getCorrectedX(),
-                (int)pointCandidate.getCorrectedY());
+//        g2.setColor(Color.RED);
+//        g2.setStroke(new BasicStroke(1));
+//        g2.drawLine((int)pointCandidate.x,
+//                (int)pointCandidate.y,
+//                (int)pointCandidate.getCorrectedX(),
+//                (int)pointCandidate.getCorrectedY());
 
         //rotation--------------------------------------------------------------
         g2.rotate(rotation, pointCandidate.getCorrectedX(), pointCandidate.getCorrectedY());

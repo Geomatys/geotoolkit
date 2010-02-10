@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import org.geotoolkit.display2d.style.CachedExternal;
 import org.geotoolkit.display2d.style.CachedFill;
 import org.geotoolkit.display2d.style.CachedGraphic;
 import org.geotoolkit.display2d.style.CachedMark;
@@ -41,6 +42,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
+import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -50,6 +52,7 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 import static org.junit.Assert.*;
+import static org.geotoolkit.style.StyleConstants.*;
 
 /**
  *
@@ -125,6 +128,30 @@ public class StyleCacheTest {
     }
 
     @Test
+    public void externalCacheTest() throws Exception{
+        final ExternalGraphic ext = SF.externalGraphic("/org/geotoolkit/display2d/sample.svg", "image/svg");
+        CachedExternal cached = new CachedExternal(ext);
+
+        assertFalse(cached.isStatic());
+        assertEquals(VisibilityState.VISIBLE, cached.isStaticVisible() );
+        assertTrue(cached.isVisible(null));
+
+        BufferedImage buffer = cached.getImage(Float.NaN, 1, null);
+        assertNotNull(buffer);
+        assertEquals(buffer.getWidth(), 12);
+        assertEquals(buffer.getHeight(), 12);
+
+        buffer = cached.getImage(null, 1, null);
+        assertEquals(buffer.getWidth(), 12);
+        assertEquals(buffer.getHeight(), 12);
+
+        buffer = cached.getImage(24f, 1, null);
+        assertEquals(buffer.getWidth(), 24);
+        assertEquals(buffer.getHeight(), 24);
+
+    }
+
+    @Test
     public void GraphicCacheTest() throws Exception {
 
         //Test a complex graphic
@@ -172,6 +199,53 @@ public class StyleCacheTest {
 
         //we must have exactly the same object
         assertTrue(buffer1 == buffer2);
+
+
+        //test svg external image ----------------------------------------------
+
+        ExternalGraphic ext = SF.externalGraphic("/org/geotoolkit/display2d/sample.svg", "image/svg");
+        List<GraphicalSymbol> gs = new ArrayList<GraphicalSymbol>();
+        gs.add(ext);
+        point = SF.pointSymbolizer(
+                    SF.graphic(
+                        gs,
+                        DEFAULT_GRAPHIC_OPACITY,
+                        FF.literal(12),
+                        DEFAULT_GRAPHIC_ROTATION,
+                        DEFAULT_ANCHOR_POINT,
+                        DEFAULT_DISPLACEMENT)
+                    ,null);
+        cached = (CachedPointSymbolizer) GO2Utilities.getCached(point);
+
+        assertFalse(cached.isStatic());
+        assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );
+        assertTrue(cached.isVisible(null));
+
+        BufferedImage buffer = cached.getImage(null, 1, null);
+        assertNotNull(buffer);
+        assertEquals(buffer.getWidth(), 12);
+        assertEquals(buffer.getHeight(), 12);
+
+        //different size
+        point = SF.pointSymbolizer(
+                    SF.graphic(
+                        gs,
+                        DEFAULT_GRAPHIC_OPACITY,
+                        FF.literal(24),
+                        DEFAULT_GRAPHIC_ROTATION,
+                        DEFAULT_ANCHOR_POINT,
+                        DEFAULT_DISPLACEMENT)
+                    ,null);
+        cached = (CachedPointSymbolizer) GO2Utilities.getCached(point);
+
+        assertFalse(cached.isStatic());
+        assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );
+        assertTrue(cached.isVisible(null));
+
+        buffer = cached.getImage(null, 1, null);
+        assertNotNull(buffer);
+        assertEquals(buffer.getWidth(), 24);
+        assertEquals(buffer.getHeight(), 24);
 
 
     }

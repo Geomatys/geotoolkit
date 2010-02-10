@@ -92,10 +92,20 @@ public class J2DGridUtilities {
         tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
 
         try{
-            final Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds(), gridCRS);
+            final Envelope gridBounds = CRS.transform(context.getCanvasObjectiveBounds2D(), gridCRS);
             final MathTransform gridToObj = CRS.findMathTransform(gridCRS, context.getObjectiveCRS(), true);
             final MathTransform inverse = gridToObj.inverse();
             final MathTransform objToDisp = context.getObjectiveToDisplay();
+
+            //ensure we dont have to much points on the lines-------------------
+            if((gridBounds.getMaximum(1)-gridBounds.getMinimum(1)) / gridResolution[1] > context.getCanvasDisplayBounds().height){
+                gridResolution[1] = (gridBounds.getMaximum(1)-gridBounds.getMinimum(1)) /context.getCanvasDisplayBounds().height;
+            }
+
+            if((gridBounds.getMaximum(0)-gridBounds.getMinimum(0)) / gridResolution[0] > context.getCanvasDisplayBounds().width){
+                gridResolution[0] = (gridBounds.getMaximum(0)-gridBounds.getMinimum(0)) / context.getCanvasDisplayBounds().width;
+            }
+
 
             //grid on X axis ---------------------------------------------------
 

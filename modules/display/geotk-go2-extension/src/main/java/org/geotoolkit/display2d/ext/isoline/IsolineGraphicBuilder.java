@@ -26,6 +26,7 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.canvas.Canvas;
 
@@ -36,12 +37,46 @@ import org.opengis.display.canvas.Canvas;
  */
 public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
-    public static final String STEP_PROPERTY = "step";
-
     private final ValueExtractor extractor;
+    private MutableStyle isoLineStyle = null;
+    private MutableStyle coverageStyle = null;
+    private boolean interpolateCoverageColor = true;
+    private int step = 10;
 
     public IsolineGraphicBuilder(ValueExtractor extractor){
         this.extractor = extractor;
+    }
+
+    public void setCoverageStyle(MutableStyle coverageStyle) {
+        this.coverageStyle = coverageStyle;
+    }
+
+    public void setIsoLineStyle(MutableStyle isoLineStyle) {
+        this.isoLineStyle = isoLineStyle;
+    }
+
+    public MutableStyle getCoverageStyle() {
+        return coverageStyle;
+    }
+
+    public MutableStyle getIsoLineStyle() {
+        return isoLineStyle;
+    }
+
+    public void setStep(int step) {
+        this.step = step;
+    }
+
+    public int getStep() {
+        return step;
+    }
+
+    public void setInterpolateCoverageColor(boolean interpolateCoverageColor) {
+        this.interpolateCoverageColor = interpolateCoverageColor;
+    }
+
+    public boolean isInterpolateCoverageColor() {
+        return interpolateCoverageColor;
     }
 
     @Override
@@ -50,7 +85,14 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         if(canvas instanceof ReferencedCanvas2D && layer instanceof FeatureMapLayer){
             final ReferencedCanvas2D refCanvas = (ReferencedCanvas2D) canvas;
             final Collection<GraphicJ2D> graphics = new ArrayList<GraphicJ2D>();
-            graphics.add(new IsolineGraphicJ2D(refCanvas,(FeatureMapLayer)layer, extractor));
+            
+            final IsolineGraphicJ2D iso = new IsolineGraphicJ2D(refCanvas,(FeatureMapLayer)layer, extractor);
+            iso.setInterpolateCoverageColor(interpolateCoverageColor);
+            iso.setCoverageStyle(coverageStyle);
+            iso.setIsoLineStyle(isoLineStyle);
+            iso.setStep(step);
+
+            graphics.add(iso);
             return graphics;
         }
 

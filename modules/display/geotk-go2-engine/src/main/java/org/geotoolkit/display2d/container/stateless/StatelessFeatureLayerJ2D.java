@@ -60,7 +60,6 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
@@ -101,6 +100,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         
         //we abort painting if the layer is not visible.
         if (!layer.isVisible()) return;  
+
+        //search for a special graphic renderer
+        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
+        if(builder != null){
+            //there is a special graphic builder, no need to check anything, the custom
+            // graphic will take care of it
+            paintVectorLayer(builder, renderingContext);
+        }
 
         final SimpleFeatureType sft = (SimpleFeatureType) layer.getCollection().getFeatureType();
         final CachedRule[] rules;
@@ -149,7 +156,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 mixedRules.add(GO2Utilities.getCached(mixedRule));
             }
 
-            rules = mixedRules.toArray(new CachedRule[mixedRules.size()]);;
+            rules = mixedRules.toArray(new CachedRule[mixedRules.size()]);
 
         }else{
             rules = GO2Utilities.getValidCachedRules(
@@ -164,20 +171,16 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         paintVectorLayer(rules, renderingContext);
     }
-    
-    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D renderingContext) {
-                
-        //search for a special graphic renderer
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
-        if(builder != null){
-            //this layer has a special graphic rendering, use it instead of normal rendering
-            final Collection<GraphicJ2D> graphics = builder.createGraphics(layer, canvas);
-            for(GraphicJ2D gra : graphics){
-                gra.paint(renderingContext);
-            }
-            return;
-        }
 
+    protected void paintVectorLayer(GraphicBuilder builder, final RenderingContext2D renderingContext){
+        final Collection<GraphicJ2D> graphics = builder.createGraphics(layer, canvas);
+        for(GraphicJ2D gra : graphics){
+            gra.paint(renderingContext);
+        }
+    }
+
+    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D renderingContext) {
+        
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Query query = prepareQuery(renderingContext, layer, rules);
 
@@ -196,8 +199,16 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //it can be a very expensive operation
 
         final StatefullContextParams params;
+
+        final CoordinateReferenceSystem dataCRS = features.getFeatureType().getCoordinateReferenceSystem();
+
+        if(dataCRS == null){
+            monitor.exceptionOccured(new IllegalStateException("Layer has no CRS, can not render it."), Level.WARNING);
+            return;
+        }
+
         try {
-            params = prepareContextParams(renderingContext, features.getFeatureType().getCoordinateReferenceSystem(), null);
+            params = prepareContextParams(renderingContext, dataCRS, null);
         } catch (FactoryException ex) {
             monitor.exceptionOccured(ex, Level.SEVERE);
             return;
