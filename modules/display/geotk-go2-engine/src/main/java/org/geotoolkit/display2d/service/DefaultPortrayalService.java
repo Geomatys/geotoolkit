@@ -28,6 +28,7 @@ import java.awt.Shape;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
 import javax.imageio.IIOImage;
@@ -332,40 +333,7 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
         try {
-            final ImageWriter writer = ImageIOUtilities.getImageWriter(image, outputDef.getMime(), outputDef.getOutput());
-            final ImageWriteParam param = writer.getDefaultWriteParam();
-
-            final Float compression = outputDef.getCompression();
-            if(compression != null && param.canWriteCompressed()){
-                param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                param.setCompressionQuality(compression);
-            }
-
-            final Boolean progress = outputDef.getProgressive();
-            if(progress != null){
-                if(progress){
-                    param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
-                }else{
-                    param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
-                }
-            }
-
-            Object output = outputDef.getOutput();
-            final ImageWriterSpi spi = writer.getOriginatingProvider();
-
-            ImageOutputStream stream = null;
-            if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
-                stream = ImageIO.createImageOutputStream(output);
-                output = stream;
-            }
-            writer.setOutput(output);
-            writer.write(null,new IIOImage(image, null, null),param);
-            writer.dispose();
-            if (stream != null) {
-                stream.close();
-            }
-
-
+            writeImage(image, outputDef);
         } catch (IOException ex) {
             throw new PortrayalException(ex);
         }
@@ -499,6 +467,48 @@ public class DefaultPortrayalService implements PortrayalService{
         g.dispose();
 
         return img;
+    }
+
+    /**
+     * Write an image in a stream using the appropriate output configuration
+     *
+     * @param image : image to write in stream
+     * @param outputDef : output configuration
+     * @throws IOException
+     */
+    public static void writeImage(RenderedImage image, OutputDef outputDef) throws IOException{
+        final ImageWriter writer = ImageIOUtilities.getImageWriter(image, outputDef.getMime(), outputDef.getOutput());
+        final ImageWriteParam param = writer.getDefaultWriteParam();
+
+        final Float compression = outputDef.getCompression();
+        if(compression != null && param.canWriteCompressed()){
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(compression);
+        }
+
+        final Boolean progress = outputDef.getProgressive();
+        if(progress != null){
+            if(progress){
+                param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+            }else{
+                param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+            }
+        }
+
+        Object output = outputDef.getOutput();
+        final ImageWriterSpi spi = writer.getOriginatingProvider();
+
+        ImageOutputStream stream = null;
+        if (!ImageIOUtilities.isValidType(spi.getOutputTypes(), output)) {
+            stream = ImageIO.createImageOutputStream(output);
+            output = stream;
+        }
+        writer.setOutput(output);
+        writer.write(null,new IIOImage(image, null, null),param);
+        writer.dispose();
+        if (stream != null) {
+            stream.close();
+        }
     }
 
     private static MapContext convertCoverage(final GridCoverage2D coverage){
