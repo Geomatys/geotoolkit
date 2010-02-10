@@ -18,9 +18,15 @@
 package org.geotoolkit.map;
 
 import java.io.IOException;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -41,7 +47,15 @@ public class SimpleCoverageReader implements CoverageReader{
 
     @Override
     public GridCoverage2D read(CoverageReadParam param) throws FactoryException, TransformException, IOException {
-        return coverage;
+
+        if(CRS.equalsIgnoreMetadata(param.getEnveloppe().getCoordinateReferenceSystem(),coverage.getCoordinateReferenceSystem())){
+            return coverage;
+        }else{
+            final Operations ops = new Operations(new Hints(Hints.LENIENT_DATUM_SHIFT, true));
+            return (GridCoverage2D) ops.resample(
+                    coverage, CRSUtilities.getCRS2D(param.getEnveloppe().getCoordinateReferenceSystem()));
+        }
+        
     }
 
     @Override
