@@ -25,8 +25,10 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
+import org.geotoolkit.wms.v111.GetLegend111;
 import org.geotoolkit.wms.v111.GetMap111;
 import org.geotoolkit.wms.v130.GetCapabilities130;
+import org.geotoolkit.wms.v130.GetLegend130;
 import org.geotoolkit.wms.v130.GetMap130;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
@@ -156,4 +158,16 @@ public class WebMapServer {
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
+
+    public GetLegendRequest creategetLegend(){
+        switch (version) {
+            case v111:
+                return new GetLegend111(serverURL.toString());
+            case v130:
+                return new GetLegend130(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
 }

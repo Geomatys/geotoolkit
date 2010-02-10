@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.map;
 
 import java.awt.AlphaComposite;
+import java.awt.Image;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.awt.Dimension;
@@ -47,6 +48,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractLayer;
@@ -78,6 +80,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
         }
         EPSG_4326 = crs;
     }
+
+
 
     /**
      * Configure the politic when the requested envelope is in CRS:84.
@@ -352,6 +356,24 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer{
                 g2.translate(-dim.width/2, -dim.height/2);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Image getLegend() throws PortrayalException {
+        GetLegendRequest request = server.creategetLegend();
+        request.setLayer(layers[0]);
+
+        BufferedImage buffer;
+        try {
+            buffer = ImageIO.read(request.getURL());
+        } catch (IOException ex) {
+            throw new PortrayalException(ex);
+        }
+
+        return buffer;
     }
 
     public void setLayerNames(String ... names){

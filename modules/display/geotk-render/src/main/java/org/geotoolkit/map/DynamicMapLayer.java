@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.map;
 
+import java.awt.Image;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.exception.PortrayalException;
 
@@ -44,4 +45,13 @@ public interface DynamicMapLayer extends MapLayer{
      */
     public void portray(RenderingContext context) throws PortrayalException;
     
+    /**
+     * Ask the distant layer to provide a legend.
+     * It might not be always possible but at least we can try.
+     * 
+     * @return image legend or null.
+     * @throws PortrayalException
+     */
+    public Image getLegend() throws PortrayalException;
+
 }

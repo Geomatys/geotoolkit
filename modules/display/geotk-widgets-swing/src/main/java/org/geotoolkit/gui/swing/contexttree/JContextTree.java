@@ -21,6 +21,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.datatransfer.DataFlavor;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -58,6 +61,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import org.geotoolkit.display.exception.PortrayalException;
 
 import org.jdesktop.swingx.JXTree;
 
@@ -65,6 +69,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
 
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.map.ContextListener;
+import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.CollectionChangeEvent;
@@ -82,7 +87,7 @@ public class JContextTree extends JScrollPane {
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
     private static final ImageIcon ICON_LAYER_UNVISIBLE = IconBundle.getInstance().getIcon("16_maplayer_unvisible");
-
+    
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
     private final DefaultTreeModel model = new DefaultTreeModel(root);
@@ -224,11 +229,26 @@ public class JContextTree extends JScrollPane {
     }
 
     private DefaultMutableTreeNode createNode(MapLayer layer){
+
         DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
-        for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-            for(Rule rule : fts.rules()){
-                DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
-                layerNode.add(ruleNode);
+
+        if(layer instanceof DynamicMapLayer){
+            //this kind of layer have there own style systems we rely on it
+            DynamicMapLayer dynlayer = (DynamicMapLayer) layer;
+            try {
+                Image img = dynlayer.getLegend();
+                DefaultMutableTreeNode imgNode = new org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode(img);
+                layerNode.add(imgNode);
+            } catch (PortrayalException ex) {
+                Logger.getLogger(JContextTree.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }else{
+            for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                for(Rule rule : fts.rules()){
+                    DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
+                    layerNode.add(ruleNode);
+                }
             }
         }
         return layerNode;
@@ -387,6 +407,8 @@ public class JContextTree extends JScrollPane {
             if (node != null) obj = node.getUserObject();
             value = obj;
 
+            this.label.setIcon(null);
+
             panel.removeAll();
 
             if (obj instanceof MapContext) {
@@ -450,7 +472,14 @@ public class JContextTree extends JScrollPane {
                 gc.gridx = 1;
                 this.label.setText(rule.getDescription().getTitle().toString());
                 panel.add(label,gc);
-            }else {
+            } else if(obj instanceof Image){
+                final Image img = (Image) obj;
+                this.label.setText("");
+                this.label.setIcon(new ImageIcon(img));
+                gc.weightx = 1;
+                gc.weighty = 1;
+                panel.add(label,gc);
+            } else {
                 gc.weightx = 1;
                 gc.weighty = 1;
                 this.label.setText("-");
