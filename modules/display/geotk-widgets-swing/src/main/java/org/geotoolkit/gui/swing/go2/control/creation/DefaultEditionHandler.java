@@ -45,6 +45,9 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.MouseInputListener;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.session.Session;
 
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
@@ -55,6 +58,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.misc.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.jdesktop.swingx.JXErrorPane;
 
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
@@ -64,8 +68,6 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  * @module pending
  */
 public class DefaultEditionHandler implements CanvasHandler {
-
-    private static final Color MAIN_COLOR = Color.RED;
 
     private final DefaultEditionDecoration deco = new DefaultEditionDecoration();
     private final GestureProxy gestureProxy = new GestureProxy();
@@ -81,7 +83,7 @@ public class DefaultEditionHandler implements CanvasHandler {
                     final Class c = layer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
                     guiLayers.setEnabled(false);
                     startAction.setEnabled(false);
-                    guiEnd.setEnabled(true);
+                    guiCommit.setEnabled(true);
                     if(c == Point.class){
                         setDelegate(new PointDelegate(DefaultEditionHandler.this));
                     }else if(c == LineString.class){
@@ -97,21 +99,57 @@ public class DefaultEditionHandler implements CanvasHandler {
                     }else if(Geometry.class.isAssignableFrom(c)){
                         setDelegate(new AnyTypeDelegate(DefaultEditionHandler.this));
                     }
+                    checkChanges();
                 }
             }
 
         }
     };
-    private final Action endAction = new AbstractAction(MessageBundle.getString("end")) {
+
+    private final Action rollbackAction = new AbstractAction(MessageBundle.getString("rollback")) {
         @Override
         public void actionPerformed(ActionEvent arg0) {
+            final Object candidate = guiLayers.getSelectedItem();
+            if(candidate instanceof FeatureMapLayer){
+                FeatureMapLayer layer = (FeatureMapLayer)candidate;
+                if(layer != null){
+                    layer.getCollection().getSession().rollback();
+
+                    final J2DCanvas canvas = getCanvas();
+                    if(canvas != null){
+                        canvas.repaint();
+                    }
+
+                }
+            }
+
+            reset();
+        }
+    };
+
+    private final Action commitAction = new AbstractAction(MessageBundle.getString("commit")) {
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            final Object candidate = guiLayers.getSelectedItem();
+            if(candidate instanceof FeatureMapLayer){
+                FeatureMapLayer layer = (FeatureMapLayer)candidate;
+                if(layer != null){
+                    try {
+                        layer.getCollection().getSession().commit();
+                    } catch (DataStoreException ex) {
+                        JXErrorPane.showDialog(ex);
+                    }
+                }
+            }
+
             reset();
         }
     };
 
     private final JComboBox guiLayers = new JComboBox();
     private final JButton guiStart = new JButton(startAction);
-    private final JButton guiEnd = new JButton(endAction);
+    private final JButton guiRollBack = new JButton(rollbackAction);
+    private final JButton guiCommit = new JButton(commitAction);
 
     private Map2D map;
     private AbstractEditionDelegate delegate = null;
@@ -130,10 +168,35 @@ public class DefaultEditionHandler implements CanvasHandler {
                         guiStart.setEnabled(true);
                     }
                 }
+                checkChanges();
             }
         });
 
         installChooser();
+    }
+
+    /**
+     * Check if there are changes in the current session and
+     * activate commit/rollback buttons.
+     */
+    private void checkChanges(){
+        boolean changes = false;
+        final Object candidate = guiLayers.getSelectedItem();
+
+        if(candidate instanceof FeatureMapLayer){
+            final FeatureMapLayer layer = (FeatureMapLayer)candidate;
+
+            if(layer != null){
+                final FeatureCollection col = layer.getCollection();
+                final Session session = col.getSession();
+                if(session != null){
+                    changes = session.hasPendingChanges();
+                }
+            }
+        }
+
+        guiCommit.setEnabled(changes);
+        guiRollBack.setEnabled(changes);
     }
 
     public void setMap(Map2D map){
@@ -204,7 +267,7 @@ public class DefaultEditionHandler implements CanvasHandler {
     public void reset(){
         guiStart.setEnabled(true);
         guiLayers.setEnabled(true);
-        guiEnd.setEnabled(false);
+        checkChanges();
         deco.setToolsPane(null);
         deco.setGestureMessages(null, null, null, null);
         setDelegate(null);
@@ -220,7 +283,8 @@ public class DefaultEditionHandler implements CanvasHandler {
         panTools.add(guiLayers);
         panTools.add(guiStart);
         panTools.add(new JLabel("  "));
-        panTools.add(guiEnd);
+        panTools.add(guiRollBack);
+        panTools.add(guiCommit);
         panNorth.add(panTools);
 
         deco.setToNorth(panNorth);
@@ -265,6 +329,9 @@ public class DefaultEditionHandler implements CanvasHandler {
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseClicked(arg0);
             }
+
+            //todo the good place to do so but since events are not working yet
+            checkChanges();
         }
 
         @Override
@@ -273,6 +340,9 @@ public class DefaultEditionHandler implements CanvasHandler {
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mousePressed(arg0);
             }
+
+            //todo the good place to do so but since events are not working yet
+            checkChanges();
         }
 
         @Override
@@ -281,6 +351,9 @@ public class DefaultEditionHandler implements CanvasHandler {
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseReleased(arg0);
             }
+
+            //todo the good place to do so but since events are not working yet
+            checkChanges();
         }
 
         @Override

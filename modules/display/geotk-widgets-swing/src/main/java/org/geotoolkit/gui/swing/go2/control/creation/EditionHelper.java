@@ -726,10 +726,6 @@ public class EditionHelper {
             if(editionLayer.getCollection().isWritable()){
                 try {
                     editionLayer.getCollection().addAll(collection);
-
-                    if(editionLayer.getCollection().getSession() != null){
-                        editionLayer.getCollection().getSession().commit();
-                    }
                 } catch (Exception eek) {
                     eek.printStackTrace();
                 }
@@ -762,11 +758,6 @@ public class EditionHelper {
                 final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
                 
                 editionLayer.getCollection().update(filter, geomAttribut,geom);
-
-                if(editionLayer.getCollection().getSession() != null){
-                    editionLayer.getCollection().getSession().commit();
-                }
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
@@ -796,11 +787,6 @@ public class EditionHelper {
 
             try {
                 editionLayer.getCollection().remove(filter);
-
-                if(editionLayer.getCollection().getSession() != null){
-                    editionLayer.getCollection().getSession().commit();
-                }
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

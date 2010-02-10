@@ -18,6 +18,8 @@
 package org.geotoolkit.data.session;
 
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
@@ -29,6 +31,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
 
@@ -63,7 +66,16 @@ class AddDelta extends AbstractDelta{
         }
 
         this.type = typeName;
-        this.features = new DefaultFeatureCollection<Feature>(null, null, Feature.class);
+
+        FeatureType ft;
+        try {
+            ft = session.getDataStore().getFeatureType(typeName);
+        } catch (DataStoreException ex) {
+            Logger.getLogger(AddDelta.class.getName()).log(Level.SEVERE, null, ex);
+            ft = null;
+        }
+
+        this.features = new DefaultFeatureCollection<Feature>(null, ft, Feature.class);
         this.features.addAll(features);
     }
 
