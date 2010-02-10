@@ -280,6 +280,8 @@ public final class Registry {
          *
          * org.geotoolkit.internal.image.io.Formats.getReaderByFormatName(String)
          */
+        setNativeCodecAllowed("GIF",   ImageReaderSpi.class, false);
+        setNativeCodecAllowed("GIF",   ImageWriterSpi.class, false);
         setNativeCodecAllowed("PNG",   ImageReaderSpi.class, false);
         setNativeCodecAllowed("PNG",   ImageWriterSpi.class, false);
         setNativeCodecAllowed("BMP",   ImageReaderSpi.class, false);
