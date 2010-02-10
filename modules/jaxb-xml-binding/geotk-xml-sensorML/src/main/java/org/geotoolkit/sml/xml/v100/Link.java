@@ -72,9 +72,9 @@ import org.geotoolkit.util.Utilities;
 public class Link {
 
     @XmlElement(required = true)
-    private Source source;
+    private LinkRef source;
     @XmlElement(required = true)
-    private Destination destination;
+    private LinkRef destination;
     @XmlAttribute
     private String type;
 
@@ -82,7 +82,7 @@ public class Link {
 
     }
 
-    public Link(String type, Source source, Destination destination) {
+    public Link(String type, LinkRef source, LinkRef destination) {
         this.destination = destination;
         this.source      = source;
         this.type        = type;
@@ -91,28 +91,28 @@ public class Link {
     /**
      * Gets the value of the source property.
      */
-    public Source getSource() {
+    public LinkRef getSource() {
         return source;
     }
 
     /**
      * Sets the value of the source property.
      */
-    public void setSource(Source value) {
+    public void setSource(LinkRef value) {
         this.source = value;
     }
 
     /**
      * Gets the value of the destination property.
      */
-    public Destination getDestination() {
+    public LinkRef getDestination() {
         return destination;
     }
 
     /**
      * Sets the value of the destination property.
      */
-    public void setDestination(Destination value) {
+    public void setDestination(LinkRef value) {
         this.destination = value;
     }
 

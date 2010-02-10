@@ -44,7 +44,6 @@ import org.geotoolkit.sml.xml.v100.Interfaces;
 import org.geotoolkit.sml.xml.v100.Contact;
 import org.geotoolkit.sml.xml.v100.SystemType;
 import org.geotoolkit.sml.xml.v100.IoComponentPropertyType;
-import org.geotoolkit.sml.xml.v100.Destination;
 import org.geotoolkit.sml.xml.v100.Documentation;
 import org.geotoolkit.sml.xml.v100.Term;
 import org.geotoolkit.sml.xml.v100.Inputs;
@@ -58,7 +57,6 @@ import org.geotoolkit.sml.xml.v100.InterfaceList;
 import org.geotoolkit.sml.xml.v100.Link;
 import org.geotoolkit.sml.xml.v100.LegalConstraint;
 import org.geotoolkit.sml.xml.v100.IdentifierList;
-import org.geotoolkit.sml.xml.v100.Source;
 import org.geotoolkit.sml.xml.v100.Identifier;
 import org.geotoolkit.sml.xml.v100.InterfaceDefinition;
 import org.geotoolkit.sml.xml.v100.ContactInfo;
@@ -102,6 +100,8 @@ import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.TemporalCRSType;
 import org.geotoolkit.gml.xml.v311.TemporalCSRefType;
 import org.geotoolkit.gml.xml.v311.TemporalDatumRefType;
+import org.geotoolkit.sml.xml.v100.LinkRef;
+import org.geotoolkit.sml.xml.v100.Member;
 import org.geotoolkit.swe.xml.v100.BooleanType;
 import org.geotoolkit.swe.xml.v100.Category;
 import org.geotoolkit.swe.xml.v100.CoordinateType;
@@ -176,7 +176,7 @@ public class SmlXMLBindingTest {
 
         SensorML result = (SensorML) unmarshalled;
 
-        SensorML.Member member = new SensorML.Member();
+        Member member = new Member();
         member.setRole("urn:x-ogx:def:sensor:OGC:detector");
 
         ComponentType component = new ComponentType();
@@ -333,7 +333,7 @@ public class SmlXMLBindingTest {
 
         SensorML result = (SensorML) unmarshalled;
 
-        SensorML.Member member = new SensorML.Member();
+        Member member = new Member();
         member.setRole("urn:x-ogx:def:sensor:OGC:detector");
 
         SystemType system = new SystemType();
@@ -524,8 +524,8 @@ public class SmlXMLBindingTest {
         system.setTemporalReferenceFrame(temporalReferenceFrame);
 
         List<Connection> connecL = new ArrayList<Connection>();
-        connecL.add(new Connection("inputTolevel", new Link(null, new Source("this/inputs/level"), new Destination("piezometer/inputs/level"))));
-        connecL.add(new Connection("depthToOutput", new Link(null, new Source("piezometer/outputs/depth"), new Destination("this/outputs/piezoMeasurements/depth"))));
+        connecL.add(new Connection("inputTolevel", new Link(null, new LinkRef("this/inputs/level"), new LinkRef("piezometer/inputs/level"))));
+        connecL.add(new Connection("depthToOutput", new Link(null, new LinkRef("piezometer/outputs/depth"), new LinkRef("this/outputs/piezoMeasurements/depth"))));
         ConnectionList connectionList = new ConnectionList(connecL);
         Connections connections = new Connections(connectionList);
         system.setConnections(connections);

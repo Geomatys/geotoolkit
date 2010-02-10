@@ -328,27 +328,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Link.Destination }
-     * 
-     */
-    public Destination createLinkDestination() {
-        return new Destination();
-    }
-
-    /**
      * Create an instance of {@link ProcessMethodType.Implementation.ImplementationCode.SourceRef }
      * 
      */
     public ProcessMethodType.Implementation.ImplementationCode.SourceRef createProcessMethodTypeImplementationImplementationCodeSourceRef() {
         return new ProcessMethodType.Implementation.ImplementationCode.SourceRef();
-    }
-
-    /**
-     * Create an instance of {@link Link.Source }
-     * 
-     */
-    public Source createLinkSource() {
-        return new Source();
     }
 
     /**

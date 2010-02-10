@@ -1,18 +1,6 @@
 /*
- *    Geotoolkit - An Open Source Java GIS Toolkit
- *    http://www.geotoolkit.org
- *
- *    (C) 2008 - 2009, Geomatys
- *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation; either
- *    version 2.1 of the License, or (at your option) any later version.
- *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
  */
 package org.geotoolkit.sml.xml.v100;
 
@@ -25,36 +13,21 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.util.Utilities;
 
 /**
- * <p>Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
- *
- * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="ref" use="required" type="{http://www.opengis.net/sensorML/1.0}linkRef" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
- * </pre>
- *
- *
- * @module pending
+ * @author guilhem
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-public class Source {
+public class LinkRef {
 
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     private String ref;
 
-    public Source() {
-
+    public LinkRef() {
     }
 
-    public Source(String ref) {
+    public LinkRef(String ref) {
         this.ref = ref;
     }
 
@@ -78,8 +51,8 @@ public class Source {
             return true;
         }
 
-        if (object instanceof Source) {
-            final Source that = (Source) object;
+        if (object instanceof LinkRef) {
+            final LinkRef that = (LinkRef) object;
             return Utilities.equals(this.ref, that.ref);
 
         }
@@ -95,10 +68,10 @@ public class Source {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[Source]").append("\n");
+        StringBuilder sb = new StringBuilder("[LinkRef]").append("\n");
         if (ref != null) {
             sb.append("ref: ").append(ref).append('\n');
         }
         return sb.toString();
-     }
+    }
 }
