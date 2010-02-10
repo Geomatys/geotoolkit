@@ -40,6 +40,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -48,6 +49,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -339,6 +341,60 @@ public class SessionTest extends TestCase{
         assertEquals(store.getCount(query),3);
         assertEquals(session.getCount(query),3);
         assertTrue(session.hasPendingChanges());
+
+        session.rollback();
+        assertFalse(session.hasPendingChanges());
+
+
+        //check that two modification doesnt conflict eachother
+        qb.reset();
+        qb.setTypeName(name);
+        query = qb.buildQuery();
+        AttributeDescriptor desc = ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double");
+
+        FeatureIterator ite = session.getFeatureIterator(query);
+        FeatureId id1 = ite.next().getIdentifier();
+        FeatureId id2 = ite.next().getIdentifier();
+        ite.close();
+
+        session.updateFeatures(name, FF.id(Collections.singleton(id1)), desc, 50d);
+        session.updateFeatures(name, FF.id(Collections.singleton(id2)), desc, 100d);
+
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setFilter(FF.id(Collections.singleton(id1)));
+        query = qb.buildQuery();
+
+        ite = session.getFeatureIterator(query);
+        int count = 0;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            assertTrue(f.getIdentifier().equals(id1));
+            assertTrue(f.getProperty("double").getValue().equals(50d));
+            count++;
+        }
+        ite.close();
+
+        assertEquals(1, count);
+
+
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setFilter(FF.id(Collections.singleton(id2)));
+        query = qb.buildQuery();
+
+        ite = session.getFeatureIterator(query);
+        count = 0;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            assertTrue(f.getIdentifier().equals(id2));
+            assertTrue(f.getProperty("double").getValue().equals(100d));
+            count++;
+        }
+        ite.close();
+
+        assertEquals(1, count);
+
 
         //todo must handle count and envelope before testing more
 

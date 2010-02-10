@@ -82,13 +82,14 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator getFeatureIterator(Query query) throws DataStoreException {
+    public FeatureIterator getFeatureIterator(Query original) throws DataStoreException {
+        Query modified = original;
         for(final Delta alt : diff.getDeltas()){
-            query = alt.modify(query);
+            modified = alt.modify(modified);
         }
-        FeatureIterator reader = store.getFeatureReader(query);
+        FeatureIterator reader = store.getFeatureReader(modified);
         for(final Delta alt : diff.getDeltas()){
-            reader = alt.modify(query,reader);
+            reader = alt.modify(original,reader);
         }
         return reader;
     }
