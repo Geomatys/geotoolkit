@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import org.geotoolkit.util.Converters;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Expression;
@@ -82,8 +83,14 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
             return false;
         }
 
-        final Class<?> valueClass = value.getClass();
-        final Comparable test = (Comparable) value;
+        Class<?> valueClass = value.getClass();
+
+        if(Number.class.isAssignableFrom(valueClass)){
+            //we better compare with double to avoid truncations
+            valueClass = Double.class;
+        }
+
+        final Comparable test = (Comparable) Converters.convert(value, valueClass);
         final Comparable down = (Comparable) lower.evaluate(feature,valueClass);
         final Comparable up = (Comparable) upper.evaluate(feature,valueClass);
 
@@ -139,4 +146,8 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return new StringBuilder("Between[").append(lower).append(',').append(upper).append("]").toString();
+    }
 }
