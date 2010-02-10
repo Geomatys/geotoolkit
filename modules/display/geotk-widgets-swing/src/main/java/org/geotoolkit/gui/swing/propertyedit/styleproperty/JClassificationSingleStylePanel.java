@@ -151,7 +151,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
             guiModel.setText(" ");
         }else{
             BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-            DefaultGlyphService.render(builder.getTemplate(), new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+            DefaultGlyphService.render(builder.getTemplate(), new Rectangle(GLYPH_DIMENSION), img.createGraphics(),null);
             guiModel.setIcon(new ImageIcon(img));
             guiModel.setText("");
         }
@@ -604,7 +604,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
             if(value instanceof Rule){
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render((Rule)value, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+                DefaultGlyphService.render((Rule)value, new Rectangle(GLYPH_DIMENSION), img.createGraphics(),null);
                 RuleStyleRenderer.this.setIcon(new ImageIcon(img));
             }
 
@@ -647,7 +647,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(this.value, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+                DefaultGlyphService.render(this.value, new Rectangle(GLYPH_DIMENSION), img.createGraphics(),null);
                 button.setIcon(new ImageIcon(img));
             }else{
                 this.value = null;

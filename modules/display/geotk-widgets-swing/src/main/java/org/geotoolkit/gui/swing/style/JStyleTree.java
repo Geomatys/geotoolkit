@@ -297,7 +297,7 @@ public class JStyleTree extends JTree implements DragGestureListener, DragSource
                 } else if (val instanceof Symbolizer) {
                     Symbolizer symb = (Symbolizer) val;
                     BufferedImage img = new BufferedImage(30, 22, BufferedImage.TYPE_INT_ARGB);
-                    DefaultGlyphService.render(symb, new Rectangle(30,22),img.createGraphics());
+                    DefaultGlyphService.render(symb, new Rectangle(30,22),img.createGraphics(),null);
                     Icon ico = new ImageIcon(img);
                     lbl.setText("");
                     lbl.setIcon(ico);

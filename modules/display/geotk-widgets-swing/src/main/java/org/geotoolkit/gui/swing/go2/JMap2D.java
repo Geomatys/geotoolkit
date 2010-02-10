@@ -88,7 +88,7 @@ public class JMap2D extends AbstractMap2D{
         } catch (TransformException ex) {
             LOGGER.log(Level.SEVERE, null, ex);
         }
-
+                
     }
 
     @Override

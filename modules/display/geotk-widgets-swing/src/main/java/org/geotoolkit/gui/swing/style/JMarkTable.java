@@ -322,8 +322,8 @@ class GraphicRenderer extends DefaultTableCellRenderer {
 
 class GraphicEditor extends AbstractCellEditor implements TableCellEditor {//implements TableCellEditor{
     private MapLayer layer = null;
-    private JMarkPane editpane = new JMarkPane();
-    private JButton but = new JButton("");
+    private final JMarkPane editpane = new JMarkPane();
+    private final JButton but = new JButton("");
     private Mark mark = null;
 
     public GraphicEditor() {
@@ -362,6 +362,7 @@ class GraphicEditor extends AbstractCellEditor implements TableCellEditor {//imp
     }
 
     public void setLayer(MapLayer layer) {
+        editpane.setLayer(layer);
         this.layer = layer;
     }
 

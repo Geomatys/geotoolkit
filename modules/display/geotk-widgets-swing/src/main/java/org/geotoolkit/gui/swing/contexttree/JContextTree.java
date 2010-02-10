@@ -432,8 +432,12 @@ public class JContextTree extends JScrollPane {
 
             } else if(obj instanceof Rule){
                 final Rule rule = (Rule) obj;
-                final BufferedImage img = new BufferedImage(30, 24, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(rule, new Rectangle(30, 24), img.createGraphics());
+
+                final MapLayer layer = (MapLayer) ((DefaultMutableTreeNode)node.getParent()).getUserObject();
+
+                Dimension dim = DefaultGlyphService.glyphPreferredSize(rule, null, layer);
+                final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+                DefaultGlyphService.render(rule, new Rectangle(dim), img.createGraphics(),layer);
 
                 gc.weightx = 0;
                 gc.weighty = 1;

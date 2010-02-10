@@ -17,12 +17,15 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyleFactory;
+
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 
@@ -94,4 +97,21 @@ public abstract class StyleElementEditor<T> extends JPanel {
         return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
     }
     
+    /**
+     * Will popup a small dialog with this style editor.
+     */
+    public T show(MapLayer layer, T target){
+        setLayer(layer);
+        parse(target);
+
+        JDialog dialog = new JDialog();
+        dialog.setContentPane(this);
+        dialog.setModal(true);
+        dialog.pack();
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+
+        return create();
+    }
+
 }

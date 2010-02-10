@@ -163,7 +163,7 @@ public class JBankPanel extends javax.swing.JPanel implements PropertyPane{
         jb.setHorizontalTextPosition(AbstractButton.CENTER);
         group.add(jb);
 
-        BufferedImage image = DefaultGlyphService.create(style, new Dimension(60, 60));
+        BufferedImage image = DefaultGlyphService.create(style, new Dimension(60, 60),null);
         jb.setIcon(new ImageIcon(image));
         jb.setText(name);
 

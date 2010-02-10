@@ -198,7 +198,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             guiModel.setText(" ");
         }else{
             BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-            DefaultGlyphService.render(template, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+            DefaultGlyphService.render(template, new Rectangle(GLYPH_DIMENSION), img.createGraphics(),null);
             guiModel.setIcon(new ImageIcon(img));
             guiModel.setText("");
         }
@@ -788,7 +788,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
             if(value instanceof Rule){
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render((Rule)value, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+                DefaultGlyphService.render((Rule)value, new Rectangle(GLYPH_DIMENSION), img.createGraphics(),null);
                 RuleStyleRenderer.this.setIcon(new ImageIcon(img));
             }
 
@@ -831,7 +831,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
-                DefaultGlyphService.render(this.value, new Rectangle(GLYPH_DIMENSION), img.createGraphics());
+                DefaultGlyphService.render(this.value, new Rectangle(GLYPH_DIMENSION), img.createGraphics(),null);
                 button.setIcon(new ImageIcon(img));
             }else{
                 this.value = null;
