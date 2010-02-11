@@ -41,6 +41,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
@@ -56,17 +57,30 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  * be represented without ambiguity as two {@linkplain DirectPosition direct positions}
  * (coordinate points). To encode an {@code Envelope}, it is sufficient to encode these
  * two points.
- * <p>
+ *
+ * {@note <code>Envelope</code> uses an arbitrary <cite>Coordinate Reference System</cite>, which
+ * doesn't need to be geographic. This is different than the <code>GeographicBoundingBox</code>
+ * class provided in the metadata package, which can be used as a kind of envelope restricted to
+ * a Geographic CRS having Greenwich prime meridian.}
+ *
  * This particular implementation of {@code Envelope} is said "General" because it
- * uses coordinates of an arbitrary dimension.
+ * uses coordinates of an arbitrary dimension. This is in contrast with {@link Envelope2D},
+ * which can use only two-dimensional coordinates.
+ * <p>
+ * A {@code GeneralEnvelope} can be created in various ways:
+ * <p>
+ * <ul>
+ *   <li>From a given number of dimension, with all ordinates initialized to 0.</li>
+ *   <li>From two coordinate points.</li>
+ *   <li>From a an other envelope (copy constructor).</li>
+ *   <li>From a <cite>geographic bounding box</cite> or a Java2D rectangle.</li>
+ *   <li>From a grid envelope together with a <cite>Grid to CRS</cite> transform.</li>
+ *   <li>From a string representing a {@code BBOX} in <cite>Well Known Text</cite> format.</li>
+ * </ul>
  *
- * {@note The metadata package provides a <code>GeographicBoundingBox</code> which can
- *        be used as a kind of envelope with a Geographic CRS having Greenwich prime
- *        meridian - typically (but not restricted to) WGS84.}
- *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geometys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.00
+ * @version 3.09
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -80,6 +94,13 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * Serial number for interoperability with different versions.
      */
     private static final long serialVersionUID = 1752330560227688940L;
+
+    /**
+     * Any of those characters can appear as point separator in our lousy WKT parser.
+     *
+     * @see #GeneralEnvelope(String)
+     */
+    private static final String POINT_SEPARATORS = ",()[]";
 
     /**
      * Minimum and maximum ordinate values. The first half contains minimum ordinates, while the
@@ -233,7 +254,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     }
 
     /**
-     * Creates a georeferenced envelope from a grid envelope transformed using the specified
+     * Constructs a georeferenced envelope from a grid envelope transformed using the specified
      * math transform. The <cite>grid to CRS</cite> transform should map either the
      * {@linkplain PixelInCell#CELL_CENTER cell center} (as in OGC convention) or
      * {@linkplain PixelInCell#CELL_CORNER cell corner} (as in Java2D/JAI convention)
@@ -295,6 +316,104 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
         assert transformed.ordinates.length == this.ordinates.length;
         System.arraycopy(transformed.ordinates, 0, this.ordinates, 0, ordinates.length);
         setCoordinateReferenceSystem(crs);
+    }
+
+    /**
+     * Constructs a new envelope initialized to the values parsed from the given string in
+     * <cite>Well Known Text</cite> (WKT) format. The given string is typically a {@code BOX}
+     * element like below:
+     *
+     * {@preformat wkt
+     *     BOX(-180 -90, 180 90)
+     * }
+     *
+     * However this constructor is lenient to other geometry types like {@code POLYGON}.
+     * Actually this constructor ignores the geometry type and just applies the following
+     * simple rules:
+     * <p>
+     * <ul>
+     *   <li>Coordinates are separated by a coma ({@code ,}) character.</li>
+     *   <li>The ordinates in a ordinate are separated by a space.</li>
+     *   <li>Ordinate numbers are assumed in US locale.</li>
+     * </ul>
+     * <p>
+     * Note that the above implies that this constructor does not check the consistency
+     * of the provided WKT.
+     *
+     * @param  wkt The {@code BOX} or {@code POLYGON} element to parse.
+     * @throws NumberFormatException If a number can not be parsed.
+     *
+     * @see #toString(Envelope)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     *
+     * @since 3.09
+     */
+    public GeneralEnvelope(final String wkt) throws NumberFormatException {
+        ensureNonNull("wkt", wkt);
+        int dimLimit     = 4;
+        int maxDimension = 0;
+        final int length = wkt.length();
+        double[] minimum = new double[dimLimit];
+        double[] maximum = new double[dimLimit];
+        Arrays.fill(minimum, Double.POSITIVE_INFINITY);
+        Arrays.fill(maximum, Double.NEGATIVE_INFINITY);
+        int dimension = 0;
+scan:   for (int i=0; i<length; i++) {
+            char c = wkt.charAt(i);
+            if (Character.isJavaIdentifierStart(c)) {
+                do if (++i >= length) break scan;
+                while (Character.isJavaIdentifierPart(c = wkt.charAt(i)));
+            }
+            if (Character.isWhitespace(c)) {
+                continue;
+            }
+            if (POINT_SEPARATORS.indexOf(c) >= 0) {
+                dimension = 0;
+                continue;
+            }
+            /*
+             * At this point we have skipped the leading keyword (BOX, POLYGON, etc.),
+             * the spaces and the parenthesis if any. We should be at the begining of
+             * a number. Search the first separator character (which determine the end
+             * of the number) and parse the number.
+             */
+            final int start = i;
+            boolean flush = false;
+            while (++i < length) {
+                c = wkt.charAt(i);
+                if (Character.isWhitespace(c)) {
+                    break;
+                }
+                if (POINT_SEPARATORS.indexOf(c) >= 0) {
+                    flush = true;
+                    break;
+                }
+            }
+            final double value = Double.parseDouble(wkt.substring(start, i));
+            /*
+             * Adjust the minimum and maximum value using the number that we parsed,
+             * increasing the arrays size if necessary. Remember the maximum number
+             * of dimensions we have found so far.
+             */
+            if (dimension >= dimLimit) {
+                final int old = dimLimit;
+                dimLimit *= 2;
+                minimum = Arrays.copyOf(minimum, dimLimit);
+                maximum = Arrays.copyOf(maximum, dimLimit);
+                Arrays.fill(minimum, old, dimLimit, Double.POSITIVE_INFINITY);
+                Arrays.fill(maximum, old, dimLimit, Double.NEGATIVE_INFINITY);
+            }
+            if (value < minimum[dimension]) minimum[dimension] = value;
+            if (value > maximum[dimension]) maximum[dimension] = value;
+            if (++dimension > maxDimension) {
+                maxDimension = dimension;
+            }
+            if (flush) {
+                dimension = 0;
+            }
+        }
+        ordinates = XArrays.resize(minimum, maxDimension*2);
+        System.arraycopy(maximum, 0, ordinates, maxDimension, maxDimension);
     }
 
     /**

@@ -27,15 +27,64 @@ import org.geotoolkit.test.Depend;
 /**
  * Tests the {@link GeneralEnvelope} class.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 2.4
  */
 @Depend(DirectPositionTest.class)
 public final class GeneralEnvelopeTest {
     /**
-     * Tests {@link GeneralEnvelope#equals} method.
+     * Tests the {@link AbstractEnvelope#toString(Envelope)} method.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testWktFormatting() {
+        Envelope2D envelope = new Envelope2D(null, -180, -90, 360, 180);
+        assertEquals("BOX2D(-180.0 -90.0, 180.0 90.0)", envelope.toString());
+        assertEquals("POLYGON((-180.0 -90.0, -180.0 90.0, 180.0 90.0, 180.0 -90.0, -180.0 -90.0))",
+                AbstractEnvelope.toPolygonString(envelope));
+
+        GeneralEnvelope envelope3D = new GeneralEnvelope(3);
+        envelope3D.setRange(0, -180, +180);
+        envelope3D.setRange(1,  -90,  +90);
+        envelope3D.setRange(2,   10,   30);
+        assertEquals("BOX3D(-180.0 -90.0 10.0, 180.0 90.0 30.0)", envelope3D.toString());
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#GeneralEnvelope(String)} constructor.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testWktParsing() {
+        GeneralEnvelope envelope = new GeneralEnvelope("BOX(-180 -90,180 90)");
+        assertEquals(2, envelope.getDimension());
+        assertEquals(-180, envelope.getMinimum(0), 0);
+        assertEquals( 180, envelope.getMaximum(0), 0);
+        assertEquals( -90, envelope.getMinimum(1), 0);
+        assertEquals(  90, envelope.getMaximum(1), 0);
+
+        envelope = new GeneralEnvelope("BOX3D(-180 -90 10, 180 90 30)");
+        assertEquals(3, envelope.getDimension());
+        assertEquals(-180, envelope.getMinimum(0), 0);
+        assertEquals( 180, envelope.getMaximum(0), 0);
+        assertEquals( -90, envelope.getMinimum(1), 0);
+        assertEquals(  90, envelope.getMaximum(1), 0);
+        assertEquals(  10, envelope.getMinimum(2), 0);
+        assertEquals(  30, envelope.getMaximum(2), 0);
+
+        envelope = new GeneralEnvelope("POLYGON((-80 -30,-100 40,80 40,100 -40,-80 -30))");
+        assertEquals(-100, envelope.getMinimum(0), 0);
+        assertEquals( 100, envelope.getMaximum(0), 0);
+        assertEquals( -40, envelope.getMinimum(1), 0);
+        assertEquals(  40, envelope.getMaximum(1), 0);
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#equals} method.
      */
     @Test
     public void testEquals() {

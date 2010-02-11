@@ -24,24 +24,36 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
 
 
 /**
  * Base class for {@linkplain Envelope envelope} implementations. This base class
- * provides default implementations for {@link #toString}, {@link #equals} and
- * {@link #hashCode} methods.
+ * provides default implementations for {@link #toString()}, {@link #equals(Object)}
+ * and {@link #hashCode()} methods.
  * <p>
  * This class do not holds any state. The decision to implement {@link java.io.Serializable}
  * or {@link org.geotoolkit.util.Cloneable} interfaces is left to implementors.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 2.4
  * @module
  */
 public abstract class AbstractEnvelope implements Envelope {
+    /**
+     * Enumeration of the 4 corners in an envelope, with repetition of the first point.
+     * The values are (x,y) pairs with {@code false} meaning "minimal value" and {@code true}
+     * meaning "maximal value". This is used by {@link #toPolygonString(Envelope)} only.
+     */
+    private static final boolean[] CORNERS = {
+        false, false,
+        false, true,
+        true,  true,
+        true,  false,
+        false, false
+    };
+
     /**
      * Constructs an envelope.
      */
@@ -97,14 +109,15 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * Returns a string representation of this envelope. The default implementation returns a
-     * string containing {@linkplain #getLowerCorner lower corner} coordinates first, followed
-     * by {@linkplain #getUpperCorner upper corner} coordinates. Other informations like the
-     * CRS or class name may or may not be presents at implementor choice.
-     * <p>
-     * This string is okay for occasional formatting (for example for debugging purpose). But
-     * if there is a lot of envelopes to format, users will get more control by using their own
-     * instance of {@link org.geotoolkit.measure.CoordinateFormat}.
+     * Formats this envelope in the <cite>Well Known Text</cite> (WKT) format. The output is like
+     * below, where <var>n</var> is the {@linkplain #getDimension() number of dimensions}:
+     *
+     * <blockquote><code>BOX</code><var>n</var>
+     * <code>D(</code>{@linkplain #getLowerCorner() lower corner}<code>,</code>
+     * {@linkplain #getUpperCorner() upper corner}<code>)</code></blockquote>
+     *
+     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
+     * by the {@link GeneralEnvelope} constructor.
      */
     @Override
     public String toString() {
@@ -112,27 +125,89 @@ public abstract class AbstractEnvelope implements Envelope {
     }
 
     /**
-     * Formats the specified envelope. The returned string will contain the
-     * {@linkplain #getLowerCorner lower corner} coordinates first, followed by
-     * {@linkplain #getUpperCorner upper corner} coordinates.
+     * Formats a {@code BOX} element from an envelope. This method formats the given envelope in
+     * the <cite>Well Known Text</cite> (WKT) format. The output is like below, where <var>n</var>
+     * is the {@linkplain Envelope#getDimension() number of dimensions}:
+     *
+     * <blockquote><code>BOX</code><var>n</var>
+     * <code>D(</code>{@linkplain Envelope#getLowerCorner() lower corner}<code>,</code>
+     * {@linkplain Envelope#getUpperCorner() upper corner}<code>)</code></blockquote>
+     *
+     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
+     * by the {@link GeneralEnvelope} constructor.
+     *
+     * @param  envelope The envelope to format.
+     * @return The envelope as a {@code BOX2D} or {@code BOX3D} in WKT format.
+     *
+     * @see GeneralEnvelope#GeneralEnvelope(String)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     * @see org.geotoolkit.io.wkt
+     *
+     * @since 3.09
      */
-    static String toString(final Envelope envelope) {
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(envelope));
+    public static String toString(final Envelope envelope) {
         final int dimension = envelope.getDimension();
-        if (dimension != 0) {
-            String separator = "[(";
-            for (int i=0; i<dimension; i++) {
-                buffer.append(separator).append(envelope.getMinimum(i));
-                separator = ", ";
+        final StringBuilder buffer = new StringBuilder("BOX").append(dimension).append("D(");
+        for (int i=0; i<dimension; i++) {
+            if (i != 0) {
+                buffer.append(' ');
             }
-            separator = "), (";
-            for (int i=0; i<dimension; i++) {
-                buffer.append(separator).append(envelope.getMaximum(i));
-                separator = ", ";
-            }
-            buffer.append(")]");
+            buffer.append(envelope.getMinimum(i));
         }
-        return buffer.toString();
+        buffer.append(',');
+        for (int i=0; i<dimension; i++) {
+            buffer.append(' ').append(envelope.getMaximum(i));
+        }
+        return buffer.append(')').toString();
+    }
+
+    /**
+     * Formats a {@code POLYGON} element from an envelope. This method formats the given envelope
+     * as a geometry in the <cite>Well Known Text</cite> (WKT) format. This is provided as an
+     * alternative to the {@code BOX} element formatted by {@link #toString(Envelope)}, because
+     * the {@code BOX} element is usually not considered a geometry while {@code POLYGON} is.
+     * <p>
+     * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
+     * by the {@link GeneralEnvelope} constructor.
+     *
+     * @param  envelope The envelope to format.
+     * @return The envelope as a {@code POLYGON} in WKT format.
+     *
+     * @see org.geotoolkit.io.wkt
+     *
+     * @since 3.09
+     */
+    public static String toPolygonString(final Envelope envelope) {
+        /*
+         * Get the dimension, ignoring the trailing ones which have infinite values.
+         */
+        int dimension = envelope.getDimension();
+        while (dimension != 0) {
+            final double length = envelope.getSpan(dimension - 1);
+            if (!Double.isNaN(length) && !Double.isInfinite(length)) {
+                break;
+            }
+            dimension--;
+        }
+        final StringBuilder buffer = new StringBuilder("POLYGON(");
+        String separator = "(";
+        for (int corner=0; corner<CORNERS.length; corner+=2) {
+            for (int i=0; i<dimension; i++) {
+                final double value;
+                switch (i) {
+                    case  0: // Fall through
+                    case  1: value = CORNERS[corner+i] ? envelope.getMaximum(i) : envelope.getMinimum(i); break;
+                    default: value = envelope.getMedian(i); break;
+                }
+                buffer.append(separator).append(value);
+                separator = " ";
+            }
+            separator = ", ";
+        }
+        if (separator == ", ") {
+            buffer.append(')');
+        }
+        return buffer.append(')').toString();
     }
 
     /**

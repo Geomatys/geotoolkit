@@ -18,16 +18,15 @@
 
 /**
  * Basic geometric objects. The {@link org.geotoolkit.geometry.GeneralDirectPosition} class represents
- * a point in a multi-dimensional space. This space may have an arbitrary number of dimensions. For
- * a two-dimensional space, {@code DirectPosition} is conceptually equivalent to
- * {@link java.awt.geom.Point2D}.
+ * a point in a multi-dimensional space, and {@link org.geotoolkit.geometry.GeneralEnvelope} represents
+ * a box in a multi-dimensional space. This space may have an arbitrary number of dimensions.
  * <p>
- * The class {@link org.geotoolkit.geometry.GeneralEnvelope} represents a box in a multi-dimensional
- * space. For a two-dimensional space, {@code Envelope} is conceptually equivalent to
- * {@link java.awt.geom.Rectangle2D}.
+ * In the particular case of two-dimensional space, {@code DirectPosition} is conceptually
+ * equivalent to {@link java.awt.geom.Point2D} and {@code Envelope} is conceptually equivalent
+ * to {@link java.awt.geom.Rectangle2D}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 1.2
  * @module

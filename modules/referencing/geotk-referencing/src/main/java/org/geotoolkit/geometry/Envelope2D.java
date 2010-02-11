@@ -340,10 +340,13 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
     }
 
     /**
-     * Returns a string representation of this envelope. The default implementation is okay
-     * for occasional formatting (for example for debugging purpose). But if there is a lot
-     * of envelopes to format, users will get more control by using their own instance of
-     * {@link org.geotoolkit.measure.CoordinateFormat}.
+     * Formats this envelope in the <cite>Well Known Text</cite> (WKT) format.
+     * The output is like below:
+     *
+     * <blockquote><code>BOX2D(</code>{@linkplain #getLowerCorner() lower corner}<code>,</code>
+     * {@linkplain #getUpperCorner() upper corner}<code>)</code></blockquote>
+     *
+     * @see AbstractFormat#toString(Envelope)
      *
      * @since 2.4
      */

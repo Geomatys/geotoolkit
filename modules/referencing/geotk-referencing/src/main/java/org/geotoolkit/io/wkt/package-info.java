@@ -33,6 +33,9 @@
  * Current implementation is primarily targeting parsing and formatting of referencing objects.
  * However other WKT formats (especially the one for geometric objects) are expected to be
  * provided here in future versions.
+ * <p>
+ * Note that the {@link org.geotoolkit.geometry.GeneralEnvelope} class provides its own, limited,
+ * WKT parsing and formatting services for the {@code BOX} element.
  *
  * {@section References}
  * <ul>

@@ -38,9 +38,9 @@ import org.geotoolkit.util.logging.LoggedFormat;
  *     PRIMEM["Greenwich", 0.0, AUTHORITY["some authority", "Greenwich"]]
  * }
  *
- * Each {@code Element} object can contain can arbitrary amount of other elements.
- * The result is a tree, which can be printed with {@link #print}.
- * Elements can be pull in a <cite>first in, first out</cite> order.
+ * Each {@code Element} object can contain an arbitrary amount of other elements.
+ * The result is a tree, which can be printed with {@link #print} for debugging
+ * purpose. Elements can be pull in a <cite>first in, first out</cite> order.
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD)
