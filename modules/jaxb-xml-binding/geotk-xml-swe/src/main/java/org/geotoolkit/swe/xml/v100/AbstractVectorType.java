@@ -58,10 +58,10 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private String referenceFrame;
+    private URI referenceFrame;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    private String localFrame;
+    private URI localFrame;
 
     public AbstractVectorType() {
 
@@ -71,7 +71,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
         super(definition);
     }
 
-    public AbstractVectorType(String referenceFrame, String localFrame) {
+    public AbstractVectorType(URI referenceFrame, URI localFrame) {
         this.localFrame = localFrame;
         this.referenceFrame = referenceFrame;
     }
@@ -79,28 +79,28 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
     /**
      * Gets the value of the referenceFrame property.
      */
-    public String getReferenceFrame() {
+    public URI getReferenceFrame() {
         return referenceFrame;
     }
 
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(URI value) {
         this.referenceFrame = value;
     }
 
     /**
      * Gets the value of the localFrame property.
      */
-    public String getLocalFrame() {
+    public URI getLocalFrame() {
         return localFrame;
     }
 
     /**
      * Sets the value of the localFrame property.
      */
-    public void setLocalFrame(String value) {
+    public void setLocalFrame(URI value) {
         this.localFrame = value;
     }
 

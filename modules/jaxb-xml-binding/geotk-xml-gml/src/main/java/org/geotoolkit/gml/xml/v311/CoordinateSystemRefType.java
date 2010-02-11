@@ -236,7 +236,7 @@ public class CoordinateSystemRefType {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[Position]").append("\n");
+        StringBuilder sb = new StringBuilder("[CoordinateSystemRefType]").append("\n");
         if (coordinateSystem != null) {
             sb.append("coordinateSystem: ").append(coordinateSystem.getValue()).append('\n');
         }

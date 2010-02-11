@@ -160,9 +160,9 @@ public class InputList implements AbstractInputList {
             sb.append("id: ").append(id).append('\n');
         }
         if (input != null) {
-            sb.append("outputList:").append('\n');
+            sb.append("intput:").append('\n');
             for (IoComponentPropertyType k : input) {
-                sb.append("output: ").append(k).append('\n');
+                sb.append(k).append('\n');
             }
         }
         return sb.toString();

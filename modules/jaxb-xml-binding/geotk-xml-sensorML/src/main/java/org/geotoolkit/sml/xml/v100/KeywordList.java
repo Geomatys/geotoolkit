@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v100;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -61,7 +62,7 @@ public class KeywordList implements AbstractKeywordList {
     @XmlElementRef(name = "keyword", namespace = "http://www.opengis.net/sensorML/1.0", type = JAXBElement.class)
     private List<JAXBElement<String>> keyword;
     @XmlAttribute
-    private String codeSpace;
+    private URI codeSpace;
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -70,7 +71,7 @@ public class KeywordList implements AbstractKeywordList {
     public KeywordList() {
     }
 
-    public KeywordList(String codeSpace, List<JAXBElement<String>> keyword) {
+    public KeywordList(URI codeSpace, List<JAXBElement<String>> keyword) {
         this.codeSpace = codeSpace;
         this.keyword = keyword;
     }
@@ -120,14 +121,14 @@ public class KeywordList implements AbstractKeywordList {
     /**
      * Gets the value of the codeSpace property.
      */
-    public String getCodeSpace() {
+    public URI getCodeSpace() {
         return codeSpace;
     }
 
     /**
      * Sets the value of the codeSpace property.
      */
-    public void setCodeSpace(String value) {
+    public void setCodeSpace(URI value) {
         this.codeSpace = value;
     }
 

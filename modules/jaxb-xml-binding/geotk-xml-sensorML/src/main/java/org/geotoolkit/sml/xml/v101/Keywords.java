@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.xml.v101;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -403,13 +404,13 @@ public class Keywords implements AbstractKeywords {
         private String id;
         @XmlAttribute
         @XmlSchemaType(name = "anyURI")
-        private String codeSpace;
+        private URI codeSpace;
 
         public KeywordList() {
 
         }
 
-        public KeywordList(String codeSpace, List<String> keyword) {
+        public KeywordList(URI codeSpace, List<String> keyword) {
             this.codeSpace = codeSpace;
             this.keyword   = keyword;
         }
@@ -456,7 +457,7 @@ public class Keywords implements AbstractKeywords {
          *     {@link String }
          *     
          */
-        public String getCodeSpace() {
+        public URI getCodeSpace() {
             return codeSpace;
         }
 
@@ -468,7 +469,7 @@ public class Keywords implements AbstractKeywords {
          *     {@link String }
          *     
          */
-        public void setCodeSpace(String value) {
+        public void setCodeSpace(URI value) {
             this.codeSpace = value;
         }
 

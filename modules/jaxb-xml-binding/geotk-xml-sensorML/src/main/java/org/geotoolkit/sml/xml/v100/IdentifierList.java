@@ -93,6 +93,23 @@ public class IdentifierList implements AbstractIdentifierList {
     }
 
     /**
+     * Gets the value of the identifier property.
+     */
+    public void setIdentifier(List<Identifier> identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * Gets the value of the identifier property.
+     */
+    public void setIdentifier(Identifier identifier) {
+        if (this.identifier == null) {
+            this.identifier = new ArrayList<Identifier>();
+        }
+        this.identifier.add(identifier);
+    }
+
+    /**
      * Gets the value of the id property.
      */
     public String getId() {

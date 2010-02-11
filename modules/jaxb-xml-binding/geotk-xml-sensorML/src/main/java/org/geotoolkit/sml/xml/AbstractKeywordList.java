@@ -18,6 +18,7 @@
 
 package org.geotoolkit.sml.xml;
 
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -28,9 +29,9 @@ public interface AbstractKeywordList {
 
     public List<String> getKeyword();
 
-    public String getCodeSpace();
+    public URI getCodeSpace();
 
-    public void setCodeSpace(String value);
+    public void setCodeSpace(URI value);
 
     public String getId();
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import java.net.URI;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -76,33 +77,33 @@ public class PositionType extends AbstractVectorType implements Position {
 
     }
 
-    public PositionType(String referenceFrame, String localFrame,VectorPropertyType location) {
+    public PositionType(URI referenceFrame, URI localFrame,VectorPropertyType location) {
         super(referenceFrame, localFrame);
         this.location    = location;
     }
 
 
-    public PositionType(String referenceFrame, String localFrame,VectorPropertyType location,
+    public PositionType(URI referenceFrame, URI localFrame,VectorPropertyType location,
             VectorOrSquareMatrixPropertyType orientation) {
         super(referenceFrame, localFrame);
         this.location    = location;
         this.orientation = orientation;
     }
 
-    public PositionType(String referenceFrame, String localFrame, VectorType location) {
+    public PositionType(URI referenceFrame, URI localFrame, VectorType location) {
         super(referenceFrame, localFrame);
         this.location    = new VectorPropertyType(location);
     }
 
 
-    public PositionType(String referenceFrame, String localFrame, VectorType location,
+    public PositionType(URI referenceFrame, URI localFrame, VectorType location,
             VectorType orientation) {
         super(referenceFrame, localFrame);
         this.location    = new VectorPropertyType(location);
         this.orientation = new VectorOrSquareMatrixPropertyType(orientation);
     }
 
-    public PositionType(String referenceFrame, String localFrame, VectorType location,
+    public PositionType(URI referenceFrame, URI localFrame, VectorType location,
             SquareMatrixType orientation) {
         super(referenceFrame, localFrame);
         this.location    = new VectorPropertyType(location);

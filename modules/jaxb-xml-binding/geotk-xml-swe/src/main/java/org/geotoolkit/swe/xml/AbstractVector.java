@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.swe.xml;
 
+import java.net.URI;
+
 /**
  *
  * @author guilhem Legal
@@ -26,21 +28,21 @@ public interface AbstractVector extends AbstractDataRecord {
     /**
      * Gets the value of the referenceFrame property.
      */
-    public String getReferenceFrame();
+    public URI getReferenceFrame();
 
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value);
+    public void setReferenceFrame(URI value);
 
     /**
      * Gets the value of the localFrame property.
      */
-    public String getLocalFrame();
+    public URI getLocalFrame();
 
     /**
      * Sets the value of the localFrame property.
      */
-    public void setLocalFrame(String value);
+    public void setLocalFrame(URI value);
 
 }

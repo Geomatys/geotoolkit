@@ -137,6 +137,13 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
     }
 
     /**
+     *
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Gets the value of the id property.
      * 
      * @return

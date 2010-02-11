@@ -250,12 +250,15 @@ public class Location implements AbstractLocation {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[Characteristics]").append("\n");
+        StringBuilder sb = new StringBuilder("[Location]").append("\n");
         if (abstractCurve != null) {
             sb.append("abstract curve: ").append(abstractCurve.getValue()).append('\n');
         }
         if (remoteSchema != null) {
             sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (point != null) {
+            sb.append("point: ").append(point).append('\n');
         }
         if (actuate != null) {
             sb.append("actuate: ").append(actuate).append('\n');

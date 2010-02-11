@@ -185,9 +185,9 @@ public class OutputList implements AbstractOutputList {
             sb.append("id: ").append(id).append('\n');
         }
         if (output != null) {
-            sb.append("outputList:").append('\n');
+            sb.append("output:").append('\n');
             for (IoComponentPropertyType k : output) {
-                sb.append("output: ").append(k).append('\n');
+                sb.append(k).append('\n');
             }
         }
         return sb.toString();

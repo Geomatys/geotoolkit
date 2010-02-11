@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
+import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -101,6 +102,19 @@ public class Characteristics {
      */
     public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
+    }
+
+    /**
+     * Sets the value of the abstractDataRecord property.
+     *
+     */
+    public void setAbstractDataRecord(AbstractDataRecordType value) {
+        org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
+        if (value instanceof SimpleDataRecordType) {
+            this.abstractDataRecord = facto.createSimpleDataRecord((SimpleDataRecordType) value);
+        } else if (value instanceof DataRecordType) {
+            this.abstractDataRecord = facto.createDataRecord((DataRecordType) value);
+        }
     }
 
     /**

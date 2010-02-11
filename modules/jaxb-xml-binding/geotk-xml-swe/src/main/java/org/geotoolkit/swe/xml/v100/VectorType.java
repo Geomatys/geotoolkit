@@ -69,7 +69,7 @@ public class VectorType extends AbstractVectorType implements Vector {
 
     }
 
-    public VectorType(String referenceFrame, String localFrame, List<CoordinateType> coordinate) {
+    public VectorType(URI referenceFrame, URI localFrame, List<CoordinateType> coordinate) {
         super(referenceFrame, localFrame);
         this.coordinate = coordinate;
     }

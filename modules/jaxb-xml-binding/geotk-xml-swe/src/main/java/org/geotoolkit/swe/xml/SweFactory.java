@@ -148,7 +148,7 @@ public class SweFactory {
         }
     }
 
-    public Position createPosition(String referenceFrame, String localFrame, Vector location, Vector orientation) {
+    public Position createPosition(URI referenceFrame, URI localFrame, Vector location, Vector orientation) {
 
         if ("1.0.0".equals(version)) {
             if (!(location instanceof org.geotoolkit.swe.xml.v100.VectorType) || !(orientation instanceof org.geotoolkit.swe.xml.v100.VectorType)) {
@@ -172,7 +172,7 @@ public class SweFactory {
         }
     }
 
-    public Position createPosition(String referenceFrame, String localFrame, Vector location) {
+    public Position createPosition(URI referenceFrame, URI localFrame, Vector location) {
 
         if ("1.0.0".equals(version)) {
             if (!(location instanceof org.geotoolkit.swe.xml.v100.VectorType)) {

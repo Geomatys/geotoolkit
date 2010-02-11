@@ -19,6 +19,7 @@ package org.geotoolkit.sml.v101;
 import org.geotoolkit.sml.xml.v101.ObjectFactory;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -137,7 +138,7 @@ public class SmlXMLBindingTest {
         kw.add("OCEANS:OCEAN PRESSURE");
         kw.add("OCEANS:SALINITY/DENSITY");
         kw.add("Instruments/Sensors:In Situ/Laboratory Instruments:Conductivity Sensors");
-        Keywords keywords = new Keywords(new KeywordList("urn:x-nasa:def:gcmd:keywords", kw));
+        Keywords keywords = new Keywords(new KeywordList(URI.create("urn:x-nasa:def:gcmd:keywords"), kw));
         system.setKeywords(keywords);
 
         CodeSpacePropertyType cs = new CodeSpacePropertyType("urn:x-ogc:dictionary::sensorTypes");
@@ -383,7 +384,7 @@ public class SmlXMLBindingTest {
         kw.add("OCEANS:OCEAN PRESSURE");
         kw.add("OCEANS:SALINITY/DENSITY");
         kw.add("Instruments/Sensors:In Situ/Laboratory Instruments:Conductivity Sensors");
-        Keywords keywords = new Keywords(new KeywordList("urn:x-nasa:def:gcmd:keywords", kw));
+        Keywords keywords = new Keywords(new KeywordList(URI.create("urn:x-nasa:def:gcmd:keywords"), kw));
         system.setKeywords(keywords);
 
         CodeSpacePropertyType cs = new CodeSpacePropertyType("urn:x-ogc:dictionary::sensorTypes");

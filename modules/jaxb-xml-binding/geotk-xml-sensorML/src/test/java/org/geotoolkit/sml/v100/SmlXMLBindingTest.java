@@ -67,6 +67,7 @@ import org.geotoolkit.sml.xml.v100.Components;
 import org.geotoolkit.sml.xml.v100.OnlineResource;
 import org.geotoolkit.sml.xml.v100.Parameters;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,6 +88,7 @@ import org.geotoolkit.swe.xml.v100.UomPropertyType;
 
 // JAXB dependencies
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 // Constellation dependencies
@@ -185,7 +187,7 @@ public class SmlXMLBindingTest {
         kw.add(sml100Factory.createKeywordsKeywordListKeyword("piezometer"));
         kw.add(sml100Factory.createKeywordsKeywordListKeyword("geosciences"));
         kw.add(sml100Factory.createKeywordsKeywordListKeyword("point d'eau"));
-        Keywords keywords = new Keywords(new KeywordList("urn:x-brgm:def:gcmd:keywords", kw));
+        Keywords keywords = new Keywords(new KeywordList(URI.create("urn:x-brgm:def:gcmd:keywords"), kw));
         component.setKeywords(keywords);
 
         Classifier cl1 = new Classifier("intendedApplication", new Term("eaux souterraines", URI.create("urn:x-ogc:def:classifier:OGC:application")));
@@ -342,7 +344,7 @@ public class SmlXMLBindingTest {
         kw.add(sml100Factory.createKeywordsKeywordListKeyword("piezometer"));
         kw.add(sml100Factory.createKeywordsKeywordListKeyword("geosciences"));
         kw.add(sml100Factory.createKeywordsKeywordListKeyword("point d'eau"));
-        Keywords keywords = new Keywords(new KeywordList("urn:x-brgm:def:gcmd:keywords", kw));
+        Keywords keywords = new Keywords(new KeywordList(URI.create("urn:x-brgm:def:gcmd:keywords"), kw));
         system.setKeywords(keywords);
 
         Classifier cl1 = new Classifier("intendedApplication", new Term("eaux souterraines", URI.create("urn:x-ogc:def:classifier:OGC:application")));
@@ -510,7 +512,7 @@ public class SmlXMLBindingTest {
 
         VectorType vect = new VectorType(URI.create("urn:ogc:def:phenomenon:location"), coordinates);
         VectorPropertyType vectP = new VectorPropertyType(vect);
-        PositionType Sposition = new PositionType("#REFERENCE_POINT", "#PIEZOMETER_FRAME", vectP, null);
+        PositionType Sposition = new PositionType(URI.create("#REFERENCE_POINT"), URI.create("#PIEZOMETER_FRAME"), vectP, null);
         Position position = new Position("piezoPosition", Sposition);
         PositionList positionList = new PositionList(null, Arrays.asList(position));
         Positions positions = new Positions(positionList);
@@ -628,4 +630,38 @@ public class SmlXMLBindingTest {
         marshallerPool.release(unmarshaller);
     }
 
+    /**
+     * Test simple Record Marshalling.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void marshallMarshalingTest() throws Exception {
+        
+
+
+        List<DataComponentPropertyType> fields = new ArrayList<DataComponentPropertyType>();
+        TimeType time = new TimeType(URI.create("urn:x-ogc:def:phenomenon:observationTime"), new UomPropertyType(null, "urn:x-ogc:def:unit:ISO8601"));
+        fields.add(new DataComponentPropertyType("time", null, time));
+
+        QuantityType q = new QuantityType(URI.create("urn:x-ogc:def:phenomenon:OGC:depth"), new UomPropertyType("m", null), null);
+        fields.add(new DataComponentPropertyType("depth", null, q));
+
+        BooleanType b = new BooleanType(URI.create("urn:x-ogc:def:phenomenon:BRGM:validity"));
+        fields.add(new DataComponentPropertyType("validity", null, b));
+
+        DataRecordType outRecord = new DataRecordType(null, fields);
+
+        IoComponentPropertyType io2 = new IoComponentPropertyType("piezoMeasurements", swe100Factory.createDataRecord(outRecord));
+        OutputList outputList = new OutputList(Arrays.asList(io2));
+        Outputs outputs = new Outputs(outputList);
+        
+        Marshaller marshaller = marshallerPool.acquireMarshaller();
+
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(outputs, sw);
+
+        String result = sw.toString();
+        //System.out.println("result:" + result);
+    }
 }

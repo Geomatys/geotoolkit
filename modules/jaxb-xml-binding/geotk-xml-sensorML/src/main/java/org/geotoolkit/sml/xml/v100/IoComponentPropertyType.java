@@ -41,6 +41,7 @@ import org.geotoolkit.swe.xml.v100.Text;
 import org.geotoolkit.swe.xml.v100.TimeType;
 import org.geotoolkit.swe.xml.v100.TimeRange;
 import org.geotoolkit.swe.xml.v100.AbstractDataRecordType;
+import org.geotoolkit.swe.xml.v100.DataArrayType;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
 import org.geotoolkit.swe.xml.v100.SimpleDataRecordType;
 import org.geotoolkit.util.Utilities;
@@ -173,6 +174,43 @@ public class IoComponentPropertyType implements IoComponent {
     public IoComponentPropertyType(String name, JAXBElement<? extends AbstractDataRecordType> abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = abstractDataRecord;
+    }
+
+    public void setValue(Object obj) {
+        if (obj instanceof JAXBElement) {
+             obj = ((JAXBElement)obj).getValue();
+        }
+
+        if (obj instanceof Count) {
+            count = (Count) obj;
+        } else if (obj instanceof QuantityType) {
+            quantity = (QuantityType) obj;
+        } else if (obj instanceof TimeType) {
+            time = (TimeType) obj;
+        } else if (obj instanceof BooleanType) {
+            _boolean = (BooleanType) obj;
+        } else if (obj instanceof Category) {
+            category = (Category) obj;
+        } else if (obj instanceof Text) {
+            text = (Text) obj;
+        } else if (obj instanceof ObservableProperty) {
+            observableProperty = (ObservableProperty) obj;
+        } else if (obj instanceof CountRange) {
+            countRange = (CountRange) obj;
+        } else if (obj instanceof CountRange) {
+            countRange = (CountRange) obj;
+        } else if (obj instanceof TimeRange) {
+            timeRange = (TimeRange) obj;
+        } else if (obj instanceof SimpleDataRecordType) {
+            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordType) obj);
+        } else if (obj instanceof DataRecordType) {
+            abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
+        } else if (obj instanceof DataArrayType) {
+            abstractDataArray = factory.createDataArray((DataArrayType) obj);
+            
+        } else {
+            System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
+        }
     }
 
     /**

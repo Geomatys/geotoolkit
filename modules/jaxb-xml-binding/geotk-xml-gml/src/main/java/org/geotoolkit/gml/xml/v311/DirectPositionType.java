@@ -176,25 +176,8 @@ public class DirectPositionType implements DirectPosition {
     }
 
     /**
-     * XML List based on XML Schema double type.  An element of this type contains a space-separated list of double values Gets the value of the value property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Double }
-     * 
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
      * 
      */
     public List<Double> getValue() {
@@ -202,6 +185,27 @@ public class DirectPositionType implements DirectPosition {
             value = new ArrayList<Double>();
         }
         return this.value;
+    }
+
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     */
+    public void setValue(List<Double> value) {
+        this.value = value;
+    }
+
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     */
+    public void setValue(Double value) {
+        if (this.value == null) {
+            this.value = new ArrayList<Double>();
+        }
+        this.value.add(value);
     }
 
     /**
@@ -255,24 +259,6 @@ public class DirectPositionType implements DirectPosition {
     /**
      * Gets the value of the axisLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axisLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxisLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getAxisLabels() {
         if (axisLabels == null) {
@@ -283,25 +269,6 @@ public class DirectPositionType implements DirectPosition {
 
     /**
      * Gets the value of the uomLabels property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uomLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUomLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getUomLabels() {
         if (uomLabels == null) {
