@@ -202,7 +202,12 @@
       <dependency>
         <groupId>org.swinglabs</groupId>
         <artifactId>swingx</artifactId>
-        <version>1.0</version>
+        <version>1.6</version>
+      </dependency>
+      <dependency>
+        <groupId>org.swinglabs</groupId>
+        <artifactId>jxlayer</artifactId>
+        <version>3.0.4</version>
       </dependency>
       <dependency>
         <groupId>com.sun</groupId>

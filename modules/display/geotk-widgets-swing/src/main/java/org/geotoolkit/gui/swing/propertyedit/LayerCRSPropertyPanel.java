@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,16 +36,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.geotoolkit.gui.swing.crschooser.JCRSList;
+import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
+import org.jdesktop.swingx.JXBusyLabel;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -57,8 +61,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class LayerCRSPropertyPanel extends javax.swing.JPanel implements PropertyPane {
 
-    private MapLayer layer;
-    private JCRSList liste = new JCRSList();
+    private MapLayer layer = null;
+    private JCRSList liste = null;
+    private CoordinateReferenceSystem crs = null;
 
     /** 
      * Creates new form DefaultMapContextCRSEditPanel 
@@ -66,26 +71,48 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
     public LayerCRSPropertyPanel() {
         initComponents();
 
-        pan_list.add(BorderLayout.CENTER, liste);
+        final JXBusyLabel lbl = new JXBusyLabel();
+        lbl.setHorizontalAlignment(SwingConstants.CENTER);
+        lbl.setVerticalAlignment(SwingConstants.CENTER);
+        lbl.setHorizontalTextPosition(SwingConstants.CENTER);
+        lbl.setBusyPainter(LoadingLockableUI.createDefaultBusyPainter());
+        lbl.setBusy(true);
+        pan_list.add(BorderLayout.CENTER,lbl);
 
-        liste.addListSelectionListener(new ListSelectionListener() {
-
+        new Thread(){
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                IdentifiedObject item;
-                try {
-                    item = liste.getSelectedItem();
-                } catch (FactoryException ex) {
-                    String message = ex.getLocalizedMessage();
-                    if (message == null) {
-                        message = Classes.getShortClassName(ex);
+            public void run() {
+                liste = new JCRSList();
+
+                liste.addListSelectionListener(new ListSelectionListener() {
+
+                    @Override
+                    public void valueChanged(ListSelectionEvent e) {
+                        IdentifiedObject item;
+                        try {
+                            item = liste.getSelectedItem();
+                        } catch (FactoryException ex) {
+                            String message = ex.getLocalizedMessage();
+                            if (message == null) {
+                                message = Classes.getShortClassName(ex);
+                            }
+                            setErrorMessage(message);
+                            return;
+                        }
+                        setIdentifiedObject(item);
                     }
-                    setErrorMessage(message);
-                    return;
+                });
+
+                lbl.setBusy(false);
+                pan_list.removeAll();
+                pan_list.add(BorderLayout.CENTER, liste);
+                pan_list.revalidate();
+                pan_list.repaint();
+                if(crs != null){
+                    liste.setCRS(crs);
                 }
-                setIdentifiedObject(item);
             }
-        });
+        }.start();
 
     }
 
@@ -187,11 +214,11 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
         );
     }// </editor-fold>//GEN-END:initComponents
     private void gui_jtf_crsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_gui_jtf_crsActionPerformed
-        liste.searchCRS(gui_jtf_crs.getText());
+        if(liste!=null)liste.searchCRS(gui_jtf_crs.getText());
     }//GEN-LAST:event_gui_jtf_crsActionPerformed
 
     private void gui_jtf_crsKeyTyped(KeyEvent evt) {//GEN-FIRST:event_gui_jtf_crsKeyTyped
-        liste.searchCRS(gui_jtf_crs.getText());
+        if(liste!=null)liste.searchCRS(gui_jtf_crs.getText());
     }//GEN-LAST:event_gui_jtf_crsKeyTyped
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JTextField gui_jtf_crs;
@@ -212,16 +239,7 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
 
     @Override
     public void apply() {
-//
-//        try {
-//            //layer.getFeatureSource().getSchema().setCoordinateReferenceSystem(liste.getCRS());
-//        } catch (NoSuchAuthorityCodeException ex) {
-//            ex.printStackTrace();
-//        } catch (TransformException ex) {
-//            ex.printStackTrace();
-//        } catch (FactoryException ex) {
-//            ex.printStackTrace();
-//        }
+        //nothing to apply
     }
 
     @Override
@@ -250,7 +268,11 @@ public class LayerCRSPropertyPanel extends javax.swing.JPanel implements Propert
             final CoordinateReferenceSystem crs = layer.getBounds().getCoordinateReferenceSystem();
             final String epsg = crs.getName().toString();
                 gui_jtf_crs.setText(epsg);
-            liste.setCRS(crs);
+            if(liste!=null){
+                liste.setCRS(crs);
+            }else{
+                this.crs = crs;
+            }
             setIdentifiedObject(crs);
         }
 

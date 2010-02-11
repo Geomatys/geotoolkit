@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.propertyedit;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -40,6 +41,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.LayoutStyle.ComponentPlacement;
@@ -55,6 +57,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.model.FeatureCollectionModel;
@@ -62,6 +65,8 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.WeakLayerListener;
+import org.jdesktop.jxlayer.JXLayer;
+import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTable;
@@ -103,6 +108,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
 
     private final List<JComponent> actions = new ArrayList<JComponent>();
+    private final LockableUI lockableUI = new LoadingLockableUI();
+    private final JXLayer guiLockPane;
 
     private FeatureMapLayer layer = null;
     private boolean editable = false;
@@ -158,6 +165,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         });
 
         checkChanges();
+
+        guiLockPane = new JXLayer(jScrollPane1,lockableUI);
+        add(BorderLayout.CENTER,guiLockPane);
     }
 
     /**
@@ -255,34 +265,31 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         jScrollPane1 = new JScrollPane();
         tab_data = new JXTable();
+        jPanel1 = new JPanel();
         jcb_edit = new JCheckBox();
-        jbu_action = new JButton();
         guiCount = new JLabel();
-        guiRollback = new JButton();
         guiCommit = new JButton();
+        guiRollback = new JButton();
+        jbu_action = new JButton();
 
         jScrollPane1.setViewportView(tab_data);
+
+        setLayout(new BorderLayout());
+
+        jPanel1.setOpaque(false);
 
         jcb_edit.setText(MessageBundle.getString("property_edit")); // NOI18N
         jcb_edit.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         jcb_edit.setEnabled(false);
-
         jcb_edit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 actionEditer(evt);
             }
         });
 
-        jbu_action.setText(MessageBundle.getString("property_action")); // NOI18N
         guiCount.setHorizontalAlignment(SwingConstants.CENTER);
         guiCount.setText(" ");
 
-        guiRollback.setText(MessageBundle.getString("rollback")); // NOI18N
-        guiRollback.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                guiRollbackActionPerformed(evt);
-            }
-        });
 
         guiCommit.setText(MessageBundle.getString("commit")); // NOI18N
         guiCommit.addActionListener(new ActionListener() {
@@ -291,35 +298,40 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             }
         });
 
-        GroupLayout layout = new GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
+        guiRollback.setText(MessageBundle.getString("rollback")); // NOI18N
+        guiRollback.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                guiRollbackActionPerformed(evt);
+            }
+        });
+
+        jbu_action.setText(MessageBundle.getString("property_action")); // NOI18N
+        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiCommit)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiRollback)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jbu_action))
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 845, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
-                .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
-                    .addComponent(jbu_action)
-                    .addComponent(guiCount)
-                    .addComponent(jcb_edit)
-                    .addComponent(guiRollback)
-                    .addComponent(guiCommit)))
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(Alignment.LEADING)
+            .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
+                .addComponent(jbu_action)
+                .addComponent(guiCount)
+                .addComponent(jcb_edit)
+                .addComponent(guiRollback)
+                .addComponent(guiCommit))
         );
+
+        add(jPanel1, BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
     private void actionEditer(ActionEvent evt) {//GEN-FIRST:event_actionEditer
@@ -329,30 +341,51 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private void guiCommitActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiCommitActionPerformed
 
         if(layer != null){
-            try {
-                layer.getCollection().getSession().commit();
-            } catch (DataStoreException ex) {
-                JXErrorPane.showDialog(ex);
-            }
+            final FeatureMapLayer candidate = layer;
+            new Thread(){
+                @Override
+                public void run() {
+                    lockableUI.setLocked(true);
+                    guiCommit.setEnabled(false);
+                    guiRollback.setEnabled(false);
+                    try {
+                        candidate.getCollection().getSession().commit();
+                    } catch (DataStoreException ex) {
+                        JXErrorPane.showDialog(ex);
+                    }finally {
+                        lockableUI.setLocked(false);
+                        checkChanges();
+                    }
+                }
+            }.start();
         }
-        checkChanges();
-
     }//GEN-LAST:event_guiCommitActionPerformed
 
     private void guiRollbackActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRollbackActionPerformed
 
         if(layer != null){
-            layer.getCollection().getSession().rollback();
-        }
-        checkChanges();
-        reset();
+            final FeatureMapLayer candidate = layer;
+            new Thread(){
+                @Override
+                public void run() {
+                    lockableUI.setLocked(true);
+                    guiCommit.setEnabled(false);
+                    guiRollback.setEnabled(false);
+                    candidate.getCollection().getSession().rollback();
+                    lockableUI.setLocked(false);
+                    checkChanges();
+                    reset();
+                }
 
+            }.start();
+        }
     }//GEN-LAST:event_guiRollbackActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton guiCommit;
     private JLabel guiCount;
     private JButton guiRollback;
+    private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private JButton jbu_action;
     private JCheckBox jcb_edit;

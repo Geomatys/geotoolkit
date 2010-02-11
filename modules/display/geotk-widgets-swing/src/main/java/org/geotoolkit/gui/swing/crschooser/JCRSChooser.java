@@ -18,11 +18,15 @@
 package org.geotoolkit.gui.swing.crschooser;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Ellipse2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -33,14 +37,18 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
+import org.jdesktop.swingx.JXBusyLabel;
+import org.jdesktop.swingx.painter.BusyPainter;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -59,8 +67,9 @@ public class JCRSChooser extends javax.swing.JDialog {
         CANCEL,
         CLOSE
     }
-    private JCRSList liste = new JCRSList();
+    private JCRSList liste;
     private ACTION exitmode = ACTION.CLOSE;
+    private CoordinateReferenceSystem crs = null;
 
     /** Creates new form JCRSChooser
      * @param parent
@@ -70,40 +79,66 @@ public class JCRSChooser extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
 
-        pan_list.add(BorderLayout.CENTER, liste);
+        final JXBusyLabel lbl = new JXBusyLabel();
+        lbl.setHorizontalAlignment(SwingConstants.CENTER);
+        lbl.setVerticalAlignment(SwingConstants.CENTER);
+        lbl.setHorizontalTextPosition(SwingConstants.CENTER);
+        lbl.setBusyPainter(LoadingLockableUI.createDefaultBusyPainter());
+        lbl.setBusy(true);
+        pan_list.add(BorderLayout.CENTER,lbl);
 
-        liste.addListSelectionListener(new ListSelectionListener() {
-
+        new Thread(){
             @Override
-            public void valueChanged(ListSelectionEvent e) {
-                IdentifiedObject item;
-                try {
-                    item = liste.getSelectedItem();
-                } catch (FactoryException ex) {
-                    String message = ex.getLocalizedMessage();
-                    if (message == null) {
-                        message = Classes.getShortClassName(ex);
-                    }
-                    setErrorMessage(message);
-                    return;
-                }
-                setIdentifiedObject(item);
-            }
-        });
+            public void run() {
+                liste = new JCRSList();
 
+                liste.addListSelectionListener(new ListSelectionListener() {
+
+                    @Override
+                    public void valueChanged(ListSelectionEvent e) {
+                        IdentifiedObject item;
+                        try {
+                            item = liste.getSelectedItem();
+                        } catch (FactoryException ex) {
+                            String message = ex.getLocalizedMessage();
+                            if (message == null) {
+                                message = Classes.getShortClassName(ex);
+                            }
+                            setErrorMessage(message);
+                            return;
+                        }
+                        setIdentifiedObject(item);
+                    }
+                });
+
+                lbl.setBusy(false);
+                pan_list.removeAll();
+                pan_list.add(BorderLayout.CENTER, liste);
+                pan_list.revalidate();
+                pan_list.repaint();
+                if(crs != null){
+                    liste.setCRS(crs);
+                }
+            }
+        }.start();
+        
     }
 
     public void setCRS(CoordinateReferenceSystem crs) {
+        this.crs = crs;
         if (crs != null) {
             String epsg = crs.getName().toString();
             gui_jtf_crs.setText(epsg);
-            liste.setCRS(crs);
             setIdentifiedObject(crs);
         }
     }
 
     public CoordinateReferenceSystem getCRS() {
-        return liste.getCRS();
+        if(liste != null){
+             return liste.getCRS();
+        }else{
+            return crs;
+        }
     }
 
     private void setIdentifiedObject(final IdentifiedObject item) {
