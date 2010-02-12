@@ -297,8 +297,14 @@ public class DefaultStroke implements Stroke{
         builder.append(" Width=");
         builder.append(width.toString());
         if(dashes != null){
-            builder.append(" Dashes=");
-            builder.append(dashes.toString());
+            builder.append(" Dashes=[");
+            for(int i=0;i<dashes.length;i++){
+                builder.append(dashes[i]);
+                if(i != dashes.length-1){
+                    builder.append(',');
+                }
+            }
+            builder.append("]");
         }
         if(fill != null){
             builder.append(" Fill=");

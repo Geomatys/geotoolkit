@@ -786,16 +786,9 @@ public final class GO2Utilities {
     ////////////////////////////////////////////////////////////////////////////
 
     public static float[] validDashes(float[] dashes) {
-        if (dashes == null || dashes.length == 0 || dashes.length == 1) {
+        if (dashes == null || dashes.length == 0) {
             return null;
         } else {
-
-            for (final float f : dashes) {
-                if (f == 0) {
-                    return null;
-                }
-            }
-
             return dashes;
         }
     }

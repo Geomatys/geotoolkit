@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.awt.BasicStroke;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
@@ -120,7 +122,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         }else{
             g2d.setComposite(symbol.getJ2DComposite(feature));
             g2d.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-            g2d.setStroke(symbol.getJ2DStroke(feature,coeff));
+            Stroke s = symbol.getJ2DStroke(feature,coeff);
+            g2d.setStroke(s);
             g2d.draw(j2dShape);
         }
 

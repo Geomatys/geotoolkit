@@ -26,6 +26,7 @@ import org.geotoolkit.display2d.style.CachedGraphic;
 import org.geotoolkit.display2d.style.CachedMark;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
+import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.VisibilityState;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -78,7 +79,7 @@ public class StyleCacheTest {
     @Test
     public void strokeCacheTest() throws Exception {
         Stroke stroke = SF.stroke();
-        CachedStroke cached = CachedStroke.cache(stroke);
+        CachedStrokeSimple cached = CachedStroke.cache(stroke);
 
         assertTrue(cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.VISIBLE);
@@ -91,6 +92,10 @@ public class StyleCacheTest {
         assertTrue(!cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.DYNAMIC);
 
+
+        stroke = SF.stroke(Color.WHITE, 0.20d, new float[]{1,3,1});
+        cached = CachedStroke.cache(stroke);
+        
     }
 
     @Test

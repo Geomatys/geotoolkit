@@ -392,11 +392,15 @@ public class CachedStrokeSimple extends CachedStroke{
                 candidateWidth = GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
             }
 
-            if (candidateDashes != null)
-                j2dStroke = new BasicStroke(candidateWidth*coeff, candidateCap, candidateJoin, 10f, candidateDashes, candidateOffset);
-            else
+            if (candidateDashes != null){
+                float[] s = candidateDashes.clone();
+                for(int i=0 ;i<s.length; i++){
+                    s[i] = s[i]*coeff;
+                }
+                j2dStroke = new BasicStroke(candidateWidth*coeff, candidateCap, candidateJoin, 0f, s, candidateOffset);
+            }else{
                 j2dStroke = new BasicStroke(candidateWidth*coeff, candidateCap, candidateJoin, 10f);
-
+            }
         }
 
         return j2dStroke;
