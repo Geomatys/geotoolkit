@@ -21,7 +21,8 @@ import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -45,7 +46,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         
     
     public CachedPolygonSymbolizer(PolygonSymbolizer poly,
-            SymbolizerRenderer<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
+            SymbolizerRendererService<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
         super(poly,renderer);
         
         cacheStroke = CachedStroke.cache(poly.getStroke());

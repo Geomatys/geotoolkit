@@ -22,7 +22,7 @@ import java.awt.AlphaComposite;
 import java.awt.Composite;
 
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -46,7 +46,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
 
 
     public CachedRasterSymbolizer(RasterSymbolizer symbol,
-            SymbolizerRenderer<RasterSymbolizer,? extends CachedSymbolizer<RasterSymbolizer>> renderer){
+            SymbolizerRendererService<RasterSymbolizer,? extends CachedSymbolizer<RasterSymbolizer>> renderer){
         super(symbol,renderer);
 
         Symbolizer outline = styleElement.getImageOutline();

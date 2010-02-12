@@ -18,7 +18,7 @@
 package org.geotoolkit.display2d.style;
 
 
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.opengis.feature.Feature;
 import org.opengis.style.Symbolizer;
 
@@ -36,9 +36,9 @@ import org.opengis.style.Symbolizer;
  */
 public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
 
-    private final SymbolizerRenderer<T,? extends CachedSymbolizer<T>> renderer;
+    private final SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer;
 
-    public CachedSymbolizer(T styleElement, SymbolizerRenderer<T,? extends CachedSymbolizer<T>> renderer){
+    public CachedSymbolizer(T styleElement, SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer){
         super(styleElement);
         this.renderer =  renderer;
     }
@@ -46,7 +46,7 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
     /**
      * @return the renderer that created this cache, also the renderer which can render it.
      */
-    public SymbolizerRenderer<T,? extends CachedSymbolizer<T>> getRenderer(){
+    public SymbolizerRendererService<T,? extends CachedSymbolizer<T>> getRenderer(){
         return renderer;
     }
 

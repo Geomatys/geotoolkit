@@ -37,50 +37,28 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.PolygonSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<PolygonSymbolizer, CachedPolygonSymbolizer>{
+public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPolygonSymbolizer>{
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Class<PolygonSymbolizer> getSymbolizerClass() {
-        return PolygonSymbolizer.class;
+    public DefaultPolygonSymbolizerRenderer(CachedPolygonSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Class<CachedPolygonSymbolizer> getCachedSymbolizerClass() {
-        return CachedPolygonSymbolizer.class;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CachedPolygonSymbolizer createCachedSymbolizer(PolygonSymbolizer symbol) {
-        return new CachedPolygonSymbolizer(symbol,this);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature projectedFeature, CachedPolygonSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
+    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
@@ -92,7 +70,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
 
-            portray(context, symbol, projectedGeometry, feature);
+            portray(renderingContext, symbol, projectedGeometry, feature);
         }
     }
 
@@ -100,15 +78,14 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage, CachedPolygonSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
         final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
 
         //could not find the border geometry
         if(projectedGeometry == null) return;
 
-        portray(context, symbol, projectedGeometry, null);
+        portray(renderingContext, symbol, projectedGeometry, null);
     }
 
     private static void portray(RenderingContext2D context, CachedPolygonSymbolizer symbol,
@@ -176,8 +153,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature projectedFeature, final CachedPolygonSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
+    public boolean hit(final ProjectedFeature projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
@@ -194,7 +170,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         if(projectedGeometry == null) return false;
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = context.getUnitCoefficient(symbolUnit);
+        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final float offset = symbol.getOffset(feature, coeff);
 
         //we switch to  more appropriate context CRS for rendering -------------
@@ -205,19 +181,19 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             if(NonSI.PIXEL.equals(symbolUnit)){
                 CRSShape = mask;
 
-                j2dShape = (offset != 0) ? bufferDisplayGeometry(context, projectedGeometry, offset)
+                j2dShape = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                          : projectedGeometry.getDisplayShape();
             }else{
                 try{
                     CRSShape = new TransformedShape();
-                    ((TransformedShape)CRSShape).setTransform(context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
+                    ((TransformedShape)CRSShape).setTransform(renderingContext.getAffineTransform(renderingContext.getDisplayCRS(), renderingContext.getObjectiveCRS()));
                     ((TransformedShape)CRSShape).setOriginalShape(mask);
                 }catch(FactoryException ex){
                     ex.printStackTrace();
                     return false;
                 }
 
-                j2dShape = (offset != 0) ? bufferObjectiveGeometry(context, projectedGeometry, symbolUnit, offset)
+                j2dShape = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
                                          : projectedGeometry.getObjectiveShape();
             }
         }catch (TransformException ex) {
@@ -268,34 +244,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, CachedPolygonSymbolizer symbol,
-            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedPolygonSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedPolygonSymbolizer symbol, MapLayer layer) {
-        final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
-                rectangle.getHeight(), rectangle.getX(), rectangle.getY());
-
-        g.setClip(rectangle);
-        final TransformedShape shape = new TransformedShape();
-        shape.setOriginalShape(POLYGON);
-        shape.setTransform(affine);
-
-        renderFill(shape, symbol.getSource().getFill(), g);
-        renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
     }
 
     /**

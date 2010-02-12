@@ -21,7 +21,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -42,7 +42,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
     private final CachedStrokeSimple cachedStroke;
     
     public CachedLineSymbolizer(LineSymbolizer line,
-            SymbolizerRenderer<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){
+            SymbolizerRendererService<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){
         super(line,renderer);
         cachedStroke = CachedStroke.cache(line.getStroke());
         this.line = line;

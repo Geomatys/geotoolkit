@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.style;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 import org.opengis.feature.Feature;
@@ -38,7 +38,7 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     private UnSynchronizedCache<Float,BufferedImage> cache = null;
         
     public CachedPointSymbolizer(PointSymbolizer point,
-            SymbolizerRenderer<PointSymbolizer,? extends CachedSymbolizer<PointSymbolizer>> renderer){
+            SymbolizerRendererService<PointSymbolizer,? extends CachedSymbolizer<PointSymbolizer>> renderer){
         super(point,renderer);
         cachedGraphic = CachedGraphic.cache(point.getGraphic());
     }

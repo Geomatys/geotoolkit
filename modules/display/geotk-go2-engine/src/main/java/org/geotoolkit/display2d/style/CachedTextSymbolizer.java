@@ -17,14 +17,15 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Font;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+
+import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
@@ -52,7 +53,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     private String label = null;
 
     public CachedTextSymbolizer(TextSymbolizer symbolizer,
-            SymbolizerRenderer<TextSymbolizer,? extends CachedSymbolizer<TextSymbolizer>> renderer){
+            SymbolizerRendererService<TextSymbolizer,? extends CachedSymbolizer<TextSymbolizer>> renderer){
         super(symbolizer,renderer);
         
         final org.opengis.style.Font font = styleElement.getFont();

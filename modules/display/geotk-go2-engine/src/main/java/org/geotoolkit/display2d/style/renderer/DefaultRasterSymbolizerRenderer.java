@@ -17,17 +17,12 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.LinearGradientPaint;
-import java.awt.MultipleGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.IndexColorModel;
@@ -40,7 +35,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.media.jai.Histogram;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.JAI;
@@ -53,11 +47,11 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -65,7 +59,6 @@ import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.resources.Errors;
@@ -73,7 +66,6 @@ import org.geotoolkit.style.function.Categorize;
 import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -93,45 +85,32 @@ import org.opengis.style.ShadedRelief;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<RasterSymbolizer, CachedRasterSymbolizer>{
+public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedRasterSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultRasterSymbolizerRenderer.class);
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Class<RasterSymbolizer> getSymbolizerClass() {
-        return RasterSymbolizer.class;
+    public DefaultRasterSymbolizerRenderer(CachedRasterSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public Class<CachedRasterSymbolizer> getCachedSymbolizerClass() {
-        return CachedRasterSymbolizer.class;
+    public void portray(ProjectedFeature graphic) throws PortrayalException {
+        //nothing to paint
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public CachedRasterSymbolizer createCachedSymbolizer(RasterSymbolizer symbol) {
-        return new CachedRasterSymbolizer(symbol,this);
+    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
+        //nothing to hit
+        return false;
     }
-
+    
     /**
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage, CachedRasterSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
-        final CanvasMonitor monitor = context.getMonitor();
-
-        double[] resolution = context.getResolution();
-        final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
+        double[] resolution = renderingContext.getResolution();
+        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         resolution = checkResolution(resolution,bounds);
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
@@ -153,7 +132,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
         }
 
 
-        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),context.getObjectiveCRS())){
+        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),renderingContext.getObjectiveCRS())){
             //todo : we should raise an ERROR exception, not just an info
 //            monitor.exceptionOccured(
 //                    new IllegalStateException("Coverage is not in the requested CRS, found : " +
@@ -164,11 +143,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
             //return;
         }
 
-        final Graphics2D g2 = context.getGraphics();
-        final RenderingHints hints = context.getRenderingHints();
+        final Graphics2D g2 = renderingContext.getGraphics();
+        final RenderingHints hints = renderingContext.getRenderingHints();
 
         //we must switch to objectiveCRS for grid coverage
-        context.switchToObjectiveCRS();
+        renderingContext.switchToObjectiveCRS();
 
         final RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints);
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
@@ -221,18 +200,17 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
         //draw the border if there is one---------------------------------------
         CachedSymbolizer outline = symbol.getOutLine();
         if(outline != null){
-            GO2Utilities.portray(projectedCoverage, outline, context);
+            GO2Utilities.portray(projectedCoverage, outline, renderingContext);
         }
 
-        context.switchToDisplayCRS();
+        renderingContext.switchToDisplayCRS();
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedRasterSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage projectedCoverage, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
@@ -259,46 +237,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageRenderer<Ra
 
         return false;
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol, MapLayer layer) {
-
-        final float[] fractions = new float[3];
-        final Color[] colors = new Color[3];
-        final MultipleGradientPaint.CycleMethod cycleMethod = MultipleGradientPaint.CycleMethod.NO_CYCLE;
-        final MultipleGradientPaint.ColorSpaceType colorSpace = MultipleGradientPaint.ColorSpaceType.SRGB;
-
-        fractions[0] = 0.0f;
-        fractions[1] = 0.5f;
-        fractions[2] = 1f;
-
-        colors[0] = Color.RED;
-        colors[1] = Color.GREEN;
-        colors[2] = Color.BLUE;
-
-        final LinearGradientPaint paint = new LinearGradientPaint(
-            new Point2D.Double(rectangle.getMinX(),rectangle.getMinY()),
-            new Point2D.Double(rectangle.getMaxX(),rectangle.getMinY()),
-            fractions,
-            colors,
-            cycleMethod
-        );
-
-        g.setPaint(paint);
-        g.fill(rectangle);
-    }
-
 
     ////////////////////////////////////////////////////////////////////////////
     // Renderedmage JAI image operations ///////////////////////////////////////

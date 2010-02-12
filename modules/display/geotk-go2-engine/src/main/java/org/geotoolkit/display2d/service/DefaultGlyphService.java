@@ -27,7 +27,7 @@ import java.awt.image.BufferedImage;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.map.MapLayer;
 
 import org.opengis.style.FeatureTypeStyle;
@@ -95,7 +95,7 @@ public class DefaultGlyphService {
             //search for the best glyph size
             dim = new Dimension(30,24);
             for(Symbolizer symbol : style.symbolizers()){
-                final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol.getClass());
+                final SymbolizerRendererService renderer = GO2Utilities.findRenderer(symbol.getClass());
 
                 if(renderer != null){
                     final CachedSymbolizer cache = GO2Utilities.getCached(symbol);
@@ -130,7 +130,7 @@ public class DefaultGlyphService {
         if(dim == null){
             //search for the best glyph size
             dim = new Dimension(30,24);
-            final SymbolizerRenderer renderer = GO2Utilities.findRenderer(style.getClass());
+            final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
 
             if(renderer != null){
                 final CachedSymbolizer cache = GO2Utilities.getCached(style);
@@ -175,7 +175,7 @@ public class DefaultGlyphService {
         target = (Graphics2D) target.create();
         target.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        final SymbolizerRenderer renderer = GO2Utilities.findRenderer(symbol.getClass());
+        final SymbolizerRendererService renderer = GO2Utilities.findRenderer(symbol.getClass());
 
         if(renderer != null){
             CachedSymbolizer cache = GO2Utilities.getCached(symbol);
@@ -216,7 +216,7 @@ public class DefaultGlyphService {
     public static Dimension glyphPreferredSize(Symbolizer style, Dimension dim, MapLayer layer){
         if(dim == null) dim = new Dimension(30,24);
         
-        final SymbolizerRenderer renderer = GO2Utilities.findRenderer(style.getClass());
+        final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
 
         if(renderer != null){
             final CachedSymbolizer cache = GO2Utilities.getCached(style);

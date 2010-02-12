@@ -22,11 +22,10 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -43,11 +42,11 @@ import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -61,38 +60,31 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymbolizer,CachedDimRangeSymbolizer>{
+public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger(DimRangeRenderer.class);
-    @Override
-    public Class<DimRangeSymbolizer> getSymbolizerClass() {
-        return DimRangeSymbolizer.class;
+    public DimRangeRenderer(CachedDimRangeSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
     @Override
-    public Class<CachedDimRangeSymbolizer> getCachedSymbolizerClass() {
-        return CachedDimRangeSymbolizer.class;
+    public void portray(ProjectedFeature graphic) throws PortrayalException {
+        //nothing to paint
     }
 
     @Override
-    public CachedDimRangeSymbolizer createCachedSymbolizer(DimRangeSymbolizer symbol) {
-        return new CachedDimRangeSymbolizer(symbol,this);
+    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
+        //nothing to hit
+        return false;
     }
 
     @Override
-    public void portray(ProjectedFeature graphic, CachedDimRangeSymbolizer symbol, RenderingContext2D context) throws PortrayalException {
-        //nothing to portray;
-    }
+    public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
-    @Override
-    public void portray(ProjectedCoverage projectedCoverage, CachedDimRangeSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException {
-
-        double[] resolution = context.getResolution();
+        double[] resolution = renderingContext.getResolution();
 
         final CoordinateReferenceSystem gridCRS = projectedCoverage.getCoverageLayer().getBounds().getCoordinateReferenceSystem();
 
-        Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
+        Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         //bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
 
         if(!gridCRS.equals(bounds.getCoordinateReferenceSystem())){
@@ -102,12 +94,12 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymboli
                 Logging.getLogger(DimRangeRenderer.class).log(Level.SEVERE, null, ex);
             }
 
-            DirectPosition2D pos = new DirectPosition2D(context.getObjectiveCRS());
+            DirectPosition2D pos = new DirectPosition2D(renderingContext.getObjectiveCRS());
             pos.x = resolution[0];
             pos.y = resolution[1];
 
             try{
-                MathTransform trs = context.getMathTransform(context.getObjectiveCRS(), gridCRS);
+                MathTransform trs = renderingContext.getMathTransform(renderingContext.getObjectiveCRS(), gridCRS);
                 DirectPosition pos2 = trs.transform(pos, null);
                 resolution[0] = pos2.getOrdinate(0);
                 resolution[1] = pos2.getOrdinate(1);
@@ -130,22 +122,22 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymboli
             throw new PortrayalException(ex);
         }
 
-        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), context.getObjectiveCRS())){
+        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
             try{
                 //we resample the native view of the coverage only, the style will be applied later.
                 dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
                         dataCoverage.view(ViewType.NATIVE),
-                        context.getObjectiveCRS());
+                        renderingContext.getObjectiveCRS());
             }catch(Exception ex){
                 System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
             }
         }
 
-        final Graphics2D g2 = context.getGraphics();
+        final Graphics2D g2 = renderingContext.getGraphics();
 
         //we must switch to objectiveCRS for grid coverage
-        context.switchToObjectiveCRS();
+        renderingContext.switchToObjectiveCRS();
 
         MeasurementRange dimRange = symbol.getSource().getDimRange();
         if (dimRange != null && dataCoverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() <= 2) {
@@ -182,19 +174,13 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymboli
         }
 
 
-        context.switchToDisplayCRS();
+        renderingContext.switchToDisplayCRS();
     }
 
-    @Override
-    public boolean hit(ProjectedFeature graphic, CachedDimRangeSymbolizer symbol, RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
-        return false;
-    }
 
     @Override
-    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedDimRangeSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage projectedCoverage, final SearchAreaJ2D search, final VisitFilter filter) {
 
-        
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
@@ -219,16 +205,6 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<DimRangeSymboli
         }
 
         return false;
-    }
-
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedDimRangeSymbolizer symbol,MapLayer layer) {
-        return null;
-    }
-
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedDimRangeSymbolizer symbol, MapLayer layer) {
-        //no glyph
     }
 
 }

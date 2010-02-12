@@ -27,10 +27,15 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.awt.AlphaComposite;
 
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -48,6 +53,7 @@ import javax.measure.converter.LinearConverter;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
@@ -59,6 +65,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -70,7 +77,7 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
-import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -81,7 +88,9 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -93,6 +102,7 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -103,9 +113,12 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.Fill;
+import org.opengis.style.Mark;
 import org.opengis.style.Style;
 import org.opengis.style.Rule;
 import org.opengis.style.SemanticType;
+import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -119,8 +132,8 @@ public final class GO2Utilities {
 
     private static final Cache<Symbolizer,CachedSymbolizer> CACHE = new Cache<Symbolizer, CachedSymbolizer>(50,50,true);
 
-    private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRenderer> RENDERERS =
-            new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRenderer>();
+    private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRendererService> RENDERERS =
+            new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();
 
     public static final MutableStyleFactory STYLE_FACTORY;
     public static final FilterFactory2 FILTER_FACTORY;
@@ -129,10 +142,15 @@ public final class GO2Utilities {
     public static final AlphaComposite ALPHA_COMPOSITE_0F = AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f);
     public static final AlphaComposite ALPHA_COMPOSITE_1F = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 
+    public static final Shape GLYPH_LINE;
+    public static final Shape GLYPH_POLYGON;
+    public static final Point2D GLYPH_POINT;
+    public static final Shape GLYPH_TEXT;
+
 
     static{
-        final ServiceLoader<SymbolizerRenderer> loader = ServiceLoader.load(SymbolizerRenderer.class);
-        for(SymbolizerRenderer renderer : loader){
+        final ServiceLoader<SymbolizerRendererService> loader = ServiceLoader.load(SymbolizerRendererService.class);
+        for(SymbolizerRendererService renderer : loader){
             RENDERERS.put(renderer.getCachedSymbolizerClass(), renderer);
         }
 
@@ -152,13 +170,50 @@ public final class GO2Utilities {
         hints.put(Hints.FILTER_FACTORY, FilterFactory2.class);
         STYLE_FACTORY = (MutableStyleFactory)FactoryFinder.getStyleFactory(hints);
         FILTER_FACTORY = (FilterFactory2) FactoryFinder.getFilterFactory(hints);
+
+        //LINE -----------------------------------------------------------------
+        final float x2Points[] = {0,    0.4f,   0.6f,   1f};
+        final float y2Points[] = {0.2f, 0.6f,   0.4f,   0.8f};
+        final GeneralPath polyline = new GeneralPath(GeneralPath.WIND_EVEN_ODD, x2Points.length);
+
+        polyline.moveTo (x2Points[0], y2Points[0]);
+        for (int index = 1; index < x2Points.length; index++) {
+                 polyline.lineTo(x2Points[index], y2Points[index]);
+        }
+        GLYPH_LINE = polyline;
+
+        //POLYGON --------------------------------------------------------------
+        final float x1Points[] = {0.2f,     0.4f,   1f,     1f,     0.2f};
+        final float y1Points[] = {1f,       0.4f,   0.2f,   1f,     1f};
+        final GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD, x1Points.length);
+
+        polygon.moveTo(x1Points[0], y1Points[0]);
+        for (int index = 1; index < x1Points.length; index++) {
+                polygon.lineTo(x1Points[index], y1Points[index]);
+        }
+        GLYPH_POLYGON = polygon;
+
+        //POINT ----------------------------------------------------------------
+        GLYPH_POINT = new Point2D.Float(0.5f,0.5f);
+
+        //TEXT -----------------------------------------------------------------
+        final float xtPoints[] = {0.1f,     0.3f,   0.2f,   0.2f};
+        final float ytPoints[] = {0.6f,     0.6f,   0.6f,   0.9f};
+        final GeneralPath textLine = new GeneralPath(GeneralPath.WIND_EVEN_ODD, xtPoints.length);
+
+        textLine.moveTo (xtPoints[0], ytPoints[0]);
+        for (int index = 1; index < xtPoints.length; index++) {
+                 textLine.lineTo(xtPoints[index], ytPoints[index]);
+        }
+        GLYPH_TEXT = textLine;
+
     }
     
     private GO2Utilities() {}
 
     public static void portray(final ProjectedFeature feature, CachedSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException{
-        final SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
             renderer.portray(feature, symbol, context);
         }
@@ -166,7 +221,7 @@ public final class GO2Utilities {
 
     public static void portray(final ProjectedCoverage graphic, CachedSymbolizer symbol,
             RenderingContext2D context) throws PortrayalException {
-        final SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
             renderer.portray(graphic, symbol, context);
         }
@@ -174,7 +229,7 @@ public final class GO2Utilities {
 
     public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,
             final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter){
-        final SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
             return renderer.hit(graphic, symbol, context, mask, filter);
         }
@@ -183,11 +238,184 @@ public final class GO2Utilities {
 
     public static boolean hit(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter) {
-        final SymbolizerRenderer renderer = findRenderer(symbol);
+        final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
             return renderer.hit(graphic, symbol, renderingContext, mask, filter);
         }
         return false;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Glyph utils /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Paint a mark.
+     *
+     * @param mark : mark to paint
+     * @param size : expected mark size
+     * @param target : Graphics2D
+     */
+    public static void renderGraphic(final Mark mark, final float size, final Graphics2D target){
+        final Expression wkn = mark.getWellKnownName();
+
+        final Shape shape;
+
+        if(StyleConstants.MARK_CIRCLE.equals(wkn)){
+            shape = WellKnownMarkFactory.CIRCLE;
+        }else if(StyleConstants.MARK_CROSS.equals(wkn)){
+            shape = WellKnownMarkFactory.CROSS;
+        }else if(StyleConstants.MARK_SQUARE.equals(wkn)){
+            shape = WellKnownMarkFactory.SQUARE;
+        }else if(StyleConstants.MARK_STAR.equals(wkn)){
+            shape = WellKnownMarkFactory.STAR;
+        }else if(StyleConstants.MARK_TRIANGLE.equals(wkn)){
+            shape = WellKnownMarkFactory.TRIANGLE;
+        }else if(StyleConstants.MARK_X.equals(wkn)){
+            shape = WellKnownMarkFactory.X;
+        }else{
+            shape = null;
+        }
+
+        if(shape != null){
+            final TransformedShape trs = new TransformedShape();
+            trs.setOriginalShape(shape);
+            trs.scale(size, size);
+            renderFill(trs, mark.getFill(), target);
+            renderStroke(trs, mark.getStroke(), SI.METRE, target);
+        }
+
+    }
+
+    /**
+     * Paint a stroked shape.
+     *
+     * @param shape : java2d shape
+     * @param stroke : sld stroke
+     * @param uom
+     * @param target : Graphics2D
+     */
+    public static void renderStroke(final Shape shape, final Stroke stroke, final Unit uom, final Graphics2D target){
+        final Expression expColor = stroke.getColor();
+        final Expression expOpa = stroke.getOpacity();
+        final Expression expCap = stroke.getLineCap();
+        final Expression expJoin = stroke.getLineJoin();
+        final Expression expWidth = stroke.getWidth();
+
+        Paint color;
+        final float width;
+        final float opacity;
+        final int cap;
+        final int join;
+        final float[] dashes;
+
+        if(GO2Utilities.isStatic(expColor)){
+            color = expColor.evaluate(null, Color.class);
+        }else{
+            color = Color.RED;
+        }
+
+        if(color == null){
+            color = Color.RED;
+        }
+
+        if(expOpa != null && GO2Utilities.isStatic(expOpa)){
+            Literal literal = (Literal) expOpa;
+            Number num = expOpa.evaluate(null, Number.class);
+            if(num != null){
+                opacity = num.floatValue();
+            }else{
+                opacity = 0.6f;
+            }
+
+        }else{
+            opacity = 0.6f;
+        }
+
+        if(GO2Utilities.isStatic(expCap)){
+            if(StyleConstants.STROKE_CAP_ROUND.equals(expCap)){
+                cap = BasicStroke.CAP_ROUND;
+            }else if(StyleConstants.STROKE_CAP_SQUARE.equals(expCap)){
+                cap = BasicStroke.CAP_SQUARE;
+            }else {
+                cap = BasicStroke.CAP_BUTT;
+            }
+        }else{
+            cap = BasicStroke.CAP_BUTT;
+        }
+
+        if(GO2Utilities.isStatic(expJoin)){
+            if(StyleConstants.STROKE_JOIN_ROUND.equals(expJoin)){
+                join = BasicStroke.JOIN_ROUND;
+            }else if(StyleConstants.STROKE_JOIN_MITRE.equals(expJoin)){
+                join = BasicStroke.JOIN_MITER;
+            }else {
+                join = BasicStroke.JOIN_BEVEL;
+            }
+        }else{
+            join = BasicStroke.JOIN_BEVEL;
+        }
+
+        if(NonSI.PIXEL.equals(uom) && GO2Utilities.isStatic(expWidth)){
+            width = expWidth.evaluate(null, Number.class).floatValue();
+
+            if(stroke.getDashArray() != null && stroke.getDashArray().length >0){
+                dashes = stroke.getDashArray();
+            }else{
+                dashes = null;
+            }
+
+        }else{
+            width = 1f;
+            dashes = null;
+        }
+
+        target.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        target.setPaint(color);
+
+        if(dashes != null){
+            target.setStroke(new BasicStroke(width, cap, join,1,dashes,0));
+        }else{
+            target.setStroke(new BasicStroke(width, cap, join));
+        }
+
+        target.draw(shape);
+    }
+
+    /**
+     * Paint a filled shape.
+     *
+     * @param shape : java2d shape
+     * @param fill : sld fill
+     * @param target : Graphics2D
+     */
+    public static void renderFill(final Shape shape, final Fill fill, final Graphics2D target){
+        final Expression expColor = fill.getColor();
+        final Expression expOpa = fill.getOpacity();
+
+        Paint color;
+        final float opacity;
+
+        if(GO2Utilities.isStatic(expColor)){
+            color = expColor.evaluate(null, Color.class);
+        }else{
+            color = Color.RED;
+        }
+
+        if(color == null){
+            color = Color.RED;
+        }
+
+        if(GO2Utilities.isStatic(expOpa)){
+            opacity = expOpa.evaluate(null, Number.class).floatValue();
+        }else{
+            opacity = 0.6f;
+        }
+
+        target.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+        target.setPaint(color);
+
+        target.fill(shape);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -336,9 +564,9 @@ public final class GO2Utilities {
     // renderers cache /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static SymbolizerRenderer findRenderer(CachedSymbolizer symbol){
+    public static SymbolizerRendererService findRenderer(CachedSymbolizer symbol){
         final Class<? extends CachedSymbolizer> type = symbol.getClass();
-        SymbolizerRenderer candidate = RENDERERS.get(type);
+        SymbolizerRendererService candidate = RENDERERS.get(type);
         if (candidate != null) {
             return candidate;
         }
@@ -349,9 +577,9 @@ public final class GO2Utilities {
         return null;
     }
 
-    private static SymbolizerRenderer findRendererForCachedClass(Class<?> type) {
+    private static SymbolizerRendererService findRendererForCachedClass(Class<?> type) {
         while (type != null) {
-            SymbolizerRenderer candidate = RENDERERS.get(type);
+            SymbolizerRendererService candidate = RENDERERS.get(type);
             if (candidate != null) {
 //                synchronized (RENDERERS) {
 //                    RENDERERS.put(type, candidate);
@@ -370,8 +598,8 @@ public final class GO2Utilities {
         return null;
     }
 
-    public static SymbolizerRenderer findRenderer(Class<? extends Symbolizer> type){
-        for(SymbolizerRenderer renderer : RENDERERS.values()){
+    public static SymbolizerRendererService findRenderer(Class<? extends Symbolizer> type){
+        for(SymbolizerRendererService renderer : RENDERERS.values()){
             if(renderer.getSymbolizerClass().isAssignableFrom(type)){
                 return renderer;
             }
@@ -890,7 +1118,7 @@ public final class GO2Utilities {
             try {
                 value = handler.peek();
                 if (value == null) {
-                    final SymbolizerRenderer renderer = findRenderer(symbol.getClass());
+                    final SymbolizerRendererService renderer = findRenderer(symbol.getClass());
                     if(renderer != null){
                         value = renderer.createCachedSymbolizer(symbol);
                     } else {

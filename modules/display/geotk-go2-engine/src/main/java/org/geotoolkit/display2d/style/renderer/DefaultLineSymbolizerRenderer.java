@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import javax.measure.unit.NonSI;
@@ -36,52 +35,28 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.LineSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<LineSymbolizer, CachedLineSymbolizer>{
+public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLineSymbolizer>{
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Class<LineSymbolizer> getSymbolizerClass() {
-        return LineSymbolizer.class;
+    public DefaultLineSymbolizerRenderer(CachedLineSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Class<CachedLineSymbolizer> getCachedSymbolizerClass() {
-        return CachedLineSymbolizer.class;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CachedLineSymbolizer createCachedSymbolizer(LineSymbolizer symbol) {
-        return new CachedLineSymbolizer(symbol,this);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature projectedFeature, CachedLineSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
-
+    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
         final Feature feature = projectedFeature.getFeature();
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
 
@@ -90,7 +65,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            portray(context, symbol, projectedGeometry, feature);
+            portray(renderingContext, symbol, projectedGeometry, feature);
         }
 
     }
@@ -99,15 +74,14 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage projectedCoverage, CachedLineSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
         //portray the border of the coverage
         final ProjectedGeometry projectedGeometry = projectedCoverage.getEnvelopeGeometry();
 
         //could not find the border geometry
         if(projectedGeometry == null) return;
 
-        portray(context, symbol, projectedGeometry, null);
+        portray(renderingContext, symbol, projectedGeometry, null);
     }
 
     private static void portray(RenderingContext2D context, CachedLineSymbolizer symbol,
@@ -162,8 +136,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature projectedFeature, final CachedLineSymbolizer symbol,
-            RenderingContext2D context, SearchAreaJ2D search, VisitFilter filter) {
+    public boolean hit(final ProjectedFeature projectedFeature, SearchAreaJ2D search, VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
@@ -187,7 +160,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
         }
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = context.getUnitCoefficient(symbolUnit);
+        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
 
         
         if(NonSI.PIXEL.equals(symbolUnit)){
@@ -221,7 +194,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
                 j2dShape = projectedGeometry.getObjectiveShape();
                 CRSShape = new TransformedShape();
                 ((TransformedShape)CRSShape).setTransform(
-                        context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS()));
+                        renderingContext.getAffineTransform(renderingContext.getDisplayCRS(), renderingContext.getObjectiveCRS()));
                 ((TransformedShape)CRSShape).setOriginalShape(search.getDisplayShape());
             } catch (TransformException ex) {
                 ex.printStackTrace();
@@ -254,33 +227,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Li
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, CachedLineSymbolizer symbol,
-            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedLineSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedLineSymbolizer symbol, MapLayer layer) {
-        final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
-                rectangle.getHeight(), rectangle.getX(), rectangle.getY());
-
-        g.setClip(rectangle);
-        final TransformedShape shape = new TransformedShape();
-        shape.setOriginalShape(LINE);
-        shape.setTransform(affine);
-
-        renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
     }
     
 }

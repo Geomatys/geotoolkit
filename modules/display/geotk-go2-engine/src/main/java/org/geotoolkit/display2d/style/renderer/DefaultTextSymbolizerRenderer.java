@@ -17,23 +17,17 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-import java.awt.Shape;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -51,56 +45,33 @@ import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.feature.Feature;
-import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.FactoryException;
-import org.opengis.style.TextSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<TextSymbolizer, CachedTextSymbolizer>{
+public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTextSymbolizer>{
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Class<TextSymbolizer> getSymbolizerClass() {
-        return TextSymbolizer.class;
+    public DefaultTextSymbolizerRenderer(CachedTextSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Class<CachedTextSymbolizer> getCachedSymbolizerClass() {
-        return CachedTextSymbolizer.class;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CachedTextSymbolizer createCachedSymbolizer(TextSymbolizer symbol) {
-        return new CachedTextSymbolizer(symbol,this);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature projectedFeature, CachedTextSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
+    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            final Graphics2D g2 = context.getGraphics();
-            final RenderingHints hints = context.getRenderingHints();
+            final Graphics2D g2 = renderingContext.getGraphics();
+            final RenderingHints hints = renderingContext.getRenderingHints();
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
             
@@ -111,10 +82,10 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
                 coeff = 1;
             }else{
                 //we have a special unit we must adjust the coefficient
-                coeff = context.getUnitCoefficient(symbolUnit);
+                coeff = renderingContext.getUnitCoefficient(symbolUnit);
                 // calculate scale difference between objective and display
                 try{
-                    final AffineTransform inverse = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
+                    final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
                     coeff *= Math.abs(XAffineTransform.getScale(inverse));
                 }catch(FactoryException ex){
                     throw new PortrayalException("Could not calculate display to objective transform",ex);
@@ -150,7 +121,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
 
             projectedGeometry = new StatefullProjectedGeometry((StatefullProjectedGeometry)projectedGeometry);
 
-            portray(projectedGeometry, context, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
+            portray(projectedGeometry, renderingContext, projectedFeature, placement, haloWidth, haloPaint, fontPaint, j2dFont, label);
         }
 
     }
@@ -217,8 +188,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage graphic, CachedTextSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
+    public void portray(final ProjectedCoverage graphic) throws PortrayalException{
         //nothing to portray
     }
 
@@ -226,8 +196,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedFeature feature, CachedTextSymbolizer symbol, 
-            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedFeature feature, SearchAreaJ2D mask, VisitFilter filter) {
         //text symbolizer are not hittable
         return false;
     }
@@ -236,81 +205,8 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Te
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, CachedTextSymbolizer symbol,
-            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedTextSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedTextSymbolizer symbol, MapLayer layer) {
-        g.setClip(rectangle);
-
-        final String family;
-        if(!symbol.getSource().getFont().getFamily().isEmpty()){
-            family = symbol.getSource().getFont().getFamily().get(0).toString();
-        }else{
-            family = "Dialog";
-        }
-
-        final Font font = new Font(family, Font.PLAIN, (int)rectangle.getHeight()/2);
-        final FontRenderContext frc = g.getFontRenderContext();
-        final GlyphVector glyphVector = font.createGlyphVector(frc, "T");
-        final Shape shape = glyphVector.getOutline();
-
-        g.translate(rectangle.getMinX()+3, rectangle.getMaxY()-3);
-
-        if(symbol.getHalo() != null){
-
-            Paint paint = null;
-            float width = 1;
-
-            if(GO2Utilities.isStatic(symbol.getSource().getHalo().getFill().getColor())){
-                paint = symbol.getSource().getHalo().getFill().getColor().evaluate(null, Color.class);
-            }
-
-            if(paint == null){
-                paint = Color.WHITE;
-            }
-
-            final Expression expWidth = symbol.getSource().getHalo().getRadius();
-            if(GO2Utilities.isStatic(expWidth)){
-                width = expWidth.evaluate(null, Number.class).floatValue();
-            }else{
-                width = 1;
-            }
-
-            if(width > 0){
-                g.setStroke(new BasicStroke(width*2+1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                g.setPaint(paint);
-                g.draw(shape);
-            }
-        }
-
-
-        Paint paint = null;
-        if(GO2Utilities.isStatic(symbol.getSource().getFill().getColor())){
-            paint = symbol.getSource().getFill().getColor().evaluate(null, Color.class);
-        }
-
-        if(paint == null){
-            paint = Color.BLACK;
-        }
-
-        g.setPaint(paint);
-        g.setFont(font);
-        g.drawString("T", 0, 0);
-
     }
 
 }

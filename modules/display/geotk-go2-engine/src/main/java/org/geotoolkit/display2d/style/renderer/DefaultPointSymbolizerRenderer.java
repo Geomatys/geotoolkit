@@ -22,19 +22,16 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -44,52 +41,27 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.Mark;
-import org.opengis.style.PointSymbolizer;
 
 /**
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<PointSymbolizer, CachedPointSymbolizer>{
+public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPointSymbolizer>{
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Class<PointSymbolizer> getSymbolizerClass() {
-        return PointSymbolizer.class;
+    public DefaultPointSymbolizerRenderer(CachedPointSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Class<CachedPointSymbolizer> getCachedSymbolizerClass() {
-        return CachedPointSymbolizer.class;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CachedPointSymbolizer createCachedSymbolizer(PointSymbolizer symbol) {
-        return new CachedPointSymbolizer(symbol,this);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature projectedFeature, CachedPointSymbolizer symbol, RenderingContext2D context) throws PortrayalException{
+    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
@@ -101,15 +73,15 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
 
-        final Graphics2D g2 = context.getGraphics();
-        final RenderingHints hints = context.getRenderingHints();
+        final Graphics2D g2 = renderingContext.getGraphics();
+        final RenderingHints hints = renderingContext.getRenderingHints();
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
         //we switch to  more appropriate context CRS for rendering ---------
         // a point symbolis always paint in display unit -------------------
-        context.switchToDisplayCRS();
+        renderingContext.switchToDisplayCRS();
 
         //we adjust coefficient for rendering ------------------------------
         float coeff;
@@ -118,10 +90,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             coeff = 1;
         }else{
             //we have a special unit we must adjust the coefficient
-            coeff = context.getUnitCoefficient(symbolUnit);
+            coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             try{
-                final AffineTransform inverse = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
+                final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
                 coeff *= Math.abs(XAffineTransform.getScale(inverse));
             }catch(FactoryException ex){
                 throw new PortrayalException("Could not calculate objective to display transform",ex);
@@ -175,18 +147,17 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
     }
 
     @Override
-    public void portray(Iterator<ProjectedFeature> graphics, CachedPointSymbolizer symbol, RenderingContext2D context) throws PortrayalException {
+    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
 
-        final Graphics2D g2 = context.getGraphics();
-        final CanvasMonitor monitor = context.getMonitor();
-        final RenderingHints hints = context.getRenderingHints();
+        final Graphics2D g2 = renderingContext.getGraphics();
+        final RenderingHints hints = renderingContext.getRenderingHints();
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
         //we switch to  more appropriate context CRS for rendering ---------
         // a point symbolis always paint in display unit -------------------
-        context.switchToDisplayCRS();
+        renderingContext.switchToDisplayCRS();
         //we adjust coefficient for rendering ------------------------------
         float coeff;
         if(symbolUnit.equals(NonSI.PIXEL)){
@@ -194,10 +165,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             coeff = 1;
         }else{
             //we have a special unit we must adjust the coefficient
-            coeff = context.getUnitCoefficient(symbolUnit);
+            coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             try{
-                final AffineTransform inverse = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
+                final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
                 coeff *= Math.abs(XAffineTransform.getScale(inverse));
             }catch(FactoryException ex){
                 throw new PortrayalException("Could not calculate objective to display transform",ex);
@@ -272,14 +243,11 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
 
     }
 
-
-
     /**
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedCoverage graphic, CachedPointSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
+    public void portray(final ProjectedCoverage graphic) throws PortrayalException{
         //nothing to portray
     }
 
@@ -287,8 +255,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature projectedFeature, final CachedPointSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
+    public boolean hit(final ProjectedFeature projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
@@ -313,10 +280,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
             coeff = 1;
         }else{
             //we have a special unit we must adjust the coefficient
-            coeff = context.getUnitCoefficient(symbolUnit);
+            coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
             try{
-                final AffineTransform inverse = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
+                final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
                 coeff *= Math.abs(XAffineTransform.getScale(inverse));
             }catch(FactoryException ex){
                 ex.printStackTrace();
@@ -399,74 +366,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<P
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, CachedPointSymbolizer symbol,
-            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedPointSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void glyph(Graphics2D target, Rectangle2D rectangle, CachedPointSymbolizer symbol, MapLayer layer) {
-        target.setClip(rectangle);
-        
-        final Expression expOpa = symbol.getSource().getGraphic().getOpacity();
-        final Expression expRotation = symbol.getSource().getGraphic().getRotation();
-        final Expression expSize = symbol.getSource().getGraphic().getSize();
-        
-        final float opacity;
-        final float rotation;
-        float size;
-        
-        if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Number.class).floatValue();
-        }else{
-            opacity = 0.6f;
-        }
-                
-        if(GO2Utilities.isStatic(expRotation)){
-            rotation = expRotation.evaluate(null, Number.class).floatValue();
-        }else{
-            rotation = 0f;
-        }
-        
-        if(GO2Utilities.isStatic(expSize)){
-            Number n = expSize.evaluate(null, Number.class);
-            if(n != null){
-                size = n.floatValue();
-            }else{
-                size = 8f;
-            }
-        }else{
-            size = 8f;
-        }
-        
-        if(size> rectangle.getHeight()){
-            size = (float)rectangle.getHeight();
-        }
-        
-        target.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        target.translate(rectangle.getCenterX(), rectangle.getCenterY());
-                
-        target.rotate(Math.toRadians(rotation), 0,0);
-        
-        for(final GraphicalSymbol graphic : symbol.getSource().getGraphic().graphicalSymbols()){
-            if(graphic instanceof Mark){
-                renderGraphic((Mark) graphic,size,target);
-            }
-        }
-        
-        target.rotate(-Math.toRadians(rotation), 0,0);
-
     }
 
 }

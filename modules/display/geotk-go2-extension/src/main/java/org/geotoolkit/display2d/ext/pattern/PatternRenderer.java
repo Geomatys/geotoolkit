@@ -16,16 +16,13 @@
  */
 package org.geotoolkit.display2d.ext.pattern;
 
-import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -42,11 +39,9 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
-import org.geotoolkit.display2d.style.renderer.AbstractCoverageRenderer;
+import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Envelope;
@@ -57,47 +52,26 @@ import org.opengis.referencing.operation.TransformException;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
-public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,CachedPatternSymbolizer>{
+public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSymbolizer>{
 
-    private static final Logger LOGGER = Logging.getLogger(PatternRenderer.class);
-    
+    public PatternRenderer(CachedPatternSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
+    }
+
     /**
      * minimum size of the blocks to use. 
      * Values between 1 and 3 give fair result.
      */
     private static final float MINIMUM_BLOCK_SIZE = 1.5f;
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Class<PatternSymbolizer> getSymbolizerClass() {
-        return PatternSymbolizer.class;
-    }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public Class<CachedPatternSymbolizer> getCachedSymbolizerClass() {
-        return CachedPatternSymbolizer.class;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CachedPatternSymbolizer createCachedSymbolizer(PatternSymbolizer symbol) {
-        return new CachedPatternSymbolizer(symbol,this);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature graphic, CachedPatternSymbolizer symbol, RenderingContext2D context)
-            throws PortrayalException {
+    public void portray(ProjectedFeature graphic) throws PortrayalException {
         //nothing to portray;
     }
 
@@ -105,11 +79,10 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedCoverage projectedCoverage, CachedPatternSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException {
+    public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
 
-        double[] resolution = context.getResolution();
-        final Envelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
+        double[] resolution = renderingContext.getResolution();
+        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         resolution = checkResolution(resolution,bounds);
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
@@ -124,13 +97,13 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
             throw new PortrayalException(ex);
         }
 
-        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), context.getObjectiveCRS())){
+        if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem2D(), renderingContext.getObjectiveCRS())){
             //coverage is not in objective crs, resample it
             try{
                 //we resample the native view of the coverage only, the style will be applied later.
                 dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
                         dataCoverage.view(ViewType.NATIVE),
-                        context.getObjectiveCRS());
+                        renderingContext.getObjectiveCRS());
             }catch(Exception ex){
                 System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
                 ex.printStackTrace();
@@ -149,23 +122,23 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
 
 
         //paint all dynamicly generated features -------------------------------
-        final ReferencedCanvas2D canvas = context.getCanvas();
+        final ReferencedCanvas2D canvas = renderingContext.getCanvas();
         final CoordinateReferenceSystem dataCRS = dataCoverage.getCoordinateReferenceSystem();
         final StatefullContextParams params = new StatefullContextParams(canvas,null);
-        final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
+        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
 
         try {
-            params.dataToObjective = context.getMathTransform(dataCRS, objectiveCRS);
+            params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
             params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
         } catch (FactoryException ex) {
             ex.printStackTrace();
         }
 
-        final AffineTransform objtoDisp = context.getObjectiveToDisplay();
+        final AffineTransform objtoDisp = renderingContext.getObjectiveToDisplay();
         params.objectiveToDisplay.setTransform(objtoDisp);
-        params.updateGeneralizationFactor(context, dataCRS);
+        params.updateGeneralizationFactor(renderingContext, dataCRS);
         try {
-            params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(dataCRS, context.getDisplayCRS()));
+            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS, renderingContext.getDisplayCRS()));
         } catch (FactoryException ex) {
             ex.printStackTrace();
         }
@@ -175,21 +148,19 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
             projectedFeature.setFeature(entry.getKey());
 
             for(final CachedSymbolizer cached : entry.getValue()){
-                GO2Utilities.portray(projectedFeature, cached, context);
+                GO2Utilities.portray(projectedFeature, cached, renderingContext);
             }
 
         }
 
-        context.switchToDisplayCRS();
+        renderingContext.switchToDisplayCRS();
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedCoverage projectedCoverage, final CachedPatternSymbolizer symbol,
-            final RenderingContext2D context, final SearchAreaJ2D search, final VisitFilter filter) {
-
+    public boolean hit(final ProjectedCoverage projectedCoverage, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
@@ -217,20 +188,10 @@ public class PatternRenderer extends AbstractCoverageRenderer<PatternSymbolizer,
         return false;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedPatternSymbolizer symbol,MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedPatternSymbolizer symbol,MapLayer layer) {
-        //todo glyph
+    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
+        //nothing to hit
+        return false;
     }
 
 }

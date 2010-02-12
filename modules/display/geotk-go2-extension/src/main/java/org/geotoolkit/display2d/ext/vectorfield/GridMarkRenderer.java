@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.display2d.ext.vectorfield;
 
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.geotoolkit.coverage.io.CoverageReadParam;
@@ -32,7 +30,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
-import org.geotoolkit.map.MapLayer;
 
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -43,36 +40,29 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GridMarkRenderer extends AbstractSymbolizerRenderer<VectorFieldSymbolizer,CachedVectorFieldSymbolizer>{
+public class GridMarkRenderer extends AbstractSymbolizerRenderer<CachedVectorFieldSymbolizer>{
 
-    @Override
-    public Class<VectorFieldSymbolizer> getSymbolizerClass() {
-        return VectorFieldSymbolizer.class;
+    public GridMarkRenderer(CachedVectorFieldSymbolizer symbol, RenderingContext2D context){
+        super(symbol,context);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public Class<CachedVectorFieldSymbolizer> getCachedSymbolizerClass() {
-        return CachedVectorFieldSymbolizer.class;
-    }
-
-    @Override
-    public CachedVectorFieldSymbolizer createCachedSymbolizer(VectorFieldSymbolizer symbol) {
-        return new CachedVectorFieldSymbolizer(symbol,this);
-    }
-
-    @Override
-    public void portray(ProjectedFeature graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException {
+    public void portray(ProjectedFeature graphic) throws PortrayalException {
         //nothing to portray
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public void portray(final ProjectedCoverage graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException {
+    public void portray(final ProjectedCoverage graphic) throws PortrayalException {
 
-        final GeneralEnvelope bounds = new GeneralEnvelope(context.getCanvasObjectiveBounds());
-        bounds.setCoordinateReferenceSystem(context.getObjectiveCRS());
-        final double[] resolution = context.getResolution();
+        final GeneralEnvelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
+        bounds.setCoordinateReferenceSystem(renderingContext.getObjectiveCRS());
+        final double[] resolution = renderingContext.getResolution();
         final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
 
         GridCoverage2D coverage;
@@ -86,35 +76,29 @@ public class GridMarkRenderer extends AbstractSymbolizerRenderer<VectorFieldSymb
             throw new PortrayalException(ex);
         }
 
-        final ReferencedCanvas2D canvas = context.getCanvas();
+        final ReferencedCanvas2D canvas = renderingContext.getCanvas();
 
         if(coverage != null){
             final RenderedGridMarks marks = new RenderedGridMarks(canvas,coverage);
-            marks.paint(context);
+            marks.paint(renderingContext);
         }
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public boolean hit(ProjectedFeature graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public boolean hit(ProjectedCoverage graphic, CachedVectorFieldSymbolizer symbol,
-            RenderingContext2D renderingContext, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
         return false;
-    }
-
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedVectorFieldSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedVectorFieldSymbolizer symbol, MapLayer layer) {
-        
     }
 
 }
