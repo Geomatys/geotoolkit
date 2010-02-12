@@ -28,12 +28,59 @@ import static org.junit.Assert.*;
 /**
  * Tests the {@link GeneralDirectPosition} and {@link DirectPosition2D} classes.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 2.4
  */
 public final class DirectPositionTest {
+    /**
+     * Tests the {@link AbstractDirectPosition#toString(DirectPosition)} method.
+     */
+    @Test
+    public void testWktFormatting() {
+        assertEquals("POINT(6 10 2)", new GeneralDirectPosition(6, 10, 2).toString());
+        assertEquals("POINT(6.5 10)", new DirectPosition2D(6.5, 10).toString());
+    }
+
+    /**
+     * Tests the {@link GeneralDirectPosition#GeneralDirectPosition(String)} constructor.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testWktParsing() {
+        assertEquals("POINT(6 10 2)", new GeneralDirectPosition("POINT(6 10 2)").toString());
+        assertEquals("POINT(3 14 2)", new GeneralDirectPosition("POINT M [ 3 14 2 ] ").toString());
+        assertEquals("POINT(2 10 8)", new GeneralDirectPosition("POINT Z 2 10 8").toString());
+        assertEquals("POINT()",       new GeneralDirectPosition("POINT()").toString());
+        assertEquals("POINT()",       new GeneralDirectPosition("POINT ( ) ").toString());
+        assertEquals("POINT()",       new GeneralDirectPosition("POINT").toString());
+        assertEquals("POINT(6 10)",   new DirectPosition2D("POINT(6 10)").toString());
+        assertEquals("POINT(8)",      new DirectPosition1D("POINT(8)").toString());
+
+        try {
+            new GeneralDirectPosition("POINT(6 10 2");
+            fail("Parsing should fails because of missing parenthesis.");
+        } catch (IllegalArgumentException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("POINT"));
+        }
+        try {
+            new GeneralDirectPosition("POINT 6 10 2)");
+            fail("Parsing should fails because of missing parenthesis.");
+        } catch (NumberFormatException e) {
+            // This is the expected exception.
+        }
+        try {
+            new GeneralDirectPosition("POINT(6 10 2) x");
+            fail("Parsing should fails because of extra characters.");
+        } catch (IllegalArgumentException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("POINT"));
+        }
+    }
+
     /**
      * Tests {@link GeneralDirectPosition#equals} method between different implementations. The
      * purpose of this test is also to run the assertion in the direct position implementations.

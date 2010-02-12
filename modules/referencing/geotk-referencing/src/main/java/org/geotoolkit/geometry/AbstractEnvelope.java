@@ -25,6 +25,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.internal.StringUtilities.trimTrailingZero;
+
 
 /**
  * Base class for {@linkplain Envelope envelope} implementations. This base class
@@ -112,9 +114,8 @@ public abstract class AbstractEnvelope implements Envelope {
      * Formats this envelope in the <cite>Well Known Text</cite> (WKT) format. The output is like
      * below, where <var>n</var> is the {@linkplain #getDimension() number of dimensions}:
      *
-     * <blockquote><code>BOX</code><var>n</var>
-     * <code>D(</code>{@linkplain #getLowerCorner() lower corner}<code>,</code>
-     * {@linkplain #getUpperCorner() upper corner}<code>)</code></blockquote>
+     * <blockquote>{@code BOX}<var>n</var>{@code D(}{@linkplain #getLowerCorner() lower corner}{@code ,}
+     * {@linkplain #getUpperCorner() upper corner}{@code )}</blockquote>
      *
      * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
      * by the {@link GeneralEnvelope} constructor.
@@ -129,9 +130,8 @@ public abstract class AbstractEnvelope implements Envelope {
      * the <cite>Well Known Text</cite> (WKT) format. The output is like below, where <var>n</var>
      * is the {@linkplain Envelope#getDimension() number of dimensions}:
      *
-     * <blockquote><code>BOX</code><var>n</var>
-     * <code>D(</code>{@linkplain Envelope#getLowerCorner() lower corner}<code>,</code>
-     * {@linkplain Envelope#getUpperCorner() upper corner}<code>)</code></blockquote>
+     * <blockquote>{@code BOX}<var>n</var>{@code D(}{@linkplain #getLowerCorner() lower corner}{@code ,}
+     * {@linkplain #getUpperCorner() upper corner}{@code )}</blockquote>
      *
      * The output of this method can be {@linkplain GeneralEnvelope#GeneralEnvelope(String) parsed}
      * by the {@link GeneralEnvelope} constructor.
@@ -152,11 +152,11 @@ public abstract class AbstractEnvelope implements Envelope {
             if (i != 0) {
                 buffer.append(' ');
             }
-            buffer.append(envelope.getMinimum(i));
+            trimTrailingZero(buffer.append(envelope.getMinimum(i)));
         }
         buffer.append(',');
         for (int i=0; i<dimension; i++) {
-            buffer.append(' ').append(envelope.getMaximum(i));
+            trimTrailingZero(buffer.append(' ').append(envelope.getMaximum(i)));
         }
         return buffer.append(')').toString();
     }
@@ -199,7 +199,7 @@ public abstract class AbstractEnvelope implements Envelope {
                     case  1: value = CORNERS[corner+i] ? envelope.getMaximum(i) : envelope.getMinimum(i); break;
                     default: value = envelope.getMedian(i); break;
                 }
-                buffer.append(separator).append(value);
+                trimTrailingZero(buffer.append(separator).append(value));
                 separator = " ";
             }
             separator = ", ";

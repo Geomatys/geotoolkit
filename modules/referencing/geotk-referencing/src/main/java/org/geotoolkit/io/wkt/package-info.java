@@ -34,16 +34,18 @@
  * However other WKT formats (especially the one for geometric objects) are expected to be
  * provided here in future versions.
  * <p>
- * Note that the {@link org.geotoolkit.geometry.GeneralEnvelope} class provides its own, limited,
- * WKT parsing and formatting services for the {@code BOX} element.
+ * Note that the {@link org.geotoolkit.geometry.GeneralEnvelope} and
+ * {@link org.geotoolkit.geometry.GeneralDirectPosition} classes provide their own, limited,
+ * WKT parsing and formatting services for the {@code BOX} and {@code POINT} elements.
  *
  * {@section References}
  * <ul>
  *   <li><A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A></li>
  *   <li><A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A></li>
+ *   <li><A HREF="http://en.wikipedia.org/wiki/Well-known_text">Well Known Text in Wikipedia</A></li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Eve (IRD)
  * @author Rueben Schulz (UBC)
  * @version 3.00

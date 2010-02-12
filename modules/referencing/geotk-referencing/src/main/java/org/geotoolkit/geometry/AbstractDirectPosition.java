@@ -17,13 +17,16 @@
  */
 package org.geotoolkit.geometry;
 
+import java.util.Arrays;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.internal.StringUtilities.trimTrailingZero;
 
 
 /**
@@ -34,8 +37,8 @@ import org.geotoolkit.util.converter.Classes;
  * This class do not holds any state. The decision to implement {@link java.io.Serializable}
  * or {@link org.geotoolkit.util.Cloneable} interfaces is left to implementors.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 2.4
  * @module
@@ -136,10 +139,14 @@ public abstract class AbstractDirectPosition implements DirectPosition {
     }
 
     /**
-     * Returns a string representation of this coordinate. The default implementation is okay
-     * for occasional formatting (for example for debugging purpose). But if there is a lot
-     * of positions to format, users will get more control by using their own instance of
-     * {@link org.geotoolkit.measure.CoordinateFormat}.
+     * Formats this position in the <cite>Well Known Text</cite> (WKT) format.
+     * The output is like below:
+     *
+     * <blockquote>{@code POINT(}{@linkplain #getCoordinate() ordinates}{@code )}</blockquote>
+     *
+     * The output of this method can be
+     * {@linkplain GeneralDirectPosition#GeneralDirectPosition(String) parsed} by the
+     * {@link GeneralDirectPosition} constructor.
      */
     @Override
     public String toString() {
@@ -147,18 +154,123 @@ public abstract class AbstractDirectPosition implements DirectPosition {
     }
 
     /**
-     * Formats the specified position.
+     * Formats a {@code POINT} element from a direct position. This method formats the given
+     * position in the <cite>Well Known Text</cite> (WKT) format. The output is like below:
+     *
+     * <blockquote>{@code POINT(}{@linkplain DirectPosition#getCoordinate() ordinates}{@code )}</blockquote>
+     *
+     * The output of this method can be
+     * {@linkplain GeneralDirectPosition#GeneralDirectPosition(String) parsed} by the
+     * {@link GeneralDirectPosition} constructor.
+     *
+     * @param  position The position to format.
+     * @return The position as a {@code POINT} in WKT format.
+     *
+     * @see GeneralDirectPosition#GeneralDirectPosition(String)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     * @see org.geotoolkit.io.wkt
+     *
+     * @since 3.09
      */
-    static String toString(final DirectPosition position) {
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(position)).append('[');
+    public static String toString(final DirectPosition position) {
+        final StringBuilder buffer = new StringBuilder("POINT(");
         final int dimension = position.getDimension();
         for (int i=0; i<dimension; i++) {
             if (i != 0) {
-                buffer.append(", ");
+                buffer.append(' ');
             }
-            buffer.append(position.getOrdinate(i));
+            trimTrailingZero(buffer.append(position.getOrdinate(i)));
         }
-        return buffer.append(']').toString();
+        return buffer.append(')').toString();
+    }
+
+    /**
+     * Parses the given WKT.
+     *
+     * @param  wkt The WKT to parse.
+     * @return The ordinates, or {@code null) if none.
+     * @throws NumberFormatException If a number can not be parsed.
+     * @throws IllegalArgumentException If the parenthesis are not balanced.
+     */
+    static double[] parse(final String wkt) throws NumberFormatException, IllegalArgumentException {
+        final int length = wkt.length();
+        int i = -1;
+        char c;
+        /*
+         * Skip the leading identifier (typically "POINT" or "POINT ZM")
+         * and the following whitespaces, if any.
+         */
+        do {
+            if (++i >= length) return null;
+            if (Character.isJavaIdentifierStart(c = wkt.charAt(i))) {
+                do if (++i >= length) return null;
+                while (Character.isJavaIdentifierPart(c = wkt.charAt(i)));
+            }
+        } while (Character.isWhitespace(c));
+        /*
+         * Skip the opening parenthesis, and the following whitespaces if any.
+         * We remember the matching parenthesis since we will look for it later.
+         * Note: we use character ' ' for "end of string".
+         */
+        char close = ' ';
+        if (c == '(' || c == '[') {
+            close = (c == '(') ? ')' : ']';
+            do if (++i >= length) {
+                c = ' ';
+                break;
+            } while (Character.isWhitespace(c = wkt.charAt(i)));
+        }
+        /*
+         * Index i is either at the begining of a number, at the closing parenthesis or at the end
+         * of string (in any cases we are not at a whitespace). Now process every space-separated
+         * ordinates until we reach the closing parenthesis or the end of string.
+         */
+        double[] ordinates = new double[2];
+        int dimension = 0;
+scan:   while (true) {
+            if (c == close) {
+                /*
+                 * We have reached the closing parenthesis. Having any non-whitespace
+                 * character after this one is an error. Otherwise we are done.
+                 */
+                while (++i < length) {
+                    if (!Character.isWhitespace(c = wkt.charAt(i))) {
+                        throw new IllegalArgumentException(Errors.format(
+                                Errors.Keys.UNPARSABLE_STRING_$2, wkt, wkt.substring(i)));
+                    }
+                }
+                break scan;
+            }
+            /*
+             * We are at the begining of a number. Find where the number ends (at
+             * the first whitespace or closing parenthesis), parse it and store it.
+             */
+            final int start = i;
+            do if (++i >= length) {
+                i = length;
+                c = ' ';
+                break;
+            } while (!Character.isWhitespace(c = wkt.charAt(i)) && c != close);
+            if (dimension == ordinates.length) {
+                ordinates = Arrays.copyOf(ordinates, dimension*2);
+            }
+            ordinates[dimension++] = Double.parseDouble(wkt.substring(start, i));
+            /*
+             * Skip whitespaces. If we reach the end of string without finding
+             * the closing parenthesis, check if we were suppose to have any.
+             */
+            while (Character.isWhitespace(c)) {
+                if (++i >= length) {
+                    if (close != ' ') {
+                        throw new IllegalArgumentException(Errors.format(
+                                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2, wkt, close));
+                    }
+                    break scan;
+                }
+                c = wkt.charAt(i);
+            }
+        }
+        return XArrays.resize(ordinates, dimension);
     }
 
     /**

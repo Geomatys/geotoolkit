@@ -138,7 +138,7 @@ public final class StringUtilities {
     /**
      * Trims the factional part of the given string, provided that it doesn't change the value.
      * More specifically, this method removes the trailing {@code ".0"} characters if any. This
-     * method is invoked before to parse an intege} or to parse a date (for omitting fractional
+     * method is invoked before to parse an integer or to parse a date (for omitting fractional
      * seconds).
      *
      * @param  value The value to trim.
@@ -156,6 +156,22 @@ public final class StringUtilities {
             }
         }
         return value;
+    }
+
+    /**
+     * If the given buffer ends with {@code ".0"}, removes those trailling characters.
+     * This method can be invoked immediately after a double value has been formatted
+     * in the buffer.
+     *
+     * @param buffer The buffer to trim.
+     *
+     * @since 3.09
+     */
+    public static void trimTrailingZero(final StringBuilder buffer) {
+        final int length = buffer.length() - 2;
+        if (length >= 0 && buffer.charAt(length) == '.' && buffer.charAt(length+1) == '0') {
+            buffer.setLength(length);
+        }
     }
 
     /**

@@ -59,8 +59,8 @@ import org.geotoolkit.resources.Errors;
  * Collections that do not rely on {@link Object#hashCode}, like {@link java.util.ArrayList},
  * are safe in all cases.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @see DirectPosition1D
  * @see GeneralDirectPosition
@@ -147,6 +147,36 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      */
     public DirectPosition2D(final DirectPosition point) {
         setLocation(point);
+    }
+
+    /**
+     * Constructs a position initialized to the values parsed from the given string in
+     * <cite>Well Known Text</cite> (WKT) format. The given string is typically a {@code POINT}
+     * element like below:
+     *
+     * {@preformat wkt
+     *     POINT(6 10)
+     * }
+     *
+     * @param  wkt The {@code POINT} or other kind of element to parse.
+     * @throws NumberFormatException If a number can not be parsed.
+     * @throws IllegalArgumentException If the parenthesis are not balanced.
+     * @throws MismatchedDimensionException If the given point is not two-dimensional.
+     *
+     * @see #toString(DirectPosition)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     *
+     * @since 3.09
+     */
+    public DirectPosition2D(final String wkt) throws NumberFormatException, IllegalArgumentException {
+        final double[] ordinates = AbstractDirectPosition.parse(wkt);
+        final int dimension = (ordinates != null) ? ordinates.length : 0;
+        if (dimension != 2) {
+            throw new MismatchedDimensionException(Errors.format(
+                    Errors.Keys.MISMATCHED_DIMENSION_$3, wkt, dimension, 2));
+        }
+        x = ordinates[0];
+        y = ordinates[1];
     }
 
     /**
@@ -265,11 +295,14 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
     }
 
     /**
-     * Returns a string representation of this coordinate. The default implementation formats
-     * this coordinate using a shared instance of {@link org.geotoolkit.measure.CoordinateFormat}.
-     * This is okay for occasional formatting (for example for debugging purpose). But if there
-     * is a lot of positions to format, users will get better performance and more control by
-     * using their own instance of {@code CoordinateFormat}.
+     * Formats this position in the <cite>Well Known Text</cite> (WKT) format.
+     * The output is like below:
+     *
+     * <blockquote>{@code POINT(}{@linkplain #getCoordinate() ordinates}{@code )}</blockquote>
+     *
+     * The output of this method can be
+     * {@linkplain GeneralDirectPosition#GeneralDirectPosition(String) parsed} by the
+     * {@link GeneralDirectPosition} constructor.
      */
     @Override
     public String toString() {

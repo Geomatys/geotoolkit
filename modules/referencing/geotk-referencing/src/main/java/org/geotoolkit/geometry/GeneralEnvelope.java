@@ -96,13 +96,6 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     private static final long serialVersionUID = 1752330560227688940L;
 
     /**
-     * Any of those characters can appear as point separator in our lousy WKT parser.
-     *
-     * @see #GeneralEnvelope(String)
-     */
-    private static final String POINT_SEPARATORS = ",()[]";
-
-    /**
      * Minimum and maximum ordinate values. The first half contains minimum ordinates, while the
      * last half contains maximum ordinates. This layout is convenient for the creation of lower
      * and upper corner direct positions.
@@ -332,31 +325,44 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * simple rules:
      * <p>
      * <ul>
+     *   <li>Character sequences complying to the rules of Java identifiers are skipped.</li>
      *   <li>Coordinates are separated by a coma ({@code ,}) character.</li>
-     *   <li>The ordinates in a ordinate are separated by a space.</li>
-     *   <li>Ordinate numbers are assumed in US locale.</li>
+     *   <li>The ordinates in a coordinate are separated by a space.</li>
+     *   <li>Ordinate numbers are assumed formatted in US locale.</li>
+     *   <li>The coordinate having the highest dimension determines the dimension of this envelope.</li>
      * </ul>
      * <p>
-     * Note that the above implies that this constructor does not check the consistency
-     * of the provided WKT.
+     * This constructor does not check the consistency of the provided WKT. For example it doesn't
+     * check that every points in a {@code LINESTRING} have the same dimension. However this
+     * constructor ensures that the parenthesis are balanced, in order to catch some malformed WKT.
+     * <p>
+     * The following examples can be parsed by this constructor in addition of the standard
+     * {@code BOX} element. This constructor creates the bounding box of those geometries:
+     * <p>
+     * <ul>
+     *   <li><pre>POINT(6 10)</pre></li>
+     *   <li><pre>MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))</pre></li>
+     *   <li><pre>GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))</pre></li>
+     * </ul>
      *
-     * @param  wkt The {@code BOX} or {@code POLYGON} element to parse.
+     * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.
      * @throws NumberFormatException If a number can not be parsed.
+     * @throws IllegalArgumentException If the parenthesis are not balanced.
      *
      * @see #toString(Envelope)
      * @see org.geotoolkit.measure.CoordinateFormat
      *
      * @since 3.09
      */
-    public GeneralEnvelope(final String wkt) throws NumberFormatException {
+    public GeneralEnvelope(final String wkt) throws NumberFormatException, IllegalArgumentException {
         ensureNonNull("wkt", wkt);
-        int dimLimit     = 4;
-        int maxDimension = 0;
+        int levelParenth = 0; // Number of opening parenthesis: (
+        int levelBracket = 0; // Number of opening brackets: [
+        int dimLimit     = 4; // The length of minimum and maximum arrays.
+        int maxDimension = 0; // The number of valid entries in the minimum and maximum arrays.
         final int length = wkt.length();
         double[] minimum = new double[dimLimit];
         double[] maximum = new double[dimLimit];
-        Arrays.fill(minimum, Double.POSITIVE_INFINITY);
-        Arrays.fill(maximum, Double.NEGATIVE_INFINITY);
         int dimension = 0;
 scan:   for (int i=0; i<length; i++) {
             char c = wkt.charAt(i);
@@ -367,9 +373,12 @@ scan:   for (int i=0; i<length; i++) {
             if (Character.isWhitespace(c)) {
                 continue;
             }
-            if (POINT_SEPARATORS.indexOf(c) >= 0) {
-                dimension = 0;
-                continue;
+            switch (c) {
+                case ',':                                      dimension=0; continue;
+                case '(':     ++levelParenth;                  dimension=0; continue;
+                case '[':     ++levelBracket;                  dimension=0; continue;
+                case ')': if (--levelParenth<0) fail(wkt,'('); dimension=0; continue;
+                case ']': if (--levelBracket<0) fail(wkt,'['); dimension=0; continue;
             }
             /*
              * At this point we have skipped the leading keyword (BOX, POLYGON, etc.),
@@ -379,14 +388,15 @@ scan:   for (int i=0; i<length; i++) {
              */
             final int start = i;
             boolean flush = false;
-            while (++i < length) {
+scanNumber: while (++i < length) {
                 c = wkt.charAt(i);
                 if (Character.isWhitespace(c)) {
                     break;
                 }
-                if (POINT_SEPARATORS.indexOf(c) >= 0) {
-                    flush = true;
-                    break;
+                switch (c) {
+                    case ',':                                      flush=true; break scanNumber;
+                    case ')': if (--levelParenth<0) fail(wkt,'('); flush=true; break scanNumber;
+                    case ']': if (--levelBracket<0) fail(wkt,'['); flush=true; break scanNumber;
                 }
             }
             final double value = Double.parseDouble(wkt.substring(start, i));
@@ -395,25 +405,35 @@ scan:   for (int i=0; i<length; i++) {
              * increasing the arrays size if necessary. Remember the maximum number
              * of dimensions we have found so far.
              */
-            if (dimension >= dimLimit) {
-                final int old = dimLimit;
-                dimLimit *= 2;
-                minimum = Arrays.copyOf(minimum, dimLimit);
-                maximum = Arrays.copyOf(maximum, dimLimit);
-                Arrays.fill(minimum, old, dimLimit, Double.POSITIVE_INFINITY);
-                Arrays.fill(maximum, old, dimLimit, Double.NEGATIVE_INFINITY);
-            }
-            if (value < minimum[dimension]) minimum[dimension] = value;
-            if (value > maximum[dimension]) maximum[dimension] = value;
-            if (++dimension > maxDimension) {
-                maxDimension = dimension;
+            if (dimension == maxDimension) {
+                if (dimension == dimLimit) {
+                    dimLimit *= 2;
+                    minimum = Arrays.copyOf(minimum, dimLimit);
+                    maximum = Arrays.copyOf(maximum, dimLimit);
+                }
+                minimum[dimension] = maximum[dimension] = value;
+                maxDimension = ++dimension;
+            } else {
+                if (value < minimum[dimension]) minimum[dimension] = value;
+                if (value > maximum[dimension]) maximum[dimension] = value;
+                dimension++;
             }
             if (flush) {
                 dimension = 0;
             }
         }
+        if (levelParenth != 0) fail(wkt, ')');
+        if (levelBracket != 0) fail(wkt, ']');
         ordinates = XArrays.resize(minimum, maxDimension*2);
         System.arraycopy(maximum, 0, ordinates, maxDimension, maxDimension);
+    }
+
+    /**
+     * Throws an exception for unmatched parenthesis during WKT parsing.
+     */
+    private static void fail(final String wkt, char missing) {
+        throw new IllegalArgumentException(Errors.format(
+                Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2, wkt, missing));
     }
 
     /**

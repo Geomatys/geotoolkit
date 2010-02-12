@@ -343,8 +343,8 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * Formats this envelope in the <cite>Well Known Text</cite> (WKT) format.
      * The output is like below:
      *
-     * <blockquote><code>BOX2D(</code>{@linkplain #getLowerCorner() lower corner}<code>,</code>
-     * {@linkplain #getUpperCorner() upper corner}<code>)</code></blockquote>
+     * <blockquote>{@code BOX2D(}{@linkplain #getLowerCorner() lower corner}{@code ,}
+     * {@linkplain #getUpperCorner() upper corner}{@code )}</blockquote>
      *
      * @see AbstractFormat#toString(Envelope)
      *

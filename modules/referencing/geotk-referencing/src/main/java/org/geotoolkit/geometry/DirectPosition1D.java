@@ -30,8 +30,8 @@ import org.geotoolkit.resources.Errors;
 /**
  * Holds the coordinates for a one-dimensional position within some coordinate reference system.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @see DirectPosition2D
  * @see GeneralDirectPosition
@@ -87,6 +87,35 @@ public class DirectPosition1D extends AbstractDirectPosition implements Serializ
      */
     public DirectPosition1D(final DirectPosition point) {
         setLocation(point);
+    }
+
+    /**
+     * Constructs a position initialized to the values parsed from the given string in
+     * <cite>Well Known Text</cite> (WKT) format. The given string is typically a {@code POINT}
+     * element like below:
+     *
+     * {@preformat wkt
+     *     POINT(6)
+     * }
+     *
+     * @param  wkt The {@code POINT} or other kind of element to parse.
+     * @throws NumberFormatException If a number can not be parsed.
+     * @throws IllegalArgumentException If the parenthesis are not balanced.
+     * @throws MismatchedDimensionException If the given point is not one-dimensional.
+     *
+     * @see #toString(DirectPosition)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     *
+     * @since 3.09
+     */
+    public DirectPosition1D(final String wkt) throws NumberFormatException, IllegalArgumentException {
+        final double[] ordinates = parse(wkt);
+        final int dimension = (ordinates != null) ? ordinates.length : 0;
+        if (dimension != 1) {
+            throw new MismatchedDimensionException(Errors.format(
+                    Errors.Keys.MISMATCHED_DIMENSION_$3, wkt, dimension, 1));
+        }
+        ordinate = ordinates[0];
     }
 
     /**

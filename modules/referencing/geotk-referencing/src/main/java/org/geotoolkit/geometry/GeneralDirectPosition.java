@@ -64,8 +64,9 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
 
     /**
      * The ordinates of the direct position.
+     * Consider this reference as final; it is modified by {@link #clone} only.
      */
-    public final double[] ordinates;
+    public double[] ordinates;
 
     /**
      * The coordinate reference system for this position, or {@code null}.
@@ -151,6 +152,33 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
     public GeneralDirectPosition(final DirectPosition point) {
         ordinates = point.getCoordinate(); // Should already be cloned.
         crs = point.getCoordinateReferenceSystem();
+    }
+
+    /**
+     * Constructs a position initialized to the values parsed from the given string in
+     * <cite>Well Known Text</cite> (WKT) format. The given string is typically a {@code POINT}
+     * element like below:
+     *
+     * {@preformat wkt
+     *     POINT(6 10)
+     * }
+     *
+     * However this constructor is lenient to other types like {@code POINT ZM}.
+     *
+     * @param  wkt The {@code POINT} or other kind of element to parse.
+     * @throws NumberFormatException If a number can not be parsed.
+     * @throws IllegalArgumentException If the parenthesis are not balanced.
+     *
+     * @see #toString(DirectPosition)
+     * @see org.geotoolkit.measure.CoordinateFormat
+     *
+     * @since 3.09
+     */
+    public GeneralDirectPosition(final String wkt) throws NumberFormatException, IllegalArgumentException {
+        ordinates = parse(wkt);
+        if (ordinates == null) {
+            ordinates = new double[0];
+        }
     }
 
     /**
@@ -307,6 +335,13 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
      */
     @Override
     public GeneralDirectPosition clone() {
-        return new GeneralDirectPosition(ordinates);
+        try {
+            GeneralDirectPosition e = (GeneralDirectPosition) super.clone();
+            e.ordinates = e.ordinates.clone();
+            return e;
+        } catch (CloneNotSupportedException exception) {
+            // Should not happen, since we are cloneable.
+            throw new AssertionError(exception);
+        }
     }
 }

@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Tests the {@link Characters} utility methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 3.00
  */
@@ -66,5 +66,17 @@ public final class CharactersTest {
         assertEquals(c, toSubScript(c));
         assertEquals(c, toNormalScript(c));
         assertFalse(isSubScript(c));
+    }
+
+    /**
+     * Tests {@link Characters#matchingBracket}.
+     *
+     * @since 3.09
+     */
+    @Test
+    public void testMatchingBracket() {
+        assertEquals('[', matchingBracket(']'));
+        assertEquals('}', matchingBracket('{'));
+        assertEquals('X', matchingBracket('X'));
     }
 }

@@ -41,16 +41,16 @@ public final class GeneralEnvelopeTest {
      */
     @Test
     public void testWktFormatting() {
-        Envelope2D envelope = new Envelope2D(null, -180, -90, 360, 180);
-        assertEquals("BOX2D(-180.0 -90.0, 180.0 90.0)", envelope.toString());
-        assertEquals("POLYGON((-180.0 -90.0, -180.0 90.0, 180.0 90.0, 180.0 -90.0, -180.0 -90.0))",
-                AbstractEnvelope.toPolygonString(envelope));
+        Envelope2D envelope2D = new Envelope2D(null, -180, -90, 360, 180);
+        assertEquals("BOX2D(-180 -90, 180 90)", envelope2D.toString());
+        assertEquals("POLYGON((-180 -90, -180 90, 180 90, 180 -90, -180 -90))",
+                AbstractEnvelope.toPolygonString(envelope2D));
 
-        GeneralEnvelope envelope3D = new GeneralEnvelope(3);
-        envelope3D.setRange(0, -180, +180);
-        envelope3D.setRange(1,  -90,  +90);
-        envelope3D.setRange(2,   10,   30);
-        assertEquals("BOX3D(-180.0 -90.0 10.0, 180.0 90.0 30.0)", envelope3D.toString());
+        GeneralEnvelope envelope = new GeneralEnvelope(3);
+        envelope.setRange(0, -180, +180);
+        envelope.setRange(1,  -90,  +90);
+        envelope.setRange(2,   10,   30);
+        assertEquals("BOX3D(-180 -90 10, 180 90 30)", envelope.toString());
     }
 
     /**
@@ -81,6 +81,29 @@ public final class GeneralEnvelopeTest {
         assertEquals( 100, envelope.getMaximum(0), 0);
         assertEquals( -40, envelope.getMinimum(1), 0);
         assertEquals(  40, envelope.getMaximum(1), 0);
+
+        assertEquals("BOX2D(6 10, 6 10)",     new GeneralEnvelope("POINT(6 10)").toString());
+        assertEquals("BOX3D(6 10 3, 6 10 3)", new GeneralEnvelope("POINT M [ 6 10 3 ] ").toString());
+        assertEquals("BOX2D(3 4, 20 50)",     new GeneralEnvelope("LINESTRING(3 4,10 50,20 25)").toString());
+        assertEquals("BOX2D(1 1, 6 5)",       new GeneralEnvelope(
+                "MULTIPOLYGON(((1 1,5 1,5 5,1 5,1 1),(2 2, 3 2, 3 3, 2 3,2 2)),((3 3,6 2,6 4,3 3)))").toString());
+        assertEquals("BOX2D(3 6, 7 10)", new GeneralEnvelope("GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))").toString());
+        assertEquals(0, new GeneralEnvelope("BOX()").getDimension());
+
+        try {
+            new GeneralEnvelope("BOX2D(3 4");
+            fail("Parsing should fails because of missing parenthesis.");
+        } catch (IllegalArgumentException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("BOX2D"));
+        }
+        try {
+            new GeneralEnvelope("LINESTRING(3 4,10 50),20 25)");
+            fail("Parsing should fails because of missing parenthesis.");
+        } catch (IllegalArgumentException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("LINESTRING"));
+        }
     }
 
     /**
