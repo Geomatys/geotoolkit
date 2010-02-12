@@ -294,6 +294,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.displayToDevice    = (graphics != null) ? graphics.getTransform() : null;
         this.objectiveToDevice  = (displayToDevice != null) ? new AffineTransform(displayToDevice) : new AffineTransform();
         this.objectiveToDevice.concatenate(objectiveToDisplay);
+        this.current = DISPLAY_TRS;
     }
 
     public void reset(){
@@ -313,6 +314,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         this.objectiveToDisplay = null;
         this.resolution[0] = 1;
         this.resolution[1] = 1;
+        this.current = DISPLAY_TRS;
     }
 
     public void dispose(){

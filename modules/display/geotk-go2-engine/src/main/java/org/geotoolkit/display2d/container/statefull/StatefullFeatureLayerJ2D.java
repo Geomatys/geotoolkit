@@ -17,9 +17,8 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import java.util.Iterator;
 import java.awt.geom.AffineTransform;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +36,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
@@ -128,6 +128,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
+    protected RenderingIterator getIterator(FeatureCollection<SimpleFeature> features, 
+            RenderingContext2D renderingContext, StatefullContextParams params){
+        updateCache(renderingContext);
+        return new StatefullGraphicIterator(features.iterator());
+    }
+
+    @Override
     protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
         updateCache(context);
 
@@ -145,7 +152,6 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             }
         }
 
-
         if(monitor.stopRequested()) return;
 
         final FeatureCollection<SimpleFeature> features;
@@ -160,141 +166,23 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
-
         //prepare the renderers
         final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, context);
 
+        final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
         if(SymbolOrder == null || SymbolOrder == false){
-            renderByFeatureOrder(features, monitor, context, preparedRenderers);
+            try{
+                renderByFeatureOrder(features, context, preparedRenderers, params);
+            }catch(PortrayalException ex){
+                monitor.exceptionOccured(ex, Level.WARNING);
+            }
         }else{
-            renderBySymbolOrder(features, monitor, context, preparedRenderers);
-        }
-        
-    }
-
-    private void renderByFeatureOrder(FeatureCollection<SimpleFeature> features,
-            CanvasMonitor monitor, RenderingContext2D context, StatefullCachedRule renderers){
-        // read & paint in the same thread, all symbolizer for each feature
-        final FeatureIterator<SimpleFeature> iterator = features.iterator();
-
-        try{
-            while(iterator.hasNext()){
-                if(monitor.stopRequested()) return;
-                final SimpleFeature feature = iterator.next();
-
-                //search in the cache
-                final String id = feature.getID();
-                StatefullProjectedFeature projectedFeature = cache.get(id);
-
-                if(projectedFeature == null){
-                    //not in cache, create it
-                    projectedFeature = new StatefullProjectedFeature(params, feature);
-                    cache.put(id, projectedFeature);
-                }
-
-                boolean painted = false;
-                for(int i=0; i<renderers.elseRuleIndex; i++){
-                    final CachedRule rule = renderers.rules[i];
-                    final Filter ruleFilter = rule.getFilter();
-                    //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                        painted = true;
-                        for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                            renderer.portray(projectedFeature);
-                        }
-                    }
-                }
-
-                //the feature hasn't been painted, paint it with the 'else' rules
-                if(!painted){
-                    for(int i=renderers.elseRuleIndex; i<renderers.rules.length; i++){
-                        final CachedRule rule = renderers.rules[i];
-                        final Filter ruleFilter = rule.getFilter();
-                        //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                                renderer.portray(projectedFeature);
-                            }
-                        }
-                    }
-                }
-
+            try{
+                renderBySymbolOrder(features, context, preparedRenderers, params);
+            }catch(PortrayalException ex){
+                monitor.exceptionOccured(ex, Level.WARNING);
             }
-        }catch(PortrayalException ex){
-            context.getMonitor().exceptionOccured(ex, Level.WARNING);
-        }finally{
-            iterator.close();
         }
-    }
-
-    private void renderBySymbolOrder(FeatureCollection<SimpleFeature> features,
-            CanvasMonitor monitor, RenderingContext2D context, StatefullCachedRule renderers){
-        // read & paint in the same thread, all symbolizer for each feature
-        final FeatureIterator<SimpleFeature> iterator = features.iterator();
-
-        List<StatefullProjectedFeature> cycle = new ArrayList<StatefullProjectedFeature>();
-
-        try{
-            while(iterator.hasNext()){
-                if(monitor.stopRequested()) return;
-                final SimpleFeature feature = iterator.next();
-
-                //search in the cache
-                final String id = feature.getID();
-                StatefullProjectedFeature graphic = cache.get(id);
-
-                if(graphic == null){
-                    //not in cache, create it
-                    graphic = new StatefullProjectedFeature(params, feature);
-                    cache.put(id, graphic);
-                }
-
-                cycle.add(graphic);
-            }
-        }finally{
-            iterator.close();
-        }
-
-        final List<StatefullProjectedFeature> unPainted = new ArrayList<StatefullProjectedFeature>(cycle);
-
-        try{
-           for(int i=0; i<renderers.elseRuleIndex; i++){
-                final CachedRule rule = renderers.rules[i];
-                final Filter rulefilter = rule.getFilter();
-
-                for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                    for(StatefullProjectedFeature feature : cycle){
-                        //test if the rule is valid for this feature
-                        if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
-                            unPainted.remove(feature);
-                            renderer.portray(feature);
-                        }
-                    }
-                }
-            }
-
-            for(int i=renderers.elseRuleIndex; i<renderers.rules.length; i++){
-                final CachedRule rule = renderers.rules[i];
-                final Filter rulefilter = rule.getFilter();
-
-                for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                    final Iterator<StatefullProjectedFeature> ite = unPainted.iterator();
-                    while(ite.hasNext()){
-                        final StatefullProjectedFeature feature = ite.next();
-                        //test if the rule is valid for this feature
-                        if (rulefilter == null || rulefilter.evaluate(feature.getFeature())) {
-                            renderer.portray(feature);
-                        }
-                    }
-                }
-            }
-           unPainted.clear();
-
-        }catch(PortrayalException ex){
-            context.getMonitor().exceptionOccured(ex, Level.WARNING);
-        }
-
     }
 
     @Override
@@ -387,6 +275,47 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
 
         return graphics;
+    }
+
+    private class StatefullGraphicIterator implements RenderingIterator{
+
+        private final FeatureIterator<SimpleFeature> ite;
+
+        public StatefullGraphicIterator(FeatureIterator<SimpleFeature> ite) {
+            this.ite = ite;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return ite.hasNext();
+        }
+
+        @Override
+        public ProjectedFeature next() {
+            //search in the cache
+            final SimpleFeature feature = ite.next();
+            final String id = feature.getID();
+            StatefullProjectedFeature graphic = cache.get(id);
+
+            if(graphic == null){
+                //not in cache, create it
+                graphic = new StatefullProjectedFeature(params, feature);
+                cache.put(id, graphic);
+            }
+            
+            return graphic;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void close() throws IOException {
+            ite.close();
+        }
+
     }
 
 }

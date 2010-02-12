@@ -78,4 +78,15 @@ public class StatefullContextParams {
         }
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(super.toString());
+        sb.append("  ");
+        sb.append(objectiveToDisplay);
+        return sb.toString();
+    }
+
+
+
 }

@@ -47,8 +47,6 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLineSymbolizer>{
 
-
-
     public DefaultLineSymbolizerRenderer(CachedLineSymbolizer symbol, RenderingContext2D context){
         super(symbol,context);
     }
@@ -67,14 +65,6 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
             portray(projectedGeometry, feature);
-        }
-    }
-
-    @Override
-    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
-        while(graphics.hasNext()){
-            if(monitor.stopRequested()) return;
-            portray(graphics.next());
         }
     }
 
