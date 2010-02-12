@@ -142,8 +142,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
             //return;
         }
 
-        final RenderingHints hints = renderingContext.getRenderingHints();
-
         //we must switch to objectiveCRS for grid coverage
         renderingContext.switchToObjectiveCRS();
 
@@ -178,16 +176,10 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
 //                    System.out.println("shadow sample model : " +shadowImage.getSampleModel());
 //                    System.out.println("transform :" + eleTrs2D);
 
-                    final Object before = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
-                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                     g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 //                    g2.setComposite(AlphaComposite.SrcAtop);
                     g2d.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
-
-                    if(before == null) g2d.getRenderingHints().remove(RenderingHints.KEY_INTERPOLATION);
-                    else               g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, before);
                 }
-
 
             }else{
                 throw new PortrayalException("Could not render elevation model, GridToCRS is a not an AffineTransform, found a " + eleTrs2D.getClass() );

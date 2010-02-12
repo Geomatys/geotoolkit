@@ -72,7 +72,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
 
-        final RenderingHints hints = renderingContext.getRenderingHints();
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
@@ -147,7 +146,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
     @Override
     public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
 
-        final RenderingHints hints = renderingContext.getRenderingHints();
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();

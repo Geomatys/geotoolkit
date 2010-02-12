@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
@@ -47,6 +47,8 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLineSymbolizer>{
 
+
+
     public DefaultLineSymbolizerRenderer(CachedLineSymbolizer symbol, RenderingContext2D context){
         super(symbol,context);
     }
@@ -66,7 +68,14 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         if(symbol.isVisible(feature)){
             portray(projectedGeometry, feature);
         }
+    }
 
+    @Override
+    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
+        while(graphics.hasNext()){
+            if(monitor.stopRequested()) return;
+            portray(graphics.next());
+        }
     }
 
     /**
@@ -84,8 +93,6 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
     }
 
     private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
-
-        final RenderingHints hints = renderingContext.getRenderingHints();
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
         final float coeff = renderingContext.getUnitCoefficient(symbolUnit);

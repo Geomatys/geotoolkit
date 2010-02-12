@@ -89,7 +89,6 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
     private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
 
-        final RenderingHints hints = renderingContext.getRenderingHints();
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
         final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final float offset = symbol.getOffset(feature, coeff);

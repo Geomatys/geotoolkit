@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
@@ -42,6 +43,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer> imp
     protected static final Logger LOGGER = Logging.getLogger(AbstractSymbolizerRenderer.class);
 
     protected final RenderingContext2D renderingContext;
+    protected final RenderingHints hints;
     protected final Graphics2D g2d;
     protected final CanvasMonitor monitor;
     protected final C symbol;
@@ -51,6 +53,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer> imp
         this.renderingContext = context;
         this.g2d = renderingContext.getGraphics();
         this.monitor = renderingContext.getMonitor();
+        this.hints = renderingContext.getRenderingHints();
     }
 
     @Override

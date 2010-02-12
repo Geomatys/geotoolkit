@@ -69,8 +69,6 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            final RenderingHints hints = renderingContext.getRenderingHints();
-
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
             
             //we adjust coefficient for rendering ------------------------------

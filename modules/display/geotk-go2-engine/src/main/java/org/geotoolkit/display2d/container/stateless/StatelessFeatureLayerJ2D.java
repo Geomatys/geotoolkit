@@ -59,7 +59,9 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.simple.SimpleFeature;
@@ -214,8 +216,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return;
         }
 
-        //sort the rules
-        final int elseRuleIndex = sortByElseRule(rules);
+        //prepare the renderers
+        final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, renderingContext);
 
         // read & paint in the same thread
         final FeatureIterator<SimpleFeature> iterator;
@@ -228,14 +230,13 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         try{
-            //performance routine
-            if(rules.length == 1
-               && (rules[0].getFilter() == null || rules[0].getFilter() == Filter.INCLUDE)
-               && rules[0].symbolizers().length == 1){
+            //performance routine, only one symbol to render
+            if(preparedRenderers.rules.length == 1
+               && (preparedRenderers.rules[0].getFilter() == null || preparedRenderers.rules[0].getFilter() == Filter.INCLUDE)
+               && preparedRenderers.rules[0].symbolizers().length == 1){
 
                 final GraphicIterator ite = new GraphicIterator(iterator, projectedFeature);
-                final CachedSymbolizer symbol = rules[0].symbolizers()[0];
-                symbol.getRenderer().portray(ite, symbol, renderingContext);
+                preparedRenderers.renderers[0][0].portray(ite);
                 return;
             }
 
@@ -245,27 +246,27 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 projectedFeature.setFeature(feature);
 
                 boolean painted = false;
-                for(int i=0;i<elseRuleIndex;i++){
-                    final CachedRule rule = rules[i];
+                for(int i=0; i<preparedRenderers.elseRuleIndex; i++){
+                    final CachedRule rule = preparedRenderers.rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
                         painted = true;
-                        for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                            symbol.getRenderer().portray(projectedFeature, symbol, renderingContext);
+                        for (final SymbolizerRenderer renderer : preparedRenderers.renderers[i]) {
+                            renderer.portray(projectedFeature);
                         }
                     }
                 }
 
                 //the feature hasn't been painted, paint it with the 'else' rules
                 if(!painted){
-                    for(int i=elseRuleIndex; i<rules.length; i++){
-                        final CachedRule rule = rules[i];
+                    for(int i=preparedRenderers.elseRuleIndex; i<preparedRenderers.rules.length; i++){
+                        final CachedRule rule =  preparedRenderers.rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                            for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                                symbol.getRenderer().portray(projectedFeature, symbol, renderingContext);
+                            for (final SymbolizerRenderer renderer : preparedRenderers.renderers[i]) {
+                                renderer.portray(projectedFeature);
                             }
                         }
                     }
@@ -316,8 +317,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return graphics;
         }
 
-        //sort the rules
-        final int elseRuleIndex = sortByElseRule(rules);
+        //prepare the renderers
+        final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, renderingContext);
 
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         try{
@@ -326,14 +327,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 projectedFeature.setFeature(feature);
 
                 boolean painted = false;
-                for(int i=0;i<elseRuleIndex;i++){
-                    final CachedRule rule = rules[i];
+                for(int i=0;i<preparedRenderers.elseRuleIndex;i++){
+                    final CachedRule rule = preparedRenderers.rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(feature)) {
                         painted = true;
-                        for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                            if(GO2Utilities.hit(projectedFeature, symbol, renderingContext, mask, visitFilter)){
+                        for(SymbolizerRenderer renderer : preparedRenderers.renderers[i]){
+                            if(renderer.hit(projectedFeature, mask, visitFilter)){
                                 if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
                                 break;
                             }
@@ -343,13 +344,13 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
                 //the feature hasn't been painted, paint it with the 'else' rules
                 if(!painted){
-                    for(int i=elseRuleIndex; i<rules.length; i++){
-                        final CachedRule rule = rules[i];
+                    for(int i=preparedRenderers.elseRuleIndex; i<preparedRenderers.rules.length; i++){
+                        final CachedRule rule = preparedRenderers.rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(feature)) {
-                            for (final CachedSymbolizer symbol : rule.symbolizers()) {
-                                if(GO2Utilities.hit(projectedFeature, symbol, renderingContext, mask, visitFilter)){
+                            for(SymbolizerRenderer renderer : preparedRenderers.renderers[i]){
+                                if(renderer.hit(projectedFeature, mask, visitFilter)){
                                     if(feature != null) graphics.add( new DefaultGraphicFeatureJ2D(getCanvas(), layer, feature) );
                                     break;
                                 }
@@ -396,29 +397,6 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }else{
             return searchGraphicAt(layer, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
         }
-    }
-
-    /**
-     * sort the rules, isolate the else rules, they must be handle differently
-     */
-    protected int sortByElseRule(CachedRule[] sortedRules){
-        int elseRuleIndex = sortedRules.length;
-
-        for(int i=0; i<elseRuleIndex; i++){
-            CachedRule r =sortedRules[i];
-            if(r.getSource().isElseFilter()){
-                elseRuleIndex--;
-
-                for(int j=i+1;j<sortedRules.length;j++){
-                    sortedRules[j-1] = sortedRules[j];
-                }
-
-                //move the rule at the end
-                sortedRules[sortedRules.length-1] = r;
-            }
-        }
-
-        return elseRuleIndex;
     }
 
     protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
