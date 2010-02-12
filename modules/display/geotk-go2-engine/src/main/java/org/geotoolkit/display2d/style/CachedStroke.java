@@ -58,7 +58,7 @@ public class CachedStroke extends Cache<Stroke>{
 
 
 
-    public CachedStroke(Stroke stroke){
+    private CachedStroke(Stroke stroke){
         super(stroke);
     }
 
@@ -121,7 +121,7 @@ public class CachedStroke extends Cache<Stroke>{
         final GraphicFill graphicFill = styleElement.getGraphicFill();
 
         if(graphicFill != null){
-            cachedGraphic = new CachedGraphic(graphicFill);
+            cachedGraphic = CachedGraphic.cache(graphicFill);
 
             if(cachedGraphic.isStaticVisible() == VisibilityState.UNVISIBLE){
                 //graphic is not visible even if some value are dynamic
@@ -453,6 +453,10 @@ public class CachedStroke extends Cache<Stroke>{
 
             return true;
         }
+    }
+
+    public static CachedStroke cache(Stroke stroke){
+        return new CachedStroke(stroke);
     }
 
 }

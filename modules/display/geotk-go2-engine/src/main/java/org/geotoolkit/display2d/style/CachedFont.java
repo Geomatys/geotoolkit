@@ -36,7 +36,7 @@ public class CachedFont extends Cache<Font>{
     private int fontSize = Integer.MIN_VALUE;
     private int fontStyle = Integer.MIN_VALUE;
     
-    public CachedFont(Font font){
+    private CachedFont(Font font){
         super(font);
     }
     
@@ -166,6 +166,10 @@ public class CachedFont extends Cache<Font>{
         evaluate();
         //font doesnt know if it's visible or not whit those informations, always true.
         return true;
+    }
+
+    public static CachedFont cache(Font font){
+        return new CachedFont(font);
     }
 
 }

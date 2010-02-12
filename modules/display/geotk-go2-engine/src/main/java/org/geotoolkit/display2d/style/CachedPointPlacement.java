@@ -35,7 +35,7 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     private final CachedDisplacement cachedDisplacement;
     private float rotation = Float.NaN;
     
-    public CachedPointPlacement(PointPlacement placement){
+    private CachedPointPlacement(PointPlacement placement){
         super(placement);
         this.cachedAnchor = CachedAnchorPoint.cache(placement.getAnchorPoint());
         this.cachedDisplacement = CachedDisplacement.cache(placement.getDisplacement());
@@ -102,6 +102,10 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
         evaluate();
         //placement doesnt know if it's visible or not whit those informations, always true.
         return true;
+    }
+
+    public static CachedPointPlacement cache(PointPlacement placement){
+        return new CachedPointPlacement(placement);
     }
 
 }

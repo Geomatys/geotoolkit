@@ -48,8 +48,8 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
             SymbolizerRenderer<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
         super(poly,renderer);
         
-        cacheStroke = new CachedStroke(poly.getStroke());
-        cacheFill = new CachedFill(poly.getFill());
+        cacheStroke = CachedStroke.cache(poly.getStroke());
+        cacheFill = CachedFill.cache(poly.getFill());
     }
     
     /**

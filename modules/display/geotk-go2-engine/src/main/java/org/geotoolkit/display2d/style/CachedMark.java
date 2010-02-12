@@ -48,10 +48,10 @@ public class CachedMark extends Cache<Mark>{
     private final CachedFill cachedFill;
     
     
-    public CachedMark(Mark mark){
+    private CachedMark(Mark mark){
         super(mark);
-        cachedStroke = new CachedStroke(mark.getStroke());
-        cachedFill = new CachedFill(mark.getFill());
+        cachedStroke = CachedStroke.cache(mark.getStroke());
+        cachedFill = CachedFill.cache(mark.getFill());
     }
     
     /**
@@ -267,6 +267,9 @@ public class CachedMark extends Cache<Mark>{
             return true;
         }
     }
-    
+
+    public static CachedMark cache(Mark mark){
+        return new CachedMark(mark);
+    }
     
 }

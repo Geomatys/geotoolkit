@@ -30,8 +30,6 @@ import org.geotoolkit.display.shape.TransformedShape;
 
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
-import org.opengis.style.AnchorPoint;
-import org.opengis.style.Displacement;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
 import org.opengis.style.GraphicalSymbol;
@@ -60,7 +58,7 @@ public class CachedGraphic extends Cache<Graphic>{
     
 
 
-    public CachedGraphic(Graphic graphic){
+    private CachedGraphic(Graphic graphic){
         super(graphic);
         this.cachedAnchor = CachedAnchorPoint.cache(graphic.getAnchorPoint());
         this.cachedDisplacement = CachedDisplacement.cache(graphic.getDisplacement());
@@ -173,7 +171,7 @@ public class CachedGraphic extends Cache<Graphic>{
         for(GraphicalSymbol symbol : symbols){
             
             if(symbol instanceof Mark){
-                CachedMark candidateMark = new CachedMark((Mark)symbol);
+                CachedMark candidateMark = CachedMark.cache((Mark)symbol);
 
                 //test if the mark is valid, could be false if an URL or anything is broken
                 if(candidateMark.isValid()){
@@ -199,7 +197,7 @@ public class CachedGraphic extends Cache<Graphic>{
                     break graphicLoop;
                 }
             }else if(symbol instanceof ExternalGraphic){
-                CachedExternal candidateExternal = new CachedExternal((ExternalGraphic)symbol);
+                CachedExternal candidateExternal = CachedExternal.cache((ExternalGraphic)symbol);
 
                 if(candidateExternal.isValid()){
                     
@@ -231,7 +229,7 @@ public class CachedGraphic extends Cache<Graphic>{
         //create the default square symbol is no symbol found
         if(!found){
             Mark mark = GO2Utilities.STYLE_FACTORY.mark();
-            cachedMark = new CachedMark(mark);
+            cachedMark = CachedMark.cache(mark);
 
             if(isStaticVisible == VisibilityState.NOT_DEFINED) isStaticVisible = VisibilityState.VISIBLE;
             
@@ -531,5 +529,8 @@ public class CachedGraphic extends Cache<Graphic>{
         }
     }
 
+    public static CachedGraphic cache(Graphic graphic){
+        return new CachedGraphic(graphic);
+    }
 
 }

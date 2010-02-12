@@ -34,7 +34,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
     private float initial = Float.NaN;
     private float offset = Float.NaN;
 
-    public CachedLinePlacement(LinePlacement placement){
+    private CachedLinePlacement(LinePlacement placement){
         super(placement);
     }
 
@@ -131,6 +131,10 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
         evaluate();
         //placement doesnt know if it's visible or not whit those informations, always true.
         return true;
+    }
+
+    public static CachedLinePlacement cache(LinePlacement placement){
+        return new CachedLinePlacement(placement);
     }
 
 }

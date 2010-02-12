@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.style;
 import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -45,7 +44,7 @@ public class CachedFill extends Cache<Fill>{
     private Paint cachedPaint = null;
     private CachedGraphic cachedGraphic = null;
 
-    public CachedFill(Fill fill){
+    private CachedFill(Fill fill){
         super(fill);
     }
 
@@ -108,7 +107,7 @@ public class CachedFill extends Cache<Fill>{
         final GraphicFill graphicFill = styleElement.getGraphicFill();
 
         if(graphicFill != null && graphicFill != null){
-            cachedGraphic = new CachedGraphic(graphicFill);
+            cachedGraphic = CachedGraphic.cache(graphicFill);
                         
             switch(cachedGraphic.isStaticVisible()){
                 //graphic is not visible even if some value are dynamic, this fill is not visible neither
@@ -242,6 +241,10 @@ public class CachedFill extends Cache<Fill>{
         }
 
         return cachedPaint;
+    }
+
+    public static CachedFill cache(Fill fill){
+        return new CachedFill(fill);
     }
 
 }

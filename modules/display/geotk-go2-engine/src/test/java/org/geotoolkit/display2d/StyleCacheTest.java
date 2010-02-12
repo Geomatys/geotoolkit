@@ -78,7 +78,7 @@ public class StyleCacheTest {
     @Test
     public void strokeCacheTest() throws Exception {
         Stroke stroke = SF.stroke();
-        CachedStroke cached = new CachedStroke(stroke);
+        CachedStroke cached = CachedStroke.cache(stroke);
 
         assertTrue(cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.VISIBLE);
@@ -86,7 +86,7 @@ public class StyleCacheTest {
 
 
         stroke = SF.stroke(FF.property("color_prop"), FF.property("width_prop"));
-        cached = new CachedStroke(stroke);
+        cached = CachedStroke.cache(stroke);
 
         assertTrue(!cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.DYNAMIC);
@@ -96,14 +96,14 @@ public class StyleCacheTest {
     @Test
     public void fillCacheTest() throws Exception {
         Fill fill = SF.fill();
-        CachedFill cached = new CachedFill(fill);
+        CachedFill cached = CachedFill.cache(fill);
 
         assertTrue(cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.VISIBLE);
         assertTrue(cached.isVisible(null));
 
         fill = SF.fill(FF.property("color_prop"));
-        cached = new CachedFill(fill);
+        cached = CachedFill.cache(fill);
 
         assertTrue(!cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.DYNAMIC);
@@ -113,14 +113,14 @@ public class StyleCacheTest {
     @Test
     public void markCacheTest() throws Exception {
         Mark mark = SF.getSquareMark();
-        CachedMark cached = new CachedMark(mark);
+        CachedMark cached = CachedMark.cache(mark);
 
         assertTrue(cached.isStatic());
         assertEquals(VisibilityState.VISIBLE, cached.isStaticVisible() );
         assertTrue(cached.isVisible(null));
 
         mark = SF.mark(StyleConstants.MARK_CROSS, SF.fill(), SF.stroke(FF.property("color_prop"), FF.property("width_prop")));
-        cached = new CachedMark(mark);
+        cached = CachedMark.cache(mark);
 
         assertTrue(!cached.isStatic());
         assertEquals(VisibilityState.VISIBLE, cached.isStaticVisible());
@@ -130,7 +130,7 @@ public class StyleCacheTest {
     @Test
     public void externalCacheTest() throws Exception{
         final ExternalGraphic ext = SF.externalGraphic("/org/geotoolkit/display2d/sample.svg", "image/svg");
-        CachedExternal cached = new CachedExternal(ext);
+        CachedExternal cached = CachedExternal.cache(ext);
 
         assertFalse(cached.isStatic());
         assertEquals(VisibilityState.VISIBLE, cached.isStaticVisible() );
@@ -175,7 +175,7 @@ public class StyleCacheTest {
                 StyleConstants.DEFAULT_ANCHOR_POINT,
                 StyleConstants.DEFAULT_DISPLACEMENT);
 
-        CachedGraphic cached = new CachedGraphic(graphic);
+        CachedGraphic cached = CachedGraphic.cache(graphic);
 
         assertTrue(!cached.isStatic());
         assertEquals(VisibilityState.DYNAMIC, cached.isStaticVisible() );

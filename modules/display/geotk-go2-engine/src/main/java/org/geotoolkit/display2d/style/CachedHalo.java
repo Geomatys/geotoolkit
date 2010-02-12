@@ -33,9 +33,9 @@ public class CachedHalo extends Cache<Halo>{
     private final CachedFill cachedFill;
     private float cachedWidth = Float.NaN;
     
-    public CachedHalo(Halo halo){
+    private CachedHalo(Halo halo){
         super(halo);
-        cachedFill = new CachedFill(halo.getFill());
+        cachedFill = CachedFill.cache(halo.getFill());
     }
     
     @Override
@@ -66,4 +66,7 @@ public class CachedHalo extends Cache<Halo>{
         return (cachedWidth >0);
     }
 
+    public static CachedHalo cache(Halo halo){
+        return new CachedHalo(halo);
+    }
 }

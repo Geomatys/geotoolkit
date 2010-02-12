@@ -56,24 +56,24 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         super(symbolizer,renderer);
         
         final org.opengis.style.Font font = styleElement.getFont();
-        cachedFont = new CachedFont(font);
+        cachedFont = CachedFont.cache(font);
         
         final Fill fill = styleElement.getFill();
-        cachedFill = new CachedFill(fill);
+        cachedFill = CachedFill.cache(fill);
             
         //halo can be null.
         final Halo halo = styleElement.getHalo();
         if(halo != null){
-            cachedHalo = new CachedHalo(halo);
+            cachedHalo = CachedHalo.cache(halo);
         }else{
             cachedHalo = null;
         }
         
         final LabelPlacement placement = styleElement.getLabelPlacement();
         if(placement instanceof PointPlacement){
-            cachedPlacement = new CachedPointPlacement((PointPlacement) placement);
+            cachedPlacement = CachedPointPlacement.cache((PointPlacement) placement);
         }else if(placement instanceof LinePlacement){
-            cachedPlacement = new CachedLinePlacement((LinePlacement) placement);
+            cachedPlacement = CachedLinePlacement.cache((LinePlacement) placement);
         }else{
             throw new IllegalArgumentException("A text symbolizer must have a placement set of type : PointPlacement or LinePlacement.");
         }

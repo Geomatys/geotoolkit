@@ -40,7 +40,7 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     public CachedPointSymbolizer(PointSymbolizer point,
             SymbolizerRenderer<PointSymbolizer,? extends CachedSymbolizer<PointSymbolizer>> renderer){
         super(point,renderer);
-        cachedGraphic = new CachedGraphic(point.getGraphic());
+        cachedGraphic = CachedGraphic.cache(point.getGraphic());
     }
 
     /**

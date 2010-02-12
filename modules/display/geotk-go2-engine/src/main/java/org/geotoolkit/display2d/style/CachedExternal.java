@@ -24,7 +24,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -51,7 +50,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
     private BufferedImage cachedImage = null;
     private boolean isSVG = false;
 
-    public CachedExternal(ExternalGraphic external){
+    private CachedExternal(ExternalGraphic external){
         super(external);
     }
 
@@ -229,6 +228,10 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         }
 
         return img;
+    }
+
+    public static CachedExternal cache(ExternalGraphic external){
+        return new CachedExternal(external);
     }
 
 }

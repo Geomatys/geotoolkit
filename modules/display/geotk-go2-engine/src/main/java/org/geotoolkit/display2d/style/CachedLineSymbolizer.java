@@ -44,7 +44,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
     public CachedLineSymbolizer(LineSymbolizer line,
             SymbolizerRenderer<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){
         super(line,renderer);
-        cachedStroke = new CachedStroke(line.getStroke());
+        cachedStroke = CachedStroke.cache(line.getStroke());
         this.line = line;
     }
 
