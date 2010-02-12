@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -70,7 +69,6 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            final Graphics2D g2 = renderingContext.getGraphics();
             final RenderingHints hints = renderingContext.getRenderingHints();
 
             final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();

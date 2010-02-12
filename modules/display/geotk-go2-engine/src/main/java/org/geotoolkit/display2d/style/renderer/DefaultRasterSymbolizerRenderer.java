@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -143,7 +142,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
             //return;
         }
 
-        final Graphics2D g2 = renderingContext.getGraphics();
         final RenderingHints hints = renderingContext.getRenderingHints();
 
         //we must switch to objectiveCRS for grid coverage
@@ -152,8 +150,8 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
         final RenderedImage img = applyStyle(dataCoverage, symbol.getSource(), hints);
         final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
         if(trs2D instanceof AffineTransform){
-            g2.setComposite(symbol.getJ2DComposite());
-            g2.drawRenderedImage(img, (AffineTransform)trs2D);
+            g2d.setComposite(symbol.getJ2DComposite());
+            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
         }else if (trs2D instanceof LinearTransform) {
             final LinearTransform lt = (LinearTransform) trs2D;
             final int col = lt.getMatrix().getNumCol();
@@ -180,14 +178,14 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
 //                    System.out.println("shadow sample model : " +shadowImage.getSampleModel());
 //                    System.out.println("transform :" + eleTrs2D);
 
-                    final Object before = g2.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
-                    g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                    g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+                    final Object before = g2d.getRenderingHint(RenderingHints.KEY_INTERPOLATION);
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 //                    g2.setComposite(AlphaComposite.SrcAtop);
-                    g2.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
+                    g2d.drawRenderedImage(shadowImage, (AffineTransform)eleTrs2D);
 
-                    if(before == null) g2.getRenderingHints().remove(RenderingHints.KEY_INTERPOLATION);
-                    else               g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, before);
+                    if(before == null) g2d.getRenderingHints().remove(RenderingHints.KEY_INTERPOLATION);
+                    else               g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, before);
                 }
 
 

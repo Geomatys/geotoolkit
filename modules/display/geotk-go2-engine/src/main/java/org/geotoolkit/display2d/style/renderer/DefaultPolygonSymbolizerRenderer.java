@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -70,7 +69,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
 
-            portray(renderingContext, symbol, projectedGeometry, feature);
+            portray(projectedGeometry, feature);
         }
     }
 
@@ -85,27 +84,25 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         //could not find the border geometry
         if(projectedGeometry == null) return;
 
-        portray(renderingContext, symbol, projectedGeometry, null);
+        portray(projectedGeometry, null);
     }
 
-    private static void portray(RenderingContext2D context, CachedPolygonSymbolizer symbol,
-            ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
+    private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
 
-        final Graphics2D g2 = context.getGraphics();
-        final RenderingHints hints = context.getRenderingHints();
+        final RenderingHints hints = renderingContext.getRenderingHints();
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = context.getUnitCoefficient(symbolUnit);
+        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final float offset = symbol.getOffset(feature, coeff);
         final Shape shape;
 
         try {
             if(NonSI.PIXEL.equals(symbolUnit)){
-                context.switchToDisplayCRS();
-                shape = (offset != 0) ? bufferDisplayGeometry(context, projectedGeometry, offset)
+                renderingContext.switchToDisplayCRS();
+                shape = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                       : projectedGeometry.getDisplayShape();
             }else{
-                context.switchToObjectiveCRS();
-                shape = (offset != 0) ? bufferObjectiveGeometry(context, projectedGeometry, symbolUnit, offset)
+                renderingContext.switchToObjectiveCRS();
+                shape = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
                                       : projectedGeometry.getObjectiveShape();
             }
         }catch (TransformException ex){
@@ -121,10 +118,10 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final float[] disps = symbol.getDisplacement(feature);
         Point2D dispStep = null;
         if(disps[0] != 0 || disps[1] != 0){
-            final AffineTransform inverse = context.getDisplayToObjective();
+            final AffineTransform inverse = renderingContext.getDisplayToObjective();
             dispStep = new Point2D.Float(disps[0], -disps[1]);
             dispStep = inverse.deltaTransform(dispStep, dispStep);
-            g2.translate(dispStep.getX(), dispStep.getY());
+            g2d.translate(dispStep.getX(), dispStep.getY());
         }
 
         final float margin = symbol.getMargin(feature, coeff) /2f;
@@ -132,19 +129,19 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final int x = (int) (bounds.getMinX() - margin);
         final int y = (int) (bounds.getMinY() - margin);
 
-        g2.setComposite( symbol.getJ2DFillComposite(feature) );
-        g2.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
-        g2.fill(shape);
+        g2d.setComposite( symbol.getJ2DFillComposite(feature) );
+        g2d.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
+        g2d.fill(shape);
         if(symbol.isStrokeVisible(feature)){
-            g2.setComposite( symbol.getJ2DStrokeComposite(feature) );
-            g2.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
-            g2.setStroke( symbol.getJ2DStroke(feature,coeff) );
-            g2.draw(shape);
+            g2d.setComposite( symbol.getJ2DStrokeComposite(feature) );
+            g2d.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
+            g2d.setStroke( symbol.getJ2DStroke(feature,coeff) );
+            g2d.draw(shape);
         }
 
         //restore the displacement
         if(dispStep != null){
-            g2.translate(-dispStep.getX(), -dispStep.getY());
+            g2d.translate(-dispStep.getX(), -dispStep.getY());
         }
 
     }

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Area;
@@ -65,7 +64,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            portray(renderingContext, symbol, projectedGeometry, feature);
+            portray(projectedGeometry, feature);
         }
 
     }
@@ -81,28 +80,26 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         //could not find the border geometry
         if(projectedGeometry == null) return;
 
-        portray(renderingContext, symbol, projectedGeometry, null);
+        portray(projectedGeometry, null);
     }
 
-    private static void portray(RenderingContext2D context, CachedLineSymbolizer symbol,
-            ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
+    private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
 
-        final Graphics2D g2 = context.getGraphics();
-        final RenderingHints hints = context.getRenderingHints();
+        final RenderingHints hints = renderingContext.getRenderingHints();
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = context.getUnitCoefficient(symbolUnit);
+        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final Shape j2dShape;
 
         if(NonSI.PIXEL == symbolUnit){
-            context.switchToDisplayCRS();
+            renderingContext.switchToDisplayCRS();
             try {
                 j2dShape = projectedGeometry.getDisplayShape();
             } catch (TransformException ex) {
                 throw new PortrayalException("Could not calculate display projected geometry",ex);
             }
         }else{
-            context.switchToObjectiveCRS();
+            renderingContext.switchToObjectiveCRS();
             try {
                 j2dShape = projectedGeometry.getObjectiveShape();
             } catch (TransformException ex) {
@@ -117,17 +114,17 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         final float offset = symbol.getOffset(feature, coeff);
         if(offset != 0){
-            g2.translate(offset, 0);
-            g2.setComposite(symbol.getJ2DComposite(feature));
-            g2.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-            g2.setStroke(symbol.getJ2DStroke(feature,coeff));
-            g2.draw(j2dShape);
-            g2.translate(-offset, 0);
+            g2d.translate(offset, 0);
+            g2d.setComposite(symbol.getJ2DComposite(feature));
+            g2d.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
+            g2d.setStroke(symbol.getJ2DStroke(feature,coeff));
+            g2d.draw(j2dShape);
+            g2d.translate(-offset, 0);
         }else{
-            g2.setComposite(symbol.getJ2DComposite(feature));
-            g2.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-            g2.setStroke(symbol.getJ2DStroke(feature,coeff));
-            g2.draw(j2dShape);
+            g2d.setComposite(symbol.getJ2DComposite(feature));
+            g2d.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
+            g2d.setStroke(symbol.getJ2DStroke(feature,coeff));
+            g2d.draw(j2dShape);
         }
 
     }

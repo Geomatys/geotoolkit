@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -73,9 +72,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
 
-        final Graphics2D g2 = renderingContext.getGraphics();
         final RenderingHints hints = renderingContext.getRenderingHints();
-        g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
@@ -128,7 +126,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                 final Coordinate coord = coords[i];
                 final int x = (int) (-img.getWidth()*anchor[0] + coord.x + disps[0]);
                 final int y = (int) (-img.getHeight()*anchor[1] + coord.y - disps[1]);
-                g2.drawImage(img, x, y, null);
+                g2d.drawImage(img, x, y, null);
             }
 
         }else{
@@ -141,7 +139,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
             final int x = (int) (-img.getWidth()*anchor[0] + pt2d.getX() + disps[0]);
             final int y = (int) (-img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
-            g2.drawImage(img, x, y, null);
+            g2d.drawImage(img, x, y, null);
         }
 
     }
@@ -149,9 +147,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
     @Override
     public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
 
-        final Graphics2D g2 = renderingContext.getGraphics();
         final RenderingHints hints = renderingContext.getRenderingHints();
-        g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+        g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
@@ -224,7 +221,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                     imgTrs.setToTranslation(
                             -img.getWidth()*anchor[0] + coord.x + disps[0], 
                             -img.getHeight()*anchor[1] + coord.y - disps[1]);
-                    g2.drawRenderedImage(img, imgTrs);
+                    g2d.drawRenderedImage(img, imgTrs);
                 }
 
             }else{
@@ -237,7 +234,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
                 imgTrs.setToTranslation(
                             -img.getWidth()*anchor[0] + pt2d.getX() + disps[0], 
                             -img.getHeight()*anchor[1] + pt2d.getY() - disps[1]);
-                g2.drawRenderedImage(img, imgTrs);
+                g2d.drawRenderedImage(img, imgTrs);
             }
         }
 
