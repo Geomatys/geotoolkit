@@ -39,7 +39,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
     private float cachedOffset = Float.NaN;
     
     private final LineSymbolizer line;
-    private final CachedStroke cachedStroke;
+    private final CachedStrokeSimple cachedStroke;
     
     public CachedLineSymbolizer(LineSymbolizer line,
             SymbolizerRenderer<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){

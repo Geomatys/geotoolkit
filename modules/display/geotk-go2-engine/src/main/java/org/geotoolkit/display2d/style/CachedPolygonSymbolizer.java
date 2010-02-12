@@ -40,7 +40,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     private float cachedDispY = Float.NaN;
     private float cachedOffset = Float.NaN;
     
-    private final CachedStroke cacheStroke;
+    private final CachedStrokeSimple cacheStroke;
     private final CachedFill cacheFill;
         
     

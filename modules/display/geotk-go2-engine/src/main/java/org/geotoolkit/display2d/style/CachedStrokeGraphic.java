@@ -17,35 +17,47 @@
  */
 package org.geotoolkit.display2d.style;
 
+import java.awt.AlphaComposite;
 
-import org.opengis.style.GraphicStroke;
+import org.opengis.feature.Feature;
 import org.opengis.style.Stroke;
 
 
 /**
- * The cached stroke is like other cached symbol a class
- * that evaluate the given symbol and cache every possible value.
- * It also provide Java2D methods to grab a Stroke,Paint and Composite
- * for a given feature.
+ * The cached simple stroke work for strokes that have
+ * only a paint or a color defined.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class CachedStroke extends Cache<Stroke>{
+public class CachedStrokeGraphic extends CachedStroke{
 
-    protected CachedStroke(Stroke stroke){
+    private CachedGraphic cachedGraphic = null;
+    private AlphaComposite cachedComposite = null;
+
+    CachedStrokeGraphic(Stroke stroke){
         super(stroke);
     }
 
-    public static CachedStrokeSimple cache(Stroke stroke){
-        final GraphicStroke gs = stroke.getGraphicStroke();
-        return new CachedStrokeSimple(stroke);
-//        if(gs == null){
-//            //simple stroke
-//            return new CachedStrokeSimple(stroke);
-//        }else{
-//            return new CachedStrokeGraphic(stroke);
-//        }
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void evaluate(){
+        if(!isNotEvaluated) return;
+
+        this.isStatic = true;
+
+        isNotEvaluated = false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isVisible(Feature feature) {
+        evaluate();
+        return true;
     }
 
 }

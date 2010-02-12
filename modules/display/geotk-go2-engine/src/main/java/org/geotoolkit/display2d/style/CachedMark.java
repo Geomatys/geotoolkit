@@ -44,7 +44,7 @@ public class CachedMark extends Cache<Mark>{
     //IDS for cache map
     private Shape cachedWKN = null;
     
-    private final CachedStroke cachedStroke;
+    private final CachedStrokeSimple cachedStroke;
     private final CachedFill cachedFill;
     
     
