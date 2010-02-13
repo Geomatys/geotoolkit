@@ -24,22 +24,13 @@ import org.geotoolkit.lang.Static;
  * A set of utilities for characters handling.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.00
  *
  * @since 2.1
  * @module
  */
 @Static
 public final class Characters {
-    /**
-     * Brackets recognized by {@link #matchingBracket(char)}, declared by pairs.
-     * The opening bracket must be at the even index and the closing bracket at
-     * the odd index.
-     *
-     * @since 3.09
-     */
-    private static final char[] BRACKETS = {'(',')' , '[',']' , '{','}' , '<','>'};
-
     /**
      * Do not allow instantiation of this class.
      */
@@ -175,33 +166,6 @@ public final class Characters {
         }
         if (c>='\u2070' && c<='\u2079') return (char) (c-('\u2070'-'0'));
         if (c>='\u2080' && c<='\u2089') return (char) (c-('\u2080'-'0'));
-        return c;
-    }
-
-    /**
-     * Returns the matching brace, bracket or parenthesis for the given character.
-     * If the given character is not a bracket, returns it unchanged.
-     * <p>
-     * In this method, the word "<cite>bracket</cite>" refers to any kind of bracket
-     * (round, square, curly or angle). For example this method returns {@code ')'}
-     * if it is given the {@code '('} character, and conversely. The same rule applies
-     * for other kind of brackets.
-     *
-     * @param  c The character which may be a bracket.
-     * @return The matching character for the given bracket, or {@code c} unchanged
-     *         if it is not a bracket.
-     *
-     * @see <a href="http://en.wikipedia.org/wiki/Bracket">Bracket on Wikipedia</a>
-     *
-     * @since 3.09
-     */
-    public static char matchingBracket(char c) {
-        for (int i=0; i<BRACKETS.length; i++) {
-            if (c == BRACKETS[i]) {
-                c = BRACKETS[i ^ 1];
-                break;
-            }
-        }
         return c;
     }
 }
