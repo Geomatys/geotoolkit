@@ -87,6 +87,7 @@
     <module>geotk-coverage</module>
     <module>geotk-coverageio</module>
     <module>geotk-coverageio-netcdf</module>
+    <module>geotk-coverage-sql</module>
   </modules>
 
 </project>

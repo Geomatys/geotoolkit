@@ -61,7 +61,7 @@ import org.geotoolkit.util.logging.Logging;
  *         // done. We do not put it back in case of SQLException.
  *         entry.statement.doSomeStuff();
  *         if (pool.put(key, entry) != null) {
- *             throw new AssertionError();
+ *             throw new AssertionError(key);
  *         }
  *     }
  * }
@@ -206,7 +206,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
      * Executed in a background thread for closing statements after their expiration time.
      * A new thread must be created every time the first statement is put in an empty map.
      * <p>
-     * This method is public as an implementation side-effect and should never been invoked
+     * This method is public as an implementation side-effect but should never been invoked
      * directly.
      */
     @Override
@@ -257,7 +257,7 @@ sleep:  do {
     }
 
     /**
-     * Closes all statements and remove them from the map.
+     * Closes all statements and removes them from the map.
      *
      * @throws SQLException If an error occured while closing the statements.
      */

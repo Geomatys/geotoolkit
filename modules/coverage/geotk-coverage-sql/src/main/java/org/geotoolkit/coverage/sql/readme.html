@@ -1,0 +1,58 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Design note</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <h1>Introduction</h1>
+    <p>Most implementations in this package are not public, because the API is very specific to the
+    needs of the coverage catalog, may change in any future version, and could be considered as a
+    duplicated (at least partially) of persistence frameworks like Hibernate. It was created before
+    Hibernate became in wide use, and is still used because it provides us maximal control over the
+    way we are querying the SQL database.</p>
+
+    <p>This page gives an overview of the package design. We can not put this overview in the
+    <code>package-info.java</code> class since it is not public API.</p>
+
+    <h1>Design overview</h1>
+    <p>This package provides four kinds of objects, each with their own hierarchy:</p>
+
+    <ul>
+      <li><code>Database</code> encapsulates a connection to a database. The connection is
+          provided by a <code>javax.sql.DataSource</code>.</li>
+     <li><code>Table</code> is the parent of every classes encapsulating a connection to a table
+         in the database. Instances of <code>Table</code> are created by <code>Database</code>.</li>
+     <li><code>Entry</code> is the parent of every classes encapsulating a record in a table.
+         Instances of <code>Entry</code> are created by the corresponding <code>Table</code> only.</li>
+     <li><code>Query</code> is the parent of every classes describing a query to be executed by
+         a <code>Table</code>. A <code>Query</code> is made of <code>Column</code>s and
+         <code>Parameter</code>s. Each <code>Column</code> instance can have an optional value
+         used as a fallback if the column does not exist in the database, for compatibility with
+         previous versions of the database schema. In addition, SQL <code>JOIN</code> clauses are
+         built automatically by inspection of the <code>FOREIGNER KEY</code> declarations in the
+         database, again for compatibility with older versions of this database schema.</li>
+   </ul>
+
+    <h1>Testing</h1>
+    <p>In order to run the JUnit test suite provided in this module, the following file shall be provided:</p>
+    <blockquote><pre>&lt;home directory&gt;/.geotoolkit.org/Tests/coverage-sql.properties</pre></blockquote>
+
+    <p>The <code>.geotoolkit.org</code> directory may change depending on the platform. On MacOS, this is
+       <code>Library/Geotoolkit.org</code>. This is the same directory than the one containing the EPSG
+       database and the optional NADCON grid files.</p>
+
+    <p>The <code>coverage-sql.properties</code> file shall have the content show below (replace the
+       <code>&lt;...&gt;</code> blocks by the content appropriate for your environment).. The schema
+       and user name can be changed if wanted - the values below are just proposals.</p>
+<blockquote><pre># --------------------------------------------------------
+# Connection to the PostgreSQL server for testing purpose.
+# Do NOT commit this file, since it contains a password.
+# --------------------------------------------------------
+server   = &lt;put the name of your server here&gt;
+database = &lt;put your database name here&gt;
+schema   = coverages
+user     = geoadmin
+password = &lt;put your password here&gt;</pre></blockquote>
+  </body>
+</html>

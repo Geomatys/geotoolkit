@@ -49,7 +49,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *       PostgreSQL 8.0 or above with a {@code btree} index and C locale.</li>
  *   <li>The ordering of the {@code '-'} and {@code '0'} to {@code '9'} characters compared
  *       to other characters is the same than ASCII. This condition needs to hold only for
- *       those particular characters (the ordering between letters don't matter).</li>
+ *       those particular characters (the ordering between letters doesn't matter).</li>
  * </ul>
  *
  * @param <K> The type of keys in the pool of prepared statements.
@@ -64,8 +64,8 @@ import org.geotoolkit.lang.ThreadSafe;
 @ThreadSafe
 public abstract class IdentifierGenerator<K, V extends StatementEntry> {
     /**
-     * The most straight forward implementation of {@link IdentifierGenerator}.
-     * The key are the table names, which imply that those name must not be
+     * The most straightforward implementation of {@link IdentifierGenerator}.
+     * The keys are the table names, which imply that those name must not be
      * used for any other purpose in the pool.
      *
      * @author Martin Desruisseaux (Geomatys)

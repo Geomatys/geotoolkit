@@ -128,8 +128,10 @@ public enum Installation {
 
     /**
      * Returns the default root directory, ignoring user's preferences.
+     *
+     * @return The default installation root directory.
      */
-    private static File root() {
+    public static File root() {
         try {
             final String directory = System.getProperty("user.home");
             if (directory != null) {

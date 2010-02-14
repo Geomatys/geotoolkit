@@ -210,6 +210,26 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_READ_$1 = 29;
 
         /**
+         * Can't read the "{1}" record in the "{0}" table.
+         */
+        public static final int CANT_READ_DATABASE_RECORD_$2 = 228;
+
+        /**
+         * Can't read the "{1}" column for the "{2}" record in the "{0}" table.
+         */
+        public static final int CANT_READ_DATABASE_RECORD_$3 = 229;
+
+        /**
+         * Can't read the "{0}" table.
+         */
+        public static final int CANT_READ_DATABASE_TABLE_$1 = 230;
+
+        /**
+         * Can't read the "{1}" column in the "{0}" table.
+         */
+        public static final int CANT_READ_DATABASE_TABLE_$2 = 231;
+
+        /**
          * Can't reduce "{0}" to a two-dimensional coordinate system.
          */
         public static final int CANT_REDUCE_TO_TWO_DIMENSIONS_$1 = 30;
@@ -293,6 +313,11 @@ public final class Errors extends IndexedResourceBundle {
          * The distance {0} is out of range ({1} to {2} {3})
          */
         public static final int DISTANCE_OUT_OF_RANGE_$4 = 45;
+
+        /**
+         * The {0} record is defined more than once.
+         */
+        public static final int DUPLICATED_RECORD_$1 = 232;
 
         /**
          * Duplicated values for key "{0}".
@@ -591,6 +616,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int MISSING_CHARACTER_$1 = 104;
 
         /**
+         * No foreigner key found in table "{0}".
+         */
+        public static final int MISSING_FOREIGNER_KEY_$1 = 233;
+
+        /**
          * This operation requires the "{0}" module.
          */
         public static final int MISSING_MODULE_$1 = 105;
@@ -816,6 +846,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_SUCH_ELEMENT_$1 = 227;
 
         /**
+         * No "{1}" record found in the "{0}" table.
+         */
+        public static final int NO_SUCH_RECORD_IN_TABLE_$2 = 234;
+
+        /**
          * No two-dimensional transform available for this geometry.
          */
         public static final int NO_TRANSFORM2D_AVAILABLE = 148;
@@ -969,6 +1004,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int TEST_FAILURE_$3 = 175;
 
         /**
+         * The thread doesn't hold the lock.
+         */
+        public static final int THREAD_DOESNT_HOLD_LOCK = 235;
+
+        /**
          * Tolerance error.
          */
         public static final int TOLERANCE_ERROR = 176;
@@ -1038,6 +1078,11 @@ public final class Errors extends IndexedResourceBundle {
          * {0} but got {1} (a difference of {2}) at ordinate {3}.
          */
         public static final int UNEXPECTED_TRANSFORM_RESULT_$5 = 188;
+
+        /**
+         * {0} records have been updated while only one was expected.
+         */
+        public static final int UNEXPECTED_UPDATES_$1 = 236;
 
         /**
          * Parameter "{0}" has no unit.
@@ -1111,6 +1156,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNMODIFIABLE_METADATA = 201;
 
         /**
+         * Unmodifiable {0} object.
+         */
+        public static final int UNMODIFIABLE_OBJECT_$1 = 237;
+
+        /**
          * Can't parse "{0}" as a number.
          */
         public static final int UNPARSABLE_NUMBER_$1 = 202;
@@ -1164,6 +1214,11 @@ public final class Errors extends IndexedResourceBundle {
          * Unsupported file type: {0}
          */
         public static final int UNSUPPORTED_FILE_TYPE_$1 = 212;
+
+        /**
+         * Unsupported operation: {0}
+         */
+        public static final int UNSUPPORTED_OPERATION_$1 = 238;
 
         /**
          * Unsupported transform.

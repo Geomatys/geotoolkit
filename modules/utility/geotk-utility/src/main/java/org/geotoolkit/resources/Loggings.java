@@ -300,6 +300,11 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int SEND_REPAINT_EVENT_$5 = 48;
 
         /**
+         * No column "{0}" has been found in table "{1}". Value "{2}" will be used instead.
+         */
+        public static final int TABLE_COLUMN_NOT_FOUND_$3 = 59;
+
+        /**
          * Temporary file "{0}" has been garbage-collected.
          */
         public static final int TEMPORARY_FILE_GC_$1 = 57;
