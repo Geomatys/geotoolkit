@@ -146,7 +146,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 //paint the motif --------------------------------------------------
                 walker.getPosition(pt);
                 final float angle = walker.getRotation();
-                trs.translate(pt.getX(), pt.getY());
+                trs.setToTranslation(pt.getX(), pt.getY());
                 trs.rotate(angle);
                 g2d.drawImage(img, trs, null);
 

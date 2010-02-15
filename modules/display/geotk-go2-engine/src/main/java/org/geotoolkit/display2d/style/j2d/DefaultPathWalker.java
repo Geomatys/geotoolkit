@@ -67,7 +67,7 @@ public class DefaultPathWalker implements PathWalker{
                     segmentEndY = currentPoint[1];
 
                     segmentLenght = distance(segmentStartX, segmentStartY, segmentEndX, segmentEndY);
-                    angle = angle(segmentStartX, segmentStartY, segmentEndX, segmentEndY);
+                    angle = Float.NaN;
                     remaining = segmentLenght;
                     first = false;
                     break;
