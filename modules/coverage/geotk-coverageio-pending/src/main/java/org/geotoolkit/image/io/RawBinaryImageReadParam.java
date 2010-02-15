@@ -35,6 +35,8 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.media.jai.ComponentSampleModelJAI;
 import javax.media.jai.PlanarImage;
 
+import org.geotoolkit.internal.image.ScaledColorSpace;
+
 
 /**
  * A class describing how a raw binary stream is to be decoded. In the context of
