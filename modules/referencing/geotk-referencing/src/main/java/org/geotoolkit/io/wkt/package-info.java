@@ -33,8 +33,14 @@
  * Current implementation is primarily targeting parsing and formatting of referencing objects.
  * However other WKT formats (especially the one for geometric objects) are expected to be
  * provided here in future versions.
- * <p>
- * Note that the {@link org.geotoolkit.geometry.GeneralEnvelope} and
+ *
+ * {@section Referencing WKT}
+ * Parsing of {@link org.opengis.referencing.crs.CoordinateReferenceSystem} and
+ * {@link org.opengis.referencing.operation.MathTransform} objects are performed
+ * by the {@link org.geotoolkit.io.wkt.ReferencingParser} class.
+ *
+ *(@section Geometry WKT}
+ * The {@link org.geotoolkit.geometry.GeneralEnvelope} and
  * {@link org.geotoolkit.geometry.GeneralDirectPosition} classes provide their own, limited,
  * WKT parsing and formatting services for the {@code BOX} and {@code POINT} elements.
  *

@@ -340,9 +340,9 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * {@code BOX} element. This constructor creates the bounding box of those geometries:
      * <p>
      * <ul>
-     *   <li><pre>POINT(6 10)</pre></li>
-     *   <li><pre>MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))</pre></li>
-     *   <li><pre>GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))</pre></li>
+     *   <li><code>POINT(6 10)</code></li>
+     *   <li><code>MULTIPOLYGON(((1 1, 5 1, 1 5, 1 1),(2 2, 3 2, 3 3, 2 2)))</code></li>
+     *   <li><code>GEOMETRYCOLLECTION(POINT(4 6),LINESTRING(3 8,7 10))</code></li>
      * </ul>
      *
      * @param  wkt The {@code BOX}, {@code POLYGON} or other kind of element to parse.

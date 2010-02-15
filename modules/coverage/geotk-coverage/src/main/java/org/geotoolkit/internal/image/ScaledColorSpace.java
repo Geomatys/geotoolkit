@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.image.io;
+package org.geotoolkit.internal.image;
 
 import java.awt.color.ColorSpace;
 
@@ -34,7 +34,7 @@ import org.geotoolkit.util.converter.Classes;
  * @module
  */
 @Immutable
-final class ScaledColorSpace extends ColorSpace {
+public final class ScaledColorSpace extends ColorSpace {
     /**
      * For cross-version compatibility.
      */
@@ -83,7 +83,27 @@ final class ScaledColorSpace extends ColorSpace {
     }
 
     /**
+     * Creates a color model.
+     *
+     * @param numComponents The number of components.
+     * @param visibleBand The band to use for computing colors.
+     * @param minimum The minimal sample value expected.
+     * @param maximum The maximal sample value expected.
+     */
+    public ScaledColorSpace(final int numComponents, final int visibleBand,
+                            final double minimum, final double maximum)
+    {
+        super(TYPE_GRAY, numComponents);
+        this.visibleBand = visibleBand;
+        final double scale  = (maximum - minimum) / (MAX_VALUE - MIN_VALUE);
+        this.scale  = (float) scale;
+        this.offset = (float) (minimum - MIN_VALUE*scale);
+    }
+
+    /**
      * Returns a RGB color for a gray scale value.
+     *
+     * @param values The gray scale values.
      */
     @Override
     public float[] toRGB(final float[] values) {
@@ -97,6 +117,8 @@ final class ScaledColorSpace extends ColorSpace {
     /**
      * Returns a real value for the specified RGB color.
      * The RGB color is assumed to be a gray scale value.
+     *
+     * @param RGB The RGB values.
      */
     @Override
     public float[] fromRGB(final float[] RGB) {
@@ -107,6 +129,8 @@ final class ScaledColorSpace extends ColorSpace {
 
     /**
      * Converts a color to the CIEXYZ color space.
+     *
+     * @param values The color values.
      */
     @Override
     public float[] toCIEXYZ(final float[] values) {
@@ -123,6 +147,8 @@ final class ScaledColorSpace extends ColorSpace {
 
     /**
      * Converts a color from the CIEXYZ color space.
+     *
+     * @param RGB The RGB values.
      */
     @Override
     public float[] fromCIEXYZ(final float[] RGB) {

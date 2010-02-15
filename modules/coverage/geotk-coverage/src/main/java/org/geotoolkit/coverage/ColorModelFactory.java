@@ -28,6 +28,7 @@ import java.awt.image.ComponentColorModel;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 
 
@@ -163,7 +164,7 @@ final class ColorModelFactory {
             // If the requested type is any type not supported by IndexColorModel,
             // fallback on a generic (but very slow!) color model.
             final int  transparency = Transparency.OPAQUE;
-            final ColorSpace colors = new ScaledColorSpace(visibleBand, numBands, minimum, maximum);
+            final ColorSpace colors = new ScaledColorSpace(numBands, visibleBand, minimum, maximum);
             return new ComponentColorModel(colors, false, false, transparency, type);
         }
         if (numBands == 1 && categoryCount == 0) {

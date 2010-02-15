@@ -18,6 +18,7 @@
 package org.geotoolkit.math;
 
 import java.awt.Rectangle;
+import java.awt.image.RenderedImage;
 import java.util.Random;
 
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -58,10 +59,17 @@ public final class ObjectiveAnalysisTest {
         }
         final ObjectiveAnalysis ob = new ObjectiveAnalysis(
                 new Rectangle(s-1, s-1), s, s, PixelOrientation.UPPER_LEFT);
-        final double[] computed = ob.interpolate(Vector.create(x), Vector.create(y), Vector.create(z));
+        ob.setInputs(Vector.create(x), Vector.create(y), Vector.create(z));
+        final double[] computed = ob.interpolate((double[]) null);
+        assertEquals(s*s, computed.length);
         for (int i=0; i<z.length; i++) {
-            final int index = x[i] + y[i] * x.length;
+            final int index = x[i] + x.length * (s-1 - y[i]);
             assertEquals(z[i], computed[index], EPS);
         }
+        /*
+         * Tests image creation. For now we merely check that no exception is thrown.
+         */
+        final RenderedImage image = ob.createImage();
+        assertNotNull(image);
     }
 }

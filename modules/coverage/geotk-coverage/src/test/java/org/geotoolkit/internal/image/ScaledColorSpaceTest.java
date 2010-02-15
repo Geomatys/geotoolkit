@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.internal.image;
 
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
@@ -69,7 +69,7 @@ public final class ScaledColorSpaceTest {
     public void setUp() {
         minimum = random.nextDouble()*100;
         maximum = random.nextDouble()*200 + minimum + 10;
-        colors  = new ScaledColorSpace(0, 1, minimum, maximum);
+        colors  = new ScaledColorSpace(1, 0, minimum, maximum);
 
         final int transparency = Transparency.OPAQUE;
         final int datatype     = DataBuffer.TYPE_FLOAT;

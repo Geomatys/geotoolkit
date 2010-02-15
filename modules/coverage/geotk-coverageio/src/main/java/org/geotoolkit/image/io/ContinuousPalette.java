@@ -25,6 +25,7 @@ import javax.imageio.ImageTypeSpecifier;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.internal.image.ScaledColorSpace;
 
 
 /**
