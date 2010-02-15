@@ -288,7 +288,7 @@ public final class Database {
      * @return An instance of a table of the specified type.
      * @throws NoSuchTableException if the specified type is unknown to this database.
      */
-    public final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
+    final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
         synchronized (tables) {
             T table = type.cast(tables.get(type));
             if (table == null) {
@@ -314,7 +314,7 @@ public final class Database {
      *
      * @param out Where to print SQL statements which would perform changes in the database content.
      */
-    public void setUpdateSimulator(final PrintWriter out) {
+    final void setUpdateSimulator(final PrintWriter out) {
         session.get().updateSimulator = out;
     }
 
@@ -324,7 +324,7 @@ public final class Database {
      *
      * @return Where to print SQL statements which would perform changes in the database content.
      */
-    public PrintWriter getUpdateSimulator() {
+    final PrintWriter getUpdateSimulator() {
         return session.get().updateSimulator;
     }
 

@@ -54,7 +54,7 @@ public class CatalogException extends Exception {
     /**
      * The primary key for the record where a problem occured, or {@code null} if unknown.
      */
-    private String key;
+    private Comparable<?> key;
 
     /**
      * Creates an exception with no cause and no details message.
@@ -103,8 +103,9 @@ public class CatalogException extends Exception {
      *
      * @param column  The column where a problem occured.
      * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     *                The key shall be either a {@link String} or {@link Integer} instance.
      */
-    public void setMetadata(final Column column, final String key) {
+    final void setMetadata(final Column column, final Comparable<?> key) {
         this.table  = column.table;
         this.column = column.name;
         this.key    = key;
@@ -119,9 +120,10 @@ public class CatalogException extends Exception {
      * @param results The result set in which a problem occured, or {@code null} if none.
      * @param column  The column index where a problem occured (number starts at 1), or {@code 0} if unknow.
      * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    public void setMetadata(final Table table, final ResultSet results, final int column, final String key)
+    final void setMetadata(final Table table, final ResultSet results, final int column, final Comparable<?> key)
             throws SQLException
     {
         boolean noTable=true, noColumn=true;
@@ -178,10 +180,11 @@ public class CatalogException extends Exception {
 
     /**
      * Returns the primary key for the record where a problem occured, or {@code null} if unknown.
+     * The primary key is either a {@link String} or an {@link Integer} instance.
      *
      * @return The identifier of the entry where a problem occured, or {@code null} if unknown.
      */
-    public String getPrimaryKey() {
+    public Comparable<?> getPrimaryKey() {
         return key;
     }
 
@@ -203,14 +206,14 @@ public class CatalogException extends Exception {
         }
         final String table  = getTableName();
         final String column = getColumnName();
-        final String key    = getPrimaryKey();
+        final Comparable<?> key = getPrimaryKey();
         if (table != null) {
             final int localKey;
-            final String[] args;
+            final Comparable<?>[] args;
             if (column != null) {
                 if (key != null) {
                     localKey = Errors.Keys.CANT_READ_DATABASE_RECORD_$3;
-                    args = new String[] {table, column, key};
+                    args = new Comparable<?>[] {table, column, key};
                 } else {
                     localKey = Errors.Keys.CANT_READ_DATABASE_TABLE_$2;
                     args = new String[] {table, column};
@@ -218,7 +221,7 @@ public class CatalogException extends Exception {
             } else {
                 if (key != null) {
                     localKey = Errors.Keys.CANT_READ_DATABASE_RECORD_$2;
-                    args = new String[] {table, key};
+                    args = new Comparable<?>[] {table, key};
                 } else {
                     localKey = Errors.Keys.CANT_READ_DATABASE_TABLE_$1;
                     args = new String[] {table};

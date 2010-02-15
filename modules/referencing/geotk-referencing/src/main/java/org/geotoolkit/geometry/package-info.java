@@ -18,7 +18,7 @@
 
 /**
  * Basic geometric objects. Every geometry objects are associated with a
- * {@link org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference System},
+ * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference System},
  * which may have an arbitrary number of dimensions. However a few specialized classes restrict
  * the CRS to a fixed number of dimensions only. The table below summarizes the most common
  * objects, and list the Java2D classes that are conceptually equivalent.

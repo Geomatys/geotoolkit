@@ -315,6 +315,15 @@ class Table {
     }
 
     /**
+     * Returns the current query type. This is {@code null} if {@link #getStatement(QueryType)}
+     * has never been invoked. But once at least one query has been initiated, it should never
+     * be null.
+     */
+    final QueryType getQueryType() {
+        return session.get().type;
+    }
+
+    /**
      * Delegates to <code>column.{@linkplain Column#indexOf(QueryType) indexOf}(type)</code>,
      * except that an exception is thrown if the specified column is not applicable to the
      * current query type. The {@code type} value is the argument given to the last call to
@@ -325,7 +334,7 @@ class Table {
      * @throws SQLException if the specified column is not applicable.
      */
     final int indexOf(final Column column) throws SQLException {
-        final QueryType type = session.get().type;
+        final QueryType type = getQueryType();
         final int index = column.indexOf(type);
         if (index > 0) {
             return index;
@@ -346,7 +355,7 @@ class Table {
      * @throws SQLException if the specified parameter is not applicable.
      */
     final int indexOf(final Parameter parameter) throws SQLException {
-        final QueryType type = session.get().type;
+        final QueryType type = getQueryType();
         final int index = parameter.indexOf(type);
         if (index > 0) {
             return index;

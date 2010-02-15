@@ -38,6 +38,15 @@ public class DuplicatedRecordException extends IllegalRecordException {
     private static final long serialVersionUID = 8782377096878595182L;
 
     /**
+     * Creates an exception with the specified details message.
+     *
+     * @param message The detail message.
+     */
+    public DuplicatedRecordException(final String message) {
+        super(message);
+    }
+
+    /**
      * Creates an exception from the specified result set. The table and column names are
      * obtained from the {@code results} argument if non-null. <strong>Note that the result
      * set will be closed</strong>, because this exception is always thrown when an error
@@ -46,10 +55,11 @@ public class DuplicatedRecordException extends IllegalRecordException {
      * @param table   The table that produced the result set, or {@code null} if unknown.
      * @param results The result set which contains duplicated values.
      * @param column  The column index of the primary key (first column index is 1).
-     * @param key     The key value for the record that was duplicated.
+     * @param key     The key value for the record that was duplicated, or {@code null} if none.
+     *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    public DuplicatedRecordException(final Table table, final ResultSet results, final int column, final String key)
+    DuplicatedRecordException(final Table table, final ResultSet results, final int column, final Comparable<?> key)
             throws SQLException
     {
         setMetadata(table, results, column, key);

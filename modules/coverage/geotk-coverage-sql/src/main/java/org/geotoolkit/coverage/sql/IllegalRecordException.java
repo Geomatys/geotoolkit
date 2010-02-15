@@ -74,10 +74,11 @@ public class IllegalRecordException extends CatalogException {
      * @param results The result set in which a problem occured, or {@code null} if none.
      * @param column  The column index where a problem occured (number starts at 1), or {@code 0} if unknow.
      * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    public IllegalRecordException(final String message, final Table table, final ResultSet results,
-                                  final int column, final String key) throws SQLException
+    IllegalRecordException(final String message, final Table table, final ResultSet results,
+                           final int column, final Comparable<?> key) throws SQLException
     {
         super(message);
         setMetadata(table, results, column, key);
@@ -94,10 +95,11 @@ public class IllegalRecordException extends CatalogException {
      * @param results The result set in which a problem occured, or {@code null} if none.
      * @param column  The column index where a problem occured (number starts at 1), or {@code 0} if unknow.
      * @param key     The key value for the record where a problem occured, or {@code null} if none.
+     *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    public IllegalRecordException(final Exception cause, final Table table, final ResultSet results,
-                                  final int column, final String key) throws SQLException
+    IllegalRecordException(final Exception cause, final Table table, final ResultSet results,
+                           final int column, final Comparable<?> key) throws SQLException
     {
         super(cause);
         setMetadata(table, results, column, key);

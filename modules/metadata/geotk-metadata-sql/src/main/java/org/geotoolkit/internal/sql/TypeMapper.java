@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.sql;
 
 import java.util.Date;
+import java.util.Arrays;
 import java.sql.Types;
 
 import org.geotoolkit.lang.Static;
@@ -27,7 +28,7 @@ import org.geotoolkit.lang.Static;
  * Maps a few basic Java types to JDBC types.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.09
  *
  * @since 3.03
  * @module
@@ -54,6 +55,23 @@ public final class TypeMapper {
         new TypeMapper(Byte   .class, Types.TINYINT,   "SMALLINT"), // JavaDB does not support TINYINT.
         new TypeMapper(Number .class, Types.DECIMAL,   "DECIMAL")   // Implemented by BigDecimal.
     };
+
+    /**
+     * The value to add to {@link #type} in order to get only positive or null values.
+     */
+    private static final int OFFSET = 6;
+
+    /**
+     * Maps SQL types to index in the {@link #TYPES} array.
+     */
+    private static final byte[] ITYPES;
+    static {
+        ITYPES = new byte[100];
+        Arrays.fill(ITYPES, (byte) -1);
+        for (byte i=0; i<TYPES.length; i++) {
+            ITYPES[TYPES[i].type + OFFSET] = i;
+        }
+    }
 
     /**
      * The Java class.
@@ -94,6 +112,25 @@ public final class TypeMapper {
                 if (type.classe.isAssignableFrom(classe)) {
                     return type.keyword;
                 }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return the Java class for the given SQL type, or {@code null} if none.
+     *
+     * @param  sqlType One of the {@link Types} constants.
+     * @return The Java class, or {@code null} if none.
+     *
+     * @since 3.09
+     */
+    public static Class<?> toJavaType(int sqlType) {
+        sqlType += OFFSET;
+        if (sqlType >= 0 && sqlType < ITYPES.length) {
+            final byte mapper = ITYPES[sqlType];
+            if (mapper >= 0 && mapper < TYPES.length) {
+                return TYPES[mapper].classe;
             }
         }
         return null;

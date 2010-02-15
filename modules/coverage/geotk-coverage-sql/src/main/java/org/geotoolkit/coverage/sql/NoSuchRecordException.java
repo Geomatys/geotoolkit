@@ -55,10 +55,11 @@ public class NoSuchRecordException extends CatalogException {
      * @param table   The table that produced the result set, or {@code null} if unknown.
      * @param results The result set used in order to look for a record.
      * @param column  The column index of the primary key (first column index is 1).
-     * @param key     The key value for the record that was not found.
+     * @param key     The key value for the record that was not found, or {@code null} if none.
+     *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    public NoSuchRecordException(final Table table, final ResultSet results, final int column, final String key)
+    NoSuchRecordException(final Table table, final ResultSet results, final int column, final Comparable<?> key)
             throws SQLException
     {
         setMetadata(table, results, column, key);
