@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -60,9 +61,7 @@ import org.geotoolkit.util.Utilities;
     "duration",
     "timeInterval"
 })
-public class TimePeriodType
-    extends AbstractTimeGeometricPrimitiveType
-{
+public class TimePeriodType extends AbstractTimeGeometricPrimitiveType {
 
     protected TimePositionType beginPosition;
     protected TimeInstantPropertyType begin;
@@ -141,6 +140,30 @@ public class TimePeriodType
     }
 
     /**
+     * Sets the value of the beginPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setBeginPosition(Date value) {
+        this.beginPosition = new TimePositionType(value);
+    }
+
+    /**
+     * Sets the value of the beginPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setBeginPosition(TimeIndeterminateValueType value) {
+        this.beginPosition = new TimePositionType(value);
+    }
+
+    /**
      * Gets the value of the begin property.
      * 
      * @return
@@ -186,6 +209,30 @@ public class TimePeriodType
      */
     public void setEndPosition(TimePositionType value) {
         this.endPosition = value;
+    }
+
+    /**
+     * Sets the value of the endPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setEndPosition(Date value) {
+        this.endPosition = new TimePositionType(value);
+    }
+
+    /**
+     * Sets the value of the beginPosition property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link TimePositionType }
+     *
+     */
+    public void setEndPosition(TimeIndeterminateValueType value) {
+        this.endPosition = new TimePositionType(value);
     }
 
     /**

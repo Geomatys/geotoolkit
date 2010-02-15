@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -98,6 +99,15 @@ public class TimePositionType {
      * @param value a date.
      */
     public TimePositionType(Timestamp time){
+        this.value = time.toString();
+    }
+
+    /**
+     * build a simple Timposition with only a value from a timestamp.
+     *
+     * @param value a date.
+     */
+    public TimePositionType(Date time){
         this.value = time.toString();
     }
 

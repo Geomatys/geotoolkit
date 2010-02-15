@@ -194,6 +194,10 @@ public class DataComponentPropertyType implements DataComponentProperty {
     }
 
     public void setValue(Object obj) {
+        ObjectFactory factory = new ObjectFactory();
+        if (obj instanceof JAXBElement) {
+            obj = ((JAXBElement) obj).getValue();
+        }
         if (obj instanceof Count) {
             count = (Count) obj;
         } else if (obj instanceof QuantityType) {
@@ -212,20 +216,16 @@ public class DataComponentPropertyType implements DataComponentProperty {
             countRange = (CountRange) obj;
         } else if (obj instanceof TimeRange) {
             timeRange = (TimeRange) obj;
-        } else if (obj instanceof JAXBElement) {
-            ObjectFactory factory = new ObjectFactory();
-            obj = ((JAXBElement)obj).getValue();
-
-            if (obj instanceof SimpleDataRecordType) {
-                abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordType) obj);
-            } else if (obj instanceof DataRecordType) {
-                abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
-            } else if (obj instanceof DataArrayType) {
-                abstractDataArray = factory.createDataArray((DataArrayType) obj);
-            } else {
-                System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
-            }
+        } else if (obj instanceof SimpleDataRecordType) {
+            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordType) obj);
+        } else if (obj instanceof DataRecordType) {
+            abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
+        } else if (obj instanceof DataArrayType) {
+            abstractDataArray = factory.createDataArray((DataArrayType) obj);
+        } else {
+            System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
         }
+
     }
     
 

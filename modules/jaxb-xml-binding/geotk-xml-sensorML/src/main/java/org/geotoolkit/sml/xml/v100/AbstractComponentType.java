@@ -117,6 +117,13 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     }
 
     /**
+     * @param parameters the parameters to set
+     */
+    public void setParameters(ParameterList parameters) {
+        this.parameters = new Parameters(parameters);
+    }
+
+    /**
      * Verify if this entry is identical to specified object.
      */
     @Override

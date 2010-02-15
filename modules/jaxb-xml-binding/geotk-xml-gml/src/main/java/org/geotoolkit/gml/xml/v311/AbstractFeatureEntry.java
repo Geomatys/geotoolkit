@@ -124,7 +124,10 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && getClass().equals(object.getClass())) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractFeatureEntry && super.equals(object)) {
             final AbstractFeatureEntry that = (AbstractFeatureEntry) object;
 
             return Utilities.equals(this.boundedBy, that.boundedBy) &&

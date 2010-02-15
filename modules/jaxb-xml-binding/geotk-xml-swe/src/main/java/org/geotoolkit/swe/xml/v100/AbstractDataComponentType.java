@@ -120,7 +120,11 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
      * Sets the value of the definition property.
       */
     public void setDefinition(String value) {
-        this.definition = URI.create(value);
+        if (value != null) {
+            this.definition = URI.create(value);
+        } else {
+            this.definition = null;
+        }
     }
 
     /**

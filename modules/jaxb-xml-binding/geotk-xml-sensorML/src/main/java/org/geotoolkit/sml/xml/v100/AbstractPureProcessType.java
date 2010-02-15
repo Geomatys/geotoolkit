@@ -103,4 +103,11 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
         this.parameters = value;
     }
 
+    /**
+     * @param parameters the parameters to set
+     */
+    public void setParameters(ParameterList parameters) {
+        this.parameters = new Parameters(parameters);
+    }
+
 }

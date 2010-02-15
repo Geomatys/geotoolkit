@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.AbstractGML;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -177,35 +178,29 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
+        if (obj instanceof AbstractGMLEntry) {
+            final AbstractGMLEntry that = (AbstractGMLEntry) obj;
+            return Utilities.equals(this.description,          that.description)          &&
+                   Utilities.equals(this.descriptionReference, that.descriptionReference) &&
+                   Utilities.equals(this.id,                   that.id)                   &&
+                   Utilities.equals(this.name,                 that.name)                 &&
+                   Utilities.equals(this.parameterName,        that.parameterName);
         }
-        final AbstractGMLEntry other = (AbstractGMLEntry) obj;
-        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
-            return false;
-        }
-        if (this.descriptionReference != other.descriptionReference && (this.descriptionReference == null || !this.descriptionReference.equals(other.descriptionReference))) {
-            return false;
-        }
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
-            return false;
-        }
-//        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
-//            return false;
-//        }
-        return true;
+        return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + (this.description != null ? this.description.hashCode() : 0);
-        hash = 41 * hash + (this.descriptionReference != null ? this.descriptionReference.hashCode() : 0);
-        hash = 41 * hash + (this.name != null ? this.name.hashCode() : 0);
-//        hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
+        int hash = 5;
+        hash = 67 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 67 * hash + (this.descriptionReference != null ? this.descriptionReference.hashCode() : 0);
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 67 * hash + (this.parameterName != null ? this.parameterName.hashCode() : 0);
         return hash;
     }
 
+    
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']').append('\n');

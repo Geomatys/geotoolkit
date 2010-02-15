@@ -268,7 +268,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("offering: " + this.getName()).append('\n');
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
         s.append("time=" + time ).append('\n');
         if (intendedApplication != null){
             s.append('\n').append("intendedApplication:").append('\n');
