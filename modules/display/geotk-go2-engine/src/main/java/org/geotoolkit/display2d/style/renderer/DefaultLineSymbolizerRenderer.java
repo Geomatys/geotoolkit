@@ -136,7 +136,9 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             final Point2D pt = new Point2D.Double();
             final CachedGraphicStroke cgs = gc.getCachedGraphic();
             final Image img = cgs.getImage(feature, 1, hints);
-            final float gap = gc.getGap(feature) + img.getWidth(null);
+            final float imgWidth = img.getWidth(null);
+            final float imgHeight = img.getHeight(null);
+            final float gap = gc.getGap(feature)+ imgWidth;
             final AffineTransform trs = new AffineTransform();
 
             final PathIterator ite = j2dShape.getPathIterator(null);
@@ -148,6 +150,11 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 final float angle = walker.getRotation();
                 trs.setToTranslation(pt.getX(), pt.getY());
                 trs.rotate(angle);
+                final float[] anchor = cgs.getAnchor(feature, null);
+                final float[] disp = cgs.getDisplacement(feature, null);
+                trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
+                trs.translate(disp[0], -disp[1]);
+
                 g2d.drawImage(img, trs, null);
 
                 //walk over the gap ------------------------------------------------

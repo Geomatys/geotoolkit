@@ -141,8 +141,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         g2d.fill(shape);
         if(symbol.isStrokeVisible(feature)){
             final CachedStroke cachedStroke = symbol.getCachedStroke();
-            if(cachedStroke instanceof CachedStrokeSimple){
-                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+        if(cachedStroke instanceof CachedStrokeSimple){
+            final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
                 g2d.setComposite(cs.getJ2DComposite(feature));
                 g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
                 g2d.setStroke(cs.getJ2DStroke(feature,coeff));
@@ -153,7 +153,9 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 final Point2D pt = new Point2D.Double();
                 final CachedGraphicStroke cgs = gc.getCachedGraphic();
                 final Image img = cgs.getImage(feature, 1, hints);
-                final float gap = gc.getGap(feature) + img.getWidth(null);
+                final float imgWidth = img.getWidth(null);
+                final float imgHeight = img.getHeight(null);
+                final float gap = gc.getGap(feature)+ imgWidth;
                 final AffineTransform trs = new AffineTransform();
 
                 final PathIterator ite = shape.getPathIterator(null);
@@ -163,8 +165,13 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                     //paint the motif --------------------------------------------------
                     walker.getPosition(pt);
                     final float angle = walker.getRotation();
-                    trs.translate(pt.getX(), pt.getY());
+                    trs.setToTranslation(pt.getX(), pt.getY());
                     trs.rotate(angle);
+                    final float[] anchor = cgs.getAnchor(feature, null);
+                    final float[] disp = cgs.getDisplacement(feature, null);
+                    trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
+                    trs.translate(disp[0], -disp[1]);
+
                     g2d.drawImage(img, trs, null);
 
                     //walk over the gap ------------------------------------------------
