@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.TimeInstantType;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.sml.xml.AbstractProcess;
 import org.geotoolkit.sml.xml.AbstractValidTime;
 import org.geotoolkit.swe.xml.v100.DataRecordType;
@@ -216,6 +218,20 @@ public abstract class AbstractProcessType extends AbstractSMLType implements Abs
      * Sets the value of the validTime property.
      */
     public void setValidTime(AbstractValidTime value) {
+        this.validTime = new ValidTime(value);
+    }
+
+     /**
+     * Sets the value of the validTime property.
+     */
+    public void setValidTime(TimePeriodType value) {
+        this.validTime = new ValidTime(value);
+    }
+
+     /**
+     * Sets the value of the validTime property.
+     */
+    public void setValidTime(TimeInstantType value) {
         this.validTime = new ValidTime(value);
     }
 

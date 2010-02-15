@@ -114,6 +114,8 @@ public class Characteristics {
             this.abstractDataRecord = facto.createSimpleDataRecord((SimpleDataRecordType) value);
         } else if (value instanceof DataRecordType) {
             this.abstractDataRecord = facto.createDataRecord((DataRecordType) value);
+        } else if (value != null){
+            System.out.println("UNXEPECTED object:" + value.getClass().getName());
         }
     }
 

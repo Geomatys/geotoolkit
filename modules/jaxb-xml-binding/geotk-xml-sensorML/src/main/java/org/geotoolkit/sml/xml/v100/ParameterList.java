@@ -81,6 +81,22 @@ public class ParameterList {
     }
 
     /**
+     * Gets the value of the parameter property.
+     */
+    public void setParameter(List<DataComponentPropertyType> parameter) {
+        this.parameter = parameter;
+    }
+    /**
+     * Gets the value of the parameter property.
+     */
+    public void setParameter(DataComponentPropertyType parameter) {
+        if (this.parameter == null) {
+            this.parameter = new ArrayList<DataComponentPropertyType>();
+        }
+        this.parameter.add(parameter);
+    }
+    
+    /**
      * Gets the value of the id property.
      */
     public String getId() {

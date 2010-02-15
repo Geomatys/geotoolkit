@@ -255,7 +255,8 @@ public class SmlXMLBindingTest {
         component.setParameters(parameters);
 
         component.setPosition(new Position("conductivitePosition", "piezometer#piezoPosition"));
-
+        component.setName("Capteur Profondeur de ARGELES");
+        
         member.setProcess(sml100Factory.createComponent(component));
         SensorML expectedResult = new SensorML("1.0", Arrays.asList(member));
 
@@ -295,16 +296,14 @@ public class SmlXMLBindingTest {
         assertEquals(resultProcess.getInputs(), component.getInputs());
 
         assertEquals(resultProcess.getOutputs(), component.getOutputs());
-
         assertEquals(resultProcess.getSMLLocation(), component.getSMLLocation());
-
         assertEquals(resultProcess.getPosition(), component.getPosition());
-
         assertEquals(resultProcess.getSpatialReferenceFrame(), component.getSpatialReferenceFrame());
-
         assertEquals(resultProcess.getDocumentation(), component.getDocumentation());
-
-        
+        assertEquals(resultProcess.getCharacteristics(), component.getCharacteristics());
+        assertEquals(resultProcess.getKeywords(), component.getKeywords());
+        assertEquals(resultProcess.getParameters(), component.getParameters());
+        assertEquals(resultProcess.getName(), component.getName());
 
         assertEquals(resultProcess, component);
 
@@ -447,6 +446,7 @@ public class SmlXMLBindingTest {
         fields.add(new DataComponentPropertyType("validity", null, b));
 
         DataRecordType outRecord = new DataRecordType(null, fields);
+        outRecord.setId("outputGroup");
 
         IoComponentPropertyType io2 = new IoComponentPropertyType("piezoMeasurements", swe100Factory.createDataRecord(outRecord));
         OutputList outputList = new OutputList(Arrays.asList(io2));
@@ -548,6 +548,7 @@ public class SmlXMLBindingTest {
         system.setLegalConstraint(legalConstraint);
 
         system.setDescription("information about the piezometer");
+        system.setName("Piezometer Test");
 
         member.setProcess(sml100Factory.createSystem(system));
         SensorML expectedResult = new SensorML("1.0", Arrays.asList(member));
@@ -621,6 +622,11 @@ public class SmlXMLBindingTest {
         assertEquals(resultProcess.getInterfaces(), system.getInterfaces());
 
         assertEquals(resultProcess.getLegalConstraint(), system.getLegalConstraint());
+
+        assertEquals(resultProcess.getKeywords(), system.getKeywords());
+
+        assertEquals(resultProcess.getId(), system.getId());
+        assertEquals(resultProcess.getName(), system.getName());
 
         assertEquals(resultProcess, system);
         assertEquals(expectedResult.getMember().get(0), result.getMember().get(0));
