@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.AlphaComposite;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
 import org.opengis.feature.Feature;
@@ -41,7 +41,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     private float cachedDispY = Float.NaN;
     private float cachedOffset = Float.NaN;
     
-    private final CachedStrokeSimple cacheStroke;
+    private final CachedStroke cacheStroke;
     private final CachedFill cacheFill;
         
     
@@ -111,20 +111,12 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         
     }
 
-    public boolean isStrokeVisible(Feature feature){
-        return cacheStroke.isVisible(feature);
+    public CachedStroke getCachedStroke(){
+        return cacheStroke;
     }
 
-    public java.awt.Stroke getJ2DStroke(Feature feature,float coeff){
-        return cacheStroke.getJ2DStroke(feature,coeff);
-    }
-    
-    public AlphaComposite getJ2DStrokeComposite(Feature feature){
-        return cacheStroke.getJ2DComposite(feature);
-    }
-    
-    public Paint getJ2DStrokePaint(Feature feature, int x, int y, float coeff, RenderingHints hints){
-        return cacheStroke.getJ2DPaint(feature,x,y,coeff,hints);
+    public boolean isStrokeVisible(Feature feature){
+        return cacheStroke.isVisible(feature);
     }
     
     public AlphaComposite getJ2DFillComposite(Feature feature){

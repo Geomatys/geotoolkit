@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
-import java.awt.BasicStroke;
+import java.awt.Image;
 import java.awt.Shape;
-import java.awt.Stroke;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
@@ -36,6 +37,12 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedGraphicStroke;
+import org.geotoolkit.display2d.style.CachedStroke;
+import org.geotoolkit.display2d.style.CachedStrokeGraphic;
+import org.geotoolkit.display2d.style.CachedStrokeSimple;
+import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
+import org.geotoolkit.display2d.style.j2d.PathWalker;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -114,19 +121,43 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         final float offset = symbol.getOffset(feature, coeff);
         if(offset != 0){
             g2d.translate(offset, 0);
-            g2d.setComposite(symbol.getJ2DComposite(feature));
-            g2d.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-            g2d.setStroke(symbol.getJ2DStroke(feature,coeff));
-            g2d.draw(j2dShape);
-            g2d.translate(-offset, 0);
-        }else{
-            g2d.setComposite(symbol.getJ2DComposite(feature));
-            g2d.setPaint(symbol.getJ2DPaint(feature, x, y, coeff, hints));
-            Stroke s = symbol.getJ2DStroke(feature,coeff);
-            g2d.setStroke(s);
-            g2d.draw(j2dShape);
         }
 
+        final CachedStroke cachedStroke = symbol.getCachedStroke();
+        if(cachedStroke instanceof CachedStrokeSimple){
+            final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+            g2d.setComposite(cs.getJ2DComposite(feature));
+            g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
+            g2d.setStroke(cs.getJ2DStroke(feature,coeff));
+            g2d.draw(j2dShape);
+        }else if(cachedStroke instanceof CachedStrokeGraphic){
+            final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+            final float initGap = gc.getInitialGap(feature);
+            final Point2D pt = new Point2D.Double();
+            final CachedGraphicStroke cgs = gc.getCachedGraphic();
+            final Image img = cgs.getImage(feature, 1, hints);
+            final float gap = gc.getGap(feature) + img.getWidth(null);
+            final AffineTransform trs = new AffineTransform();
+
+            final PathIterator ite = j2dShape.getPathIterator(null);
+            final PathWalker walker = new DefaultPathWalker(ite);
+            walker.walk(initGap);
+            while(!walker.isFinished()){
+                //paint the motif --------------------------------------------------
+                walker.getPosition(pt);
+                final float angle = walker.getRotation();
+                trs.translate(pt.getX(), pt.getY());
+                trs.rotate(angle);
+                g2d.drawImage(img, trs, null);
+
+                //walk over the gap ------------------------------------------------
+                walker.walk(gap);
+            }
+        }
+
+        if(offset != 0){
+            g2d.translate(-offset, 0);
+        }
     }
 
     /**
@@ -150,10 +181,13 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         if(projectedGeometry == null) return false;
 
         //Test composites ------------------------------------------------------
-        final float strokeAlpha = symbol.getJ2DComposite(feature).getAlpha();
-        if(strokeAlpha < GO2Utilities.SELECTION_LOWER_ALPHA){
-            //feature graphic is translucide, not selectable
-            return false;
+        if(symbol.getCachedStroke() instanceof CachedStrokeSimple){
+            CachedStrokeSimple cs = (CachedStrokeSimple) symbol.getCachedStroke();
+            final float strokeAlpha = cs.getJ2DComposite(feature).getAlpha();
+            if(strokeAlpha < GO2Utilities.SELECTION_LOWER_ALPHA){
+                //feature graphic is translucide, not selectable
+                return false;
+            }
         }
 
         final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
@@ -171,7 +205,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 return false;
             }
 
-            final int bufferWidth = (int) symbol.getStrokeWidth(feature);
+            final int bufferWidth = (int) symbol.getMargin(feature,1);
 
             //test envelopes first
 //            Geometry CRSShape = mask.getEnvelope();
@@ -201,20 +235,21 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                 return false;
             }
 
-            final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
-            final Area area = new Area(stroke.createStrokedShape(j2dShape));
+            if(symbol.getCachedStroke() instanceof CachedStrokeSimple){
+                final CachedStrokeSimple cs = (CachedStrokeSimple) symbol.getCachedStroke();
+                final java.awt.Stroke stroke = cs.getJ2DStroke(feature,coeff);
+                final Area area = new Area(stroke.createStrokedShape(j2dShape));
 
-            switch(filter){
-                case INTERSECTS :
-                    area.intersect(new Area(CRSShape));
-                    return !area.isEmpty();
-                case WITHIN :
-                    Area start = new Area(area);
-                    area.add(new Area(CRSShape));
-                    return start.equals(area);
+                switch(filter){
+                    case INTERSECTS :
+                        area.intersect(new Area(CRSShape));
+                        return !area.isEmpty();
+                    case WITHIN :
+                        Area start = new Area(area);
+                        area.add(new Area(CRSShape));
+                        return start.equals(area);
+                }
             }
-
-
         }
 
         return false;

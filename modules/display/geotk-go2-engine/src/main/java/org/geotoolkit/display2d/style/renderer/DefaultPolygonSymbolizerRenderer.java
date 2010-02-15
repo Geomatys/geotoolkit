@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.display2d.style.renderer;
 
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.measure.unit.NonSI;
@@ -36,6 +38,12 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.CachedGraphicStroke;
+import org.geotoolkit.display2d.style.CachedStroke;
+import org.geotoolkit.display2d.style.CachedStrokeGraphic;
+import org.geotoolkit.display2d.style.CachedStrokeSimple;
+import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
+import org.geotoolkit.display2d.style.j2d.PathWalker;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -132,10 +140,37 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         g2d.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
         g2d.fill(shape);
         if(symbol.isStrokeVisible(feature)){
-            g2d.setComposite( symbol.getJ2DStrokeComposite(feature) );
-            g2d.setPaint( symbol.getJ2DStrokePaint(feature, x, y, coeff, hints) );
-            g2d.setStroke( symbol.getJ2DStroke(feature,coeff) );
-            g2d.draw(shape);
+            final CachedStroke cachedStroke = symbol.getCachedStroke();
+            if(cachedStroke instanceof CachedStrokeSimple){
+                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+                g2d.setComposite(cs.getJ2DComposite(feature));
+                g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
+                g2d.setStroke(cs.getJ2DStroke(feature,coeff));
+                g2d.draw(shape);
+            }else if(cachedStroke instanceof CachedStrokeGraphic){
+                final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+                final float initGap = gc.getInitialGap(feature);
+                final Point2D pt = new Point2D.Double();
+                final CachedGraphicStroke cgs = gc.getCachedGraphic();
+                final Image img = cgs.getImage(feature, 1, hints);
+                final float gap = gc.getGap(feature) + img.getWidth(null);
+                final AffineTransform trs = new AffineTransform();
+
+                final PathIterator ite = shape.getPathIterator(null);
+                final PathWalker walker = new DefaultPathWalker(ite);
+                walker.walk(initGap);
+                while(!walker.isFinished()){
+                    //paint the motif --------------------------------------------------
+                    walker.getPosition(pt);
+                    final float angle = walker.getRotation();
+                    trs.translate(pt.getX(), pt.getY());
+                    trs.rotate(angle);
+                    g2d.drawImage(img, trs, null);
+
+                    //walk over the gap ------------------------------------------------
+                    walker.walk(gap);
+                }
+            }
         }
 
         //restore the displacement
@@ -206,19 +241,23 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
         //Test composites ------------------------------------------------------
         final float fillAlpha   = symbol.getJ2DFillComposite(feature).getAlpha();
-        final float strokeAlpha = symbol.getJ2DStrokeComposite(feature).getAlpha();
+
+        //todo must hanlde graphic stroke
+        //final float strokeAlpha = symbol.getJ2DStrokeComposite(feature).getAlpha();
 
         final Area area ;
         if(fillAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
             area = new Area(j2dShape);
-            if(strokeAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
-                final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
-                area.add( new Area(stroke.createStrokedShape(j2dShape) ));
-            }
-        }else if(strokeAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
-            final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
-            area = new Area(stroke.createStrokedShape(j2dShape));
-        }else{
+//            if(strokeAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
+//                final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
+//                area.add( new Area(stroke.createStrokedShape(j2dShape) ));
+//            }
+        }
+//        else if(strokeAlpha >= GO2Utilities.SELECTION_LOWER_ALPHA){
+//            final java.awt.Stroke stroke = symbol.getJ2DStroke(feature,coeff);
+//            area = new Area(stroke.createStrokedShape(j2dShape));
+//        }
+        else{
             //feature graphic is translucide, not selectable
             return false;
         }

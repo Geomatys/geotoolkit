@@ -17,26 +17,23 @@
  */
 package org.geotoolkit.display2d.style;
 
-import java.awt.AlphaComposite;
-
 import org.opengis.feature.Feature;
 import org.opengis.style.Stroke;
 
 
 /**
- * The cached simple stroke work for strokes that have
- * only a paint or a color defined.
+ * The cached stroke work for graphic strokes.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class CachedStrokeGraphic extends CachedStroke{
 
-    private CachedGraphic cachedGraphic = null;
-    private AlphaComposite cachedComposite = null;
+    private final CachedGraphicStroke cachedGraphic;
 
     CachedStrokeGraphic(Stroke stroke){
         super(stroke);
+        cachedGraphic = new CachedGraphicStroke(stroke.getGraphicStroke());
     }
 
     /**
@@ -51,13 +48,31 @@ public class CachedStrokeGraphic extends CachedStroke{
         isNotEvaluated = false;
     }
 
+    public CachedGraphicStroke getCachedGraphic(){
+        return cachedGraphic;
+    }
+
+    public float getGap(Feature feature){
+        return cachedGraphic.getGap(feature);
+    }
+
+    public float getInitialGap(Feature feature){
+        return cachedGraphic.getInitialGap(feature);
+    }
+
+
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean isVisible(Feature feature) {
-        evaluate();
-        return true;
+        return cachedGraphic.isVisible(feature);
+    }
+
+    @Override
+    public float getMargin(Feature feature, float coeff) {
+        return cachedGraphic.getMargin(feature, coeff);
     }
 
 }

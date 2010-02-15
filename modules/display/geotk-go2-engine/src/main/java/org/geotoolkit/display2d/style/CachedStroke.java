@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.style;
 
 
+import org.opengis.feature.Feature;
 import org.opengis.style.GraphicStroke;
 import org.opengis.style.Stroke;
 
@@ -37,15 +38,25 @@ public abstract class CachedStroke extends Cache<Stroke>{
         super(stroke);
     }
 
-    public static CachedStrokeSimple cache(Stroke stroke){
+    public static CachedStroke cache(Stroke stroke){
         final GraphicStroke gs = stroke.getGraphicStroke();
-        return new CachedStrokeSimple(stroke);
-//        if(gs == null){
-//            //simple stroke
-//            return new CachedStrokeSimple(stroke);
-//        }else{
-//            return new CachedStrokeGraphic(stroke);
-//        }
+        if(gs == null){
+            //simple stroke
+            return new CachedStrokeSimple(stroke);
+        }else{
+            return new CachedStrokeGraphic(stroke);
+        }
     }
+
+    /**
+     * Get the maximum size of the symbol for the given feature.
+     * This is used to calculate the display boundingbox of a feature.
+     *
+     * @param feature : evaluate symbol margin with the given feature
+     * @param coeff : use to adjust stroke size, if in display unit value equals 1
+     * @return max width of this symbol with the given feature
+     */
+    public abstract float getMargin(Feature feature, float coeff);
+
 
 }

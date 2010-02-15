@@ -20,13 +20,13 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.geotoolkit.display2d.style.CachedExternal;
 import org.geotoolkit.display2d.style.CachedFill;
 import org.geotoolkit.display2d.style.CachedGraphic;
 import org.geotoolkit.display2d.style.CachedMark;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.display2d.style.CachedStroke;
-import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.VisibilityState;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.DefaultStyleFactory;
@@ -38,9 +38,11 @@ import org.geotoolkit.style.function.Interpolate;
 import org.geotoolkit.style.function.InterpolationPoint;
 import org.geotoolkit.style.function.Method;
 import org.geotoolkit.style.function.Mode;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExternalGraphic;
@@ -50,7 +52,6 @@ import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.PointSymbolizer;
 import org.opengis.style.Stroke;
-import org.opengis.style.Symbolizer;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.style.StyleConstants.*;
@@ -79,7 +80,7 @@ public class StyleCacheTest {
     @Test
     public void strokeCacheTest() throws Exception {
         Stroke stroke = SF.stroke();
-        CachedStrokeSimple cached = CachedStroke.cache(stroke);
+        CachedStroke cached = CachedStroke.cache(stroke);
 
         assertTrue(cached.isStatic());
         assertTrue(cached.isStaticVisible() == VisibilityState.VISIBLE);

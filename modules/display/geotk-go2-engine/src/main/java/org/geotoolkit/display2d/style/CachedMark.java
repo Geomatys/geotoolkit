@@ -50,7 +50,7 @@ public class CachedMark extends Cache<Mark>{
     
     private CachedMark(Mark mark){
         super(mark);
-        cachedStroke = CachedStroke.cache(mark.getStroke());
+        cachedStroke = (CachedStrokeSimple) CachedStroke.cache(mark.getStroke());
         cachedFill = CachedFill.cache(mark.getFill());
     }
     

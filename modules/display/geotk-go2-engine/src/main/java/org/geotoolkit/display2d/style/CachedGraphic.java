@@ -41,7 +41,7 @@ import org.opengis.style.Mark;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CachedGraphic extends Cache<Graphic>{
+public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
     //cached values
     private float cachedOpacity = Float.NaN;
@@ -58,7 +58,7 @@ public class CachedGraphic extends Cache<Graphic>{
     
 
 
-    private CachedGraphic(Graphic graphic){
+    protected CachedGraphic(C graphic){
         super(graphic);
         this.cachedAnchor = CachedAnchorPoint.cache(graphic.getAnchorPoint());
         this.cachedDisplacement = CachedDisplacement.cache(graphic.getDisplacement());
