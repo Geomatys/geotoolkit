@@ -80,14 +80,19 @@ public class FeatureCollectionModel extends DefaultTableModel {
         for(Name name : query.getPropertyNames()){
             columns.add(ft.getDescriptor(name));
         }
-        
+
+        FeatureIterator<SimpleFeature> fi = null;
         try {
-            FeatureIterator<SimpleFeature> fi = (FeatureIterator<SimpleFeature>)  ((FeatureMapLayer)layer).getCollection().subCollection(query).iterator();
+            fi = (FeatureIterator<SimpleFeature>)  ((FeatureMapLayer)layer).getCollection().subCollection(query).iterator();
             while (fi.hasNext()) {
                 features.add(fi.next());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally{
+            if(fi != null){
+                fi.close();
+            }
         }
 
     }
