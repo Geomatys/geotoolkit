@@ -285,11 +285,7 @@ public class SensorML extends AbstractSensorML {
      *     
      */
     public String getVersion() {
-        if (version == null) {
-            return "1.0";
-        } else {
-            return version;
-        }
+        return version;
     }
 
     /**

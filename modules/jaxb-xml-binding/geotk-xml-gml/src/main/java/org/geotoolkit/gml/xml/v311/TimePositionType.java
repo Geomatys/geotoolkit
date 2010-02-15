@@ -17,6 +17,8 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -70,6 +72,7 @@ public class TimePositionType {
     @XmlAttribute
     private TimeIndeterminateValueType indeterminatePosition;
 
+    private static DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
     /**
      * empty constructor used by JAXB.
      */
@@ -108,7 +111,7 @@ public class TimePositionType {
      * @param value a date.
      */
     public TimePositionType(Date time){
-        this.value = time.toString();
+        this.value = formatter.format(time);
     }
 
     /**
