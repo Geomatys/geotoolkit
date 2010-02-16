@@ -113,15 +113,8 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             }
         }
 
-        if(cachedImage != null){
-            final Collection<ColorReplacement> replaces = styleElement.getColorReplacements();
-            for(final ColorReplacement replace : replaces){
-                final Function fct = replace.getRecoding();
-                cachedImage = fct.evaluate(cachedImage, BufferedImage.class);
-            }
-        }
+        cachedImage = recode(cachedImage, styleElement.getColorReplacements());
 
-        
         return true;
     }
 
@@ -178,6 +171,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
             if(stream != null){
                 try{
                     BufferedImage buffer = (BufferedImage) SvgUtils.read(stream, dim, hints);
+                    buffer = recode(buffer, styleElement.getColorReplacements());
                     return buffer;
                 }catch (Exception ex){
                     Logger.getLogger(CachedExternal.class.getName()).log(Level.SEVERE, null, ex);
@@ -232,6 +226,16 @@ public class CachedExternal extends Cache<ExternalGraphic>{
 
     public static CachedExternal cache(ExternalGraphic external){
         return new CachedExternal(external);
+    }
+
+    private static BufferedImage recode(BufferedImage buffer, Collection<ColorReplacement> replacements){
+        if(buffer != null){
+            for(final ColorReplacement replace : replacements){
+                final Function fct = replace.getRecoding();
+                buffer = fct.evaluate(buffer, BufferedImage.class);
+            }
+        }
+        return buffer;
     }
 
 }

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.geotoolkit.filter.AbstractExpression;
+
 import org.opengis.filter.capability.FunctionName;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -54,7 +55,10 @@ import org.opengis.filter.expression.Literal;
  * @module pending
  */
 public class RecolorFunction extends AbstractExpression implements Function {
-        
+
+    private final int MASK_ALPHA = 0xFF000000;
+    private final int MASK_NO_ALPHA = 0x00FFFFFF;
+
     private final List<ColorItem> items;
     private final Literal fallback;
     
@@ -140,20 +144,23 @@ public class RecolorFunction extends AbstractExpression implements Function {
             buffer = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
             buffer.getGraphics().drawImage(img, 0, 0, null);
         }
-
+        
         for(ColorItem item : items){
-            final Color dataExp = item.getSourceColor().evaluate(null, Color.class);
-            final Color resultExp = item.getTargetColor().evaluate(null, Color.class);
+            final int dataExp = item.getSourceColor().evaluate(null, Color.class).getRGB() & MASK_NO_ALPHA;
+            final int resultExp = item.getTargetColor().evaluate(null, Color.class).getRGB() & MASK_NO_ALPHA;
 
-            for (int y = 0; y < buffer.getHeight(); y++) {
-                for (int x = 0; x < buffer.getWidth(); x++) {
-                    Color c = new Color(buffer.getRGB(x, y));
-                    if(c.equals(dataExp)){
-                        buffer.setRGB(x, y, resultExp.getRGB());
+            for (int y=0,h=buffer.getHeight(); y<h ; y++) {
+                for (int x=0,w=buffer.getWidth(); x<w; x++) {
+                    final int pixelColor = buffer.getRGB(x, y);
+                    final int noalpha = MASK_NO_ALPHA & pixelColor;
+                    //compare ignoring alpha value
+                    if(noalpha == dataExp){
+                        //combine the pixel alpha with the result color
+                        final int composite = resultExp | (pixelColor & MASK_ALPHA);
+                        buffer.setRGB(x, y, composite);
                     }
                 }
             }
-
         }
 
         return buffer;
