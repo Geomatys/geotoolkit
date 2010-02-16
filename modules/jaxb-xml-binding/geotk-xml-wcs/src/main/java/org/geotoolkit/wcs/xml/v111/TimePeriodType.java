@@ -111,10 +111,6 @@ public class TimePeriodType {
      * Gets the value of the frame property.
      */
     public String getFrame() {
-        if (frame == null) {
-            return "#ISO-8601";
-        } else {
-            return frame;
-        }
+        return frame;
     }
 }

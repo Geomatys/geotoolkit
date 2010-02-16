@@ -86,12 +86,8 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
      * Gets the value of the fixed property.
      */
     @Override
-    public boolean isFixed() {
-        if (fixed == null) {
-            return false;
-        } else {
-            return fixed;
-        }
+    public Boolean isFixed() {
+        return fixed;
     }
 
     /**

@@ -138,11 +138,7 @@ public class TimePositionType {
      *     
      */
     public String getFrame() {
-        if (frame == null) {
-            return "#ISO-8601";
-        } else {
-            return frame;
-        }
+        return frame;
     }
 
     /**

@@ -39,6 +39,6 @@ public interface AbstractDataComponent {
      * Specifies if the value of a component stays fixed in time or is variable. Default is variable.
      */
     @UML(identifier="fixed", obligation=OPTIONAL, specification=UNSPECIFIED )
-    boolean isFixed();
+    Boolean isFixed();
     
 }

@@ -188,7 +188,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
             final QuantityType that = (QuantityType) object;
 
             return Utilities.equals(this.axisID, that.axisID)   &&
-                   Utilities.equals(this.quality, that.quality) &&
+                   Utilities.equals(this.getQuality(), that.getQuality()) &&
                    Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                    Utilities.equals(this.uom, that.uom) &&
                    Utilities.equals(this.value, that.value) &&

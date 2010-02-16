@@ -126,7 +126,7 @@ public class AbstractDataComponentEntry implements AbstractDataComponent {
      * {@inheritDoc}
      */
     @Override
-    public boolean isFixed() {
+    public Boolean isFixed() {
         return fixed;
     }
 

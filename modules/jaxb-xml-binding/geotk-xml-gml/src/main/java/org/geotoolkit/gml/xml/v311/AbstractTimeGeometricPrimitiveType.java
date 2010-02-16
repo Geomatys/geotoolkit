@@ -54,9 +54,7 @@ import javax.xml.bind.annotation.XmlType;
     TimePeriodType.class,
     TimeInstantType.class
 })
-public abstract class AbstractTimeGeometricPrimitiveType
-    extends AbstractTimePrimitiveType
-{
+public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePrimitiveType {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
@@ -71,11 +69,7 @@ public abstract class AbstractTimeGeometricPrimitiveType
      *     
      */
     public String getFrame() {
-        if (frame == null) {
-            return "#ISO-8601";
-        } else {
-            return frame;
-        }
+        return frame;
     }
 
     /**
