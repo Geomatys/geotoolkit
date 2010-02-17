@@ -38,6 +38,7 @@ import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.JulianDate;
+import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
@@ -413,53 +414,60 @@ public final class Utils {
         if (ordinalPosition == null) {
             return null;
         }
-        final Calendar calendar = Calendar.getInstance();
-        if (ordinalPosition.getOrdinalPosition() != null) {
-            final Date beginEra = ordinalPosition.getOrdinalPosition().getBeginning();
-            final Date endEra = ordinalPosition.getOrdinalPosition().getEnd();
-            final Long middle = ((endEra.getTime() - beginEra.getTime()) / 2) + beginEra.getTime();
-            calendar.setTimeInMillis(middle);
-            return calendar.getTime();
+        final OrdinalEra era = ordinalPosition.getOrdinalPosition();
+        if (era != null) {
+            final Date beginEra = era.getBeginning();
+            final Date endEra = era.getEnd();
+            final long middle = (endEra.getTime() + beginEra.getTime()) / 2 ;
+            return new Date(middle);
         } else {
             return null;
         }
     }
 
     /**
+     * @param duration to evaluate
      * @return the nearest Unit of a Duration.
      */
     public static Unit getUnitFromDuration(Duration duration) {
         if (duration == null) {
             return null;
         }
-        final DefaultDuration dduration = (DefaultDuration) duration;
+
+        final DefaultDuration dduration;
+        if(duration instanceof DefaultDuration){
+            dduration = (DefaultDuration) duration;
+        }else{
+            throw new IllegalArgumentException("Can not evaluate best unit for Duration which is not a DefaultDuration.");
+        }
+
         final long mills = dduration.getTimeInMillis();
         long temp = mills / YEAR_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return YEAR_UNIT;
         }
         temp = mills / MONTH_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return MONTH_UNIT;
         }
         temp = mills / WEEK_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return NonSI.WEEK;
         }
         temp = mills / DAY_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return NonSI.DAY;
         }
         temp = mills / HOUR_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return NonSI.HOUR;
         }
         temp = mills / MIN_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return NonSI.MINUTE;
         }
         temp = mills / SECOND_MS;
-        if (temp >= 1) {
+        if (temp > 0) {
             return SI.SECOND;
         }
         return null;
@@ -472,9 +480,9 @@ public final class Utils {
      */
     public static Date createDate(String date) {
         if (date == null) {
-            return new Date(new java.util.Date().getTime());
+            return new Date();
         }
-        if (date.equals("") || date.contains("BC")) {
+        if (date.isEmpty() || date.contains("BC")) {
             return new Date(new java.util.Date().getTime());
         }
 
@@ -514,7 +522,7 @@ public final class Utils {
         Date tmp = new Date();
 
         if (date.contains("/")) {
-            if (getOccurence(date, "/") == 2) {
+            if (getOccurence(date, '/') == 2) {
                 day = date.substring(0, date.indexOf('/'));
                 date = date.substring(date.indexOf('/') + 1);
                 month = date.substring(0, date.indexOf('/'));
@@ -522,13 +530,13 @@ public final class Utils {
 
                 tmp = java.sql.Date.valueOf(year + "-" + month + "-" + day);
             } else {
-                if (getOccurence(date, "/") == 1) {
+                if (getOccurence(date, '/') == 1) {
                     month = date.substring(0, date.indexOf('/'));
                     year = date.substring(date.indexOf('/') + 1);
                     tmp = java.sql.Date.valueOf(year + "-" + month + "-" + "01");
                 }
             }
-        } else if (getOccurence(date, " ") == 2) {
+        } else if (getOccurence(date, ' ') == 2) {
             if (!date.contains("?")) {
 
                 day = date.substring(0, date.indexOf(' '));
@@ -540,7 +548,7 @@ public final class Utils {
             } else {
                 tmp = java.sql.Date.valueOf("2000" + "-" + "01" + "-" + "01");
             }
-        } else if (getOccurence(date, " ") == 1 && getOccurence(date, "-") < 3) {
+        } else if (getOccurence(date, ' ') == 1 && getOccurence(date, '-') < 3) {
             try {
                 final java.util.Date d = df.parse(date);
                 return new Date(d.getTime());
@@ -552,14 +560,14 @@ public final class Utils {
             tmp = java.sql.Date.valueOf(year + "-" + month + "-" + "01");
 
 
-        } else if (getOccurence(date, "-") == 1) {
+        } else if (getOccurence(date, '-') == 1) {
 
             month = date.substring(0, date.indexOf('-'));
             year = date.substring(date.indexOf('-') + 1);
 
             tmp = java.sql.Date.valueOf(year + "-" + month + "-" + "01");
 
-        } else if (getOccurence(date, "-") == 2) {
+        } else if (getOccurence(date, '-') == 2) {
             //if date is in format yyyy-mm-ddTHH:mm:ss
             try {
                 final java.util.Date resultDate = getDateFromString(date);
@@ -591,7 +599,7 @@ public final class Utils {
             }
 
         } else {
-            if (getOccurence(date, "-") == 0) {
+            if (getOccurence(date, '-') == 0) {
                 year = date;
                 tmp = java.sql.Date.valueOf(year + "-" + "01" + "-" + "01");
             }
@@ -599,21 +607,36 @@ public final class Utils {
 
         return tmp;
     }
-    
+
     /**
      * This method returns a number of occurences occ in the string s.
+     * @param s : String to search in
+     * @param occ : Occurence to search
+     * @return number of occurence
+     */
+    public static int getOccurence(String s, char occ) {
+        int cnt = 0;
+        int pos = s.indexOf(occ);
+        for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
+            cnt++;
+        }
+        return cnt;
+    }
+
+    /**
+     * This method returns a number of occurences occ in the string s.
+     * @param s : String to search in
+     * @param occ : Occurence to search
+     * @return number of occurence
      */
     public static int getOccurence(String s, String occ) {
-        if (!s.contains(occ)) {
-            return 0;
-        } else {
-            int nbocc = 0;
-            while (s.indexOf(occ) != -1) {
-                s = s.substring(s.indexOf(occ) + 1);
-                nbocc++;
-            }
-            return nbocc;
+        int cnt = 0;
+        int pos = s.indexOf(occ);
+        for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
+            cnt++;
         }
+        return cnt;
     }
+
 }
 
