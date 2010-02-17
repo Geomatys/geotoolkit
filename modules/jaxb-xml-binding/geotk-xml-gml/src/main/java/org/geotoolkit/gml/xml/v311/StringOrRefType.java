@@ -26,7 +26,11 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * This type is available wherever there is a need for a "text" type property. It is of string type, so the text can be included inline, but the value can also be referenced remotely via xlinks from the AssociationAttributeGroup. If the remote reference is present, then the value obtained by traversing the link should be used, and the string content of the element can be used for an annotation.
+ * This type is available wherever there is a need for a "text" type property. 
+ * It is of string type, so the text can be included inline,
+ * but the value can also be referenced remotely via xlinks from the AssociationAttributeGroup.
+ * If the remote reference is present, then the value obtained by traversing the link should be used,
+ * and the string content of the element can be used for an annotation.
  * 
  * <p>Java class for StringOrRefType complex type.
  * 

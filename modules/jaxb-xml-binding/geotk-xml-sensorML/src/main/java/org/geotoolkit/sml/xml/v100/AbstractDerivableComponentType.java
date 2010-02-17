@@ -89,10 +89,12 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
 
     
 
+    @Override
     public Location getSMLLocation() {
         return location;
     }
-    
+
+    @Override
     public void setSMLLocation(AbstractLocation location) {
         if (location instanceof Location)
             this.location = (Location) location;
@@ -102,6 +104,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the spatialReferenceFrame
      */
+    @Override
     public SpatialReferenceFrame getSpatialReferenceFrame() {
         return spatialReferenceFrame;
     }
@@ -116,6 +119,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @return the position
      */
+    @Override
     public Position getPosition() {
         return position;
     }
@@ -123,6 +127,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @param position the position to set
      */
+    @Override
     public void setPosition(AbstractPosition position) {
         if (position instanceof Position)
             this.position = (Position) position;

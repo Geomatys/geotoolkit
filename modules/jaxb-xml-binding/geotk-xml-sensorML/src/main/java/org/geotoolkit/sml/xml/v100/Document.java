@@ -221,13 +221,13 @@ public class Document implements AbstractDocument {
 
         if (object instanceof Document) {
             final Document that = (Document) object;
-            return Utilities.equals(this.contact,        that.contact)        &&
-                   Utilities.equals(this.date,           that.date)           &&
-                   Utilities.equals(this.description,    that.description)    &&
-                   Utilities.equals(this.format,         that.format)         &&
-                   Utilities.equals(this.id,             that.id)             &&
-                   Utilities.equals(this.onlineResource, that.onlineResource) &&
-                   Utilities.equals(this.version,         that.version);
+            return Utilities.equals(this.contact,             that.contact)        &&
+                   Utilities.equals(this.date,                that.date)           &&
+                   Utilities.equals(this.description,         that.description)    &&
+                   Utilities.equals(this.format,              that.format)         &&
+                   Utilities.equals(this.id,                  that.id)             &&
+                   Utilities.equals(this.getOnlineResource(), that.getOnlineResource()) &&
+                   Utilities.equals(this.version,             that.version);
         }
         return false;
     }

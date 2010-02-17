@@ -208,7 +208,7 @@ public class ContactInfo implements AbstractContactInfo {
             return Utilities.equals(this.address,             that.address)             &&
                    Utilities.equals(this.contactInstructions, that.contactInstructions) &&
                    Utilities.equals(this.hoursOfService,      that.hoursOfService)      &&
-                   Utilities.equals(this.onlineResource,      that.onlineResource)      &&
+                   Utilities.equals(this.getOnlineResource(), that.getOnlineResource()) &&
                    Utilities.equals(this.phone,               that.phone);
         }
         return false;

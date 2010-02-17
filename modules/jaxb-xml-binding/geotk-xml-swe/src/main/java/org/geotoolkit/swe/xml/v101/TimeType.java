@@ -117,7 +117,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
                    Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                    Utilities.equals(this.referenceTime,  that.referenceTime)  &&
                    Utilities.equals(this.uom,            that.uom)            &&
-                   Utilities.equals(this.value,          that.value);
+                   Utilities.equals(this.getValue(),     that.getValue());
         } 
         return false;
     }
@@ -135,8 +135,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append("[TimeType]").append('\n').append("super:").append(super.toString()).append('\n');
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
         if (localFrame != null)
             s.append("localFrame:").append(localFrame).append('\n');
         if (referenceFrame != null)

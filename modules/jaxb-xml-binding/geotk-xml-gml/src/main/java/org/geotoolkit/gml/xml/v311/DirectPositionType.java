@@ -356,11 +356,11 @@ public class DirectPositionType implements DirectPosition {
         }
         if (object instanceof DirectPositionType) {
             final DirectPositionType that = (DirectPositionType) object;
-            return  Utilities.equals(this.axisLabels, that.axisLabels)     &&
-                    Utilities.equals(this.srsDimension, that.srsDimension) &&
-                    Utilities.equals(this.srsName, that.srsName)           &&
-                    Utilities.equals(this.uomLabels, that.uomLabels)       &&
-                    Utilities.equals(this.value, that.value);
+            return  Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                    Utilities.equals(this.srsDimension,    that.srsDimension)    &&
+                    Utilities.equals(this.srsName,         that.srsName)         &&
+                    Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    Utilities.equals(this.value,           that.value);
         }
         return false;
     }

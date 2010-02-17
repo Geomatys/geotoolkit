@@ -119,9 +119,10 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
     }
 
     /**
-     * Deprecated with GML version 3.1.0 for coordinates with ordinate values that are numbers. Use "pos" 
-     * 								instead. The "coordinates" element shall only be used for coordinates with ordinates that require a string 
-     * 								representation, e.g. DMS representations.
+     * Deprecated with GML version 3.1.0 for coordinates with ordinate values that are numbers. 
+     * Use "pos" instead.
+     * The "coordinates" element shall only be used for coordinates with ordinates that require a string
+     * representation, e.g. DMS representations.
      * 
      * @return
      *     possible object is
@@ -133,9 +134,10 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
     }
 
     /**
-     * Deprecated with GML version 3.1.0 for coordinates with ordinate values that are numbers. Use "pos" 
-     * 								instead. The "coordinates" element shall only be used for coordinates with ordinates that require a string 
-     * 								representation, e.g. DMS representations.
+     * Deprecated with GML version 3.1.0 for coordinates with ordinate values that are numbers.
+     * Use "pos"instead.
+     * The "coordinates" element shall only be used for coordinates with ordinates that require a string
+     * representation, e.g. DMS representations.
      * 
      * @param value
      *     allowed object is

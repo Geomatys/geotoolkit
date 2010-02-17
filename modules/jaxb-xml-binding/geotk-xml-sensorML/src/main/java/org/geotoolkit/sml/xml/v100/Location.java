@@ -119,7 +119,7 @@ public class Location implements AbstractLocation {
      * 
      */
     public void setAbstractCurve(JAXBElement<? extends AbstractCurveType> value) {
-        this.abstractCurve = ((JAXBElement<? extends AbstractCurveType> ) value);
+        this.abstractCurve = value;
     }
 
     /**
