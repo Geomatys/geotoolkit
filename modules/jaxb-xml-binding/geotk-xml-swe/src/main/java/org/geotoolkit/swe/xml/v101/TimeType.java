@@ -117,7 +117,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
                    Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                    Utilities.equals(this.referenceTime,  that.referenceTime)  &&
                    Utilities.equals(this.uom,            that.uom)            &&
-                   Utilities.equals(this.getValue(),     that.getValue());
+                   Utilities.equals(this.value,          that.value);
         } 
         return false;
     }
