@@ -63,10 +63,12 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
      * integers; the last number may be integer or real.
      *
      */
+    @Override
     public Number[] getClockTime() {
         return clockTime;
     }
 
+    @Override
     public InternationalString getCalendarEraName() {
         return calendarEraName;
     }
@@ -79,6 +81,7 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
      * used for any date that is composed of values for year, month and day.
      *
      */
+    @Override
     public int[] getCalendarDate() {
         return calendarDate;
     }

@@ -51,6 +51,7 @@ public class DefaultClockTime extends DefaultTemporalPosition implements ClockTi
      * unit used at the next lower level, and so on. All but the last number in the sequence shall be
      * integers; the last number may be integer or real.
      *
+     * @return 
      */
     @Override
     public Number[] getClockTime() {

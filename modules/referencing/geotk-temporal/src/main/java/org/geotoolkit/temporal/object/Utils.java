@@ -32,8 +32,8 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.DateAndTime;
 import org.opengis.temporal.Duration;
@@ -41,7 +41,10 @@ import org.opengis.temporal.JulianDate;
 import org.opengis.temporal.OrdinalEra;
 import org.opengis.temporal.OrdinalPosition;
 import org.opengis.temporal.TemporalCoordinate;
-import org.opengis.temporal.TemporalCoordinateSystem;
+import org.opengis.temporal.TemporalReferenceSystem;
+
+
+import static org.geotoolkit.temporal.object.TemporalConstants.*;
 
 /**
  * This is a tool class to convert DateTime from ISO8601 to Date object.
@@ -52,35 +55,8 @@ import org.opengis.temporal.TemporalCoordinateSystem;
 public final class Utils {
 
     private static final Logger LOGGER = Logging.getLogger(Utils.class);
+    private static final String DEFAULT_TIMEZONE = TimeZone.getDefault().getID();
 
-    /**
-     * The number of millisecond in one year.
-     */
-    private static final long YEAR_MS = 31536000000L;
-    /**
-     * The number of millisecond in one month.
-     */
-    private static final long MONTH_MS = 2628000000L;
-    /**
-     * The number of millisecond in one week.
-     */
-    private static final long WEEK_MS = 604800000L;
-    /**
-     * The number of millisecond in one day.
-     */
-    private static final long DAY_MS = 86400000L;
-    /**
-     * The number of millisecond in one hour.
-     */
-    private static final long HOUR_MS = 3600000L;
-    /**
-     * The number of millisecond in one minute.
-     */
-    private static final long MIN_MS = 60000;
-    /**
-     * The number of millisecond in one second.
-     */
-    private static final long SECOND_MS = 1000;
 
     /**
      * The units for months.
@@ -162,7 +138,7 @@ public final class Utils {
 
     public static String getTimeZone(final String dateString) {
         if (dateString.endsWith("Z")) {
-            return "GMT+" + 0;
+            return "GMT+0";
         }
         int index = dateString.lastIndexOf('+');
         if (index == -1) {
@@ -171,7 +147,7 @@ public final class Utils {
         if (index > dateString.indexOf('T')) {
             return "GMT" + dateString.substring(index);
         }
-        return TimeZone.getDefault().getID();
+        return DEFAULT_TIMEZONE;
     }
 
     /**
@@ -230,7 +206,7 @@ public final class Utils {
         //we look if the period contains minutes (60000 ms)
         if (periodDuration.indexOf('M') != -1) {
             final int nbMin = Integer.parseInt(periodDuration.substring(0, periodDuration.indexOf('M')));
-            time += nbMin * MIN_MS;
+            time += nbMin * MINUTE_MS;
             periodDuration = periodDuration.substring(periodDuration.indexOf('M') + 1);
         }
 
@@ -254,11 +230,10 @@ public final class Utils {
         if (jdt == null) {
             return null;
         }
-        Date response = null;
 
         final int gregDays = 15 + 31 * (10 + 12 * 1582);
         int jalpha, ja, jb, jc, jd, je, year, month, day;
-        ja = (int) jdt.getCoordinateValue().intValue();
+        ja = jdt.getCoordinateValue().intValue();
         if (ja >= gregDays) {
             jalpha = (int) (((ja - 1867216) - 0.25) / 36524.25);
             ja = ja + 1 + jalpha - jalpha / 4;
@@ -280,10 +255,8 @@ public final class Utils {
         if (year <= 0) {
             year--;
         }
-        final Calendar cal = Calendar.getInstance();
-        cal.set(year, month, day);
-        response = cal.getTime();
-        return response;
+
+        return new Date(year*YEAR_MS + month*MONTH_MS + day*DAY_MS);
     }
 
     /**
@@ -291,31 +264,20 @@ public final class Utils {
      * @param calDate
      */
     public static Date calendarDateToDate(final CalendarDate calDate) {
-        if (calDate == null || !(calDate instanceof DefaultCalendarDate)){
+        if (calDate == null){
             return null;
         }
 
-        final DefaultCalendarDate caldate = (DefaultCalendarDate) calDate;
-        final Calendar calendar = Calendar.getInstance();
-        
         final int[] cal = calDate.getCalendarDate();
-        int year = 0;
-        int month = 0;
-        int day = 0;
-        if (cal.length > 3) {
-            throw new IllegalArgumentException("The CalendarDate integer array is malformed ! see ISO 8601 format.");
-        } else {
-            year = cal[0];
-            if (cal.length > 0) {
-                month = cal[1];
-            }
-            if (cal.length > 1) {
-                day = cal[2];
-            }
-            calendar.set(year, month, day);
-            return calendar.getTime();
-        }
 
+        if (cal.length > 3)
+            throw new IllegalArgumentException("The CalendarDate integer array is malformed ! see ISO 8601 format.");
+
+        return new Date(
+                (cal.length>0 ? cal[0] : 0) * YEAR_MS +
+                (cal.length>1 ? cal[1] : 0) * MONTH_MS +
+                (cal.length>2 ? cal[2] : 0) * DAY_MS
+                );
     }
 
     /**
@@ -329,84 +291,72 @@ public final class Utils {
         }
 
         final DefaultDateAndTime dateTime = (DefaultDateAndTime) dateAndTime;
-        final Calendar calendar = Calendar.getInstance();
 
         final int[] cal = dateTime.getCalendarDate();
-        int year = 0;
-        int month = 0;
-        int day = 0;
-        if (cal.length > 3) {
-            throw new IllegalArgumentException("The CalendarDate integer array is malformed ! see ISO 8601 format.");
-        } else {
-            year = cal[0];
-            if (cal.length > 0) {
-                month = cal[1];
-            }
-            if (cal.length > 1) {
-                day = cal[2];
-            }
-        }
-
         final Number[] clock = dateTime.getClockTime();
-        final Number hour;
-        Number minute = 0;
-        Number second = 0;
-        if (clock.length > 3) {
+
+        if (cal.length > 3)
+            throw new IllegalArgumentException("The CalendarDate integer array is malformed ! see ISO 8601 format.");
+        if (clock.length > 3)
             throw new IllegalArgumentException("The ClockTime Number array is malformed ! see ISO 8601 format.");
-        } else {
-            hour = clock[0];
-            if (clock.length > 0) {
-                minute = clock[1];
-            }
-            if (clock.length > 1) {
-                second = clock[2];
-            }
-        }
-        calendar.set(year, month, day, hour.intValue(), minute.intValue(), second.intValue());
-        return calendar.getTime();
-        
+
+        return new Date(
+                (cal.length>0 ? cal[0] : 0) * YEAR_MS +
+                (cal.length>1 ? cal[1] : 0) * MONTH_MS +
+                (cal.length>2 ? cal[2] : 0) * DAY_MS +
+                (clock.length>0 ? clock[0].intValue() : 0) * HOUR_MS +
+                (clock.length>1 ? clock[1].intValue() : 0) * MINUTE_MS +
+                (clock.length>2 ? clock[2].intValue() : 0) * SECOND_MS
+                );
     }
 
     /**
      * Convert a TemporalCoordinate object to Date.
      * @param temporalCoord
+     * @return Date
      */
     public static Date temporalCoordToDate(final TemporalCoordinate temporalCoord) {
         if (temporalCoord == null) {
             return null;
         }
-        final Calendar calendar = Calendar.getInstance();
-        final DefaultTemporalCoordinate timeCoord = (DefaultTemporalCoordinate) temporalCoord;
-        final Number value = timeCoord.getCoordinateValue();
-        if (timeCoord.getFrame() instanceof TemporalCoordinateSystem) {
-            final DefaultTemporalCoordinateSystem coordSystem = (DefaultTemporalCoordinateSystem) timeCoord.getFrame();
+
+        final DefaultTemporalCoordinate timeCoord;
+        if(temporalCoord instanceof DefaultTemporalCoordinate){
+            timeCoord = (DefaultTemporalCoordinate) temporalCoord;
+        }else{
+            throw new IllegalArgumentException("Can not convert a temporal coordinate which is not a DefaultTemporalCoordinate.");
+        }
+
+        final long value = timeCoord.getCoordinateValue().longValue();
+        final TemporalReferenceSystem frame = timeCoord.getFrame();
+        if (frame instanceof DefaultTemporalCoordinateSystem) {
+            final DefaultTemporalCoordinateSystem coordSystem = (DefaultTemporalCoordinateSystem) frame;
             final Date origin = coordSystem.getOrigin();
             final String interval = coordSystem.getInterval().toString();
 
-            Long timeInMS = 0L;
+            long timeInMS = 0L;
 
-            if (interval.equals("year")) {
-                timeInMS = value.longValue() * YEAR_MS;
-            } else if (interval.equals("month")) {
-                timeInMS = value.longValue() * MONTH_MS;
-            } else if (interval.equals("week")) {
-                timeInMS = value.longValue() * WEEK_MS;
-            } else if (interval.equals("day")) {
-                timeInMS = value.longValue() * DAY_MS;
-            } else if (interval.equals("hour")) {
-                timeInMS = value.longValue() * HOUR_MS;
-            } else if (interval.equals("minute")) {
-                timeInMS = value.longValue() * MIN_MS;
-            } else if (interval.equals("second")) {
-                timeInMS = value.longValue() * SECOND_MS;
+            if (YEAR_STR.equals(interval)) {
+                timeInMS = value * YEAR_MS;
+            } else if (MONTH_STR.equals(interval)) {
+                timeInMS = value * MONTH_MS;
+            } else if (WEEK_STR.equals(interval)) {
+                timeInMS = value * WEEK_MS;
+            } else if (DAY_STR.equals(interval)) {
+                timeInMS = value * DAY_MS;
+            } else if (HOUR_STR.equals(interval)) {
+                timeInMS = value * HOUR_MS;
+            } else if (MINUTE_STR.equals(interval)) {
+                timeInMS = value * MINUTE_MS;
+            } else if (SECOND_STR.equals(interval)) {
+                timeInMS = value * SECOND_MS;
             } else {
                 throw new IllegalArgumentException(" The interval of TemporalCoordinateSystem for this TemporalCoordinate object is unknown ! ");
             }
             timeInMS = timeInMS + origin.getTime();
-            calendar.setTimeInMillis(timeInMS);
-            return calendar.getTime();
+            return new Date(timeInMS);
         } else {
-            throw new IllegalArgumentException("The frame of this TemporalCoordinate object must be an instance of TemporalCoordinateSystem");
+            throw new IllegalArgumentException("The frame of this TemporalCoordinate object must be an instance of DefaultTemporalCoordinateSystem");
         }
     }
 
@@ -462,7 +412,7 @@ public final class Utils {
         if (temp > 0) {
             return NonSI.HOUR;
         }
-        temp = mills / MIN_MS;
+        temp = mills / MINUTE_MS;
         if (temp > 0) {
             return NonSI.MINUTE;
         }

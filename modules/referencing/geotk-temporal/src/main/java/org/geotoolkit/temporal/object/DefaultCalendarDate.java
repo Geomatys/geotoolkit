@@ -52,7 +52,9 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
     /**
      * Provides the name of the {@linkplain CalendarEra calendar era}
      * to which the date is referenced.
+     * @return
      */
+    @Override
     public InternationalString getCalendarEraName() {
         return calendarEraName;
     }
@@ -64,7 +66,9 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
      * and so on. The format defined in ISO 8601 for dates in the Gregorian calendar may be
      * used for any date that is composed of values for year, month and day.
      *
+     * @return
      */
+    @Override
     public int[] getCalendarDate() {
         return calendarDate;
     }

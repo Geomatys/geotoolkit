@@ -22,6 +22,8 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.temporal.PeriodDuration;
 import org.opengis.util.InternationalString;
 
+import static org.geotoolkit.temporal.object.TemporalConstants.*;
+
 /**
  * Uses the format specified by ISO 8601 for exchanging information
  * about the duration of a period.
@@ -68,14 +70,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @param durationInMilliSeconds
      */
     public DefaultPeriodDuration(long durationInMilliSeconds) {
-        long yearMS = 31536000000L;
-        long monthMS = 2628000000L;
-        long weekMS = 604800000L;
-        long dayMS = 86400000L;
-        long hourMS = 3600000L;
-        long minMS = 60000L;
-        long secondMS = 1000L;
-
         InternationalString _years = null;
         InternationalString _months = null;
         InternationalString _week = null;
@@ -84,53 +78,53 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         InternationalString _minutes = null;
         InternationalString _seconds = null;
 
-        long temp = durationInMilliSeconds / yearMS;
+        long temp = durationInMilliSeconds / YEAR_MS;
         if (temp >= 1) {
             _years = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * yearMS;
+            durationInMilliSeconds -= temp * YEAR_MS;
         }
         this.years = _years;
 
-        temp = durationInMilliSeconds / monthMS;
+        temp = durationInMilliSeconds / MONTH_MS;
         if (temp >= 1) {
             _months = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * monthMS;
+            durationInMilliSeconds -= temp * MONTH_MS;
         }
         this.months = _months;
 
-        temp = durationInMilliSeconds / weekMS;
+        temp = durationInMilliSeconds / WEEK_MS;
         if (temp >= 1) {
             _week = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * weekMS;
+            durationInMilliSeconds -= temp * WEEK_MS;
         }
         this.weeks = _week;
 
         //we look if the gap is more than one day (86400000 ms)
-        temp = durationInMilliSeconds / dayMS;
+        temp = durationInMilliSeconds / DAY_MS;
         if (temp >= 1) {
             _days = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * dayMS;
+            durationInMilliSeconds -= temp * DAY_MS;
         }
         this.days = _days;
 
-        temp = durationInMilliSeconds / hourMS;
+        temp = durationInMilliSeconds / HOUR_MS;
         if (temp >= 1) {
             _hours = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * hourMS;
+            durationInMilliSeconds -= temp * HOUR_MS;
         }
         this.hours = _hours;
 
-        temp = durationInMilliSeconds / minMS;
+        temp = durationInMilliSeconds / MINUTE_MS;
         if (temp >= 1) {
             _minutes = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * minMS;
+            durationInMilliSeconds -= temp * MINUTE_MS;
         }
         this.minutes = _minutes;
 
-        temp = durationInMilliSeconds / secondMS;
+        temp = durationInMilliSeconds / SECOND_MS;
         if (temp >= 1) {
             _seconds = new SimpleInternationalString(String.valueOf(temp));
-            durationInMilliSeconds -= temp * secondMS;
+            durationInMilliSeconds -= temp * SECOND_MS;
         }
         this.seconds = _seconds;
 
@@ -250,13 +244,6 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
     @Override
     public long getTimeInMillis() {
         String periodDescription = this.toString();
-        long yearMS = 31536000000L;
-        long monthMS = 2628000000L;
-        long weekMS = 604800000L;
-        long dayMS = 86400000L;
-        long hourMS = 3600000L;
-        long minMS = 60000L;
-        long secondMS = 1000L;
         long response = 0;
         //removing the 'P' character
         periodDescription = periodDescription.substring(1);
@@ -264,7 +251,7 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         //if the period contains years (31536000000 ms) the response will be incremented
         if (periodDescription.indexOf('Y') != -1) {
             int nbYear = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('Y')));
-            response += nbYear * yearMS;
+            response += nbYear * YEAR_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('Y') + 1);
         }
 
@@ -274,21 +261,21 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
                 (periodDescription.indexOf('M') < periodDescription.indexOf('T')) && 
                 ((periodDescription.indexOf('M') != -1)))) {
             int nbMonth = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('M')));
-            response += nbMonth * monthMS;
+            response += nbMonth * MONTH_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('M') + 1);
         }
 
         //if the period contains weeks (604800000 ms)
         if (periodDescription.indexOf('W') != -1) {
             int nbWeek = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('W')));
-            response += nbWeek * weekMS;
+            response += nbWeek * WEEK_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('W') + 1);
         }
 
         //if the period contains days (86400000 ms)
         if (periodDescription.indexOf('D') != -1) {
             int nbDay = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('D')));
-            response += nbDay * dayMS;
+            response += nbDay * DAY_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('D') + 1);
         }
 
@@ -300,21 +287,21 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         //if the period contains hours (3600000 ms)
         if (periodDescription.indexOf('H') != -1) {
             int nbHour = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('H')));
-            response += nbHour * hourMS;
+            response += nbHour * HOUR_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('H') + 1);
         }
 
         //if the period contains minutes (60000 ms)
         if (periodDescription.indexOf('M') != -1) {
             int nbMin = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('M')));
-            response += nbMin * minMS;
+            response += nbMin * MINUTE_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('M') + 1);
         }
 
         //if the period contains seconds (1000 ms)
         if (periodDescription.indexOf('S') != -1) {
             int nbSec = Integer.parseInt(periodDescription.substring(0, periodDescription.indexOf('S')));
-            response += nbSec * secondMS;
+            response += nbSec * SECOND_MS;
             periodDescription = periodDescription.substring(periodDescription.indexOf('S') + 1);
         }
 
@@ -362,28 +349,28 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         StringBuilder s = new StringBuilder();
         s.append(DESIGNATOR);
         if (years != null) {
-            s.append(years).append("Y");
+            s.append(years).append('Y');
         }
         if (months != null) {
-            s.append(months).append("M");
+            s.append(months).append('M');
         }
         if (weeks != null) {
-            s.append(weeks).append("W");
+            s.append(weeks).append('W');
         }
         if (days != null) {
-            s.append(days).append("D");
+            s.append(days).append('D');
         }
         if (hours != null || minutes != null || seconds != null) {
             s.append(TIME_INDICATOR);
         }
         if (hours != null) {
-            s.append(hours).append("H");
+            s.append(hours).append('H');
         }
         if (minutes != null) {
-            s.append(minutes).append("M");
+            s.append(minutes).append('M');
         }
         if (seconds != null) {
-            s.append(seconds).append("S");
+            s.append(seconds).append('S');
         }
 
         return s.toString();

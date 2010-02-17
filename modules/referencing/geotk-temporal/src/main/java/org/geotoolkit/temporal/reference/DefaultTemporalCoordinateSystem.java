@@ -18,13 +18,17 @@
 package org.geotoolkit.temporal.reference;
 
 import java.util.Date;
+
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.temporal.object.DefaultTemporalCoordinate;
+
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.temporal.TemporalCoordinate;
 import org.opengis.temporal.TemporalCoordinateSystem;
 import org.opengis.util.InternationalString;
+
+import static org.geotoolkit.temporal.object.TemporalConstants.*;
 
 /**
  *
@@ -75,33 +79,30 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
     @Override
     public Date transformCoord(TemporalCoordinate c_value) {
         Date response;
-        final long yearMS = 31536000000L;
-        final long monthMS = 2628000000L;
-        final long weekMS = 604800000L;
-        final long dayMS = 86400000L;
-        final long hourMS = 3600000L;
-        final long minMS = 60000L;
-        final long secondMS = 1000L;
+
         DefaultTemporalCoordinate value = (DefaultTemporalCoordinate) c_value;
         Number f = 0;
         if (value.getFrame() != null && value.getFrame() instanceof TemporalCoordinateSystem) {
             if (value.getCoordinateValue() != null) {
-                float n = value.getCoordinateValue().floatValue();
-                if (interval.toString().equals("year")) {
-                    f = n * (float) yearMS;
-                } else if (interval.toString().equals("month")) {
-                    f = n * (float) monthMS;
-                } else if (interval.toString().equals("week")) {
-                    f = n * (float) weekMS;
-                } else if (interval.toString().equals("day")) {
-                    f = n * (float) dayMS;
-                } else if (interval.toString().equals("hour")) {
-                    f = n * (float) hourMS;
-                } else if (interval.toString().equals("minute")) {
-                    f = n * (float) minMS;
-                } else if (interval.toString().equals("second")) {
-                    f = n * (float) secondMS;
-                } else if (interval.toString().equals("millisecond")) {
+                final String interStr = interval.toString();
+                final float n = value.getCoordinateValue().floatValue();
+
+
+                if (YEAR_STR.equals(interStr)) {
+                    f = n * (float) YEAR_MS;
+                } else if (MONTH_STR.equals(interStr)) {
+                    f = n * (float) MONTH_MS;
+                } else if (WEEK_STR.equals(interStr)) {
+                    f = n * (float) WEEK_MS;
+                } else if (DAY_STR.equals(interStr)) {
+                    f = n * (float) DAY_MS;
+                } else if (HOUR_STR.equals(interStr)) {
+                    f = n * (float) HOUR_MS;
+                } else if (MINUTE_STR.equals(interStr)) {
+                    f = n * (float) MINUTE_MS;
+                } else if (SECOND_STR.equals(interStr)) {
+                    f = n * (float) SECOND_MS;
+                } else if (MILLISECOND_STR.equals(interStr)) {
                     f = n;
                 } else {
                     throw new IllegalArgumentException("The name of a single unit of measure used as the base interval for the scale in this current TemporalCoordinateSystem is not supported !");
@@ -124,33 +125,27 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      */
     @Override
     public TemporalCoordinate transformDateTime(Date dateTime) {
-        TemporalCoordinate response;
-        final long yearMS = 31536000000L;
-        final long monthMS = 2628000000L;
-        final long weekMS = 604800000L;
-        final long dayMS = 86400000L;
-        final long hourMS = 3600000L;
-        final long minMS = 60000L;
-        final long secondMS = 1000L;
-
+        final String intervalStr = interval.toString();
         Number coordinateValue = Math.abs(dateTime.getTime() - origin.getTime());
-        if (interval.toString().equals("year")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) yearMS;
-        } else if (interval.toString().equals("month")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) monthMS;
-        } else if (interval.toString().equals("week")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) weekMS;
-        } else if (interval.toString().equals("day")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) dayMS;
-        } else if (interval.toString().equals("hour")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) hourMS;
-        } else if (interval.toString().equals("minute")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) minMS;
-        } else if (interval.toString().equals("second")) {
-            coordinateValue = (float) coordinateValue.longValue() / (float) secondMS;
+        final float val = coordinateValue.floatValue();
+
+        if (YEAR_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / YEAR_MS );
+        } else if (MONTH_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / MONTH_MS );
+        } else if (WEEK_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / WEEK_MS );
+        } else if (DAY_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / DAY_MS );
+        } else if (HOUR_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / HOUR_MS );
+        } else if (MINUTE_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / MINUTE_MS );
+        } else if (SECOND_STR.equals(intervalStr)) {
+            coordinateValue = Float.valueOf( val / SECOND_MS );
         }
-        response = new DefaultTemporalCoordinate(this, null, coordinateValue);
-        return response;
+        
+        return new DefaultTemporalCoordinate(this, null, coordinateValue);
     }
 
     @Override
