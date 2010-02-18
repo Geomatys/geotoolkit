@@ -19,6 +19,7 @@ package org.geotoolkit.temporal.object;
 
 import java.util.Calendar;
 import java.lang.annotation.Annotation;
+import java.util.TimeZone;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -84,11 +85,11 @@ public class UtilsTest implements Test{
         int[] nb;
 
         str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = Utils.getPositions(str, '-');
+        nb = Utils.getIndexes(str, '-');
         assertEquals(0, nb.length);
 
         str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = Utils.getPositions(str, '-');
+        nb = Utils.getIndexes(str, '-');
         assertEquals(5, nb.length);
         assertEquals(0, nb[0]);
         assertEquals(9, nb[1]);
@@ -97,7 +98,7 @@ public class UtilsTest implements Test{
         assertEquals(40, nb[4]);
 
         str = "---";
-        nb = Utils.getPositions(str, '-');
+        nb = Utils.getIndexes(str, '-');
         assertEquals(3, nb.length);
         assertEquals(0, nb[0]);
         assertEquals(1, nb[1]);
@@ -115,89 +116,200 @@ public class UtilsTest implements Test{
         int hour = 16;
         int min = 41;
         int sec = 36;
+        int mil = 512;
 
 
         str = "11/1995";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(1, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
 
         str = "23/11/1995";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "23 novembre 1995";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23 16:41:36";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
         assertEquals(hour, date.get(HOUR_OF_DAY));
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "Novembre 1995";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(1, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "11-1995";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(1, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
         assertEquals(hour, date.get(HOUR_OF_DAY));
         assertEquals(min, date.get(MINUTE));
         assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23Z";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
         assertEquals(day, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
 
         str = "1995";
         date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(0, date.get(MONTH));
         assertEquals(1, date.get(DAY_OF_MONTH));
         assertEquals(0, date.get(HOUR_OF_DAY));
         assertEquals(0, date.get(MINUTE));
         assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+
+        //ISO 8601 dates--------------------------------------------------------
+        
+        str = "1995-11-23T16:41:36";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36Z";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36.512Z";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(512, date.get(MILLISECOND));
+
+        str = "1995-11-23";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getDefault());
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(0, date.get(HOUR_OF_DAY));
+        assertEquals(0, date.get(MINUTE));
+        assertEquals(0, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36+04";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour-4, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36+04:00";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour-4, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36-04";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour+4, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
+        str = "1995-11-23T16:41:36-04:00";
+        date.setTime(Utils.createDate(str));
+        date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+        assertEquals(year, date.get(YEAR));
+        assertEquals(month, date.get(MONTH));
+        assertEquals(day, date.get(DAY_OF_MONTH));
+        assertEquals(hour+4, date.get(HOUR_OF_DAY));
+        assertEquals(min, date.get(MINUTE));
+        assertEquals(sec, date.get(SECOND));
+        assertEquals(0, date.get(MILLISECOND));
+
 
 
 

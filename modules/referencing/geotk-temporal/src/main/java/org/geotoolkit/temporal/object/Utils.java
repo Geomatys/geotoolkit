@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Map;
 import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,6 +35,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.UnSynchronizedCache;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.temporal.CalendarDate;
@@ -81,6 +84,29 @@ public final class Utils {
     private static final List<String> FR_POOL = new ArrayList<String>();
     private static final List<String> FR_POOL_CASE = new ArrayList<String>();
 
+    private static final int[] EMPTY_INT_ARRAY = new int[0];
+
+    /**
+     * Caution : those objects are not thread safe, take care to synchronize when you use them.
+     */
+    private static final SimpleDateFormat sdf1 = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+    private static final SimpleDateFormat sdf2 = new java.text.SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat sdf3 = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    private static final SimpleDateFormat sdf4 = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+    private static final Map<String,TimeZone> TIME_ZONES = new UnSynchronizedCache<String, TimeZone>(50){
+        @Override
+        public TimeZone get(Object o) {
+            TimeZone tz = super.get(o);
+            if(tz == null){
+                tz = TimeZone.getTimeZone((String)o);
+                put((String)o, tz);
+            }
+            return tz;
+        }
+    };
+
+
     static{
         FR_POOL.add("janvier");
         FR_POOL.add("février");
@@ -109,40 +135,33 @@ public final class Utils {
         FR_POOL_CASE.add("Décembre");
     }
 
-    private static final int[] EMPTY_INT_ARRAY = new int[0];
-
     private Utils(){}
 
     /**
      * Returns a Date object from an ISO-8601 representation string. (String defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
      * @param dateString
      * @return Date result of parsing the given string
+     * @throws ParseException
      */
     public static Date getDateFromString(String dateString) throws ParseException {
-        final String dateFormat1 = "yyyy-MM-dd'T'HH:mm:ssZ";
-        final String dateFormat2 = "yyyy-MM-dd";
-        final String dateFormat3 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
-        final String dateFormat4 = "yyyy-MM-dd'T'HH:mm:ss";
-        final SimpleDateFormat sdf = new java.text.SimpleDateFormat(dateFormat1);
-        final SimpleDateFormat sdf2 = new java.text.SimpleDateFormat(dateFormat2);
-        final SimpleDateFormat sdf3 = new java.text.SimpleDateFormat(dateFormat3);
-        final SimpleDateFormat sdf4 = new java.text.SimpleDateFormat(dateFormat4);
 
         boolean defaultTimezone = false;
 
-        if (dateString.contains("T")) {
-            String timezoneStr;
-            int index = dateString.lastIndexOf('+');
-            if (index == -1) {
-                index = dateString.lastIndexOf('-');
-            }
-            if (index > dateString.indexOf('T')) {
-                timezoneStr = dateString.substring(index + 1);
+        final int indexT = dateString.indexOf('T');
+        if (indexT > 0) {
 
-                if (timezoneStr.contains(":")) {
+            int tzIndex = dateString.lastIndexOf('+');
+            if (tzIndex == -1) {
+                tzIndex = dateString.lastIndexOf('-');
+            }
+
+            if (tzIndex > indexT) {
+                String timezoneStr = dateString.substring(tzIndex + 1);
+
+                if (timezoneStr.indexOf(':') > 0) {
                     //e.g : 1985-04-12T10:15:30+04:00
                     timezoneStr = timezoneStr.replace(":", "");
-                    dateString = dateString.substring(0, index + 1).concat(timezoneStr);
+                    dateString = dateString.substring(0, tzIndex + 1).concat(timezoneStr);
                 } else if (timezoneStr.length() == 2) {
                     //e.g : 1985-04-12T10:15:30-04
                     dateString = dateString.concat("00");
@@ -154,22 +173,37 @@ public final class Utils {
                 //e.g : 1985-04-12T10:15:30
                 defaultTimezone = true;
             }
-            final String timezone = getTimeZone(dateString);
-            sdf.setTimeZone(TimeZone.getTimeZone(timezone));
 
-            if (dateString.contains(".")) {
-                return sdf3.parse(dateString);
+            
+            if (dateString.indexOf('.') > 0) {
+                //simple date format is not thread safe
+                synchronized (sdf3){
+                    return sdf3.parse(dateString);
+                }
             }
-            if ( ! defaultTimezone ) {
-                return sdf.parse(dateString);
-            }else {
+
+            if(defaultTimezone){
                 //applying default timezone
-                return sdf4.parse(dateString);
+                //simple date format is not thread safe
+                synchronized(sdf4){
+                    return sdf4.parse(dateString);
+                }
+            }else{
+                final String timezone = getTimeZone(dateString);
+                //simple date format is not thread safe
+                synchronized(sdf1){
+                    sdf1.setTimeZone(TIME_ZONES.get(timezone));
+                    return sdf1.parse(dateString);
+                }
+            }
+
+        }else if(dateString.indexOf('-') > 0) {
+            //simple date format is not thread safe
+            synchronized(sdf2){
+                return sdf2.parse(dateString);
             }
         }
-        if (dateString.contains("-")) {
-            return sdf2.parse(dateString);
-        }
+
         return null;
     }
 
@@ -466,12 +500,12 @@ public final class Utils {
      * @return Date
      */
     public static Date createDate(String date) {
-        if (date == null || date.isEmpty() || date.contains("BC")) {
+        if (date == null || date.isEmpty() || date.endsWith("BC")) {
             return new Date();
         }
 
 
-        final int[] slashOccurences = getPositions(date, '/');
+        final int[] slashOccurences = getIndexes(date, '/');
         
         if(slashOccurences.length == 1){
             // date is like : 11/2050
@@ -479,6 +513,7 @@ public final class Utils {
             final int year = Integer.parseInt(date.substring(slashOccurences[0]+1, date.length()));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,1,0,0,0);
+            cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
 
         }else if(slashOccurences.length == 2){
@@ -488,11 +523,12 @@ public final class Utils {
             final int year = Integer.parseInt(date.substring(slashOccurences[1]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,day,0,0,0);
+            cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
         }
 
-        final int[] spaceOccurences = getPositions(date, ' ');
-        final int[] dashOccurences = getPositions(date, '-');
+        final int[] spaceOccurences = getIndexes(date, ' ');
+        final int[] dashOccurences = getIndexes(date, '-');
 
         if(spaceOccurences.length == 2){
             //date is like : 18 janvier 2050
@@ -501,6 +537,7 @@ public final class Utils {
             final int year = Integer.parseInt(date.substring(spaceOccurences[1]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,day,0,0,0);
+            cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
 
         }else if(spaceOccurences.length == 1 && dashOccurences.length < 3) {
@@ -516,6 +553,7 @@ public final class Utils {
             final int year = Integer.parseInt(date.substring(spaceOccurences[0]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,1,0,0,0);
+            cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
 
         }else if(dashOccurences.length == 1) {
@@ -524,9 +562,10 @@ public final class Utils {
             final int year = Integer.parseInt(date.substring(dashOccurences[0]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,1,0,0,0);
+            cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
 
-        }else if(dashOccurences.length == 2) {
+        }else if(dashOccurences.length >= 2) {
             //if date is in format yyyy-mm-ddTHH:mm:ss
             try {
                 final java.util.Date resultDate = getDateFromString(date);
@@ -551,6 +590,7 @@ public final class Utils {
 
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year,month,day,0,0,0);
+                cal.set(Calendar.MILLISECOND, 0);
                 return cal.getTime();
             }else{
                 //date is like 23-11-2010
@@ -559,6 +599,7 @@ public final class Utils {
                 final int year = Integer.parseInt(date.substring(dashOccurences[1]+1));
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year,month,day,0,0,0);
+                cal.set(Calendar.MILLISECOND, 0);
                 return cal.getTime();
             }
 
@@ -567,6 +608,7 @@ public final class Utils {
             final int year = Integer.parseInt(date);
             final Calendar cal = Calendar.getInstance();
             cal.set(year,0,1,0,0,0);
+            cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
         }
 
@@ -590,6 +632,7 @@ public final class Utils {
 
     /**
      * This method returns a number of occurences occ in the string s.
+     *
      * @param s : String to search in
      * @param occ : Occurence to search
      * @return number of occurence
@@ -603,8 +646,14 @@ public final class Utils {
         return cnt;
     }
 
-
-    public static int[] getPositions(String s, char occ) {
+    /**
+     * Search a string for all occurence of the char.
+     * 
+     * @param s : String to search in
+     * @param occ : Occurence to search
+     * @return array of all occurence indexes
+     */
+    public static int[] getIndexes(String s, char occ) {
         int pos = s.indexOf(occ);
         if(pos <0){
             return EMPTY_INT_ARRAY;
