@@ -457,7 +457,8 @@ scan:       while (!tables.isEmpty()) {
              */
             final CrossReference ref = entry.getValue();
             if (ref == null) {
-                throw new SQLException(Errors.format(Errors.Keys.MISSING_FOREIGNER_KEY_$1, table));
+                throw new SQLException(Errors.getResources(database.getLocale())
+                        .getString(Errors.Keys.MISSING_FOREIGNER_KEY_$1, table));
             }
             assert table.equals(ref.primaryKey.table) : table;
             buffer.append(" ON ");
@@ -516,6 +517,17 @@ scan:       while (!tables.isEmpty()) {
     }
 
     /**
+     * Returns the database metadata. This method can be invoked in a block synchronized on
+     * {@link Database#getLocalCache()}. This synchronization must be performed by
+     * the {@code Query} user; we can not perform it inside the {@code Query} class.
+     */
+    private DatabaseMetaData getMetaData() throws SQLException {
+        final LocalCache cache = database.getLocalCache();
+        assert Thread.holdsLock(cache); // Necessary for blocking the cleaner thread.
+        return cache.connection().getMetaData();
+    }
+
+    /**
      * Creates the SQL statement for the query of the given type with no {@code WHERE} clause.
      * This is mostly used for debugging purpose.
      *
@@ -524,7 +536,7 @@ scan:       while (!tables.isEmpty()) {
      * @throws SQLException if an error occured while reading the database.
      */
     final String selectAll(final QueryType type) throws SQLException {
-        final DatabaseMetaData metadata = database.getConnection().getMetaData();
+        final DatabaseMetaData metadata = getMetaData();
         final StringBuilder buffer = new StringBuilder();
         selectAll(buffer, type, metadata, false);
         appendOrdering(buffer, type, metadata);
@@ -543,7 +555,7 @@ scan:       while (!tables.isEmpty()) {
         synchronized (cachedSQL) {
             sql = cachedSQL.get(type);
             if (sql == null) {
-                final DatabaseMetaData metadata = database.getConnection().getMetaData();
+                final DatabaseMetaData metadata = getMetaData();
                 final StringBuilder buffer = new StringBuilder();
                 selectAll       (buffer, type, metadata, true);
                 appendParameters(buffer, type, metadata);
@@ -568,7 +580,7 @@ scan:       while (!tables.isEmpty()) {
         synchronized (cachedSQL) {
             sql = cachedSQL.get(type);
             if (sql == null) {
-                final DatabaseMetaData metadata = database.getConnection().getMetaData();
+                final DatabaseMetaData metadata = getMetaData();
                 final String quote = metadata.getIdentifierQuoteString().trim();
                 final Set<String> columnNames = getColumnNames(metadata, table);
                 final StringBuilder buffer = new StringBuilder("INSERT INTO ");
@@ -631,7 +643,7 @@ scan:       while (!tables.isEmpty()) {
         synchronized (cachedSQL) {
             sql = cachedSQL.get(type);
             if (sql == null) {
-                final DatabaseMetaData metadata = database.getConnection().getMetaData();
+                final DatabaseMetaData metadata = getMetaData();
                 final String quote = metadata.getIdentifierQuoteString().trim();
                 final StringBuilder buffer = new StringBuilder("DELETE FROM ");
                 if (!isIncludingChildTables()) {
@@ -682,24 +694,5 @@ scan:       while (!tables.isEmpty()) {
                 buffer.append(')');
             }
         }
-    }
-
-    /**
-     * Returns a string representation of this query, for debugging purpose.
-     */
-    @Override
-    public String toString() {
-        for (final QueryType type : QueryType.values()) {
-            final String sql;
-            try {
-                sql = select(type);
-            } catch (SQLException e) {
-                return e.toString();
-            }
-            if (sql!=null && sql.length() != 0) {
-                return sql;
-            }
-        }
-        return "<empty>";
     }
 }

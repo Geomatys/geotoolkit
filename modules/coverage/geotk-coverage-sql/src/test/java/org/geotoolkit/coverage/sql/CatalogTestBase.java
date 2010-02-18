@@ -59,7 +59,7 @@ public class CatalogTestBase {
      *
      * @return The database.
      */
-    protected static synchronized Database getDatabase() {
+    static synchronized Database getDatabase() {
         if (database == null) {
             final File pf = new File(Installation.root(), "Tests/coverage-sql.properties");
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
@@ -75,21 +75,20 @@ public class CatalogTestBase {
             ds.setServerName(properties.getProperty("server"));
             ds.setDatabaseName(properties.getProperty("database"));
             database = new Database(ds, properties);
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override public void run() {
-                    final Database db = database;
-                    database = null;
-                    try {
-                        db.getConnection().close();
-                    } catch (SQLException e) {
-                        // Not a recommanded practice, but we can hardly do better.
-                        // We can not log neither since we are shuting down the JVM.
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
         return database;
+    }
+
+    /**
+     * Closes the connection to the database.
+     *
+     * @throws SQLException If an error occured while closing the connection.
+     */
+    @AfterClass
+    public static synchronized void shutdown() throws SQLException {
+        final Database db = database;
+        database = null;
+        db.reset();
     }
 
     /**
@@ -99,9 +98,13 @@ public class CatalogTestBase {
      */
     @Test
     public void testConnection() throws SQLException {
-        final Connection connection = getDatabase().getConnection();
-        assertNotNull(connection);
-        assertFalse(connection.isClosed());
+        final LocalCache cache = getDatabase().getLocalCache();
+        synchronized (cache) {
+            final Connection connection = cache.connection();
+            assertNotNull(connection);
+            assertFalse(connection.isClosed());
+            assertSame(connection, cache.connection());
+        }
     }
 
     /**
@@ -111,7 +114,7 @@ public class CatalogTestBase {
      * @throws SQLException if an query error occured.
      */
     protected static void trySelectStatement(final String query) throws SQLException {
-        final Statement s = getDatabase().getConnection().createStatement();
+        final Statement s = getDatabase().getLocalCache().connection().createStatement();
         final ResultSet r = s.executeQuery(query);
         if (r.next()) {
             final ResultSetMetaData metadata = r.getMetaData();

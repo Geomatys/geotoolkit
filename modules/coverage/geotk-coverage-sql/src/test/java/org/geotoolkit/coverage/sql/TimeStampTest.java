@@ -51,19 +51,22 @@ public final class TimeStampTest extends CatalogTestBase {
     public void testGet() throws SQLException {
         final TimeZone UTC = TimeZone.getTimeZone("UTC");
         final Calendar cal = new GregorianCalendar(UTC, Locale.CANADA);
-        final Statement  s = getDatabase().getConnection().createStatement();
-        final ResultSet  r = s.executeQuery(
-                "SELECT \"startTime\", \"startTime\" FROM \"coverages\".\"GridCoverages\" " +
-                "WHERE series=100 AND filename='198601'");
-        Date t1, t2;
-        try {
-            assertTrue(r.next());
-            t1 = r.getTimestamp(1);
-            t2 = r.getTimestamp(2, cal);
-            assertFalse(r.next());
-        } finally {
-            r.close();
-            s.close();
+        final LocalCache cache = getDatabase().getLocalCache();
+        final Date t1, t2;
+        synchronized (cache) {
+            final Statement s = cache.connection().createStatement();
+            final ResultSet r = s.executeQuery(
+                    "SELECT \"startTime\", \"startTime\" FROM \"coverages\".\"GridCoverages\" " +
+                    "WHERE series=100 AND filename='198601'");
+            try {
+                assertTrue(r.next());
+                t1 = r.getTimestamp(1);
+                t2 = r.getTimestamp(2, cal);
+                assertFalse(r.next());
+            } finally {
+                r.close();
+                s.close();
+            }
         }
         // 'offset' sera expliqué plus bas...
         final int offset = TimeZone.getDefault().getOffset(t1.getTime());

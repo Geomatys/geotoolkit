@@ -31,7 +31,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class DuplicatedRecordException extends IllegalRecordException {
+class DuplicatedRecordException extends IllegalRecordException {
     /**
      * For cross-version compatibility.
      */
@@ -70,6 +70,6 @@ public class DuplicatedRecordException extends IllegalRecordException {
      */
     @Override
     public String getLocalizedMessage() {
-        return Errors.format(Errors.Keys.DUPLICATED_RECORD_$1, getPrimaryKey());
+        return errors().getString(Errors.Keys.DUPLICATED_RECORD_$1, getPrimaryKey());
     }
 }

@@ -26,10 +26,18 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * An entry in {@link StatementPool}.
  *
+ * {@note We could define a <code>StatementAdapter</code> class which implement the
+ * <code>PreparedStatement</code> interface  and delegate every method calls to the
+ * wrapped statement. Then this <code>StatementEntry</code> class could extend that
+ * <code>StatementAdapter</code> class. But for now we prefer to avoid the weight of
+ * such a big adapter and force every usage of <code>StatementEntry</code> to work
+ * directly with the wrapped statement.}
+ *
  * {@section Synchronization}
  * This class is <strong>not</strong> thread-safe. Callers must perform their own synchronization
  * in such a way that only one query is executed on the same connection (JDBC connections can not
- * be assumed thread-safe).
+ * be assumed thread-safe). The synchronization block shall be the {@link StatementPool} which
+ * contain this entry.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.03
@@ -39,21 +47,15 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class StatementEntry {
     /**
-     * The timeout before to close a prepared statement.
-     * This is set to 10 seconds.
-     */
-    static final int TIMEOUT = 10000;
-
-    /**
-     * The expiration time of this result. It must be initialized by the caller
-     * to the current time + {@link #TIMEOUT}.
+     * The expiration time of this result. This is read and updated by {@link StatementPool} only.
      */
     long expireTime;
 
     /**
-     * The statement for a specific table.
+     * The statement associated with this entry.
+     * This is the statement given to the constructor.
      */
-    protected final PreparedStatement statement;
+    public final PreparedStatement statement;
 
     /**
      * Constructs a metadata result for the specified statement.
@@ -65,15 +67,12 @@ public class StatementEntry {
     }
 
     /**
-     * Notifies this object that it has been used.
-     */
-    final void touch() {
-        expireTime = System.currentTimeMillis() + TIMEOUT;
-    }
-
-    /**
      * Closes the statement and free all resources. After this method
      * has been invoked, this object can't be used anymore.
+     * <p>
+     * This method should be invoked instead than a direct call to {@code statement.close()}
+     * because some subclasses override this method in order to release additional resources
+     * hold by this {@code StatementEntry}.
      *
      * @throws SQLException If an error occured while closing the statement.
      */
@@ -91,7 +90,7 @@ public class StatementEntry {
             close();
         } catch (SQLException e) {
             /*
-             * Use the logger of the package that subclass this entry, and pretent that the
+             * Use the logger of the package that subclass this entry, and pretend that the
              * message comme from PreparedStatement.close() which is the closest we can get
              * to a public API.
              */

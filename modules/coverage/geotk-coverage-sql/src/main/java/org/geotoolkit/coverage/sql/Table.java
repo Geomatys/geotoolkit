@@ -21,14 +21,17 @@ import java.sql.SQLException;
 import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Locale;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
 
@@ -42,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @ThreadSafe(concurrent=true)
-class Table {
+class Table implements Localized {
     /**
      * The logger for table-related events.
      */
@@ -64,27 +67,34 @@ class Table {
      */
     private static final class Session {
         /**
+         * The pool of prepared statements. All tables used in the same thread share the same
+         * {@code LocalCache} instance. However different threads use different instances.
+         * <p>
+         * All JDBC operations must be synchronized on this object, in order to prevent the
+         * background cleaner thread to close the statements before we finished to use them.
+         * <p>
+         * This field is provided only for convenience. It shall be the same reference than
+         * {@link Database#getLocalCache()} all the time.
+         */
+        final LocalCache cache;
+
+        /**
          * The query type for the current {@linkplain #statement}.
          */
         QueryType type;
 
         /**
-         * The last used query in SQL language.
-         * This is the query used for the {@link #statement} creation.
-         */
-        String sql;
-
-        /**
-         * The prepared statement for fetching data.
-         */
-        PreparedStatement statement;
-
-        /**
-         * {@code true} if the {@linkplain #statement} needs to be
-         * {@linkplain Table#configure configured}. This is the case
-         * when a new statement has just been created.
+         * {@code true} if the statement needs to be {@linkplain Table#configure configured}.
+         * This is the case when a new statement has just been created.
          */
         boolean changed;
+
+        /**
+         * Creates a new instance.
+         */
+        Session(final LocalCache cache) {
+            this.cache = cache;
+        }
     }
 
     /**
@@ -92,7 +102,7 @@ class Table {
      */
     private final ThreadLocal<Session> session = new ThreadLocal<Session>() {
         @Override protected Session initialValue() {
-            return new Session();
+            return new Session(getDatabase().getLocalCache());
         }
     };
 
@@ -136,7 +146,7 @@ class Table {
     final Database getDatabase() throws IllegalStateException {
         final Database database = query.database;
         if (database == null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.NO_DATA_SOURCE));
+            throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
         }
         return database;
     }
@@ -149,90 +159,89 @@ class Table {
      * @param  key The property key, usually one of {@link Database} constants.
      * @return The property value, or {@code null} if none.
      */
-    final String getProperty(final ConfigurationKey key) {
+    protected final String getProperty(final ConfigurationKey key) {
         final Database database = query.database;
         return (database != null) ? database.getProperty(key) : key.defaultValue;
     }
 
     /**
-     * Formats the given statement. If the given statement is an implementation which is known
-     * to have a well suited {@code toString()} method (like the PostgreSQL driver), then that
-     * method is invoked directly. Otherwise this query is formatted as a fallback (in which
-     * case the parameter values are missing).
-     * <p>
-     * This method is used only for logging or debugging purpose.
+     * Returns the lock to use for any call to a {@code getStatement(...)} method. Note that
+     * this lock will <strong>not</strong> block concurrent usage of {@code Table}. This is
+     * only a lock for preventing the connection to be closed before the query is finished.
      *
-     * @param  statement The prepared statement to format.
-     * @param  query The SQL query used for preparing the statement.
-     * @return A string representation of the given prepared statement.
+     * @return The lock to use in a {@code synchronized} statement.
      */
-    private static String format(final PreparedStatement statement, final String query) {
-        final String className = statement.getClass().getName();
-        if (className.startsWith("org.postgresql")) {
-            return statement.toString();
-        }
-        return query;
+    final Object getLock() {
+        return session.get().cache;
     }
 
     /**
      * Returns a prepared statement for the given SQL query. If the specified {@code query} is the
      * same one than last time this method has been invoked, then this method returns the same
-     * {@link PreparedStatement} instance (if it still available). Otherwise this method closes
-     * the previous statement and creates a new one.
+     * {@link PreparedStatement} instance (if it still available).
      * <p>
      * If a new statement is created, or if the table has {@linkplain #fireStateChanged
      * changed its state} since the last call, then this method invokes {@link #configure}.
+     * <p>
+     * This method must be invoked in a synchronized block as below. Note that the lock
+     * will not prevent concurrent usage of this table. This is just a lock for preventing
+     * the JDBC resources to be reclaimed while they are still in use.
+     *
+     * {@preformat java
+     *     synchronized(getLock()) {
+     *         // Perform all JDBC work here.
+     *     }
+     * }
      *
      * @param  query The SQL query to prepare.
      * @return The prepared statement.
      * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    final PreparedStatement getStatement(final String query) throws CatalogException, SQLException {
+    final LocalCache.Stmt getStatement(final String query) throws CatalogException, SQLException {
         final Session s = session.get();
-        PreparedStatement statement = s.statement;
-        if (!query.equals(s.sql)) {
-            if (statement != null) {
-                s.sql       = null;
-                s.statement = null; // Must be done first in case the following line fails.
-                statement.close();
-            }
-            s.statement = statement = getDatabase().getConnection().prepareStatement(query);
-            s.changed   = true;
-            s.sql       = query;
-        }
-        if (statement != null) {
-            if (s.changed) {
-                final QueryType type = s.type;
-                configure(type, statement);
-                final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
-                if (LOGGER.isLoggable(level)) {
-                    final LogRecord record = new LogRecord(level, format(statement, query));
-                    record.setSourceClassName(getClass().getName());
-                    final String method;
-                    switch (type) {
-                        case SELECT: method = "getEntry"; break;
-                        case LIST:   method = "getEntries"; break;
-                        default:     method = "getStatement"; break;
-                    }
-                    record.setSourceMethodName(method);
-                    record.setLoggerName(LOGGER.getName());
-                    LOGGER.log(record);
+        assert Thread.holdsLock(s.cache);
+        final LocalCache.Stmt ce = s.cache.prepareStatement(this, query);
+        if (s.changed) {
+            final QueryType type = s.type;
+            configure(type, ce.statement);
+            final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
+            if (LOGGER.isLoggable(level)) {
+                final LogRecord record = new LogRecord(level, ce.toString());
+                record.setSourceClassName(getClass().getName());
+                final String method;
+                switch (type) {
+                    case SELECT: method = "getEntry"; break;
+                    case LIST:   method = "getEntries"; break;
+                    default:     method = "getStatement"; break;
                 }
+                record.setSourceMethodName(method);
+                record.setLoggerName(LOGGER.getName());
+                LOGGER.log(record);
             }
         }
-        return statement;
+        return ce;
     }
 
     /**
      * Returns a prepared statement for the given query type.
+     * <p>
+     * This method must be invoked in a synchronized block as below. Note that the lock
+     * will not prevent concurrent usage of this table. This is just a lock for preventing
+     * the JDBC resources to be reclaimed while they are still in use.
+     *
+     * {@preformat java
+     *     synchronized(getLock()) {
+     *         // Perform all JDBC work here.
+     *     }
+     * }
      *
      * @param  type The query type.
      * @return The prepared statement.
      * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    final PreparedStatement getStatement(final QueryType type) throws CatalogException, SQLException {
+    final LocalCache.Stmt getStatement(final QueryType type) throws CatalogException, SQLException {
         final String sql;
         switch (type) {
             default:     sql = query.select(type); break;
@@ -246,17 +255,19 @@ class Table {
 
     /**
      * Invoked before an arbitrary amount of {@code INSERT}, {@code UPDATE} or {@code DELETE}
-     * SQL statements. This method <strong>must</strong> be invoked in a {@code try} ...
-     * {@code finally} block as below:
+     * SQL statements. This method <strong>must</strong> be invoked in a
+     * {@code try} ... {@code finally} block as below:
      *
      * {@preformat java
-     *     boolean success = false;
-     *     transactionBegin();
-     *     try {
-     *        // Do some operation here...
-     *         success = true;  // Must be the very last line in the try block.
-     *     } finally {
-     *         transactionEnd(success);
+     *     synchronized(getLock()) {
+     *         boolean success = false;
+     *         transactionBegin();
+     *         try {
+     *            // Do some operation here...
+     *             success = true;  // Must be the very last line in the try block.
+     *         } finally {
+     *             transactionEnd(success);
+     *         }
      *     }
      * }
      *
@@ -333,15 +344,16 @@ class Table {
      * @return The column index (starting with 1).
      * @throws SQLException if the specified column is not applicable.
      */
-    final int indexOf(final Column column) throws SQLException {
+    protected final int indexOf(final Column column) throws SQLException {
         final QueryType type = getQueryType();
         final int index = column.indexOf(type);
         if (index > 0) {
             return index;
         }
+        final IndexedResourceBundle errors = errors();
         throw new SQLDataException(
-                Errors.format(Errors.Keys.UNSUPPORTED_OPERATION_$1, type) + ". " +
-                Errors.format(Errors.Keys.CANT_READ_DATABASE_TABLE_$2, column.table, column.name));
+                errors.getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type) + ". " +
+                errors.getString(Errors.Keys.CANT_READ_DATABASE_TABLE_$2, column.table, column.name));
     }
 
     /**
@@ -354,13 +366,13 @@ class Table {
      * @return The parameter index (starting with 1).
      * @throws SQLException if the specified parameter is not applicable.
      */
-    final int indexOf(final Parameter parameter) throws SQLException {
+    protected final int indexOf(final Parameter parameter) throws SQLException {
         final QueryType type = getQueryType();
         final int index = parameter.indexOf(type);
         if (index > 0) {
             return index;
         }
-        throw new SQLDataException(Errors.format(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
+        throw new SQLDataException(errors().getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
     }
 
     /**
@@ -378,7 +390,7 @@ class Table {
      *
      * @return The calendar for date calculation in this table.
      */
-    final Calendar getCalendar() {
+    protected final Calendar getCalendar() {
         final Database database = getDatabase();
         final Calendar calendar = database.getCalendar();
         assert calendar.getTimeZone().equals(database.getTimeZone());
@@ -396,14 +408,14 @@ class Table {
      * @param property The name of the property that changed.
      * @throws CatalogException If this table is not modifiable.
      */
-    void fireStateChanged(final String property) throws CatalogException {
+    protected void fireStateChanged(final String property) throws CatalogException {
         /*
          * Set the change flag anyway, because this method is invoked when the
          * change has already been applied so it is too late for preventing it.
          */
         session.get().changed = true;
         if (unmodifiable) {
-            throw new CatalogException(Errors.format(Errors.Keys.UNMODIFIABLE_OBJECT_$1, getClass()));
+            throw new CatalogException(errors().getString(Errors.Keys.UNMODIFIABLE_OBJECT_$1, getClass()));
         }
     }
 
@@ -434,7 +446,9 @@ class Table {
     }
 
     /**
-     * Ensures that the given argument is non-null. This is a convenience method for argument checks.
+     * Ensures that the given argument is non-null. This is a convenience method for argument checks
+     * in constructors. This method does not take in account the table locale because the table is
+     * typically not fully constructed when this method is invoked.
      *
      * @param  name  The argument name.
      * @param  value The argument value.
@@ -444,6 +458,27 @@ class Table {
         if (value == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
+    }
+
+    /**
+     * Returns the resources to use for formatting error messages.
+     */
+    final IndexedResourceBundle errors() {
+        return Errors.getResources(getLocale());
+    }
+
+    /**
+     * Returns the locale to use for formatting messages. This is used mostly for error messages
+     * in exceptions, and for warnings during {@linkplain javax.imageio.ImageRead image read}
+     * operations.
+     *
+     * @return The locale for message formatting, or {@code null} for the
+     *         {@linkplain Locale#getDefault() system default}.
+     */
+    @Override
+    public final Locale getLocale() {
+        final Database database = query.database;
+        return (database != null) ? database.getLocale() : null;
     }
 
     /**

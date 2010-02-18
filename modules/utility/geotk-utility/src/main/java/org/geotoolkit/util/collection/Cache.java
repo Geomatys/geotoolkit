@@ -256,6 +256,14 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     }
 
     /**
+     * Returns {@code true} if this map contains the specified key.
+     */
+    @Override
+    public boolean containsKey(final Object key) {
+        return map.containsKey(key);
+    }
+
+    /**
      * Returns {@code true} if the given value is an instance of one of the reserved types
      * used internally by this class.
      */

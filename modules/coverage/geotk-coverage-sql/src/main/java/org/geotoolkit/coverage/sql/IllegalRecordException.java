@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class IllegalRecordException extends CatalogException {
+class IllegalRecordException extends CatalogException {
     /**
      * For cross-version compatibility.
      */

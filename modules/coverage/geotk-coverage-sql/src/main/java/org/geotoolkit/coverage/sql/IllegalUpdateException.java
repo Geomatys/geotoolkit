@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Locale;
 import org.geotoolkit.resources.Errors;
 
 
@@ -34,7 +35,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class IllegalUpdateException extends CatalogException {
+class IllegalUpdateException extends CatalogException {
     /**
      * For cross-version compatibility.
      */
@@ -51,10 +52,11 @@ public class IllegalUpdateException extends CatalogException {
      * Creates an exception with a detail messages created from the specified number
      * of rows that were changed.
      *
+     * @param locale The locale to use for formatting the error message, or {@code null}.
      * @param count The unexpected number of rows changed.
      */
-    public IllegalUpdateException(final int count) {
-        this(Errors.format(Errors.Keys.UNEXPECTED_UPDATES_$1, count));
+    IllegalUpdateException(final Locale locale, final int count) {
+        this(Errors.getResources(locale).getString(Errors.Keys.UNEXPECTED_UPDATES_$1, count));
     }
 
     /**

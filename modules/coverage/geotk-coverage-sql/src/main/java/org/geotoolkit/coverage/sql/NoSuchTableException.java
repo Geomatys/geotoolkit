@@ -27,7 +27,7 @@ package org.geotoolkit.coverage.sql;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class NoSuchTableException extends CatalogException {
+class NoSuchTableException extends CatalogException {
     /**
      * For cross-version compatibility.
      */

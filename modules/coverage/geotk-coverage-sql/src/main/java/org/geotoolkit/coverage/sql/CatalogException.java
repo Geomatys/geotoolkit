@@ -20,8 +20,10 @@ package org.geotoolkit.coverage.sql;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Locale;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -35,7 +37,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class CatalogException extends Exception {
+class CatalogException extends Exception {
     /**
      * For cross-version compatibility.
      */
@@ -55,6 +57,11 @@ public class CatalogException extends Exception {
      * The primary key for the record where a problem occured, or {@code null} if unknown.
      */
     private Comparable<?> key;
+
+    /**
+     * The locale to use for formatting error messages, or {@code null} for the default.
+     */
+    private Locale locale;
 
     /**
      * Creates an exception with no cause and no details message.
@@ -143,11 +150,14 @@ public class CatalogException extends Exception {
          * we created our SQL statement). But some JDBC drivers don't provide information.
          * In the later case, we fallback on the information found in our Column objects.
          */
-        if ((noTable || noColumn) && table != null) {
-            final Column c = table.getColumn(column);
-            if (c != null) {
-                if (noTable)  this.table  = c.table;
-                if (noColumn) this.column = c.name;
+        if (table != null) {
+            locale = table.getLocale();
+            if (noTable || noColumn) {
+                final Column c = table.getColumn(column);
+                if (c != null) {
+                    if (noTable)  this.table  = c.table;
+                    if (noColumn) this.column = c.name;
+                }
             }
         }
         this.key = key;
@@ -189,6 +199,13 @@ public class CatalogException extends Exception {
     }
 
     /**
+     * Returns the resources to use for formatting error messages.
+     */
+    final IndexedResourceBundle errors() {
+        return Errors.getResources(locale);
+    }
+
+    /**
      * Returns a concatenation of the {@linkplain #getMessage details message} and the table
      * and column name where the error occured.
      */
@@ -227,7 +244,7 @@ public class CatalogException extends Exception {
                     args = new String[] {table};
                 }
             }
-            final String explain = Errors.format(localKey, args);
+            final String explain = errors().getString(localKey, args);
             if (message != null) {
                 message = explain + ' ' + message;
             }

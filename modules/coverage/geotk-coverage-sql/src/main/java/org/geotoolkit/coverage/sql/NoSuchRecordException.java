@@ -31,7 +31,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class NoSuchRecordException extends CatalogException {
+class NoSuchRecordException extends CatalogException {
     /**
      * For cross-version compatibility.
      */
@@ -74,7 +74,7 @@ public class NoSuchRecordException extends CatalogException {
         // the super-class implementation never returns null.
         String message = getMessage();
         if (message == null) {
-            message = Errors.format(Errors.Keys.NO_SUCH_RECORD_IN_TABLE_$2, getTableName(), getPrimaryKey());
+            message = errors().getString(Errors.Keys.NO_SUCH_RECORD_IN_TABLE_$2, getTableName(), getPrimaryKey());
         }
         return message;
     }

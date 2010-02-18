@@ -34,6 +34,11 @@ import org.geotoolkit.util.logging.Logging;
  * closed and removed from the map when the number of statements exceed the maximal capacity.
  * Inactive statements are also closed after some timeout.
  *
+ * {@note This class duplicates the work done by statement pools in modern JDBC drivers.
+ * Nevertheless it still useful when we retain some additional JDBC resources together with
+ * the <code>PreparedStatement</code>, for example the <code>ResultSet</code> created from
+ * that statement. This is what the <code>geotk-metadata-sql</code> module does.}
+ *
  * {@section Synchronization}
  * Every access to this pool <strong>must</strong> be synchronized on {@code this}.
  * Synchronization is user-responsability; this class is not thread safe alone. It
@@ -76,7 +81,15 @@ import org.geotoolkit.util.logging.Logging;
  * @module
  */
 @SuppressWarnings("serial")
-public final class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V> implements Runnable {
+public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V> implements Runnable {
+    /**
+     * The timeout before to close a prepared statement. This is set to 2 seconds, which is
+     * a bit short but should be okay if the {@link DataSource} creates pooled connections.
+     * In case there is no connection pool, then the mechanism defined in this package will
+     * hopefully keeps the performance at a raisonable level.
+     */
+    private static final int TIMEOUT = 2000;
+
     /**
      * The maximum number of prepared statements to be kept in the pool.
      */
@@ -101,7 +114,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
      */
     public StatementPool(final int capacity, final DataSource dataSource) {
         super(Utilities.hashMapCapacity(capacity));
-        this.capacity = capacity;
+        this.capacity   = capacity;
         this.dataSource = dataSource;
     }
 
@@ -156,8 +169,8 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
      */
     @Override
     public final V put(final K key, final V value) {
-        value.touch();
         assert Thread.holdsLock(this);
+        value.expireTime = System.currentTimeMillis() + TIMEOUT;
         return super.put(key, value);
     }
 
@@ -215,7 +228,7 @@ public final class StatementPool<K,V extends StatementEntry> extends LinkedHashM
          * An initial wait time is preferable because the map may be empty for a few
          * milliseconds (this occurs when MetadataSource has just been created).
          */
-        long waitTime = StatementEntry.TIMEOUT;
+        long waitTime = TIMEOUT;
 sleep:  do {
             /*
              * Increase the wait time by an arbitrary amount in order to

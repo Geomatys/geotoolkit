@@ -409,7 +409,7 @@ public class PaletteFactory {
      * factory concurrently in many threads, each with their own locale.
      *
      * @param warningLocale The locale for warning or error messages, or {@code null} for the
-     *        default locale
+     *        {@linkplain Locale#getDefault() default locale}.
      *
      * @since 2.4
      */

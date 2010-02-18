@@ -36,7 +36,7 @@ import org.geotoolkit.util.logging.Logging;
  * @module
  */
 @ThreadSafe
-public class Entry implements Serializable {
+class Entry implements Serializable {
     /**
      * For cross-version compatibility.
      */

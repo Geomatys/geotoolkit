@@ -103,6 +103,8 @@ COMMENT ON INDEX "SampleDimensions_index" IS
 -- Dependencies: "SampleDimensions"                                                             --
 --------------------------------------------------------------------------------------------------
 
+CREATE TYPE "Function" AS ENUM ('log');
+
 CREATE TABLE "Categories" (
     "format"   character varying NOT NULL,
     "band"     smallint          NOT NULL,
@@ -111,7 +113,7 @@ CREATE TABLE "Categories" (
     "upper"    integer           NOT NULL,
     "c0"       double precision,
     "c1"       double precision,
-    "function" character varying,
+    "function" "Function",
     "colors"   character varying,
     PRIMARY KEY ("format", "band", "name"),
     FOREIGN KEY ("format", "band") REFERENCES "SampleDimensions" ON UPDATE CASCADE ON DELETE CASCADE,
