@@ -36,7 +36,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
-import org.apache.bcel.generic.CHECKCAST;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
