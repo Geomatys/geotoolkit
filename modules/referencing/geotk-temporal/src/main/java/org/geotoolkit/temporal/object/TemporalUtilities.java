@@ -56,9 +56,9 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
  * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
-public final class Utils {
+public final class TemporalUtilities {
 
-    private static final Logger LOGGER = Logging.getLogger(Utils.class);
+    private static final Logger LOGGER = Logging.getLogger(TemporalUtilities.class);
     private static final String DEFAULT_TIMEZONE = TimeZone.getDefault().getID();
 
     /**
@@ -135,7 +135,7 @@ public final class Utils {
         FR_POOL_CASE.add("Décembre");
     }
 
-    private Utils(){}
+    private TemporalUtilities(){}
 
     /**
      * Returns a Date object from an ISO-8601 representation string. (String defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).

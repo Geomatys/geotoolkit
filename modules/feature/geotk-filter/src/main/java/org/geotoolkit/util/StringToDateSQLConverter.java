@@ -17,7 +17,7 @@
 package org.geotoolkit.util;
 
 import java.sql.Date;
-import org.geotoolkit.temporal.object.Utils;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 
@@ -56,7 +56,7 @@ public class StringToDateSQLConverter implements ObjectConverter<String, Date>{
 
     @Override
     public Date convert(String s) throws NonconvertibleObjectException {
-        return new Date(Utils.createDate(s).getTime());
+        return new Date(TemporalUtilities.createDate(s).getTime());
     }
 
 }

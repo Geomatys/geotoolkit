@@ -18,7 +18,7 @@
 package org.geotoolkit.filter.binarycomparison;
 
 import java.util.Date;
-import org.geotoolkit.temporal.object.Utils;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.junit.Test;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsGreaterThan;

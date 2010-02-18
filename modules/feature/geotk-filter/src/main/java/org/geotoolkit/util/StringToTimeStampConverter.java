@@ -18,7 +18,7 @@ package org.geotoolkit.util;
 
 import java.sql.Timestamp;
 
-import org.geotoolkit.temporal.object.Utils;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.converter.ObjectConverter;
 
@@ -57,7 +57,7 @@ public class StringToTimeStampConverter implements ObjectConverter<String, Times
 
     @Override
     public Timestamp convert(String s) throws NonconvertibleObjectException {
-        return new Timestamp(Utils.createDate(s).getTime());
+        return new Timestamp(TemporalUtilities.createDate(s).getTime());
     }
 
 }

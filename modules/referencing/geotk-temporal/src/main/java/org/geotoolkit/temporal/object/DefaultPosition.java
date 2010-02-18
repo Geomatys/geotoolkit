@@ -67,7 +67,7 @@ public class DefaultPosition implements Position {
      * @throws java.text.ParseException
      */
     public DefaultPosition(final InternationalString datetime) throws ParseException {
-        this.position = Utils.getDateFromString(datetime.toString());
+        this.position = TemporalUtilities.getDateFromString(datetime.toString());
     }
 
     /**
@@ -103,19 +103,19 @@ public class DefaultPosition implements Position {
         }
         if (this.position instanceof TemporalPosition) {
             if (this.position instanceof JulianDate) {
-                return Utils.julianToDate((DefaultJulianDate) position);
+                return TemporalUtilities.julianToDate((DefaultJulianDate) position);
             }
             if (this.position instanceof DateAndTime) {
-                return Utils.dateAndTimeToDate((DateAndTime) position);
+                return TemporalUtilities.dateAndTimeToDate((DateAndTime) position);
             }
             if (this.position instanceof CalendarDate) {
-                return Utils.calendarDateToDate((CalendarDate) position);
+                return TemporalUtilities.calendarDateToDate((CalendarDate) position);
             }
             if (this.position instanceof TemporalCoordinate) {
-                return Utils.temporalCoordToDate((TemporalCoordinate) position);
+                return TemporalUtilities.temporalCoordToDate((TemporalCoordinate) position);
             }
             if (this.position instanceof OrdinalPosition) {
-                return Utils.ordinalToDate((OrdinalPosition) position);
+                return TemporalUtilities.ordinalToDate((OrdinalPosition) position);
             }
         }
         return null;

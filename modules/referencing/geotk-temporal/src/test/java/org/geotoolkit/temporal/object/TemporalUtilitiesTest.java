@@ -31,7 +31,7 @@ import static java.util.Calendar.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class UtilsTest implements Test{
+public class TemporalUtilitiesTest implements Test{
 
     @Override
     public Class<? extends Throwable> expected() {
@@ -61,21 +61,21 @@ public class UtilsTest implements Test{
         int nb;
 
         str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = Utils.getOccurence(str, '-');
+        nb = TemporalUtilities.getOccurence(str, '-');
         assertEquals(0, nb);
 
 
         str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = Utils.getOccurence(str, '-');
+        nb = TemporalUtilities.getOccurence(str, '-');
         assertEquals(5, nb);
 
         str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = Utils.getOccurence(str, "-");
+        nb = TemporalUtilities.getOccurence(str, "-");
         assertEquals(0, nb);
 
 
         str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = Utils.getOccurence(str, "-");
+        nb = TemporalUtilities.getOccurence(str, "-");
         assertEquals(5, nb);
     }
 
@@ -85,11 +85,11 @@ public class UtilsTest implements Test{
         int[] nb;
 
         str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = Utils.getIndexes(str, '-');
+        nb = TemporalUtilities.getIndexes(str, '-');
         assertEquals(0, nb.length);
 
         str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = Utils.getIndexes(str, '-');
+        nb = TemporalUtilities.getIndexes(str, '-');
         assertEquals(5, nb.length);
         assertEquals(0, nb[0]);
         assertEquals(9, nb[1]);
@@ -98,7 +98,7 @@ public class UtilsTest implements Test{
         assertEquals(40, nb[4]);
 
         str = "---";
-        nb = Utils.getIndexes(str, '-');
+        nb = TemporalUtilities.getIndexes(str, '-');
         assertEquals(3, nb.length);
         assertEquals(0, nb[0]);
         assertEquals(1, nb[1]);
@@ -120,7 +120,7 @@ public class UtilsTest implements Test{
 
 
         str = "11/1995";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -132,7 +132,7 @@ public class UtilsTest implements Test{
 
 
         str = "23/11/1995";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -143,7 +143,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "23 novembre 1995";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -154,7 +154,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23 16:41:36";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -165,7 +165,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "Novembre 1995";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -176,7 +176,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "11-1995";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -187,7 +187,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -198,7 +198,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23Z";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -209,7 +209,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(0, date.get(MONTH));
@@ -223,7 +223,7 @@ public class UtilsTest implements Test{
         //ISO 8601 dates--------------------------------------------------------
         
         str = "1995-11-23T16:41:36";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -234,7 +234,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36Z";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -245,7 +245,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36.512Z";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -256,7 +256,7 @@ public class UtilsTest implements Test{
         assertEquals(512, date.get(MILLISECOND));
 
         str = "1995-11-23";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getDefault());
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -267,7 +267,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36+04";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -278,7 +278,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36+04:00";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -289,7 +289,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36-04";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
@@ -300,7 +300,7 @@ public class UtilsTest implements Test{
         assertEquals(0, date.get(MILLISECOND));
 
         str = "1995-11-23T16:41:36-04:00";
-        date.setTime(Utils.createDate(str));
+        date.setTime(TemporalUtilities.createDate(str));
         date.setTimeZone(TimeZone.getTimeZone("GMT+0"));
         assertEquals(year, date.get(YEAR));
         assertEquals(month, date.get(MONTH));
