@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,13 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.List;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +32,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.temporal.CalendarDate;
@@ -57,7 +58,6 @@ public final class Utils {
     private static final Logger LOGGER = Logging.getLogger(Utils.class);
     private static final String DEFAULT_TIMEZONE = TimeZone.getDefault().getID();
 
-
     /**
      * The units for months.
      *
@@ -72,9 +72,46 @@ public final class Utils {
      */
     public static final Unit<javax.measure.quantity.Duration> YEAR_UNIT = NonSI.DAY.times(YEAR_MS / DAY_MS);
 
-    private Utils(){
+    /**
+     * Hack for french datas, must find another way to do so.
+     * handle all local ? impossible
+     * handle the current local ? 
+     * If the server has a different local then the client ? won't work
+     */
+    private static final List<String> FR_POOL = new ArrayList<String>();
+    private static final List<String> FR_POOL_CASE = new ArrayList<String>();
 
+    static{
+        FR_POOL.add("janvier");
+        FR_POOL.add("février");
+        FR_POOL.add("mars");
+        FR_POOL.add("avril");
+        FR_POOL.add("mai");
+        FR_POOL.add("juin");
+        FR_POOL.add("juillet");
+        FR_POOL.add("août");
+        FR_POOL.add("septembre");
+        FR_POOL.add("octobre");
+        FR_POOL.add("novembre");
+        FR_POOL.add("décembre");
+
+        FR_POOL_CASE.add("Janvier");
+        FR_POOL_CASE.add("Février");
+        FR_POOL_CASE.add("Mars");
+        FR_POOL_CASE.add("Avril");
+        FR_POOL_CASE.add("Mai");
+        FR_POOL_CASE.add("Juin");
+        FR_POOL_CASE.add("Juillet");
+        FR_POOL_CASE.add("Août");
+        FR_POOL_CASE.add("Septembre");
+        FR_POOL_CASE.add("Octobre");
+        FR_POOL_CASE.add("Novembre");
+        FR_POOL_CASE.add("Décembre");
     }
+
+    private static final int[] EMPTY_INT_ARRAY = new int[0];
+
+    private Utils(){}
 
     /**
      * Returns a Date object from an ISO-8601 representation string. (String defined with pattern yyyy-MM-dd'T'HH:mm:ss.SSSZ or yyyy-MM-dd).
@@ -422,140 +459,118 @@ public final class Utils {
         }
         return null;
     }
-    
+
     /**
      * this method creates a date from a string, support for many formats.
-     * @param date
+     * @param date string to parse
      * @return Date
      */
     public static Date createDate(String date) {
-        if (date == null) {
+        if (date == null || date.isEmpty() || date.contains("BC")) {
             return new Date();
         }
-        if (date.isEmpty() || date.contains("BC")) {
-            return new Date(new java.util.Date().getTime());
+
+
+        final int[] slashOccurences = getPositions(date, '/');
+        
+        if(slashOccurences.length == 1){
+            // date is like : 11/2050
+            final int month = Integer.parseInt(date.substring(0, slashOccurences[0])) -1;
+            final int year = Integer.parseInt(date.substring(slashOccurences[0]+1, date.length()));
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year,month,1,0,0,0);
+            return cal.getTime();
+
+        }else if(slashOccurences.length == 2){
+            // date is like : 23/11/2050
+            final int day = Integer.parseInt(date.substring(0, slashOccurences[0]));
+            final int month = Integer.parseInt(date.substring(slashOccurences[0]+1, slashOccurences[1])) -1;
+            final int year = Integer.parseInt(date.substring(slashOccurences[1]+1));
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year,month,day,0,0,0);
+            return cal.getTime();
         }
 
-        final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final int[] spaceOccurences = getPositions(date, ' ');
+        final int[] dashOccurences = getPositions(date, '-');
 
-        final Map<String, String> pool = new HashMap<String, String>();
-        pool.put("janvier", "01");
-        pool.put("février", "02");
-        pool.put("mars", "03");
-        pool.put("avril", "04");
-        pool.put("mai", "05");
-        pool.put("juin", "06");
-        pool.put("juillet", "07");
-        pool.put("août", "08");
-        pool.put("septembre", "09");
-        pool.put("octobre", "10");
-        pool.put("novembre", "11");
-        pool.put("décembre", "12");
+        if(spaceOccurences.length == 2){
+            //date is like : 18 janvier 2050
+            final int day = Integer.parseInt(date.substring(0, spaceOccurences[0]));
+            final int month = FR_POOL.indexOf(date.substring(spaceOccurences[0]+1, spaceOccurences[1]));
+            final int year = Integer.parseInt(date.substring(spaceOccurences[1]+1));
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year,month,day,0,0,0);
+            return cal.getTime();
 
-        final Map<String, String> poolCase = new HashMap<String, String>();
-        poolCase.put("Janvier", "01");
-        poolCase.put("Février", "02");
-        poolCase.put("Mars", "03");
-        poolCase.put("Avril", "04");
-        poolCase.put("Mai", "05");
-        poolCase.put("Juin", "06");
-        poolCase.put("Juillet", "07");
-        poolCase.put("Août", "08");
-        poolCase.put("Septembre", "09");
-        poolCase.put("Octobre", "10");
-        poolCase.put("Novembre", "11");
-        poolCase.put("Décembre", "12");
-
-        String year;
-        String month;
-        String day;
-        Date tmp = new Date();
-
-        if (date.contains("/")) {
-            if (getOccurence(date, '/') == 2) {
-                day = date.substring(0, date.indexOf('/'));
-                date = date.substring(date.indexOf('/') + 1);
-                month = date.substring(0, date.indexOf('/'));
-                year = date.substring(date.indexOf('/') + 1);
-
-                tmp = java.sql.Date.valueOf(year + "-" + month + "-" + day);
-            } else {
-                if (getOccurence(date, '/') == 1) {
-                    month = date.substring(0, date.indexOf('/'));
-                    year = date.substring(date.indexOf('/') + 1);
-                    tmp = java.sql.Date.valueOf(year + "-" + month + "-" + "01");
-                }
-            }
-        } else if (getOccurence(date, ' ') == 2) {
-            if (!date.contains("?")) {
-
-                day = date.substring(0, date.indexOf(' '));
-                date = date.substring(date.indexOf(' ') + 1);
-                month = pool.get(date.substring(0, date.indexOf(' ')));
-                year = date.substring(date.indexOf(' ') + 1);
-
-                tmp = java.sql.Date.valueOf(year + "-" + month + "-" + day);
-            } else {
-                tmp = java.sql.Date.valueOf("2000" + "-" + "01" + "-" + "01");
-            }
-        } else if (getOccurence(date, ' ') == 1 && getOccurence(date, '-') < 3) {
+        }else if(spaceOccurences.length == 1 && dashOccurences.length < 3) {
+            final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
-                final java.util.Date d = df.parse(date);
-                return new Date(d.getTime());
+                return df.parse(date);
             } catch (ParseException ex) {
                 LOGGER.log(Level.FINE, "Could not parse date : " + date +" with dateFormat : " + df);
             }
-            month = poolCase.get(date.substring(0, date.indexOf(' ')));
-            year = date.substring(date.indexOf(' ') + 1);
-            tmp = java.sql.Date.valueOf(year + "-" + month + "-" + "01");
 
+            //date is like : Janvier 2050
+            final int month = FR_POOL_CASE.indexOf(date.substring(0,spaceOccurences[0]));
+            final int year = Integer.parseInt(date.substring(spaceOccurences[0]+1));
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year,month,1,0,0,0);
+            return cal.getTime();
 
-        } else if (getOccurence(date, '-') == 1) {
+        }else if(dashOccurences.length == 1) {
+            //date is like : 05-2050
+            final int month = Integer.parseInt(date.substring(0,dashOccurences[0])) -1;
+            final int year = Integer.parseInt(date.substring(dashOccurences[0]+1));
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year,month,1,0,0,0);
+            return cal.getTime();
 
-            month = date.substring(0, date.indexOf('-'));
-            year = date.substring(date.indexOf('-') + 1);
-
-            tmp = java.sql.Date.valueOf(year + "-" + month + "-" + "01");
-
-        } else if (getOccurence(date, '-') == 2) {
+        }else if(dashOccurences.length == 2) {
             //if date is in format yyyy-mm-ddTHH:mm:ss
             try {
                 final java.util.Date resultDate = getDateFromString(date);
-
                 if (resultDate != null) {
-                    return new Date(resultDate.getTime());
+                    return resultDate;
                 }
             } catch (ParseException e) {
                 LOGGER.log(Level.FINE, "Could not parse date : " + date +" with getDateFromString method.");
             }
 
-            if (date.substring(0, date.indexOf('-')).length() == 4) {
-                year = date.substring(0, date.indexOf('-'));
-                date = date.substring(date.indexOf('-') + 1); //mm-ddZ
-                month = date.substring(0, date.indexOf('-'));
-                date = date.substring(date.indexOf('-') + 1); // ddZ
-                if (date.contains("Z")) {
-                    date = date.substring(0, date.indexOf('Z'));
+            if(dashOccurences[0] == 4) {
+                //date is like 2010-11-23Z
+                final int year = Integer.parseInt(date.substring(0,dashOccurences[0]));
+                final int month = Integer.parseInt(date.substring(dashOccurences[0]+1, dashOccurences[1])) -1;
+
+                final int day;
+                if (date.endsWith("Z")) {
+                    day = Integer.parseInt(date.substring(dashOccurences[1]+1,date.length()-1));
+                }else{
+                    day = Integer.parseInt(date.substring(dashOccurences[1]+1));
                 }
-                day = date;
-                tmp = java.sql.Date.valueOf(year + "-" + month + "-" + day);
-            } else {
-                day = date.substring(0, date.indexOf('-'));
-                date = date.substring(date.indexOf('-') + 1);
-                month = date.substring(0, date.indexOf('-'));
-                year = date.substring(date.indexOf('-') + 1);
 
-                tmp = java.sql.Date.valueOf(year + "-" + month + "-" + day);
+                final Calendar cal = Calendar.getInstance();
+                cal.set(year,month,day,0,0,0);
+                return cal.getTime();
+            }else{
+                //date is like 23-11-2010
+                final int day = Integer.parseInt(date.substring(0, dashOccurences[0]));
+                final int month = Integer.parseInt(date.substring(dashOccurences[0]+1, dashOccurences[1])) -1;
+                final int year = Integer.parseInt(date.substring(dashOccurences[1]+1));
+                final Calendar cal = Calendar.getInstance();
+                cal.set(year,month,day,0,0,0);
+                return cal.getTime();
             }
 
-        } else {
-            if (getOccurence(date, '-') == 0) {
-                year = date;
-                tmp = java.sql.Date.valueOf(year + "-" + "01" + "-" + "01");
-            }
+        }else if(dashOccurences.length == 0) {
+            //date is like 2010
+            final int year = Integer.parseInt(date);
+            final Calendar cal = Calendar.getInstance();
+            cal.set(year,0,1,0,0,0);
+            return cal.getTime();
         }
 
-        return tmp;
+        return new Date();
     }
 
     /**
@@ -586,6 +601,24 @@ public final class Utils {
             cnt++;
         }
         return cnt;
+    }
+
+
+    public static int[] getPositions(String s, char occ) {
+        int pos = s.indexOf(occ);
+        if(pos <0){
+            return EMPTY_INT_ARRAY;
+        }else{
+            int[] indexes = new int[]{pos};
+            pos = s.indexOf(occ, pos+1);
+            for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
+                int end = indexes.length;
+                indexes = XArrays.resize(indexes, end+1);
+                indexes[end] = pos;
+            }
+            return indexes;
+        }
+        
     }
 
 }
