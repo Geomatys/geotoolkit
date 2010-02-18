@@ -74,7 +74,8 @@ abstract class ColumnOrParameter {
      * @param types  The query types for which the element applies.
      */
     ColumnOrParameter(final Query query, final QueryType... types) {
-        this(query, EnumSet.copyOf(Arrays.asList(types)));
+        this(query, (types != null && types.length != 0) ?
+            EnumSet.copyOf(Arrays.asList(types)) : EnumSet.noneOf(QueryType.class));
     }
 
     /**

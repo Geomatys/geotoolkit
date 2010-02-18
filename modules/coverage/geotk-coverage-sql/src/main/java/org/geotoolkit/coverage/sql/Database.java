@@ -171,7 +171,7 @@ class Database implements Localized {
         public Stmt prepareStatement(final Table table, final String sql) throws SQLException {
             final SQL key = new SQL(table, sql);
             Stmt value = remove(key);
-            if (sql == null) {
+            if (value == null) {
                 value = new Stmt(connection().prepareStatement(sql), key);
             }
             return value;

@@ -84,16 +84,18 @@ class Table implements Localized {
         QueryType type;
 
         /**
-         * {@code true} if the statement needs to be {@linkplain Table#configure configured}.
-         * This is the case when a new statement has just been created.
+         * Incremented every time the {@link Table} configuration changed. This is compared
+         * with {@link LocalCache.Stmt#stamp} in order to determine if the statement needs
+         * to be set.
          */
-        boolean changed;
+        int modificationCount;
 
         /**
          * Creates a new instance.
          */
         Session(final LocalCache cache) {
             this.cache = cache;
+            modificationCount = 1;
         }
     }
 
@@ -202,9 +204,10 @@ class Table implements Localized {
         final Session s = session.get();
         assert Thread.holdsLock(s.cache);
         final LocalCache.Stmt ce = s.cache.prepareStatement(this, query);
-        if (s.changed) {
+        if (s.modificationCount != ce.stamp) {
             final QueryType type = s.type;
             configure(type, ce.statement);
+            ce.stamp = s.modificationCount;
             final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
             if (LOGGER.isLoggable(level)) {
                 final LogRecord record = new LogRecord(level, ce.toString());
@@ -292,11 +295,8 @@ class Table implements Localized {
     /**
      * Invoked automatically by {@link #getStatement(String)} for a newly created statement, or
      * for an existing statement when this table {@linkplain #fireStateChanged changed its state}.
-     *
-     * {@section Overriding}
      * Subclasses should override this method if they need to set SQL parameters according the
-     * table state. Overriding methods should invoke {@code super.configure(type, statement)}
-     * first.
+     * table state. The default implementation does nothing.
      *
      * @param  type The query type.
      * @param  statement The statement to configure (never {@code null}).
@@ -306,7 +306,6 @@ class Table implements Localized {
     void configure(final QueryType type, final PreparedStatement statement)
             throws CatalogException, SQLException
     {
-        session.get().changed = false;
     }
 
     /**
@@ -413,7 +412,7 @@ class Table implements Localized {
          * Set the change flag anyway, because this method is invoked when the
          * change has already been applied so it is too late for preventing it.
          */
-        session.get().changed = true;
+        session.get().modificationCount++;
         if (unmodifiable) {
             throw new CatalogException(errors().getString(Errors.Keys.UNMODIFIABLE_OBJECT_$1, getClass()));
         }

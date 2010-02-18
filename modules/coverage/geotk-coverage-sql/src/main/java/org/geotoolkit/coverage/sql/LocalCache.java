@@ -160,6 +160,12 @@ interface LocalCache {
         final SQL key;
 
         /**
+         * A value used by {@link Table} in order to determine if the {@link #statement}
+         * parameters need to be modified.
+         */
+        int stamp;
+
+        /**
          * Constructs a metadata result for the specified statement.
          *
          * @param statement The prepared statement.
