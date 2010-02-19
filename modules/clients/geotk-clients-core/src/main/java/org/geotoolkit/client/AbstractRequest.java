@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.wms;
+package org.geotoolkit.client;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -22,22 +22,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.geotoolkit.util.StringUtilities;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class AbstractRequest implements Request{
+public class AbstractRequest implements Request {
 
     protected final String serverURL;
-    protected final Map<String,String> requestParameters = new HashMap<String,String>();
+    protected final Map<String, String> requestParameters = new HashMap<String, String>();
 
-    protected AbstractRequest(String serverURL){
+    protected AbstractRequest(String serverURL) {
 
-        if(serverURL.contains("?")){
+        if (serverURL.contains("?")) {
             this.serverURL = serverURL;
-        }else{
+        } else {
             this.serverURL = serverURL + "?";
         }
 
@@ -50,30 +53,26 @@ public class AbstractRequest implements Request{
     public URL getURL() throws MalformedURLException {
         final StringBuilder sb = new StringBuilder();
         final List<String> keys = new ArrayList<String>(requestParameters.keySet());
-        
-        sb.append(serverURL);
-        
-        if(!requestParameters.isEmpty()){
 
-            if(!(serverURL.endsWith("?") || serverURL.endsWith("&"))){
+        sb.append(serverURL);
+
+        if (!requestParameters.isEmpty()) {
+
+            if (!(serverURL.endsWith("?") || serverURL.endsWith("&"))) {
                 sb.append("&");
             }
 
             String key = keys.get(0);
-            sb.append(noSpaces(key)).append('=').append(noSpaces(requestParameters.get(key)));
-            
-            for(int i=1,n=keys.size();i<n;i++){
+            sb.append(StringUtilities.convertSpacesForUrl(key)).append('=')
+                    .append(StringUtilities.convertSpacesForUrl(requestParameters.get(key)));
+
+            for (int i = 1, n = keys.size(); i < n; i++) {
                 key = keys.get(i);
-                sb.append('&').append(noSpaces(key)).append('=').append(noSpaces(requestParameters.get(key)));
+                sb.append('&').append(StringUtilities.convertSpacesForUrl(key))
+                        .append('=').append(StringUtilities.convertSpacesForUrl(requestParameters.get(key)));
             }
         }
 
         return new URL(sb.toString());
     }
-
-    private static String noSpaces(String str){
-        if(str == null) return null;
-        return str.replaceAll(" ", "%20");
-    }
-
 }

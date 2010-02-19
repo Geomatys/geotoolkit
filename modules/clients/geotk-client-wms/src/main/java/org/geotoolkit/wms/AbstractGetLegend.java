@@ -19,14 +19,10 @@ package org.geotoolkit.wms;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
+import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.cs.CoordinateSystemAxis;
+
 
 /**
  *

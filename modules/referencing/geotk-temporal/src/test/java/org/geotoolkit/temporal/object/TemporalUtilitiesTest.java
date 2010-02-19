@@ -56,57 +56,6 @@ public class TemporalUtilitiesTest implements Test{
     }
 
     @Test
-    public void occurenceTest(){
-        String str;
-        int nb;
-
-        str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = TemporalUtilities.getOccurence(str, '-');
-        assertEquals(0, nb);
-
-
-        str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = TemporalUtilities.getOccurence(str, '-');
-        assertEquals(5, nb);
-
-        str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = TemporalUtilities.getOccurence(str, "-");
-        assertEquals(0, nb);
-
-
-        str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = TemporalUtilities.getOccurence(str, "-");
-        assertEquals(5, nb);
-    }
-
-    @Test
-    public void positionsTest(){
-        String str;
-        int[] nb;
-
-        str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = TemporalUtilities.getIndexes(str, '-');
-        assertEquals(0, nb.length);
-
-        str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = TemporalUtilities.getIndexes(str, '-');
-        assertEquals(5, nb.length);
-        assertEquals(0, nb[0]);
-        assertEquals(9, nb[1]);
-        assertEquals(21, nb[2]);
-        assertEquals(35, nb[3]);
-        assertEquals(40, nb[4]);
-
-        str = "---";
-        nb = TemporalUtilities.getIndexes(str, '-');
-        assertEquals(3, nb.length);
-        assertEquals(0, nb[0]);
-        assertEquals(1, nb[1]);
-        assertEquals(2, nb[2]);
-
-    }
-
-    @Test
     public void dateParsingTest(){
         String str;
         final Calendar date = Calendar.getInstance();

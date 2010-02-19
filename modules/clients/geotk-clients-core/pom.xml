@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>clients</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>coverage</artifactId>
-  <packaging>pom</packaging>
-  <name>Coverage</name>
+  <artifactId>geotk-clients-core</artifactId>
+  <packaging>jar</packaging>
+  <name>Web Clients Core</name>
 
   <description>
-    Projects group for pending coverage services.
+    Core module for web clients.
   </description>
 
 
@@ -36,20 +36,21 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Administrator</role>
+        <role>Developer</role>
       </roles>
     </developer>
     <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
+      <name>Cédric Briançon</name>
+      <id>cedricbr</id>
+      <email>cedric.briancon@geomatys.fr</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
@@ -65,37 +66,11 @@
   <!-- =========================================================== -->
   <dependencies>
     <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>geoapi-pending</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-utility</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-metadata</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-referencing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.opengis</groupId>
-      <artifactId>conformance</artifactId>
-      <scope>test</scope>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-temporal</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
-
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
-  <modules>
-    <module>geotk-coverageio-pending</module>
-    <module>geotk-coverageio-netcdf</module>
-    <module>geotk-world-image</module>
-    <module>geotk-geotiff</module>
-  </modules>
 
 </project>

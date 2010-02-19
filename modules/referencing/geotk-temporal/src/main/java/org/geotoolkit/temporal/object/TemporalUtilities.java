@@ -25,7 +25,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +33,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 import org.geotoolkit.util.logging.Logging;
@@ -505,7 +505,7 @@ public final class TemporalUtilities {
         }
 
 
-        final int[] slashOccurences = getIndexes(date, '/');
+        final int[] slashOccurences = StringUtilities.getIndexes(date, '/');
         
         if(slashOccurences.length == 1){
             // date is like : 11/2050
@@ -527,8 +527,8 @@ public final class TemporalUtilities {
             return cal.getTime();
         }
 
-        final int[] spaceOccurences = getIndexes(date, ' ');
-        final int[] dashOccurences = getIndexes(date, '-');
+        final int[] spaceOccurences = StringUtilities.getIndexes(date, ' ');
+        final int[] dashOccurences = StringUtilities.getIndexes(date, '-');
 
         if(spaceOccurences.length == 2){
             //date is like : 18 janvier 2050
@@ -621,12 +621,13 @@ public final class TemporalUtilities {
      * @param occ : Occurence to search
      * @return number of occurence
      */
+    @Deprecated
     public static int getOccurence(String s, char occ) {
         int cnt = 0;
         int pos = s.indexOf(occ);
         for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
             cnt++;
-        }
+}
         return cnt;
     }
 
@@ -637,6 +638,7 @@ public final class TemporalUtilities {
      * @param occ : Occurence to search
      * @return number of occurence
      */
+    @Deprecated
     public static int getOccurence(String s, String occ) {
         int cnt = 0;
         int pos = s.indexOf(occ);
@@ -648,11 +650,12 @@ public final class TemporalUtilities {
 
     /**
      * Search a string for all occurence of the char.
-     * 
+     *
      * @param s : String to search in
      * @param occ : Occurence to search
      * @return array of all occurence indexes
      */
+    @Deprecated
     public static int[] getIndexes(String s, char occ) {
         int pos = s.indexOf(occ);
         if(pos <0){
@@ -667,7 +670,7 @@ public final class TemporalUtilities {
             }
             return indexes;
         }
-        
+
     }
 
 }

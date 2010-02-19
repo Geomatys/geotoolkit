@@ -14,7 +14,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>coverage</artifactId>
+    <artifactId>clients</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
@@ -23,9 +23,9 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>geotk-wms</artifactId>
+  <artifactId>geotk-client-wms</artifactId>
   <packaging>jar</packaging>
-  <name>Coverage Web Map Server</name>
+  <name>Web Client WMS</name>
 
   <description>
     An OGC Web Map Server client implementation that can be used directly or as 
@@ -68,6 +68,11 @@
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-go2</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-clients-core</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

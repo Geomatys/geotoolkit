@@ -22,12 +22,12 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.pending</groupId>
-  <artifactId>coverage</artifactId>
+  <artifactId>clients</artifactId>
   <packaging>pom</packaging>
-  <name>Coverage</name>
+  <name>Web Clients</name>
 
   <description>
-    Projects group for pending coverage services.
+    Projects group for pending web clients.
   </description>
 
 
@@ -36,20 +36,21 @@
   <!-- =========================================================== -->
   <developers>
     <developer>
-      <name>Martin Desruisseaux</name>
-      <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <name>Johann Sorel</name>
+      <id>eclesia</id>
+      <email>johann.sorel@geomatys.com</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
         <role>Administrator</role>
+        <role>Developer</role>
       </roles>
     </developer>
     <developer>
-      <name>Johann Sorel</name>
-      <id>eclesia</id>
-      <email>johann.sorel@geomatys.com</email>
+      <name>Cédric Briançon</name>
+      <id>cedricbr</id>
+      <email>cedric.briancon@geomatys.fr</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
@@ -69,8 +70,9 @@
       <artifactId>geoapi-pending</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.geotoolkit</groupId>
-      <artifactId>geotk-utility</artifactId>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-utility-pending</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.geotoolkit</groupId>
@@ -92,10 +94,8 @@
   <!--     Modules included in the build                           -->
   <!-- =========================================================== -->
   <modules>
-    <module>geotk-coverageio-pending</module>
-    <module>geotk-coverageio-netcdf</module>
-    <module>geotk-world-image</module>
-    <module>geotk-geotiff</module>
+    <module>geotk-clients-core</module>
+    <module>geotk-client-wms</module>
   </modules>
 
 </project>

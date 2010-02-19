@@ -126,6 +126,7 @@
     <module>display</module>
     <module>jaxb-xml-binding</module>
     <module>jaxp-xml-parser</module>
+    <module>clients</module>
     <module>coverage</module>
   </modules>
 

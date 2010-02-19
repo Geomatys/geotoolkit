@@ -18,14 +18,31 @@ package org.geotoolkit.wms;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.geotoolkit.client.AbstractRequest;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
+ * @author Olivier Terral (Geomatys)
  * @module pending
  */
-public interface Request {
+public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
 
-    URL getURL() throws MalformedURLException;
-    
+    protected final String version;
+
+    protected AbstractGetCapabilities(String serverURL,String version){
+        super(serverURL);
+        this.version = version;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public URL getURL() throws MalformedURLException {
+        requestParameters.put("SERVICE",    "WMS");
+        requestParameters.put("REQUEST",    "GetCapabilities");
+        requestParameters.put("VERSION",    version);        
+        return super.getURL();
+    }
+
 }
