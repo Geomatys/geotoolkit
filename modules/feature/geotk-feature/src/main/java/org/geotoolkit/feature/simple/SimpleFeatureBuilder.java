@@ -285,7 +285,10 @@ public class SimpleFeatureBuilder {
      */
     public void set(final int index, final Object value) {
         if (index >= values.length) {
-            throw new ArrayIndexOutOfBoundsException("Can handle " + values.length + " attributes only, index is " + index);
+            throw new ArrayIndexOutOfBoundsException(
+                    "Can handle " + values.length + " attributes only.\n"
+                    +"Can not add value " + value +" at index "+ index+"\n"
+                    + featureType);
         }
 
         final AttributeDescriptor descriptor = featureType.getDescriptor(index);

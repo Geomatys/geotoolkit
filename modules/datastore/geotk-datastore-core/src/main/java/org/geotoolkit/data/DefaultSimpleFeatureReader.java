@@ -1,9 +1,9 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
+ *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- *    
+ *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -17,6 +17,7 @@
 package org.geotoolkit.data;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.feature.SchemaException;
@@ -25,6 +26,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 
 /**
  * Experimental  FeatureReader<SimpleFeatureType, SimpleFeature> that always takes the first column of the
@@ -36,7 +38,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * constructor defaulting to the xxx typename.  I feel that it should perhaps
  * take a typename.  If people deliberately set to null then we could use xxx
  * or something. ch
- * 
+ *
  * <p>
  * This now feels sorta hacky, I'm not sure that I like it, but I'm going to
  * commit as I need to go now and revisit it in a bit.  I think the idea of
@@ -59,6 +61,11 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
     private final SimpleFeatureBuilder builder;
 
     /**
+     * if the attributs between reader and schema are the same but not in the same order.
+     */
+    private final int[] attributIndexes;
+
+    /**
      * Creates a new instance of AbstractFeatureReader
      *
      * @param attributeReader AttributeReader
@@ -67,13 +74,29 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
      *
      * @throws SchemaException if we could not determine the correct FeatureType
      */
-    public DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader, SimpleFeatureType schema)
-            throws SchemaException {
+    public DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+            SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
 
         if (schema == null) {
             schema = createSchema(attributeReader);
+            attributIndexes = new int[0];
+        }else{
+            //check if the attributs are mixed
+            final AttributeDescriptor[] readerAtt = attributeReader.getAttributeDescriptors();
+            final AttributeDescriptor[] schemaAtt = schema.getAttributeDescriptors().toArray(new AttributeDescriptor[schema.getAttributeCount()]);
+
+            if(Arrays.deepEquals(readerAtt, schemaAtt)){
+                attributIndexes = new int[0];
+            }else{
+                //attributs are mixed
+                attributIndexes = new int[readerAtt.length];
+                for(int i=0; i<readerAtt.length;i++){
+                    attributIndexes[i] = schema.indexOf(readerAtt[i].getName());
+                }
+            }
+
         }
 
         this.schema = schema;
@@ -109,10 +132,6 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
 
     private SimpleFeature readFeature() throws DataStoreException {
 
-        //Seems like doing it here could be a bit expensive.
-        //The other option from this is to have this constructed with two
-        //attributeReaders, the FID one and real attributes one.  Could then
-        //have default FIDAttributeReader.
         final String fid = fidReader.next();
         builder.reset();
         try {
@@ -120,7 +139,15 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
-        builder.addAll(buffer);
+
+        if(attributIndexes.length == 0){
+            builder.addAll(buffer);
+        }else{
+            for(int i=0; i<attributIndexes.length; i++){
+                builder.set(attributIndexes[i], buffer[i]);
+            }
+        }
+
         return builder.buildFeature(fid);
     }
 
@@ -179,5 +206,5 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
     public void remove() throws DataStoreRuntimeException{
         throw new DataStoreRuntimeException("Can not remove from a feature reader.");
     }
-    
+
 }

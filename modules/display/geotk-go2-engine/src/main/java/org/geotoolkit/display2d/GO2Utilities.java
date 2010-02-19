@@ -802,10 +802,20 @@ public final class GO2Utilities {
     }
 
     public static Geometry getGeometry(final SimpleFeature feature, final String geomName){
+        final Object candidate;
         if (geomName != null && !geomName.trim().isEmpty()) {
-            return (Geometry) feature.getAttribute(geomName);
+            candidate = feature.getAttribute(geomName);
         } else {
-            return (Geometry) feature.getDefaultGeometry();
+            candidate = feature.getDefaultGeometry();
+        }
+
+        if(candidate instanceof Geometry){
+            return (Geometry) candidate;
+        }else{
+            throw new IllegalStateException("Attribut : " + geomName +" from feature returned value :"+candidate+". " +
+                    "This object is not a geometry, maybe you ask the wrong" +
+                    " attribut or the feature doesnt match it's feature type définition.\n"+
+                    feature);
         }
     }
 

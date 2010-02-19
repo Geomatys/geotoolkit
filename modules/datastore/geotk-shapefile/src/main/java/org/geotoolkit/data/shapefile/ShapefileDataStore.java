@@ -344,11 +344,11 @@ public class ShapefileDataStore extends AbstractDataStore{
 
         // check if the geometry is the one and only attribute needed
         // to return attribute _and_ to run the query filter
-        if ((propertyNames != null)
-                && (propertyNames.length == 1)
-                && propertyNames[0].equals(defaultGeomName)
-                && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0]
-                        .equals(defaultGeomName)))) {
+        if (   propertyNames != null
+            && propertyNames.length == 1
+            && propertyNames[0].getLocalPart().equals(defaultGeomName.getLocalPart())
+            && (filterAttnames.length == 0 || (filterAttnames.length == 1 && filterAttnames[0].getLocalPart()
+                        .equals(defaultGeomName.getLocalPart())))) {
             try {
                 final SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
