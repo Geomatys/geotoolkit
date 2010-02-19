@@ -34,7 +34,6 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.temporal.reference.DefaultTemporalCoordinateSystem;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 import org.geotoolkit.util.logging.Logging;
 
@@ -83,8 +82,6 @@ public final class TemporalUtilities {
      */
     private static final List<String> FR_POOL = new ArrayList<String>();
     private static final List<String> FR_POOL_CASE = new ArrayList<String>();
-
-    private static final int[] EMPTY_INT_ARRAY = new int[0];
 
     /**
      * Caution : those objects are not thread safe, take care to synchronize when you use them.
@@ -623,12 +620,7 @@ public final class TemporalUtilities {
      */
     @Deprecated
     public static int getOccurence(String s, char occ) {
-        int cnt = 0;
-        int pos = s.indexOf(occ);
-        for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
-            cnt++;
-}
-        return cnt;
+        return StringUtilities.getOccurence(s, occ);
     }
 
     /**
@@ -640,12 +632,7 @@ public final class TemporalUtilities {
      */
     @Deprecated
     public static int getOccurence(String s, String occ) {
-        int cnt = 0;
-        int pos = s.indexOf(occ);
-        for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
-            cnt++;
-        }
-        return cnt;
+        return StringUtilities.getOccurence(s, occ);
     }
 
     /**
@@ -657,20 +644,7 @@ public final class TemporalUtilities {
      */
     @Deprecated
     public static int[] getIndexes(String s, char occ) {
-        int pos = s.indexOf(occ);
-        if(pos <0){
-            return EMPTY_INT_ARRAY;
-        }else{
-            int[] indexes = new int[]{pos};
-            pos = s.indexOf(occ, pos+1);
-            for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
-                int end = indexes.length;
-                indexes = XArrays.resize(indexes, end+1);
-                indexes[end] = pos;
-            }
-            return indexes;
-        }
-
+        return StringUtilities.getIndexes(s, occ);
     }
 
 }
