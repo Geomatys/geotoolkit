@@ -144,7 +144,9 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
             builder.addAll(buffer);
         }else{
             for(int i=0; i<attributIndexes.length; i++){
-                builder.set(attributIndexes[i], buffer[i]);
+                if(attributIndexes[i] >=0 ){
+                    builder.set(attributIndexes[i], buffer[i]);
+                }
             }
         }
 

@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.shapefile;
 
+import org.geotoolkit.data.query.QueryBuilder;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -353,23 +354,38 @@ public class ShapefileDataStore extends AbstractDataStore{
                 final SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
 
-                return createFeatureReader(typeName,getAttributesReader(false), newSchema);
+                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false), newSchema);
+                QueryBuilder query2 = new QueryBuilder(query.getTypeName());
+                query2.setProperties(query.getPropertyNames());
+                query2.setFilter(query.getFilter());
+                reader = handleRemaining(reader, query2.buildQuery());
+
+                return reader;
+            } catch (SchemaException se) {
+                throw new DataStoreException("Error creating schema", se);
+            }
+        }else{
+             try {
+                final SimpleFeatureType newSchema;
+                if (propertyNames != null) {
+                    newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
+                } else {
+                    newSchema = schema;
+                }
+
+                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(true), newSchema);
+                QueryBuilder query2 = new QueryBuilder(query.getTypeName());
+                query2.setProperties(query.getPropertyNames());
+                query2.setFilter(query.getFilter());
+                reader = handleRemaining(reader, query2.buildQuery());
+
+                return reader;
             } catch (SchemaException se) {
                 throw new DataStoreException("Error creating schema", se);
             }
         }
 
-        try {
-            final SimpleFeatureType newSchema;
-            if (propertyNames != null) {
-                newSchema = FeatureTypeUtilities.createSubType(schema, propertyNames);
-            } else {
-                newSchema = schema;
-            }
-            return createFeatureReader(typeName,getAttributesReader(true), newSchema);
-        } catch (SchemaException se) {
-            throw new DataStoreException("Error creating schema", se);
-        }
+       
     }
 
     /**
