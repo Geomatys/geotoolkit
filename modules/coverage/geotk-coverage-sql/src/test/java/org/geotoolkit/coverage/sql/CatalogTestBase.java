@@ -88,7 +88,9 @@ public class CatalogTestBase {
     public static synchronized void shutdown() throws SQLException {
         final Database db = database;
         database = null;
-        db.reset();
+        if (db != null) {
+            db.reset();
+        }
     }
 
     /**
