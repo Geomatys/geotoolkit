@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,15 @@
 package org.geotoolkit.wms;
 
 import java.awt.Dimension;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Map;
-import org.opengis.geometry.Envelope;
+import org.geotoolkit.client.Request;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetLegendRequest {
+public interface GetLegendRequest extends Request {
 
     String getLayer();
 
@@ -56,7 +54,5 @@ public interface GetLegendRequest {
     String getSldBody();
 
     void setSldBody(String sldBody);
-    
-    URL getURL() throws MalformedURLException;
-    
+
 }
