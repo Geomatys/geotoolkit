@@ -31,8 +31,10 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 
@@ -95,9 +97,21 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator() throws DataStoreRuntimeException{
+    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException{
+
+        final Query iteQuery;
+        if(hints != null){
+            final QueryBuilder qb = new QueryBuilder(this.query);
+            final Hints hts = new Hints(hints);
+            hts.add(this.query.getHints());
+            qb.setHints(hts);
+            iteQuery = qb.buildQuery();
+        }else{
+            iteQuery = this.query;
+        }
+
         try {
-            return session.getFeatureIterator(query);
+            return session.getFeatureIterator(iteQuery);
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
         }

@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -105,6 +106,15 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      */
     @Override
     FeatureIterator<F> iterator() throws DataStoreRuntimeException;
+
+    /**
+     * Get an iterator using some extra hints to configure the reader parameters.
+     * 
+     * @param hints : Extra hints
+     * @return FeatureIterator
+     * @throws DataStoreRuntimeException
+     */
+    FeatureIterator<F> iterator(Hints hints) throws DataStoreRuntimeException;
 
     /**
      * Convinient method to update a single attribut.

@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,7 +21,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 
@@ -49,21 +53,20 @@ import org.opengis.feature.type.AttributeDescriptor;
  *
  * @author Ian Schneider
  * @author Chris Holmes, TOPP
- * @version $Id$
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
+public abstract class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
-    private final AttributeReader attributeReader;
-    private final SimpleFeatureType schema;
-    private final FeatureIDReader fidReader;
-    private final Object[] buffer;
-    private final SimpleFeatureBuilder builder;
+    protected final AttributeReader attributeReader;
+    protected final SimpleFeatureType schema;
+    protected final FeatureIDReader fidReader;
+    protected final Object[] buffer;
 
     /**
      * if the attributs between reader and schema are the same but not in the same order.
      */
-    private final int[] attributIndexes;
+    protected final int[] attributIndexes;
 
     /**
      * Creates a new instance of AbstractFeatureReader
@@ -74,7 +77,7 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
      *
      * @throws SchemaException if we could not determine the correct FeatureType
      */
-    public DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+    private DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
@@ -101,7 +104,6 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
 
         this.schema = schema;
         this.buffer = new Object[attributeReader.getAttributeCount()];
-        this.builder = new SimpleFeatureBuilder(schema);
     }
 
     public DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader)
@@ -130,28 +132,7 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
         }
     }
 
-    private SimpleFeature readFeature() throws DataStoreException {
-
-        final String fid = fidReader.next();
-        builder.reset();
-        try {
-            attributeReader.read(buffer);
-        } catch (IOException ex) {
-            throw new DataStoreException(ex);
-        }
-
-        if(attributIndexes.length == 0){
-            builder.addAll(buffer);
-        }else{
-            for(int i=0; i<attributIndexes.length; i++){
-                if(attributIndexes[i] >=0 ){
-                    builder.set(attributIndexes[i], buffer[i]);
-                }
-            }
-        }
-
-        return builder.buildFeature(fid);
-    }
+    protected abstract SimpleFeature readFeature() throws DataStoreException;
 
     /**
      * {@inheritDoc }
@@ -207,6 +188,94 @@ public class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureTy
     @Override
     public void remove() throws DataStoreRuntimeException{
         throw new DataStoreRuntimeException("Can not remove from a feature reader.");
+    }
+
+
+    public static DefaultSimpleFeatureReader create(AttributeReader attributeReader, FeatureIDReader fidReader,
+            SimpleFeatureType schema, Hints hints) throws SchemaException{
+        final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
+        if(detached == null || detached){
+            //default behavior, make separate features
+            return new DefaultSeparateFeatureReader(attributeReader, fidReader, schema);
+        }else{
+            //reuse same feature
+            return new DefaultReuseFeatureReader(attributeReader, fidReader, schema);
+        }
+    }
+
+    private static class DefaultSeparateFeatureReader extends DefaultSimpleFeatureReader{
+
+        protected final SimpleFeatureBuilder builder;
+
+        private DefaultSeparateFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+            SimpleFeatureType schema) throws SchemaException{
+            super(attributeReader,fidReader,schema);
+
+            this.builder = new SimpleFeatureBuilder(schema);
+        }
+
+        @Override
+        protected SimpleFeature readFeature() throws DataStoreException {
+
+            final String fid = fidReader.next();
+            builder.reset();
+            try {
+                attributeReader.read(buffer);
+            } catch (IOException ex) {
+                throw new DataStoreException(ex);
+            }
+
+            if(attributIndexes.length == 0){
+                builder.addAll(buffer);
+            }else{
+                for(int i=0; i<attributIndexes.length; i++){
+                    if(attributIndexes[i] >=0 ){
+                        builder.set(attributIndexes[i], buffer[i]);
+                    }
+                }
+            }
+
+            return builder.buildFeature(fid);
+        }
+
+    }
+
+    private static class DefaultReuseFeatureReader extends DefaultSimpleFeatureReader{
+
+        protected final DefaultSimpleFeature feature;
+
+        private DefaultReuseFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+            SimpleFeatureType schema) throws SchemaException{
+            super(attributeReader,fidReader,schema);
+
+            feature = new DefaultSimpleFeature(new Object[schema.getAttributeCount()], schema, null, false);
+        }
+
+        @Override
+        protected SimpleFeature readFeature() throws DataStoreException {
+
+            final String fid = fidReader.next();
+            feature.setId(fid);
+
+            try {
+                attributeReader.read(buffer);
+            } catch (IOException ex) {
+                throw new DataStoreException(ex);
+            }
+
+            if(attributIndexes.length == 0){
+                feature.setAttributes(buffer);
+            }else{
+                for(int i=0; i<attributIndexes.length; i++){
+                    if(attributIndexes[i] >=0 ){
+                        feature.setAttribute(attributIndexes[i], buffer[i]);
+                    }
+                }
+            }
+
+            return feature;
+        }
+
     }
 
 }

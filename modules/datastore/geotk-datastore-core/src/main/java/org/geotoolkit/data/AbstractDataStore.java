@@ -38,6 +38,8 @@ import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -149,6 +151,7 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public long getCount(Query query) throws DataStoreException {
+        query = addSeparateFeatureHint(query);
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateCount(reader);
     }
@@ -159,11 +162,21 @@ public abstract class AbstractDataStore implements DataStore{
      * This implementation will aquiere a reader and iterate to expend an envelope.
      * Subclasses should override this method if they have a faster way to
      * calculate envelope.
+     * @throws DataStoreException 
+     * @throws DataStoreRuntimeException
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
+        query = addSeparateFeatureHint(query);
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateEnvelope(reader);
+    }
+
+    private static Query addSeparateFeatureHint(Query query){
+        //hints never null on a query
+        Hints hints = query.getHints();
+        hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
+        return query;
     }
 
     /**
@@ -351,6 +364,7 @@ public abstract class AbstractDataStore implements DataStore{
         final Name[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
+        final Hints hints = remainingParameters.getHints();
 
         //we should take care of wrapping the reader in a correct order to avoid
         //unnecessary calculations. fast and reducing number wrapper should be placed first.
@@ -400,7 +414,7 @@ public abstract class AbstractDataStore implements DataStore{
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
-            reader = GenericRetypeFeatureIterator.wrap(reader, mask);
+            reader = GenericRetypeFeatureIterator.wrap(reader, mask, hints);
         }
 
         //wrap reprojection ----------------------------------------------------

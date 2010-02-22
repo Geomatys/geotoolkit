@@ -17,7 +17,6 @@
 
 package org.geotoolkit.data.shapefile;
 
-import org.geotoolkit.data.query.QueryBuilder;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -25,8 +24,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import java.io.FileWriter;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -45,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -63,6 +63,7 @@ import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileWriter;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
@@ -75,8 +76,8 @@ import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.util.converter.Classes;
-import org.opengis.feature.Feature;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -94,6 +95,7 @@ import static org.geotoolkit.data.shapefile.ShpFileType.*;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class ShapefileDataStore extends AbstractDataStore{
 
@@ -329,6 +331,7 @@ public class ShapefileDataStore extends AbstractDataStore{
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
 
+        final Hints hints = query.getHints();
         final String typeName = query.getTypeName().getLocalPart();
         final Name[] propertyNames = query.getPropertyNames();
         final Name defaultGeomName = schema.getGeometryDescriptor().getName();
@@ -354,10 +357,11 @@ public class ShapefileDataStore extends AbstractDataStore{
                 final SimpleFeatureType newSchema = FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
 
-                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false), newSchema);
+                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false), newSchema,hints);
                 QueryBuilder query2 = new QueryBuilder(query.getTypeName());
                 query2.setProperties(query.getPropertyNames());
                 query2.setFilter(query.getFilter());
+                query2.setHints(query.getHints());
                 reader = handleRemaining(reader, query2.buildQuery());
 
                 return reader;
@@ -373,10 +377,11 @@ public class ShapefileDataStore extends AbstractDataStore{
                     newSchema = schema;
                 }
 
-                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(true), newSchema);
+                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(true), newSchema, hints);
                 QueryBuilder query2 = new QueryBuilder(query.getTypeName());
                 query2.setProperties(query.getPropertyNames());
                 query2.setFilter(query.getFilter());
+                query2.setHints(query.getHints());
                 reader = handleRemaining(reader, query2.buildQuery());
 
                 return reader;
@@ -398,7 +403,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         final ShapefileAttributeReader attReader = getAttributesReader(true);
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
         try {
-            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema);
+            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema,null);
 
         } catch (Exception e) {
             featureReader = GenericEmptyFeatureIterator.createReader(schema);
@@ -715,11 +720,10 @@ public class ShapefileDataStore extends AbstractDataStore{
     }
 
     protected DefaultSimpleFeatureReader createFeatureReader(String typeName,
-            ShapefileAttributeReader reader, SimpleFeatureType readerSchema)
+            ShapefileAttributeReader reader, SimpleFeatureType readerSchema, Hints hints)
             throws SchemaException {
 
-        return new org.geotoolkit.data.DefaultSimpleFeatureReader(reader,
-                new DefaultFeatureIDReader(typeName), readerSchema);
+        return DefaultSimpleFeatureReader.create(reader, new DefaultFeatureIDReader(typeName), readerSchema, hints);
     }
 
     /**

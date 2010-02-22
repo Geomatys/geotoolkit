@@ -83,6 +83,7 @@ import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.Hints;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -235,6 +236,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
 
+        final Hints hints = query.getHints();
+
         Name[] propertyNames = query.getPropertyNames() == null ? new Name[0]
                 : query.getPropertyNames();
         final Name defaultGeomName = getFeatureType().getGeometryDescriptor().getName();
@@ -267,11 +270,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
 
             FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
-                    readGeometry, query.getFilter()), getFeatureType());
+                    readGeometry, query.getFilter()), getFeatureType(), hints);
 
             QueryBuilder query2 = new QueryBuilder(query.getTypeName());
             query2.setProperties(query.getPropertyNames());
             query2.setFilter(query.getFilter());
+            query2.setHints(query.getHints());
 
             reader = handleRemaining(reader, query2.buildQuery());
             return reader;
@@ -282,7 +286,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     }
 
     protected FeatureReader<SimpleFeatureType, SimpleFeature> createFeatureReader(String typeName,
-            IndexedShapefileAttributeReader r, SimpleFeatureType readerSchema)
+            IndexedShapefileAttributeReader r, SimpleFeatureType readerSchema, Hints hints)
             throws SchemaException, IOException,DataStoreException {
 
         FeatureIDReader fidReader;
@@ -291,7 +295,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         } else {
             fidReader = new IndexedFidReader(shpFiles, r);
         }
-        return new DefaultSimpleFeatureReader(r, fidReader, readerSchema);
+
+        return DefaultSimpleFeatureReader.create(r, fidReader, readerSchema, hints);
     }
 
     /**
@@ -626,7 +631,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 throw new IOException(
                         "To create a shapefile, you must first call createSchema()");
             }
-            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema);
+            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema, null);
 
         } catch (Exception e) {
             featureReader = GenericEmptyFeatureIterator.createReader(getFeatureType());

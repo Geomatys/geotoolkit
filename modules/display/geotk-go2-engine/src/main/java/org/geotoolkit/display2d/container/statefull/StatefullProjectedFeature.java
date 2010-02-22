@@ -59,9 +59,9 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     public void setFeature(SimpleFeature feature) {
-        if(this.feature != feature){
-            clearDataCache();
-        }
+        //we dont test if it is the same feature or not, even
+        //if it's the same feature, it might have change so we clear the cache anyway.
+        clearDataCache();
         this.feature = feature;
     }
 

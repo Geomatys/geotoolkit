@@ -32,6 +32,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 
@@ -81,8 +82,8 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<F> iterator() throws DataStoreRuntimeException{
-        FeatureIterator iterator = original.iterator();
+    public FeatureIterator<F> iterator(Hints hints) throws DataStoreRuntimeException{
+        FeatureIterator iterator = original.iterator(hints);
 
         final Integer start = query.getStartIndex();
         final Integer max = query.getMaxFeatures();
@@ -144,7 +145,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
         if(properties != null){
             try{
                 final FeatureType mask = FeatureTypeUtilities.createSubType((SimpleFeatureType) reader.getFeatureType(), properties);
-                reader = GenericRetypeFeatureIterator.wrap(reader, mask);
+                reader = GenericRetypeFeatureIterator.wrap(reader, mask, hints);
             }catch(IOException ex){
                 throw new DataStoreRuntimeException(ex);
             }

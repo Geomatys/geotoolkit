@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 
@@ -73,7 +74,7 @@ public class DefaultFeatureCollection<F extends Feature> extends AbstractFeature
     }
 
     @Override
-    public FeatureIterator<F> iterator() {
+    public FeatureIterator<F> iterator(Hints hints) {
         return GenericWrapFeatureIterator.wrapToIterator(features.iterator());
     }
 

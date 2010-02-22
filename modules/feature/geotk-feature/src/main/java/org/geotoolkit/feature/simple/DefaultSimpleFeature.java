@@ -18,15 +18,11 @@
 package org.geotoolkit.feature.simple;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.IOException;
-import java.io.StringWriter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import java.util.Map.Entry;
-import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -42,7 +38,8 @@ import org.opengis.filter.identity.FeatureId;
  */
 public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
-    private final FeatureId id;
+    private String id;
+    private FeatureId featureId;
 
     private final SimpleFeatureType featureType;
     /**
@@ -86,7 +83,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     public DefaultSimpleFeature(final Object[] values, final SimpleFeatureType featureType, final FeatureId id,
             final boolean validating){
-        this.id = id;
+        this.featureId = id;
         this.featureType = featureType;
         this.values = values;
         this.validating = validating;
@@ -120,7 +117,15 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     @Override
     public FeatureId getIdentifier() {
-        return id;
+        if(featureId == null){
+            featureId = new DefaultFeatureId(id);
+        }
+        return featureId;
+    }
+
+    public void setId(String id){
+        this.id = id;
+        this.featureId = null;
     }
 
     /**
@@ -149,7 +154,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     @Override
     public int hashCode() {
-        return id.hashCode() * featureType.hashCode();
+        return featureId.hashCode() * featureType.hashCode();
     }
 
     /**
@@ -178,13 +183,13 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
         // this check shouldn't exist, by contract,
         //all features should have an ID.
-        if (id == null) {
+        if (featureId == null) {
             if (feat.getIdentifier() != null) {
                 return false;
             }
         }
 
-        if (!id.equals(feat.getIdentifier())) {
+        if (!featureId.equals(feat.getIdentifier())) {
             return false;
         }
 

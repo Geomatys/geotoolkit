@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,9 @@ package org.geotoolkit.data.memory;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.util.converter.Classes;
 
@@ -125,7 +128,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericRetypeFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+    private static final class GenericSeparateRetypeFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericRetypeFeatureIterator<F,R> implements FeatureReader<T,F>{
 
         /**
@@ -138,7 +141,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         private final SimpleFeatureBuilder builder;
         protected final T mask;
 
-        private GenericRetypeFeatureReader(R reader, T mask){
+        private GenericSeparateRetypeFeatureReader(R reader, T mask){
             super(reader);
             this.mask = mask;
             types = typeAttributes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
@@ -171,14 +174,78 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
     }
 
     /**
+     * Wrap a FeatureReader with a new featuretype. reuse the same feature each time.
+     *
+     * @param <T> extends FeatureType
+     * @param <F> extends Feature
+     * @param <R> extends FeatureReader<T,F>
+     */
+    private static final class GenericReuseRetypeFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+            extends GenericRetypeFeatureIterator<F,R> implements FeatureReader<T,F>{
+
+        /**
+         * The descriptors we are going to from the original reader
+         */
+        private final AttributeDescriptor[] types;
+
+        private final DefaultSimpleFeature feature;
+
+        /**
+         * Creates retyped features
+         */
+        protected final T mask;
+
+        private GenericReuseRetypeFeatureReader(R reader, T mask){
+            super(reader);
+            this.mask = mask;
+            types = typeAttributes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
+
+            feature = new DefaultSimpleFeature(new Object[types.length], (SimpleFeatureType) mask, null, false);
+        }
+
+        @Override
+        public F next() throws DataStoreRuntimeException {
+            final SimpleFeature next = (SimpleFeature) iterator.next();
+            feature.setId(next.getID());
+
+            for (int i = 0; i < types.length; i++) {
+                feature.setAttribute(i, next.getAttribute(types[i].getLocalName()));
+            }
+            
+            return (F) feature;
+        }
+
+        @Override
+        public T getFeatureType() {
+            return mask;
+        }
+
+        @Override
+        public void remove() {
+            iterator.remove();
+        }
+    }
+
+
+    /**
      * Wrap a FeatureReader with a new featuretype.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(FeatureReader<T,F> reader, FeatureType mask){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
+            FeatureReader<T,F> reader, FeatureType mask, Hints hints){
         if(mask.equals(reader.getFeatureType())){
             //same type mapping, no need to wrap it
             return reader;
         }
-        return new GenericRetypeFeatureReader(reader, mask);
+
+        final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
+        if(detached == null || detached){
+            //default behavior, make separate features
+            return new GenericSeparateRetypeFeatureReader(reader,mask);
+        }else{
+            //reuse same feature
+            return new GenericReuseRetypeFeatureReader(reader, mask);
+        }
+        
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
@@ -233,8 +234,8 @@ public class DataUtilities {
         }
 
         @Override
-        public FeatureIterator iterator() throws DataStoreRuntimeException {
-            return new SequenceIterator();
+        public FeatureIterator iterator(Hints hints) throws DataStoreRuntimeException {
+            return new SequenceIterator(hints);
         }
 
         @Override
@@ -286,12 +287,14 @@ public class DataUtilities {
 
         private class SequenceIterator implements FeatureIterator {
 
+            private final Hints hints;
             private int currentCollection = -1;
             private FeatureIterator ite = null;
 
-            public SequenceIterator() {
+            public SequenceIterator(Hints hints) {
+                this.hints = hints;
                 currentCollection = 0;
-                ite = wrapped[currentCollection].iterator();
+                ite = wrapped[currentCollection].iterator(hints);
             }
 
             @Override
@@ -316,7 +319,7 @@ public class DataUtilities {
 
                 currentCollection++;
                 while (currentCollection < wrapped.length) {
-                    ite = wrapped[currentCollection].iterator();
+                    ite = wrapped[currentCollection].iterator(hints);
 
                     if (ite.hasNext()) {
                         return true;

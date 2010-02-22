@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 
 import org.opengis.feature.Feature;
@@ -93,7 +94,12 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public abstract FeatureIterator<F> iterator();
+    public final FeatureIterator<F> iterator(){
+        return iterator(null);
+    }
+
+    @Override
+    public abstract FeatureIterator<F> iterator(Hints hints);
 
     /**
      * {@inheritDoc }

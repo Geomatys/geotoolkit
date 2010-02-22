@@ -62,8 +62,9 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -240,13 +241,19 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
     protected RenderingIterator getIterator(FeatureCollection<SimpleFeature> features, 
             RenderingContext2D renderingContext, StatefullContextParams params){
-        final FeatureIterator<SimpleFeature> iterator = features.iterator();
+        final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
+        final FeatureIterator<SimpleFeature> iterator = features.iterator(iteHints);
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
 
     /**
      * Render by feature order.
+     * @param features 
+     * @param renderers
+     * @param context 
+     * @param params 
+     * @throws PortrayalException
      */
     protected final void renderByFeatureOrder(FeatureCollection<SimpleFeature> features,
             RenderingContext2D context, StatefullCachedRule renderers, StatefullContextParams params)

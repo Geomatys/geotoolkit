@@ -619,7 +619,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         if (postFilter != null && postFilter != Filter.INCLUDE) {
             reader = GenericFilterFeatureIterator.wrap(reader, postFilter);
             if(!returnedSchema.equals(querySchema))
-                reader = GenericRetypeFeatureIterator.wrap(reader, returnedSchema);
+                reader = GenericRetypeFeatureIterator.wrap(reader, returnedSchema,query.getHints());
         }
 
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();

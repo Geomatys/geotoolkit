@@ -30,6 +30,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
 
 import org.opengis.feature.Feature;
@@ -98,6 +99,11 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
 
     @Override
     public FeatureIterator<F> iterator() throws DataStoreRuntimeException {
+        return iterator(null);
+    }
+
+    @Override
+    public FeatureIterator<F> iterator(Hints hints) throws DataStoreRuntimeException {
         return new GenericMappingFeatureIterator<F>(original.iterator(), original.getFeatureType(), type, mapping, defaults);
     }
 
@@ -165,6 +171,5 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     public void clear() {
         throw new DataStoreRuntimeException("Not writable");
     }
-
 
 }
