@@ -28,7 +28,7 @@ package org.geotoolkit.coverage.sql;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public enum UpdatePolicy {
+enum UpdatePolicy {
     /**
      * The new record is discarted and the existing one is keept unchanged.
      */

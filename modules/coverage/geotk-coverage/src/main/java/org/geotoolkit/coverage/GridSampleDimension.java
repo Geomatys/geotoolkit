@@ -542,7 +542,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *          (the name of what looks like the "main" category). This is the value to be
      *          returned by {@link #getDescription}.
      * @param categories
-     *          The list of categories.
+     *          The list of categories, or {@code null} if none.
      * @param units
      *          The unit information for this sample dimension. May be {@code null} if
      *          no category has units. This unit apply to values obtained after the
@@ -581,7 +581,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *            (the name of what looks like the "main" category). This is the value to be
      *            returned by {@link #getDescription}.
      * @param list
-     *            The list of categories, or {@code null}.
+     *            The list of categories, or {@code null} if none.
      */
     private GridSampleDimension(final CharSequence description, final CategoryList list) {
         /*

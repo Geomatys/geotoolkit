@@ -31,7 +31,7 @@ package org.geotoolkit.coverage.sql;
  *
  * @see Database#getProperty
  */
-public enum ConfigurationKey {
+enum ConfigurationKey {
     /**
      * Key for the local data directory root. The value may be {@code null} if data are
      * not accessible locally. In such case, data may be accessible remotely from the

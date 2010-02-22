@@ -18,16 +18,17 @@
 package org.geotoolkit.coverage.sql;
 
 import java.sql.SQLException;
-import java.util.Map;
-
+import javax.measure.unit.SI;
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link CategoryTable}.
+ * Tests {@link SampleDimensionTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.09
@@ -35,29 +36,29 @@ import static org.junit.Assert.*;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-public class CategoryTableTest extends CatalogTestBase {
+@Depend(CategoryTableTest.class)
+public class SampleDimensionTableTest extends CatalogTestBase {
     /**
-     * Tests the {@link CategoryTable#getCategories} method.
+     * Tests the {@link SampleDimensionTable#getSampleDimensions} method.
      *
      * @throws SQLException     If the test can't connect to the database.
      * @throws CatalogException Should never happen in normal test execution.
      */
     @Test
     public void testSelect() throws CatalogException, SQLException {
-        final CategoryTable table = new CategoryTable(getDatabase());
-        final Map<Integer,Category[]> map = table.getCategories(FormatTableTest.TEMPERATURE);
-        assertEquals("The format should define only one band.", 1, map.size());
-        checkTemperatureCategories(map.get(1));
+        final SampleDimensionTable table = new SampleDimensionTable(getDatabase());
+        checkTemperatureDimension(table.getSampleDimensions(FormatTableTest.TEMPERATURE));
     }
 
     /**
-     * Checks the categories in the band #1 of the
-     * {@code "PNG Temperature [-3 … 32.25]°C"} format.
+     * Checks the sample dimensions of the {@code "PNG Temperature [-3 … 32.25]°C"} format.
      */
-    static void checkTemperatureCategories(final Category[] categories) {
-        assertNotNull("The band #1 should exists.", categories);
-        assertEquals("The band is expected to have 2 categories.", 2, categories.length);
-        assertEquals("Missing value", categories[0].getName().toString());
-        assertEquals("Temperature",   categories[1].getName().toString());
+    static void checkTemperatureDimension(final GridSampleDimension[] dimensions) {
+        assertNotNull("The SampleDimension array can't be null.", dimensions);
+        assertEquals("The format should have exactly 1 band.", 1, dimensions.length);
+        final GridSampleDimension dim = dimensions[0];
+        assertEquals("SST [-3 … 32.25°C]", dim.getDescription().toString());
+        assertEquals(SI.CELSIUS, dim.getUnits());
+        CategoryTableTest.checkTemperatureCategories(dim.getCategories().toArray(new Category[0]));
     }
 }

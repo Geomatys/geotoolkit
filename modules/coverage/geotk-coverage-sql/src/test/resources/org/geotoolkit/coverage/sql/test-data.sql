@@ -7,6 +7,11 @@
 SET client_encoding = 'UTF8';
 SET search_path = coverages, postgis;
 
+
+
+--------------------------------------------------------------------------------------------------
+-- Temperature data                                                                             --
+--------------------------------------------------------------------------------------------------
 INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
  ('PNG Temperature [-3 … 32.25]°C', 'PNG', 'native');
 
@@ -34,3 +39,21 @@ INSERT INTO "GridCoverages" ("series", "filename", "startTime", "endTime", "exte
  (100, '198605', '1986-02-02', '1986-02-10', 100),
  (100, '198606', '1986-02-10', '1986-02-18', 100),
  (100, '198607', '1986-02-18', '1986-02-26', 100);
+
+
+
+--------------------------------------------------------------------------------------------------
+-- Geostrophic current data                                                                     --
+--------------------------------------------------------------------------------------------------
+INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
+ ('Mars (u,v)', 'NetCDF', 'geophysics');
+
+INSERT INTO "SampleDimensions" ("format", "band", "name", "units") VALUES
+ ('Mars (u,v)', 1, 'U', 'm/s'),
+ ('Mars (u,v)', 2, 'V', 'm/s');
+
+INSERT INTO "Categories" ("format", "band", "name", "lower", "upper", "c0", "c1", "colors") VALUES
+ ('Mars (u,v)', 1, 'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Mars (u,v)', 2, 'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Mars (u,v)', 1, 'U component', 1, 255, -1.75, 0.01, 'white-cyan-red'),
+ ('Mars (u,v)', 2, 'V component', 1, 255, -1.75, 0.01, 'white-cyan-red');

@@ -681,6 +681,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NON_CARTESIAN_COORDINATE_SYSTEM_$1 = 116;
 
         /**
+         * Bands {0} and {1} are not consecutive.
+         */
+        public static final int NON_CONSECUTIVE_BANDS_$2 = 239;
+
+        /**
          * Can't convert value from units "{1}" to "{0}".
          */
         public static final int NON_CONVERTIBLE_UNITS_$2 = 117;
