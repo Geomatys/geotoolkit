@@ -135,6 +135,7 @@ public class RegistryObjectType implements RegistryObject {
      * Gets the value of the name property.
      * 
      */
+    @Override
     public InternationalStringType getName() {
         return name;
     }
@@ -250,6 +251,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Gets the value of the id property.
      */
+    @Override
     public String getId() {
         return id;
     }

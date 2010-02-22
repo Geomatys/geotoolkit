@@ -239,7 +239,11 @@ public class FileUtilities {
             }
         } else if (scheme.equals("jar") || scheme.equals("zip")) {
             final File f = new File(System.getProperty("java.io.tmpdir") + "/Constellation");
-            if (f != null && f.exists()) {
+            boolean created = true;
+            if (!f.exists()) {
+                created = f.mkdir();
+            }
+            if (created) {
                 try {
                     String cleanedUri = u.getSchemeSpecificPart();
                     if (cleanedUri.indexOf('!') != -1) {
@@ -258,7 +262,7 @@ public class FileUtilities {
                     LOGGER.info("The configuration directory was not found in the temporary folder.");
                 }
             } else {
-                LOGGER.info("The Constellation directory was not present in the temporary folder.");
+                LOGGER.info("The Constellation directory can't be created in the temporary folder.");
             }
         }
         return null;
@@ -280,7 +284,11 @@ public class FileUtilities {
         }
         if (scheme.equals("jar") || scheme.equals("zip")) {
             final File f = new File(System.getProperty("java.io.tmpdir") + "/Constellation");
-            if (f != null && f.exists()) {
+            boolean created = true;
+            if (!f.exists()) {
+                created = f.mkdir();
+            }
+            if (created) {
                 final File fConfig = new File(f, filePackageName);
                 if (fConfig.exists() && fConfig.isDirectory()) {
                     return fConfig;
@@ -288,7 +296,7 @@ public class FileUtilities {
                     LOGGER.info("The configuration directory was not found in the temporary folder.");
                 }
             } else {
-                LOGGER.info("The Constellation directory was not present in the temporary folder.");
+                LOGGER.info("The Constellation directory can't be created in the temporary folder.");
             }
         }
         return null;

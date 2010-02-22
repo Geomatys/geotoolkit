@@ -60,12 +60,12 @@ public class PhoneType implements AbstractPhone {
 
     public PhoneType(List<String> voice, List<String> facsimile) {
         this.facsimile = facsimile;
-        this.voice = voice;
+        this.voice     = voice;
     }
 
     public PhoneType(String voice, String facsimile) {
         this.facsimile = new ArrayList<String>();
-        this.voice = new ArrayList<String>();
+        this.voice     = new ArrayList<String>();
         if (facsimile != null) {
             this.facsimile.add(facsimile);
         }
@@ -78,6 +78,7 @@ public class PhoneType implements AbstractPhone {
     /**
      * Gets the value of the voice property.
      */
+    @Override
     public List<String> getVoice() {
         if (voice == null) {
             voice = new ArrayList<String>();
@@ -86,14 +87,49 @@ public class PhoneType implements AbstractPhone {
     }
 
     /**
+     * Sets the value of the voice property.
+     */
+    public void setVoice(List<String> voice) {
+        this.voice = voice;
+    }
+
+    /**
+     * Sets the value of the voice property.
+     */
+    public void setVoice(String voice) {
+        if (this.voice == null) {
+            this.voice = new ArrayList<String>();
+        }
+        this.voice.add(voice);
+    }
+
+    /**
      * Gets the value of the facsimile property.
      *
      */
+    @Override
     public List<String> getFacsimile() {
         if (facsimile == null) {
             facsimile = new ArrayList<String>();
         }
         return this.facsimile;
+    }
+
+    /**
+     * Sets the value of the facsimile property.
+     */
+    public void setFacsimile(List<String> facsimile) {
+        this.facsimile = facsimile;
+    }
+
+    /**
+     * Sets the value of the facsimile property.
+     */
+    public void setFacsimile(String facsimile) {
+        if (this.facsimile == null) {
+            this.facsimile = new ArrayList<String>();
+        }
+        this.facsimile.add(facsimile);
     }
 
     @Override
@@ -124,7 +160,7 @@ public class PhoneType implements AbstractPhone {
         if (object instanceof PhoneType) {
             final PhoneType that = (PhoneType) object;
             return Utilities.equals(this.facsimile, that.facsimile) &&
-                    Utilities.equals(this.voice, that.voice);
+                   Utilities.equals(this.voice,     that.voice);
         }
         return false;
     }

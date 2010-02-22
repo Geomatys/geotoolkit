@@ -64,11 +64,23 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
     /**
      * Gets the value of the field property.
      */
+    @Override
     public List<AnyScalarPropertyType> getField() {
         if (field == null) {
             field = new ArrayList<AnyScalarPropertyType>();
         }
         return this.field;
+    }
+
+    public void setField(List<AnyScalarPropertyType> field) {
+        this.field = field;
+    }
+
+    public void setField(AnyScalarPropertyType field) {
+        if (this.field == null) {
+            this.field = new ArrayList<AnyScalarPropertyType>();
+        }
+        this.field.add(field);
     }
 
     @Override

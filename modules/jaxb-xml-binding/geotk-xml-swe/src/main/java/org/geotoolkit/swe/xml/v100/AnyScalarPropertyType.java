@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.swe.xml.v100;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -68,7 +69,7 @@ public class AnyScalarPropertyType implements AnyScalar {
     @XmlElement(name = "Time")
     private TimeType time;
     @XmlElement(name = "Boolean")
-    private Boolean _boolean;
+    private BooleanType _boolean;
     @XmlElement(name = "Category")
     private Category category;
     @XmlElement(name = "Text")
@@ -117,7 +118,7 @@ public class AnyScalarPropertyType implements AnyScalar {
         this.time  = time;
     }
 
-    public AnyScalarPropertyType(String name, Boolean _boolean) {
+    public AnyScalarPropertyType(String name, BooleanType _boolean) {
         this.name  = name;
         this._boolean = _boolean;
     }
@@ -130,6 +131,48 @@ public class AnyScalarPropertyType implements AnyScalar {
     public AnyScalarPropertyType(String name, Text text) {
         this.name  = name;
         this.text  = text;
+    }
+
+    public void setValue(Object obj) {
+        ObjectFactory factory = new ObjectFactory();
+        if (obj instanceof JAXBElement) {
+            obj = ((JAXBElement) obj).getValue();
+        }
+        if (obj instanceof Count) {
+            count = (Count) obj;
+        } else if (obj instanceof QuantityType) {
+            quantity = (QuantityType) obj;
+        } else if (obj instanceof TimeType) {
+            time = (TimeType) obj;
+        } else if (obj instanceof BooleanType) {
+            _boolean = (BooleanType) obj;
+        } else if (obj instanceof Category) {
+            category = (Category) obj;
+        } else if (obj instanceof Text) {
+            text = (Text) obj;
+        } else {
+            System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
+        }
+
+    }
+
+    public Object getValue() {
+
+        if (count != null) {
+            return count;
+        } else if (quantity != null) {
+            return quantity;
+        } else if (time != null) {
+            return time;
+        } else if (_boolean != null) {
+            return _boolean;
+        } else if (category != null) {
+            return category;
+        } else if (text != null) {
+            return text;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -212,7 +255,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Boolean }
      *     
      */
-    public Boolean getBoolean() {
+    public BooleanType getBoolean() {
         return _boolean;
     }
 
@@ -224,7 +267,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Boolean }
      *     
      */
-    public void setBoolean(Boolean value) {
+    public void setBoolean(BooleanType value) {
         this._boolean = value;
     }
 
