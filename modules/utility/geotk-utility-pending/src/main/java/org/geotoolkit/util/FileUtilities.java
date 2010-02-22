@@ -54,20 +54,12 @@ public class FileUtilities {
      * @param file The File or directory to delete.
      */
     public static void deleteDirectory(File dir) {
-        if (dir.exists()) {
-            if (dir.isDirectory()) {
-                for (File f : dir.listFiles()) {
-                    if (f.isDirectory()) {
-                        deleteDirectory(f);
-                    } else {
-                        f.delete();
-                    }
-                }
-                dir.delete();
-            } else {
-                dir.delete();
+        if (dir.isDirectory()) {
+            for (File f : dir.listFiles()) {
+                deleteDirectory(f);
             }
         }
+        dir.delete();
     }
 
     /**
@@ -97,15 +89,12 @@ public class FileUtilities {
      *
      * @throws IOException if the file does not exist or cannot be read.
      */
-    public static void emptyFile(String urlFile) throws IOException {
-
-        //false means we overwrite
-        final FileWriter fw = new FileWriter(urlFile, false);
-        final BufferedWriter output = new BufferedWriter(fw);
-
-        output.write("");
-        output.flush();
-        output.close();
+    public static void emptyFile(final String urlFile) throws IOException {
+        final File file = new File(urlFile);
+        if (file.exists()) {
+            file.delete();
+        }
+        file.createNewFile();
     }
 
     /**
@@ -153,6 +142,39 @@ public class FileUtilities {
         } catch (IOException ex) {
             LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
         }
+
+        return result;
+    }
+
+    /**
+     * Searches in the Context ClassLoader for the named file and returns it.
+     *
+     * @param packagee The name of package.
+     *
+     * @return A directory if it exist.
+     */
+    public static File getFileFromResource(String packagee) {
+        File result = null;
+        final ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+
+        try {
+            final String extension = packagee.substring(packagee.lastIndexOf('.'), packagee.length());
+            packagee = packagee.substring(0, packagee.lastIndexOf('.'));
+            final String fileP = packagee.replace('.', '/') + extension;
+            final Enumeration<URL> urls = classloader.getResources(fileP);
+            while (urls.hasMoreElements()) {
+                final URL url = urls.nextElement();
+                try {
+                    final URI uri = url.toURI();
+                    result = scanFile(uri, fileP);
+                } catch (URISyntaxException e) {
+                    LOGGER.severe("URL, " + url + "cannot be converted to a URI");
+                }
+            }
+        } catch (IOException ex) {
+            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
+        }
+
 
         return result;
     }
@@ -240,39 +262,6 @@ public class FileUtilities {
             }
         }
         return null;
-    }
-
-    /**
-     * Searches in the Context ClassLoader for the named file and returns it.
-     *
-     * @param packagee The name of package.
-     *
-     * @return A directory if it exist.
-     */
-    public static File getFileFromResource(String packagee) {
-        File result = null;
-        final ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
-        try {
-            final String extension = packagee.substring(packagee.lastIndexOf('.'), packagee.length());
-            packagee = packagee.substring(0, packagee.lastIndexOf('.'));
-            final String fileP = packagee.replace('.', '/') + extension;
-            final Enumeration<URL> urls = classloader.getResources(fileP);
-            while (urls.hasMoreElements()) {
-                final URL url = urls.nextElement();
-                try {
-                    final URI uri = url.toURI();
-                    result = scanFile(uri, fileP);
-                } catch (URISyntaxException e) {
-                    LOGGER.severe("URL, " + url + "cannot be converted to a URI");
-                }
-            }
-        } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
-        }
-
-
-        return result;
     }
 
     /**
