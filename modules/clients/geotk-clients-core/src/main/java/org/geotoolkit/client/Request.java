@@ -29,6 +29,12 @@ import java.net.URL;
  */
 public interface Request {
 
+    /**
+     * Returns the URL of a request on a web service, in REST mode.
+     *
+     * @throws MalformedURLException if the request does not comply with the {@link URL}
+     *                               specification.
+     */
     URL getURL() throws MalformedURLException;
     
 }

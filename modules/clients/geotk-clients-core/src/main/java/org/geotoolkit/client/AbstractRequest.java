@@ -26,17 +26,25 @@ import org.geotoolkit.util.StringUtilities;
 
 
 /**
+ * Abstract implementation of {@link Request}. Defines methods to get the full url
+ * of the request in REST Kvp mode.
  *
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class AbstractRequest implements Request {
-
+    /**
+     * The address of the web service.
+     */
     protected final String serverURL;
+
+    /**
+     * Parameters of the request, for key-value-pair requests.
+     */
     protected final Map<String, String> requestParameters = new HashMap<String, String>();
 
-    protected AbstractRequest(String serverURL) {
+    protected AbstractRequest(final String serverURL) {
 
         if (serverURL.contains("?")) {
             this.serverURL = serverURL;

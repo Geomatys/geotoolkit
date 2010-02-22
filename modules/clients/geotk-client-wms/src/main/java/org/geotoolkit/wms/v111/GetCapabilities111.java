@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,13 +18,20 @@ package org.geotoolkit.wms.v111;
 
 import org.geotoolkit.wms.AbstractGetCapabilities;
 
+
 /**
+ * Implementation for the GetCapabilities request version 1.1.1.
+ *
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
 public class GetCapabilities111 extends AbstractGetCapabilities {
-
-    public GetCapabilities111(String serverURL){
+    /**
+     * Defines the server url and its version.
+     *
+     * @param serverURL The url of the webservice.
+     */
+    public GetCapabilities111(final String serverURL){
         super(serverURL, "1.1.1");
     }
 

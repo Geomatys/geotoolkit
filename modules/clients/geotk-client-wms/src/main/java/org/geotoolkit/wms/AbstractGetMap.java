@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,15 +29,23 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+
 /**
+ * Abstract implementation of {@link GetMapRequest}, which defines the parameters for
+ * a GetMap request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest{
-
+    /**
+     * Default logger for all GetMap requests.
+     */
     protected static final Logger LOGGER = Logging.getLogger(AbstractGetMap.class);
 
+    /**
+     * The version to use for this webservice request.
+     */
     protected final String version;
     protected final HashMap<String,String> dims = new HashMap<String, String>();
     protected String format = "image/png";
@@ -50,6 +58,12 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     protected String sldBody = null;
     protected Boolean transparent = true;
 
+    /**
+     * Defines the server url and the service version for this kind of request.
+     *
+     * @param serverURL The server url.
+     * @param version The version of the request.
+     */
     protected AbstractGetMap(String serverURL,String version){
         super(serverURL);
         this.version = version;

@@ -90,6 +90,15 @@ public final class RequestsUtilities {
         return Boolean.parseBoolean(strTransparent.trim());
     }
 
+    /**
+     * Get the {@link Color} object matching with the given string.
+     *
+     * @param background A string representing the color. It will be given to
+     *                   {@link Color#decode(String)}.
+     * @return The color object, or {@code null} if the given string is {@code null}.
+     * @throws NumberFormatException if the specified string cannot be interpreted
+     *                               as a decimal, octal, or hexidecimal integer.
+     */
     public static Color toColor(String background) throws NumberFormatException{
         Color color = null;
         if (background != null) {
@@ -116,21 +125,14 @@ public final class RequestsUtilities {
     }
 
     /**
-     * Convert a string containing a date into a {@link Date}, respecting the ISO 8601 standard.
+     * Extends the {@link Double#valueOf(String)} method, in removing the leading
+     * and trailing whitespace.
      *
-     * @param strTime Date as a string.
-     * @return A date parsed from a string, or {@code null} if it doesn't respect the ISO 8601.
-     * @throws java.text.ParseException
+     * @param value A string representing a double value.
+     * @return A double representation of the given string, or {@code NaN} if the
+     *         given string is null.
+     * @throws NumberFormatException if the string can't be parsed as an double value.
      */
-//    public static Date toDate(final String strTime) throws ParseException {
-//        if (strTime == null) {
-//            return null;
-//        }
-//        final List<Date> dates = new ArrayList<Date>();
-//        TimeParser.parse(strTime, 0L, dates);
-//        return (dates != null && !dates.isEmpty()) ? dates.get(0) : null;
-//    }
-
     public static double toDouble(String value) throws NumberFormatException {
         if (value == null) {
             return Double.NaN;
@@ -318,6 +320,12 @@ public final class RequestsUtilities {
 
     }
 
+    /**
+     * Returns the format if it is a known format, that can be used for writting.
+     *
+     * @param format The format chosen, as a string.
+     * @throws IllegalArgumentException if the given string is not a known format.
+     */
     public static String toFormat(String format) throws IllegalArgumentException {
         if (format == null) {
             return null;
@@ -331,6 +339,15 @@ public final class RequestsUtilities {
         return format;
     }
 
+    /**
+     * Extends the {@link Integer#valueOf(String)} method, in removing the leading
+     * and trailing whitespace.
+     *
+     * @param value A string representing an integer value.
+     * @return An integer representation of the given string.
+     * @throws NumberFormatException if the given value is {@code null}, or if the
+     *                               string can't be parsed as an integer value.
+     */
     public static int toInt(String value) throws NumberFormatException {
         if (value == null) {
             throw new NumberFormatException("Int value not defined.");
@@ -339,6 +356,12 @@ public final class RequestsUtilities {
         return Integer.parseInt(value);
     }
 
+    /**
+     * Takes a string with the pattern: beginVal,lastVal/otherVal.
+     * That string will be splitted in order to return a list of ranges.
+     *
+     * @param ranges A string representing a list of ranges.
+     */
     public static List<Double[]> toCategoriesRange(final String ranges) {
         final List<Double[]> exts = new ArrayList<Double[]>();
         final String[] blocks = ranges.split("/");

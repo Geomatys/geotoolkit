@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,18 +19,24 @@ package org.geotoolkit.wms.v111;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.wms.AbstractGetMap;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 
+
 /**
+ * Implementation for the GetMap request version 1.1.1.
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class GetMap111 extends AbstractGetMap {
-
+    /**
+     * Defines the server url and its version.
+     *
+     * @param serverURL The url of the webservice.
+     */
     public GetMap111(String serverURL){
         super(serverURL,"1.1.1");
     }
@@ -39,8 +45,8 @@ public class GetMap111 extends AbstractGetMap {
      * {@inheritDoc }
      */
     @Override
-    protected Map<String,String> toString(Envelope env) {
-        Map<String,String> map = new HashMap<String,String>();
+    protected Map<String,String> toString(final Envelope env) {
+        final Map<String,String> map = new HashMap<String,String>();
         final StringBuilder sb = new StringBuilder();
         final double minx = env.getMinimum(0);
         final double maxx = env.getMaximum(0);

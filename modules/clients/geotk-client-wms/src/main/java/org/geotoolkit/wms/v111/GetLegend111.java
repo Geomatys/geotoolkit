@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,19 @@ package org.geotoolkit.wms.v111;
 
 import org.geotoolkit.wms.AbstractGetLegend;
 
+
 /**
+ * Implementation for the GetLegendGraphic request version 1.1.1.
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class GetLegend111 extends AbstractGetLegend {
-
+    /**
+     * Defines the server url and its version.
+     *
+     * @param serverURL The url of the webservice.
+     */
     public GetLegend111(String serverURL){
         super(serverURL,"1.1.1");
     }

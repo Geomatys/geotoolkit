@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,16 +20,27 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
 
+
 /**
+ * Abstract implementation of {@link GetCapabilitiesRequest}, which defines the
+ * parameters for a GetCapabilities request.
  *
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
 public abstract class AbstractGetCapabilities extends AbstractRequest implements GetCapabilitiesRequest{
-
+    /**
+     * The version to use for this webservice request.
+     */
     protected final String version;
 
-    protected AbstractGetCapabilities(String serverURL,String version){
+    /**
+     * Defines the server url and the service version for this kind of request.
+     *
+     * @param serverURL The server url.
+     * @param version The version of the request.
+     */
+    protected AbstractGetCapabilities(final String serverURL, final String version){
         super(serverURL);
         this.version = version;
     }

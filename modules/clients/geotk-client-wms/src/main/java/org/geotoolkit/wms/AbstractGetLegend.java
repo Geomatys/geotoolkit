@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,14 +25,21 @@ import org.geotoolkit.util.logging.Logging;
 
 
 /**
+ * Abstract implementation of {@link GetLegendRequest}, which defines the
+ * parameters for a GetLegendGraphic request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public abstract class AbstractGetLegend extends AbstractRequest implements GetLegendRequest{
-
+    /**
+     * Default logger for all GetLegendGraphic requests.
+     */
     protected static final Logger LOGGER = Logging.getLogger(AbstractGetMap.class);
 
+    /**
+     * The version to use for this webservice request.
+     */
     protected final String version;
     protected String format = "image/png";
     protected String exception = "application/vnd.ogc.se_inimage";
@@ -43,6 +50,12 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     protected String sldBody = null;
     protected Boolean transparent = true;
 
+    /**
+     * Defines the server url and the service version for this kind of request.
+     *
+     * @param serverURL The server url.
+     * @param version The version of the request.
+     */
     protected AbstractGetLegend(String serverURL,String version){
         super(serverURL);
         this.version = version;
