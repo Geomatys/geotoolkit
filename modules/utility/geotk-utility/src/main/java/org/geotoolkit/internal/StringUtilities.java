@@ -17,9 +17,8 @@
  */
 package org.geotoolkit.internal;
 
-import java.util.Arrays;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Strings;
 
 
 /**
@@ -50,15 +49,12 @@ public final class StringUtilities {
      * @return The number of occurences of the given character.
      *
      * @since 3.03
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static int count(final CharSequence text, final char c) {
-        int n = 0;
-        for (int i=text.length(); --i>=0;) {
-            if (text.charAt(i) == c) {
-                n++;
-            }
-        }
-        return n;
+        return Strings.count(text, c);
     }
 
     /**
@@ -67,14 +63,12 @@ public final class StringUtilities {
      * @param buffer The string in which to perform the replacements.
      * @param target The string to replace.
      * @param replacement The replacement for the target string.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static void replace(final StringBuilder buffer, final String target, final String replacement) {
-        final int length = target.length();
-        int i = buffer.length();
-        while ((i = buffer.lastIndexOf(target, i)) >= 0) {
-            buffer.replace(i, i+length, replacement);
-            i -= length;
-        }
+        Strings.replace(buffer, target, replacement);
     }
 
     /**
@@ -84,19 +78,26 @@ public final class StringUtilities {
      * @param toRemove The string to remove.
      *
      * @since 3.06
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static void remove(final StringBuilder buffer, final String toRemove) {
-        final int length = toRemove.length();
-        for (int i=buffer.lastIndexOf(toRemove); i>=0; i=buffer.lastIndexOf(toRemove, i)) {
-            buffer.delete(i, i + length);
-        }
+        Strings.remove(buffer, toRemove);
     }
 
     /**
-     * Removes every occurences of line feeds in the given buffer, together with the spaces
-     * around the line feeds. If the last character of a line and the first character of the
-     * next line are both {@linkplain Character#isLetterOrDigit(char) letter or digit}, then
-     * a space will be inserted between them. Otherwise they will be no space.
+     * Reformats a multi-line text as a single line text. More specifically, for each
+     * occurence of line feed (the {@code '\n'} character) found in the given buffer,
+     * this method performs the following steps:
+     * <p>
+     * <ol>
+     *   <li>Remove the line feed character and the {@linkplain Character#isWhitespace(char)
+     *       white spaces} around them.</li>
+     *   <li>If the last character before the line feed and the first character after the
+     *       line feed are both {@linkplain Character#isLetterOrDigit(char) letter or digit},
+     *       then a space will be inserted between them. Otherwise they will be no space.</li>
+     * </ol>
      *
      * @param buffer The string in which to perform the removal.
      */
@@ -136,7 +137,7 @@ public final class StringUtilities {
     }
 
     /**
-     * Trims the factional part of the given string, provided that it doesn't change the value.
+     * Trims the fractional part of the given string, provided that it doesn't change the value.
      * More specifically, this method removes the trailing {@code ".0"} characters if any. This
      * method is invoked before to parse an integer or to parse a date (for omitting fractional
      * seconds).
@@ -145,17 +146,13 @@ public final class StringUtilities {
      * @return The value without the trailing {@code ".0"} part.
      *
      * @since 3.06
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static String trimFractionalPart(String value) {
         value = value.trim();
-        for (int i=value.length(); --i>=0;) {
-            switch (value.charAt(i)) {
-                case '0': continue;
-                case '.': return value.substring(0, i);
-                default : return value;
-            }
-        }
-        return value;
+        return Strings.trimFractionalPart(value);
     }
 
     /**
@@ -166,7 +163,10 @@ public final class StringUtilities {
      * @param buffer The buffer to trim.
      *
      * @since 3.09
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static void trimTrailingZero(final StringBuilder buffer) {
         final int length = buffer.length() - 2;
         if (length >= 0 && buffer.charAt(length) == '.' && buffer.charAt(length+1) == '0') {
@@ -184,32 +184,12 @@ public final class StringUtilities {
      * @return The identifier with spaces inserted after what looks like words.
      *
      * @since 3.03
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static StringBuilder separateWords(final CharSequence identifier) {
-        final int length = identifier.length();
-        final StringBuilder buffer = new StringBuilder(length + 8);
-        int last = 0;
-        for (int i=1; i<=length; i++) {
-            if (i == length ||
-                (Character.isUpperCase(identifier.charAt(i)) &&
-                 Character.isLowerCase(identifier.charAt(i-1))))
-            {
-                final int pos = buffer.length();
-                buffer.append(identifier, last, i).append(' ');
-                if (pos!=0 && last<length-1 && Character.isLowerCase(identifier.charAt(last+1))) {
-                    buffer.setCharAt(pos, Character.toLowerCase(buffer.charAt(pos)));
-                }
-                last = i;
-            }
-        }
-        /*
-         * Removes the trailing space, if any.
-         */
-        int lg = buffer.length();
-        if (lg != 0 && Character.isSpaceChar(buffer.charAt(--lg))) {
-            buffer.setLength(lg);
-        }
-        return buffer;
+        return Strings.camelCaseToWords(identifier, true);
     }
 
     /**
@@ -306,46 +286,12 @@ public final class StringUtilities {
      * @return The acronym, or {@code null} if the given text was null.
      *
      * @since 3.07
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static String acronym(String text) {
-        if (text != null && !isUpperCase(text = text.trim())) {
-            final int length = text.length();
-            final StringBuilder buffer = new StringBuilder();
-            boolean wantChar = true;
-            for (int i=0; i<length; i++) {
-                final char c = text.charAt(i);
-                if (wantChar) {
-                    if (Character.isJavaIdentifierStart(c)) {
-                        buffer.append(c);
-                        wantChar = false;
-                    }
-                } else if (!Character.isJavaIdentifierPart(c) || c == '_') {
-                    wantChar = true;
-                } else if (Character.isUpperCase(c)) {
-                    // Test for mixed-case (e.g. "northEast").
-                    // Note that the buffer is garanteed to contain at least 1 character.
-                    if (Character.isLowerCase(buffer.charAt(buffer.length() - 1))) {
-                        buffer.append(c);
-                    }
-                }
-            }
-            final int acrlg = buffer.length();
-            if (acrlg != 0) {
-                /*
-                 * If every characters except the first one are upper-case, ensure that the
-                 * first one is upper-case as well. This is for handling the identifiers which
-                 * are compliant to Java-Beans convention (e.g. "northEast").
-                 */
-                if (isUpperCase(buffer, 1, acrlg)) {
-                    buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
-                }
-                final String acronym = buffer.toString();
-                if (!text.equals(acronym)) {
-                    text = acronym;
-                }
-            }
-        }
-        return text;
+        return Strings.camelCaseToAcronym(text);
     }
 
     /**
@@ -364,68 +310,12 @@ public final class StringUtilities {
      * @return {@code true} if the second string is an acronym of the first one.
      *
      * @since 3.03
+     *
+     * @deprecated Moved to the {@link Strings} class. WARNING: Argument order is swapped.
      */
+    @Deprecated
     public static boolean equalsAcronym(final CharSequence complete, final CharSequence acronym) {
-        final int lgc = complete.length();
-        final int lga = acronym .length();
-        int ic=0, ia=0;
-        char ca, cc;
-        do if (ia >= lga) return false;
-        while (!Character.isLetterOrDigit(ca = acronym.charAt(ia++)));
-        do if (ic >= lgc) return false;
-        while (!Character.isLetterOrDigit(cc = complete.charAt(ic++)));
-        if (Character.toUpperCase(ca) != Character.toUpperCase(cc)) {
-            // The first letter must match.
-            return false;
-        }
-cmp:    while (ia < lga) {
-            if (ic >= lgc) {
-                // There is more letters in the acronym than in the complete name.
-                return false;
-            }
-            ca = acronym .charAt(ia++);
-            cc = complete.charAt(ic++);
-            if (Character.isLetterOrDigit(ca)) {
-                if (Character.toUpperCase(ca) == Character.toUpperCase(cc)) {
-                    // Acronym letter matches the letter from the complete name.
-                    // Continue the comparison with next letter of both strings.
-                    continue;
-                }
-                // Will search for the next word after the 'else' block.
-            } else do {
-                if (ia >= lga) break cmp;
-                ca = acronym.charAt(ia++);
-            } while (!Character.isLetterOrDigit(ca));
-            /*
-             * At this point, 'ca' is the next acronym letter to compare and we
-             * need to search for the next word in the complete name. We first
-             * skip remaining letters, then we skip non-letter characters.
-             */
-            boolean skipLetters = true;
-            do while (Character.isLetterOrDigit(cc) == skipLetters) {
-                if (ic >= lgc) {
-                    return false;
-                }
-                cc = complete.charAt(ic++);
-            } while ((skipLetters = !skipLetters) == false);
-            // Now that we are aligned on a new word, the first letter must match.
-            if (Character.toUpperCase(ca) != Character.toUpperCase(cc)) {
-                return false;
-            }
-        }
-        /*
-         * Now that we have processed all acronym letters, the complete name can not have
-         * any additional word. We can only finish the current word and skip trailing non-
-         * letter characters.
-         */
-        boolean skipLetters = true;
-        do {
-            do {
-                if (ic >= lgc) return true;
-                cc = complete.charAt(ic++);
-            } while (Character.isLetterOrDigit(cc) == skipLetters);
-        } while ((skipLetters = !skipLetters) == false);
-        return false;
+        return Strings.isAcronymForWords(acronym, complete);
     }
 
     /**
@@ -437,18 +327,12 @@ cmp:    while (ia < lga) {
      * @param  s1 The first string to compare.
      * @param  s2 The second string to compare.
      * @return {@code true} if the two given strings are equal, ignoring case.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static boolean equalsIgnoreCase(final CharSequence s1, final CharSequence s2) {
-        final int length = s1.length();
-        if (s2.length() != length) {
-            return false;
-        }
-        for (int i=0; i<length; i++) {
-            if (Character.toUpperCase(s1.charAt(i)) != Character.toUpperCase(s2.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
+        return Strings.equalsIgnoreCase(s1, s2);
     }
 
     /**
@@ -458,18 +342,12 @@ cmp:    while (ia < lga) {
      * @param offset The offset at which {@code part} is to be tested.
      * @param part   The part which may be present in {@code string}.
      * @return {@code true} if {@code string} contains {@code part} at the given {@code offset}.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static boolean regionMatches(final CharSequence string, final int offset, final CharSequence part) {
-        final int length = part.length();
-        if (offset + length > string.length()) {
-            return false;
-        }
-        for (int i=0; i<length; i++) {
-            if (string.charAt(offset + i) != part.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
+        return Strings.regionMatches(string, offset, part);
     }
 
     /**
@@ -480,22 +358,12 @@ cmp:    while (ia < lga) {
      * @return {@code true} if every character are upper-case.
      *
      * @since 3.07
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static boolean isUpperCase(final CharSequence text) {
-        return isUpperCase(text, 0, text.length());
-    }
-
-    /**
-     * Same as {@link #isUpperCase(CharSequence)}, but on a sub-sequence.
-     */
-    private static boolean isUpperCase(final CharSequence text, int lower, final int upper) {
-        while (lower < upper) {
-            final char c = text.charAt(lower++);
-            if (!Character.isUpperCase(c)) {
-                return false;
-            }
-        }
-        return true;
+        return Strings.isUpperCase(text);
     }
 
     /**
@@ -505,29 +373,12 @@ cmp:    while (ia < lga) {
      * @param s1 The first string, or {@code null}.
      * @param s2 The second string, or {@code null}.
      * @return The common prefix of both strings, or {@code null} if both strings are null.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static String commonPrefix(final String s1, final String s2) {
-        if (s1 == null) return s2;
-        if (s2 == null) return s1;
-        final String shortest;
-        final int lg1 = s1.length();
-        final int lg2 = s2.length();
-        final int length;
-        if (lg1 <= lg2) {
-            shortest = s1;
-            length = lg1;
-        } else {
-            shortest = s2;
-            length = lg2;
-        }
-        int i = 0;
-        while (i < length) {
-            if (s1.charAt(i) != s2.charAt(i)) {
-                break;
-            }
-            i++;
-        }
-        return shortest.substring(0, i);
+        return Strings.commonPrefix(s1, s2);
     }
 
     /**
@@ -537,29 +388,12 @@ cmp:    while (ia < lga) {
      * @param s1 The first string, or {@code null}.
      * @param s2 The second string, or {@code null}.
      * @return The common suffix of both strings, or {@code null} if both strings are null.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static String commonSuffix(final String s1, final String s2) {
-        if (s1 == null) return s2;
-        if (s2 == null) return s1;
-        final String shortest;
-        final int lg1 = s1.length();
-        final int lg2 = s2.length();
-        final int length;
-        if (lg1 <= lg2) {
-            shortest = s1;
-            length = lg1;
-        } else {
-            shortest = s2;
-            length = lg2;
-        }
-        int i = 0;
-        while (++i <= length) {
-            if (s1.charAt(lg1 - i) != s2.charAt(lg2 - i)) {
-                break;
-            }
-        }
-        i--;
-        return shortest.substring(length - i);
+        return Strings.commonSuffix(s1, s2);
     }
 
     /**
@@ -569,24 +403,12 @@ cmp:    while (ia < lga) {
      * @param prefix      The expected prefix.
      * @param ignoreCase  {@code true} if the case should be ignored.
      * @return {@code true} if the given sequence starts with the given prefix.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static boolean startsWith(final CharSequence sequence, final CharSequence prefix, final boolean ignoreCase) {
-        final int length = prefix.length();
-        if (length > sequence.length()) {
-            return false;
-        }
-        for (int i=0; i<length; i++) {
-            char c1 = sequence.charAt(i);
-            char c2 = prefix.charAt(i);
-            if (ignoreCase) {
-                c1 = Character.toLowerCase(c1);
-                c2 = Character.toLowerCase(c2);
-            }
-            if (c1 != c2) {
-                return false;
-            }
-        }
-        return true;
+        return Strings.startsWith(sequence, prefix, ignoreCase);
     }
 
     /**
@@ -596,26 +418,12 @@ cmp:    while (ia < lga) {
      * @param suffix      The expected suffix.
      * @param ignoreCase  {@code true} if the case should be ignored.
      * @return {@code true} if the given sequence ends with the given suffix.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static boolean endsWith(final CharSequence sequence, final CharSequence suffix, final boolean ignoreCase) {
-        int j = suffix.length();
-        int i = sequence.length();
-        if (j > i) {
-            return false;
-        }
-
-        while (--j >= 0) {
-            char c1 = sequence.charAt(--i);
-            char c2 = suffix.charAt(j);
-            if (ignoreCase) {
-                c1 = Character.toLowerCase(c1);
-                c2 = Character.toLowerCase(c2);
-            }
-            if (c1 != c2) {
-                return false;
-            }
-        }
-        return true;
+        return Strings.endsWith(sequence, suffix, ignoreCase);
     }
 
     /**
@@ -628,49 +436,12 @@ cmp:    while (ia < lga) {
      * @param numToSkip The number of lines to skip. Can be positive, zero or negative.
      * @param startAt   Index at which to start the search.
      * @return Index of the first character after the last skipped line.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static int skipLines(final CharSequence string, int numToSkip, int startAt) {
-        final int length = string.length();
-        /*
-         * Go backward if the number of lines is negative.
-         */
-        if (numToSkip < 0) {
-            do {
-                char c;
-                do {
-                    if (startAt == 0) {
-                        return startAt;
-                    }
-                    c = string.charAt(--startAt);
-                    if (c == '\n') {
-                        if (startAt != 0 && string.charAt(startAt - 1) == '\r') {
-                            --startAt;
-                        }
-                        break;
-                    }
-                } while (c != '\r');
-            } while (++numToSkip != 0);
-            numToSkip = 1; // For skipping the "end of line" characters.
-        }
-        /*
-         * Skips forward the given amount of lines.
-         */
-        while (--numToSkip >= 0) {
-            char c;
-            do {
-                if (startAt >= length) {
-                    return startAt;
-                }
-                c = string.charAt(startAt++);
-                if (c == '\r') {
-                    if (startAt != length && string.charAt(startAt) == '\n') {
-                        startAt++;
-                    }
-                    break;
-                }
-            } while (c != '\n');
-        }
-        return startAt;
+        return Strings.skipLines(string, numToSkip, startAt);
     }
 
     /**
@@ -680,69 +451,11 @@ cmp:    while (ia < lga) {
      *
      * @param  text The text to split.
      * @return The lines in the text, or {@code null} if the given text was null.
+     *
+     * @deprecated Moved to the {@link Strings} class.
      */
+    @Deprecated
     public static String[] splitLines(final String text) {
-        if (text == null) {
-            return null;
-        }
-        /*
-         * This method is implemented on top of String.indexOf(int,int), which is the
-         * fatest method available while taking care of the complexity of code points.
-         */
-        int lf = text.indexOf('\n');
-        int cr = text.indexOf('\r');
-        if (lf < 0 && cr < 0) {
-            return new String[] {
-                text
-            };
-        }
-        int count = 0;
-        String[] splitted = new String[8];
-        int last = 0;
-        boolean hasMore;
-        do {
-            int skip = 1;
-            final int splitAt;
-            if (cr < 0) {
-                // There is no "\r" character in the whole text, only "\n".
-                splitAt = lf;
-                hasMore = (lf = text.indexOf('\n', lf+1)) >= 0;
-            } else if (lf < 0) {
-                // There is no "\n" character in the whole text, only "\r".
-                splitAt = cr;
-                hasMore = (cr = text.indexOf('\r', cr+1)) >= 0;
-            } else if (lf < cr) {
-                // There is both "\n" and "\r" characters with "\n" first.
-                splitAt = lf;
-                hasMore = true;
-                lf = text.indexOf('\n', lf+1);
-            } else {
-                // There is both "\r" and "\n" characters with "\r" first.
-                // We need special care for the "\r\n" sequence.
-                splitAt = cr;
-                if (lf == ++cr) {
-                    cr = text.indexOf('\r', cr+1);
-                    lf = text.indexOf('\n', lf+1);
-                    hasMore = (cr >= 0 || lf >= 0);
-                    skip = 2;
-                } else {
-                    cr = text.indexOf('\r', cr+1);
-                    hasMore = true; // Because there is lf.
-                }
-            }
-            if (count >= splitted.length) {
-                splitted = Arrays.copyOf(splitted, count*2);
-            }
-            splitted[count++] = text.substring(last, splitAt);
-            last = splitAt + skip;
-        } while (hasMore);
-        /*
-         * Add the remaining string and we are done.
-         */
-        if (count >= splitted.length) {
-            splitted = Arrays.copyOf(splitted, count+1);
-        }
-        splitted[count++] = text.substring(last);
-        return XArrays.resize(splitted, count);
+        return Strings.getLinesFromMultilines(text);
     }
 }

@@ -48,10 +48,10 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.CodeLists;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
@@ -1132,7 +1132,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Integer getAttributeAsInteger(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = StringUtilities.trimFractionalPart(value);
+            value = Strings.trimFractionalPart(value);
             try {
                 return Integer.valueOf(value);
             } catch (NumberFormatException e) {
@@ -1249,7 +1249,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     public Date getAttributeAsDate(final String attribute) {
         String value = getAttribute(attribute);
         if (value != null) {
-            value = StringUtilities.trimFractionalPart(value);
+            value = Strings.trimFractionalPart(value);
             if (metadata instanceof SpatialMetadata) {
                 return ((SpatialMetadata) metadata).dateFormat().parse(value);
             } else try {

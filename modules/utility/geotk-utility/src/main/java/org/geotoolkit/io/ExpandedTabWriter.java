@@ -21,7 +21,7 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -103,7 +103,7 @@ public class ExpandedTabWriter extends FilterWriter {
      */
     private void expand() throws IOException {
         final int width = tabWidth - (column % tabWidth);
-        out.write(Utilities.spaces(width));
+        out.write(Strings.spaces(width));
         column += width;
     }
 

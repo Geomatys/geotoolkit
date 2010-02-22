@@ -29,8 +29,8 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -93,7 +93,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
         final String name = axis.getName().trim();
         if (name.equalsIgnoreCase("longitude")) return "\u03BB";
         if (name.equalsIgnoreCase("latitude"))  return "\u03C6";
-        return StringUtilities.acronym(name).toLowerCase();
+        return Strings.camelCaseToAcronym(name).toLowerCase();
     }
 
     /**

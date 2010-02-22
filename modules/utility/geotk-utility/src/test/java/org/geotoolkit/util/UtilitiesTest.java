@@ -94,14 +94,4 @@ public final class UtilitiesTest {
         assertFalse(Utilities.equals(C1, S2));
         assertFalse(Utilities.equals(B1, C2));
     }
-
-    /**
-     * Tests {@link Utilities#spaces}.
-     */
-    @Test
-    public void testSpaces() {
-        assertEquals("",         spaces(0));
-        assertEquals(" ",        spaces(1));
-        assertEquals("        ", spaces(8));
-    }
 }

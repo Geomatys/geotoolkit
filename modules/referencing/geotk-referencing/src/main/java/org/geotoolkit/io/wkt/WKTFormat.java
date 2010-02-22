@@ -41,7 +41,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.io.ContentFormatException;
@@ -649,7 +649,7 @@ copy:       while (true) {
         } else {
             err.println();
         }
-        err.print(Utilities.spaces(errorOffset - base));
+        err.print(Strings.spaces(errorOffset - base));
         err.println('^');
     }
 

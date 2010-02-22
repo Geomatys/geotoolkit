@@ -58,8 +58,8 @@ import org.jdesktop.swingx.JXTitledSeparator;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.gui.swing.Dialog;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.SwingUtilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.measure.RangeFormat;
@@ -645,7 +645,7 @@ public class ImageProperties extends JPanel implements Dialog {
             return resources.getString(Vocabulary.Keys.UNDEFINED);
         }
         final String name = Classes.getShortClassName(object);
-        final StringBuilder buffer = StringUtilities.separateWords(name);
+        final StringBuilder buffer = Strings.camelCaseToWords(name, true);
         long numColors = 0;
         if (object instanceof IndexColorModel) {
             numColors = ((IndexColorModel) object).getMapSize();

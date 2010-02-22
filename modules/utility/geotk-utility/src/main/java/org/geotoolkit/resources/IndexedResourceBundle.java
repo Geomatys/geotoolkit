@@ -34,7 +34,7 @@ import java.util.logging.LogRecord;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.lang.ThreadSafe;
@@ -187,7 +187,7 @@ public class IndexedResourceBundle extends ResourceBundle {
             int indexCR = value.indexOf('\r'); if (indexCR < 0) indexCR = value.length();
             int indexLF = value.indexOf('\n'); if (indexLF < 0) indexLF = value.length();
             final String number = String.valueOf(i);
-            out.write(Utilities.spaces(5 - number.length()));
+            out.write(Strings.spaces(5 - number.length()));
             out.write(number);
             out.write(":\t");
             out.write(value.substring(0, Math.min(indexCR,indexLF)));
@@ -361,7 +361,7 @@ public class IndexedResourceBundle extends ResourceBundle {
      * @return A sentence not longer than {@code maxLength}.
      */
     private static String summarize(String text, int maxLength) {
-        text = Utilities.trim(text);
+        text = Strings.trim(text);
         final int length = text.length();
         if (length <= maxLength) {
             return text;
@@ -395,7 +395,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                 break;
             }
         }
-        return Utilities.trim(text.substring(0, break1+1) + " (...) " + text.substring(break2));
+        return Strings.trim(text.substring(0, break1+1) + " (...) " + text.substring(break2));
     }
 
     /**

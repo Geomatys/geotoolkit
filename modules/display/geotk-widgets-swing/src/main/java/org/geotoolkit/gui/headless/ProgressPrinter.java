@@ -25,6 +25,7 @@ import java.text.BreakIterator;
 import org.opengis.util.ProgressListener;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -378,7 +379,7 @@ public class ProgressPrinter implements ProgressListener {
             margin = trim(margin);
             if (margin.length() != 0) {
                 prefix = prefix + '(' + margin + ") ";
-                second = Utilities.spaces(prefix.length());
+                second = Strings.spaces(prefix.length());
             }
         }
         int width = maxLength - prefix.length() - 1;

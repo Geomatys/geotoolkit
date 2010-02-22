@@ -43,9 +43,9 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.Citations;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.image.io.DataTypes;
 import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.naming.DefaultNameSpace;
@@ -508,7 +508,7 @@ public class ReferencingBuilder {
                     if (abbreviation == null) {
                         abbreviation = direction.identifier();
                     }
-                    abbreviation = StringUtilities.acronym(abbreviation);
+                    abbreviation = Strings.camelCaseToAcronym(abbreviation);
                 }
                 final Unit<?> unit = axesAccessor.getAttributeAsUnit("unit", null);
                 if (!isNonNull("getCoordinateSystem", "unit", unit)) {

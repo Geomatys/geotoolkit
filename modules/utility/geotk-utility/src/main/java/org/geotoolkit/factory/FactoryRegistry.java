@@ -25,7 +25,7 @@ import javax.imageio.spi.ServiceRegistry;
 
 import org.opengis.metadata.quality.ConformanceResult;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
@@ -481,7 +481,7 @@ public class FactoryRegistry extends ServiceRegistry {
             final Hints.Key key, final String message, final Class<?> type)
     {
         final StringBuilder buffer = new StringBuilder(status);
-        buffer.append(Utilities.spaces(Math.max(1, 7-status.length())))
+        buffer.append(Strings.spaces(Math.max(1, 7-status.length())))
               .append('(').append(Classes.getShortName(category));
         if (key != null) {
             buffer.append(", ").append(key);

@@ -26,7 +26,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.internal.StringUtilities.trimTrailingZero;
+import static org.geotoolkit.util.Strings.trimFractionalPart;
 
 
 /**
@@ -179,7 +179,7 @@ public abstract class AbstractDirectPosition implements DirectPosition {
             if (i != 0) {
                 buffer.append(' ');
             }
-            trimTrailingZero(buffer.append(position.getOrdinate(i)));
+            trimFractionalPart(buffer.append(position.getOrdinate(i)));
         }
         return buffer.append(')').toString();
     }

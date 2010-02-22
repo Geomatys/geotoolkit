@@ -40,14 +40,13 @@ import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.TextImageWriter;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.resources.Errors;
 
@@ -235,7 +234,7 @@ public class AsciiGridWriter extends TextImageWriter {
                 if (fillValues != null && fillValues.length != 0) {
                     final double value = fillValues[0];
                     if (!Double.isNaN(value)) {
-                        fillValue = StringUtilities.trimFractionalPart(String.valueOf(value));
+                        fillValue = Strings.trimFractionalPart(String.valueOf(value));
                         header.put("NODATA_VALUE", fillValue);
                     }
                 }
@@ -271,7 +270,7 @@ public class AsciiGridWriter extends TextImageWriter {
             first = false;
             final String key = entry.getKey();
             out.write(key);
-            out.write(Utilities.spaces(2 + Math.max(0, length - key.length())));
+            out.write(Strings.spaces(2 + Math.max(0, length - key.length())));
             out.write(entry.getValue());
         }
         // We intentionaly ommit the line separator for the last line,

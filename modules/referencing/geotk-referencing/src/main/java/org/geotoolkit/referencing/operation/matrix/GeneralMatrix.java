@@ -35,7 +35,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.ContentFormatException;
@@ -604,7 +604,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
          * Formats the element values like usual matrix representation (including the brackets).
          */
         final String lineSeparator = System.getProperty("line.separator", "\n");
-        final String whiteline = Utilities.spaces(numCol*columnWidth + 1);
+        final String whiteline = Strings.spaces(numCol*columnWidth + 1);
         StringBuffer buffer = new StringBuffer();
         buffer.append('\u250C').append(whiteline).append('\u2510').append(lineSeparator);
         for (int j=0; j<numRow; j++) {
@@ -613,7 +613,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
                 final int position = buffer.length();
                 buffer = format.format(matrix.getElement(j,i), buffer, dummy);
                 final int spaces = Math.max(columnWidth - (buffer.length() - position), 1);
-                buffer.insert(position, Utilities.spaces(spaces));
+                buffer.insert(position, Strings.spaces(spaces));
             }
             buffer.append(" \u2502").append(lineSeparator);
         }

@@ -24,7 +24,7 @@ import java.sql.DriverManager;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Loggings;
@@ -127,7 +127,7 @@ final class VersionAction {
             }
             out.print(header);
             out.print(':');
-            out.print(Utilities.spaces(22 - header.length()));
+            out.print(Strings.spaces(22 - header.length()));
             if (result instanceof String) {
                 out.print(faint);
                 out.print((String) result);

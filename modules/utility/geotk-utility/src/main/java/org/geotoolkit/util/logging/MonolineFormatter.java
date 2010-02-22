@@ -31,6 +31,7 @@ import java.util.logging.*;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.LineWriter;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -465,7 +466,7 @@ loop:   for (int i=0; ; i++) {
             }
             final int offset = buffer.length();
             buffer.append(level.getLocalizedName());
-            buffer.append(Utilities.spaces(levelWidth - (buffer.length() - offset)));
+            buffer.append(Strings.spaces(levelWidth - (buffer.length() - offset)));
             margin += buffer.length() - offset;
             if (colors) {
                 buffer.append(X364.BACKGROUND_DEFAULT.sequence());
@@ -509,7 +510,7 @@ loop:   for (int i=0; ; i++) {
          * following by some amout of space in order to align message body.
          */
         if (bodyLineSeparator.length() != lineSeparator.length() + margin) {
-            bodyLineSeparator = lineSeparator + Utilities.spaces(margin);
+            bodyLineSeparator = lineSeparator + Strings.spaces(margin);
         }
         if (colors && !emphase) {
             buffer.append(X364.FAINT.sequence());

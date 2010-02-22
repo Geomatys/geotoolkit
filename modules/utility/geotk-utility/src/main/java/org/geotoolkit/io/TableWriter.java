@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.text.StyleConstants;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -254,7 +254,7 @@ public class TableWriter extends FilterWriter {
      * @param spaces Amount of white spaces to use as column separator.
      */
     public TableWriter(final Writer out, final int spaces) {
-        this(out, Utilities.spaces(spaces));
+        this(out, Strings.spaces(spaces));
     }
 
     /**

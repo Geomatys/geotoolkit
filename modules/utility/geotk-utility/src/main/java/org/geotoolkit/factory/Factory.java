@@ -36,7 +36,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Descriptions;
@@ -857,7 +857,7 @@ public abstract class Factory {
             table.write(String.valueOf(value));
             table.write('\n');
             if (recursive != null) {
-                final String nextIndent = Utilities.spaces(indent.length() + 2);
+                final String nextIndent = Strings.spaces(indent.length() + 2);
                 format(table, recursive.getImplementationHints(), nextIndent, done);
             }
         }

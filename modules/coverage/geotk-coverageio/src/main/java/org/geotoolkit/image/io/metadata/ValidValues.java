@@ -19,8 +19,8 @@ package org.geotoolkit.image.io.metadata;
 
 import javax.imageio.metadata.IIOMetadataFormat;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.metadata.ValueRestriction;
 
@@ -161,7 +161,7 @@ final class ValidValues extends ValueRestriction {
                 if (buffer.length() != 0) {
                     buffer.append(", ");
                 }
-                buffer.append(StringUtilities.separateWords(code.toString()));
+                buffer.append(Strings.camelCaseToWords(code.toString(), true));
             }
             return buffer.toString();
         }

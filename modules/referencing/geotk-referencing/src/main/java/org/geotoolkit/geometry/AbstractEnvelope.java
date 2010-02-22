@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.internal.StringUtilities.trimTrailingZero;
+import static org.geotoolkit.util.Strings.trimFractionalPart;
 
 
 /**
@@ -152,11 +152,11 @@ public abstract class AbstractEnvelope implements Envelope {
             if (i != 0) {
                 buffer.append(' ');
             }
-            trimTrailingZero(buffer.append(envelope.getMinimum(i)));
+            trimFractionalPart(buffer.append(envelope.getMinimum(i)));
         }
         buffer.append(',');
         for (int i=0; i<dimension; i++) {
-            trimTrailingZero(buffer.append(' ').append(envelope.getMaximum(i)));
+            trimFractionalPart(buffer.append(' ').append(envelope.getMaximum(i)));
         }
         return buffer.append(')').toString();
     }
@@ -199,7 +199,7 @@ public abstract class AbstractEnvelope implements Envelope {
                     case  1: value = CORNERS[corner+i] ? envelope.getMaximum(i) : envelope.getMinimum(i); break;
                     default: value = envelope.getMedian(i); break;
                 }
-                trimTrailingZero(buffer.append(separator).append(value));
+                trimFractionalPart(buffer.append(separator).append(value));
                 separator = " ";
             }
             separator = ", ";

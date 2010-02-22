@@ -69,19 +69,6 @@ import org.geotoolkit.lang.Static;
 @Static
 public final class Utilities {
     /**
-     * An array of strings containing only white spaces. Strings' lengths are equal to their
-     * index in the {@code spaces} array. For example, {@code spaces[4]}œcontains a string of
-     * length 4. Strings are constructed only when first needed.
-     */
-    private static final String[] spaces = new String[21];
-    static {
-        final int last = spaces.length - 1;
-        final char[] blancs = new char[last];
-        Arrays.fill(blancs, ' ');
-        spaces[last] = new String(blancs).intern();
-    }
-
-    /**
      * A prime number used for hash code computation. Value 31 is often used because
      * some modern compilers can optimize {@code x*31} as {@code (x << 5) - x}
      * (Josh Bloch, <cite>Effective Java</cite>).
@@ -642,16 +629,12 @@ public final class Utilities {
      * @return A string with leading and trailing whitespaces removed.
      *
      * @since 3.00
+     *
+     * @deprecated Moved into the {@link Strings} class.
      */
+    @Deprecated
     public static String trim(String text) {
-        if (text != null) {
-            int upper = text.length();
-            while (upper != 0 && Character.isWhitespace(text.charAt(upper-1))) upper--;
-            int lower = 0;
-            while (lower < upper && Character.isWhitespace(text.charAt(lower))) lower++;
-            text = text.substring(lower, upper);
-        }
-        return text;
+        return Strings.trim(text);
     }
 
     /**
@@ -660,28 +643,11 @@ public final class Utilities {
      *
      * @param  length The string length. Negative values are clamped to 0.
      * @return A string of length {@code length} filled with white spaces.
+     *
+     * @deprecated Moved into the {@link Strings} class.
      */
+    @Deprecated
     public static String spaces(int length) {
-        /*
-         * No need to synchronize.  In the unlikely event of two threads calling this method
-         * at the same time and the two calls creating a new string, the String.intern() call
-         * will take care of canonicalizing the strings.
-         */
-        if (length < 0) {
-            length = 0;
-        }
-        String s;
-        if (length < spaces.length) {
-            s = spaces[length];
-            if (s == null) {
-                s = spaces[spaces.length - 1].substring(0, length).intern();
-                spaces[length] = s;
-            }
-        } else {
-            char[] blancs = new char[length];
-            Arrays.fill(blancs, ' ');
-            s = new String(blancs);
-        }
-        return s;
+        return Strings.spaces(length);
     }
 }

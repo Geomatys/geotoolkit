@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.internal.sql.ScriptRunner;
 
 
@@ -253,7 +253,7 @@ final class EpsgScriptRunner extends ScriptRunner {
     @Override
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
         if (!supportsCommit) {
-            if (StringUtilities.equalsIgnoreCase("COMMIT", sql)) {
+            if (Strings.equalsIgnoreCase("COMMIT", sql)) {
                 return 0;
             }
         }
@@ -263,9 +263,9 @@ final class EpsgScriptRunner extends ScriptRunner {
             }
         }
         if (replaceParagraphs) {
-            StringUtilities.replace(sql, "\u00B6", "\n");
+            Strings.replace(sql, "\u00B6", "\n");
         }
-        if (maxRowsPerInsert != 0 && StringUtilities.startsWith(sql, "INSERT INTO", true)) {
+        if (maxRowsPerInsert != 0 && Strings.startsWith(sql, "INSERT INTO", true)) {
             /*
              * The following code is very specific to the syntax of the scripts generated
              * by the geotk-epsg-pack module. It is executed only when running the scripts

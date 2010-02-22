@@ -21,7 +21,7 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -96,7 +96,7 @@ public class IndentedLineWriter extends FilterWriter {
      */
     public void setIndentation(final int width) {
         synchronized (lock) {
-            margin = Utilities.spaces(width);
+            margin = Strings.spaces(width);
         }
     }
 

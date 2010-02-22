@@ -25,7 +25,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.math.Statistics;
 
 import org.junit.*;
@@ -215,7 +215,7 @@ public final class CacheTest {
             System.out.println("properly tuned, most values should be non-zero.");
             for (int i=0; i<threads.length;) {
                 final String n = String.valueOf(threads[i++].hit);
-                System.out.print(Utilities.spaces(6 - n.length()));
+                System.out.print(Strings.spaces(6 - n.length()));
                 System.out.print(n);
                 if ((i % 10) == 0) {
                     System.out.println();

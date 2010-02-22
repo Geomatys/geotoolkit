@@ -76,7 +76,6 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
 import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -84,6 +83,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -693,7 +693,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             statements.put(key, stmt);
         }
         // Partial check that the statement is for the right SQL query.
-        assert stmt.getParameterMetaData().getParameterCount() == StringUtilities.count(sql, '?');
+        assert stmt.getParameterMetaData().getParameterCount() == Strings.count(sql, '?');
         return stmt;
     }
 
@@ -980,7 +980,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 if (owner.startsWith(AnsiDialectEpsgFactory.TABLE_PREFIX)) {
                     owner = owner.substring(AnsiDialectEpsgFactory.TABLE_PREFIX.length());
                 }
-                if (!StringUtilities.equalsAcronym(table, owner)) {
+                if (!Strings.isAcronymForWords(owner, table)) {
                     continue;
                 }
             }

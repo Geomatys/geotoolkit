@@ -50,7 +50,7 @@ import org.geotoolkit.io.X364;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.lang.Visitor;
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -328,7 +328,7 @@ public class Formatter {
         } while (Character.isWhitespace(c) || c == symbols.space);
         buffer.append(symbols.separator).append(symbols.space);
         if (newLine && indentation > FormattableObject.SINGLE_LINE) {
-            buffer.append(lineSeparator).append(Utilities.spaces(margin));
+            buffer.append(lineSeparator).append(Strings.spaces(margin));
             lineChanged = true;
         }
     }

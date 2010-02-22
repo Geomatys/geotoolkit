@@ -34,7 +34,7 @@ import javax.swing.tree.TreeNode;
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -581,11 +581,11 @@ final class PropertyTree {
                  * collection. If the node has no child and is NOT a leaf, then it is an empty
                  * metadata and we just ommit it.
                  */
-                buffer.append(Utilities.spaces(indent)).append(node).append(lineSeparator);
+                buffer.append(Strings.spaces(indent)).append(node).append(lineSeparator);
             }
             return;
         }
-        buffer.append(Utilities.spaces(indent)).append(node).append(':');
+        buffer.append(Strings.spaces(indent)).append(node).append(':');
         if (count == 1) {
             final TreeNode child = node.getChildAt(0);
             if (child.isLeaf()) {

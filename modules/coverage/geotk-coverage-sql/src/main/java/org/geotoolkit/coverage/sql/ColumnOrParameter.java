@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.util.Strings;
 
 
 /**
@@ -170,7 +170,7 @@ search: for (final QueryType type : types) {
      * @param types The type of the queries for which to use the given function.
      */
     final void setFunction(final int numQuestionMarks, final String function, final QueryType... types) {
-        if (StringUtilities.count(function, '?') != numQuestionMarks) {
+        if (Strings.count(function, '?') != numQuestionMarks) {
             throw new IllegalArgumentException(function);
         }
         if (functions == null) {

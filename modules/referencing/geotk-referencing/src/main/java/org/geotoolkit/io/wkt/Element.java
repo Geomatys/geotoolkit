@@ -25,7 +25,7 @@ import java.text.ParsePosition;
 import java.text.ParseException;
 
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LoggedFormat;
 
@@ -571,7 +571,7 @@ final class Element {
      */
     public void print(final PrintWriter out, final int level) {
         final int tabWidth = 4;
-        out.print(Utilities.spaces(tabWidth * level));
+        out.print(Strings.spaces(tabWidth * level));
         out.println(keyword);
         if (list == null) {
             return;
@@ -582,7 +582,7 @@ final class Element {
             if (object instanceof Element) {
                 ((Element) object).print(out, level+1);
             } else {
-                out.print(Utilities.spaces(tabWidth * (level+1)));
+                out.print(Strings.spaces(tabWidth * (level+1)));
                 out.println(object);
             }
         }

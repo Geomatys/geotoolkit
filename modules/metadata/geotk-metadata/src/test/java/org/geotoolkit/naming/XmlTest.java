@@ -27,8 +27,8 @@ import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 import org.junit.*;
@@ -69,10 +69,10 @@ public final class XmlTest {
          */
         int startAt = xml.indexOf("<gmd:featureTypes>");
         assertTrue("<gmd:featureTypes> not found.", startAt >= 0);
-        startAt = StringUtilities.skipLines(xml, 1, startAt);
+        startAt = Strings.skipLines(xml, 1, startAt);
         int endAt = xml.indexOf("</gmd:featureTypes>");
         assertTrue("</gmd:featureTypes> not found.", endAt >= 0);
-        endAt = StringUtilities.skipLines(xml, -1, endAt);
+        endAt = Strings.skipLines(xml, -1, endAt);
         return xml.substring(startAt, endAt);
     }
 
