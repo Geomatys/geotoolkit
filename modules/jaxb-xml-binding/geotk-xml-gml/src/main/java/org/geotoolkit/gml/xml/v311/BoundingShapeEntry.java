@@ -140,10 +140,10 @@ public class BoundingShapeEntry {
             
             final BoundingShapeEntry that = (BoundingShapeEntry) object;
 
-            return Utilities.equals(this._null,                  that._null)                  &&
+            return Utilities.equals(this.getNull(),              that.getNull())              &&
                    Utilities.equals(this.envelope,               that.envelope)               &&
                    Utilities.equals(this.envelopeWithTimePeriod, that.envelopeWithTimePeriod) &&
-                   Utilities.equals(this.nilReason,              that.nilReason);
+                   Utilities.equals(this.getNilReason(),         that.getNilReason());
         }
         return false;
     }
@@ -160,7 +160,7 @@ public class BoundingShapeEntry {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        StringBuilder s = new StringBuilder("[BoundingshapeEntry]").append('\n');
         if (envelope != null) {
             s.append("envelope:").append(envelope.toString());
         }

@@ -337,14 +337,13 @@ public class EnvelopeEntry {
         if (object instanceof EnvelopeEntry) {
             final EnvelopeEntry that = (EnvelopeEntry) object;
 
-            return Utilities.equals(this.axisLabels,      that.axisLabels)    &&
-                   Utilities.equals(this.coordinates,     that.coordinates)   &&
-                   Utilities.equals(this.id,              that.id)            &&
-                   Utilities.equals(this.lowerCorner,     that.lowerCorner)   &&
-                   Utilities.equals(this.pos,             that.pos)           &&
-                   Utilities.equals(this.srsDimension,    that.srsDimension)  &&
-                   Utilities.equals(this.uomLabels,       that.uomLabels)     &&
-                   Utilities.equals(this.upperCorner,     that.upperCorner)   &&
+            return Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                   Utilities.equals(this.coordinates,     that.coordinates)     &&
+                   Utilities.equals(this.id,              that.id)              &&
+                   Utilities.equals(this.lowerCorner,     that.lowerCorner)     &&
+                   Utilities.equals(this.getPos(),        that.getPos())        &&
+                   Utilities.equals(this.srsDimension,    that.srsDimension)    &&
+                   Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
                    Utilities.equals(this.srsName,         that.srsName);
         }
         return false;
