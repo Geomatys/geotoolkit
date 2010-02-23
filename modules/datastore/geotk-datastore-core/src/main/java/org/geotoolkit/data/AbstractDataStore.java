@@ -167,7 +167,7 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
-        query = addSeparateFeatureHint(query);
+        // TODO query = addSeparateFeatureHint(query);
         final FeatureReader reader = getFeatureReader(query);
         return DataUtilities.calculateEnvelope(reader);
     }
