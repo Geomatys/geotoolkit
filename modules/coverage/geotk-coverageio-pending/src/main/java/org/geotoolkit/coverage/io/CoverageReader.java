@@ -42,7 +42,7 @@ public interface CoverageReader {
      * @throws org.opengis.referencing.operation.TransformException
      * @throws java.io.IOException
      */
-    public GridCoverage2D read(CoverageReadParam param) 
+    public GridCoverage2D read(CoverageReadParam param)
             throws FactoryException, TransformException, IOException;
     
     /**

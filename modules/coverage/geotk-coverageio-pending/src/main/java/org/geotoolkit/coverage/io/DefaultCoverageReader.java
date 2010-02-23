@@ -88,7 +88,7 @@ public class DefaultCoverageReader implements CoverageReader{
     /**
      * {@inheritDoc }
      */
-    public GridCoverage2D read(final CoverageReadParam param) 
+    public GridCoverage2D read(final CoverageReadParam param)
             throws FactoryException, TransformException, IOException{
         
         if(param == null){
