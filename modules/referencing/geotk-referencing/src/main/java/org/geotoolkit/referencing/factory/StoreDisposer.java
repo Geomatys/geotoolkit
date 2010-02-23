@@ -22,9 +22,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.DelayQueue;
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.DaemonThread;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -37,12 +39,12 @@ import org.geotoolkit.util.logging.Logging;
  * method is invoked and a new reference is pushed for a new check after some delay.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 3.00
  * @module
  */
-final class StoreDisposer extends Thread {
+final class StoreDisposer extends DaemonThread {
     /**
      * The unique instance of this disposer thread. This is a demaon
      * thread started on this class initialization and running until
@@ -68,7 +70,6 @@ final class StoreDisposer extends Thread {
     private StoreDisposer() {
         super(Threads.RESOURCE_DISPOSERS, "StoreDisposer");
         setPriority(Thread.NORM_PRIORITY + 1);
-        setDaemon(true);
     }
 
     /**
@@ -80,8 +81,13 @@ final class StoreDisposer extends Thread {
     public void run() {
         // The reference queue should never be null, but experience with
         // WeakCollectionCleaner suggests that we are better to be safe.
+        Level level = Level.SEVERE;
         DelayQueue<Ref> queue;
         while ((queue = this.queue) != null) {
+            if (isKillRequested()) {
+                level = Level.INFO;
+                break;
+            }
             final Ref ref;
             try {
                 ref = queue.take();
@@ -98,7 +104,7 @@ final class StoreDisposer extends Thread {
                 }
             }
         }
-        Logging.getLogger(StoreDisposer.class).severe("Daemon stopped."); // Should never happen.
+        Logging.getLogger(StoreDisposer.class).log(level, "Daemon stopped.");
     }
 
     /**

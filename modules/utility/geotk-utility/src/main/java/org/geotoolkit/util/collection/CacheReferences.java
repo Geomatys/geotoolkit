@@ -17,11 +17,13 @@
  */
 package org.geotoolkit.util.collection;
 
+import java.util.logging.Level;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.DaemonThread;
 
 
 /**
@@ -31,12 +33,12 @@ import org.geotoolkit.internal.Threads;
  * this secondary work in a background thread.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 3.00
  * @module
  */
-final class CacheReferences extends Thread {
+final class CacheReferences extends DaemonThread {
     /**
      * Invoked in the {@link CachReferences} thread after a new entry has been added in a
      * {@link Cache}. The implementation must checks if some strong references need to be
@@ -79,7 +81,6 @@ final class CacheReferences extends Thread {
     private CacheReferences() {
         super(Threads.REFERENCE_CLEANERS, "CacheReferences");
         setPriority(MAX_PRIORITY - 2);
-        setDaemon(true);
     }
 
     /**
@@ -111,7 +112,13 @@ final class CacheReferences extends Thread {
          * in org.geotoolkit.util.collection.WeakCollectionCleaner.run() and we are applying
          * the same defensive check here.
          */
-        while (queue != null) {
+        Level level = Level.SEVERE;
+        BlockingQueue<Handler> queue;
+        while ((queue = this.queue) != null) {
+            if (isKillRequested()) {
+                level = Level.INFO;
+                break;
+            }
             try {
                 final Handler worker = queue.take();
                 worker.adjustReferences();
@@ -125,6 +132,6 @@ final class CacheReferences extends Thread {
                 // keep the same behaviour as if assertions were turned off.
             }
         }
-        Logging.getLogger(CacheReferences.class).severe("Daemon stopped."); // Should never happen.
+        Logging.getLogger(CacheReferences.class).log(level, "Daemon stopped.");
     }
 }

@@ -42,6 +42,11 @@ import org.geotoolkit.lang.Static;
 @SuppressWarnings("serial")
 public final class Threads extends AtomicInteger implements ThreadFactory {
     /**
+     * The parent of every threads declared in this class.
+     */
+    public static final ThreadGroup GEOTOOLKIT = new ThreadGroup("Geotoolkit.org");
+
+    /**
      * The group of shutdown hooks. This group has the default priority.
      */
     public static final ThreadGroup SHUTDOWN_HOOKS;
@@ -66,7 +71,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     public static final ThreadGroup DAEMONS;
 
     static {
-        final ThreadGroup parent = new ThreadGroup("Geotoolkit.org");
+        final ThreadGroup parent = GEOTOOLKIT;
         SHUTDOWN_HOOKS     = new ThreadGroup(parent, "ShutdownHooks");
         REFERENCE_CLEANERS = new ThreadGroup(parent, "ReferenceQueueConsumers");
         RESOURCE_DISPOSERS = new ThreadGroup(parent, "ResourceDisposers");

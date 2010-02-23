@@ -72,7 +72,6 @@ final class PaletteDisposer extends ReferenceQueueConsumer<ColorModel> {
      */
     private PaletteDisposer() {
         super("PaletteDisposer");
-        setDaemon(true);
     }
 
     /**

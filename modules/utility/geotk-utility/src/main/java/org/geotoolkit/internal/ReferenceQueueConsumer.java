@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.internal;
 
+import java.util.logging.Level;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 
@@ -29,12 +31,12 @@ import org.geotoolkit.util.converter.Classes;
  * @param <T> The type of objects being referenced.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.09
  *
  * @since 3.00
  * @module
  */
-public abstract class ReferenceQueueConsumer<T> extends Thread {
+public abstract class ReferenceQueueConsumer<T> extends DaemonThread {
     /**
      * List of references collected by the garbage collector.
      */
@@ -49,7 +51,6 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
     protected ReferenceQueueConsumer(final String name) {
         super(Threads.REFERENCE_CLEANERS, name);
         setPriority(MAX_PRIORITY - 2);
-        setDaemon(true);
     }
 
     /**
@@ -67,8 +68,13 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
         // The reference queue should never be null.  However some strange cases (maybe caused
         // by an anormal JVM state) have been reported on the mailing list. In such case, stop
         // the daemon instead of writing 50 Mb of log messages.
+        Level level = Level.SEVERE;
         ReferenceQueue<T> queue;
         while ((queue = this.queue) != null) {
+            if (isKillRequested()) {
+                level = Level.INFO;
+                break;
+            }
             final Reference<? extends T> ref;
             try {
                 // Block until a reference is enqueded.
@@ -100,6 +106,6 @@ public abstract class ReferenceQueueConsumer<T> extends Thread {
                 // keep the same behaviour as if assertions were turned off.
             }
         }
-        Logging.getLogger(getClass()).severe(Classes.getShortClassName(this) + " daemon stopped."); // Should never happen.
+        Logging.getLogger(getClass()).log(level, Classes.getShortClassName(this) + " daemon stopped.");
     }
 }

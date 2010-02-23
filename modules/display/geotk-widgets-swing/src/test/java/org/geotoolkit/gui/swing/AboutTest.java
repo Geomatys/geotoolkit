@@ -23,13 +23,14 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
 
 import org.junit.*;
+import static org.junit.Assume.*;
 
 
 /**
  * Tests the {@link About} dialog.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.09
  *
  * @since 2.0
  */
@@ -57,5 +58,15 @@ public final class AboutTest extends SwingBase<About> {
     @Override
     protected About create() {
         return new About();
+    }
+
+    /**
+     * Tests the usage of the {@link About#showDialog} method.
+     */
+    @Test
+    public void testOpenDialog() {
+        assumeTrue(isDisplayEnabled());
+        final About test = new About();
+        test.showDialog(null, "About");
     }
 }

@@ -24,7 +24,6 @@ import java.awt.EventQueue;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import javax.swing.event.ListDataListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import java.net.URL;
@@ -56,6 +55,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.DaemonThread;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
 
@@ -78,7 +78,7 @@ import org.geotoolkit.gui.swing.image.RegisteredOperationBrowser;
  * If none of the above information is available, then {@link Version#GEOTOOLKIT} is used.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.09
  *
  * @since 2.0
  * @module
@@ -110,7 +110,7 @@ public class About extends JPanel implements Dialog {
      * Construct a new dialog box with the Geotk's logo.
      */
     public About() {
-        this("org/geotoolkit/resources/Geotoolkit.png", About.class, null);
+        this("org/geotoolkit/resources/Geotoolkit.png", About.class, Threads.GEOTOOLKIT);
     }
 
     /**
@@ -425,11 +425,11 @@ public class About extends JPanel implements Dialog {
     }
 
     /**
-     * Modèle représentant la liste des processus actif dans un {@link ThreadGroup}.
-     * Cette liste se mettre automatiquement à jour de façon périodique.
+     * List of active thread in a given thread group.
+     * This list will update itself in a background thread.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.09
      *
      * @since 2.0
      * @module
@@ -437,28 +437,29 @@ public class About extends JPanel implements Dialog {
     @SuppressWarnings("serial")
     private static final class ThreadList extends AbstractListModel implements Runnable {
         /**
-         * Processus qui met à jour {@code ThreadList}, ou {@code null} s'il n'y en a pas.
-         * On peut tuer le processus actif en donnant la valeur {@code null} à cette variable.
+         * The thread which update {@code ThreadList}, or {@code null} if none.
+         * Setting this field to {@code null} will stop any current process.
          */
-        public transient Thread worker;
+        transient DaemonThread worker;
 
         /**
-         * Liste des processus en cours.
+         * The group of threads to display.
          */
         private final ThreadGroup tasks;
 
         /**
-         * Liste des noms des processus en cours. Cette liste sera mises à jour périodiquement.
+         * The list of threads to display. This list will be updated in a background
+         * thread (the {@linkplain #worker}) on a regular basis.
          */
-        private String[] names=new String[0];
+        private String[] names = new String[0];
 
         /**
-         * Texte dans lequel écrire la mémoire totale réservée.
+         * The label where to write the total amount of memory.
          */
         private final JLabel totalMemory;
 
         /**
-         * Texte dans lequel écrire le pourcentage de mémoire utilisée.
+         * The laber where to write the percentage of memory currently in use.
          */
         private final JLabel percentUsed;
 
@@ -468,7 +469,7 @@ public class About extends JPanel implements Dialog {
         private final Vocabulary resources;
 
         /**
-         * Construit une liste des processus actifs dans le groupe {@code tasks} spécifié.
+         * Creates a list of threads declared in the given thread group.
          */
         public ThreadList(final ThreadGroup tasks,  final JLabel totalMemory,
                           final JLabel percentUsed, final Vocabulary resources)
@@ -480,7 +481,7 @@ public class About extends JPanel implements Dialog {
         }
 
         /**
-         * Retourne le nombre d'éléments dans la liste.
+         * Returns the number of elements currently in this list.
          */
         @Override
         public int getSize() { // NO synchronized here
@@ -488,7 +489,7 @@ public class About extends JPanel implements Dialog {
         }
 
         /**
-         * Retourne un des éléments de la liste.
+         * Returns the element at the given index in this list.
          */
         @Override
         public Object getElementAt(final int index) { // NO synchronized here
@@ -496,21 +497,11 @@ public class About extends JPanel implements Dialog {
         }
 
         /**
-         * Ajoute un objet à la liste des objets intéressés
-         * à être informé des changements apportés à la liste.
-         */
-        @Override
-        public synchronized void addListDataListener(final ListDataListener listener) {
-            super.addListDataListener(listener);
-        }
-
-        /**
-         * Démarre le thread.
+         * Starts the thread, if not already running.
          */
         public synchronized void start() {
             if (worker == null) {
-                worker = new Thread(Threads.DAEMONS, this, resources.getString(Vocabulary.Keys.ABOUT));
-                worker.setDaemon(true);
+                worker = new DaemonThread(Threads.DAEMONS, this, resources.getString(Vocabulary.Keys.ABOUT));
                 worker.start();
             }
         }
@@ -524,7 +515,9 @@ public class About extends JPanel implements Dialog {
         public synchronized void run() {
             String oldTotalMemory = null;
             String oldPercentUsed = null;
-            while (worker==Thread.currentThread() && listenerList.getListenerCount()!=0) {
+            while (worker == Thread.currentThread() && !worker.isKillRequested() &&
+                    listenerList.getListenerCount() != 0)
+            {
                 final Runtime     system = Runtime.getRuntime();
                 final float  freeMemoryN = system.freeMemory()  / HEAP_SIZE_UNIT;
                 final float totalMemoryN = system.totalMemory() / HEAP_SIZE_UNIT;
@@ -536,8 +529,8 @@ public class About extends JPanel implements Dialog {
                 Thread[] threadArray = new Thread[tasks.activeCount()];
                 String[] threadNames = new String[tasks.enumerate(threadArray)];
                 int c=0; for (int i=0; i<threadNames.length; i++) {
-                    if (threadArray[i]!=worker) {
-                        threadNames[c++]=threadArray[i].getName();
+                    if (threadArray[i] != worker) {
+                        threadNames[c++] = threadArray[i].getName();
                     }
                 }
                 threadNames = XArrays.resize(threadNames, c);
@@ -545,16 +538,16 @@ public class About extends JPanel implements Dialog {
                     threadNames = null;
                 }
                 if (totalMemoryText.equals(oldTotalMemory)) {
-                    totalMemoryText=null;
+                    totalMemoryText = null;
                 } else {
-                    oldTotalMemory=totalMemoryText;
+                    oldTotalMemory = totalMemoryText;
                 }
                 if (percentUsedText.equals(oldPercentUsed)) {
                     percentUsedText = null;
                 } else {
                     oldPercentUsed = percentUsedText;
                 }
-                if (threadNames!=null || totalMemoryText!=null || percentUsedText!=null) {
+                if (threadNames != null || totalMemoryText != null || percentUsedText != null) {
                     final String[]     names = threadNames;
                     final String totalMemory = totalMemoryText;
                     final String percentUsed = percentUsedText;
@@ -567,7 +560,7 @@ public class About extends JPanel implements Dialog {
                 try {
                     wait(4000);
                 } catch (InterruptedException exception) {
-                    // Quelqu'un a réveillé ce thread. Retourne au travail.
+                    // Someone doesn't want to let us sleep. Go back to work.
                 }
             }
             worker = null;
@@ -586,8 +579,8 @@ public class About extends JPanel implements Dialog {
                 names = newNames;
                 fireContentsChanged(this, 0, count-1);
             }
-            if (totalMemory!=null) this.totalMemory.setText(totalMemory);
-            if (percentUsed!=null) this.percentUsed.setText(percentUsed);
+            if (totalMemory != null) this.totalMemory.setText(totalMemory);
+            if (percentUsed != null) this.percentUsed.setText(percentUsed);
         }
     }
 
@@ -646,6 +639,5 @@ public class About extends JPanel implements Dialog {
         if (updater != null) {
             updater.worker = null; // Stop the thread.
         }
-        // Le thread avait une référence indirecte vers 'this' via 'ListDataListener'
     }
 }
