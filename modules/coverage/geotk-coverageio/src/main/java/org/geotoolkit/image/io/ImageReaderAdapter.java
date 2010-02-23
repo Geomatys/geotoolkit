@@ -218,7 +218,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             final Object mainInput = createInput("main");
             if (mainInput == null) {
                 throw new InvalidImageStoreException(getErrorResources().getString(
-                        Errors.Keys.UNKNOW_TYPE_$1, input.getClass()));
+                        Errors.Keys.UNKNOWN_TYPE_$1, input.getClass()));
             }
             main.setInput(mainInput, seekForwardOnly, ignoreMetadata);
             initialize();

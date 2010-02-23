@@ -306,7 +306,7 @@ public abstract class CommandLine implements Runnable {
                     arg = arg.trim();
                     if (arg.startsWith(OPTION_PREFIX)) {
                         status = new IllegalArgumentException(error(
-                                Errors.Keys.UNKNOW_PARAMETER_$1, arg));
+                                Errors.Keys.UNKNOWN_PARAMETER_$1, arg));
                     }
                 }
             }
@@ -618,7 +618,7 @@ public abstract class CommandLine implements Runnable {
             summary();
             exit(0);
         } else {
-            err.println(error(Errors.Keys.UNKNOW_COMMAND_$1, action));
+            err.println(error(Errors.Keys.UNKNOWN_COMMAND_$1, action));
             exit(ILLEGAL_ARGUMENT_EXIT_CODE);
         }
     }

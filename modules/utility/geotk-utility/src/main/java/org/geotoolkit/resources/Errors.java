@@ -1098,52 +1098,57 @@ public final class Errors extends IndexedResourceBundle {
          * Authority "{0}" is unknown or doesn't match the supplied hints. Maybe it is defined in an
          * unreachable JAR file?
          */
-        public static final int UNKNOW_AUTHORITY_$1 = 190;
+        public static final int UNKNOWN_AUTHORITY_$1 = 190;
 
         /**
          * Authority "{0}" is not available. The cause is: {1}
          */
-        public static final int UNKNOW_AUTHORITY_$2 = 221;
+        public static final int UNKNOWN_AUTHORITY_$2 = 221;
 
         /**
          * Unknow axis direction: "{0}".
          */
-        public static final int UNKNOW_AXIS_DIRECTION_$1 = 191;
+        public static final int UNKNOWN_AXIS_DIRECTION_$1 = 191;
 
         /**
-         * Unknow command: {0}
+         * Unknown command: {0}
          */
-        public static final int UNKNOW_COMMAND_$1 = 192;
+        public static final int UNKNOWN_COMMAND_$1 = 192;
 
         /**
          * Image format "{0}" is unknown.
          */
-        public static final int UNKNOW_IMAGE_FORMAT_$1 = 193;
+        public static final int UNKNOWN_IMAGE_FORMAT_$1 = 193;
 
         /**
          * Interpolation "{0}" is unknown.
          */
-        public static final int UNKNOW_INTERPOLATION_$1 = 194;
+        public static final int UNKNOWN_INTERPOLATION_$1 = 194;
 
         /**
-         * Unknow parameter: {0}
+         * Unknown parameter: {0}
          */
-        public static final int UNKNOW_PARAMETER_$1 = 195;
+        public static final int UNKNOWN_PARAMETER_$1 = 195;
 
         /**
-         * Unknow parameter name: {0}
+         * Unknown parameter name: {0}
          */
-        public static final int UNKNOW_PARAMETER_NAME_$1 = 196;
+        public static final int UNKNOWN_PARAMETER_NAME_$1 = 196;
 
         /**
-         * Unknow projection type.
+         * Unknown projection type.
          */
-        public static final int UNKNOW_PROJECTION_TYPE = 197;
+        public static final int UNKNOWN_PROJECTION_TYPE = 197;
 
         /**
-         * Type "{0}" is unknow in this context.
+         * Type "{0}" is unknown in this context.
          */
-        public static final int UNKNOW_TYPE_$1 = 198;
+        public static final int UNKNOWN_TYPE_$1 = 198;
+
+        /**
+         * Unit "{0}" is not recognized.
+         */
+        public static final int UNKNOWN_UNIT_$1 = 240;
 
         /**
          * This affine transform is unmodifiable.

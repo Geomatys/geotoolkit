@@ -501,7 +501,7 @@ public class ImageWorker extends ImageInspector {
             forceComponentColorModel();
         } else {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.UNKNOW_TYPE_$1, type));
+                    Errors.Keys.UNKNOWN_TYPE_$1, type));
         }
     }
 

@@ -713,7 +713,7 @@ public final class Referencing extends Formulas implements XReferencing {
         try {
             return parameters.parameter(parameter).getValue();
         } catch (ParameterNotFoundException exception) {
-            return Errors.format(Errors.Keys.UNKNOW_PARAMETER_$1, parameter);
+            return Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, parameter);
         } catch (RuntimeException exception) {
             return getLocalizedMessage(exception);
         }

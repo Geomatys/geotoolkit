@@ -472,7 +472,7 @@ public class MetadataAccessor implements WarningProducer {
             switch (paths.size()) {
                 case 0: {
                     throw new IllegalArgumentException(getErrorResources()
-                            .getString(Errors.Keys.UNKNOW_TYPE_$1, type));
+                            .getString(Errors.Keys.UNKNOWN_TYPE_$1, type));
                 }
                 case 1: {
                     parentPath = paths.get(0);

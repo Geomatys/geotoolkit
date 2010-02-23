@@ -519,7 +519,7 @@ final class PropertyAccessor {
         if (index >= 0) {
             return index;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, key));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, key));
     }
 
     /**

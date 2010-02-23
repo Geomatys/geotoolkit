@@ -329,7 +329,7 @@ final class ReferencingAction {
             final PrintWriter err = cmd.err;
             final Errors resources = Errors.getResources(cmd.locale);
             err.println(resources.getString(Errors.Keys.ILLEGAL_ARGUMENT_$1, "list"));
-            err.println(resources.getString(Errors.Keys.UNKNOW_TYPE_$1, list));
+            err.println(resources.getString(Errors.Keys.UNKNOWN_TYPE_$1, list));
             cmd.exit(ILLEGAL_ARGUMENT_EXIT_CODE);
             return;
         }

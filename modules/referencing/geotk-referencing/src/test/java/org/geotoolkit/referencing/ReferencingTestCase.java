@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing;
 
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
@@ -27,6 +28,8 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.io.wkt.FormattableObject;
 
 import org.junit.Assert;
@@ -38,7 +41,7 @@ import static org.geotoolkit.test.Commons.*;
  * going to use.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.09
  *
  * @since 3.00
  */
@@ -143,5 +146,39 @@ public abstract class ReferencingTestCase extends Assert {
      */
     private static boolean isSingleLine(final String text) {
         return text.lastIndexOf('\n') < 0 && text.lastIndexOf('\r') < 0;
+    }
+
+    /**
+     * Returns the class of the projection, or {@code null} if none.
+     *
+     * @param  crs The crs for which to get the projection class.
+     * @return The class of the projection implementation, or {@code null} if none.
+     *
+     * @since 3.09
+     */
+    public static Class<? extends UnitaryProjection> getProjectionClass(final ProjectedCRS crs) {
+        return getProjectionClass(crs.getConversionFromBase().getMathTransform());
+    }
+
+    /**
+     * Returns the class of the projection, or {@code null} if none.
+     * This method invokes itself recursively down the concatenated transforms tree.
+     */
+    private static Class<? extends UnitaryProjection> getProjectionClass(final MathTransform transform) {
+        if (transform instanceof UnitaryProjection) {
+            return ((UnitaryProjection) transform).getClass();
+        }
+        if (transform instanceof ConcatenatedTransform) {
+            Class<? extends UnitaryProjection> candidate;
+            candidate = getProjectionClass(((ConcatenatedTransform) transform).transform1);
+            if (candidate != null) {
+                return candidate;
+            }
+            candidate = getProjectionClass(((ConcatenatedTransform) transform).transform2);
+            if (candidate != null) {
+                return candidate;
+            }
+        }
+        return null;
     }
 }

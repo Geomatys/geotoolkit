@@ -318,7 +318,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
         } else {
             name = String.valueOf(parameter);
         }
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_$1, name));
+        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, name));
     }
 
     /**

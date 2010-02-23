@@ -222,7 +222,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             final Object mainOutput = createOutput("main");
             if (mainOutput == null) {
                 throw new InvalidImageStoreException(getErrorResources().getString(
-                        Errors.Keys.UNKNOW_TYPE_$1, output.getClass()));
+                        Errors.Keys.UNKNOWN_TYPE_$1, output.getClass()));
             }
             main.setOutput(mainOutput);
             initialize();

@@ -281,7 +281,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 }
             }
             throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.UNKNOW_COMMAND_$1, methodName));
+                    Errors.Keys.UNKNOWN_COMMAND_$1, methodName));
         }
         if (numArgs != 0) {
             throw new IllegalArgumentException(Errors.format(

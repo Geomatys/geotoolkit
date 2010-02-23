@@ -1179,6 +1179,6 @@ compare:for (int i=0; i<c1.length; i++) {
      * Returns an exception for an unkown type.
      */
     private static IllegalArgumentException unknownType(final Class<?> type) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
     }
 }

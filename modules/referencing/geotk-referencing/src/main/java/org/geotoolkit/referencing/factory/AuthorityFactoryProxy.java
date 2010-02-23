@@ -274,7 +274,7 @@ abstract class AuthorityFactoryProxy {
                     return;
                 }
             }
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
         }
 
         @Override

@@ -207,7 +207,7 @@ public final class MetadataStandard {
         final PropertyAccessor accessor = getAccessorOptional(type);
         if (accessor == null) {
             throw new ClassCastException(Errors.format(
-                    Errors.Keys.UNKNOW_TYPE_$1, type.getCanonicalName()));
+                    Errors.Keys.UNKNOWN_TYPE_$1, type.getCanonicalName()));
         }
         return accessor;
     }

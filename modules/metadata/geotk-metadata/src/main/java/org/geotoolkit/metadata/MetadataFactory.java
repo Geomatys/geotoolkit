@@ -221,6 +221,6 @@ public class MetadataFactory extends Factory {
                 return type.cast(metadata);
             }
         }
-        throw new FactoryException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type), failure);
+        throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type), failure);
     }
 }

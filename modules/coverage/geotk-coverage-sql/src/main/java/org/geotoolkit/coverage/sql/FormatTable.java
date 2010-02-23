@@ -78,7 +78,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         } else {
             // Following constructor will close the ResultSet.
             throw new IllegalRecordException(errors().getString(
-                    Errors.Keys.UNKNOW_PARAMETER_$1, encoding),
+                    Errors.Keys.UNKNOWN_PARAMETER_$1, encoding),
                     this, results, encodingIndex, name);
         }
         return new FormatEntry(getDatabase(), name, format, geophysics);

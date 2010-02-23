@@ -985,7 +985,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return candidate;
         }
         throw new NoSuchElementException(
-                Errors.format(Errors.Keys.UNKNOW_AXIS_DIRECTION_$1, direction));
+                Errors.format(Errors.Keys.UNKNOWN_AXIS_DIRECTION_$1, direction));
     }
 
     /**

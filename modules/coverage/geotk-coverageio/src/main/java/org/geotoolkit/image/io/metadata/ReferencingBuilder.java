@@ -306,7 +306,7 @@ public class ReferencingBuilder {
                         getConversionFromBase(baseCRS, derivedCS), derivedCS));
             } else {
                 // TODO: test for other types of CRS here (VerticalCRS, etc.)
-                warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOW_TYPE_$1, type);
+                warning("getCoordinateReferenceSystem", Errors.Keys.UNKNOWN_TYPE_$1, type);
             }
         }
         return getDefault("getCoordinateReferenceSystem", accessor, baseType);
@@ -550,7 +550,7 @@ public class ReferencingBuilder {
                 }
             } else {
                 // TODO: test for other types of CS here (VerticalCS, etc.)
-                warning("getCoordinateSystem", Errors.Keys.UNKNOW_TYPE_$1, type);
+                warning("getCoordinateSystem", Errors.Keys.UNKNOWN_TYPE_$1, type);
             }
         }
         return getDefault("getCoordinateSystem", csAccessor, baseType);
@@ -630,7 +630,7 @@ public class ReferencingBuilder {
             } else if (EngineeringDatum.class.isAssignableFrom(type)) {
                 return baseType.cast(factory.createEngineeringDatum(properties));
             } else {
-                warning("getDatum", Errors.Keys.UNKNOW_TYPE_$1, type);
+                warning("getDatum", Errors.Keys.UNKNOWN_TYPE_$1, type);
             }
         }
         return getDefault("getDatum", datumAccessor, baseType);
@@ -848,7 +848,7 @@ public class ReferencingBuilder {
             if (classe != null) {
                 return classe;
             }
-            warning(method, Errors.Keys.UNKNOW_TYPE_$1, type);
+            warning(method, Errors.Keys.UNKNOWN_TYPE_$1, type);
         } catch (ClassCastException e) {
             warning(method, Errors.Keys.ILLEGAL_CLASS_$2, new Object[] {type, baseType});
         }

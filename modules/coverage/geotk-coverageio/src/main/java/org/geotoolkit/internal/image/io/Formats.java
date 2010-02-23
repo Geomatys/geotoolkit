@@ -371,7 +371,7 @@ attmpt: while (true) {
         if (fallback != null) {
             return fallback;
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_IMAGE_FORMAT_$1, format));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_IMAGE_FORMAT_$1, format));
     }
 
     /**

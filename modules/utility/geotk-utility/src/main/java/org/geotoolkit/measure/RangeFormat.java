@@ -236,7 +236,7 @@ public class RangeFormat extends Format {
             elementFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
             unitFormat    = null;
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, elementClass));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, elementClass));
         }
         final DecimalFormatSymbols ds;
         if (elementFormat instanceof DecimalFormat) {

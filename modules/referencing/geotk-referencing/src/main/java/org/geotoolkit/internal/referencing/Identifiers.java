@@ -393,7 +393,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         for (int i=0; i<nameUsed.length; i++) {
             if (!nameUsed[i]) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.UNKNOW_PARAMETER_$1, names[i]));
+                        Errors.Keys.UNKNOWN_PARAMETER_$1, names[i]));
             }
         }
         /*

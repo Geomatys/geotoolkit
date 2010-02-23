@@ -310,7 +310,7 @@ public class AsciiGridReader extends TextImageReader {
              */
             for (final String extra : header.keySet()) {
                 Warnings.log(this, null, AsciiGridReader.class, "readHeader",
-                        Errors.Keys.UNKNOW_PARAMETER_$1, extra);
+                        Errors.Keys.UNKNOWN_PARAMETER_$1, extra);
             }
         }
     }

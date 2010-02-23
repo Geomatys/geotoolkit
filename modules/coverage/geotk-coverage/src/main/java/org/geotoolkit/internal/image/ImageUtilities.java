@@ -408,7 +408,7 @@ public final class ImageUtilities {
                 }
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_INTERPOLATION_$1, type));
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_INTERPOLATION_$1, type));
     }
 
     /**

@@ -18,6 +18,10 @@
 package org.geotoolkit.referencing.factory.web;
 
 import java.util.Collection;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import javax.measure.unit.SI;
+import javax.measure.unit.NonSI;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.FactoryException;
@@ -26,9 +30,11 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.referencing.operation.projection.TransverseMercator;
+import org.geotoolkit.referencing.operation.projection.Orthographic;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 
 
 /**
@@ -36,11 +42,12 @@ import static org.junit.Assert.*;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Andrea Aime (OpenGeo)
+ * @version 3.09
  *
  * @since 2.2
  */
-public final class AutoCRSFactoryTest {
+public final class AutoCRSFactoryTest extends ReferencingTestCase {
     /**
      * The factory to test.
      */
@@ -86,12 +93,91 @@ public final class AutoCRSFactoryTest {
      */
     @Test
     public void test42001() throws FactoryException {
-        final ProjectedCRS utm = factory.createProjectedCRS("AUTO:42001,0.0,0.0");
-        assertNotNull("auto-utm", utm);
-        assertSame   (utm, factory.createObject("AUTO :42001, 0,0"));
-        assertSame   (utm, factory.createObject("AUTO2:42001, 0,0"));
-        assertSame   (utm, factory.createObject(      "42001, 0,0"));
-        assertNotSame(utm, factory.createObject("AUTO :42001,30,0"));
-        assertEquals ("Transverse_Mercator", utm.getConversionFromBase().getMethod().getName().getCode());
+        final ProjectedCRS proj = factory.createProjectedCRS("AUTO:42001,0.0,0.0");
+        assertNotNull("auto-utm", proj);
+        assertSame   (proj, factory.createObject("AUTO :42001, 0,0"));
+        assertSame   (proj, factory.createObject("AUTO2:42001, 0,0"));
+        assertSame   (proj, factory.createObject(      "42001, 0,0"));
+        assertSame   (proj, factory.createObject(      "42001 ,0,0"));
+        assertNotSame(proj, factory.createObject("AUTO :42001,30,0"));
+        assertEquals ("Transverse_Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
+    }
+
+    /**
+     * Same tests than {@link #test42001}, but with units.
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void test42001Units() throws FactoryException {
+        final ProjectedCRS proj = factory.createProjectedCRS("AUTO:42001,9001,0.0,0.0");
+        assertNotNull("auto-utm", proj);
+        assertSame   (SI.METRE, proj.getCoordinateSystem().getAxis(0).getUnit());
+        assertSame   (proj, factory.createObject("AUTO :42001,  0,0"));
+        assertSame   (proj, factory.createObject("AUTO :42001, ,0,0"));
+        assertSame   (proj, factory.createObject("AUTO :42001, 9001,0,0"));
+        assertSame   (proj, factory.createObject("AUTO2:42001, 9001,0,0"));
+        assertSame   (proj, factory.createObject(      "42001, 9001,0,0"));
+        assertNotSame(proj, factory.createObject("AUTO :42001, 9001,30,0"));
+        assertEquals ("Transverse_Mercator", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals (TransverseMercator.class, getProjectionClass(proj));
+        /*
+         * Use an other units.
+         */
+        final ProjectedCRS projUS = factory.createProjectedCRS("AUTO:42001,9002,0.0,0.0");
+        assertSame(NonSI.FOOT, projUS.getCoordinateSystem().getAxis(0).getUnit());
+    }
+
+    /**
+     * Tests the polar, equatorial and oblique cases.
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void test42003() throws FactoryException {
+        ProjectedCRS proj = factory.createProjectedCRS("AUTO:42003,9001,0.0,0");
+        assertEquals ("Orthographic", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals (Orthographic.class, getProjectionClass(proj));
+
+        proj = factory.createProjectedCRS("AUTO:42003,9001,0.0,90");
+        assertEquals ("Orthographic", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals (Orthographic.class, getProjectionClass(proj));
+
+        proj = factory.createProjectedCRS("AUTO:42003,9001,0.0,45");
+        assertEquals ("Orthographic", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertEquals (Orthographic.class, getProjectionClass(proj));
+    }
+
+    /**
+     * Tests a case which should have been optimized as an affine transform.
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void test42004() throws FactoryException {
+        final ProjectedCRS proj = factory.createProjectedCRS("AUTO:42004,9001,0.0,35");
+        assertEquals ("Equidistant_Cylindrical", proj.getConversionFromBase().getMethod().getName().getCode());
+        assertNull   ("Should have been optimized to an AffineTransform.", getProjectionClass(proj));
+        final double stdParallel1 = proj.getConversionFromBase().getParameterValues().parameter("latitude_of_origin").doubleValue();
+        assertEquals("The parameter should still available, even if the projection " +
+                "has been optimized to an AffineTransform.", 35.0, stdParallel1, 1E-9);
+    }
+
+    /**
+     * Tests the affine transform case with different units.
+     *
+     * @throws FactoryException Should never happen.
+     * @throws NoninvertibleTransformException Should never happen.
+     */
+    @Test
+    public void testUnits() throws FactoryException, NoninvertibleTransformException {
+        AffineTransform tr1, tr2;
+        tr1 = (AffineTransform) factory.createProjectedCRS("42004,9001,0,35").getConversionFromBase().getMathTransform();
+        tr2 = (AffineTransform) factory.createProjectedCRS("42004,9002,0,35").getConversionFromBase().getMathTransform();
+        tr2 = tr2.createInverse();
+        tr2.concatenate(tr1);
+        assertEquals("Expected any kind of scale.", 0, tr2.getType() & ~AffineTransform.TYPE_MASK_SCALE);
+        assertEquals("Expected the conversion factor from foot to metre.", 0.3048, tr2.getScaleX(), 1E-9);
+        assertEquals("Expected the conversion factor from foot to metre.", 0.3048, tr2.getScaleY(), 1E-9);
     }
 }

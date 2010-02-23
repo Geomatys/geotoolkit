@@ -1403,7 +1403,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         } else if (AuthorityFactory.class.equals(type)) {
             f = getAuthorityFactory(code);
         } else {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
         }
         return type.cast(f);
     }

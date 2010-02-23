@@ -17,10 +17,13 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
+import javax.measure.unit.Unit;
+
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.resources.Errors;
@@ -31,14 +34,20 @@ import org.geotoolkit.resources.Errors;
  * The expected format is {@code AUTO:code,lon0,lat0} where {@code AUTO} is optional.
  *
  * @author Jody Garnett (Refractions)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 2.2
  * @module
  */
 @Immutable
 final class Code {
+    /**
+     * The maximal amount of numeric fields that we expect after the {@code "AUTO:"} part.
+     * The expected fields are (code, unit, longitude, latitude).
+     */
+    private static final int MAXIMUM_FIELDS = 4;
+
     /**
      * The authority name. Should usually be {@code AUTO}.
      */
@@ -48,6 +57,11 @@ final class Code {
      * The code number.
      */
     public final int code;
+
+    /**
+     * The unit of measurement.
+     */
+    public final Unit<?> unit;
 
     /**
      * The central longitude.
@@ -77,70 +91,113 @@ final class Code {
     public Code(final String text, final Class<? extends CoordinateReferenceSystem> type)
             throws NoSuchAuthorityCodeException
     {
+        /*
+         * Extract the authority, which is optional.
+         */
         String authority = "AUTO";
+        int splitAt = text.indexOf(':');
+        if (splitAt > 0) {
+            authority = text.substring(0, splitAt).trim();
+        }
+        /*
+         * Get the indices where to split the string. Throw the
+         * exception immediately if there is too many fields.
+         */
+        final int[] splitIndices = new int[MAXIMUM_FIELDS + 1];
+        int fieldCount = 0;
+        do {
+            if (fieldCount >= MAXIMUM_FIELDS) {
+                throw noSuchAuthorityCode(type, authority, text, splitIndices);
+            }
+            splitIndices[fieldCount++] = ++splitAt;
+            splitAt = text.indexOf(',', splitAt);
+        } while (splitAt >= 0);
+        splitIndices[fieldCount] = text.length() + 1;
+        /*
+         * If there is some missing fields, guess which ones are the missing ones
+         * and offset the array of indices in order to put the missing field at
+         * the proper place.
+         */
+        switch (MAXIMUM_FIELDS - fieldCount) {
+            case 0: {
+                // No field are missing.
+                break;
+            }
+            case 1: {
+                // Exactly one field is missing. Assume that this is the unit field.
+                // This field was not present in WMS 1.0, and added in WMS 1.1.
+                System.arraycopy(splitIndices, 1, splitIndices, 2, MAXIMUM_FIELDS - 1);
+                break;
+            }
+            default: {
+                // Too many fields are missing.
+                throw noSuchAuthorityCode(type, authority, text, splitIndices);
+            }
+        }
+        /*
+         * Parse the fields.
+         */
         int    code      = 0;
+        int    unit      = 9001;
         double longitude = Double.NaN;
         double latitude  = Double.NaN;
-        int startField   = -1;
-parse:  for (int i=0; /*stop condition in the 'switch' statement below*/; i++) {
-            final char delimiter = (i == 0) ? ':' : ',';
-            int endField = text.indexOf(delimiter, ++startField);
-            if (endField < 0) {
-                if (i == 0) {
-                    // The "AUTO" prefix is optional. Continue the search for next fields.
-                    startField = -1;
-                    continue;
+parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
+            splitAt = splitIndices[i];
+            final int end = splitIndices[i+1] - 1;
+            if (end > splitAt) {
+                final String field = text.substring(splitAt, end).trim();
+                if (field.length() != 0) try {
+                    switch (i) {
+                        default: throw new AssertionError(i);
+                        case 0:  code      = Integer.parseInt  (field); break;
+                        case 1:  unit      = Integer.parseInt  (field); break;
+                        case 2:  longitude = Double.parseDouble(field); break;
+                        case 3:  latitude  = Double.parseDouble(field); break parse;
+                        /*
+                         * Add case statements here if there is more fields to parse.
+                         * Only the last case should end with 'break parse' instead of 'break'.
+                         */
+                    }
+                } catch (NumberFormatException exception) {
+                    // If a number can't be parsed, then this is an invalid authority code.
+                    NoSuchAuthorityCodeException e = noSuchAuthorityCode(type, authority, text, splitIndices);
+                    e.initCause(exception);
+                    throw e;
                 }
-                endField = text.length();
             }
-            if (endField <= startField) {
-                // A required field was not found.
-                throw noSuchAuthorityCode(type, text);
-            }
-            final String field = text.substring(startField, endField).trim();
-            try {
-                switch (i) {
-                    default: throw new AssertionError(i);
-                    case 0:  authority =                    field;  break;
-                    case 1:  code      = Integer.parseInt  (field); break;
-                    case 2:  longitude = Double.parseDouble(field); break;
-                    case 3:  latitude  = Double.parseDouble(field); break parse;
-                    /*
-                     * Add case statements here if the is more fields to parse.
-                     * Only the last case should end with 'break parse' instead of 'break'.
-                     */
-                }
-            } catch (NumberFormatException exception) {
-                // If a number can't be parsed, then this is an invalid authority code.
-                NoSuchAuthorityCodeException e = noSuchAuthorityCode(type, text);
-                e.initCause(exception);
-                throw e;
-            }
-            startField = endField;
         }
         if (!(longitude >= Longitude.MIN_VALUE && longitude <= Longitude.MAX_VALUE &&
               latitude  >=  Latitude.MIN_VALUE && latitude  <=  Latitude.MAX_VALUE))
         {
             // A longitude or latitude is out of range, or was not present
             // (i.e. the field still has a NaN value).
-            throw noSuchAuthorityCode(type, text);
+            throw noSuchAuthorityCode(type, authority, text, splitIndices);
         }
         this.authority = authority;
         this.code      = code;
+        this.unit      = Units.valueOfEPSG(unit);
         this.longitude = longitude;
         this.latitude  = latitude;
         this.type      = type;
+        if (this.unit == null) {
+            throw new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.UNKNOWN_UNIT_$1, unit),
+                    authority, text.substring(splitIndices[0]).trim());
+        }
     }
 
     /**
      * Creates an exception for an unknow authority code.
      *
-     * @param  type  The GeoAPI interface that was to be created.
-     * @param  code  The unknow authority code.
+     * @param  type         The GeoAPI interface that was to be created.
+     * @param  authority    Either {@code "AUTO"} or {@code "AUTO2"}.
+     * @param  code         The text that we were trying to parse.
+     * @param  splitIndices The indices where to split. Only the first one is used.
      * @return An exception initialized with an error message built from the specified informations.
      */
-    private static NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type, final String code) {
-        final String authority = "AUTO";
+    private static NoSuchAuthorityCodeException noSuchAuthorityCode(final Class<?> type,
+            final String authority, String code, final int[] splitIndices)
+    {
+        code = code.substring(splitIndices[0]).trim();
         return new NoSuchAuthorityCodeException(Errors.format(Errors.Keys.NO_SUCH_AUTHORITY_CODE_$3,
                 code, authority, type), authority, code);
     }

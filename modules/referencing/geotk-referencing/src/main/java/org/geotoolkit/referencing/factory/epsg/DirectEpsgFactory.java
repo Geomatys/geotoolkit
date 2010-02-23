@@ -128,38 +128,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     //////                                                                                 ///////
     //////////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * Returns a hard-coded unit from an EPSG code. We do not need to provide all units here,
-     * but we must at least provide all base units declared in the [TARGET_UOM_CODE] column
-     * of table [Unit of Measure]. Other units will be derived automatically if they are not
-     * listed here.
-     *
-     * @param  code The code.
-     * @return The unit, or {@code null} if the code is unrecognized.
-     */
-    private static Unit<?> getUnit(final int code) {
-        switch (code) {
-            case 9001: return SI   .METRE;
-            case 9002: return NonSI.FOOT;
-            case 9030: return NonSI.NAUTICAL_MILE;
-            case 9036: return SI   .KILOMETRE;
-            case 9101: return SI   .RADIAN;
-            case 9122: // Fall through
-            case 9102: return NonSI.DEGREE_ANGLE;
-            case 9103: return NonSI.MINUTE_ANGLE;
-            case 9104: return NonSI.SECOND_ANGLE;
-            case 9105: return NonSI.GRADE;
-            case 9107: return Units.DEGREE_MINUTE_SECOND;
-            case 9108: return Units.DEGREE_MINUTE_SECOND;
-            case 9109: return SI.MetricPrefix.MICRO(SI.RADIAN);
-            case 9110: return Units.SEXAGESIMAL_DMS;
-//TODO      case 9111: return NonSI.SEXAGESIMAL_DM;
-            case 9203: // Fall through
-            case 9201: return Unit .ONE;
-            case 9202: return Units.PPM;
-            default:   return null;
-        }
-    }
+    // See org.geotoolkit.measure.Units.valueOfEPSG(int) for hard-code units from EPSG codes.
 
     /**
      * Sets a Bursa-Wolf parameter from an EPSG parameter.
@@ -1192,11 +1161,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final double   b = result.getDouble(2);
                 final double   c = result.getDouble(3);
                 final int target = getInt(result,   4, code);
-                final Unit<?> base = getUnit(target);
+                final Unit<?> base = Units.valueOfEPSG(target);
                 if (base == null) {
                     throw noSuchAuthorityCode(Unit.class, String.valueOf(target));
                 }
-                Unit<?> unit = getUnit(source);
+                Unit<?> unit = Units.valueOfEPSG(source);
                 if (unit != null) {
                     // TODO: check unit consistency here.
                 } else if (b != 0 && c != 0) {
@@ -1630,7 +1599,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     datum = factory.createEngineeringDatum(properties);
                 } else {
                     result.close();
-                    throw new FactoryException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+                    throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
                 }
                 returnValue = ensureSingleton(datum, returnValue, code);
                 if (result == null) {
@@ -1859,7 +1828,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     }
                 } else {
                     result.close();
-                    throw new FactoryException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+                    throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
                 }
                 if (cs == null) {
                     result.close();
@@ -2058,7 +2027,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  * ---------------------------------------------------------------------- */
                 else {
                     result.close();
-                    throw new FactoryException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+                    throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
                 }
                 returnValue = ensureSingleton(crs, returnValue, code);
                 if (result == null) {
@@ -2645,7 +2614,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         expected = Conversion.class;
                     } else {
                         result.close();
-                        throw new FactoryException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+                        throw new FactoryException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
                     }
                     final MathTransform mt = factories.getMathTransformFactory().createBaseToDerived(
                             sourceCRS, parameters, targetCRS.getCoordinateSystem());

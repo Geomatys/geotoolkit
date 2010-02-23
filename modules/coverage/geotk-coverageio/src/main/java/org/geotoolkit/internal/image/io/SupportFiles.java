@@ -162,7 +162,7 @@ public final class SupportFiles {
             }
             path = IOUtilities.changeExtension(path, extension);
             if (path == null) {
-                throw new IIOException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, Classes.getClass(path)));
+                throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, Classes.getClass(path)));
             }
         }
         return path;

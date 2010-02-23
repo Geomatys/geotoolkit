@@ -132,7 +132,7 @@ final class PropertyTree {
         final Class<?> type = metadata.getClass();
         final PropertyAccessor accessor = standard.getAccessorOptional(type);
         if (accessor == null) {
-            throw new ParseException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type), 0);
+            throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type), 0);
         }
         final int duplicated = parse(node, type, metadata, null, accessor);
         if (duplicated != 0) {
@@ -211,13 +211,13 @@ final class PropertyTree {
              */
             final int index = accessor.indexOf(name);
             if (index < 0) {
-                throw new ParseException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_NAME_$1, name), 0);
+                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), 0);
             }
             Class<?> childType = accessor.type(index, TypeValuePolicy.ELEMENT_TYPE);
             if (childType == null) {
                 // The type of the parameter is unknow (actually the message is a bit
                 // misleading since it doesn't said that only the type is unknown).
-                throw new ParseException(Errors.format(Errors.Keys.UNKNOW_PARAMETER_$1, name), 0);
+                throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, name), 0);
             }
             childType = standard.getImplementation(childType);
             /*

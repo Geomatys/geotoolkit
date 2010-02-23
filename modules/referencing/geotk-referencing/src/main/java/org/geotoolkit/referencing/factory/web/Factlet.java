@@ -18,17 +18,22 @@
 package org.geotoolkit.referencing.factory.web;
 
 import java.util.Collections;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -36,8 +41,8 @@ import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
  *
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.09
  *
  * @since 2.2
  * @module
@@ -69,6 +74,15 @@ abstract class Factlet {
     public final ProjectedCRS create(final Code code, final ReferencingFactoryContainer factories)
             throws FactoryException
     {
+        DefaultCartesianCS cs = DefaultCartesianCS.PROJECTED;
+        final Unit<?> unit = code.unit;
+        if (!SI.METRE.equals(unit)) {
+            if (!Units.isLinear(unit)) {
+                throw new NoSuchAuthorityCodeException(Errors.format(
+                        Errors.Keys.NON_LINEAR_UNIT_$1, unit), code.authority, code.toString());
+            }
+            cs = cs.usingUnit(unit);
+        }
         final String classification = getClassification();
         final ParameterValueGroup parameters;
         parameters = factories.getMathTransformFactory().getDefaultParameters(classification);
@@ -77,7 +91,7 @@ abstract class Factlet {
         final DefiningConversion conversion = new DefiningConversion(name, parameters);
         return factories.getCRSFactory().createProjectedCRS(
                 Collections.singletonMap(IdentifiedObject.NAME_KEY, name),
-                DefaultGeographicCRS.WGS84, conversion, DefaultCartesianCS.PROJECTED);
+                DefaultGeographicCRS.WGS84, conversion, cs);
     }
 
     /**

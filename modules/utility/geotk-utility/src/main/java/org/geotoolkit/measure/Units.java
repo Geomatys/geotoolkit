@@ -357,4 +357,50 @@ public final class Units {
         return uom.length() == length+1 && Character.toLowerCase(uom.charAt(length)) == 's' &&
                 uom.regionMatches(true, 0, expected, 0, length);
     }
+
+    /**
+     * Returns a hard-coded unit from an EPSG code. The {@code code} argument given to this
+     * method shall be a code identifying a record in the {@code "Unit of Measure"} table of
+     * the EPSG database. If this method does not recognize the given code, then it returns
+     * {@code null}.
+     * <p>
+     * The list of units recognized by this method is not exhaustive. This method recognizes
+     * the base units declared in the {@code [TARGET_UOM_CODE]} column of the above-cited table,
+     * and some frequently-used units. The list of recognized units may be updated in any future
+     * version of Geotk.
+     * <p>
+     * The {@link org.geotoolkit.referencing.factory.epsg.DirectEpsgFactory} uses this method
+     * for fetching the base units, and derives automatically other units from the information
+     * found in the EPSG database. This method is also used by other code not directly related
+     * to the EPSG database, like {@link org.geotoolkit.referencing.factory.web.AutoCRSFactory}
+     * which uses EPSG code for identifying units.
+     *
+     * @param  code The EPSG code for a unit of measurement.
+     * @return The unit, or {@code null} if the code is unrecognized.
+     *
+     * @since 3.09
+     */
+    public static Unit<?> valueOfEPSG(final int code) {
+        switch (code) {
+            case 9001: return SI   .METRE;
+            case 9002: return NonSI.FOOT;
+            case 9030: return NonSI.NAUTICAL_MILE;
+            case 9036: return SI   .KILOMETRE;
+            case 9101: return SI   .RADIAN;
+            case 9122: // Fall through
+            case 9102: return NonSI.DEGREE_ANGLE;
+            case 9103: return NonSI.MINUTE_ANGLE;
+            case 9104: return NonSI.SECOND_ANGLE;
+            case 9105: return NonSI.GRADE;
+            case 9107: return Units.DEGREE_MINUTE_SECOND;
+            case 9108: return Units.DEGREE_MINUTE_SECOND;
+            case 9109: return SI.MetricPrefix.MICRO(SI.RADIAN);
+            case 9110: return Units.SEXAGESIMAL_DMS;
+//TODO      case 9111: return NonSI.SEXAGESIMAL_DM;
+            case 9203: // Fall through
+            case 9201: return Unit .ONE;
+            case 9202: return Units.PPM;
+            default:   return null;
+        }
+    }
 }

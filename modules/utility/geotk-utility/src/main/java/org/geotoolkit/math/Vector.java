@@ -99,7 +99,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
                 return new ArrayVector(array);
             }
         }
-        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1,
+        throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1,
                 (component != null) ? component : type));
     }
 

@@ -290,7 +290,7 @@ public class ReferencingParser extends MathTransformParser {
                 case   414930797: if ("FITTED_CS".equals(keyword)) return parseFittedCS(element); break;
             }
         }
-        throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOW_TYPE_$1, key));
+        throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, key));
     }
 
     /**
@@ -336,7 +336,7 @@ public class ReferencingParser extends MathTransformParser {
                 case  -219294638: if ("PASSTHROUGH_MT".equals(keyword)) return parsePassThroughMT(element); break;
             }
         }
-        throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOW_TYPE_$1, key));
+        throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, key));
     }
 
     /**
@@ -473,7 +473,7 @@ public class ReferencingParser extends MathTransformParser {
         element.close();
         final AxisDirection direction = directions.get(keyword(orientation));
         if (direction == null) {
-            throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOW_TYPE_$1, orientation));
+            throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, orientation));
         }
         try {
             return createAxis(properties, name, direction, unit);
@@ -737,7 +737,7 @@ public class ReferencingParser extends MathTransformParser {
         element.close();
         final VerticalDatumType type = getVerticalDatumTypeFromLegacyCode(datum);
         if (type == null) {
-            throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOW_TYPE_$1, datum));
+            throw element.parseFailed(null, Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, datum));
         }
         try {
             return datumFactory.createVerticalDatum(properties, type);

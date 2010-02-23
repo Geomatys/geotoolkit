@@ -682,7 +682,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
         } else {
             // Thrown IllegalStateException instead than IllegalArgumentException because
             // the 'type' argument given to this method come from a NumberRange field.
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
         }
         if (!up) {
             value = -value;

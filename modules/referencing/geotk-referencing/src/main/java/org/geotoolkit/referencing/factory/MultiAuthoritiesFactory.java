@@ -521,9 +521,9 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
                 }
             }
             if (message != null) {
-                message = Errors.format(Errors.Keys.UNKNOW_AUTHORITY_$2, authority, message);
+                message = Errors.format(Errors.Keys.UNKNOWN_AUTHORITY_$2, authority, message);
             } else {
-                message = Errors.format(Errors.Keys.UNKNOW_AUTHORITY_$1, authority);
+                message = Errors.format(Errors.Keys.UNKNOWN_AUTHORITY_$1, authority);
             }
         }
         final NoSuchAuthorityCodeException exception;
@@ -861,7 +861,7 @@ scanForType:    for (int i=0; i<FACTORY_TYPES.length; i++) {
                     return FACTORY_TYPES[i];
                 }
             }
-            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, type));
+            throw new IllegalStateException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
         }
 
         /**

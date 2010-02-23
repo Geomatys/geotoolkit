@@ -343,6 +343,6 @@ jump:   while (true) {
             }
             return names;
         }
-        throw new ClassCastException(Errors.format(Errors.Keys.UNKNOW_TYPE_$1, value.getClass()));
+        throw new ClassCastException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, value.getClass()));
     }
 }
