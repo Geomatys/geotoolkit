@@ -388,21 +388,20 @@ public final class RequestsUtilities {
             @Override
             public int compare(Double[] t, Double[] t1) {
                 double res = t[0] - t1[0];
-                if(res < 0){
+                if (res < 0) {
                     return -1;
-                }else if(res > 0){
-                    return 1;
-                }else{
-                    res = t[1] - t1[1];
-                    if(res < 0){
-                        return -1;
-                    }else if(res > 0){
-                        return 1;
-                    }else{
-                        return 0;
-                    }
                 }
-
+                if (res > 0) {
+                    return 1;
+                }
+                res = t[1] - t1[1];
+                if (res < 0) {
+                    return -1;
+                }
+                if (res > 0) {
+                    return 1;
+                }
+                return 0;
             }
         });
 

@@ -676,7 +676,7 @@ public class DefaultController2D implements CanvasController2D{
                 gc.setDestinationPosition(pos2);
                 distance = Math.abs(gc.getOrthodromicDistance());
             }catch(Exception ex){
-                LOGGER.log(Level.WARNING, "Current mpa bounds is out of geodetic calculation, will return scale 1.0");
+                LOGGER.log(Level.WARNING, "Current map bounds is out of geodetic calculation, will return scale 1.0");
                 return 1;
             }
         }

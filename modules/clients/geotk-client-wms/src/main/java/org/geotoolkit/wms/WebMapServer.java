@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -34,9 +34,12 @@ import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
 import org.geotoolkit.wms.xml.WMSBindingUtilities;
 import org.geotoolkit.wms.xml.WMSVersion;
 
+
 /**
+ * Generates WMS requests objects on a WMS server.
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
 public class WebMapServer {
@@ -47,64 +50,76 @@ public class WebMapServer {
     private final URL serverURL;
     private AbstractWMSCapabilities capabilities;
 
-    public WebMapServer(URL serverURL, String version) {
-        final WMSVersion vers;
-        if (version.equals("1.1.1")) {
-            vers = WMSVersion.v111;
-        } else if (version.equals("1.3.0")) {
-            vers = WMSVersion.v130;
-        } else {
-            throw new IllegalArgumentException("Unknowned version : " + version);
-        }
-
-        this.version = vers;
-        this.serverURL = serverURL;
-        this.capabilities = null;
+    /**
+     * Builds a web map server with the given server url and version.
+     *
+     * @param serverURL The server base url.
+     * @param version A string representation of the service version.
+     * @throws IllegalArgumentException if the version specified is not applyable.
+     */
+    public WebMapServer(final URL serverURL, final String version) {
+        this(serverURL, WMSVersion.getVersion(version));
     }
 
-    public WebMapServer(URL serverURL, WMSVersion version) {
+    /**
+     * Builds a web map server with the given server url and version.
+     *
+     * @param serverURL The server base url.
+     * @param version The service version.
+     */
+    public WebMapServer(final URL serverURL, final WMSVersion version) {
+        this(serverURL, version, null);
+    }
+
+    /**
+     * Builds a web map server with the given server url, version and getCapabilities response.
+     *
+     * @param serverURL The server base url.
+     * @param version A string representation of the service version.
+     * @param capabilities A getCapabilities response.
+     * @throws IllegalArgumentException if the version specified is not applyable.
+     */
+    public WebMapServer(final URL serverURL, final String version, final AbstractWMSCapabilities capabilities) {
+        this(serverURL, WMSVersion.getVersion(version), capabilities);
+    }
+
+    /**
+     * Builds a web map server with the given server url, version and getCapabilities response.
+     *
+     * @param serverURL The server base url.
+     * @param version A string representation of the service version.
+     * @param capabilities A getCapabilities response.
+     */
+    public WebMapServer(final URL serverURL, final WMSVersion version, final AbstractWMSCapabilities capabilities) {
         this.version = version;
-        this.serverURL = serverURL;
-        this.capabilities = null;
-    }
-
-    public WebMapServer(URL serverURL, String version, AbstractWMSCapabilities capabilities) {
-        final WMSVersion vers;
-        if (version.equals("1.1.1")) {
-            vers = WMSVersion.v111;
-        } else if (version.equals("1.3.0")) {
-            vers = WMSVersion.v130;
-        } else {
-            throw new IllegalArgumentException("Unknowned version : " + version);
-        }
-
-        this.version = vers;
         this.serverURL = serverURL;
         this.capabilities = capabilities;
     }
 
-    public WebMapServer(URL serverURL, WMSVersion version, AbstractWMSCapabilities capabilities) {
-        this.version = version;
-        this.serverURL = serverURL;
-        this.capabilities = capabilities;
-    }
-
+    /**
+     * Returns the server url as an {@link URI}, or {@code null} il the uri syntax
+     * is not respected.
+     */
     public URI getURI(){
         try {
             return serverURL.toURI();
         } catch (URISyntaxException ex) {
-            Logger.getLogger(WebMapServer.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
         return null;
     }
 
+    /**
+     * Returns the {@linkplain AbstractWMSCapabilities capabilities} response for this
+     * request.
+     */
     public AbstractWMSCapabilities getCapabilities() {
 
         if (capabilities != null) {
             return capabilities;
         }
         //Thread to prevent infinite request on a server
-        Thread thread = new Thread() {
+        final Thread thread = new Thread() {
             @Override
             public void run() {
                 try {
@@ -112,7 +127,8 @@ public class WebMapServer {
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
-                        LOGGER.log(Level.SEVERE, "Wrong URL, the server doesn't answer : " + createGetCapabilities().getURL().toString(), ex);
+                        LOGGER.log(Level.SEVERE, "Wrong URL, the server doesn't answer : " +
+                                createGetCapabilities().getURL().toString(), ex);
                     } catch (MalformedURLException ex1) {
                         LOGGER.log(Level.SEVERE, "Malformed URL, the server doesn't answer. ", ex1);
                     }
@@ -120,7 +136,7 @@ public class WebMapServer {
             }
         };
         thread.start();
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         try {
             thread.join(10000);
         } catch (InterruptedException ex) {
@@ -133,10 +149,18 @@ public class WebMapServer {
         return capabilities;
     }
 
+    /**
+     * Returns the request version.
+     */
     public WMSVersion getVersion() {
         return version;
     }
 
+    /**
+     * Returns the request object, in the version chosen.
+     *
+     * @throws IllegalArgumentException if the version requested is not supported.
+     */
     public GetMapRequest createGetMap() {
         switch (version) {
             case v111:
@@ -148,6 +172,11 @@ public class WebMapServer {
         }
     }
 
+    /**
+     * Returns the request object, in the version chosen.
+     *
+     * @throws IllegalArgumentException if the version requested is not supported.
+     */
     public GetCapabilitiesRequest createGetCapabilities() {
         switch (version) {
             case v111:
@@ -159,6 +188,11 @@ public class WebMapServer {
         }
     }
 
+    /**
+     * Returns the request object, in the version chosen.
+     *
+     * @throws IllegalArgumentException if the version requested is not supported.
+     */
     public GetLegendRequest creategetLegend(){
         switch (version) {
             case v111:
