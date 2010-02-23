@@ -89,7 +89,6 @@ public class DataUtilities {
 
                 for(Property property : f.getProperties()){
                     candidate.getProperty(property.getName()).setValue(property.getValue());
-                    property = candidate.getProperty(property.getName());
                 }
                 writer.write();
                 ids.add(candidate.getIdentifier());

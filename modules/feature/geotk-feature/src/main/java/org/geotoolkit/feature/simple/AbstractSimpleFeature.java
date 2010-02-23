@@ -90,7 +90,7 @@ public abstract class AbstractSimpleFeature implements SimpleFeature{
         final Object[] array = getValues();
 
         for (int i = 0; i < array.length; i++) {
-            array[i] = values[i];
+            setAttribute(i, values[i]);
         }
     }
 

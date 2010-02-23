@@ -132,7 +132,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     protected FeatureCollection<SimpleFeature> loadFeatures(IndexedShapefileDataStore s)
             throws Exception {
-        return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
+        return s.createSession(false).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
 
     public void testLoad() throws Exception {

@@ -28,9 +28,12 @@ import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -76,7 +79,14 @@ class AddDelta extends AbstractDelta{
         }
 
         this.features = new DefaultFeatureCollection<Feature>(null, ft, Feature.class);
-        this.features.addAll(features);
+
+        //we must copy the features since they might be changed later
+        for(Feature f : features){
+            SimpleFeature sf = (SimpleFeature) f;
+            sf = SimpleFeatureBuilder.deep(sf);
+            this.features.add(sf);
+        }
+        
     }
 
     /**

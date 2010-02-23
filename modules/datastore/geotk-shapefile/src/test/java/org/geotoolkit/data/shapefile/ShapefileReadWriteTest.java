@@ -37,6 +37,7 @@ import java.util.Map;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
+import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
 
 /**
@@ -212,11 +213,11 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
         shapefile.createSchema(typeName,type);
 
-        FeatureWriter writer = shapefile.getFeatureWriterAppend(typeName);
-
         Session session = shapefile.createSession(true);
         session.addFeatures(typeName, original);
         session.commit();
+
+        assertFalse(session.hasPendingChanges());
         
         FeatureCollection<SimpleFeature> copy = session.getFeatureCollection(QueryBuilder.all(typeName));
         compare(original, copy);
