@@ -95,7 +95,7 @@ public class FactoryRegistry extends ServiceRegistry {
     private final FactoryIteratorProviders globalConfiguration = new FactoryIteratorProviders();
 
     /**
-     * The set of category that need to be scanned for plugins, or {@code null} if none.
+     * The set of categories that need to be scanned for plugins, or {@code null} if none.
      * On initialization, all categories need to be scanned for plugins. After a category
      * has been first used, it is removed from this set so we don't scan for plugins again.
      */
@@ -765,6 +765,7 @@ public class FactoryRegistry extends ServiceRegistry {
      * @level advanced
      */
     public void scanForPlugins() {
+        needScanForPlugins = null;
         final Set<ClassLoader> loaders = getClassLoaders();
         for (final Iterator<Class<?>> categories=getCategories(); categories.hasNext();) {
             final Class<?> category = categories.next();

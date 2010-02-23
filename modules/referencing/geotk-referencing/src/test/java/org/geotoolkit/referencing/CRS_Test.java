@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 
 import org.junit.*;
+import org.opengis.referencing.operation.OperationNotFoundException;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 
@@ -50,7 +51,8 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * service (WKT parsing, object comparisons, <i>etc.</i>).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @author Andrea Aime (OpenGeo)
+ * @version 3.09
  *
  * @since 3.00
  */
@@ -84,6 +86,39 @@ public final class CRS_Test {
     @Test
     public void testDecode() throws FactoryException {
         assertSame(DefaultGeographicCRS.WGS84, CRS.decode("WGS84(DD)"));
+    }
+
+    /**
+     * Checks {@code "X"} is equated to {@code "Easting"} and {@code "Y"} to {@code "Northing"}.
+     *
+     * @throws FactoryException Should not happen.
+     */
+    @Test
+    public void testAxisAliases() throws FactoryException {
+        final String wkt1 = "PROJCS[\"NAD_1927_Texas_Statewide_Mapping_System\"," +
+                "GEOGCS[\"GCS_North_American_1927\"," +
+                "DATUM[\"D_North_American_1927\"," +
+                "SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]]," +
+                "PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]," +
+                "PROJECTION[\"Lambert_Conformal_Conic\"]," +
+                "PARAMETER[\"False_Easting\",3000000.0]," +
+                "PARAMETER[\"False_Northing\",3000000.0]," +
+                "PARAMETER[\"Central_Meridian\",-100.0]," +
+                "PARAMETER[\"Standard_Parallel_1\",27.416666666666668]," +
+                "PARAMETER[\"Standard_Parallel_2\",34.916666666666664]," +
+                "PARAMETER[\"Latitude_Of_Origin\",31.166666666666668]," +
+                "UNIT[\"Foot\",0.3048]]";
+        /*
+         * The above WKT will be parsed with "X" and "Y" axis names
+         * by default. Now specifies explicitly different axis names.
+         */
+        final String wkt2 = wkt1.substring(0, wkt1.length()-1) + "," +
+                "AXIS[\"Easting\", EAST]," +
+                "AXIS[\"Northing\", NORTH]]";
+
+        final CoordinateReferenceSystem crs1 = CRS.parseWKT(wkt1);
+        final CoordinateReferenceSystem crs2 = CRS.parseWKT(wkt2);
+        assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
     }
 
     /**
@@ -176,6 +211,27 @@ public final class CRS_Test {
         assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs2));
 
         assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
+    }
+
+    /**
+     * Tests a request for a math transform which should succeed
+     * only when datum shift are lenient.
+     *
+     * @throws FactoryException Should never happen.
+     * @throws TransformException Should never happen.
+     */
+    @Test
+    public void testTransformationFailure() throws FactoryException, TransformException {
+        final CoordinateReferenceSystem mapCRS = CRS.parseWKT(WKT.GEOGCS_WGS84_ALTERED);
+        final CoordinateReferenceSystem WGS84  = DefaultGeographicCRS.WGS84;
+        final MathTransform crsTransform = CRS.findMathTransform(WGS84, mapCRS, true);
+        assertTrue(crsTransform.isIdentity());
+        try {
+            CRS.findMathTransform(WGS84, mapCRS, false);
+            fail("Should not have found the transform, because the datum are not equivalent.");
+        } catch (OperationNotFoundException e) {
+            // This is the expected exception.
+        }
     }
 
     /**

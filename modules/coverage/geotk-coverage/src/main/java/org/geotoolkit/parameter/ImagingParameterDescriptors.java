@@ -94,7 +94,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      */
     private static final Object[] AUTHORITIES = {
             "com.sun.media.jai", Citations.JAI,
-            "org.geotoolkit",      Citations.GEOTOOLKIT
+            "org.geotoolkit",    Citations.GEOTOOLKIT
     };
 
     /**
@@ -321,7 +321,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
              */
             final InternationalString description;
             description = new ImagingParameterDescription(op, "Description", null);
-            try {
+            if (authority != null) try {
                 final URI uri = new URI(bundle.getString("DocURL"));
                 final DefaultOnlineResource resource = new DefaultOnlineResource(uri);
                 resource.setFunction(OnLineFunction.INFORMATION);

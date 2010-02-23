@@ -25,7 +25,8 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * than strings read from a file.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Andrea Aime (OpenGeo)
+ * @version 3.09
  *
  * @since 2.4
  */
@@ -104,6 +105,18 @@ public final class WKT {
             "  UNIT[“degree”, 0.017453292519943295],\n" +
             "  AXIS[“Lon”, EAST],\n" +
             "  AXIS[“Lat”, NORTH]]");
+
+    /**
+     * Geographic CRS (EPSG:4326) with a datum name which is not recognized as an alias.
+     */
+    public static final String GEOGCS_WGS84_ALTERED = decodeQuotes(
+            "GEOGCS[“WGS84”,\n"                                   +
+            "  DATUM[“WGS84_altered”,\n"                          +
+            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
+            "  PRIMEM[“Greenwich”, 0.0],\n"                       +
+            "  UNIT[“degree”, 0.017453292519943295],\n"+""        +
+            "  AXIS[“Longitude”,EAST],"                           +
+            "  AXIS[“Latitude”,NORTH]]");
 
     /**
      * Geographic CRS (EPSG:4326) with (<var>latitude</var>, <var>longitude</var>) axis order.

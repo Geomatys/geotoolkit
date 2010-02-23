@@ -452,4 +452,13 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
             ((Factory) factory).dispose(false);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void scanForPlugins() {
+        cache.clear();
+        super.scanForPlugins();
+    }
 }

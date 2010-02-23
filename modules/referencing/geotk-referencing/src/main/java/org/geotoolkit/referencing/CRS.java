@@ -1802,6 +1802,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             final boolean all = aspect.equalsIgnoreCase("all");
             if (all || aspect.equalsIgnoreCase("plugins")) {
                 AuthorityFactoryFinder.scanForPlugins();
+                standardFactory = null;
+                xyFactory       = null;
+                strictFactory   = null;
+                lenientFactory  = null;
             }
             if (all || aspect.equalsIgnoreCase("warnings")) {
                 UnitaryProjection.resetWarnings();
