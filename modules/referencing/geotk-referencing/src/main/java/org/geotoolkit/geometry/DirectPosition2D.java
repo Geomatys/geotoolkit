@@ -163,7 +163,7 @@ public class DirectPosition2D extends Point2D.Double implements DirectPosition, 
      * @throws IllegalArgumentException If the parenthesis are not balanced.
      * @throws MismatchedDimensionException If the given point is not two-dimensional.
      *
-     * @see #toString(DirectPosition)
+     * @see AbstractDirectPosition#toString(DirectPosition)
      * @see org.geotoolkit.measure.CoordinateFormat
      *
      * @since 3.09

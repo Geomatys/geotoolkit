@@ -30,7 +30,7 @@ import org.geotoolkit.lang.Static;
  * {@section Handling of null values}
  * Some methods accept a {@code null} argument, in particular the methods converting the
  * given {@code String} to another {@code String} which may be the same. For example the
- * {@link #wordsToAcronym(String)} method returns {@code null} if the string to convert is
+ * {@link #camelCaseToAcronym(String)} method returns {@code null} if the string to convert is
  * {@code null}. Some other methods like {@link #count(String, char)} handles {@code null}
  * argument like an empty string. The methods that don't accept a {@code null} argument are
  * explicitly documented as throwing a {@link NullPointerException}.

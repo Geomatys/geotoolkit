@@ -139,7 +139,7 @@ public class ObjectiveAnalysis {
      * at the locations defined by {@link #getOutputLocation(int, Point2D.Double)}.
      * <p>
      * This convenience method wraps the given arrays in {@link Vector} objects
-     * and delegates to {@link #setInput(Vector, Vector, Vector)}.
+     * and delegates to {@link #setInputs(Vector, Vector, Vector)}.
      *
      * @param xp The <var>x</var> ordinates of a random set of points.
      * @param yp The <var>y</var> ordinates of a random set of points.
@@ -158,7 +158,7 @@ public class ObjectiveAnalysis {
      * at the locations defined by {@link #getOutputLocation(int, Point2D.Double)}.
      * <p>
      * This convenience method wraps the given arrays in {@link Vector} objects
-     * and delegates to {@link #setInput(Vector, Vector, Vector)}.
+     * and delegates to {@link #setInputs(Vector, Vector, Vector)}.
      *
      * @param xp The <var>x</var> ordinates of a random set of points.
      * @param yp The <var>y</var> ordinates of a random set of points.
@@ -201,7 +201,7 @@ public class ObjectiveAnalysis {
     /**
      * Returns the (<var>x</var>,<var>y</var>) coordinate of the point evaluated at the given
      * index. This is the spatial location of {@code values[index]} where {@code values} is the
-     * array returned by the {@link #interpolate(Vector, Vector, Vector) interpolate(...)} method.
+     * array returned by the {@link #interpolate(double[]) interpolate(...)} method.
      * <p>
      * If the {@code dest} argument is non-null, then the result will be writen in the given
      * {@code Point2D} instance and this method returns {@code dest}. Otherwise this method

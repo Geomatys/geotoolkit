@@ -346,7 +346,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * <blockquote>{@code BOX2D(}{@linkplain #getLowerCorner() lower corner}{@code ,}
      * {@linkplain #getUpperCorner() upper corner}{@code )}</blockquote>
      *
-     * @see AbstractFormat#toString(Envelope)
+     * @see AbstractEnvelope#toString(Envelope)
      *
      * @since 2.4
      */
