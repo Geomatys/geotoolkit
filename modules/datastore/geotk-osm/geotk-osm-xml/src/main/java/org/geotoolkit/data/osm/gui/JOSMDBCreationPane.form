@@ -386,6 +386,16 @@
                           </Group>
                       </Group>
                       <Component id="guiSepGeometry" alignment="0" pref="372" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="guiLblCreateGeomField" linkSize="5" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiCreateGeomField" min="-2" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="guiLblGenerateGeometry" linkSize="5" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiGenerateGeometries" min="-2" max="-2" attributes="1"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -435,6 +445,16 @@
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="guiSepGeometry" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="guiCreateGeomField" max="32767" attributes="1"/>
+                      <Component id="guiLblCreateGeomField" alignment="0" max="32767" attributes="1"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="guiGenerateGeometries" alignment="0" max="32767" attributes="1"/>
+                      <Component id="guiLblGenerateGeometry" alignment="0" min="-2" max="-2" attributes="1"/>
+                  </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -515,6 +535,26 @@
         <Component class="org.jdesktop.swingx.JXTitledSeparator" name="guiSepCreate">
         </Component>
         <Component class="org.jdesktop.swingx.JXTitledSeparator" name="guiSepGeometry">
+        </Component>
+        <Component class="org.jdesktop.swingx.JXBusyLabel" name="guiLblCreateGeomField">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Create geometry fields"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="guiCreateGeomField">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+        <Component class="org.jdesktop.swingx.JXBusyLabel" name="guiLblGenerateGeometry">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Generate geometries"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="guiGenerateGeometries">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

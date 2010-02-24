@@ -78,6 +78,11 @@ public class OSMPostgresQueries {
             "GROUP BY \"nodeId\",k " +
             "HAVING count(\"nodeId\") > 1)";
 
+    public static final String CREATE_NODE_GEOMETRY_FIELD =
+            "SELECT AddGeometryColumn('public', 'Node', 'geometry', 4326, 'POINT', 2)";
+
+    public static final String GENERATE_NODE_GEOMETRY =
+            "UPDATE \"Node\" SET geometry = geomfromtext('POINT(' || lon || ' ' || lat || ')', 4326)";
 
     ////////////////////////////////////////////////////////////////////////////
     // WAY TABLE AND TAG ///////////////////////////////////////////////////////
@@ -149,6 +154,18 @@ public class OSMPostgresQueries {
             "FROM \"WayMember\" " +
             "GROUP BY \"wayId\",\"nodeId\",index " +
             "HAVING count(\"wayId\") > 1)";
+
+    public static final String CREATE_WAY_GEOMETRY_FIELD =
+            "SELECT AddGeometryColumn('public', 'Way', 'geometry', 4326, 'LINESTRING', 2)";
+
+    public static final String GENERATE_WAY_GEOMETRY =
+		"UPDATE \"Way\" w SET geometry = ( " +
+                "SELECT makeline(c.geom) AS way_line FROM ( " +
+                "SELECT n.geometry AS geom " +
+                "FROM \"Node\" n INNER JOIN \"WayMember\" wn ON n.id = wn.\"nodeId\" " +
+                "WHERE (wn.\"wayId\" = w.id) ORDER BY wn.index " +
+                ") c " +
+                ") ";
 
 
     ////////////////////////////////////////////////////////////////////////////

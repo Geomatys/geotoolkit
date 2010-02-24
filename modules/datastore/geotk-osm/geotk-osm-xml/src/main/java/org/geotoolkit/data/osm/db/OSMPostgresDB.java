@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.geotoolkit.data.osm.model.Member;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
@@ -246,6 +247,24 @@ public class OSMPostgresDB {
         stmt.execute(OSMPostgresQueries.CREATE_RELATION_TAG_FK);
         stmt.execute(OSMPostgresQueries.CREATE_RELATION_MEMBER_FK);
         
+        stmt.close();
+    }
+
+    public void createGeometryFields() throws SQLException{
+        final Statement stmt = cnx.createStatement();
+
+        stmt.execute(OSMPostgresQueries.CREATE_NODE_GEOMETRY_FIELD);
+        stmt.execute(OSMPostgresQueries.CREATE_WAY_GEOMETRY_FIELD);
+
+        stmt.close();
+    }
+
+    public void generateGeometries() throws SQLException{
+        final Statement stmt = cnx.createStatement();
+
+        stmt.execute(OSMPostgresQueries.GENERATE_NODE_GEOMETRY);
+        stmt.execute(OSMPostgresQueries.GENERATE_WAY_GEOMETRY);
+
         stmt.close();
     }
 

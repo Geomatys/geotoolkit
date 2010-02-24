@@ -148,6 +148,30 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiLblCreateTable.setText("Create tables : " + (after-before) + " ms");
     }
 
+    private void createGeometryFields() throws SQLException{
+        guiLblCreateGeomField.setBusy(true);
+        final long before = System.currentTimeMillis();
+
+        pgDB.createGeometryFields();
+        pgDB.commit();
+
+        final long after = System.currentTimeMillis();
+        guiLblCreateGeomField.setBusy(false);
+        guiLblCreateGeomField.setText("Create geometry fields : " + (after-before) + " ms");
+    }
+
+    private void generateGeometries() throws SQLException{
+        guiLblGenerateGeometry.setBusy(true);
+        final long before = System.currentTimeMillis();
+
+        pgDB.generateGeometries();
+        pgDB.commit();
+
+        final long after = System.currentTimeMillis();
+        guiLblGenerateGeometry.setBusy(false);
+        guiLblGenerateGeometry.setText("Generate geometries : " + (after-before) + " ms");
+    }
+
     private void commitNodeBuffer() throws SQLException{
         restartReference = nodeBuffer.get(0).getId();
 
@@ -351,6 +375,15 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         if(guiCreateFK.isSelected()){
             createFK();
         }
+
+        if(guiCreateGeomField.isSelected()){
+            createGeometryFields();
+        }
+
+        if(guiGenerateGeometries.isSelected()){
+            generateGeometries();
+        }
+
         
     }
 
@@ -401,6 +434,10 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiSepIntegrity = new org.jdesktop.swingx.JXTitledSeparator();
         guiSepCreate = new org.jdesktop.swingx.JXTitledSeparator();
         guiSepGeometry = new org.jdesktop.swingx.JXTitledSeparator();
+        guiLblCreateGeomField = new org.jdesktop.swingx.JXBusyLabel();
+        guiCreateGeomField = new javax.swing.JCheckBox();
+        guiLblGenerateGeometry = new org.jdesktop.swingx.JXBusyLabel();
+        guiGenerateGeometries = new javax.swing.JCheckBox();
         jLabel12 = new javax.swing.JLabel();
         guiCrash = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
@@ -603,6 +640,14 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
 
         guiLblEraseDuplicate.setText("Erase duplicate");
 
+        guiLblCreateGeomField.setText("Create geometry fields");
+
+        guiCreateGeomField.setSelected(true);
+
+        guiLblGenerateGeometry.setText("Generate geometries");
+
+        guiGenerateGeometries.setSelected(true);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -638,13 +683,23 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(guiCreatePK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(guiCreateFK)))
-                    .addComponent(guiSepGeometry, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
+                    .addComponent(guiSepGeometry, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(guiLblCreateGeomField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiCreateGeomField))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(guiLblGenerateGeometry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiGenerateGeometries)))
                 .addContainerGap())
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiLblCreateFK, guiLblCreatePK, guiLblEraseDuplicate});
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiLblCreateTable, guiLblDropTable, guiLblInsertData});
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiLblCreateGeomField, guiLblGenerateGeometry});
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -683,6 +738,14 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                     .addComponent(guiCreateFK, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiSepGeometry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(guiCreateGeomField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLblCreateGeomField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(guiGenerateGeometries, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guiLblGenerateGeometry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -863,17 +926,21 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JTextField guiCrash;
     private javax.swing.JButton guiCreate;
     private javax.swing.JCheckBox guiCreateFK;
+    private javax.swing.JCheckBox guiCreateGeomField;
     private javax.swing.JCheckBox guiCreatePK;
     private javax.swing.JCheckBox guiCreateTable;
     private javax.swing.JTextField guiDatabase;
     private javax.swing.JCheckBox guiDropTable;
     private javax.swing.JCheckBox guiEraseDuplicate;
+    private javax.swing.JCheckBox guiGenerateGeometries;
     private javax.swing.JTextField guiHost;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreateFK;
+    private org.jdesktop.swingx.JXBusyLabel guiLblCreateGeomField;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreatePK;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreateTable;
     private org.jdesktop.swingx.JXBusyLabel guiLblDropTable;
     private org.jdesktop.swingx.JXBusyLabel guiLblEraseDuplicate;
+    private org.jdesktop.swingx.JXBusyLabel guiLblGenerateGeometry;
     private org.jdesktop.swingx.JXBusyLabel guiLblInsertData;
     private org.jdesktop.swingx.JXBusyLabel guiLblRestart;
     private javax.swing.JTextField guiNodes;
