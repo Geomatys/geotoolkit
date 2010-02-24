@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.xml.model;
+package org.geotoolkit.data.osm.model;
 
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

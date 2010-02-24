@@ -15,40 +15,38 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.xml.model;
+package org.geotoolkit.data.osm.model;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.geotoolkit.io.TableWriter;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class Relation extends IdentifiedElement{
+public class Node extends IdentifiedElement{
 
-    private final List<Member> members;
+    private final double lat;
+    private final double lon;
 
-    public Relation(List<Member> members,
+    public Node(double lat, double lon,
             long id, int version, int changeset, User user,
             long timestamp, Map<String,String> tags) {
         super(id,version,changeset,user,timestamp,tags);
-
-        if(members == null || members.isEmpty()){
-            this.members = Collections.EMPTY_LIST;
-        }else{
-            this.members = UnmodifiableArrayList.wrap(members.toArray(new Member[members.size()]));
-        }
+        this.lat = lat;
+        this.lon = lon;
     }
 
-    public List<Member> getMembers() {
-        return members;
+    public double getLatitude() {
+        return lat;
+    }
+
+    public double getLongitude() {
+        return lon;
     }
 
     @Override
@@ -57,12 +55,10 @@ public class Relation extends IdentifiedElement{
         final TableWriter tablewriter = new TableWriter(writer);
 
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("OSM-RELATION\t \n");
+        tablewriter.write("OSM-NODE\t \n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-        tablewriter.write("members count\t"+members.size()+"\n");
-        for(int i=0;i<members.size();i++){
-            tablewriter.write("member " +i +"\t"+members.get(i)+"\n");
-        }
+        tablewriter.write("lat\t"+getLatitude()+"\n");
+        tablewriter.write("lon\t"+getLongitude()+"\n");
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         tablewriter.write("ID\t"+getId()+"\n");
         tablewriter.write("ChangeSet\t"+getChangeset()+"\n");
@@ -74,10 +70,9 @@ public class Relation extends IdentifiedElement{
             tablewriter.write(entry.getKey()+"\t"+entry.getValue()+"\n");
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-
+        
         try {
             tablewriter.flush();
-            writer.flush();
         } catch (IOException ex) {
             //will never happen is this case
             ex.printStackTrace();

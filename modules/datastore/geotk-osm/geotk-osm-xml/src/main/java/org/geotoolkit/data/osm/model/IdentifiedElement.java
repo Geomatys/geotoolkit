@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.xml.model;
+package org.geotoolkit.data.osm.model;
 
 import java.io.Serializable;
 import java.util.Collections;

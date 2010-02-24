@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.xml.gui;
+package org.geotoolkit.data.osm.gui;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,10 +29,10 @@ import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.osm.db.OSMPostgresDB;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
-import org.geotoolkit.data.osm.xml.model.IdentifiedElement;
-import org.geotoolkit.data.osm.xml.model.Node;
-import org.geotoolkit.data.osm.xml.model.Relation;
-import org.geotoolkit.data.osm.xml.model.Way;
+import org.geotoolkit.data.osm.model.IdentifiedElement;
+import org.geotoolkit.data.osm.model.Node;
+import org.geotoolkit.data.osm.model.Relation;
+import org.geotoolkit.data.osm.model.Way;
 
 import org.jdesktop.swingx.JXErrorPane;
 

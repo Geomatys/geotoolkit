@@ -28,11 +28,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.geotoolkit.data.osm.xml.model.Member;
-import org.geotoolkit.data.osm.xml.model.Node;
-import org.geotoolkit.data.osm.xml.model.Relation;
-import org.geotoolkit.data.osm.xml.model.User;
-import org.geotoolkit.data.osm.xml.model.Way;
+import org.geotoolkit.data.osm.model.Member;
+import org.geotoolkit.data.osm.model.Node;
+import org.geotoolkit.data.osm.model.Relation;
+import org.geotoolkit.data.osm.model.User;
+import org.geotoolkit.data.osm.model.Way;
 
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 

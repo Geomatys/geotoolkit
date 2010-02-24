@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.osm.xml.model;
+package org.geotoolkit.data.osm.model;
 
 /**
  * Open Street Map user.
