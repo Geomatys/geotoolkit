@@ -349,8 +349,8 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="guiSepCreate" pref="372" max="32767" attributes="0"/>
-                      <Component id="guiSepIntegrity" alignment="0" pref="372" max="32767" attributes="0"/>
+                      <Component id="guiSepCreate" pref="379" max="32767" attributes="0"/>
+                      <Component id="guiSepIntegrity" alignment="0" pref="379" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="guiLblDropTable" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -385,7 +385,7 @@
                               <Component id="guiCreateFK" alignment="0" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
-                      <Component id="guiSepGeometry" alignment="0" pref="372" max="32767" attributes="0"/>
+                      <Component id="guiSepGeometry" alignment="0" pref="379" max="32767" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="guiLblCreateGeomField" linkSize="5" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -395,6 +395,11 @@
                           <Component id="guiLblGenerateGeometry" linkSize="5" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="guiGenerateGeometries" min="-2" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="guiLblGenerateIndex" linkSize="5" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiGenerateIndex" min="-2" max="-2" attributes="1"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -454,6 +459,11 @@
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="guiGenerateGeometries" alignment="0" max="32767" attributes="1"/>
                       <Component id="guiLblGenerateGeometry" alignment="0" min="-2" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="guiGenerateIndex" alignment="0" max="32767" attributes="1"/>
+                      <Component id="guiLblGenerateIndex" alignment="0" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -552,6 +562,16 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="guiGenerateGeometries">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+          </Properties>
+        </Component>
+        <Component class="org.jdesktop.swingx.JXBusyLabel" name="guiLblGenerateIndex">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Generate index"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="guiGenerateIndex">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
           </Properties>

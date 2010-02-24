@@ -84,6 +84,9 @@ public class OSMPostgresQueries {
     public static final String GENERATE_NODE_GEOMETRY =
             "UPDATE \"Node\" SET geometry = geomfromtext('POINT(' || lon || ' ' || lat || ')', 4326)";
 
+    public static final String CREATE_NODE_GEOMETRY_INDEX =
+            "CREATE INDEX idx_node_geom ON \"Node\" USING gist (geometry)";
+
     ////////////////////////////////////////////////////////////////////////////
     // WAY TABLE AND TAG ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -166,6 +169,9 @@ public class OSMPostgresQueries {
                 "WHERE (wn.\"wayId\" = w.id) ORDER BY wn.index " +
                 ") c " +
                 ") ";
+
+    public static final String CREATE_WAY_GEOMETRY_INDEX =
+            "CREATE INDEX idx_way_geom ON \"Way\" USING gist (geometry)";
 
 
     ////////////////////////////////////////////////////////////////////////////

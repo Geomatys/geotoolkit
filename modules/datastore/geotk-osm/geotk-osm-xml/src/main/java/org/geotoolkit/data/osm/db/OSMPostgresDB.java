@@ -268,6 +268,15 @@ public class OSMPostgresDB {
         stmt.close();
     }
 
+    public void createIndexes() throws SQLException {
+        final Statement stmt = cnx.createStatement();
+
+        stmt.execute(OSMPostgresQueries.CREATE_NODE_GEOMETRY_INDEX);
+        stmt.execute(OSMPostgresQueries.CREATE_WAY_GEOMETRY_INDEX);
+
+        stmt.close();
+    }
+
     public void insertNode(Node node) throws SQLException{
     }
 
@@ -496,6 +505,8 @@ public class OSMPostgresDB {
 
         stmt.close();
     }
+
+
 
     private final class Statements extends UnSynchronizedCache<Integer, PreparedStatement>{
 
