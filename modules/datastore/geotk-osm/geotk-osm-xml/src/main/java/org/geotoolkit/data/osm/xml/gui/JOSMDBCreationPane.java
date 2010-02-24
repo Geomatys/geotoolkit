@@ -26,12 +26,14 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.xml.stream.XMLStreamException;
+
+import org.geotoolkit.data.osm.db.OSMPostgresDB;
 import org.geotoolkit.data.osm.xml.OSMXMLReader;
-import org.geotoolkit.data.osm.xml.db.OSMPostgresDB;
 import org.geotoolkit.data.osm.xml.model.IdentifiedElement;
 import org.geotoolkit.data.osm.xml.model.Node;
 import org.geotoolkit.data.osm.xml.model.Relation;
 import org.geotoolkit.data.osm.xml.model.Way;
+
 import org.jdesktop.swingx.JXErrorPane;
 
 

@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.osm.xml.db;
+package org.geotoolkit.data.osm.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
