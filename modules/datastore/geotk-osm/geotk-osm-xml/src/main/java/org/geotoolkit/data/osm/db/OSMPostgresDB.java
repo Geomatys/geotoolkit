@@ -22,6 +22,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -61,18 +62,27 @@ public class OSMPostgresDB {
     private final Statements relationMemberInsert = new Statements(Statements.RELATION_MEMBER);
     private final Statements userInsert = new Statements(Statements.USER);
 
+    private Savepoint savePoint = null;
+
     public OSMPostgresDB(String username, String password, String database) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         cnx = DriverManager.getConnection("jdbc:postgresql:"+database,username,password);
         cnx.setAutoCommit(false);
+        cnx.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
+        savePoint = cnx.setSavepoint();
     }
 
     public void commit() throws SQLException{
         cnx.commit();
+        savePoint = cnx.setSavepoint();
     }
 
     public void rollBack() throws SQLException{
-        cnx.rollback();
+        if(savePoint != null){
+            cnx.rollback(savePoint);
+        }else{
+            cnx.rollback();
+        }
     }
 
     public void checkUserIds() throws SQLException{
@@ -439,6 +449,32 @@ public class OSMPostgresDB {
         stmt.executeUpdate();
         usersAdded.add(user.getId());
         return 1;
+    }
+
+    public void eraseDuplicates() throws SQLException {
+
+        final Statement stmt = cnx.createStatement();
+
+        stmt.execute(OSMPostgresQueries.DELETE_NODE_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_NODE_TAG_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_WAY_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_WAY_TAG_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_WAY_MEMBER_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_RELATION_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_RELATION_TAG_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_RELATION_MEMBER_DUPLICATE);
+        commit();
+        stmt.execute(OSMPostgresQueries.DELETE_USER_DUPLICATE);
+        commit();
+
+        stmt.close();
     }
 
     private final class Statements extends UnSynchronizedCache<Integer, PreparedStatement>{

@@ -61,6 +61,22 @@ public class OSMPostgresQueries {
             "ALTER TABLE \"NodeTag\" ADD PRIMARY KEY (\"nodeId\",k)";
     public static final String CREATE_NODE_TAG_FK =
             "ALTER TABLE \"NodeTag\" ADD FOREIGN KEY (\"nodeId\") REFERENCES \"Node\"(id)";
+    
+    public static final String DELETE_NODE_DUPLICATE =
+            "DELETE FROM \"Node\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"Node\" " +
+            "GROUP BY id " +
+            "HAVING count(id) > 1)";
+
+    public static final String DELETE_NODE_TAG_DUPLICATE =
+            "DELETE FROM \"NodeTag\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"NodeTag\" " +
+            "GROUP BY \"nodeId\",k " +
+            "HAVING count(\"nodeId\") > 1)";
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -112,6 +128,28 @@ public class OSMPostgresQueries {
     public static final String CREATE_WAY_TAG_FK =
             "ALTER TABLE \"WayTag\" ADD FOREIGN KEY (\"wayId\") REFERENCES \"Way\"(id)";
 
+    public static final String DELETE_WAY_DUPLICATE =
+            "DELETE FROM \"Way\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"Way\" " +
+            "GROUP BY id " +
+            "HAVING count(id) > 1)";
+    public static final String DELETE_WAY_TAG_DUPLICATE =
+            "DELETE FROM \"WayTag\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"WayTag\" " +
+            "GROUP BY \"wayId\",k " +
+            "HAVING count(\"wayId\") > 1)";
+    public static final String DELETE_WAY_MEMBER_DUPLICATE =
+            "DELETE FROM \"WayMember\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"WayMember\" " +
+            "GROUP BY \"wayId\",\"nodeId\",index " +
+            "HAVING count(\"wayId\") > 1)";
+
 
     ////////////////////////////////////////////////////////////////////////////
     // RELATION TABLE AND TAG //////////////////////////////////////////////////
@@ -162,6 +200,28 @@ public class OSMPostgresQueries {
     public static final String CREATE_RELATION_TAG_FK =
             "ALTER TABLE \"RelationTag\" ADD FOREIGN KEY (\"relationId\") REFERENCES \"Relation\"(id)";
 
+    public static final String DELETE_RELATION_DUPLICATE =
+            "DELETE FROM \"Relation\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"Relation\" " +
+            "GROUP BY id " +
+            "HAVING count(id) > 1)";
+    public static final String DELETE_RELATION_TAG_DUPLICATE =
+            "DELETE FROM \"RelationTag\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"RelationTag\" " +
+            "GROUP BY \"relationId\",k " +
+            "HAVING count(\"relationId\") > 1)";
+    public static final String DELETE_RELATION_MEMBER_DUPLICATE =
+            "DELETE FROM \"RelationMember\" " +
+            "WHERE ctid IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"RelationMember\" " +
+            "GROUP BY \"relationId\",\"memberId\",index " +
+            "HAVING count(\"relationId\") > 1)";
+
 
     ////////////////////////////////////////////////////////////////////////////
     // USER TABLE //////////////////////////////////////////////////////////////
@@ -178,6 +238,15 @@ public class OSMPostgresQueries {
 
     public static final String CREATE_USER_PK =
             "ALTER TABLE \"User\" ADD PRIMARY KEY (id)";
+
+    public static final String DELETE_USER_DUPLICATE =
+            "DELETE FROM \"User\" " +
+            "WHERE ctid NOT IN " +
+            "(SELECT MIN(ctid) " +
+            "FROM \"User\" " +
+            "GROUP BY id " +
+            "HAVING count(id) > 1)";
+    
 
 
     ////////////////////////////////////////////////////////////////////////////

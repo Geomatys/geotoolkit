@@ -80,6 +80,33 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     /** Creates new form JOSMDBCreationPane */
     public JOSMDBCreationPane() {
         initComponents();
+        guiSepCreate.setTitle("Creation");
+        guiSepIntegrity.setTitle("Integrity");
+        guiSepGeometry.setTitle("PostGIS Geometry");
+    }
+
+    private void reset(){
+        guiLblCreateFK.setBusy(false);
+        guiLblCreatePK.setBusy(false);
+        guiLblCreateTable.setBusy(false);
+        guiLblDropTable.setBusy(false);
+        guiLblInsertData.setBusy(false);
+        guiLblRestart.setBusy(false);
+
+        nodeBuffer.clear();
+        wayBuffer.clear();
+        relationBuffer.clear();
+        nbNodes=0;
+        nbNodesTag=0;
+        nbWays=0;
+        nbWaysTag=0;
+        nbWaysMember=0;
+        nbRelations=0;
+        nbRelationsTag=0;
+        nbRelationsMember=0;
+        nbUser=0;
+        restartReference=-1;
+        updatecounters();
     }
 
     private void updatecounters(){
@@ -100,6 +127,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         final long before = System.currentTimeMillis();
 
         pgDB.clearDataBase();
+        pgDB.commit();
 
         final long after = System.currentTimeMillis();
         guiLblDropTable.setBusy(false);
@@ -111,6 +139,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         final long before = System.currentTimeMillis();
 
         pgDB.createTables();
+        pgDB.commit();
 
         final long after = System.currentTimeMillis();
         guiLblCreateTable.setBusy(false);
@@ -178,11 +207,11 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         nbRelationsTag = nbs[6];
         nbRelationsMember = nbs[7];
         nbUser = nbs[8];
+        updatecounters();
 
         final long after = System.currentTimeMillis();
         guiLblRestart.setBusy(false);
         guiLblRestart.setText("Restart at : " + (after-before) + " ms");
-        updatecounters();
     }
 
     private void readDatas() throws SQLException, XMLStreamException, IOException{
@@ -242,11 +271,24 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         System.out.println("Time to read = " + (after-before) + " ms");
     }
 
+    private void eraseDuplicate() throws SQLException{
+        guiLblEraseDuplicate.setBusy(true);
+        final long before = System.currentTimeMillis();
+
+        pgDB.eraseDuplicates();
+        pgDB.commit();
+
+        final long after = System.currentTimeMillis();
+        guiLblEraseDuplicate.setBusy(false);
+        guiLblEraseDuplicate.setText("Erase duplicate : " + (after-before) + " ms");
+    }
+
     private void createPK() throws SQLException{
         guiLblCreatePK.setBusy(true);
         final long before = System.currentTimeMillis();
 
         pgDB.createPrimaryKeys();
+        pgDB.commit();
 
         final long after = System.currentTimeMillis();
         guiLblCreatePK.setBusy(false);
@@ -258,6 +300,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         final long before = System.currentTimeMillis();
 
         pgDB.createForeignKeys();
+        pgDB.commit();
 
         final long after = System.currentTimeMillis();
         guiLblCreateFK.setBusy(false);
@@ -265,6 +308,8 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     }
 
     private void processOperations() throws SQLException, ClassNotFoundException, FileNotFoundException, XMLStreamException, IOException{
+        reset();
+
         File f= new File("/home/sorel/GIS_DATA/switzerland.osm");
         //File f = new File("sampleOSM.osm");
 
@@ -292,6 +337,10 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                 JXErrorPane.showDialog(ex);
                 pgDB.rollBack();
             }
+        }
+
+        if(guiEraseDuplicate.isSelected()){
+            eraseDuplicate();
         }
 
         if(guiCreatePK.isSelected()){
@@ -342,7 +391,6 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiLblInsertData = new org.jdesktop.swingx.JXBusyLabel();
         guiLblCreatePK = new org.jdesktop.swingx.JXBusyLabel();
         guiLblCreateFK = new org.jdesktop.swingx.JXBusyLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         guiDropTable = new javax.swing.JCheckBox();
         guiCreateTable = new javax.swing.JCheckBox();
         guiinsertData = new javax.swing.JCheckBox();
@@ -350,6 +398,11 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiCreateFK = new javax.swing.JCheckBox();
         guiRestartAt = new javax.swing.JSpinner();
         guiLblRestart = new org.jdesktop.swingx.JXBusyLabel();
+        guiLblEraseDuplicate = new org.jdesktop.swingx.JXBusyLabel();
+        guiEraseDuplicate = new javax.swing.JCheckBox();
+        guiSepIntegrity = new org.jdesktop.swingx.JXTitledSeparator();
+        guiSepCreate = new org.jdesktop.swingx.JXTitledSeparator();
+        guiSepGeometry = new org.jdesktop.swingx.JXTitledSeparator();
         jLabel12 = new javax.swing.JLabel();
         guiCrash = new javax.swing.JTextField();
 
@@ -525,8 +578,6 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
 
         guiLblCreateFK.setText("Create FK");
 
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
         guiDropTable.setSelected(true);
 
         guiCreateTable.setSelected(true);
@@ -541,6 +592,8 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
 
         guiLblRestart.setText("Restart at");
 
+        guiLblEraseDuplicate.setText("Erase duplicate");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -548,6 +601,8 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(guiSepCreate, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                    .addComponent(guiSepIntegrity, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(guiLblDropTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -555,59 +610,71 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                             .addComponent(guiLblInsertData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(guiinsertData, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-                            .addComponent(guiCreateTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(guiDropTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(guiDropTable, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(guiinsertData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(guiCreateTable)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(guiLblRestart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiRestartAt, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(guiRestartAt, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(guiLblEraseDuplicate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiEraseDuplicate))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(guiLblCreatePK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(guiLblCreateFK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(guiCreateFK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(guiCreatePK, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE))))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(237, Short.MAX_VALUE))
+                            .addComponent(guiCreatePK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(guiCreateFK)))
+                    .addComponent(guiSepGeometry, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiLblCreateFK, guiLblCreatePK, guiLblCreateTable, guiLblDropTable, guiLblInsertData});
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiLblCreateFK, guiLblCreatePK, guiLblEraseDuplicate});
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiLblCreateTable, guiLblDropTable, guiLblInsertData});
 
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(guiLblDropTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiDropTable))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(guiLblCreateTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiCreateTable))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(guiLblInsertData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiinsertData))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(guiRestartAt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiLblRestart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(guiLblCreatePK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiCreatePK))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(guiLblCreateFK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(guiCreateFK))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(guiSepCreate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiLblDropTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiDropTable, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiLblCreateTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiCreateTable, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiLblInsertData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiinsertData, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiRestartAt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiLblRestart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiSepIntegrity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(guiLblEraseDuplicate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiEraseDuplicate, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiLblCreatePK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiCreatePK, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(guiLblCreateFK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(guiCreateFK, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(guiSepGeometry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getStyle() | java.awt.Font.BOLD, jLabel12.getFont().getSize()+2));
@@ -700,10 +767,12 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JCheckBox guiCreatePK;
     private javax.swing.JCheckBox guiCreateTable;
     private javax.swing.JCheckBox guiDropTable;
+    private javax.swing.JCheckBox guiEraseDuplicate;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreateFK;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreatePK;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreateTable;
     private org.jdesktop.swingx.JXBusyLabel guiLblDropTable;
+    private org.jdesktop.swingx.JXBusyLabel guiLblEraseDuplicate;
     private org.jdesktop.swingx.JXBusyLabel guiLblInsertData;
     private org.jdesktop.swingx.JXBusyLabel guiLblRestart;
     private javax.swing.JTextField guiNodes;
@@ -713,6 +782,9 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JTextField guiRelationsMember;
     private javax.swing.JTextField guiRelationsTag;
     private javax.swing.JSpinner guiRestartAt;
+    private org.jdesktop.swingx.JXTitledSeparator guiSepCreate;
+    private org.jdesktop.swingx.JXTitledSeparator guiSepGeometry;
+    private org.jdesktop.swingx.JXTitledSeparator guiSepIntegrity;
     private javax.swing.JTextField guiUsers;
     private javax.swing.JTextField guiWays;
     private javax.swing.JTextField guiWaysMember;
@@ -731,7 +803,6 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -322,23 +322,30 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
+                      <Component id="guiSepCreate" pref="236" max="32767" attributes="0"/>
+                      <Component id="guiSepIntegrity" alignment="0" pref="236" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="guiLblDropTable" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiLblCreateTable" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiLblInsertData" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="guiLblDropTable" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="guiLblCreateTable" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="guiLblInsertData" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="guiinsertData" alignment="0" pref="68" max="32767" attributes="1"/>
-                              <Component id="guiCreateTable" alignment="0" max="32767" attributes="1"/>
-                              <Component id="guiDropTable" alignment="0" max="32767" attributes="1"/>
+                              <Component id="guiDropTable" max="32767" attributes="1"/>
+                              <Component id="guiinsertData" alignment="0" max="32767" attributes="1"/>
+                              <Component id="guiCreateTable" alignment="0" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="guiLblRestart" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="guiRestartAt" min="-2" pref="107" max="-2" attributes="0"/>
+                          <Component id="guiRestartAt" min="-2" pref="131" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="guiLblEraseDuplicate" linkSize="2" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="guiEraseDuplicate" min="-2" max="-2" attributes="1"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -347,14 +354,13 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="guiCreateFK" max="32767" attributes="1"/>
-                              <Component id="guiCreatePK" alignment="0" pref="68" max="32767" attributes="1"/>
+                              <Component id="guiCreatePK" max="32767" attributes="1"/>
+                              <Component id="guiCreateFK" alignment="0" min="-2" max="-2" attributes="1"/>
                           </Group>
                       </Group>
+                      <Component id="guiSepGeometry" alignment="0" pref="236" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="jSeparator1" min="-2" pref="28" max="-2" attributes="0"/>
-                  <EmptySpace pref="237" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -362,41 +368,47 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jSeparator1" alignment="1" pref="196" max="32767" attributes="1"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="guiLblDropTable" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiDropTable" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="guiLblCreateTable" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiCreateTable" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="guiLblInsertData" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiinsertData" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="guiRestartAt" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiLblRestart" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="guiLblCreatePK" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiCreatePK" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="guiLblCreateFK" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="guiCreateFK" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <Component id="guiSepCreate" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiLblDropTable" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiDropTable" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiLblCreateTable" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiCreateTable" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiLblInsertData" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiinsertData" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiRestartAt" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiLblRestart" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="guiSepIntegrity" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="guiLblEraseDuplicate" min="-2" max="-2" attributes="1"/>
+                      <Component id="guiEraseDuplicate" min="-2" pref="26" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiLblCreatePK" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiCreatePK" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="guiLblCreateFK" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="guiCreateFK" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="guiSepGeometry" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="52" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -425,11 +437,6 @@
         <Component class="org.jdesktop.swingx.JXBusyLabel" name="guiLblCreateFK">
           <Properties>
             <Property name="text" type="java.lang.String" value="Create FK"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JSeparator" name="jSeparator1">
-          <Properties>
-            <Property name="orientation" type="int" value="1"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="guiDropTable">
@@ -468,6 +475,19 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Restart at"/>
           </Properties>
+        </Component>
+        <Component class="org.jdesktop.swingx.JXBusyLabel" name="guiLblEraseDuplicate">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Erase duplicate"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="guiEraseDuplicate">
+        </Component>
+        <Component class="org.jdesktop.swingx.JXTitledSeparator" name="guiSepIntegrity">
+        </Component>
+        <Component class="org.jdesktop.swingx.JXTitledSeparator" name="guiSepCreate">
+        </Component>
+        <Component class="org.jdesktop.swingx.JXTitledSeparator" name="guiSepGeometry">
         </Component>
       </SubComponents>
     </Container>
