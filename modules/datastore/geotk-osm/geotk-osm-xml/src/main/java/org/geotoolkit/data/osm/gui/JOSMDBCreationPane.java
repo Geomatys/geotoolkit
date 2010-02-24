@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.xml.stream.XMLStreamException;
@@ -86,6 +87,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     }
 
     private void reset(){
+
         guiLblCreateFK.setBusy(false);
         guiLblCreatePK.setBusy(false);
         guiLblCreateTable.setBusy(false);
@@ -310,10 +312,9 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private void processOperations() throws SQLException, ClassNotFoundException, FileNotFoundException, XMLStreamException, IOException{
         reset();
 
-        File f= new File("/home/sorel/GIS_DATA/switzerland.osm");
-        //File f = new File("sampleOSM.osm");
+        File f= new File(guiPath.getText());
 
-        pgDB = new OSMPostgresDB("postgres", "postgres", "osm_swiss");
+        pgDB = new OSMPostgresDB(guiHost.getText(),guiDatabase.getText(),guiUser.getText(),new String(guiPassword.getPassword()));
         reader = new OSMXMLReader(f);
 
         if(guiDropTable.isSelected()){
@@ -362,9 +363,6 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        guiPath = new javax.swing.JTextField();
-        guiChooser = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -405,37 +403,45 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiSepGeometry = new org.jdesktop.swingx.JXTitledSeparator();
         jLabel12 = new javax.swing.JLabel();
         guiCrash = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        guiPath = new javax.swing.JTextField();
+        guiChooser = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        guiHost = new javax.swing.JTextField();
+        guiDatabase = new javax.swing.JTextField();
+        guiUser = new javax.swing.JTextField();
+        guiPassword = new javax.swing.JPasswordField();
 
-        jLabel1.setText("File :");
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        guiPath.setText("/home/sorel/GIS_DATA/switzerland.osm");
-
-        guiChooser.setText("...");
-        guiChooser.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                guiChooserActionPerformed(evt);
-            }
-        });
-
+        jLabel2.setFont(jLabel2.getFont().deriveFont(jLabel2.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel2.setText("Nodes =");
 
         jLabel3.setText("Nodes tag =");
 
+        jLabel4.setFont(jLabel4.getFont().deriveFont(jLabel4.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel4.setText("Ways =");
 
         jLabel5.setText("Ways tag =");
 
         jLabel6.setText("Ways member =");
 
+        jLabel7.setFont(jLabel7.getFont().deriveFont(jLabel7.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel7.setText("Relations =");
 
         jLabel8.setText("Relations tag =");
 
         jLabel9.setText("Relations member =");
 
+        jLabel10.setFont(jLabel10.getFont().deriveFont(jLabel10.getFont().getStyle() | java.awt.Font.BOLD));
         jLabel10.setText("Users =");
 
         guiNodes.setEditable(false);
+        guiNodes.setFont(guiNodes.getFont().deriveFont(guiNodes.getFont().getStyle() | java.awt.Font.BOLD));
         guiNodes.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         guiNodes.setText("0");
 
@@ -444,6 +450,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiNodesTag.setText("0");
 
         guiWays.setEditable(false);
+        guiWays.setFont(guiWays.getFont().deriveFont(guiWays.getFont().getStyle() | java.awt.Font.BOLD));
         guiWays.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         guiWays.setText("0");
 
@@ -456,6 +463,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiWaysMember.setText("0");
 
         guiRelations.setEditable(false);
+        guiRelations.setFont(guiRelations.getFont().deriveFont(guiRelations.getFont().getStyle() | java.awt.Font.BOLD));
         guiRelations.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         guiRelations.setText("0");
 
@@ -468,6 +476,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiRelationsMember.setText("0"); // NOI18N
 
         guiUsers.setEditable(false);
+        guiUsers.setFont(guiUsers.getFont().deriveFont(guiUsers.getFont().getStyle() | java.awt.Font.BOLD));
         guiUsers.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         guiUsers.setText("0");
 
@@ -481,39 +490,39 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiNodes, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiNodes, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiNodesTag, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiNodesTag, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiWays, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiWays, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiWaysTag, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiWaysTag, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiWaysMember, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiWaysMember, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiRelations, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiRelations, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiRelationsTag, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiRelationsTag, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiRelationsMember, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE))
+                        .addComponent(guiRelationsMember, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)))
+                        .addComponent(guiUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -558,7 +567,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(guiUsers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
 
         guiCreate.setText("Run");
@@ -601,8 +610,8 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(guiSepCreate, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
-                    .addComponent(guiSepIntegrity, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                    .addComponent(guiSepCreate, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addComponent(guiSepIntegrity, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(guiLblDropTable, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -629,7 +638,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(guiCreatePK, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(guiCreateFK)))
-                    .addComponent(guiSepGeometry, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
+                    .addComponent(guiSepGeometry, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -674,7 +683,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
                     .addComponent(guiCreateFK, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(guiSepGeometry, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel12.setFont(jLabel12.getFont().deriveFont(jLabel12.getFont().getStyle() | java.awt.Font.BOLD, jLabel12.getFont().getSize()+2));
@@ -684,42 +693,122 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiCrash.setEditable(false);
         guiCrash.setText("-1");
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        jLabel1.setText("File :");
+
+        guiPath.setText("/home/sorel/GIS_DATA/switzerland.osm");
+
+        guiChooser.setText("...");
+        guiChooser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guiChooserActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Host :");
+
+        jLabel13.setText("DataBase :");
+
+        jLabel14.setText("User :");
+
+        jLabel15.setText("Password :");
+
+        guiHost.setText("localhost:5432");
+
+        guiDatabase.setText("osm_swiss");
+
+        guiUser.setText("postgres");
+
+        guiPassword.setText("postgres");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiPath, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                        .addComponent(guiPath, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(guiChooser))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(jLabel12)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(guiCrash, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(guiCreate)))
+                        .addComponent(guiHost, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiDatabase, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiUser, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiPassword, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(guiPath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(guiChooser))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(guiHost, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(guiDatabase, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(guiUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(guiPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guiCrash, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(guiCreate))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jPanel2, jPanel3});
+
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(guiCreate)
@@ -755,7 +844,17 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     }//GEN-LAST:event_guiCreateActionPerformed
 
     private void guiChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiChooserActionPerformed
-        // TODO add your handling code here:
+
+        final JFileChooser chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setMultiSelectionEnabled(false);
+        int val = chooser.showOpenDialog(this);
+
+        if(val == JFileChooser.APPROVE_OPTION){
+            File f = chooser.getSelectedFile();
+            guiPath.setText(f.getAbsolutePath());
+        }
+
     }//GEN-LAST:event_guiChooserActionPerformed
 
 
@@ -766,8 +865,10 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JCheckBox guiCreateFK;
     private javax.swing.JCheckBox guiCreatePK;
     private javax.swing.JCheckBox guiCreateTable;
+    private javax.swing.JTextField guiDatabase;
     private javax.swing.JCheckBox guiDropTable;
     private javax.swing.JCheckBox guiEraseDuplicate;
+    private javax.swing.JTextField guiHost;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreateFK;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreatePK;
     private org.jdesktop.swingx.JXBusyLabel guiLblCreateTable;
@@ -777,6 +878,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private org.jdesktop.swingx.JXBusyLabel guiLblRestart;
     private javax.swing.JTextField guiNodes;
     private javax.swing.JTextField guiNodesTag;
+    private javax.swing.JPasswordField guiPassword;
     private javax.swing.JTextField guiPath;
     private javax.swing.JTextField guiRelations;
     private javax.swing.JTextField guiRelationsMember;
@@ -785,6 +887,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private org.jdesktop.swingx.JXTitledSeparator guiSepCreate;
     private org.jdesktop.swingx.JXTitledSeparator guiSepGeometry;
     private org.jdesktop.swingx.JXTitledSeparator guiSepIntegrity;
+    private javax.swing.JTextField guiUser;
     private javax.swing.JTextField guiUsers;
     private javax.swing.JTextField guiWays;
     private javax.swing.JTextField guiWaysMember;
@@ -792,7 +895,11 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JCheckBox guiinsertData;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -803,6 +910,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
 
 }

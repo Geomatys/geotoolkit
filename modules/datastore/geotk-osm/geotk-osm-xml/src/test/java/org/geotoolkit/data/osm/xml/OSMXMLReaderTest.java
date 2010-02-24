@@ -4,7 +4,6 @@ package org.geotoolkit.data.osm.xml;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.sun.corba.se.spi.ior.Identifiable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

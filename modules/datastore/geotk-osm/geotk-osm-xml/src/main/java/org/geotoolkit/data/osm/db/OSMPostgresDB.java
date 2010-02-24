@@ -64,9 +64,9 @@ public class OSMPostgresDB {
 
     private Savepoint savePoint = null;
 
-    public OSMPostgresDB(String username, String password, String database) throws SQLException, ClassNotFoundException {
+    public OSMPostgresDB(String host, String database,String username, String password) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
-        cnx = DriverManager.getConnection("jdbc:postgresql:"+database,username,password);
+        cnx = DriverManager.getConnection("jdbc:postgresql://"+host+"/"+database,username,password);
         cnx.setAutoCommit(false);
         cnx.setTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
         savePoint = cnx.setSavepoint();
@@ -447,6 +447,7 @@ public class OSMPostgresDB {
         stmt.setString(2, user.getName());
 
         stmt.executeUpdate();
+        commit();
         usersAdded.add(user.getId());
         return 1;
     }
