@@ -136,11 +136,66 @@ public class OSMXMLReaderTest {
         assertEquals("center", rel.getMembers().get(1).getRole());
         assertEquals(MemberType.NODE, rel.getMembers().get(1).getType());
 
-
     }
 
     @Test
-    public void testMoveTo() {
+    public void testMoveTo() throws FileNotFoundException, XMLStreamException, IOException {
+        File testFile = new File("src/test/resources/org/geotoolkit/test-data/osm/sampleOSM.osm");
+        OSMXMLReader reader = new OSMXMLReader(testFile);
+
+        //check that the bound is correctly read
+        Envelope env = reader.getEnvelope();
+        assertNotNull(env);
+        assertTrue(CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84));
+        assertEquals(-0.108157396316528d, env.getMinimum(0),DELTA);
+        assertEquals(-0.107599496841431d, env.getMaximum(0),DELTA);
+        assertEquals(51.5073601795557d, env.getMinimum(1),DELTA);
+        assertEquals(51.5076406454029d, env.getMaximum(1),DELTA);
+
+        //move to the way node
+        reader.moveTo(27776903l);
+
+        final List<IdentifiedElement> elements = new ArrayList<IdentifiedElement>();
+        while(reader.hasNext()){
+            elements.add(reader.next());
+        }
+        reader.close();
+
+        //while raise an error if the order is wrong or if types doesnt match
+        final Way way = (Way) elements.get(0);
+        final Relation rel = (Relation) elements.get(1);
+
+        //check the way
+        assertEquals(27776903, way.getId());
+        assertEquals(1368552, way.getChangeset());
+        assertEquals(3, way.getVersion());
+        assertEquals(70, way.getUser().getId());
+        assertEquals("Matt", way.getUser().getName());
+        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), way.getTimestamp());
+        assertEquals(2, way.getTags().size());
+        assertEquals("private", way.getTags().get("access"));
+        assertEquals("service", way.getTags().get("highway"));
+        assertEquals(2, way.getNodesIds().size());
+        assertEquals(319408586, way.getNodesIds().get(0).longValue());
+        assertEquals(275452090, way.getNodesIds().get(1).longValue());
+
+        //check the relation
+        assertEquals(33368911, rel.getId());
+        assertEquals(152, rel.getChangeset());
+        assertEquals(3, rel.getVersion());
+        assertEquals(77, rel.getUser().getId());
+        assertEquals("Georges", rel.getUser().getName());
+        assertEquals(TemporalUtilities.createDate("2009-05-31T13:39:15Z").getTime(), rel.getTimestamp());
+        assertEquals(1, rel.getTags().size());
+        assertEquals("garden", rel.getTags().get("space"));
+        assertEquals(2, rel.getMembers().size());
+        assertEquals(27776903, rel.getMembers().get(0).getReference());
+        assertEquals("border", rel.getMembers().get(0).getRole());
+        assertEquals(MemberType.WAY, rel.getMembers().get(0).getType());
+        assertEquals(319408586, rel.getMembers().get(1).getReference());
+        assertEquals("center", rel.getMembers().get(1).getRole());
+        assertEquals(MemberType.NODE, rel.getMembers().get(1).getType());
+
     }
     
 }

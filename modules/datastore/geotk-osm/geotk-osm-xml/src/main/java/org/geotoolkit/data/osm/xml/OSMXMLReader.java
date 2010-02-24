@@ -135,6 +135,8 @@ public class OSMXMLReader{
     public void moveTo(Long id) throws XMLStreamException{
         moveToId = id;
         read();
+        //we have reached the wanted item, reset the search id
+        moveToId = -1;
     }
 
     public boolean hasNext() throws XMLStreamException{
@@ -194,8 +196,10 @@ public class OSMXMLReader{
             }
         }
 
-        //nothing left to read
-        reader.close();
+        if(reader.hasNext()){
+            //nothing left to read
+            reader.close();
+        }
     }
 
     private static Long toDateLong(String str){
