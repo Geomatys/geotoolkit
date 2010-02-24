@@ -39,7 +39,6 @@ import static org.junit.Assert.*;
  * @version 3.09
  *
  * @since 3.09 (derived from Seagis)
- * @module
  */
 public final class TimeStampTest extends CatalogTestBase {
     /**

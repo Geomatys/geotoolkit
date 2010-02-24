@@ -33,7 +33,6 @@ import static org.geotoolkit.coverage.sql.QueryType.*;
  * @version 3.09
  *
  * @since 3.09 (derived from Seagis)
- * @module
  */
 public final class QueryTest extends CatalogTestBase {
     /**

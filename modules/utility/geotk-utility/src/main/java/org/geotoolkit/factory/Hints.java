@@ -144,7 +144,7 @@ public class Hints extends RenderingHints {
     /**
      * The {@link org.opengis.referencing.datum.DatumAuthorityFactory} instance to use.
      *
-     * @see AuthorityFactoryFinder#getDatumAuthorityFactory(String, factory.Hints)
+     * @see AuthorityFactoryFinder#getDatumAuthorityFactory(String, Hints)
      * @category Referencing
      */
     public static final ClassKey DATUM_AUTHORITY_FACTORY = new ClassKey(

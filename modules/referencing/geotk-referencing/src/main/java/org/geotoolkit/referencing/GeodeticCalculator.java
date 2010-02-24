@@ -1063,7 +1063,7 @@ public class GeodeticCalculator {
         double xy, w, q2, q4, q6, r2, r3, sig, ssig, slon, clon, sinalf, ab=dlon;
         int kcount = 0;
         do {
-            if (++kcount > 8) {
+            if (++kcount > 12) {
                 throw new ArithmeticException(getNoConvergenceErrorMessage());
             }
             clon = cos(ab);

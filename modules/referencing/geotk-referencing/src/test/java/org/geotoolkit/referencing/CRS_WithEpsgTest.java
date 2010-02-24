@@ -38,6 +38,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -54,7 +57,7 @@ import static org.junit.Assume.assumeTrue;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.07
+ * @version 3.09
  *
  * @since 2.4
  */
@@ -549,6 +552,25 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assertEquals(2, cs.getDimension());
         assertEquals(AxisDirection.NORTH, cs.getAxis(0).getDirection());
         assertEquals(AxisDirection.EAST,  cs.getAxis(1).getDirection());
+    }
+
+    /**
+     * Tests the creation of a math transform from 4D to 3D CRS.
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @todo Disabled for now, since the test doesn't pass.
+     * @see http://jira.geotoolkit.org/browse/GEOTK-81
+     */
+    @Test
+    @Ignore
+    public void testProjected4D() throws FactoryException {
+        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3395");
+        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:27572");
+        sourceCRS = new DefaultCompoundCRS("3D", sourceCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        sourceCRS = new DefaultCompoundCRS("4D", sourceCRS, DefaultTemporalCRS.JULIAN);
+        MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
+        assertNotNull(tr);
     }
 
     /**

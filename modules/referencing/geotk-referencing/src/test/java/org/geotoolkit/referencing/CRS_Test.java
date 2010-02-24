@@ -95,26 +95,27 @@ public final class CRS_Test {
      */
     @Test
     public void testAxisAliases() throws FactoryException {
-        final String wkt1 = "PROJCS[\"NAD_1927_Texas_Statewide_Mapping_System\"," +
-                "GEOGCS[\"GCS_North_American_1927\"," +
-                "DATUM[\"D_North_American_1927\"," +
-                "SPHEROID[\"Clarke_1866\",6378206.4,294.9786982]]," +
-                "PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]]," +
-                "PROJECTION[\"Lambert_Conformal_Conic\"]," +
-                "PARAMETER[\"False_Easting\",3000000.0]," +
-                "PARAMETER[\"False_Northing\",3000000.0]," +
-                "PARAMETER[\"Central_Meridian\",-100.0]," +
-                "PARAMETER[\"Standard_Parallel_1\",27.416666666666668]," +
-                "PARAMETER[\"Standard_Parallel_2\",34.916666666666664]," +
-                "PARAMETER[\"Latitude_Of_Origin\",31.166666666666668]," +
-                "UNIT[\"Foot\",0.3048]]";
+        final String wkt1 = decodeQuotes(
+            "PROJCS[“NAD_1927_Texas_Statewide_Mapping_System”," +
+            "GEOGCS[“GCS_North_American_1927”," +
+            "DATUM[“D_North_American_1927”," +
+            "SPHEROID[“Clarke_1866”,6378206.4,294.9786982]]," +
+            "PRIMEM[“Greenwich”,0.0],UNIT[“Degree”,0.0174532925199433]]," +
+            "PROJECTION[“Lambert_Conformal_Conic\"]," +
+            "PARAMETER[“False_Easting”,3000000.0]," +
+            "PARAMETER[“False_Northing”,3000000.0]," +
+            "PARAMETER[“Central_Meridian”,-100.0]," +
+            "PARAMETER[“Standard_Parallel_1”,27.416666666666668]," +
+            "PARAMETER[“Standard_Parallel_2”,34.916666666666664]," +
+            "PARAMETER[“Latitude_Of_Origin”,31.166666666666668]," +
+            "UNIT[“Foot”,0.3048]]");
         /*
          * The above WKT will be parsed with "X" and "Y" axis names
          * by default. Now specifies explicitly different axis names.
          */
-        final String wkt2 = wkt1.substring(0, wkt1.length()-1) + "," +
-                "AXIS[\"Easting\", EAST]," +
-                "AXIS[\"Northing\", NORTH]]";
+        final String wkt2 = decodeQuotes(wkt1.substring(0, wkt1.length()-1) + "," +
+                "AXIS[“Easting”, EAST]," +
+                "AXIS[“Northing”, NORTH]]");
 
         final CoordinateReferenceSystem crs1 = CRS.parseWKT(wkt1);
         final CoordinateReferenceSystem crs2 = CRS.parseWKT(wkt2);
@@ -131,24 +132,72 @@ public final class CRS_Test {
     @Test
     @Ignore
     public void testESRICode() throws Exception {
-        String wkt = "PROJCS[\"Albers_Conic_Equal_Area\",\n"                  +
-                     "  GEOGCS[\"GCS_North_American_1983\",\n"                +
-                     "    DATUM[\"D_North_American_1983\",\n"                 +
-                     "    SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],\n" +
-                     "    PRIMEM[\"Greenwich\",0.0],\n"                       +
-                     "    UNIT[\"Degree\",0.0174532925199433]],\n"            +
-                     "  PROJECTION[\"Equidistant_Conic\"],\n"                 +
-                     "  PARAMETER[\"False_Easting\",0.0],\n"                  +
-                     "  PARAMETER[\"False_Northing\",0.0],\n"                 +
-                     "  PARAMETER[\"Central_Meridian\",-96.0],\n"             +
-                     "  PARAMETER[\"Standard_Parallel_1\",33.0],\n"           +
-                     "  PARAMETER[\"Standard_Parallel_2\",45.0],\n"           +
-                     "  PARAMETER[\"Latitude_Of_Origin\",39.0],\n"            +
-                     "  UNIT[\"Meter\",1.0]]";
+        String wkt = decodeQuotes(
+            "PROJCS[“Albers_Conic_Equal_Area”,\n" +
+             "  GEOGCS[“GCS_North_American_1983”,\n" +
+             "    DATUM[“D_North_American_1983”,\n" +
+             "    SPHEROID[“GRS_1980”,6378137.0,298.257222101]],\n" +
+             "    PRIMEM[“Greenwich”,0.0],\n" +
+             "    UNIT[“Degree”,0.0174532925199433]],\n" +
+             "  PROJECTION[“Equidistant_Conic\"],\n" +
+             "  PARAMETER[“False_Easting”,0.0],\n" +
+             "  PARAMETER[“False_Northing”,0.0],\n" +
+             "  PARAMETER[“Central_Meridian”,-96.0],\n" +
+             "  PARAMETER[“Standard_Parallel_1”,33.0],\n" +
+             "  PARAMETER[“Standard_Parallel_2”,45.0],\n" +
+             "  PARAMETER[“Latitude_Of_Origin”,39.0],\n" +
+             "  UNIT[“Meter”,1.0]]");
         CoordinateReferenceSystem crs = CRS.parseWKT(wkt);
         final CoordinateReferenceSystem WGS84  = DefaultGeographicCRS.WGS84;
         final MathTransform crsTransform = CRS.findMathTransform(WGS84, crs, true);
         assertFalse(crsTransform.isIdentity());
+    }
+
+    /**
+     * Tests a reported issue. Actually, this exception is currently the expected one.
+     *
+     * @throws FactoryException The expected exception.
+     *
+     * @see https://jira.codehaus.org/browse/GEOT-1660
+     */
+    @Test(expected = FactoryException.class)
+    public void testGEOT1660() throws FactoryException {
+        String wkt = decodeQuotes(
+            "PROJCS[“Custom”,\n" +
+            "  GEOGCS[“GCS_North_American_1983”,\n" +
+            "    DATUM[“D_North_American_1983”,\n" +
+            "      SPHEROID[“GRS_1980”,6378137.0,298.257222101]],\n" +
+            "    PRIMEM[“Greenwich”,0.0],\n" +
+            "    UNIT[“Degree”,0.0174532925199433]],\n" +
+            "  PROJECTION[“Lambert_Conformal_Conic”],\n" +
+            "  PARAMETER[“False_Easting”,1312335.958],\n" +
+            "  PARAMETER[“False_Northing”,0.0],\n" +
+            "  PARAMETER[“Central_Meridian”,-120.5],\n" +
+            "  PARAMETER[“Standard_Parallel_1”,43.0],\n" +
+            "  PARAMETER[“Standard_Parallel_2”,45.5],\n" +
+            "  PARAMETER[“Central_Parallel”,41.75],\n" +
+            "  UNIT[“Foot”,0.3048]]");
+        CRS.parseWKT(wkt);
+    }
+
+    /**
+     * Ensures that parsing a WKT with wrong units throws an exception.
+     *
+     * @throws FactoryException The expected exception.
+     *
+     * @see http://jira.geotoolkit.org/browse/GEOTK-86
+     * @todo Not yet fixed.
+     */
+    @Ignore
+    @Test(expected = FactoryException.class)
+    public void testGEOTK86() throws FactoryException {
+        String wkt = decodeQuotes(
+                "GEOGCS[“NAD83”,\n" +
+                "  DATUM[“North_American_Datum_1983”,\n" +
+                "    SPHEROID[“GRS 1980”, 6378137.0, 298.257222]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0],\n" +
+                "  UNIT[“m”, 1.0]]");
+        CRS.parseWKT(wkt);
     }
 
     /**

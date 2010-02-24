@@ -46,7 +46,6 @@ import static org.junit.Assume.*;
  * @version 3.09
  *
  * @since 3.09 (derived from Seagis)
- * @module
  */
 public class CatalogTestBase {
     /**
