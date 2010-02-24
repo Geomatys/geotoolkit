@@ -45,6 +45,7 @@ import org.geotoolkit.io.wkt.ReferencingParser;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.collection.DerivedSet;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.resources.Errors;
@@ -347,7 +348,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory
         try {
             wkt = definitions.get(trim);
         } catch (BackingStoreException e) {
-            throw e.unwrap();
+            throw e.unwrapOrRethrow(FactoryException.class);
         }
         if (wkt == null) {
             throw noSuchAuthorityCode(type, code);

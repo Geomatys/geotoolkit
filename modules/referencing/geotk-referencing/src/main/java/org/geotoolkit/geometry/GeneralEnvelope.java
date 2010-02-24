@@ -491,9 +491,12 @@ scanNumber: while (++i < length) {
 
     /**
      * Sets the coordinate reference system in which the coordinate are given.
-     * This method <strong>do not</strong> reproject the envelope, and do not
+     * This method <strong>does not</strong> reproject the envelope, and do not
      * check if the envelope is contained in the new domain of validity. The
      * later can be enforced by a call to {@link #normalize}.
+     * <p>
+     * If the envelope coordinates need to be transformed to the new CRS, consider
+     * using {@link CRS#transform(Envelope, CoordinateReferenceSystem)} instead.
      *
      * @param  crs The new coordinate reference system, or {@code null}.
      * @throws MismatchedDimensionException if the specified CRS doesn't have the expected
@@ -1158,8 +1161,8 @@ scanNumber: while (++i < length) {
     /**
      * Returns a new envelope that encompass only some dimensions of this envelope.
      * This method copy this envelope's ordinates into a new envelope, beginning at
-     * dimension <code>lower</code> and extending to dimension <code>upper-1</code>.
-     * Thus the dimension of the subenvelope is <code>upper-lower</code>.
+     * dimension {@code lower} and extending to dimension {@code upper-1}.
+     * Thus the dimension of the subenvelope is {@code upper-lower}.
      *
      * @param  lower The first dimension to copy, inclusive.
      * @param  upper The last  dimension to copy, exclusive.

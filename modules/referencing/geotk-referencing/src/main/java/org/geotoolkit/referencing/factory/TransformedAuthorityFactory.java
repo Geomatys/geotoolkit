@@ -41,6 +41,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
@@ -526,7 +527,7 @@ public class TransformedAuthorityFactory extends AuthorityFactoryAdapter {
             try {
                 operation = it.next();
             } catch (BackingStoreException exception) {
-                throw exception.unwrap();
+                throw exception.unwrapOrRethrow(FactoryException.class);
             }
             modified.add(replace(operation));
         }

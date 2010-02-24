@@ -163,6 +163,10 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
 
     /**
      * Sets the coordinate reference system in which the coordinate are given.
+     * This method <strong>does not</strong> reproject the envelope.
+     * If the envelope coordinates need to be transformed to the new CRS, consider using
+     * {@link org.geotoolkit.referencing.CRS#transform(Envelope, CoordinateReferenceSystem)}
+     * instead.
      *
      * @param crs The new coordinate reference system, or {@code null}.
      */

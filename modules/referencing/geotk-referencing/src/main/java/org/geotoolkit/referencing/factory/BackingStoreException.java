@@ -35,8 +35,11 @@ import org.opengis.referencing.FactoryException;
  *
  * @since 2.3
  * @module
+ *
+ * @deprecated Moved to the {@link org.geotoolkit.util.collection} package.
  */
-public class BackingStoreException extends RuntimeException {
+@Deprecated
+public class BackingStoreException extends org.geotoolkit.util.collection.BackingStoreException {
     /**
      * For cross-version compatibility.
      */
@@ -74,20 +77,5 @@ public class BackingStoreException extends RuntimeException {
      */
     public BackingStoreException(final String message, final Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * If the underlying cause is a checked exception, returns it as a {@link FactoryException}.
-     * Otherwise lets the unchecked exception propagates.
-     */
-    final FactoryException unwrap() {
-        final Throwable cause = getCause();
-        if (cause instanceof FactoryException) {
-            return (FactoryException) cause;
-        } else if (cause instanceof RuntimeException) {
-            throw (RuntimeException) cause;
-        } else {
-            throw this;
-        }
     }
 }

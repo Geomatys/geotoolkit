@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2005-2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2010, Geomatys
+ *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,19 +17,13 @@
  */
 
 /**
- * A schema for storing coverages metadata in a SQL database.
- *
- * {@section Thread-safety}
- * Every classes made available in this package are thread-safe, and when possible concurrent.
- *
- * {@section Subclassing}
- * This package is not designed for subclassing, since the underlying implementation is
- * strictly internal and may change in any future version. Only the public API is stable.
+ * Provides {@link org.geotoolkit.coverage.io.GridCoverageReader} implementations for creating
+ * {@link org.geotoolkit.coverage.grid.GridCoverage2D} instances from a datasource.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.09
  *
- * @since 3.09 (derived from Seagis)
+ * @since 3.08 (derived from 2.4)
  * @module
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.coverage.io;

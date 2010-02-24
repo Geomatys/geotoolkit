@@ -37,7 +37,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.factory.BackingStoreException;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;

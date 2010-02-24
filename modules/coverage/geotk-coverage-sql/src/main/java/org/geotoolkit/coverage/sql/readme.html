@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   <head>
-    <title>Design note</title>
+    <title>Design notes</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   </head>
   <body>
@@ -15,26 +15,37 @@
     <p>This page gives an overview of the package design. We can not put this overview in the
     <code>package-info.java</code> class since it is not public API.</p>
 
-    <h1>Design overview</h1>
+
+
+
+    <hr><h1>Design overview</h1>
     <p>This package provides four kinds of objects, each with their own hierarchy:</p>
 
     <ul>
       <li><code>Database</code> encapsulates a connection to a database. The connection is
           provided by a <code>javax.sql.DataSource</code>.</li>
-     <li><code>Table</code> is the parent of every classes encapsulating a connection to a table
+      <li><code>Table</code> is the parent of every classes encapsulating a connection to a table
          in the database. Instances of <code>Table</code> are created by <code>Database</code>.</li>
-     <li><code>Entry</code> is the parent of every classes encapsulating a record in a table.
+      <li><code>Entry</code> is the parent of every classes encapsulating a record in a table.
          Instances of <code>Entry</code> are created by the corresponding <code>Table</code> only.</li>
-     <li><code>Query</code> is the parent of every classes describing a query to be executed by
+      <li><code>Query</code> is the parent of every classes describing a query to be executed by
          a <code>Table</code>. A <code>Query</code> is made of <code>Column</code>s and
          <code>Parameter</code>s. Each <code>Column</code> instance can have an optional value
          used as a fallback if the column does not exist in the database, for compatibility with
          previous versions of the database schema. In addition, SQL <code>JOIN</code> clauses are
          built automatically by inspection of the <code>FOREIGNER KEY</code> declarations in the
          database, again for compatibility with older versions of this database schema.</li>
-   </ul>
+    </ul>
 
-    <h1>Testing</h1>
+    <h2>Caching</h2>
+    <p>This implementation may cache some database records. The mechanism works correctly when new
+       entries are added in the database, but does not work if existing entries have been modified.
+       In such case the caches need to be cleared. The easiest way to clean them is to dispose the
+       old <code>Database</code> instance and create a new one using the copy constructor.</p>
+
+
+
+    <hr><h1>Testing</h1>
     <p>In order to run the JUnit test suite provided in this module, the following file shall be provided:</p>
     <blockquote><pre>&lt;home directory&gt;/.geotoolkit.org/Tests/coverage-sql.properties</pre></blockquote>
 

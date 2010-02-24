@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -37,7 +38,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class CatalogException extends Exception {
+class CatalogException extends CoverageStoreException {
     /**
      * For cross-version compatibility.
      */
