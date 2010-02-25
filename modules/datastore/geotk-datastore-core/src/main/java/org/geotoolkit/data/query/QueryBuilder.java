@@ -29,11 +29,13 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * Query builder, convinient utility class to build queries.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class QueryBuilder {
 
     private static final Name[] NO_PROPERTIES = new Name[0];
-    
+
+    private Source source = null;
     private Name typeName = null;
 
     private Filter filter = Filter.INCLUDE;
@@ -83,6 +85,16 @@ public class QueryBuilder {
 
     public void setTypeName(Name typeName) {
         this.typeName = typeName;
+        this.source = null;
+    }
+
+    public void setSource(Source source){
+        this.source = source;
+        this.typeName = null;
+    }
+
+    public Source getSource(){
+        return source;
     }
 
     public Filter getFilter() {
@@ -153,7 +165,8 @@ public class QueryBuilder {
     }
 
     public Query buildQuery(){
-        return new DefaultQuery(typeName, filter, properties, sortBy, crs, startIndex, maxFeatures, hints);
+        final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
+        return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, hints);
     }
 
     /**
@@ -190,7 +203,7 @@ public class QueryBuilder {
      * filtering, and the default featureType.
      */
     public static Query all(Name name){
-        return new DefaultQuery(name);
+        return new DefaultQuery(new DefaultSelector(null, name, "s1"));
     }
 
     /**
@@ -199,7 +212,7 @@ public class QueryBuilder {
      * filtering, and the a featureType with no attribtues.
      */
     public static Query fids(Name name){
-        return new DefaultQuery(name, NO_PROPERTIES);
+        return new DefaultQuery(new DefaultSelector(null, name, "s1"), NO_PROPERTIES);
     }
 
     /**

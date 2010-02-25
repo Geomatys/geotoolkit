@@ -30,7 +30,7 @@ import org.opengis.filter.PropertyIsEqualTo;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface Join {
+public interface Join extends Source{
 
     /**
      * Gets the join condition.

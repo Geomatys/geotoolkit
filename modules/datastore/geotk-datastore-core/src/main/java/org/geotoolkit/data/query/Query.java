@@ -24,40 +24,24 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.feature.type.Name;
 
 /**
- * Encapsulates a data request.
- *
  * <p>
- * The query object is used by the FeatureSource.getFeatures(Query) to
- * encapsulate a request. For this use it the
- * FeatureSource.getSchema().getTypeName() should match the one provided by
- * the Query, or the Query should not provide one.
+ * The query object is used by the Session.getFeatureCollection(Query) to
+ * encapsulate a request. The query may regroup feature from several sources
+ * into a single feature type.
  * </p>
  *
  * <p>
- * Suggested Extensions (Jody):
+ * Cross source queries will slow down considerably if the used session
+ * are different, so it is recommended to create a new source that combines
+ * the datas you want before if you have performance needs.
  * </p>
  *
- * <ul>
- * <li>
- * Transient CoordianteSystem override done getCoordianteSystem()
- * </li>
- * <li>
- * Transient Geometry reproject to an alternate CoordinateSystem - done
- * getCoordinateSystemReproject()
- * </li>
- * <li>
- * Consider Namespace, FeatueType name override - not done considered evil
- * </li>
- * <li>
- * DataStore.getFeatureReader( Query, Transaction )
- * </li>
- * <li>
- * DataStore.getView( Query ) - prototype in AbstractDataStore (not really
- * ready for primetime, see Expr)
- * </li>
- * </ul>
- *
- *
+ * <p>
+ * This class is the counterpart of javax.jcr.query.qom.QueryObjectModel
+ * from JSR-283 (Java Content Repository 2).
+ * </p>
+ * 
+ * @author Johann Sorel (Geomatys)
  * @author Chris Holmes
  * @version $Id$
  * @module pending
@@ -65,14 +49,26 @@ import org.opengis.feature.type.Name;
 public interface Query {
 
     /**
+     * The feature source of the query.
+     * Can be a selector or Join.
+     */
+    Source getSource();
+
+    /**
      * The typeName attribute is used to indicate the name of the feature type
-     * to be queried.  If no typename is specified, then the default typeName
-     * should be returned from the dataStore.  If the datasstore only supports
-     * one feature type then this part of the query may be ignored.
+     * to be queried. This value can not be return if the query affects several
+     * feature source.
      *
      * @return the name of the feature type to be returned with this query.
+     * @throws IllegalStateException if the query is not simple.
      */
-    Name getTypeName();
+    Name getTypeName() throws IllegalStateException;
+
+    /**
+     * A query is consider simple when it has a single source which is a selector.
+     * @return true is query has a single selector.
+     */
+    boolean isSimple();
 
     /**
      * The Filter can be used to define constraints on a query.

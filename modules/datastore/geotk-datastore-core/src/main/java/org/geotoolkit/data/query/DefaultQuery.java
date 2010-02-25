@@ -26,23 +26,14 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * The query object is used by the {@link FeatureSource#getFeatures()} method of
- * the DataSource interface, to encapsulate a request.  It defines which
- * feature type  to query, what properties to retrieve and what constraints
- * (spatial and non-spatial) to apply to those properties.  It is designed to
- * closesly match a WFS Query element of a <code>getFeatures</code> request.
- * The only difference is the addition of the maxFeatures element, which
- * allows more control over the features selected.  It allows a full
- * <code>getFeatures</code> request to properly control how many features it
- * gets from each query, instead of requesting and discarding when the max is
- * reached.
+ * Default query implementation.
  *
  * @author Chris Holmes
  * @module pending
  */
 class DefaultQuery implements Query {
 
-    private final Name typeName;
+    private final Source source;
     private final Name[] properties;
     private final Integer maxFeatures;
     private final int startIndex;
@@ -56,7 +47,7 @@ class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    DefaultQuery(final Name name) {
+    DefaultQuery(final Source name) {
         this(name,null);
     }
 
@@ -65,7 +56,7 @@ class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    DefaultQuery(final Name name, Name[] attributs) {
+    DefaultQuery(final Source name, Name[] attributs) {
         this(name,
                 Filter.INCLUDE,
                 attributs,
@@ -76,18 +67,18 @@ class DefaultQuery implements Query {
                 null);
     }
 
-    DefaultQuery(final Name name, Filter filter, Name[] attributs, SortBy[] sort,
+    DefaultQuery(final Source source, Filter filter, Name[] attributs, SortBy[] sort,
             CoordinateReferenceSystem crs, int startIndex, Integer MaxFeature,Hints hints){
 
-        if(name == null){
-            throw new NullPointerException("Type name can not be null");
+        if(source == null){
+            throw new NullPointerException("Query source can not be null");
         }
 
         if(filter == null){
-            throw new IllegalArgumentException("Filter can not be null, did you mean Filter.INCLUDE ?");
+            throw new IllegalArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
         }
 
-        this.typeName = name;
+        this.source = source;
         this.filter = filter;
         this.properties = attributs;
         this.sortBy = sort;
@@ -107,7 +98,7 @@ class DefaultQuery implements Query {
      * @param query : query to copy
      */
     public DefaultQuery(final Query query) {
-        this(query.getTypeName(), 
+        this(query.getSource(),
              query.getFilter(),
              query.getPropertyNames(),
              query.getSortBy(),
@@ -115,6 +106,35 @@ class DefaultQuery implements Query {
              query.getStartIndex(),
              query.getMaxFeatures(),
              query.getHints());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Source getSource(){
+        return source;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Name getTypeName() {
+        if(source instanceof Selector){
+            return ((Selector)source).getFeatureTypeName();
+        }else{
+            throw new IllegalStateException("Query getTypeName can only be called " +
+                    "when query is simple (only one selector).");
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean isSimple() {
+        return source instanceof Selector;
     }
 
     /**
@@ -161,18 +181,10 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public Name getTypeName() {
-        return typeName;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public String toString() {
         StringBuilder returnString = new StringBuilder("Query:");
 
-        returnString.append("\n   feature type: " + typeName);
+        returnString.append("\n   feature type: " + source);
 
         if (filter != null) {
             returnString.append("\n   filter: " + filter.toString());
@@ -248,7 +260,7 @@ class DefaultQuery implements Query {
             return false;
         }
         final DefaultQuery other = (DefaultQuery) obj;
-        if (this.typeName != other.typeName && (this.typeName == null || !this.typeName.equals(other.typeName))) {
+        if (this.source != other.source && (this.source == null || !this.source.equals(other.source))) {
             return false;
         }
         if (!Arrays.deepEquals(this.properties, other.properties)) {
@@ -281,7 +293,7 @@ class DefaultQuery implements Query {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 83 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
+        hash = 83 * hash + (this.source != null ? this.source.hashCode() : 0);
         hash = 83 * hash + Arrays.deepHashCode(this.properties);
         hash = 83 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
         hash = 83 * hash + this.startIndex;

@@ -31,7 +31,7 @@ import org.opengis.feature.type.Name;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface Selector {
+public interface Selector extends Source{
 
     /**
      * In the case of mutiple selector in a query, each selector must specify
