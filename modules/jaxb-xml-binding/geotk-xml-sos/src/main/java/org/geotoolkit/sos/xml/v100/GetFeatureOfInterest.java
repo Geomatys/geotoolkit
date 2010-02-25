@@ -17,7 +17,6 @@
 package org.geotoolkit.sos.xml.v100;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -27,6 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ogc.xml.v110.BBOXType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.util.Utilities;
 
@@ -113,12 +113,19 @@ public class GetFeatureOfInterest extends RequestBaseType {
      public GetFeatureOfInterest(String version, String service, String featureId) {
         super(version, service);
         this.featureOfInterestId = new ArrayList<String>();
-        this.featureOfInterestId.add(featureId);
-     }
+        if (featureId != null) {
+            this.featureOfInterestId.add(featureId);
+        }
+        }
 
      public GetFeatureOfInterest(String version, String service, List<String> featureId) {
         super(version, service);
         this.featureOfInterestId = featureId;
+     }
+
+     public GetFeatureOfInterest(String version, String service, GetFeatureOfInterest.Location location) {
+        super(version, service);
+        this.location = location;
      }
 
     /**
@@ -148,6 +155,14 @@ public class GetFeatureOfInterest extends RequestBaseType {
      */
     public GetFeatureOfInterest.Location getLocation() {
         return location;
+    }
+
+    /**
+     * Set the value of the featureOfInterestLocation property.
+     *
+     */
+    public void setLocation(GetFeatureOfInterest.Location location) {
+        this.location = location;
     }
     
     /**
@@ -205,11 +220,33 @@ public class GetFeatureOfInterest extends RequestBaseType {
         @XmlElementRef(name = "spatialOps", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
         private JAXBElement<? extends SpatialOpsType> spatialOps;
 
+        public Location() {
+
+        }
+
+        public Location(JAXBElement<? extends SpatialOpsType> spatialOps) {
+            this.spatialOps = spatialOps;
+        }
+
+        public Location(BBOXType bboxFilter) {
+            if (bboxFilter != null) {
+                org.geotoolkit.ogc.xml.v110.ObjectFactory factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
+                this.spatialOps = factory.createBBOX(bboxFilter);
+            }
+        }
+
         /**
          * Gets the value of the spatialOps property.
          */
         public JAXBElement<? extends SpatialOpsType> getSpatialOps() {
             return spatialOps;
+        }
+
+        /**
+         * Gets the value of the spatialOps property.
+         */
+        public void setSpatialOps(JAXBElement<? extends SpatialOpsType> spatialOps) {
+            this.spatialOps = spatialOps;
         }
         
         /**
