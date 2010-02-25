@@ -18,6 +18,8 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
 import org.opengis.util.InternationalString;
@@ -26,23 +28,32 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.util.collection.BackingStoreException;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Localized;
+import org.geotoolkit.resources.Errors;
 
 
 /**
  * Base class of {@link GridCoverage} readers. Reading is a two steps process:
- * The input file must be set first, then the actual reading is performed with
- * a call to the {@link #read} method. Example:
+ * <p>
+ * <ul>
+ *   <li>The input must be set first using the {@link #setInput(Object)} method.</li>
+ *   <li>The actual reading is performed by a call to the
+ *       {@link #read(int, GridCoverageReadParam)} method.</li>
+ * </ul>
+ * <p>
+ * Example:
  *
  * {@preformat java
  *     GridCoverageReader reader = ...
- *     reader.setInput(new File("MyCoverage.dat"));
- *     GridCoverage coverage = reader.read(0);
+ *     reader.setInput(new File("MyCoverage.asc"));
+ *     GridCoverage coverage = reader.read(0, null);
  * }
  *
- * This class is conceptually equivalent to the {@link ImageReader} class in the standard
- * Java library. Actually implementations of this class are often a wrapper around a Java
- * {@code ImageReader}, converting geodetic coordinates to pixel coordinates before to
- * delegate the reading of pixel values.
+ * {@note This class is conceptually equivalent to the <code>ImageReader</code> class in
+ * the standard Java library. Implementations of this class are often wrappers around a Java
+ * <code>ImageReader</code>, converting geodetic coordinates to pixel coordinates before to
+ * delegate the reading of pixel values.}
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.09
@@ -52,11 +63,58 @@ import org.geotoolkit.util.collection.BackingStoreException;
  * @since 3.09 (derived from 2.4)
  * @module
  */
-public abstract class GridCoverageReader {
+public abstract class GridCoverageReader implements Localized {
+    /**
+     * The logger, mostly for use by the {@link #read(int, GridCoverageReadParam)} method.
+     */
+    static Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.io");
+
+    /**
+     * The input (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
+     * or {@code null} if input is not set.
+     */
+    Object input;
+
+    /**
+     * The locale to use for formatting messages, or {@code null} for a default locale.
+     */
+    Locale locale;
+
     /**
      * Creates a new instance.
      */
     protected GridCoverageReader() {
+    }
+
+    /**
+     * Returns the locale to use for formatting warnings and error messages,
+     * or {@code null} for the {@linkplain Locale#getDefault() default}.
+     *
+     * @return The current locale, or {@code null}.
+     */
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Sets the current locale of this coverage reader to the given value. A value of
+     * {@code null} removes any previous setting, and indicates that the reader should
+     * localize as it sees fit.
+     *
+     * @param locale The new locale to use.
+     */
+    public void setLocale(final Locale locale) {
+        this.locale = locale;
+    }
+
+    /**
+     * Returns a localized string for the specified error key.
+     *
+     * @param key One of the constants declared in the {@link Errors.Keys} inner class.
+     */
+    final String error(final int key) {
+        return Errors.getResources(locale).getString(key);
     }
 
     /**
@@ -71,7 +129,22 @@ public abstract class GridCoverageReader {
      *
      * @see ImageReader#setInput(Object)
      */
-    public abstract void setInput(Object input) throws CoverageStoreException;
+    public void setInput(Object input) throws CoverageStoreException {
+        this.input = input;
+    }
+
+    /**
+     * Returns the input which was set by the last call to {@link #setInput(Object)},
+     * or {@code null} if none.
+     *
+     * @return The current input, or {@code null} if none.
+     * @throws CoverageStoreException if the operation failed.
+     *
+     * @see ImageReader#getInput()
+     */
+    public Object getInput() throws CoverageStoreException {
+        return input;
+    }
 
     /**
      * Returns the list of coverage names available from the current input source. The length
@@ -138,5 +211,8 @@ public abstract class GridCoverageReader {
      *
      * @throws CoverageStoreException if an error occurs while disposing resources.
      */
-    public abstract void reset() throws CoverageStoreException;
+    public void reset() throws CoverageStoreException {
+        locale = null;
+        input  = null;
+    }
 }

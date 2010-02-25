@@ -452,7 +452,7 @@ public final class XImageIO {
     public static void close(final ImageReader reader) throws IOException {
         ensureNonNull("reader", reader);
         final Object input = reader.getInput();
-        reader.reset();
+        reader.setInput(null);
         close(input);
     }
 
@@ -636,7 +636,7 @@ public final class XImageIO {
     public static void close(final ImageWriter writer) throws IOException {
         ensureNonNull("writer", writer);
         final Object output = writer.getOutput();
-        writer.reset();
+        writer.setOutput(null);
         close(output);
     }
 

@@ -173,11 +173,11 @@ public class GridCoverageReadParam {
 
     /**
      * Sets the region to read from the stream. The envelope can be specified in any
-     * {@link CoordinateReferenceSystem Coordinate Reference System}; the envelope will
+     * {@linkplain CoordinateReferenceSystem Coordinate Reference System}; the envelope will
      * be transformed to the {@linkplain #getCoordinateReferenceSystem() requested CRS}
      * at reading time.
      * <p>
-     * If the envelope is set to {@code null}, then {@code GridCoverageReader} will read
+     * If the envelope is set to {@code null}, then {@link GridCoverageReader} will read
      * the full coverage extent in its native CRS.
      *
      * @param envelope The region to read from the stream, or {@code null}.
@@ -223,7 +223,7 @@ public class GridCoverageReadParam {
      * same {@linkplain CoordinateReferenceSystem Coordinate Reference System} than the
      * {@linkplain #getEnvelope() envelope} CRS.
      * <p>
-     * If the dimension is set to {@code null}, then {@code GridCoverageReader} will read
+     * If the dimension is set to {@code null}, then {@link GridCoverageReader} will read
      * the coverage with the best resolution available.
      *
      * @param resolution The new resolution to read from the stream, or {@code null}.
