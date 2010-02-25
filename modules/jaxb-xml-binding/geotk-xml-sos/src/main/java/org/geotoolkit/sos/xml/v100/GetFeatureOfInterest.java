@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sos.xml.v100;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -105,13 +106,29 @@ public class GetFeatureOfInterest extends RequestBaseType {
     /**
      * An empty constructor used by jaxB
      */
-     GetFeatureOfInterest(){}
-     
+     public GetFeatureOfInterest() {
+     }
+
+
+     public GetFeatureOfInterest(String version, String service, String featureId) {
+        super(version, service);
+        this.featureOfInterestId = new ArrayList<String>();
+        this.featureOfInterestId.add(featureId);
+     }
+
+     public GetFeatureOfInterest(String version, String service, List<String> featureId) {
+        super(version, service);
+        this.featureOfInterestId = featureId;
+     }
+
     /**
      * Gets the value of the featureOfInterestId property.
      */
     public List<String> getFeatureOfInterestId() {
-        return Collections.unmodifiableList(featureOfInterestId);
+        if (featureOfInterestId == null) {
+            featureOfInterestId = new ArrayList<String>();
+        }
+        return featureOfInterestId;
     }
     
     /**
@@ -119,7 +136,10 @@ public class GetFeatureOfInterest extends RequestBaseType {
      * (unmodifiable)
      */
     public List<EventTime> getEventTime() {
-        return Collections.unmodifiableList(eventTime);
+        if (eventTime == null) {
+            eventTime = new ArrayList<EventTime>();
+        }
+        return eventTime;
     }
     
     /**
