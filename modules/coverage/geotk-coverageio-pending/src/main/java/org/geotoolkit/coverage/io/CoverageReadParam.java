@@ -22,23 +22,24 @@ import org.opengis.geometry.Envelope;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by {@link GridCoverageReadParam}.
  */
-public class CoverageReadParam {
-
-    private final Envelope env;
-    private final double[] resolution;
+@Deprecated
+public class CoverageReadParam extends GridCoverageReadParam {
     
     public CoverageReadParam(Envelope env, double[] resolution){
-        this.env = env;
-        this.resolution = resolution;
+        super.setEnvelope(env);
+        super.setResolution(resolution);
     }
     
     public Envelope getEnveloppe(){
-        return env;
+        return super.getEnvelope();
     }
-    
+
+    @Override
     public double[] getResolution(){
-        return resolution;
+        return super.getResolution();
     }
     
 }

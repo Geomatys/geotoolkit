@@ -83,7 +83,7 @@ import org.opengis.referencing.operation.MathTransform;
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
  */
-public abstract class AbstractGridCoverageReader implements GridCoverageReader {
+public abstract class AbstractGridCoverageReader {
     /**
      * The logger for the {@link #getGridCoverage} method.
      */
