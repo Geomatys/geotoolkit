@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -56,10 +57,44 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class MemoryDataStore extends AbstractDataStore{
 
+    private final boolean singleTypeLock;
     private final Map<Name,FeatureType> types = new HashMap<Name, FeatureType>();
-    private final Map<Name,List<Feature>> features = new HashMap<Name, List<Feature>>();
+    private final Map<Name,Collection<Feature>> features = new HashMap<Name, Collection<Feature>>();
     private final Map<Name,FeatureIDReader> idGenerators = new HashMap<Name, FeatureIDReader>();
     private Set<Name> nameCache = null;
+
+    public MemoryDataStore(){
+        singleTypeLock = false;
+    }
+
+    /**
+     * Create a memory datastore using the given collection.
+     * Usefull when you want to benefit the datastore structure from a simple list.
+     *
+     * @param baseCollection : original collection.
+     * @param singleTypeLock : true if you don't want any other types to be create or
+     * the collection type to be deleted.
+     */
+    public MemoryDataStore(FeatureCollection<? extends Feature> baseCollection, boolean singleTypeLock){
+        this.singleTypeLock = singleTypeLock;
+
+        if(baseCollection == null){
+            throw new NullPointerException("Collection is null.");
+        }
+
+        final FeatureType ft = baseCollection.getFeatureType();
+        if(ft == null){
+            throw new IllegalArgumentException("Can not create memory datastore from untyped feature collection.");
+        }
+
+        final Name n = ft.getName();
+        types.put(n, ft);
+        features.put(n, (Collection<Feature>) baseCollection);
+
+        //todo not 100% safe, we should rely on the basecollection to handle this more properly.
+        idGenerators.put(n, new DefaultFeatureIDReader(n.getLocalPart()));
+
+    }
 
     /**
      * {@inheritDoc }
@@ -91,6 +126,9 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public synchronized void createSchema(Name name, FeatureType featureType) throws DataStoreException {
+        if(singleTypeLock) throw new DataStoreException(
+                "Memory datastore is in single type mode. Schema modification are not allowed.");
+
         if(featureType == null){
             throw new NullPointerException("Feature type can not be null.");
         }
@@ -118,6 +156,9 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public synchronized void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+        if(singleTypeLock) throw new DataStoreException(
+                "Memory datastore is in single type mode. Schema modification are not allowed.");
+
         //todo must do it a way to avoid destroying all features.
 
         if(featureType == null){
@@ -152,6 +193,9 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public synchronized void deleteSchema(Name typeName) throws DataStoreException {
+        if(singleTypeLock) throw new DataStoreException(
+                "Memory datastore is in single type mode. Schema modification are not allowed.");
+
         final FeatureType type = types.remove(typeName);
 
         if(type == null){
@@ -181,7 +225,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public long getCount(Query query) throws DataStoreException {
-        final List<Feature> lst = features.get(query.getTypeName());
+        final Collection<Feature> lst = features.get(query.getTypeName());
 
         if(lst == null){
             throw new IllegalArgumentException("No featureType for name : " + query.getTypeName());
@@ -205,8 +249,12 @@ public class MemoryDataStore extends AbstractDataStore{
             long count = 0;
 
             if(max != null){
-                for(int index=0; index <= max; index++){
-                    if(filter.evaluate(lst.get(index))) count++;
+                int index=0;
+                final Iterator<Feature> ite = lst.iterator();
+                while(ite.hasNext() && index <= max){
+                    final Feature f = ite.next();
+                    if(filter.evaluate(f)) count++;
+                    index++;
                 }
             }else{
                 for(final Feature f :lst){
@@ -230,7 +278,7 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         final FeatureType type = getFeatureType(groupName);
-        final List<Feature> group = this.features.get(groupName);
+        final Collection<Feature> group = this.features.get(groupName);
 
 
         final List<FeatureId> ids = new ArrayList<FeatureId>();
@@ -266,7 +314,7 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         final FeatureType type = getFeatureType(groupName);
-        final List<Feature> group = this.features.get(groupName);
+        final Collection<Feature> group = this.features.get(groupName);
 
         int numUpdated = 0;
 
@@ -291,7 +339,7 @@ public class MemoryDataStore extends AbstractDataStore{
      */
     @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
-        final List<Feature> group = this.features.get(groupName);
+        final Collection<Feature> group = this.features.get(groupName);
         
         if(group == null){
             throw new DataStoreException("Type : " + groupName +" do not exist.");
@@ -318,7 +366,7 @@ public class MemoryDataStore extends AbstractDataStore{
     @Override
     public FeatureReader getFeatureReader(Query query) throws DataStoreException {
         final FeatureType type = getFeatureType(query.getTypeName());
-        final List<Feature> lst = features.get(query.getTypeName());
+        final Collection<Feature> lst = features.get(query.getTypeName());
 
         if(lst == null){
             throw new IllegalArgumentException("No featureType for name : " + query.getTypeName());

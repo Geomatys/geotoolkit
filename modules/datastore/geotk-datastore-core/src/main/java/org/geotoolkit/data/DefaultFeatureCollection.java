@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
+import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.NumberRange;
@@ -41,6 +42,8 @@ import org.opengis.filter.Filter;
  */
 public class DefaultFeatureCollection<F extends Feature> extends AbstractFeatureCollection<F>{
 
+    private DataStore store = null;
+    private Session session = null;
     private final List<F> features;
 
     public DefaultFeatureCollection(String id, FeatureType type, Class<F> featureClass){
@@ -69,8 +72,14 @@ public class DefaultFeatureCollection<F extends Feature> extends AbstractFeature
     }
 
     @Override
-    public Session getSession() {
-        return null;
+    public synchronized Session getSession() {
+        if(store == null){
+            //create a dummy datastore that will allow us to have several session
+            //for the collection and so use them in complexe queries.
+            store = new MemoryDataStore(this, true);
+            session = store.createSession(false);
+        }
+        return session;
     }
 
     @Override
@@ -84,7 +93,7 @@ public class DefaultFeatureCollection<F extends Feature> extends AbstractFeature
     }
 
     @Override
-    public boolean addAll(Collection<? extends F> clctn) {
+    public boolean addAll(Collection clctn) {
         return features.addAll(clctn);
     }
 
