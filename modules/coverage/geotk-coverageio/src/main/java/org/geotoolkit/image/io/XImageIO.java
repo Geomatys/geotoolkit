@@ -124,7 +124,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * the first argument. All other arguments are optional and can be {@code null}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.09
  *
  * @since 3.07
  * @module
@@ -349,6 +349,10 @@ public final class XImageIO {
      * files having the suffix found in the input. The {@code input} argument is mandatory and will
      * be used for initializing the reader as documented in the {@link #getReader getReader(...)}
      * method.
+     * <p>
+     * If this method doesn't know how to get the suffix from the given input (for example
+     * if the input is an instance of {@link ImageInputStream}), then this method delegates
+     * to {@link #getReader(Object, Boolean, Boolean)}.
      *
      * @param  input The mandatory input to be given to the new reader instance.
      * @param  seekForwardOnly Optional parameter to be given (if non-null) to the
@@ -365,6 +369,9 @@ public final class XImageIO {
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
     {
         ensureNonNull("input", input);
+        if (!IOUtilities.canProcessAsPath(input)) {
+            return getReader(input, seekForwardOnly, ignoreMetadata);
+        }
         return getReaderBySuffix(IOUtilities.extension(input), input, seekForwardOnly, ignoreMetadata);
     }
 

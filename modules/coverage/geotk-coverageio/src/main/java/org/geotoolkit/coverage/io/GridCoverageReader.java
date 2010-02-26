@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
-import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -31,6 +31,8 @@ import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
@@ -91,6 +93,8 @@ public abstract class GridCoverageReader implements Localized {
      * or {@code null} for the {@linkplain Locale#getDefault() default}.
      *
      * @return The current locale, or {@code null}.
+     *
+     * @see ImageReader#getLocale()
      */
     @Override
     public Locale getLocale() {
@@ -103,6 +107,8 @@ public abstract class GridCoverageReader implements Localized {
      * localize as it sees fit.
      *
      * @param locale The new locale to use.
+     *
+     * @see ImageReader#setLocale(Locale)
      */
     public void setLocale(final Locale locale) {
         this.locale = locale;
@@ -147,12 +153,24 @@ public abstract class GridCoverageReader implements Localized {
     }
 
     /**
+     * Returns the name of the {@linkplain #input}, or "<cite>Untitled</cite>" if
+     * the input is not a recognized type. This is used for formatting messages only.
+     */
+    final String getInputName() {
+        final Object input = this.input;
+        if (IOUtilities.canProcessAsPath(input)) {
+            return IOUtilities.name(input);
+        } else {
+            return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
+        }
+    }
+
+    /**
      * Returns the list of coverage names available from the current input source. The length
      * of the returned list is the number of coverages found in the current input source. The
-     * elements in the returned list are the names of each coverage, which may be {@code null}
-     * for unamed coverages.
+     * elements in the returned list are the names of each coverage.
      * <p>
-     * The list returned may be backed by this {@code GridCoverageReader}: it should be used
+     * The returned list may be backed by this {@code GridCoverageReader}: it should be used
      * only as long as this reader and its input source are valids, iterating over the list
      * may be costly and the operation performed on the list may throw a
      * {@link BackingStoreException}.
@@ -163,7 +181,7 @@ public abstract class GridCoverageReader implements Localized {
      *
      * @see ImageReader#getNumImages(boolean)
      */
-    public abstract List<InternationalString> getCoverageNames() throws CoverageStoreException;
+    public abstract List<String> getCoverageNames() throws CoverageStoreException;
 
     /**
      * Returns the grid geometry for the {@link GridCoverage} to be read at the given index.
@@ -172,7 +190,7 @@ public abstract class GridCoverageReader implements Localized {
      * @return The grid geometry for the {@link GridCoverage} at the specified index.
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws CoverageStoreException if an error occurs reading the width information from the input source.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
      *
      * @see ImageReader#getWidth(int)
      * @see ImageReader#getHeight(int)
@@ -188,9 +206,26 @@ public abstract class GridCoverageReader implements Localized {
      *         This list length is equals to the number of bands in the {@link GridCoverage}.
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws CoverageStoreException if an error occurs reading the width information from the input source.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
      */
     public abstract List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException;
+
+    /**
+     * Returns an optional map of properties associated with the coverage at the given index, or
+     * {@code null} if none. The properties are implementation-specific; they are available to
+     * subclasses for any use. The {@code GridCoverageReader} class will simply gives those
+     * properties to the {@link javax.media.jai.PropertySource} object to be created by the
+     * {@link #read read} method, without any processing.
+     * <p>
+     * The default implementation returns {@code null} in every cases.
+     *
+     * @param  index The index of the coverage to be queried.
+     * @return The properties, or {@code null} if none.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     */
+    public Map<?,?> getProperties(int index) throws CoverageStoreException {
+        return null;
+    }
 
     /**
      * Reads the grid coverage.
@@ -210,6 +245,8 @@ public abstract class GridCoverageReader implements Localized {
      * Restores the {@code GridCoverageReader} to its initial state.
      *
      * @throws CoverageStoreException if an error occurs while disposing resources.
+     *
+     * @see ImageReader#reset()
      */
     public void reset() throws CoverageStoreException {
         locale = null;
