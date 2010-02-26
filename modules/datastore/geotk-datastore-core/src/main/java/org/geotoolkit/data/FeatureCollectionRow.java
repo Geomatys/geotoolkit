@@ -1,8 +1,8 @@
 /*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
- * 
- *    (C) 2009, Geomatys
+ *
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,25 +16,33 @@
  */
 package org.geotoolkit.data;
 
-import org.geotoolkit.util.collection.CloseableIterator;
-
 import org.opengis.feature.Feature;
 
 /**
- * Extent the Standard Iterator, limit to Feature class
- * and add a close method from interface Closeable that is needed by the datastore
- * to release potential resources.
- * 
+ * Define a group of feature related through the join condition of the source.
+ *
+ * This class is the counterpart of javax.jcr.query.Row
+ * from JSR-283 (Java Content Repository 2).
+ *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FeatureIterator<F extends Feature> extends CloseableIterator<F>{
+public interface FeatureCollectionRow {
 
     /**
-     * Reduce possibilties to Feature only.
+     * Return the current feature of the only selector.
+     *
      * @return Feature
+     * @exception DataStoreException if the source have more then one selector.
      */
-    @Override
-    F next();
+    Feature getFeature() throws DataStoreException;
+
+    /**
+     * Return the current feature of the requested selector.
+     *
+     * @return Feature
+     * @exception DataStoreException.
+     */
+    Feature getFeature(String selector) throws DataStoreException;
 
 }

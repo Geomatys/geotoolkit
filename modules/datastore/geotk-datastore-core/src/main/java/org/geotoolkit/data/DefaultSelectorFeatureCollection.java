@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.data.session;
+package org.geotoolkit.data;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,18 +25,15 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.data.AbstractFeatureCollection;
-import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -48,28 +45,30 @@ import org.opengis.filter.identity.Identifier;
 import org.opengis.geometry.Envelope;
 
 /**
- * Implementation of a collection working against a session.
+ * Feature collection that takes it's source from a single selector.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
-public class SessionFeatureCollection extends AbstractFeatureCollection<Feature> {
+public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<Feature>{
 
     private final Query query;
 
-    public SessionFeatureCollection(String id, Query query){
-        super(id,null,query.getSource());
-        if(source == null){
-            throw new NullPointerException("Source can not be null.");
+    public DefaultSelectorFeatureCollection(String id, Query query){
+        super(id,query.getSource());
+
+        if(!(query.getSource() instanceof Selector)){
+            throw new IllegalArgumentException("Query must have a selector source.");
         }
-        if(id == null){
-            throw new NullPointerException("ID can not be null.");
+
+        if(!QueryUtilities.isAbsolute(getSource())){
+            throw new IllegalArgumentException("Selector must be absolute.");
         }
-        if(query == null){
-            throw new NullPointerException("Query can not be null.");
-        }
+
         this.query = query;
+
     }
-   
+
     /**
      * {@inheritDoc }
      */
@@ -115,6 +114,14 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException {
+        return new DefaultRowIterator(iterator());
     }
 
     /**
@@ -167,7 +174,7 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
         try {
             return getSession().getDataStore().isWritable(query.getTypeName());
         } catch (DataStoreException ex) {
-            Logger.getLogger(SessionFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DefaultSelectorFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -198,7 +205,6 @@ public class SessionFeatureCollection extends AbstractFeatureCollection<Feature>
 
     @Override
     public boolean removeAll(Collection<?> clctn) {
-        final boolean writable;
 
         if(isWritable()){
             final Set<Identifier> ids = new HashSet<Identifier>();

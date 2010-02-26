@@ -36,6 +36,7 @@ import org.opengis.filter.Filter;
  *  Abstract session which handle listeners and add convinient fire event methods.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractSession implements Session, StorageListener{
 

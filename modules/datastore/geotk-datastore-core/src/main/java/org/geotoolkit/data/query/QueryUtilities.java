@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DefaultSelectorFeatureCollection;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 
@@ -114,6 +117,48 @@ public class QueryUtilities {
         QueryBuilder qb = new QueryBuilder(query);
         qb.setSource(source);
         return qb.buildQuery();
+    }
+
+    public static FeatureCollection evaluate(String id,Query query){
+        return evaluate(id,query, null);
+    }
+
+    public static FeatureCollection evaluate(String id, Query query, Session session){
+        query = QueryUtilities.makeAbsolute(query, session);
+
+        final Source s = query.getSource();
+
+        if(s instanceof Selector){
+            return new DefaultSelectorFeatureCollection(id, query);
+        }else{
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    /**
+     * Explore all source and check that the type is writable.
+     * 
+     * @param source
+     * @return true if all source are writable
+     */
+    public static boolean isWritable(Source source) throws DataStoreException{
+        if(source instanceof Join){
+            final Join j = (Join) source;
+            return isWritable(j.getLeft()) && isWritable(j.getRight());
+
+        }else if(source instanceof Selector){
+            final Selector select = (Selector) source;
+            final Session session = select.getSession();
+
+            if(session == null){
+                throw new IllegalArgumentException("Source must be absolute to verify if it's writable");
+            }
+            
+            return session.getDataStore().isWritable(select.getFeatureTypeName());
+        }else{
+            throw new IllegalStateException("Source type is unknowned : " + source +
+                    "\n valid types ares Join and Selector");
+        }
     }
 
     /**

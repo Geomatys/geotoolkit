@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -23,13 +23,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.SchemaException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -43,17 +40,16 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F> 
+public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F>
         implements FeatureCollection<F>, StorageListener{
 
     //@todo not thread safe, I dont think it's important
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
 
     protected final String id;
-    protected final FeatureType type;
     protected final Source source;
 
-    public AbstractFeatureCollection(String id, FeatureType type, Source source){
+    public AbstractFeatureCollection(String id, Source source){
 
         if(id == null){
             throw new NullPointerException("Feature collection ID must not be null.");
@@ -63,7 +59,6 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         }
 
         this.id = id;
-        this.type = type;
         this.source = source;
 
         if(source != null){
@@ -109,8 +104,12 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType() {
-        return type;
+    public boolean isWritable() throws DataStoreRuntimeException {
+        try {
+            return QueryUtilities.isWritable(source);
+        } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
     }
 
     /**
@@ -119,21 +118,6 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     @Override
     public final FeatureIterator<F> iterator(){
         return iterator(null);
-    }
-
-    @Override
-    public abstract FeatureIterator<F> iterator(Hints hints);
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureCollection<F> subCollection(Query query) throws DataStoreException{
-        try {
-            return new DefaultSubFeatureCollection<F>(this, query);
-        } catch (SchemaException ex) {
-            throw new DataStoreException(ex);
-        }
     }
 
     /**
@@ -174,7 +158,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     @Override
     public void structureChanged(StorageManagementEvent event){
         final FeatureType currentType = getFeatureType();
-        
+
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
             event = StorageManagementEvent.resetSource(this, event);

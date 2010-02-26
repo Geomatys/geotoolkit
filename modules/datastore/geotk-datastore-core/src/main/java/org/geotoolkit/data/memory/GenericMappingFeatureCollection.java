@@ -23,16 +23,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollectionRow;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.DefaultSubFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -96,11 +96,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
 
     @Override
     public FeatureCollection<F> subCollection(Query query) throws DataStoreException {
-        try {
-            return new DefaultSubFeatureCollection<F>(this, query);
-        } catch (SchemaException ex) {
-            throw new DataStoreException(ex);
-        }
+        throw new UnsupportedOperationException("Mapping feature collection is not made to allow sub query.");
     }
 
     @Override
@@ -176,6 +172,11 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     @Override
     public void clear() {
         throw new DataStoreRuntimeException("Not writable");
+    }
+
+    @Override
+    public CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

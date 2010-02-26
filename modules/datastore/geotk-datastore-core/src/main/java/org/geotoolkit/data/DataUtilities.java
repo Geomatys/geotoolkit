@@ -22,18 +22,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import org.geotoolkit.data.memory.MemoryDataStore;
-import org.geotoolkit.data.query.QueryBuilder;
 
+import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 import org.opengis.filter.identity.FeatureId;
@@ -223,7 +224,7 @@ public class DataUtilities {
         private final FeatureCollection[] wrapped;
 
         private FeatureCollectionSequence(String id, FeatureCollection[] wrapped) {
-            super(id, (SimpleFeatureType) wrapped[0].getFeatureType(),wrapped[0].getSource());
+            super(id, wrapped[0].getSource());
 
             if(wrapped.length == 1){
                 throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");
@@ -291,6 +292,25 @@ public class DataUtilities {
         @Override
         public Session getSession() {
             return null;
+        }
+
+        @Override
+        public CloseableIterator getRows() throws DataStoreException {
+            return new DefaultRowIterator(iterator());
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return wrapped[0].getFeatureType();
+        }
+
+        @Override
+        public FeatureCollection subCollection(Query query) throws DataStoreException {
+            FeatureCollection[] subs = new FeatureCollection[wrapped.length];
+            for(int i=0;i<subs.length;i++){
+                subs[i] = wrapped[i].subCollection(query);
+            }
+            return new FeatureCollectionSequence("subid", subs);
         }
 
         private class SequenceIterator implements FeatureIterator {

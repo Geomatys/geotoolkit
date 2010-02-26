@@ -28,6 +28,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 
@@ -75,7 +76,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public FeatureCollection getFeatureCollection(Query query) {
-        return new SessionFeatureCollection("id", query);
+        return QueryUtilities.evaluate("id", query,this);
     }
 
     /**

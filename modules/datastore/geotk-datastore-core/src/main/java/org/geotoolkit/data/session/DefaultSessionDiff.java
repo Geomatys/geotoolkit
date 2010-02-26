@@ -32,6 +32,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * deltas and lock when commiting or reverting changes.
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 class DefaultSessionDiff{
 

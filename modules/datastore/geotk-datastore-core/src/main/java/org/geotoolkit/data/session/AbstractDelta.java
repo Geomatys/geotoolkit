@@ -26,6 +26,7 @@ import org.opengis.filter.FilterFactory2;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 abstract class AbstractDelta implements Delta{
 
