@@ -19,10 +19,12 @@ package org.geotoolkit.wms;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.cs.AxisDirection;
@@ -240,8 +242,8 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("FORMAT",     format);
         requestParameters.put("WIDTH",      String.valueOf(dimension.width));
         requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
-        requestParameters.put("LAYERS",     toString(layers));
-        requestParameters.put("STYLES",     toString(styles));
+        requestParameters.put("LAYERS",     StringUtilities.toCommaSeparatedValues(layers));
+        requestParameters.put("STYLES",     StringUtilities.toCommaSeparatedValues(styles));
         requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
 
         if (sld != null) {
@@ -255,23 +257,6 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.putAll(toString(enveloppe));
 
         return super.getURL();
-    }
-
-    private String toString(String[] vars){
-        if(vars == null || vars.length == 0) return "";
-
-        if(vars.length == 1 && vars[0] == null){
-            return "";
-        }
-
-        final StringBuilder sb = new StringBuilder();
-        int i=0;
-        for(;i<vars.length-1;i++){
-            sb.append(vars[i]).append(',');
-        }
-        sb.append(vars[i]);
-
-        return sb.toString();
     }
 
     protected abstract Map<String,String> toString(Envelope env);

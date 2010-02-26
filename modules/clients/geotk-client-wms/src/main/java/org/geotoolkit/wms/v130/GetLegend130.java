@@ -20,7 +20,7 @@ import org.geotoolkit.wms.AbstractGetLegend;
 
 
 /**
- * Implementation for the GetLegendGraphic request version 1.1.1.
+ * Implementation for the GetLegendGraphic request version 1.3.0.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending

@@ -32,8 +32,12 @@ public interface GetFeatureInfoRequest extends GetMapRequest {
 
     void setY(int y);
 
-    String getSelectedLayer();
+    String getInfoFormat();
 
-    void setSelectedLayer(String layer);
+    void setInfoFormat(String format);
+
+    String[] getQueryLayers();
+
+    void setQueryLayers(String[] layers);
 
 }

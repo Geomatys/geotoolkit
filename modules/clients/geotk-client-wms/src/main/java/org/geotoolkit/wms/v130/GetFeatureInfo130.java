@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,28 +16,31 @@
  */
 package org.geotoolkit.wms.v130;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.wms.AbstractGetMap;
+import org.geotoolkit.wms.AbstractGetFeatureInfo;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
 
 
 /**
- * Implementation for the GetMap request version 1.3.0.
+ * Implementation for the GetFeatureInfo request version 1.3.0.
  *
+ * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GetMap130 extends AbstractGetMap {
+public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
     /**
      * Defines the server url and its version.
      *
      * @param serverURL The url of the webservice.
      */
-    public GetMap130(String serverURL){
+    public GetFeatureInfo130(String serverURL){
         super(serverURL,"1.3.0");
     }
 
@@ -67,4 +70,10 @@ public class GetMap130 extends AbstractGetMap {
         return map;
     }
 
+    @Override
+    public URL getURL() throws MalformedURLException {
+        requestParameters.put("I", String.valueOf(x));
+        requestParameters.put("J", String.valueOf(y));
+        return super.getURL();
+    }
 }
