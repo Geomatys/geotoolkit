@@ -39,7 +39,7 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.DefaultFeatureCollection;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
@@ -304,7 +304,7 @@ public class WFSDataStore extends AbstractDataStore{
         if(newFeatures instanceof FeatureCollection){
             col = (FeatureCollection) newFeatures;
         }else{
-            col = new DefaultFeatureCollection("", null, Feature.class);
+            col = DataUtilities.collection("", null);
             col.addAll(newFeatures);
         }
         insert.setFeatures(col);
@@ -437,7 +437,7 @@ public class WFSDataStore extends AbstractDataStore{
 
             if(result instanceof SimpleFeature){
                 final SimpleFeature sf = (SimpleFeature) result;
-                final FeatureCollection<SimpleFeature> col = new DefaultFeatureCollection<SimpleFeature>("id", sft, SimpleFeature.class);
+                final FeatureCollection<SimpleFeature> col = DataUtilities.collection("id", sft);
                 col.add(sf);
 
                 lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
@@ -448,7 +448,7 @@ public class WFSDataStore extends AbstractDataStore{
                 lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
                 return col;
             }else{
-                final FeatureCollection<SimpleFeature> col = new DefaultFeatureCollection<SimpleFeature>("", sft, SimpleFeature.class);
+                final FeatureCollection<SimpleFeature> col = DataUtilities.collection("", sft);
                 lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
                 return col;
 //                throw new IOException("unexpected type : " + result);

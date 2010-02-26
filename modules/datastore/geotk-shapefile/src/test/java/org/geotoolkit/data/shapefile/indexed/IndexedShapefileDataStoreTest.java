@@ -52,6 +52,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -70,11 +71,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import org.geotoolkit.data.DefaultFeatureCollection;
+
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.feature.type.Name;
 
 /**
@@ -561,7 +563,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeatureType featureType = createExampleSchema();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
 
-        FeatureCollection<SimpleFeature> features = new DefaultFeatureCollection<SimpleFeature>("",null,SimpleFeature.class);
+        FeatureCollection<SimpleFeature> features = DataUtilities.collection("",null);
         for (int i = 0, ii = 20; i < ii; i++) {
 
             build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
@@ -648,7 +650,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
         SimpleFeatureType type = ftb.buildFeatureType();
 
-        FeatureCollection<SimpleFeature> features = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
+        FeatureCollection<SimpleFeature> features = DataUtilities.collection("", null);
 
         for (int i = 0, ii = 20; i < ii; i++) {
             SimpleFeature feature = SimpleFeatureBuilder.build(type,

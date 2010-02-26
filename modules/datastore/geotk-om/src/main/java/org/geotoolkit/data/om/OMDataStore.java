@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
 import java.util.logging.Logger;
+
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
-import org.geotoolkit.data.DefaultFeatureCollection;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FeatureCollection;
@@ -197,7 +197,7 @@ public class OMDataStore extends AbstractDataStore {
     
    private FeatureCollection<SimpleFeature> getFeatureCollection(SimpleFeatureType sft, String typeName) throws IOException {
         
-        final FeatureCollection<SimpleFeature> collection = new DefaultFeatureCollection(typeName + "-collection", sft, SimpleFeature.class);
+        final FeatureCollection<SimpleFeature> collection = DataUtilities.collection(typeName + "-collection", sft);
         SimpleFeatureBuilder builder = new SimpleFeatureBuilder(sft);
         try {
             ResultSet result = getAllSamplingPoint.executeQuery();

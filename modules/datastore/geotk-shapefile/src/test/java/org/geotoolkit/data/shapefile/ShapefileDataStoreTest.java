@@ -46,7 +46,6 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -63,7 +62,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.data.DefaultFeatureCollection;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**
@@ -466,7 +465,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         // create feature type
         SimpleFeatureType type = FeatureTypeUtilities.createType("junk",
                 "a:Point,b:java.math.BigDecimal,c:java.math.BigInteger");
-        FeatureCollection<SimpleFeature> features = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
+        FeatureCollection<SimpleFeature> features = DataUtilities.collection("", null);
 
         BigInteger bigInteger = new BigInteger("1234567890123456789");
         BigDecimal bigDecimal = new BigDecimal(bigInteger, 2);
@@ -649,7 +648,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         SimpleFeatureType featureType = createExampleSchema();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
 
-        FeatureCollection<SimpleFeature> features = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
+        FeatureCollection<SimpleFeature> features = DataUtilities.collection("", null);
         for (int i = 0, ii = 20; i < ii; i++) {
 
             build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
@@ -724,7 +723,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
         SimpleFeatureType type = ftb.buildFeatureType();
 
-        FeatureCollection<SimpleFeature> features = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
+        FeatureCollection<SimpleFeature> features = DataUtilities.collection("", null);
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(type);
         for (int i = 0, ii = 20; i < ii; i++) {
             build.set(0, (Geometry) geom.clone());

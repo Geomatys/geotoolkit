@@ -30,7 +30,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 
@@ -105,7 +104,7 @@ public class FidQueryTest extends FIDTestCase {
         build.add(new Long(0));
         build.add("Hey");
         SimpleFeature newFeature = build.buildFeature(null);
-        FeatureCollection<SimpleFeature> collection = new DefaultFeatureCollection<SimpleFeature>("", null, SimpleFeature.class);
+        FeatureCollection<SimpleFeature> collection = DataUtilities.collection("", null);
         collection.add(newFeature);
 
         List<FeatureId> newFids = DataUtilities.write(ds.getFeatureWriterAppend(name), collection);

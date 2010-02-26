@@ -36,15 +36,15 @@ import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
-import org.geotoolkit.data.DefaultFeatureCollection;
+import org.geotoolkit.data.DataUtilities;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-
 import org.geotoolkit.util.Converters;
+
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
@@ -266,7 +266,7 @@ public class JAXPEventFeatureReader extends JAXPFeatureReader {
                         for (FeatureType ft : featureTypes) {
                             if (ft.getName().equals(name)) {
                                 if (collection == null) {
-                                    collection = new DefaultFeatureCollection(id, ft, SimpleFeature.class);
+                                    collection = DataUtilities.collection(id, ft);
                                 }
                                 collection.add(readFeature(eventReader, fid.getValue(), ft));
                                 find = true;

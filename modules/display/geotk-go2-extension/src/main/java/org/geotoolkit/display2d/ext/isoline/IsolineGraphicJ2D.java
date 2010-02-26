@@ -49,7 +49,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.DefaultFeatureCollection;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -242,8 +242,8 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
                 final Map<Point3d,List<Coordinate>> steps = ob.doContouring(cx, cy, computed, palier);
 
                 //render the isolines ----------------------------------------------
-                final DefaultFeatureCollection col = new DefaultFeatureCollection(
-                        "id", featureBuilder.getFeatureType(), SimpleFeature.class);
+                final FeatureCollection col = DataUtilities.collection(
+                        "id", featureBuilder.getFeatureType());
                 int inc = 0;
 
                 context.switchToDisplayCRS();

@@ -43,7 +43,6 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.opengis.feature.Feature;
@@ -137,7 +136,7 @@ public abstract class JDBC3DTest extends JDBCTestSupport {
                 "l3" }, null);
 
         // insert it
-        FeatureCollection col = new DefaultFeatureCollection("", null, Feature.class);
+        FeatureCollection col = DataUtilities.collection("", null);
         col.add(newFeature);
 
         List<FeatureId> fids = DataUtilities.write(dataStore.getFeatureWriterAppend(nsname(LINE3D)), col);
