@@ -27,8 +27,11 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.query.SortByComparator;
+import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.sort.SortBy;
 
@@ -68,7 +71,7 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
         ordered = new ArrayList<F>();
 
         while(iterator.hasNext()){
-            ordered.add(iterator.next());
+            ordered.add((F) SimpleFeatureBuilder.copy((SimpleFeature) iterator.next()));
         }
 
         Collections.sort(ordered,comparator);

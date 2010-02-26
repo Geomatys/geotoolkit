@@ -67,7 +67,7 @@ public class MemoryDataStore extends AbstractDataStore{
         public Group(FeatureType type) {
             this.type = type;
             this.datas = new ArrayList<Object[]>();
-            this.base = type.getName().getLocalPart();
+            this.base = type.getName().getLocalPart()+".";
         }
 
         public ArrayPropertyRW createPropertyReader(){

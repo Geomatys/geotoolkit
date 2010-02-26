@@ -62,10 +62,13 @@ public class GenericIteratorTest extends TestCase{
     private final FeatureCollection<SimpleFeature> collection;
     private final Name name;
     private final SimpleFeatureType type;
+    private final String id1;
+    private final String id2;
+    private final String id3;
 
     public GenericIteratorTest(){
         final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-        name = new DefaultName("http://test.com", "TestSchema1");
+        name = new DefaultName("http://test.com", "TestSchema");
         builder.reset();
         builder.setName(name);
         builder.add("att_string", String.class);
@@ -74,20 +77,23 @@ public class GenericIteratorTest extends TestCase{
 
         collection = DataUtilities.collection("id", type);
 
-        SimpleFeature sf = SimpleFeatureBuilder.template(type, "id1");
+        SimpleFeature sf = SimpleFeatureBuilder.template(type, "-");
         sf.setAttribute("att_string", "bbb");
         sf.setAttribute("att_double", 3d);
         collection.add(sf);
+        id1 = name.getLocalPart()+"."+1;
 
-        sf = SimpleFeatureBuilder.template(type, "id2");
+        sf = SimpleFeatureBuilder.template(type, "-");
         sf.setAttribute("att_string", "ccc");
         sf.setAttribute("att_double", 1d);
         collection.add(sf);
+        id2 = name.getLocalPart()+"."+2;
 
-        sf = SimpleFeatureBuilder.template(type, "id3");
+        sf = SimpleFeatureBuilder.template(type, "-");
         sf.setAttribute("att_string", "aaa");
         sf.setAttribute("att_double", 2d);
         collection.add(sf);
+        id3 = name.getLocalPart()+"."+3;
     }
 
     private void testIterationOnNext(FeatureIterator ite, int size){
@@ -192,7 +198,7 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(1, DataUtilities.calculateCount(ite));
         ite = GenericFilterFeatureIterator.wrap(collection.iterator(), FF.equals(FF.literal("aaa"), FF.property("att_string")));
 
-        assertEquals(ite.next().getIdentifier().getID(),"id3");
+        assertEquals(ite.next().getIdentifier().getID(),id3);
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
@@ -213,7 +219,7 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(2, DataUtilities.calculateCount(ite));
 
         ite = GenericMaxFeatureIterator.wrap(collection.iterator(), 1);
-        assertEquals(ite.next().getIdentifier().getID(),"id1");
+        assertEquals(ite.next().getIdentifier().getID(),id1);
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
@@ -247,7 +253,7 @@ public class GenericIteratorTest extends TestCase{
         ite = GenericModifyFeatureIterator.wrap(collection.iterator(), filter, values);
         while(ite.hasNext()){
             Feature f = ite.next();
-            if(f.getIdentifier().getID().equals("id3")){
+            if(f.getIdentifier().getID().equals(id3)){
                 assertTrue(f.getProperty("att_string").getValue().equals("toto"));
             }else{
                 assertFalse(f.getProperty("att_string").getValue().equals("toto"));
@@ -281,9 +287,9 @@ public class GenericIteratorTest extends TestCase{
 
 
         ite = GenericSortByFeatureIterator.wrap(collection.iterator(), sorts);
-        assertEquals(ite.next().getIdentifier().getID(),"id3");
-        assertEquals(ite.next().getIdentifier().getID(),"id1");
-        assertEquals(ite.next().getIdentifier().getID(),"id2");
+        assertEquals(ite.next().getIdentifier().getID(),id3);
+        assertEquals(ite.next().getIdentifier().getID(),id1);
+        assertEquals(ite.next().getIdentifier().getID(),id2);
 
         try{
             ite.next();
@@ -305,7 +311,7 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(2, DataUtilities.calculateCount(ite));
 
         ite = GenericStartIndexFeatureIterator.wrap(collection.iterator(), 2);
-        assertEquals(ite.next().getIdentifier().getID(),"id3");
+        assertEquals(ite.next().getIdentifier().getID(),id3);
         try{
             ite.next();
             fail("Should have raise a no such element exception.");
