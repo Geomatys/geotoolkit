@@ -29,6 +29,7 @@ import org.geotoolkit.data.DefaultSubFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
@@ -71,6 +72,11 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     @Override
     public Session getSession() {
         return original.getSession();
+    }
+
+    @Override
+    public Source getSource() {
+        return original.getSource();
     }
 
     @Override

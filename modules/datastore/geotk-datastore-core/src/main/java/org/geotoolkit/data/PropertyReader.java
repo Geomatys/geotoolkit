@@ -18,11 +18,11 @@ package org.geotoolkit.data;
 
 import java.io.IOException;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
- * The low-level attribute reading API.  An AttributeReader is responsible for
- * reading a finite set of attributes from an underlying storage format. It
+ * The low-level property reading API.  An PropertyReader is responsible for
+ * reading a finite set of properties from an underlying storage format. It
  * provides meta-data regarding the data it can provide, and an iterative,
  * row-based approach for accessing the data.
  *
@@ -31,28 +31,28 @@ import org.opengis.feature.type.AttributeDescriptor;
  *
  * @module pending
  */
-public interface AttributeReader {
+public interface PropertyReader {
 
     /**
-     * The number of attributes this reader can read, i.e the length of a row.
+     * The number of properties this reader can read, i.e the length of a row.
      *
-     * @return Number of attribtues this reader can read
+     * @return Number of properties this reader can read
      */
-    int getAttributeCount();
+    int getPropertyCount();
 
     /**
-     * Retrieve the AttributeType at the given index.
+     * Retrieve the PropertyDescriptor at the given index.
      *
-     * @return AttributeType at given index
+     * @return PropertyDescriptor at given index
      */
-    AttributeDescriptor getAttributeDescriptor(int index) throws ArrayIndexOutOfBoundsException;
+    PropertyDescriptor getPropertyDescriptor(int index) throws ArrayIndexOutOfBoundsException;
 
     /**
-     * Retrieve all AttributeDescriptors.
+     * Retrieve all PropertyDescriptors.
      * 
-     * @return Array of all AttributeDescriptor in index order
+     * @return Array of all PropertyDescriptor in index order
      */
-    AttributeDescriptor[] getAttributeDescriptors();
+    PropertyDescriptor[] getPropertyDescriptors();
 
     /**
      * Release any resources associated with this reader
@@ -60,26 +60,26 @@ public interface AttributeReader {
     void close() throws IOException;
 
     /**
-     * Does another set of attributes exist in this reader?
+     * Does another set of properties exist in this reader?
      *
-     * @return <code>true</code> if additional content exists for AttributeReader
+     * @return <code>true</code> if additional content exists for PropertyReader
      */
     boolean hasNext() throws IOException;
 
     /**
-     * Advance the reader to the next set of attributes.
+     * Advance the reader to the next set of properties.
      */
     void next() throws IOException;
 
     /**
-     * Read the attribute at the given index.
+     * Read the propertie at the given index.
      *
-     * @return Object Attribute at given index
+     * @return Object value at given index
      */
     Object read(int index) throws IOException, ArrayIndexOutOfBoundsException;
 
     /**
-     * Read all attributs in one call, improves performances when iterating.
+     * Read all properties in one call, improves performances when iterating.
      *
      * @param buffer : be sure it is not null and has the good size
      * @throws IOException

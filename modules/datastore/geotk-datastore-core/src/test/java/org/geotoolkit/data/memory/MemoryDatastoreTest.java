@@ -88,7 +88,7 @@ public class MemoryDatastoreTest extends TestCase{
         Set<Name> names;
 
         names = store.getNames();
-        assertEquals(names.size(), 0);
+        assertEquals(0,names.size());
 
         //test creation of one schema ------------------------------------------
         Name name = new DefaultName("http://test.com", "TestSchema1");
@@ -100,7 +100,7 @@ public class MemoryDatastoreTest extends TestCase{
         store.createSchema(name,type1);
 
         names = store.getNames();
-        assertEquals(names.size(), 1);
+        assertEquals(1,names.size());
         Name n = names.iterator().next();
 
         assertEquals(n.getLocalPart(), "TestSchema1");
@@ -126,7 +126,7 @@ public class MemoryDatastoreTest extends TestCase{
         store.updateSchema(name, type2);
 
         names = store.getNames();
-        assertEquals(names.size(), 1);
+        assertEquals(1,names.size());
         n = names.iterator().next();
 
         assertEquals(n.getLocalPart(), "TestSchema1");
@@ -146,12 +146,12 @@ public class MemoryDatastoreTest extends TestCase{
         //test delete schema ---------------------------------------------------
 
         names = store.getNames();
-        assertEquals(names.size(), 1);
+        assertEquals(1,names.size());
 
         store.deleteSchema(name);
 
         names = store.getNames();
-        assertEquals(names.size(), 0);
+        assertEquals(0,names.size());
 
         try{
             store.deleteSchema(new DefaultName("http://not", "exist"));
@@ -253,7 +253,7 @@ public class MemoryDatastoreTest extends TestCase{
         }finally{
             reader.close();
         }
-        assertEquals(count, 10);
+        assertEquals(10,count);
         assertEquals(store.getCount(QueryBuilder.all(name)), 10);
 
         //check deleting features
@@ -277,7 +277,7 @@ public class MemoryDatastoreTest extends TestCase{
         }finally{
             reader.close();
         }
-        assertEquals(count, 0);
+        assertEquals(0,count);
         assertEquals(store.getCount(QueryBuilder.all(name)), 0);
     }
 

@@ -77,6 +77,7 @@ public class QueryBuilder {
         this.sortBy = query.getSortBy();
         this.startIndex = query.getStartIndex();
         this.typeName = query.getTypeName();
+        this.source = query.getSource();
     }
 
     public Name getTypeName() {

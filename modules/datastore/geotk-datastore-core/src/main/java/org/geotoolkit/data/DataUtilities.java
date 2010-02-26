@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.query.QueryBuilder;
 
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
@@ -51,7 +53,7 @@ public class DataUtilities {
     }
 
     public static FeatureCollection collection(Feature[] features){
-        final FeatureCollection col = new DefaultFeatureCollection("", null, Feature.class);
+        final FeatureCollection col = collection("", features[0].getType());
         for(Feature f : features){
             col.add(f);
         }
@@ -65,10 +67,17 @@ public class DataUtilities {
      * @return FeatureCollection
      */
     public static FeatureCollection collection(FeatureType type, Collection<? extends Feature> features){
-        final FeatureCollection col = new DefaultFeatureCollection("", type, Feature.class);
+        final FeatureCollection col = collection("", type);
         col.addAll(features);
         return col;
     }
+
+    public static FeatureCollection collection(String id, FeatureType type){
+        final MemoryDataStore ds = new MemoryDataStore(type, true);
+        final Session session = ds.createSession(false);
+        return session.getFeatureCollection(QueryBuilder.all(type.getName()));
+    }
+
 
     /**
      * Write the features from the given collection and return the list of generated FeatureID
@@ -214,7 +223,7 @@ public class DataUtilities {
         private final FeatureCollection[] wrapped;
 
         private FeatureCollectionSequence(String id, FeatureCollection[] wrapped) {
-            super(id, (SimpleFeatureType) wrapped[0].getFeatureType());
+            super(id, (SimpleFeatureType) wrapped[0].getFeatureType(),wrapped[0].getSource());
 
             if(wrapped.length == 1){
                 throw new IllegalArgumentException("Sequence of featureCollection must have at least 2 collections.");

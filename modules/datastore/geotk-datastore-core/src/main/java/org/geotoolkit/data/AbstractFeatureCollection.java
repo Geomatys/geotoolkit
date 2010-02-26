@@ -18,11 +18,15 @@
 package org.geotoolkit.data;
 
 import java.util.AbstractCollection;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.data.query.Selector;
+import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.SchemaException;
@@ -47,21 +51,28 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
     protected final String id;
     protected final FeatureType type;
-    protected final Session session;
+    protected final Source source;
 
-    public AbstractFeatureCollection(String id, FeatureType type){
-        this(id,type,null);
-    }
+    public AbstractFeatureCollection(String id, FeatureType type, Source source){
 
-    public AbstractFeatureCollection(String id, FeatureType type, Session session){
+        if(id == null){
+            throw new NullPointerException("Feature collection ID must not be null.");
+        }
+        if(source == null){
+            throw new NullPointerException("Feature collection source must not be null.");
+        }
+
         this.id = id;
         this.type = type;
-        this.session = session;
+        this.source = source;
 
-        if(session != null){
-            //register a wek listener, to memory leak since we don't know when to remove the listener.
-            //@todo should we have a dispose method on the session ? I dont think so
-            session.addStorageListener(new WeakStorageListener(session, this));
+        if(source != null){
+            final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
+            for(Session s : sessions){
+                //register a weak listener, to memory leak since we don't know when to remove the listener.
+                //@todo should we have a dispose method on the session ? I dont think so
+                s.addStorageListener(new WeakStorageListener(source, this));
+            }
         }
     }
 
@@ -79,7 +90,19 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      */
     @Override
     public Session getSession() {
-        return session;
+        if(source instanceof Selector){
+            return ((Selector)source).getSession();
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Source getSource() {
+        return source;
     }
 
     /**

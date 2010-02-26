@@ -16,20 +16,21 @@
  */
 package org.geotoolkit.data;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
- * Provides support for creating AttributeReaders.
+ * Provides support for creating PropertyReaders.
+ * 
  * @module pending
  * @since 2.0
  * @version $Id$
  * @author  Ian Schneider
  */
-public abstract class AbstractAttributeReader implements AttributeReader {
+public abstract class AbstractPropertyReader implements PropertyReader {
 
-    protected final AttributeDescriptor[] metaData;
+    protected final PropertyDescriptor[] metaData;
 
-    protected AbstractAttributeReader(AttributeDescriptor[] metaData) {
+    protected AbstractPropertyReader(PropertyDescriptor[] metaData) {
         this.metaData = metaData;
     }
 
@@ -37,7 +38,7 @@ public abstract class AbstractAttributeReader implements AttributeReader {
      * {@inheritDoc }
      */
     @Override
-    public final int getAttributeCount() {
+    public final int getPropertyCount() {
         return metaData.length;
     }
 
@@ -45,7 +46,7 @@ public abstract class AbstractAttributeReader implements AttributeReader {
      * {@inheritDoc }
      */
     @Override
-    public final AttributeDescriptor getAttributeDescriptor(int position) {
+    public final PropertyDescriptor getPropertyDescriptor(int position) {
         return metaData[position];
     }
 
@@ -53,7 +54,7 @@ public abstract class AbstractAttributeReader implements AttributeReader {
      * {@inheritDoc }
      */
     @Override
-    public final AttributeDescriptor[] getAttributeDescriptors(){
+    public final PropertyDescriptor[] getPropertyDescriptors(){
         return metaData;
     }
 

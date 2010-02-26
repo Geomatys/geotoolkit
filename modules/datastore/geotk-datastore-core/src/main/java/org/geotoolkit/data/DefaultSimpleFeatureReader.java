@@ -31,6 +31,7 @@ import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Experimental  FeatureReader<SimpleFeatureType, SimpleFeature> that always takes the first column of the
@@ -58,7 +59,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  */
 public abstract class DefaultSimpleFeatureReader implements FeatureReader<SimpleFeatureType, SimpleFeature> {
 
-    protected final AttributeReader attributeReader;
+    protected final PropertyReader attributeReader;
     protected final SimpleFeatureType schema;
     protected final FeatureIDReader fidReader;
     protected final Object[] buffer;
@@ -77,7 +78,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      *
      * @throws SchemaException if we could not determine the correct FeatureType
      */
-    private DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+    private DefaultSimpleFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
@@ -87,7 +88,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
             attributIndexes = new int[0];
         }else{
             //check if the attributs are mixed
-            final AttributeDescriptor[] readerAtt = attributeReader.getAttributeDescriptors();
+            final AttributeDescriptor[] readerAtt = getDescriptors(attributeReader);
             final AttributeDescriptor[] schemaAtt = schema.getAttributeDescriptors().toArray(new AttributeDescriptor[schema.getAttributeCount()]);
 
             if(Arrays.deepEquals(readerAtt, schemaAtt)){
@@ -103,10 +104,10 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         }
 
         this.schema = schema;
-        this.buffer = new Object[attributeReader.getAttributeCount()];
+        this.buffer = new Object[attributeReader.getPropertyCount()];
     }
 
-    public DefaultSimpleFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader)
+    public DefaultSimpleFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader)
             throws SchemaException {
         this(attributeReader, fidReader, null);
     }
@@ -175,10 +176,10 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     /**
      * Create a FeatureType based on the attributs described in the attribut reader.
      */
-    private static SimpleFeatureType createSchema(AttributeReader attributeReader) throws SchemaException {
+    private static SimpleFeatureType createSchema(PropertyReader attributeReader) throws SchemaException {
         final SimpleFeatureTypeBuilder b = new SimpleFeatureTypeBuilder();
         b.setName("xxx");
-        b.addAll(attributeReader.getAttributeDescriptors());
+        b.addAll(getDescriptors(attributeReader));
         return b.buildFeatureType();
     }
 
@@ -191,7 +192,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     }
 
 
-    public static DefaultSimpleFeatureReader create(AttributeReader attributeReader, FeatureIDReader fidReader,
+    public static DefaultSimpleFeatureReader create(PropertyReader attributeReader, FeatureIDReader fidReader,
             SimpleFeatureType schema, Hints hints) throws SchemaException{
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
         if(detached == null || detached){
@@ -207,7 +208,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
         protected final SimpleFeatureBuilder builder;
 
-        private DefaultSeparateFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+        private DefaultSeparateFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException{
             super(attributeReader,fidReader,schema);
 
@@ -244,7 +245,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
         protected final DefaultSimpleFeature feature;
 
-        private DefaultReuseFeatureReader(AttributeReader attributeReader, FeatureIDReader fidReader,
+        private DefaultReuseFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException{
             super(attributeReader,fidReader,schema);
 
@@ -276,6 +277,15 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
             return feature;
         }
 
+    }
+
+    private static AttributeDescriptor[] getDescriptors(PropertyReader reader){
+        final PropertyDescriptor[] vals = reader.getPropertyDescriptors();
+        final AttributeDescriptor[] atts = new AttributeDescriptor[vals.length];
+        for(int i=0; i<vals.length;i++){
+            atts[i] = (AttributeDescriptor) vals[i];
+        }
+        return atts;
     }
 
 }

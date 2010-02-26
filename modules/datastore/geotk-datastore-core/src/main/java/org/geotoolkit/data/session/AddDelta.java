@@ -24,11 +24,9 @@ import java.util.logging.Logger;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 
@@ -78,7 +76,7 @@ class AddDelta extends AbstractDelta{
             ft = null;
         }
 
-        this.features = new DefaultFeatureCollection<Feature>(null, ft, Feature.class);
+        this.features = DataUtilities.collection("temp", ft);
 
         //we must copy the features since they might be changed later
         for(Feature f : features){

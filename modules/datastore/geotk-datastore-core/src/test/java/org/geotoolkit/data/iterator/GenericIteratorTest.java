@@ -17,13 +17,12 @@
 
 package org.geotoolkit.data.iterator;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import junit.framework.TestCase;
+
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.data.DefaultFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -32,14 +31,15 @@ import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
-import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+
 import org.junit.Test;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -72,7 +72,7 @@ public class GenericIteratorTest extends TestCase{
         builder.add("att_double", Double.class);
         type = builder.buildFeatureType();
 
-        collection = new DefaultFeatureCollection<SimpleFeature>("id", type, SimpleFeature.class);
+        collection = DataUtilities.collection("id", type);
 
         SimpleFeature sf = SimpleFeatureBuilder.template(type, "id1");
         sf.setAttribute("att_string", "bbb");

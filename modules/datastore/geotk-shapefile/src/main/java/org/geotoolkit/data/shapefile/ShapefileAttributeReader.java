@@ -19,7 +19,7 @@ package org.geotoolkit.data.shapefile;
 import java.io.IOException;
 import java.util.List;
 
-import org.geotoolkit.data.AbstractAttributeReader;
+import org.geotoolkit.data.AbstractPropertyReader;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 
@@ -32,7 +32,7 @@ import org.opengis.feature.type.AttributeDescriptor;
  * DbaseFileReader
  * @module pending
  */
-public class ShapefileAttributeReader extends AbstractAttributeReader {
+public class ShapefileAttributeReader extends AbstractPropertyReader {
 
     protected ShapefileReader shp;
     protected DbaseFileReader dbf;
@@ -148,7 +148,7 @@ public class ShapefileAttributeReader extends AbstractAttributeReader {
     @Override
     public void read(Object[] buffer) throws IOException {
         buffer[0] = record.shape();
-        for(int i=0,n=getAttributeCount()-1; i<n; i++){
+        for(int i=0,n=getPropertyCount()-1; i<n; i++){
             buffer[i+1] = row.read(i);
         }
     }

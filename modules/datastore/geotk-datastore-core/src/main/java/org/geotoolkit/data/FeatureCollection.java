@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 
@@ -58,9 +59,21 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
      * A collection may be linked to a session, this implies that changes maid
      * in the collection may not be send to the datastore now.
      * A session.commit() call must be done.
+     * 
      * @return Session or null if not related to a session.
+     * @deprecated use getSource() instead
      */
+    @Deprecated
     Session getSession();
+
+    /**
+     * A collection always takes it's datas from somewhere, it can be any kind
+     * of Datastore.
+     *
+     * @return feature source of this collection.
+     */
+    Source getSource();
+
 
     /**
      * If all features in this collection are of the same type then

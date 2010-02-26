@@ -58,7 +58,7 @@ public class DefaultSubFeatureCollection<F extends Feature> extends AbstractFeat
     private final Query query;
 
     public DefaultSubFeatureCollection(FeatureCollection<F> original, Query query) throws SchemaException{
-        super(original.getID(),expectingType(original.getFeatureType(),query));
+        super(original.getID(),expectingType(original.getFeatureType(),query),original.getSource());
         this.original = original;
         this.query = query;
     }

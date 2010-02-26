@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,13 @@
 package org.geotoolkit.data.query;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -32,12 +34,114 @@ import org.opengis.filter.FilterFactory;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class QueryUtilities {
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
     
     private QueryUtilities(){}
+
+    /**
+     * A source is considered absolute when all selector in the source have
+     * a session defined. That implies we can use a query with this source
+     * directly on a EvaluatedFeatureCollection.
+     * 
+     * @param source
+     * @return true if the source is absolute
+     */
+    public static boolean isAbsolute(Source source){
+        if(source instanceof Join){
+            final Join j = (Join) source;
+            return isAbsolute(j.getLeft()) && isAbsolute(j.getRight());
+        }else if (source instanceof Selector){
+            return ((Selector)source).getSession() != null;
+        }else{
+            throw new IllegalStateException("Source type is unknowned : " + source +
+                    "\n valid types ares Join and Selector");
+        }
+    }
+
+    /**
+     * When a source is not yet absolute, you can reconfigure it to be so.
+     * every Selector that doesn't have a session configure will be replaced by
+     * the given one.
+     *
+     * @param source
+     * @param session
+     * @return an absolute source
+     */
+    public static Source makeAbsolute(Source source, Session session){
+        
+        final Source absolute;
+        if(source instanceof Join){
+            final Join j = (Join) source;
+
+            if(isAbsolute(j)){
+                absolute = j;
+            }else{
+                final Source left = makeAbsolute(j.getLeft(), session);
+                final Source right = makeAbsolute(j.getLeft(), session);
+                absolute = new DefaultJoin(left, right, j.getJoinType(), j.getJoinCondition());
+            }
+        }else if (source instanceof Selector){
+            final Selector select = (Selector) source;
+            if (select.getSession() == null){
+                if(session == null){
+                    throw new NullPointerException("Session can not be null.");
+                }
+
+                absolute = new DefaultSelector(session, select.getFeatureTypeName(), select.getSelectorName());
+            }else{
+                absolute = source;
+            }
+        }else{
+            throw new IllegalStateException("Source type is unknowned : " + source +
+                    "\n valid types ares Join and Selector");
+        }
+
+        return absolute;
+    }
+
+    public static Query makeAbsolute(Query query, Session session){
+        Source source = query.getSource();
+        if(isAbsolute(source)){
+            //nothing to change, query is absolute already
+            return query;
+        }
+
+        source = makeAbsolute(source, session);
+        QueryBuilder qb = new QueryBuilder(query);
+        qb.setSource(source);
+        return qb.buildQuery();
+    }
+
+    /**
+     * Explore the source and return a collection of all session used in this
+     * source.
+     *
+     * @param source : source to explore
+     * @param buffer : a collection buffer, can be null
+     * @return a collection of sessions, never null but can be empty.
+     */
+    public static Collection<Session> getSessions(Source source, Collection<Session> buffer){
+        if(buffer == null){
+            buffer = new HashSet<Session>();
+        }
+
+        if(source instanceof Selector){
+            final Session s = ((Selector)source).getSession();
+            if(s != null){
+                buffer.add(s);
+            }
+        }else if(source instanceof Join){
+            final Join j = (Join) source;
+            getSessions(j.getLeft(), buffer);
+            getSessions(j.getRight(), buffer);
+        }
+
+        return buffer;
+    }
 
     public static boolean queryAll(Query query){
 

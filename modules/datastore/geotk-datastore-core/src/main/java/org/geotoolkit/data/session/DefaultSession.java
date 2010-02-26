@@ -75,7 +75,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public FeatureCollection getFeatureCollection(Query query) {
-        return new SessionFeatureCollection(this, "id", query);
+        return new SessionFeatureCollection("id", query);
     }
 
     /**
