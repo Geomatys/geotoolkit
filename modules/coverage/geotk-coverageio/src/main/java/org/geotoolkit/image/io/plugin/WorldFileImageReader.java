@@ -352,10 +352,12 @@ public class WorldFileImageReader extends ImageReaderAdapter {
         }
 
         /**
-         * Registers a default set of <cite>World File</cite> formats. This method shall be
-         * invoked exactly once by client application before to use Image I/O library if they
-         * wish to decode <cite>World File</cite> images. See the
-         * <a href="../package-summary.html#package_description">package description</a>
+         * Registers a default set of <cite>World File</cite> formats. This method shall be invoked
+         * at least once by client application before to use Image I/O library if they wish to decode
+         * <cite>World File</cite> images. This method can also be invoked more time if the PNG, TIFF
+         * or other standard readers changed, and this change needs to be taken in account by the
+         * <cite>World File</cite> readers. See the <cite>System initialization</cite> section in
+         * the <a href="../package-summary.html#package_description">package description</a>
          * for more information.
          * <p>
          * The current implementation registers plugins for the TIFF, JPEG, PNG, GIF, BMP
@@ -394,6 +396,7 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                     continue;
                 }
                 registry.registerServiceProvider(provider, ImageReaderSpi.class);
+                registry.setOrdering(ImageReaderSpi.class, provider, provider.main);
             }
         }
 

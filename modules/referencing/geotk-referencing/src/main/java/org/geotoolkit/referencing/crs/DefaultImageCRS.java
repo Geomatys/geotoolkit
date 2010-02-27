@@ -28,10 +28,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.datum.ImageDatum;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.ImageCRS;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.datum.DefaultImageDatum;
+import org.geotoolkit.resources.Vocabulary;
 
 
 /**
@@ -59,6 +63,26 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
      * Serial number for interoperability with different versions.
      */
     private static final long serialVersionUID = 7312452786096397847L;
+
+    /**
+     * A two-dimensional cartesian coordinate reference system with
+     * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#COLUMN column},
+     * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#ROW row} axes.
+     * By default, this CRS has no transformation path to any other CRS (i.e. a map using this
+     * CS can't be reprojected to a {@linkplain DefaultGeographicCRS geographic coordinate
+     * reference system} for example).
+     * <p>
+     * The {@link PixelInCell} attribute of the associated {@link ImageDatum}
+     * is set to {@link PixelInCell#CELL_CENTER CELL_CENTER}.
+     *
+     * @since 3.09
+     */
+    public static final DefaultImageCRS GRID_2D;
+    static {
+        final Map<String,?> properties = name(Vocabulary.Keys.GRID);
+        GRID_2D = new DefaultImageCRS(properties, new DefaultImageDatum(properties,
+                PixelInCell.CELL_CENTER), DefaultCartesianCS.GRID);
+    }
 
     /**
      * Constructs a new object in which every attributes are set to a default value.

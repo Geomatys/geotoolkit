@@ -47,8 +47,8 @@ public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
     /**
      * The provider for the format to be tested.
      */
-    static final class Spi extends TextMatrixImageReader.Spi {
-        Spi() {
+    public static final class Spi extends TextMatrixImageReader.Spi {
+        public Spi() {
             padValue = -9999;
             locale   = Locale.CANADA;
             charset  = Charset.forName("UTF-8");

@@ -17,10 +17,13 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Set;
 import java.util.Map;
 import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Collections;
 import java.util.MissingResourceException;
 import java.util.logging.Level;
 import java.io.Closeable;
@@ -31,7 +34,11 @@ import java.awt.image.RenderedImage;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
+
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
@@ -42,18 +49,35 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.BackingStoreException;
+import org.geotoolkit.referencing.crs.DefaultImageCRS;
+import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 
 
 /**
  * A {@link GridCoverageReader} implementation which use an {@link ImageReader} for reading
  * sample values. This implementation stores the sample values in a {@link RenderedImage},
  * and consequently is targeted toward two-dimensional slices of data.
+ * <p>
+ * {@code ImageCoverageReader} basically works as a layer which converts <cite>geodetic
+ * coordinates</cite> (for example the region to read) to <cite>pixel coordinates</cite>
+ * before to pass them to the wrapped {@code ImageReader}, and conversely: from pixel
+ * coordinates to geodetic coordinates. The later conersion is called "<cite>grid to CRS</cite>"
+ * and is determined from the {@link SpatialMetadata} provided by the {@code ImageReader}.
+ *
+ * {@section Default metadata value}
+ * If no <cite>grid to CRS</cite> conversion or no {@linkplain CoordinateReferenceSystem
+ * Coordinate Reference System} object can be created from the {@link SpatialMetadata},
+ * then {@code ImageCoverageReader} invokes the {@link #getDefaultMetadata(int, Class)}
+ * method in order to get a default value. Subclasses can override that method in order
+ * to provide different default values.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.09
@@ -61,7 +85,41 @@ import org.geotoolkit.util.collection.BackingStoreException;
  * @since 3.09 (derived from 2.2)
  * @module
  */
-public abstract class ImageCoverageReader extends GridCoverageReader {
+public class ImageCoverageReader extends GridCoverageReader {
+    /**
+     * The name of metadata nodes we are interrested in. Some implementations of
+     * {@link ImageReader} may use this information for reading only the metadata
+     * we are interrested in.
+     *
+     * @see SpatialMetadataFormat
+     */
+    private static final Set<String> METADATA_NODES;
+    static {
+        final Set<String> s = new HashSet<String>(25);
+                                                // geotk-coverageio
+                                                // ├───ImageDescription
+        s.add("Dimensions");                    // │   ├───Dimensions
+        s.add("Dimension");                     // │   │   └───Dimension
+        s.add("RangeElementDescriptions");      // │   └───RangeElementDescriptions
+        s.add("RangeElementDescription");       // │       └───RangeElementDescription
+        s.add("SpatialRepresentation");         // ├───SpatialRepresentation
+        s.add("RectifiedGridDomain");           // └───RectifiedGridDomain
+        s.add("Limits");                        //     ├───Limits
+        s.add("OffsetVectors");                 //     ├───OffsetVectors
+        s.add("OffsetVector");                  //     │   └───OffsetVector
+        s.add("CoordinateReferenceSystem");     //     └───CoordinateReferenceSystem
+        s.add("CoordinateSystem");              //         ├───CoordinateSystem
+        s.add("Axes");                          //         │   └───Axes
+        s.add("CoordinateSystemAxis");          //         │       └───CoordinateSystemAxis
+        s.add("Datum");                         //         ├───Datum
+        s.add("Ellipsoid");                     //         │   ├───Ellipsoid
+        s.add("PrimeMeridian");                 //         │   └───PrimeMeridian
+        s.add("Conversion");                    //         └───Conversion
+        s.add("Parameters");                    //             └───Parameters
+        s.add("ParameterValue");                //                 └───ParameterValue
+        METADATA_NODES = Collections.unmodifiableSet(s);
+    }
+
     /**
      * The {@link ImageReader} to use for decoding {@link RenderedImage}s. This reader is
      * initially {@code null} and lazily created the first time {@link #setInput(Object)}
@@ -142,7 +200,7 @@ public abstract class ImageCoverageReader extends GridCoverageReader {
      * @see ImageReader#setLocale(Locale)
      */
     private static void setLocale(final ImageReader reader, final Locale locale) {
-        if (reader != null) {
+        if (reader != null && locale != null) {
             final Locale[] list = reader.getAvailableLocales();
             for (int i=list.length; --i>=0;) {
                 if (locale.equals(list[i])) {
@@ -315,6 +373,33 @@ public abstract class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Returns the default metadata for an object of the given type. This method is invoked
+     * by {@link #getGridGeometry(int)} when a required metadata object can not be created.
+     * The {@code type} argument can be any of the types listed in left column of the table
+     * below. The values listed in the right columns are the default values provided by the
+     * default implementation of this method.
+     * <p>
+     * <table border="1" cellspacing="0">
+     *   <tr bgcolor="lightblue"><th>Type</th><th>Default value</th></tr>
+     *   <tr><td>&nbsp;{@link CoordinateReferenceSystem}&nbsp;</td>
+     *       <td>&nbsp;{@link DefaultImageCRS#GRID_2D}&nbsp;</td></tr>
+     * </table>
+     *
+     * @param  <T>   The type of the metadata object to return.
+     * @param  index The index of the image for which a metadata value is required.
+     * @param  type  The type of the metadata object to return.
+     * @return The default metadata value for an object of the given kind.
+     * @throws CoverageStoreException If an error occured while determining the default value.
+     */
+    protected <T> T getDefaultMetadata(final int index, final Class<T> type) throws CoverageStoreException {
+        Object value = null;
+        if (type.equals(CoordinateReferenceSystem.class)) {
+            value = DefaultImageCRS.GRID_2D;
+        }
+        return type.cast(value);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -338,28 +423,92 @@ public abstract class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Gets the spatial metadata from the given image reader, or return {@code null}
+     * if none were found. This method asks only for the metadata nodes listed in the
+     * {@link #METADATA_NODES} collection. Note however that most {@link ImageReader}
+     * implementations will return all metadata anyway.
+     *
+     * @param  imageReader The image reader from which to get the metadata.
+     * @param  index The index of the image to be queried.
+     * @return The metadata of the given index, or {@code null} if none.
+     * @throws IOException If an error occured while reading the metadata.
+     */
+    private static SpatialMetadata getSpatialMetadata(final ImageReader imageReader, final int index)
+            throws IOException
+    {
+        final IIOMetadata metadata = imageReader.getImageMetadata(index,
+                SpatialMetadataFormat.FORMAT_NAME, METADATA_NODES);
+        if (metadata instanceof SpatialMetadata) {
+            return (SpatialMetadata) metadata;
+        } else if (metadata != null) {
+            return new SpatialMetadata(SpatialMetadataFormat.IMAGE, imageReader, metadata);
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns the grid geometry for the {@link GridCoverage2D} to be read at the given index.
      * The default implementation performs the following:
      * <p>
      * <ul>
      *   <li>The {@link org.opengis.coverage.grid.GridEnvelope} is determined from the image
-     *       {@linkplain ImageReader#getWidth(int)} and {@linkplain ImageReader#getHeight(int)}.</li>
+     *       {@linkplain ImageReader#getWidth(int) width} and
+     *       {@linkplain ImageReader#getHeight(int) height}.</li>
+     *   <li>The {@link CoordinateReferenceSystem} and the "<cite>grid to CRS</cite>" conversion
+     *       are determined from the {@link SpatialMetadata} if any, or from the values returned
+     *       by {@link #getDefaultMetadata(int, Class)} otherwise.</li>
      * </ul>
      */
     @Override
     public GridGeometry2D getGridGeometry(final int index) throws CoverageStoreException {
-        final int dimension = 2; // TODO
-        final int[]   lower = new int[dimension];
-        final int[]   upper = new int[dimension];
-        Arrays.fill(upper, 1);
+        final ImageReader imageReader = this.imageReader; // Protect from changes.
+        if (imageReader == null) {
+            throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+        }
+        /*
+         * Get the metadata.
+         */
+        CoordinateReferenceSystem crs = null;
+        MathTransform gridToCRS = null;
+        final int width, height;
         try {
-            upper[0] = imageReader.getWidth(index);
-            upper[1] = imageReader.getHeight(index);
+            width  = imageReader.getWidth(index);
+            height = imageReader.getHeight(index);
+            final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
+            if (metadata != null) {
+                crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
+                // TODO get gridToCRS.
+            }
         } catch (IOException e) {
             throw new CoverageStoreException(error(e), e);
         }
-        final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, true);
-        return new GridGeometry2D(gridRange, null, null);
+        /*
+         * Replace missing metadata by their default values
+         * and create the grid geometry.
+         */
+        if (crs == null) {
+            crs = getDefaultMetadata(index, CoordinateReferenceSystem.class);
+        }
+        final int dimension = crs.getCoordinateSystem().getDimension();
+        if (gridToCRS == null) {
+            gridToCRS = IdentityTransform.create(dimension);
+        }
+        final int[] lower = new int[dimension];
+        final int[] upper = new int[dimension];
+        Arrays.fill(upper, 1);
+        upper[0] = width;
+        upper[1] = height;
+        final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
+        return new GridGeometry2D(gridRange, gridToCRS, crs);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
+        return null;
     }
 
     /**

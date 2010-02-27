@@ -234,7 +234,7 @@ import org.geotoolkit.resources.Errors;
     │   ├───low
     │   └───high
     ├───origin
-    ├───OffsetVectors
+    ├───<b>OffsetVectors</b>
     │   └───OffsetVector
     │       └───values
     └───<b>CoordinateReferenceSystem</b> : {@linkplain CoordinateReferenceSystem}

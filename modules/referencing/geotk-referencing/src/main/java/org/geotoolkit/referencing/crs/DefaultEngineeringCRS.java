@@ -112,7 +112,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * A two-dimensional cartesian coordinate reference system with
      * {@linkplain DefaultCoordinateSystemAxis#X x},
      * {@linkplain DefaultCoordinateSystemAxis#Y y}
-     * axis in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
+     * axes in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
      * path to any other CRS (i.e. a map using this CS can't be reprojected to a
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
@@ -124,7 +124,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * {@linkplain DefaultCoordinateSystemAxis#X x},
      * {@linkplain DefaultCoordinateSystemAxis#Y y},
      * {@linkplain DefaultCoordinateSystemAxis#Z z}
-     * axis in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
+     * axes in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
      * path to any other CRS (i.e. a map using this CS can't be reprojected to a
      * {@linkplain DefaultGeographicCRS geographic coordinate reference system} for example).
      */
@@ -135,7 +135,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * A two-dimensional wildcard coordinate system with
      * {@linkplain DefaultCoordinateSystemAxis#X x},
      * {@linkplain DefaultCoordinateSystemAxis#Y y}
-     * axis in {@linkplain SI#METRE metres}. At the difference of {@link #CARTESIAN_2D},
+     * axes in {@linkplain SI#METRE metres}. At the difference of {@link #CARTESIAN_2D},
      * this coordinate system is treated specially by the default {@linkplain
      * org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory coordinate operation
      * factory} with loose transformation rules: if no transformation path were found (for example
@@ -151,7 +151,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * {@linkplain DefaultCoordinateSystemAxis#X x},
      * {@linkplain DefaultCoordinateSystemAxis#Y y},
      * {@linkplain DefaultCoordinateSystemAxis#Z z}
-     * axis in {@linkplain SI#METRE metres}. At the difference of {@link #CARTESIAN_3D},
+     * axes in {@linkplain SI#METRE metres}. At the difference of {@link #CARTESIAN_3D},
      * this coordinate system is treated specially by the default {@linkplain
      * org.geotoolkit.referencing.operation.DefaultCoordinateOperationFactory coordinate operation
      * factory} with loose transformation rules: if no transformation path were found (for example

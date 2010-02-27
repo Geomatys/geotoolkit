@@ -75,7 +75,7 @@
  * the standard types (image input or output stream) defined by the Java Image I/O specification.
  *
  * {@section System initialization}
- * While not mandatory, it is recommanded to invoke the following methods exactly once before
+ * While not mandatory, it is recommanded to invoke the following methods at least once before
  * to use the Geotk library. Those methods are not invoked automatically in order to let users
  * control their application configuration.
  * <p>
@@ -85,6 +85,11 @@
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
+ * <p>
+ * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
+ * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.registerDefaults(...)}
+ * again will replace the old <cite>World File</cite> readers by new one wrapping the new standard
+ * readers.
  *
  * {@section Conversion of sample values}
  * Spatial image formats often contain geophysical values (e.g. temperatures in Celsius degrees,
