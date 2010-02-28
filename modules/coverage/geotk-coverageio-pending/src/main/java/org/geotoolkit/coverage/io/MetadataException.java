@@ -17,6 +17,7 @@
 package org.geotoolkit.coverage.io;
 
 import javax.imageio.IIOException;
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.text.DefaultTextMetadataParser;
 
 
@@ -29,8 +30,11 @@ import org.geotoolkit.image.io.text.DefaultTextMetadataParser;
  *
  * @module pending
  * @since 2.2
+ *
+ * @deprecated Replaced by {@link ImageMetadataException}.
  */
-public class MetadataException extends IIOException {
+@Deprecated
+public class MetadataException extends ImageMetadataException {
     /**
      * Serial number for interoperability with different versions.
      */

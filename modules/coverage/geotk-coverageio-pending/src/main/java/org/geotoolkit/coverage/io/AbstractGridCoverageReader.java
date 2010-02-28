@@ -82,7 +82,10 @@ import org.opengis.referencing.operation.MathTransform;
  * @since 2.2
  * @version $Id$
  * @author Martin Desruisseaux (IRD)
+ *
+ * @deprecated Replaced by {@link ImageCoverageReader}.
  */
+@Deprecated
 public abstract class AbstractGridCoverageReader {
     /**
      * The logger for the {@link #getGridCoverage} method.

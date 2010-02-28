@@ -45,7 +45,10 @@ import org.opengis.referencing.operation.Projection;
  *
  * @module pending
  * @since 2.5
+ *
+ * @deprecated Replaced by {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
  */
+@Deprecated
 class MetadataWriter {
     /**
      * The {@linkplain GeographicMetadata geographic metadata} in which different

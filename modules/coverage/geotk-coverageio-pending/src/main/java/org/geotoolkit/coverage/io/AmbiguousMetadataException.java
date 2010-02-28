@@ -31,7 +31,10 @@ import org.geotoolkit.resources.Errors;
  *
  * @module pending
  * @since 2.2
+ *
+ * @deprecated No replacement.
  */
+@Deprecated
 public class AmbiguousMetadataException extends MetadataException {
     /**
      * Serial number for interoperability with different versions.

@@ -47,7 +47,10 @@ import org.opengis.referencing.operation.TransformException;
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by {@link ImageCoverageReader}
  */
+@Deprecated
 public class DefaultCoverageReader implements CoverageReader{
 
     private final ImageReader reader;
