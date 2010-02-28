@@ -58,6 +58,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * delegate the reading of pixel values.}
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @version 3.09
  *
  * @see ImageReader

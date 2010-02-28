@@ -19,17 +19,21 @@ package org.geotoolkit.coverage.io;
 
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
@@ -88,15 +92,56 @@ public final class ImageCoverageReaderTest {
 
         final GridGeometry2D gridGeometry = reader.getGridGeometry(0);
         final GridEnvelope gridEnvelope = gridGeometry.getGridRange();
-        assertEquals( 2, gridEnvelope.getDimension());
-        assertEquals( 0, gridEnvelope.getLow(0));
-        assertEquals( 0, gridEnvelope.getLow(1));
-        assertEquals(19, gridEnvelope.getHigh(0)); // Inclusive
-        assertEquals(41, gridEnvelope.getHigh(1)); // Inclusive
-        assertTrue(new Rectangle(20,42).equals(gridGeometry.getGridRange2D()));
-        assertTrue(new AffineTransform(1000, 0, 0, -1000, -10000, 21000).equals(gridGeometry.getGridToCRS()));
+        assertEquals("Grid dimension", 2, gridEnvelope.getDimension());
+        assertEquals("Image columns",  0, gridEnvelope.getLow(0));
+        assertEquals("Image rows",     0, gridEnvelope.getLow(1));
+        assertEquals("Image columns", 19, gridEnvelope.getHigh(0)); // Inclusive
+        assertEquals("Image rows",    41, gridEnvelope.getHigh(1)); // Inclusive
+        assertTrue("Image bounds", new Rectangle(20,42).equals(gridGeometry.getGridRange2D()));
+        assertTrue("Grid to CRS (Java2D)", new AffineTransform(1000, 0, 0, -1000, -10000, 21000)
+                .equals(gridGeometry.getGridToCRS(PixelOrientation.UPPER_LEFT)));
+        assertTrue("Grid to CRS (OGC)", new AffineTransform(1000, 0, 0, -1000, -9500, 20500)
+                .equals(gridGeometry.getGridToCRS())); // Equivalent to PixelOrientation.CENTER
 
         final GridCoverage2D gridCoverage = reader.read(0, null);
-        assertNotNull(gridCoverage); // We merely tested that no exception were thrown.
+        final RenderedImage image = gridCoverage.getRenderedImage();
+        assertEquals("Image columns",  0, image.getMinX());
+        assertEquals("Image rows",     0, image.getMinY());
+        assertEquals("Image columns", 20, image.getWidth());
+        assertEquals("Image rows",    42, image.getHeight());
+
+        final Envelope envelope = gridCoverage.getEnvelope();
+        assertEquals("Envelope X", -10000, envelope.getMinimum(0), 1E-9);
+        assertEquals("Envelope Y", -21000, envelope.getMinimum(1), 1E-9);
+        assertEquals("Envelope X",  10000, envelope.getMaximum(0), 1E-9);
+        assertEquals("Envelope Y",  21000, envelope.getMaximum(1), 1E-9);
+    }
+
+    /**
+     * Reads a region of the image.
+     *
+     * @throws IOException If the text file can not be open (should not happen).
+     * @throws CoverageStoreException Should not happen.
+     */
+    @Test
+    public void readRegion() throws IOException, CoverageStoreException {
+        final ImageCoverageReader reader = new ImageCoverageReader();
+        reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
+        assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
+
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
+        final GridCoverage2D gridCoverage = reader.read(0, param);
+        final RenderedImage image = gridCoverage.getRenderedImage();
+        assertEquals("Image columns",  0, image.getMinX());
+        assertEquals("Image rows",     0, image.getMinY());
+        assertEquals("Image columns",  9, image.getWidth());
+        assertEquals("Image rows",    14, image.getHeight());
+
+        final Envelope envelope = gridCoverage.getEnvelope();
+        assertEquals("Envelope X", -1000, envelope.getMinimum(0), 1E-9);
+        assertEquals("Envelope Y", -2000, envelope.getMinimum(1), 1E-9);
+        assertEquals("Envelope X",  8000, envelope.getMaximum(0), 1E-9);
+        assertEquals("Envelope Y", 12000, envelope.getMaximum(1), 1E-9);
     }
 }

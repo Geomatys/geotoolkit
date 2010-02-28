@@ -61,9 +61,10 @@ public class GridCoverageReadParam {
     private double[] resolution;
 
     /**
-     * The set of parameters which should be used strictly as defined. By default, every
-     * parameters are strict. However users can remove elements from this set for allowing
-     * the {@link GridCoverageReader} to use more efficient parameter values when possible.
+     * The set of parameters which should be used strictly as defined. By default, no parameter
+     * is strict (i.e. this set is empty), which allow the {@link GridCoverageReader} to use more
+     * efficient parameter values when possible. However users can add elements to this set for
+     * forcing the {@code GridCoverageReader} to return a coverage matching exactly the parameters.
      * <p>
      * For example if the {@linkplain #getEnvelope() envelope} is not strict, then the reader
      * may use the intersection of the coverage envelope (as available in the store) with the
@@ -73,7 +74,8 @@ public class GridCoverageReadParam {
      * See {@link ParameterType} for a list of parameters that can be set to strict or not-strict
      * mode, and and explanation of what "non-strict" means for each parameter.
      */
-    public final Set<ParameterType> strictParameters = EnumSet.allOf(ParameterType.class);
+    // TODO: Not yet public because not yet implemented.
+    final Set<ParameterType> strictParameters = EnumSet.noneOf(ParameterType.class);
 
     /**
      * Creates a new {@code GridCoverageReadParam} instance. All properties are

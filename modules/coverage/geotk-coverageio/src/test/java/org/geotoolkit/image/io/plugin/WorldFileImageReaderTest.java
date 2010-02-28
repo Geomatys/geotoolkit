@@ -108,7 +108,8 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "│           └───method=“Mercator_1SP”\n" +
                 "└───SpatialRepresentation\n" +
                 "    ├───numberOfDimensions=“2”\n" +
-                "    └───centerPoint=“0.0 0.0”"), metadata.toString());
+                "    ├───centerPoint=“0.0 0.0”\n" +
+                "    └───pointInPixel=“upperLeft”"), metadata.toString());
         reader.dispose();
     }
 }

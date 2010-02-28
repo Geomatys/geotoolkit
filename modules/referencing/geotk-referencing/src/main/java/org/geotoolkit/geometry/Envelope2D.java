@@ -42,7 +42,7 @@ import org.geotoolkit.resources.Errors;
  * on the {@linkplain java.awt.Graphics2D#getTransform affine transform in the graphics context}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.09
  *
  * @see GeneralEnvelope
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -74,8 +74,9 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * Constructs two-dimensional envelope defined by an other {@link Envelope}.
      *
      * @param envelope The envelope to copy.
+     * @throws MismatchedDimensionException If the given envelope is not two-dimensional.
      */
-    public Envelope2D(final Envelope envelope) {
+    public Envelope2D(final Envelope envelope) throws MismatchedDimensionException {
         super(envelope.getMinimum(0), envelope.getMinimum(1),
               envelope.getSpan(0), envelope.getSpan(1));
 
@@ -149,6 +150,26 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
               Math.abs(maxDP.x - minDP.x),
               Math.abs(maxDP.y - minDP.y));
         setCoordinateReferenceSystem(AbstractEnvelope.getCoordinateReferenceSystem(minDP, maxDP));
+    }
+
+    /**
+     * Sets this envelope to the same values than the given {@link Envelope}.
+     *
+     * @param envelope The envelope to copy.
+     * @throws MismatchedDimensionException If the given envelope is not two-dimensional.
+     *
+     * @since 3.09
+     */
+    public void setEnvelope(final Envelope envelope) throws MismatchedDimensionException {
+        if (envelope != this) {
+            final int dimension = envelope.getDimension();
+            if (dimension != 2) {
+                throw new MismatchedDimensionException(Errors.format(
+                        Errors.Keys.NOT_TWO_DIMENSIONAL_$1, dimension));
+            }
+            setCoordinateReferenceSystem(envelope.getCoordinateReferenceSystem());
+            setFrame(envelope.getMinimum(0), envelope.getMinimum(1), envelope.getSpan(0), envelope.getSpan(1));
+        }
     }
 
     /**

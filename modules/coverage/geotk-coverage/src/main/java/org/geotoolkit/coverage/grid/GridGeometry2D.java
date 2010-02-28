@@ -39,6 +39,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
@@ -747,7 +748,8 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @see #getEnvelope
      */
     public Envelope2D getEnvelope2D() throws InvalidGridGeometryException {
-        if (envelope!=null && !envelope.isNull()) {
+        final GeneralEnvelope envelope = this.envelope;
+        if (envelope != null && !envelope.isNull()) {
             assert isDefined(ENVELOPE);
             return new Envelope2D(crs2D,
                     envelope.getMinimum(axisDimensionX),
@@ -774,12 +776,13 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @see #getGridRange
      */
     public GridEnvelope2D getGridRange2D() throws InvalidGridGeometryException {
+        final GridEnvelope gridRange = this.gridRange;
         if (gridRange != null) {
             assert isDefined(GRID_RANGE);
             return new GridEnvelope2D(gridRange.getLow (gridDimensionX),
                                       gridRange.getLow (gridDimensionY),
-                                      gridRange.getSpan (gridDimensionX),
-                                      gridRange.getSpan (gridDimensionY));
+                                      gridRange.getSpan(gridDimensionX),
+                                      gridRange.getSpan(gridDimensionY));
         }
         assert !isDefined(GRID_RANGE);
         throw new InvalidGridGeometryException(Errors.Keys.UNSPECIFIED_IMAGE_SIZE);

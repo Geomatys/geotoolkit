@@ -27,6 +27,7 @@ import javax.imageio.spi.ServiceRegistry;
 import java.awt.geom.AffineTransform;
 import java.awt.Rectangle;
 
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.ImageReaderAdapter;
@@ -218,7 +219,8 @@ public class WorldFileImageReader extends ImageReaderAdapter {
                 if (gridToCRS != null) {
                     final int width  = getWidth (imageIndex);
                     final int height = getHeight(imageIndex);
-                    new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height), null, null);
+                    new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height),
+                            null, PixelOrientation.UPPER_LEFT);
                 }
                 if (crs != null) {
                     new ReferencingBuilder(metadata).setCoordinateReferenceSystem(crs);
