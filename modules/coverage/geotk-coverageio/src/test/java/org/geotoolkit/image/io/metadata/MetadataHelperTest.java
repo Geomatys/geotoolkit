@@ -18,9 +18,11 @@
 package org.geotoolkit.image.io.metadata;
 
 import java.util.Locale;
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.display.shape.DoubleDimension2D;
@@ -55,7 +57,14 @@ public final class MetadataHelperTest implements Localized {
 
     /**
      * Tests the {@link MetadataHelper#getAffineTransform} method.
-     * Also tests related methods fetching the grid size.
+     * Contains also opportunist tests of the following methods:
+     * <p>
+     * <ul>
+     *   <li>{@link MetadataHelper#getCellDimension}</li>
+     *   <li>{@link MetadataHelper#getCellSize}</li>
+     *   <li>{@link MetadataHelper#formatCellDimension}</li>
+     *   <li>{@link MetadataHelper#getGridToCRS}</li>
+     * </ul>
      *
      * @throws ImageMetadataException Should not happen.
      */
@@ -76,8 +85,11 @@ public final class MetadataHelperTest implements Localized {
         assertEquals(-20, tr.getTranslateY(), EPS);
         assertEquals(  3, tr.getScaleX(),     EPS);
         assertEquals(  8, tr.getScaleY(),     EPS);
-        assertEquals(  4, tr.getShearX(),     EPS);
-        assertEquals(  0, tr.getShearY(),     EPS);
+        assertEquals(  0, tr.getShearX(),     EPS);
+        assertEquals(  4, tr.getShearY(),     EPS);
+        assertEquals("Testing origin", new Point2D.Double(-10,-20), tr.transform(new Point2D.Double(), null));
+        assertEquals("Testing offset vector 1", new Point2D.Double(3,4), tr.deltaTransform(new Point2D.Double(1,0), null));
+        assertEquals("Testing offset vector 2", new Point2D.Double(0,8), tr.deltaTransform(new Point2D.Double(0,1), null));
         assertNull(hlp.getCellDimension(tr));
         try {
             hlp.getCellSize(tr);
@@ -86,6 +98,12 @@ public final class MetadataHelperTest implements Localized {
             // This is the expected exception.
         }
         assertEquals("5 × 8", hlp.formatCellDimension(grid, null));
+        /*
+         * getGridCRS(...) should returns an equivalent transform.
+         */
+        final MathTransform gridToCRS = hlp.getGridToCRS(grid);
+        assertTrue(gridToCRS instanceof AffineTransform);
+        assertTrue(tr.equals(gridToCRS));
     }
 
     /**

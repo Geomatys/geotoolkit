@@ -23,13 +23,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.MissingResourceException;
-import java.util.logging.Level;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -37,10 +35,16 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.util.InternationalString;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
@@ -49,13 +53,15 @@ import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.io.LineWriter;
-import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
@@ -73,11 +79,17 @@ import org.geotoolkit.referencing.operation.transform.IdentityTransform;
  * and is determined from the {@link SpatialMetadata} provided by the {@code ImageReader}.
  *
  * {@section Default metadata value}
- * If no <cite>grid to CRS</cite> conversion or no {@linkplain CoordinateReferenceSystem
- * Coordinate Reference System} object can be created from the {@link SpatialMetadata},
- * then {@code ImageCoverageReader} invokes the {@link #getDefaultMetadata(int, Class)}
- * method in order to get a default value. Subclasses can override that method in order
- * to provide different default values.
+ * If no {@linkplain CoordinateReferenceSystem Coordinate Reference System} or no
+ * <cite>grid to CRS</cite> {@linkplain MathTransform math transform} can be created
+ * from the {@link SpatialMetadata}, then the default values listed below are used:
+ * <p>
+ * <table border="1" cellspacing="0">
+ *   <tr bgcolor="lightblue"><th>Type</th><th>Default value</th></tr>
+ *   <tr><td>&nbsp;{@link CoordinateReferenceSystem}&nbsp;</td>
+ *       <td>&nbsp;{@link DefaultImageCRS#GRID_2D}&nbsp;</td></tr>
+ *   <tr><td>&nbsp;{@link MathTransform}&nbsp;</td>
+ *       <td>&nbsp;{@link IdentityTransform#create(int)} with the CRS dimension&nbsp;</td></tr>
+ * </table>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.09
@@ -157,6 +169,11 @@ public class ImageCoverageReader extends GridCoverageReader {
     private List<String> coverageNames;
 
     /**
+     * Helper utilities for parsing metadata. Created only when needed.
+     */
+    private transient MetadataHelper helper;
+
+    /**
      * The grid coverage factory to use.
      */
     private final GridCoverageFactory factory;
@@ -177,7 +194,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      *        or {@code null} for the default hints.
      */
     public ImageCoverageReader(final Hints hints) {
-        this.factory = CoverageFactoryFinder.getGridCoverageFactory(hints);
+        factory = CoverageFactoryFinder.getGridCoverageFactory(hints);
     }
 
     /**
@@ -191,6 +208,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public void setLocale(final Locale locale) {
         super.setLocale(locale);
         setLocale(imageReader, locale);
+        helper = null;
     }
 
     /**
@@ -373,33 +391,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Returns the default metadata for an object of the given type. This method is invoked
-     * by {@link #getGridGeometry(int)} when a required metadata object can not be created.
-     * The {@code type} argument can be any of the types listed in left column of the table
-     * below. The values listed in the right columns are the default values provided by the
-     * default implementation of this method.
-     * <p>
-     * <table border="1" cellspacing="0">
-     *   <tr bgcolor="lightblue"><th>Type</th><th>Default value</th></tr>
-     *   <tr><td>&nbsp;{@link CoordinateReferenceSystem}&nbsp;</td>
-     *       <td>&nbsp;{@link DefaultImageCRS#GRID_2D}&nbsp;</td></tr>
-     * </table>
-     *
-     * @param  <T>   The type of the metadata object to return.
-     * @param  index The index of the image for which a metadata value is required.
-     * @param  type  The type of the metadata object to return.
-     * @return The default metadata value for an object of the given kind.
-     * @throws CoverageStoreException If an error occured while determining the default value.
-     */
-    protected <T> T getDefaultMetadata(final int index, final Class<T> type) throws CoverageStoreException {
-        Object value = null;
-        if (type.equals(CoordinateReferenceSystem.class)) {
-            value = DefaultImageCRS.GRID_2D;
-        }
-        return type.cast(value);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -448,6 +439,16 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Returns a helper object for parsing metadata.
+     */
+    private MetadataHelper getMetadataHelper() {
+        if (helper == null) {
+            helper = new MetadataHelper(this);
+        }
+        return helper;
+    }
+
+    /**
      * Returns the grid geometry for the {@link GridCoverage2D} to be read at the given index.
      * The default implementation performs the following:
      * <p>
@@ -456,8 +457,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      *       {@linkplain ImageReader#getWidth(int) width} and
      *       {@linkplain ImageReader#getHeight(int) height}.</li>
      *   <li>The {@link CoordinateReferenceSystem} and the "<cite>grid to CRS</cite>" conversion
-     *       are determined from the {@link SpatialMetadata} if any, or from the values returned
-     *       by {@link #getDefaultMetadata(int, Class)} otherwise.</li>
+     *       are determined from the {@link SpatialMetadata} if any.</li>
      * </ul>
      */
     @Override
@@ -467,10 +467,12 @@ public class ImageCoverageReader extends GridCoverageReader {
             throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
         }
         /*
-         * Get the metadata.
+         * Get the required information from the SpatialMetadata, if any.
+         * For now we just collect them - they will be processed later.
          */
         CoordinateReferenceSystem crs = null;
-        MathTransform gridToCRS = null;
+        MathTransform       gridToCRS = null;
+        PixelOrientation pointInPixel = null;
         final int width, height;
         try {
             width  = imageReader.getWidth(index);
@@ -478,29 +480,44 @@ public class ImageCoverageReader extends GridCoverageReader {
             final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
             if (metadata != null) {
                 crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
-                // TODO get gridToCRS.
+                final RectifiedGrid grid = metadata.getInstanceForType(RectifiedGrid.class);
+                if (grid != null) {
+                    gridToCRS = getMetadataHelper().getGridToCRS(grid);
+                }
+                final Georectified georect = metadata.getInstanceForType(Georectified.class);
+                if (georect != null) {
+                    pointInPixel = georect.getPointInPixel();
+                }
             }
         } catch (IOException e) {
             throw new CoverageStoreException(error(e), e);
         }
         /*
-         * Replace missing metadata by their default values
-         * and create the grid geometry.
+         * If any metadata are still null, replace them by their default values. Those default
+         * values are selected in order to be as neutral as possible: An ImageCRS which is not
+         * convertible to GeodeticCRS, an identity "grid to CRS" conversion, a PixelOrientation
+         * equivalent to performing no shift at all in the "grid to CRS" conversion.
          */
         if (crs == null) {
-            crs = getDefaultMetadata(index, CoordinateReferenceSystem.class);
+            crs = DefaultImageCRS.GRID_2D;
         }
         final int dimension = crs.getCoordinateSystem().getDimension();
         if (gridToCRS == null) {
             gridToCRS = IdentityTransform.create(dimension);
         }
+        if (pointInPixel == null) {
+            pointInPixel = PixelOrientation.CENTER;
+        }
+        /*
+         * Now build the grid geometry.
+         */
         final int[] lower = new int[dimension];
         final int[] upper = new int[dimension];
         Arrays.fill(upper, 1);
         upper[0] = width;
         upper[1] = height;
         final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
-        return new GridGeometry2D(gridRange, gridToCRS, crs);
+        return new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
     }
 
     /**
@@ -508,7 +525,110 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
-        return null;
+        final ImageReader imageReader = this.imageReader; // Protect from changes.
+        if (imageReader == null) {
+            throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+        }
+        /*
+         * Get the required information from the SpatialMetadata, if any.
+         * For now we just collect them - they will be processed later.
+         */
+        List<SampleDimension> sampleDimensions = null;
+        try {
+            final SpatialMetadata metadata = getSpatialMetadata(imageReader, index);
+            if (metadata != null) {
+                sampleDimensions = metadata.getListForType(SampleDimension.class);
+            }
+        } catch (IOException e) {
+            throw new CoverageStoreException(error(e), e);
+        }
+        if (sampleDimensions == null || sampleDimensions.isEmpty()) {
+            return null;
+        }
+        /*
+         * Now convert the SampleDimension instances to GridSampleDimension instances.
+         * For each sample dimension, we create a qualitative category for each fill
+         * values (if any) and a single quantitative category for the range of sample
+         * values.
+         */
+        InternationalString untitled = null; // To be created only if needed.
+        final MetadataHelper hlp = getMetadataHelper();
+        final List<Category> categories = new ArrayList<Category>();
+        final GridSampleDimension[] bands = new GridSampleDimension[sampleDimensions.size()];
+        boolean hasSampleDimensions = false;
+        for (int i=0; i<bands.length; i++) {
+            final SampleDimension sd = sampleDimensions.get(i);
+            if (sd != null) {
+                /*
+                 * Get a name for the sample dimensions. This name will be given both to the
+                 * GridSampleDimension object and to the single qualitative Category. If no
+                 * name can be found, "Untitled" will be used.
+                 */
+                InternationalString dimensionName = sd.getDescriptor();
+                if (dimensionName == null) {
+                    if (untitled == null) {
+                        untitled = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+                    }
+                    dimensionName = untitled;
+                }
+                /*
+                 * Create a qualitative category for each fill value.
+                 */
+                final double[] fillValues = sd.getFillSampleValues();
+                if (fillValues != null) {
+                    final CharSequence name = Category.NODATA.getName();
+                    for (int j=0; j<fillValues.length; j++) {
+                        final double fv = fillValues[i];
+                        final int ifv = (int) fv;
+                        final Category c;
+                        if (ifv == fv) {
+                            c = new Category(name, null, ifv);
+                        } else {
+                            c = new Category(name, null, fv);
+                        }
+                        categories.add(c);
+                    }
+                }
+                /*
+                 * Create a quantitative category for the range of valid sample values.
+                 */
+                final NumberRange<?> range = hlp.getValidSampleValues(sd, fillValues);
+                if (range != null) {
+                    final Double scale = sd.getScaleFactor();
+                    if (scale != null) {
+                        Double offset = sd.getOffset();
+                        if (offset == null) {
+                            offset = 0.0;
+                        }
+                        final TransferFunctionType type = sd.getTransferFunctionType();
+                        if (type == null || type.equals(TransferFunctionType.LINEAR)) {
+                            categories.add(new Category(dimensionName, null, range, scale, offset));
+                        } else {
+                            /*
+                             * TODO: We need to support exponential and logarithmic transforms
+                             * here. For doing a good job, we should use a MathTransformFactory
+                             * (see CategoryTable for inspiration). In order to be consistent, we
+                             * should use that factory for the transform implicitly created by
+                             * the above new Category(...) constructor call, and the transform
+                             * implicitly created by MetadataHelper.createGridToCRS(...).
+                             */
+                            throw new CoverageStoreException(Errors.getResources(locale)
+                                    .getString(Errors.Keys.UNSUPPORTED_OPERATION_$1, type));
+                        }
+                    }
+                }
+                /*
+                 * Create the GridSampleDimension instance.
+                 */
+                if (!categories.isEmpty()) {
+                    bands[i] = new GridSampleDimension(dimensionName,
+                            categories.toArray(new Category[categories.size()]), sd.getUnits());
+                    categories.clear();
+                    hasSampleDimensions = true;
+                }
+            }
+        }
+        return hasSampleDimensions ? Arrays.asList(bands) : null;
     }
 
     /**
@@ -516,7 +636,6 @@ public class ImageCoverageReader extends GridCoverageReader {
      * the information provided by {@link #getGridGeometry(int)}.
      */
     @Override
-    @SuppressWarnings("fallthrough")
     public GridCoverage2D read(final int index, final GridCoverageReadParam param)
             throws CoverageStoreException
     {
@@ -541,59 +660,6 @@ public class ImageCoverageReader extends GridCoverageReader {
         } catch (IOException e) {
             throw new CoverageStoreException(error(e), e);
         }
-        if (LOGGER.isLoggable(Level.FINE)) {
-            /*
-             * Log the arguments used for creating the GridCoverage. This is a costly logging:
-             * the string representations for some argument are very long   (RenderedImage and
-             * CoordinateReferenceSystem), and string representation for sample dimensions may
-             * use many lines.
-             */
-            final StringWriter buffer = new StringWriter(         );
-            final LineWriter   trimer = new LineWriter  (buffer   );
-            final TableWriter   table = new TableWriter (trimer, 1);
-            final PrintWriter     out = new PrintWriter (table    );
-            buffer.write("Creating GridCoverage[\"");
-            buffer.write(name);
-            buffer.write("\"] with:");
-            buffer.write(trimer.getLineSeparator());
-            table.setMultiLinesCells(true);
-            final int sdCount = (bands != null) ? bands.size() : 0;
-            for (int i=-3; i<sdCount; i++) {
-                String key = "";
-                Object value;
-                switch (i) {
-                    case -3: {
-                        key = "RenderedImage";
-                        value = image;
-                        break;
-                    }
-                    case -2: {
-                        key = "CoordinateReferenceSystem";
-                        value = gridGeometry.getCoordinateReferenceSystem();
-                        break;
-                    }
-                    case -1: {
-                        key = "Envelope";
-                        value = gridGeometry.getEnvelope();
-                        break;
-                    }
-                    case 0: {
-                        key = "SampleDimensions";
-                        // fall through
-                    }
-                    default: {
-                        value = bands.get(i);
-                        break;
-                    }
-                }
-                out.print("    ");
-                out.print(key   ); table.nextColumn();
-                out.print('='   ); table.nextColumn();
-                out.print(value ); table.nextLine();
-            }
-            out.flush();
-            LOGGER.fine(buffer.toString());
-        }
         return factory.create(name, image, gridGeometry,
                 (bands != null) ? bands.toArray(new GridSampleDimension[bands.size()]) : null,
                 null, properties);
@@ -601,8 +667,8 @@ public class ImageCoverageReader extends GridCoverageReader {
 
     /**
      * Returns an error message for the given exception. If the {@linkplain #input input} is
-     * known, this method returns "<cite>Can't read 'the name'</cite>". Otherwise it returns
-     * the localized message of the given exception.
+     * known, this method returns "<cite>Can't read 'the name'</cite>" followed by the cause
+     * message. Otherwise it returns the localized message of the given exception.
      */
     private String error(final IOException e) {
         return error(input, e);
@@ -612,11 +678,15 @@ public class ImageCoverageReader extends GridCoverageReader {
      * Same than {@link #error(IOException)}, but with an explicitly specified input.
      */
     private String error(final Object input, final IOException e) {
+        String message = e.getLocalizedMessage();
         if (IOUtilities.canProcessAsPath(input)) {
-            return Errors.getResources(locale).getString(Errors.Keys.CANT_READ_$1, IOUtilities.name(input));
-        } else {
-            return e.getLocalizedMessage();
+            final String cause = message;
+            message = Errors.getResources(locale).getString(Errors.Keys.CANT_READ_$1, IOUtilities.name(input));
+            if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
+                message = message + '\n' + cause;
+            }
         }
+        return message;
     }
 
     /**
@@ -665,6 +735,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             reader.dispose();
         }
         imageReader = null;
+        helper = null;
         super.reset();
     }
 }

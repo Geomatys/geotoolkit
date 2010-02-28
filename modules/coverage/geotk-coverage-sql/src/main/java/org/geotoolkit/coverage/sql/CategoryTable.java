@@ -28,12 +28,14 @@ import java.sql.PreparedStatement;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
 
@@ -64,9 +66,9 @@ final class CategoryTable extends Table {
     };
 
     /**
-     * The <code>f(x) = 10<sup>x</sup></code> transform, created only when first needed.
+     * The math transform factory, created only when first needed.
      */
-    private transient MathTransform1D exponential;
+    private transient volatile MathTransformFactory mtFactory;
 
     /**
      * Creates a category table.
@@ -89,6 +91,8 @@ final class CategoryTable extends Table {
         final CategoryQuery query = (CategoryQuery) this.query;
         final List<Category> categories = new ArrayList<Category>();
         final Map<Integer,Category[]> dimensions = new HashMap<Integer,Category[]>();
+        MathTransformFactory mtFactory = null;  // Will be fetched only if needed.
+        MathTransform      exponential = null;  // Will be fetched only if needed.
         int bandOfPreviousCategory = 0;
         synchronized (getLock()) {
             final LocalCache.Stmt ce = getStatement(QueryType.LIST);
@@ -149,27 +153,41 @@ final class CategoryTable extends Table {
                     category = new Category(name, colors, range, (MathTransform1D) null);
                 } else {
                     // Quantitative category.
-                    category = new Category(name, colors, range, c1, c0);
-                    if (function != null) {
-                        if (function.equalsIgnoreCase("log")) try {
-                            // Quantitative and logarithmic category.
-                            final MathTransformFactory factory = AuthorityFactoryFinder.getMathTransformFactory(null);
-                            if (exponential == null) {
-                                final ParameterValueGroup param = factory.getDefaultParameters("Exponential");
-                                param.parameter("base").setValue(10.0); // Must be a 'double'
-                                exponential = (MathTransform1D) factory.createParameterizedTransform(param);
-                            }
-                            MathTransform1D tr = category.getSampleToGeophysics();
-                            tr = (MathTransform1D) factory.createConcatenatedTransform(tr, exponential);
-                            category = new Category(name, colors, range, tr);
-                        } catch (FactoryException exception) {
-                            results.close();
-                            throw new CatalogException(exception);
-                        } else {
-                            throw new IllegalRecordException(errors().getString(
-                                    Errors.Keys.UNSUPPORTED_OPERATION_$1, function),
-                                    this, results, functionIndex, name);
+                    if (mtFactory == null) {
+                        mtFactory = this.mtFactory;
+                        if (mtFactory == null) {
+                            // Not a big deal if invoked concurrently in 2 threads.
+                            this.mtFactory = mtFactory = AuthorityFactoryFinder
+                                    .getMathTransformFactory(getDatabase().hints);
                         }
+                    }
+                    MathTransform tr;
+                    try {
+                        tr = mtFactory.createAffineTransform(new Matrix2(c1, c0, 0, 1));
+                        if (function != null) {
+                            if (function.equalsIgnoreCase("log")) {
+                                // Quantitative and logarithmic category.
+                                if (exponential == null) {
+                                    final ParameterValueGroup param = mtFactory.getDefaultParameters("Exponential");
+                                    param.parameter("base").setValue(10.0); // Must be a 'double'
+                                    exponential = mtFactory.createParameterizedTransform(param);
+                                }
+                                tr = mtFactory.createConcatenatedTransform(tr, exponential);
+                            } else {
+                                throw new IllegalRecordException(errors().getString(
+                                        Errors.Keys.UNSUPPORTED_OPERATION_$1, function),
+                                        this, results, functionIndex, name);
+                            }
+                        }
+                    } catch (FactoryException exception) {
+                        results.close();
+                        throw new CatalogException(exception);
+                    }
+                    try {
+                        category = new Category(name, colors, range, (MathTransform1D) tr);
+                    } catch (ClassCastException exception) { // If 'tr' is not a MathTransform1D.
+                        results.close();
+                        throw new CatalogException(exception);
                     }
                 }
                 /*

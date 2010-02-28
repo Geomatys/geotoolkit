@@ -17,9 +17,13 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+
+import org.opengis.coverage.grid.GridEnvelope;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -83,9 +87,16 @@ public final class ImageCoverageReaderTest {
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
 
         final GridGeometry2D gridGeometry = reader.getGridGeometry(0);
-        System.out.println(gridGeometry);
+        final GridEnvelope gridEnvelope = gridGeometry.getGridRange();
+        assertEquals( 2, gridEnvelope.getDimension());
+        assertEquals( 0, gridEnvelope.getLow(0));
+        assertEquals( 0, gridEnvelope.getLow(1));
+        assertEquals(19, gridEnvelope.getHigh(0)); // Inclusive
+        assertEquals(41, gridEnvelope.getHigh(1)); // Inclusive
+        assertTrue(new Rectangle(20,42).equals(gridGeometry.getGridRange2D()));
+        assertTrue(new AffineTransform(1000, 0, 0, -1000, -10000, 21000).equals(gridGeometry.getGridToCRS()));
 
         final GridCoverage2D gridCoverage = reader.read(0, null);
-        System.out.println(gridCoverage);
+        assertNotNull(gridCoverage); // We merely tested that no exception were thrown.
     }
 }

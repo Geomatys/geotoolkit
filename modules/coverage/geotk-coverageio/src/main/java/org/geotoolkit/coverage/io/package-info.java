@@ -22,9 +22,9 @@
  * implementation is {@link org.geotoolkit.coverage.io.ImageCoverageReader}, which read the
  * sample values using an {@link javax.imageio.ImageReader} from the standard Java library.
  * <p>
- * Many different data formats exist. However most of this variety is not handled by
- * this {@code org.geotoolkit.coverage.io} package. The various data formats are
- * rather handled by different subclasses of {@code ImageReader}, for example
+ * Many different data formats exist. However most of this variety is not handled by this package.
+ * The various data formats are rather handled by different subclasses of {@code ImageReader},
+ * for example
  * {@link org.geotoolkit.image.io.plugin.AsciiGridReader},
  * {@link org.geotoolkit.image.io.plugin.NetcdfImageReader} and
  * {@link org.geotoolkit.image.io.plugin.WorldFileImageReader}.

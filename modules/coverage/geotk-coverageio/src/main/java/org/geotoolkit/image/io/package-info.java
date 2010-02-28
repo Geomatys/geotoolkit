@@ -87,7 +87,7 @@
  * </ol>
  * <p>
  * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
- * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.registerDefaults(...)}
+ * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.Spi.registerDefaults(...)}
  * again will replace the old <cite>World File</cite> readers by new one wrapping the new standard
  * readers.
  *

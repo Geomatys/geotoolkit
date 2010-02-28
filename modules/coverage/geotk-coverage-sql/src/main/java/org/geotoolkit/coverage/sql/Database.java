@@ -35,6 +35,7 @@ import java.lang.reflect.Constructor;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -104,6 +105,11 @@ class Database implements Localized {
      * returned by {@link Table#getCalendar()}.
      */
     private final TimeZone timezone;
+
+    /**
+     * The hints to use for fetching factories. Shall be considered read-only.
+     */
+    final Hints hints;
 
     /**
      * Provides information for SQL statements being executed.
@@ -226,6 +232,7 @@ class Database implements Localized {
         this.timezone   = toCopy.timezone;
         this.catalog    = toCopy.catalog;
         this.schema     = toCopy.schema;
+        this.hints      = toCopy.hints;
     }
 
     /**
@@ -267,6 +274,7 @@ class Database implements Localized {
         catalog  = getProperty(ConfigurationKey.CATALOG);
         schema   = getProperty(ConfigurationKey.SCHEMA);
         source   = new AuthenticatedDataSource(datasource, username, password, Boolean.TRUE);
+        hints    = null; // May be configurable in a future version.
     }
 
     /**

@@ -32,6 +32,7 @@ import javax.measure.unit.UnitFormat;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.resources.Errors;
@@ -41,6 +42,9 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.image.io.ImageMetadataException;
+import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 
 /**
@@ -103,6 +107,16 @@ public class MetadataHelper implements Localized {
     }
 
     /**
+     * Ensures that the given vector is non-null and non-empty.
+     */
+    private void ensureVectorsExist(final List<?> vectors) throws ImageMetadataException {
+        ensureMetadataExists("OffsetVectors", -1, vectors);
+        if (vectors.isEmpty()) {
+            throw new ImageMetadataException(error(Errors.Keys.MISSING_PARAMETER_VALUE_$1, "OffsetVectors"));
+        }
+    }
+
+    /**
      * Ensures that the given value is non-null. The value is presumed extracted
      * from a metadata attribute.
      *
@@ -121,19 +135,23 @@ public class MetadataHelper implements Localized {
     }
 
     /**
-     * Ensures that the given {@code dimension} argument is equal to 2.
+     * Ensures that the given {@code dimension} argument is equal to the expected value.
      *
      * @param  name      The name of the parameter being verified.
      * @param  index     The index to append to {@code name}, or -1 if none.
-     * @param  dimension The dimension which shall be equals to 2.
-     * @throws ImageMetadataException If the given dimension is not equals to 2.
+     * @param  dimension The dimension which shall be equals to {@code expected}.
+     * @param  expected  The expected dimension value (often 2).
+     * @throws ImageMetadataException If the given dimension is not equals to {@code expected}.
      */
-    private void ensureTwoDimensional(String name, int index, int dimension) throws ImageMetadataException {
-        if (dimension != 2) {
+    private void ensureDimensionMatch(String name, int index, int dimension, final int expected)
+            throws ImageMetadataException
+    {
+        if (dimension != expected) {
             if (index >= 0) {
                 name = name + '[' + index + ']';
             }
-            throw new ImageMetadataException(error(Errors.Keys.MISMATCHED_DIMENSION_$3, name, dimension, 2));
+            throw new ImageMetadataException(error(Errors.Keys.MISMATCHED_DIMENSION_$3,
+                    name, dimension, expected));
         }
     }
 
@@ -250,6 +268,46 @@ public class MetadataHelper implements Localized {
     }
 
     /**
+     * Creates the <cite>Grid to CRS</cite> conversion from the {@linkplain RectifiedGrid#getOrigin()
+     * origin} and {@linkplain RectifiedGrid#getOffsetVectors() offset vectors} of the given domain.
+     * <p>
+     * This method is similar to {@link #getAffineTransform(RectifiedGrid, IIOParam)}, except that
+     * it is not restricted to a two-dimensional conversion and does not take an {@link IIOParam}
+     * object in account.
+     *
+     * @param  domain The domain from which to extract the origin and offset vectors.
+     * @return The <cite>Grid to CRS</cite> conversion extracted from the given domain.
+     * @throws ImageMetadataException If a mandatory attribute is missing from the given domain.
+     *
+     * @since 3.09
+     */
+    public MathTransform getGridToCRS(final RectifiedGrid domain) throws ImageMetadataException {
+        final DirectPosition origin = domain.getOrigin();
+        ensureMetadataExists("origin", -1, origin);
+        final List<double[]> vectors = domain.getOffsetVectors();
+        ensureVectorsExist(vectors);
+        final int dimSource = vectors.size();        // Number of dimensions in the grid.
+        final int dimTarget = origin.getDimension(); // Number of dimensions in the CRS.
+        final XMatrix matrix = MatrixFactory.create(dimTarget + 1, dimSource + 1);
+        if (dimTarget < dimSource) {
+            matrix.setElement(dimTarget, dimTarget, 0);
+        }
+        matrix.setElement(dimTarget, dimSource, 1);
+        for (int i=0; i<dimSource; i++) {
+            final double[] v = vectors.get(i);
+            ensureMetadataExists("OffsetVector", i, v);
+            ensureDimensionMatch("OffsetVector", i, v.length, dimTarget);
+            for (int j=0; j<dimTarget; j++) {
+                matrix.setElement(j, i, v[j]);
+            }
+        }
+        for (int j=0; j<dimTarget; j++) {
+            matrix.setElement(j, dimSource, origin.getOrdinate(j));
+        }
+        return ProjectiveTransform.create(matrix);
+    }
+
+    /**
      * Creates an affine transform from the {@linkplain RectifiedGrid#getOrigin() origin} and
      * {@linkplain RectifiedGrid#getOffsetVectors() offset vectors} of the given domain. If
      * the {@code param} parameter is non-null, then the affine transform is scaled and
@@ -271,20 +329,16 @@ public class MetadataHelper implements Localized {
     {
         final DirectPosition origin = domain.getOrigin();
         ensureMetadataExists("origin", -1, origin);
-        ensureTwoDimensional("origin", -1, origin.getDimension());
+        ensureDimensionMatch("origin", -1, origin.getDimension(), 2);
         final List<double[]> vectors = domain.getOffsetVectors();
-        ensureMetadataExists("OffsetVectors", -1, vectors);
-        if (vectors.isEmpty()) {
-            throw new ImageMetadataException(error(Errors.Keys.MISSING_PARAMETER_VALUE_$1, "OffsetVectors"));
-        }
-        ensureTwoDimensional("OffsetVectors", -1, vectors.size());
+        ensureVectorsExist(vectors);
+        ensureDimensionMatch("OffsetVectors", -1, vectors.size(), 2);
         final double matrix[] = new double[6];
         for (int i=0; i<=1; i++) {
             final double[] v = vectors.get(i);
             ensureMetadataExists("OffsetVector", i, v);
-            ensureTwoDimensional("OffsetVector", i, v.length);
-            matrix[i  ] = v[0]; // 0:ScaleX | 1:ShearY
-            matrix[i+2] = v[1]; // 2:ShearX | 3:ScaleY
+            ensureDimensionMatch("OffsetVector", i, v.length, 2);
+            System.arraycopy(v, 0, matrix, i*2, 2);
             matrix[i+4] = origin.getOrdinate(i);
         }
         for (int i=0; i<matrix.length; i++) {
