@@ -22,11 +22,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
@@ -41,6 +45,8 @@ import org.opengis.filter.identity.FeatureId;
  * @module pending
  */
 public class OSMBinDataStore extends AbstractDataStore{
+
+    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
     public OSMBinDataStore(URL filePath){
 
@@ -66,8 +72,8 @@ public class OSMBinDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public QueryCapabilities getQueryCapabilities() {
+        return capabilities;
     }
 
     /**
