@@ -18,9 +18,11 @@
 package org.geotoolkit.gui.swing.image;
 
 import java.awt.Color;
+import javax.measure.unit.SI;
 import static java.awt.Color.*;
 
 import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.internal.image.ColorUtilities;
 
 
@@ -28,7 +30,7 @@ import org.geotoolkit.internal.image.ColorUtilities;
  * Tests the {@link ColorRamp}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @version 3.10
  *
  * @since 2.0
  */
@@ -45,10 +47,15 @@ public final class ColorRampTest extends SwingBase<ColorRamp> {
      */
     @Override
     protected ColorRamp create() {
+        final NumberGraduation graduation = new NumberGraduation(SI.CELSIUS);
+        graduation.setMinimum(-3);
+        graduation.setMaximum(40);
+
         final ColorRamp test = new ColorRamp();
         final int[] ARGB = new int[256];
         ColorUtilities.expand(new Color[] {RED, ORANGE, YELLOW, CYAN}, ARGB, 0, ARGB.length);
         test.setColors(ColorUtilities.getIndexColorModel(ARGB));
+        test.setGraduation(graduation);
         return test;
     }
 }

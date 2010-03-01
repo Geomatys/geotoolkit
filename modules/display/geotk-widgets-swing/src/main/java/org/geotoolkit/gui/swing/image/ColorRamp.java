@@ -21,47 +21,25 @@ import javax.swing.JComponent;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.ComponentUI;
 
-import java.awt.Font;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
-import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphVector;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import java.util.Map;
-import java.util.HashMap;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.LogRecord;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.measure.unit.Unit;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
-import org.opengis.coverage.PaletteInterpretation;
-import org.opengis.referencing.operation.MathTransform1D;
-import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.axis.Graduation;
-import org.geotoolkit.display.axis.TickIterator;
-import org.geotoolkit.display.axis.NumberGraduation;
-import org.geotoolkit.display.axis.AbstractGraduation;
-import org.geotoolkit.display.axis.LogarithmicNumberGraduation;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
-import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -75,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.09
+ * @version 3.10
  *
  * @since 1.1
  * @module
@@ -83,74 +61,42 @@ import org.geotoolkit.resources.Errors;
 @SuppressWarnings("serial")
 public class ColorRamp extends JComponent {
     /**
-     * Margin (in pixel) on each sides: top, left, right and bottom of the color ramp.
+     * The object to use for painting the color ramp.
      */
-    private static final int MARGIN = 10;
+    private final class Painter extends org.geotoolkit.internal.image.ColorRamp {
+        /** Tells the painter that we want to be informed about color changes. */
+        @Override protected boolean reportColorChanges() {
+            return true;
+        }
+
+        /** Allows user to override the {@code createGraduation} method. */
+        @Override protected Graduation createGraduation(final Graduation reuse,
+                final SampleDimension band, final double minimum, final double maximum)
+        {
+            return ColorRamp.this.createGraduation(reuse, band, minimum, maximum);
+        }
+    }
 
     /**
-     * The graduation to write over the color ramp.
+     * The object on which to delegate the paint operations.
      */
-    private Graduation graduation;
-
-    /**
-     * Graduation units. This is constructed from {@link Graduation#getUnit} and cached
-     * for faster rendering.
-     */
-    private String units;
-
-    /**
-     * The colors to paint as ARGB values (never {@code null}).
-     */
-    private int[] colors = new int[0];
-
-    /**
-     * {@code true} if tick label must be display.
-     */
-    private boolean labelVisibles = true;
-
-    /**
-     * {@code true} if tick label can be display with an automatic color. The
-     * automatic color will be white or black depending the background color.
-     */
-    private boolean autoForeground = true;
-
-    /**
-     * {@code true} if the color bar should be drawn horizontally,
-     * or {@code false} if it should be drawn vertically.
-     */
-    private boolean horizontal = true;
-
-    /**
-     * Rendering hints for the graduation. This include the color bar
-     * length, which is used for the space between ticks.
-     */
-    private transient RenderingHints hints;
-
-    /**
-     * The tick iterator used during the last painting. This iterator will be reused as mush
-     * as possible in order to reduce garbage-collections.
-     */
-    private transient TickIterator reuse;
-
-    /**
-     * A temporary buffer for conversions from RGB to HSB
-     * values. This is used by {@link #getForeground(int)}.
-     */
-    private transient float[] HSB;
+    private final Painter painter;
 
     /**
      * The {@link ComponentUI} object for computing preferred
      * size, drawn the component and handle some events.
      */
-    private final UI ui = new UI();
+    private final UI ui;
 
     /**
      * Constructs an initially empty color ramp. Colors can be
      * set using one of the {@code setColors(...)} methods.
      */
     public ColorRamp() {
+        ui = new UI();
         setOpaque(true);
         setUI(ui);
+        painter = new Painter();
     }
 
     /**
@@ -170,7 +116,7 @@ public class ColorRamp extends JComponent {
      * @return The graduation to draw.
      */
     public Graduation getGraduation() {
-        return graduation;
+        return painter.getGraduation();
     }
 
     /**
@@ -184,28 +130,18 @@ public class ColorRamp extends JComponent {
      * @return {@code true} if this object changed as a result of this call.
      */
     public boolean setGraduation(final Graduation graduation) {
-        final Graduation oldGraduation = this.graduation;
-        if (graduation != oldGraduation) {
+        final Graduation oldGraduation = painter.setGraduation(graduation);
+        final boolean changed = !Utilities.equals(graduation, oldGraduation);
+        if (changed) {
             if (oldGraduation != null) {
                 oldGraduation.removePropertyChangeListener(ui);
             }
             if (graduation != null) {
                 graduation.addPropertyChangeListener(ui);
             }
-            this.graduation = graduation;
-            units = null;
-            if (graduation != null) {
-                final Unit<?> unit = graduation.getUnit();
-                if (unit != null) {
-                    units = unit.toString();
-                }
-            }
-        }
-        final boolean changed = !Utilities.equals(graduation, oldGraduation);
-        if (changed) {
             repaint();
+            firePropertyChange("graduation", oldGraduation, graduation);
         }
-        firePropertyChange("graduation", oldGraduation, graduation);
         return changed;
     }
 
@@ -215,28 +151,7 @@ public class ColorRamp extends JComponent {
      * @return The colors (never {@code null}).
      */
     public Color[] getColors() {
-        return getColors(colors, new HashMap<Integer,Color>());
-    }
-
-    /**
-     * Creates an array of {@link Color} values from the given array of ARGB values.
-     *
-     * @param  ARGB  The array of ARGB values.
-     * @param  share A map of {@link Color} instances previously created, or an empty map if none.
-     * @return The array of color instances.
-     */
-    private static Color[] getColors(final int[] ARGB, final Map<Integer,Color> share) {
-        final Color[] colors = new Color[ARGB.length];
-        for (int i=0; i<colors.length; i++) {
-            final Integer value = ARGB[i];
-            Color ci = share.get(value);
-            if (ci == null) {
-                ci = new Color(value, true);
-                share.put(value, ci);
-            }
-            colors[i] = ci;
-        }
-        return colors;
+        return painter.getColors();
     }
 
     /**
@@ -254,16 +169,7 @@ public class ColorRamp extends JComponent {
      * @see #getGraduation()
      */
     public boolean setColors(final Color[] colors) {
-        final Map<Integer,Color> share = new HashMap<Integer,Color>();
-        int[] ARGB = null;
-        if (colors != null) {
-            ARGB = new int[colors.length];
-            for (int i=0; i<colors.length; i++) {
-                final Color c = colors[i];
-                share.put(ARGB[i] = c.getRGB(), c);
-            }
-        }
-        return setColors(ARGB, share);
+        return fireColorChange(painter.setColors(colors));
     }
 
     /**
@@ -281,30 +187,21 @@ public class ColorRamp extends JComponent {
      * @since 3.09
      */
     public boolean setColors(final int[] colors) {
-        return setColors((colors != null) ? colors.clone() : null, null);
+        return fireColorChange(painter.setColors(colors));
     }
 
     /**
-     * Sets the colors to paint as an array of ARGB values.
+     * Fires a property change event if the colors changed.
      *
-     * @param  newColors The colors to paint, or {@code null} if none.
-     * @param  share A map of {@link Color} instances previously created, or {@code null} if none.
-     * @return {@code true} if the state of this {@code ColorRamp} changed as a result of this call.
+     * @param  changes The old and new colors, or {@code null} if there is no change.
+     * @return Whatever that were a change.
      */
-    private boolean setColors(int[] newColors, Map<Integer,Color> share) {
-        if (newColors == null) {
-            newColors = new int[0];
-        }
-        final int[] oldColors = colors;
-        colors = newColors;
-        if (Arrays.equals(oldColors, newColors)) {
+    private boolean fireColorChange(final Color[][] changes) {
+        if (changes == null) {
             return false;
         }
         repaint();
-        if (share == null) {
-            share = new HashMap<Integer,Color>();
-        }
-        firePropertyChange("colors", getColors(oldColors, share), getColors(newColors, share));
+        firePropertyChange("colors", changes[0], changes[1]);
         return true;
     }
 
@@ -346,100 +243,9 @@ public class ColorRamp extends JComponent {
      * @see #getColors()
      * @see #getGraduation()
      */
-    @SuppressWarnings("fallthrough")
-    public boolean setColors(SampleDimension band) {
-        Color[] colors = null;
-        Graduation graduation = null;
-        /*
-         * Gets the color palette, preferably from the "non-geophysics" view since it is usually
-         * the one backed by an IndexColorModel.  We assume that 'palette[i]' gives the color of
-         * sample value 'i'. We will search for the largest range of valid sample integer values,
-         * ignoring "nodata" values. Those "nodata" values appear usually at the begining or at
-         * the end of the whole palette range.
-         *
-         * Note that the above algorithm works without Category. We try to avoid dependency
-         * on categories because some applications don't use them. TODO: should we use this
-         * algorithm only as a fallback (i.e. use categories when available)?
-         */
-        if (band != null) {
-            if (band instanceof GridSampleDimension) {
-                band = ((GridSampleDimension) band).geophysics(false);
-            }
-            final int[][] palette = band.getPalette();
-            if (palette != null) {
-                int lower = 0; // Will be inclusive
-                int upper = 0; // Will be exclusive
-                final double[] nodata = band.getNoDataValues();
-                final double[] sorted = new double[nodata!=null ? nodata.length + 2 : 2];
-                sorted[0] = -1;
-                sorted[sorted.length - 1] = palette.length;
-                if (nodata != null) {
-                    System.arraycopy(nodata, 0, sorted, 1, nodata.length);
-                }
-                Arrays.sort(sorted);
-                for (int i=1; i<sorted.length; i++) {
-                    // Note: Don't cast to integer now, because we
-                    // want to take NaN and infinity in account.
-                    final double lo = Math.floor(sorted[i-1])+1; // "Nodata" always excluded
-                    final double hi = Math.ceil (sorted[i  ]);   // "Nodata" included if integer
-                    if (lo>=0 && hi<=palette.length && (hi-lo)>(upper-lower)) {
-                        lower = (int) lo;
-                        upper = (int) hi;
-                    }
-                }
-                /*
-                 * We now know the range of values to show on the palette. Creates the colors from
-                 * the palette. Only palette using RGB colors are understood at this time, but the
-                 * graduation (after this block) is still created for all kind of palette.
-                 */
-                if (PaletteInterpretation.RGB.equals(band.getPaletteInterpretation())) {
-                    colors = new Color[upper - lower];
-                    for (int i=0; i<colors.length; i++) {
-                        int r=0, g=0, b=0, a=255;
-                        final int[] c = palette[i+lower];
-                        if (c != null) switch (c.length) {
-                            default:        // Fall through
-                            case 4: a=c[3]; // Fall through
-                            case 3: b=c[2]; // Fall through
-                            case 2: g=c[1]; // Fall through
-                            case 1: r=c[0]; // Fall through
-                            case 0: break;
-                        }
-                        colors[i] = new Color(r,g,b,a);
-                    }
-                }
-                /*
-                 * Transforms the lower and upper sample values into minimum and maximum geophysics
-                 * values and creates the graduation. Note that the maximum value will be inclusive,
-                 * at the difference of upper value which was exclusive prior this point.
-                 */
-                if (upper > lower) {
-                    upper--; // Make it inclusive.
-                }
-                double min, max;
-                try {
-                    final MathTransform1D tr = band.getSampleToGeophysics();
-                    min = tr.transform(lower);
-                    max = tr.transform(upper);
-                } catch (TransformException cause) {
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "band", band), cause);
-                }
-                if (min > max) {
-                    // This case occurs typically when displaying a color ramp for
-                    // sea bathymetry, for which floor level are negative numbers.
-                    min = -min;
-                    max = -max;
-                }
-                if (!(min <= max)) {
-                    // This case occurs if one or both values is NaN.
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "band", band));
-                }
-                graduation = createGraduation(this.graduation, band, min, max);
-            }
-        }
-        return setGraduation(graduation) | setColors(colors); // Realy |, not ||
+    public boolean setColors(final SampleDimension band) {
+        final Map.Entry<Graduation,Color[]> entry = painter.getColors(band);
+        return setGraduation(entry.getKey()) | setColors(entry.getValue()); // Realy |, not ||
     }
 
     /**
@@ -470,15 +276,7 @@ public class ColorRamp extends JComponent {
      * @return The component orientation.
      */
     public int getOrientation() {
-        return orientation();
-    }
-
-    /**
-     * Non-overridable method for consistency with the old values provided in
-     * calls to {@code firePropertyChange} (they always use the internal value).
-     */
-    private int orientation() {
-        return (horizontal) ? SwingConstants.HORIZONTAL : SwingConstants.VERTICAL;
+        return painter.getOrientation();
     }
 
     /**
@@ -487,14 +285,11 @@ public class ColorRamp extends JComponent {
      * @param orient {@link SwingConstants#HORIZONTAL} or {@link SwingConstants#VERTICAL}.
      */
     public void setOrientation(final int orient) {
-        final int old = orientation();
-        switch (orient) {
-            case SwingConstants.HORIZONTAL: horizontal=true;  break;
-            case SwingConstants.VERTICAL:   horizontal=false; break;
-            default: throw new IllegalArgumentException(String.valueOf(orient));
+        final int old = painter.setOrientation(orient);
+        if (old != orient) {
+            firePropertyChange("orientation", old, orient);
+            repaint();
         }
-        firePropertyChange("orientation", old, orient);
-        repaint();
     }
 
     /**
@@ -504,7 +299,7 @@ public class ColorRamp extends JComponent {
      * @return {@code true} if graduation labels are drawn.
      */
     public boolean isLabelVisibles() {
-        return labelVisibles;
+        return painter.labelVisibles;
     }
 
     /**
@@ -513,10 +308,12 @@ public class ColorRamp extends JComponent {
      * @param visible {@code true} if graduation labels should be drawn.
      */
     public void setLabelVisibles(final boolean visible) {
-        final boolean old = labelVisibles;
-        labelVisibles = visible;
-        firePropertyChange("labelVisibles", old, visible);
-        repaint();
+        final boolean old = painter.labelVisibles;
+        painter.labelVisibles = visible;
+        if (old != visible) {
+            firePropertyChange("labelVisibles", old, visible);
+            repaint();
+        }
     }
 
     /**
@@ -529,20 +326,7 @@ public class ColorRamp extends JComponent {
     @Override
     public void setForeground(final Color color) {
         super.setForeground(color);
-        autoForeground = (color == null);
-    }
-
-    /**
-     * Returns a color for label at the specified index. The default color will be
-     * black or white, depending of the background color at the specified index.
-     */
-    private Color getForeground(final int colorIndex) {
-        final int color = colors[colorIndex];
-        final int R = ((color >>> 16) & 0xFF);
-        final int G = ((color >>>  8) & 0xFF);
-        final int B = ( color         & 0xFF);
-        HSB = Color.RGBtoHSB(R, G, B, HSB);
-        return (HSB[2] >= 0.5f) ? Color.BLACK : Color.WHITE;
+        painter.autoForeground = (color == null);
     }
 
     /**
@@ -554,154 +338,18 @@ public class ColorRamp extends JComponent {
      * @return Bounding box of graduation labels (NOT taking in account the color ramp
      *                  behind them), or {@code null} if no label has been painted.
      */
-    private Rectangle2D paint(final Graphics2D graphics, final Rectangle bounds) {
-        final int[] colors = this.colors;
-        final int length = colors.length;
-        final double dx, dy;
-        if (length == 0) {
-            dx = 0;
-            dy = 0;
-        } else {
-            dx = (double) (bounds.width  - 2*MARGIN) / length;
-            dy = (double) (bounds.height - 2*MARGIN) / length;
-            int i=0, lastIndex=0;
-            int color = colors[0];
-            int nextColor = color;
-            final int ox = bounds.x + MARGIN;
-            final int oy = bounds.y + bounds.height - MARGIN;
-            final Rectangle2D.Double rect = new Rectangle2D.Double();
-            rect.setRect(bounds);
-            while (++i <= length) {
-                if (i != length) {
-                    nextColor = colors[i];
-                    if (nextColor == color) {
-                        continue;
-                    }
-                }
-                if (horizontal) {
-                    rect.x      = ox + dx*lastIndex;
-                    rect.width  = dx * (i-lastIndex);
-                    if (lastIndex == 0) {
-                        rect.x     -= MARGIN;
-                        rect.width += MARGIN;
-                    }
-                    if (i == length) {
-                        rect.width += MARGIN;
-                    }
-                } else {
-                    rect.y      = oy - dy*i;
-                    rect.height = dy * (i-lastIndex);
-                    if (lastIndex == 0) {
-                        rect.height += MARGIN;
-                    }
-                    if (i == length) {
-                        rect.y      -= MARGIN;
-                        rect.height += MARGIN;
-                    }
-                }
-                graphics.setColor(new Color(color, true));
-                graphics.fill(rect);
-                lastIndex = i;
-                color = nextColor;
-            }
-        }
-        Rectangle2D labelBounds = null;
-        if (labelVisibles && graduation!=null) {
-            /*
-             * Prepares graduation writing. First, computes the color ramp width in pixels.
-             * Then, computes the coefficients for conversion of graduation values to pixel
-             * coordinates.
-             */
-            double x = bounds.getCenterX();
-            double y = bounds.getCenterY();
-            final double axisRange   = graduation.getSpan();
-            final double axisMinimum = graduation.getMinimum();
-            final double visualLength, scale, offset;
-            if (horizontal) {
-                visualLength = bounds.getWidth() - 2*MARGIN - dx;
-                scale        = visualLength / axisRange;
-                offset       = (bounds.getMinX() + MARGIN + 0.5*dx) - scale*axisMinimum;
-            } else {
-                visualLength = bounds.getHeight() - 2*MARGIN - dy;
-                scale        = -visualLength / axisRange;
-                offset       = (bounds.getMaxY() - MARGIN - 0.5*dy) + scale*axisMinimum;
-            }
-            if (hints == null) {
-                hints = new RenderingHints(null);
-            }
-            final double valueToLocation = length / axisRange;
-            Font font = getFont();
-            if (font == null) {
-                font = Font.decode("SansSerif-10");
-            }
-            final FontRenderContext context = graphics.getFontRenderContext();
-            hints.put(Graduation.VISUAL_AXIS_LENGTH, new Float((float)visualLength));
-            graphics.setColor(getForeground());
-            /*
-             * Now write the graduation.
-             */
-            final TickIterator ticks = graduation.getTickIterator(hints, reuse);
-            for (reuse=ticks; !ticks.isDone(); ticks.nextMajor()) {
-                if (ticks.isMajorTick()) {
-                    final GlyphVector glyph = font.createGlyphVector(context, ticks.currentLabel());
-                    final Rectangle2D rectg = glyph.getVisualBounds();
-                    final double      width = rectg.getWidth();
-                    final double     height = rectg.getHeight();
-                    final double      value = ticks.currentPosition();
-                    final double   position = value*scale + offset;
-                    final int    colorIndex = Math.min(Math.max((int) Math.round(
-                                              (value - axisMinimum)*valueToLocation),0), length-1);
-                    if (horizontal) x=position;
-                    else            y=position;
-                    rectg.setRect(x-0.5*width, y-0.5*height, width, height);
-                    if (autoForeground) {
-                        graphics.setColor(getForeground(colorIndex));
-                    }
-                    graphics.drawGlyphVector(glyph, (float)rectg.getMinX(), (float)rectg.getMaxY());
-                    if (labelBounds != null) {
-                        labelBounds.add(rectg);
-                    } else {
-                        labelBounds = rectg;
-                    }
-                }
-            }
-            /*
-             * Writes units.
-             */
-            if (units != null) {
-                final GlyphVector glyph = font.createGlyphVector(context, units);
-                final Rectangle2D rectg = glyph.getVisualBounds();
-                final double      width = rectg.getWidth();
-                final double     height = rectg.getHeight();
-                if (horizontal) {
-                    double left = bounds.getMaxX() - width;
-                    if (labelBounds != null) {
-                        final double check = labelBounds.getMaxX() + 4;
-                        if (check < left) {
-                            left = check;
-                        }
-                    }
-                    rectg.setRect(left, y - 0.5*height, width, height);
-                } else {
-                    rectg.setRect(x - 0.5*width, bounds.getMinY() + height, width, height);
-                }
-                if (autoForeground) {
-                    graphics.setColor(getForeground(length-1));
-                }
-                if (labelBounds==null || !labelBounds.intersects(rectg)) {
-                    graphics.drawGlyphVector(glyph, (float)rectg.getMinX(), (float)rectg.getMaxY());
-                }
-            }
-        }
-        return labelBounds;
+    final Rectangle2D paint(final Graphics2D graphics, final Rectangle bounds) {
+        return painter.paint(graphics, bounds, getFont(), getForeground());
     }
 
     /**
-     * Returns a graduation for the specified sample dimension, minimum and maximum values. This
+     * Returns a graduation for the specified sample dimension, minimum and maximum values. If
+     * the supplied {@code reuse} object is non-null and is of the appropriate class, then this
+     * method can return {@code reuse} without creating a new graduation object. Otherwise this
      * method must returns a graduation of the appropriate class, usually {@link NumberGraduation}
-     * or {@link LogarithmicNumberGraduation}. If the supplied {@code reuse} object is non-null and
-     * is of the appropriate class, then this method can returns {@code reuse} without creating a
-     * new graduation object. This method must set graduations's
+     * or {@link LogarithmicNumberGraduation}.
+     * <p>
+     * In every cases, this method must set graduations's
      * {@linkplain AbstractGraduation#setMinimum minimum},
      * {@linkplain AbstractGraduation#setMaximum maximum} and
      * {@linkplain AbstractGraduation#setUnit unit} according the values given in arguments.
@@ -715,69 +363,19 @@ public class ColorRamp extends JComponent {
     protected Graduation createGraduation(final Graduation reuse, final SampleDimension band,
                                           final double minimum, final double maximum)
     {
-        MathTransform1D tr  = band.getSampleToGeophysics();
-        boolean linear      = false;
-        boolean logarithmic = false;
-        try {
-            /*
-             * An heuristic approach to determine if the transform is linear or logarithmic.
-             * We look at the derivative, which should be constant everywhere for a linear
-             * scale and be proportional to the inverse of 'x' for a logarithmic one.
-             */
-            tr = tr.inverse();
-            final double EPS   = 1E-6; // For rounding error.
-            final double ratio = tr.derivative(minimum) / tr.derivative(maximum);
-            if (Math.abs(ratio-1) <= EPS) {
-                linear = true;
-            }
-            if (Math.abs(ratio*(minimum/maximum) - 1) <= EPS) {
-                logarithmic = true;
-            }
-        } catch (TransformException exception) {
-            // Transformation failed. We don't know if the scale is linear or logarithmic.
-            // Continue anyway. A warning will be logged later in this method.
-        }
-        final Unit<?> units = band.getUnits();
-        AbstractGraduation graduation = (reuse instanceof AbstractGraduation) ?
-                (AbstractGraduation) reuse : null;
-        if (linear) {
-            if (graduation==null || !graduation.getClass().equals(NumberGraduation.class)) {
-                graduation = new NumberGraduation(units);
-            }
-        } else if (logarithmic) {
-            if (graduation==null || !graduation.getClass().equals(LogarithmicNumberGraduation.class)) {
-                graduation = new LogarithmicNumberGraduation(units);
-            }
-        } else {
-            final Logger logger = Logging.getLogger(ColorRamp.class);
-            final LogRecord record = Loggings.format(Level.WARNING,
-                    Loggings.Keys.UNRECOGNIZED_SCALE_TYPE_$1, Classes.getShortClassName(tr));
-            record.setLoggerName(logger.getName());
-            logger.log(record);
-            graduation = new NumberGraduation(units);
-        }
-        if (graduation == reuse) {
-            graduation.setUnit(units);
-        }
-        graduation.setMinimum(minimum);
-        graduation.setMaximum(maximum);
-        return graduation;
+        return Painter.createDefaultGraduation(reuse, band, minimum, maximum);
     }
 
     /**
      * Returns an image representation for this color ramp. The image size will be this
-     * {@linkplain #getSize widget size}.
+     * {@linkplain #getSize() widget size}.
      *
      * @return The color ramp as a buffered image.
      *
      * @since 2.4
      */
     public BufferedImage toImage() {
-        final BufferedImage image = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D graphics = image.createGraphics();
-        paint(graphics, new Rectangle(0, 0, image.getWidth(), image.getHeight()));
-        graphics.dispose();
-        return image;
+        return painter.toImage(getWidth(), getHeight(), getFont(), getForeground());
     }
 
     /**
@@ -785,29 +383,17 @@ public class ColorRamp extends JComponent {
      */
     @Override
     public String toString() {
-        final int[] colors = this.colors;
-        int count = 0;
-        int i = 0;
-        if (i < colors.length) {
-            int last = colors[i];
-            while (++i < colors.length) {
-                int c = colors[i];
-                if (c != last) {
-                    last = c;
-                    count++;
-                }
-            }
-        }
-        return Classes.getShortClassName(this) + '[' + count + " colors]";
+        return painter.toString(getClass());
     }
 
     /**
      * Notifies this component that it now has a parent component. This method
-     * is invoked by <cite>Swing</cite> and shouldn't be directly used.
+     * is invoked by <i>Swing</i> and shouldn't be directly used.
      */
     @Override
     public void addNotify() {
         super.addNotify();
+        final Graduation graduation = painter.getGraduation();
         if (graduation != null) {
             graduation.removePropertyChangeListener(ui); // Avoid duplication
             graduation.addPropertyChangeListener(ui);
@@ -816,14 +402,27 @@ public class ColorRamp extends JComponent {
 
     /**
      * Notifies this component that it no longer has a parent component.
-     * This method is invoked by <em>Swing</em> and shouldn't be directly used.
+     * This method is invoked by <i>Swing</i> and shouldn't be directly used.
      */
     @Override
     public void removeNotify() {
+        final Graduation graduation = painter.getGraduation();
         if (graduation != null) {
             graduation.removePropertyChangeListener(ui);
         }
         super.removeNotify();
+    }
+
+    /**
+     * Returns the size of a vertical or horizontal rectangle, depending
+     * on the orientation of this widget.
+     */
+    final Dimension getSize(final int size) {
+        switch (getOrientation()) {
+            case SwingConstants.HORIZONTAL: return new Dimension(size, 16);
+            case SwingConstants.VERTICAL:   return new Dimension(16, size);
+            default: throw new AssertionError(this);
+        }
     }
 
     /**
@@ -839,20 +438,19 @@ public class ColorRamp extends JComponent {
      */
     private final class UI extends ComponentUI implements PropertyChangeListener {
         /**
-         * Retourne la dimension minimale de cette rampe de couleurs.
+         * Returns the minimal {@link ColorRamp} size.
          */
         @Override
         public Dimension getMinimumSize(final JComponent c) {
-            return (((ColorRamp) c).horizontal) ?
-                    new Dimension(2*MARGIN, 16) : new Dimension(16, 2*MARGIN);
+            return ((ColorRamp) c).getSize(2*Painter.MARGIN);
         }
 
         /**
-         * Retourne la dimension préférée de cette rampe de couleurs.
+         * Returns the prefered {@link ColorRamp} size.
          */
         @Override
         public Dimension getPreferredSize(final JComponent c) {
-            return (((ColorRamp) c).horizontal) ? new Dimension(256, 16) : new Dimension(16, 256);
+            return ((ColorRamp) c).getSize(256);
         }
 
         /**
@@ -866,7 +464,7 @@ public class ColorRamp extends JComponent {
         @Override
         public void paint(final Graphics graphics, final JComponent component) {
             final ColorRamp ramp = (ColorRamp) component;
-            if (ramp.colors != null) {
+            if (ramp.painter.hasColors()) {
                 final Rectangle bounds = ramp.getBounds();
                 bounds.x = 0;
                 bounds.y = 0;

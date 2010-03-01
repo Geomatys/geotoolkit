@@ -806,6 +806,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NO_DATA_SOURCE = 140;
 
         /**
+         * No image codec found for the "{0}" format. Available formats are {1}.
+         */
+        public static final int NO_IMAGE_FORMAT_$2 = 241;
+
+        /**
          * No input set.
          */
         public static final int NO_IMAGE_INPUT = 141;

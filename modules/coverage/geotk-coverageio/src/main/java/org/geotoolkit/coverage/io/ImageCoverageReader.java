@@ -114,7 +114,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -685,6 +685,35 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Returns the sample dimensions for each band to be read, as determined from the given
+     * optional parameters. If parameters are not null, then this method returns only the
+     * sample dimensions for supplied source bands list and returns them in the order
+     * inferred from the destination bands list.
+     */
+    private GridSampleDimension[] getSampleDimensions(final int index, final int[] srcBands, final int[] dstBands)
+            throws CoverageStoreException
+    {
+        final List<GridSampleDimension> bands = getSampleDimensions(index);
+        if (bands == null) {
+            return null;
+        }
+        int bandCount = bands.size();
+        if (srcBands != null && srcBands.length < bandCount) bandCount = srcBands.length;
+        if (dstBands != null && dstBands.length < bandCount) bandCount = dstBands.length;
+        final GridSampleDimension[] selectedBands = new GridSampleDimension[bandCount];
+        /*
+         * Searchs for 'GridSampleDimension' from the given source band index and
+         * stores their reference at the position given by destination band index.
+         */
+        for (int j=0; j<bandCount; j++) {
+            final int srcBand = (srcBands != null) ? srcBands[j] : j;
+            final int dstBand = (dstBands != null) ? dstBands[j] : j;
+            selectedBands[dstBand] = bands.get(srcBand % bandCount);
+        }
+        return selectedBands;
+    }
+
+    /**
      * Reads the grid coverage. The default implementation creates a grid coverage using the
      * information provided by {@link #getGridGeometry(int)} and {@link #getSampleDimensions(int)}.
      */
@@ -699,6 +728,8 @@ public class ImageCoverageReader extends GridCoverageReader {
         GridGeometry2D gridGeometry = getGridGeometry(index);
         final AffineTransform change; // The change in the 'gridToCRS' transform.
         final ImageReadParam imageParam;
+        final int[] srcBands = null; // TODO
+        final int[] dstBands = null;
         if (param != null) {
             /*
              * Convert geodetic envelope and resolution to pixel coordinates.
@@ -742,7 +773,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         /*
          * Read the image.
          */
-        final List<GridSampleDimension> bands = getSampleDimensions(index);
+        final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
         final Map<?,?> properties = getProperties(index);
         final String name;
         final RenderedImage image;
@@ -789,9 +820,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
             }
         }
-        return factory.create(name, image, gridGeometry,
-                (bands != null) ? bands.toArray(new GridSampleDimension[bands.size()]) : null,
-                null, properties);
+        return factory.create(name, image, gridGeometry, bands, null, properties);
     }
 
     /**

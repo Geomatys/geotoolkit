@@ -1222,8 +1222,8 @@ search: for (final Tile tile : tiles) {
                     tiles.addAll(manager.getTiles());
                 }
             } else {
-                tiles.add(new Tile(reader.getOriginatingProvider(), reader.getInput(),
-                        0, new Point(), (Dimension) null));
+                // Note: we must not use reader.getInput() since it may be an ImageInputStream.
+                tiles.add(new Tile(reader.getOriginatingProvider(), input, 0, new Point(), (Dimension) null));
             }
             temporaryFiles.putAll(RMI.execute(new TileCopier(tiles, op)));
         }

@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.List;
 import java.util.Locale;
@@ -28,6 +29,7 @@ import org.opengis.coverage.grid.GridCoverage;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.util.collection.BackingStoreException;
+import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.resources.Errors;
@@ -59,7 +61,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @see ImageReader
  *
@@ -212,6 +214,36 @@ public abstract class GridCoverageReader implements Localized {
     public abstract List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException;
 
     /**
+     * Returns the ranges of valid sample values for each band in this format.
+     * The ranges are always expressed in <cite>geophysics</cite> units.
+     * <p>
+     * The default implementation computes the ranges from the information returned
+     * by {@link #getSampleDimensions(int)}, if any.
+     *
+     * @param  index The index of the coverage to be queried.
+     * @return The ranges of values for each band, or {@code null} if none.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     *
+     * @since 3.10
+     */
+    public List<MeasurementRange<Double>> getSampleValueRanges(int index) throws CoverageStoreException {
+        final List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
+        if (sampleDimensions == null) {
+            return null;
+        }
+        @SuppressWarnings({"unchecked","rawtypes"})  // Generic array creation.
+        final MeasurementRange<Double>[] ranges = new MeasurementRange[sampleDimensions.size()];
+        for (int i=0; i<ranges.length; i++) {
+            GridSampleDimension sd = sampleDimensions.get(i);
+            if (sd != null) {
+                sd = sd.geophysics(true);
+                ranges[i] = MeasurementRange.create(sd.getMinimumValue(), sd.getMaximumValue(), sd.getUnits());
+            }
+        }
+        return Arrays.asList(ranges);
+    }
+
+    /**
      * Returns an optional map of properties associated with the coverage at the given index, or
      * {@code null} if none. The properties are implementation-specific; they are available to
      * subclasses for any use. The {@code GridCoverageReader} class will simply gives those
@@ -236,7 +268,7 @@ public abstract class GridCoverageReader implements Localized {
      * @return The {@link GridCoverage} at the specified index.
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
-     * @throws CoverageStoreException if an error occurs reading the width information from the input source.
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
      *
      * @see ImageReader#read(int)
      */
