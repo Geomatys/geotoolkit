@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,12 +16,73 @@
  */
 package org.geotoolkit.wms;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import org.geotoolkit.util.StringUtilities;
+
+
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class AbstractGetFeatureInfo {
+public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements GetFeatureInfoRequest {
 
-    //TODO : see if we can share the same request classes with constellation
+    protected int x;
+    protected int y;
+    protected String infoFormat;
+    protected String[] queryLayers;
+
+    protected AbstractGetFeatureInfo(String serverURL, String version) {
+        super(serverURL, version);
+    }
+
+    @Override
+    public int getX() {
+        return x;
+    }
+
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public String getInfoFormat() {
+        return infoFormat;
+    }
+
+    @Override
+    public String[] getQueryLayers() {
+        return queryLayers;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public void setQueryLayers(String[] layers) {
+        this.queryLayers = layers;
+    }
+
+    @Override
+    public void setInfoFormat(String format) {
+        this.infoFormat = format;
+    }
+
+    @Override
+    public URL getURL() throws MalformedURLException {
+        requestParameters.put("INFO_FORMAT", infoFormat);
+        requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues(queryLayers));
+        return super.getURL();
+    }
+
 }

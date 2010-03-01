@@ -30,7 +30,10 @@ import org.opengis.referencing.operation.TransformException;
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
+ *
+ * @deprecated Replaced by {@link GridCoverageReader}.
  */
+@Deprecated
 public interface CoverageReader {
     
     /**

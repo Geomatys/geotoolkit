@@ -19,6 +19,7 @@ package org.geotoolkit.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -309,21 +310,30 @@ public final class StringUtilities {
     /**
      * Returns the values of the list separated by commas.
      *
-     * @param list The list to extract values.
+     * @param values The list to extract values.
      */
-    public static String toCommaSeparatedValues(final List<String> list) {
-        if (list == null || list.isEmpty()) {
+    public static String toCommaSeparatedValues(final List<String> values) {
+        if (values == null || values.isEmpty()) {
             return "";
         }
-        final int listSize = list.size();
+        final int listSize = values.size();
         final StringBuilder builder = new StringBuilder();
         for (int i=0; i<listSize; i++) {
             if (i>0) {
                 builder.append(',');
             }
-            builder.append(list.get(i));
+            builder.append(values.get(i));
         }
         return builder.toString();
+    }
+
+    /**
+     * Returns the values of the array separated by commas.
+     *
+     * @param values The array to extract values.
+     */
+    public static String toCommaSeparatedValues(final String[] values) {
+        return toCommaSeparatedValues(Arrays.asList(values));
     }
 
     /**

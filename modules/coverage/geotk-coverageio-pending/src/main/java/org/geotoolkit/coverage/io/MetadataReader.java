@@ -91,7 +91,10 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @module pending
  * @since 2.2
+ *
+ * @deprecated Replaced by {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
  */
+@Deprecated
 public class MetadataReader {
     /**
      * Set of commonly used symbols for "metres".

@@ -52,8 +52,9 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon
  *
- * @deprecated To be refactored (work in progress).
+ * @deprecated Replaced by {@link org.geotoolkit.image.io.plugin.WorldFileImageReader}.
  */
+@Deprecated
 public class ExoreferencedGridCoverageReader extends AbstractGridCoverageReader {
     /**
      * The object to use for parsing the meta-data.

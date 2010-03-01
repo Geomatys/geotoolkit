@@ -355,6 +355,15 @@ public class ObservationEntry implements Observation {
             return null;
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setObservedProperty(PhenomenonEntry observedProperty) {
+        if (observedProperty != null) {
+            this.observedProperty = new PhenomenonPropertyType(observedProperty);
+        }
+    }
     
     public PhenomenonPropertyType getPropertyObservedProperty() {
        return observedProperty;
