@@ -32,7 +32,9 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
@@ -82,6 +84,7 @@ public class MemoryDataStore extends AbstractDataStore{
 
     }
 
+    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final boolean singleTypeLock;
     private final Map<Name,Group> groups = new HashMap<Name, Group>();
     private Set<Name> nameCache = null;
@@ -216,8 +219,8 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public QueryCapabilities getQueryCapabilities() {
+        return capabilities;
     }
 
     /**

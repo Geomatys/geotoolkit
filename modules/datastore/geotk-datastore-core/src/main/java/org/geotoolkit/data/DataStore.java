@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
 
 import org.opengis.feature.Feature;
@@ -143,7 +144,7 @@ public interface DataStore {
      * @return QueryCapabilities
      * @todo move query capabilities from old datastore model
      */
-    Object getQueryCapabilities();
+    QueryCapabilities getQueryCapabilities();
 
     /**
      * Get the number of features that match the query.

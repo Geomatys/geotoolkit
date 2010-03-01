@@ -44,8 +44,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.feature.SchemaException;
 
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.jdbc.fid.PrimaryKeyFIDValidator;
@@ -64,8 +64,10 @@ import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -120,6 +122,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     protected final int WRITER_ADD = 0x01<<0;
     protected final int WRITER_UPDATE = 0x01<<1;
 
+    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private final Map<Name,FeatureType> names = new HashMap<Name, FeatureType>();
     private final Map<Name,PrimaryKey> primaryKeys = new HashMap<Name, PrimaryKey>();
     private Set<Name> nameCache = null;
@@ -504,8 +507,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public QueryCapabilities getQueryCapabilities() {
+        return capabilities;
     }
 
     /**

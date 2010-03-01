@@ -45,7 +45,9 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -85,6 +87,7 @@ public class WFSDataStore extends AbstractDataStore{
 
     private static final AtomicLong NS_INC = new AtomicLong();
 
+    private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
     private final WebFeatureServer server;
     private final WFSCapabilitiesType capabilities;
     private final List<Name> typeNames = new ArrayList<Name>();
@@ -221,8 +224,8 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public QueryCapabilities getQueryCapabilities() {
+        return queryCapabilities;
     }
 
     ////////////////////////////////////////////////////////////////////////////

@@ -42,7 +42,9 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -93,6 +95,7 @@ public class OMDataStore extends AbstractDataStore {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
+    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     private CoordinateReferenceSystem defaultCRS;
 
     public OMDataStore(Connection connection) {
@@ -257,39 +260,74 @@ public class OMDataStore extends AbstractDataStore {
 
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
         return handleWriterAppend(typeName);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public Set<Name> getNames() throws DataStoreException {
         return types.keySet();
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
         types.put(typeName, (SimpleFeatureType) featureType);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
         types.put(typeName, (SimpleFeatureType) featureType);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void deleteSchema(Name typeName) throws DataStoreException {
         types.remove(typeName);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureType getFeatureType(Name typeName) throws DataStoreException {
         return types.get(typeName);
     }
 
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public QueryCapabilities getQueryCapabilities() {
+        return capabilities;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
         return handleWriter(typeName, filter);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
         List<FeatureId> result = new ArrayList<FeatureId>();
         FeatureType featureType = types.get(groupName);
@@ -361,10 +399,18 @@ public class OMDataStore extends AbstractDataStore {
         return null;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }

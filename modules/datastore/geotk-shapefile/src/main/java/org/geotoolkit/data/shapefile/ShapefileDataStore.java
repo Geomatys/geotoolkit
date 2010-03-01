@@ -53,7 +53,9 @@ import org.geotoolkit.data.DefaultSimpleFeatureReader;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileException;
 import org.geotoolkit.data.shapefile.dbf.DbaseFileHeader;
@@ -102,6 +104,7 @@ public class ShapefileDataStore extends AbstractDataStore{
     // This is the default character as specified by the DBF specification
     public static final Charset DEFAULT_STRING_CHARSET = DbaseFileReader.DEFAULT_STRING_CHARSET;
 
+    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     protected final ShpFiles shpFiles;
     protected final String namespace;
     protected final boolean useMemoryMappedBuffer;
@@ -237,8 +240,8 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Object getQueryCapabilities() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public QueryCapabilities getQueryCapabilities() {
+        return capabilities;
     }
 
     /**
