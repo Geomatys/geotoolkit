@@ -190,7 +190,20 @@ Geotoolkit.org History
   that new contributors will need to spend time working with the library before being given leading
   roles in the project.
 
+
+* Migrating from GeoTools
+
+  As of the middle of 2009, Geotk provides a core API essentially identical to that provided by
+  the GeoTools\ 2 project but differing in the names of the available packages and classes and the
+  removal of all deprecated code. Applications which run on GeoTools\ 2 should therefore be able to
+  be ported to Geotk with relatively little difficulty, especially if the application focused
+  on the methods in GeoAPI and avoided using deprecated classes and methods.
+
+  The {{{build/tools/geotk-migrate/index.html}geotk-migrate}} module of Geotk provides a tool to
+  automatically rename the Java <<<import>>> statements and other references to all the classes
+  which have been renamed in Geotk. Applications which depend directly on low-level API of
+  GeoTools, such as the <<<MapProjection>>> classes, may require more work to use Geotk. The
+  {{{build/tools/geotk-migrate/changes.html}changes page}} summarizes the changes between GeoTools\ 2
+  and Geotk and should help in any porting effort.
+
   --July, 2009
-
-
-
