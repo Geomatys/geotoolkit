@@ -45,6 +45,8 @@ import org.opengis.filter.spatial.BBOX;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map.Entry;
 import org.geotoolkit.data.DataUtilities;
 
@@ -104,7 +106,7 @@ public class FidQueryTest extends FIDTestCase {
         build.add(new Long(0));
         build.add("Hey");
         SimpleFeature newFeature = build.buildFeature(null);
-        FeatureCollection<SimpleFeature> collection = DataUtilities.collection("", null);
+        Collection<SimpleFeature> collection = new ArrayList<SimpleFeature>();
         collection.add(newFeature);
 
         List<FeatureId> newFids = DataUtilities.write(ds.getFeatureWriterAppend(name), collection);

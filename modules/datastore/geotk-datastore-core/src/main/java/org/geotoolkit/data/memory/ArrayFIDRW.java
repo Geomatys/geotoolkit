@@ -52,7 +52,7 @@ class ArrayFIDRW implements FeatureIDReader{
             iteIndex++;
             return current[idIndex].toString();
         }else{
-            return base + inc.incrementAndGet();
+            return base + inc.getAndIncrement();
         }
     }
 

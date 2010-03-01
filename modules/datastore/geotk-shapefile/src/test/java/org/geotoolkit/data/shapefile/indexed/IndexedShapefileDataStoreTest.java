@@ -71,6 +71,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
@@ -379,7 +381,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     private IndexedShapefileDataStore createDataStore(File f) throws Exception {
-        FeatureCollection<SimpleFeature> fc = createFeatureCollection();
+        Collection<SimpleFeature> fc = createFeatureCollection();
         f.createNewFile();
 
         IndexedShapefileDataStore sds = new IndexedShapefileDataStore(f.toURL());
@@ -559,11 +561,11 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         return build.buildFeatureType();
     }
 
-    private FeatureCollection<SimpleFeature> createFeatureCollection() throws Exception {
+    private Collection<SimpleFeature> createFeatureCollection() throws Exception {
         SimpleFeatureType featureType = createExampleSchema();
         SimpleFeatureBuilder build = new SimpleFeatureBuilder(featureType);
 
-        FeatureCollection<SimpleFeature> features = DataUtilities.collection("",null);
+        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
         for (int i = 0, ii = 20; i < ii; i++) {
 
             build.add(new GeometryFactory().createPoint(new Coordinate(1, -1)));
@@ -587,7 +589,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
     }
 
     public void testAttributesWriting() throws Exception {
-        FeatureCollection<SimpleFeature> features = createFeatureCollection();
+        Collection<SimpleFeature> features = createFeatureCollection();
         File tmpFile = getTempFile();
         tmpFile.createNewFile();
 
@@ -623,13 +625,13 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         }
     }
 
-    private void writeFeatures(IndexedShapefileDataStore s, FeatureCollection<SimpleFeature> fc)
+    private void writeFeatures(IndexedShapefileDataStore s, Collection<SimpleFeature> fc)
             throws Exception {
         final SimpleFeatureType type = fc.iterator().next().getFeatureType();
         s.createSchema(type.getName(),type);
 
         FeatureWriter<SimpleFeatureType, SimpleFeature> fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
-        FeatureIterator<SimpleFeature> it = fc.iterator();
+        Iterator<SimpleFeature> it = fc.iterator();
 
         while (it.hasNext()) {
             SimpleFeature feature = it.next();
@@ -650,7 +652,7 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
         SimpleFeatureType type = ftb.buildFeatureType();
 
-        FeatureCollection<SimpleFeature> features = DataUtilities.collection("", null);
+        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
 
         for (int i = 0, ii = 20; i < ii; i++) {
             SimpleFeature feature = SimpleFeatureBuilder.build(type,

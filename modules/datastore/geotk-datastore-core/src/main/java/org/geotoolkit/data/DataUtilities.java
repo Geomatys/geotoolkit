@@ -29,6 +29,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.SortByComparator;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -74,6 +75,15 @@ public class DataUtilities {
     }
 
     public static FeatureCollection collection(String id, FeatureType type){
+        if(type == null){
+            //a collection with no defined type, make a generic abstract type
+            //that is possible since feature collection may not always have a type.
+            SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+            sftb.setName("null");
+            sftb.setAbstract(true);
+            type = sftb.buildFeatureType();
+        }
+
         final MemoryDataStore ds = new MemoryDataStore(type, true);
         final Session session = ds.createSession(false);
         return session.getFeatureCollection(QueryBuilder.all(type.getName()));

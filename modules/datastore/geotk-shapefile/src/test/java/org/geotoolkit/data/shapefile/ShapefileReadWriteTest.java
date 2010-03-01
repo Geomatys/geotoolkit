@@ -26,18 +26,18 @@ import java.nio.charset.Charset;
 import junit.framework.AssertionFailedError;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.ShapeTestData;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.Closeable;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
-import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
 
 /**
@@ -237,7 +237,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         }
     }
 
-    static void compare(FeatureCollection<SimpleFeature> one, FeatureCollection<SimpleFeature> two)
+    static void compare(Collection<SimpleFeature> one, Collection<SimpleFeature> two)
             throws Exception {
 
         if (one.size() != two.size()) {
@@ -245,16 +245,21 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
                     + " != " + two.size());
         }
 
-        FeatureIterator<SimpleFeature> iterator1 = one.iterator();
-        FeatureIterator<SimpleFeature> iterator2 = two.iterator();
+        Iterator<SimpleFeature> iterator1 = one.iterator();
+        Iterator<SimpleFeature> iterator2 = two.iterator();
 
         while (iterator1.hasNext()) {
             SimpleFeature f1 = iterator1.next();
             SimpleFeature f2 = iterator2.next();
             compare(f1, f2);
         }
-        iterator1.close();
-        iterator2.close();
+
+        if(iterator1 instanceof Closeable){
+            ((Closeable)iterator1).close();
+        }
+        if(iterator2 instanceof Closeable){
+            ((Closeable)iterator2).close();
+        }
     }
 
     static void compare(SimpleFeature f1, SimpleFeature f2) throws Exception {
