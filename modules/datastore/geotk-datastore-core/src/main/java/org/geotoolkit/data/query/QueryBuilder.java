@@ -17,6 +17,9 @@
 
 package org.geotoolkit.data.query;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 
@@ -167,7 +170,34 @@ public class QueryBuilder {
 
     public Query buildQuery(){
         final Source cs = (source == null) ? new DefaultSelector(null, typeName, "s1") : source;
+        checkSource(cs,null);
         return new DefaultQuery(cs, filter, properties, sortBy, crs, startIndex, maxFeatures, hints);
+    }
+
+    /**
+     * Verify that we don't have several selectors with the same name.
+     */
+    private static void checkSource(Source s, Set<String> selectors){
+        if(selectors == null){
+            selectors = new HashSet<String>();
+        }
+
+        if(s instanceof Join){
+            final Join j = (Join) s;
+            checkSource(j.getLeft(), selectors);
+            checkSource(j.getRight(), selectors);
+        }else if(s instanceof Selector){
+            final String selectName = ((Selector) s).getSelectorName();
+            if(selectors.contains(selectName)){
+                throw new IllegalStateException("Source has several selector with the same name = " + selectName);
+            }else{
+                selectors.add(selectName);
+            }
+        }else{
+            throw new IllegalStateException("Source type is unknowned : " + s +
+                    "\n valid types ares Join and Selector");
+        }
+
     }
 
     /**
@@ -205,6 +235,15 @@ public class QueryBuilder {
      */
     public static Query all(Name name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"));
+    }
+
+    /**
+     * Implements a query that will fetch all features from a source. This
+     * query should retrieve all properties, with no maxFeatures, no
+     * filtering, and the default featureType.
+     */
+    public static Query all(Source source){
+        return new DefaultQuery(source);
     }
 
     /**

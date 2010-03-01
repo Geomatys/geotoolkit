@@ -19,16 +19,25 @@
 package org.geotoolkit.data.query;
 
 import junit.framework.TestCase;
+import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureWriter;
+import org.geotoolkit.data.memory.MemoryDataStore;
+import org.geotoolkit.data.session.Session;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -41,7 +50,73 @@ public class QueryTest extends TestCase{
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    public QueryTest() {
+
+    private final MemoryDataStore store = new MemoryDataStore();
+    private final Name name1;
+    private final Name name2;
+
+    public QueryTest() throws Exception {
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+
+        //----------------------------------------------------------------------
+        name1 = new DefaultName("http://type1.com", "Type1");
+        builder.reset();
+        builder.setName(name1);
+        builder.add(new DefaultName("http://type1.com", "att1"), String.class);
+        builder.add(new DefaultName("http://type1.com", "att2"), Integer.class);
+        final SimpleFeatureType sft1 = builder.buildFeatureType();
+        store.createSchema(name1,sft1);
+
+        FeatureWriter fw = store.getFeatureWriterAppend(name1);
+        SimpleFeature sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att1", "str1");
+        sf.setAttribute("att2", 1);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att1", "str2");
+        sf.setAttribute("att2", 2);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att1", "str3");
+        sf.setAttribute("att2", 3);
+        fw.write();
+
+        fw.close();
+
+
+        //----------------------------------------------------------------------
+        name2 = new DefaultName("http://type2.com", "Type2");
+        builder.reset();
+        builder.setName(name2);
+        builder.add(new DefaultName("http://type2.com", "att3"), Integer.class);
+        builder.add(new DefaultName("http://type2.com", "att4"), Double.class);
+        final SimpleFeatureType sft2 = builder.buildFeatureType();
+        store.createSchema(name2,sft2);
+
+        fw = store.getFeatureWriterAppend(name2);
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 1);
+        sf.setAttribute("att4", 40);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 2);
+        sf.setAttribute("att4", 50);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 2);
+        sf.setAttribute("att4", 60);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 2);
+        sf.setAttribute("att4", 70);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 3);
+        sf.setAttribute("att4", 80);
+        fw.write();
+
+        fw.close();
+
     }
 
     /**
@@ -54,7 +129,7 @@ public class QueryTest extends TestCase{
 
         //test null values------------------------------------------------------
         try{
-            QueryBuilder.all(null);
+            QueryBuilder.all((Name)null);
             throw new Exception("We can not build a query without at least the type name.");
         }catch(NullPointerException ex){
             //ok
@@ -218,6 +293,30 @@ public class QueryTest extends TestCase{
         assertEquals(query.getPropertyNames(), null);
         assertEquals(query.getSortBy(), null);
         assertEquals(query.getStartIndex(), 0);
+
+    }
+
+    /**
+     * Test that cross datastore queries works correctly.
+     */
+    @Test
+    public void testCrossQuery() throws Exception{
+        final Session session = store.createSession(false);
+
+        final QueryBuilder qb = new QueryBuilder();
+        final Join join = new DefaultJoin(
+                new DefaultSelector(session, name1, "s1"),
+                new DefaultSelector(session, name2, "s2"),
+                JoinType.INNER,
+                FF.equals(FF.property("att2"), FF.property("att3")));
+        qb.setSource(join);
+
+        final Query query = qb.buildQuery();
+
+        final FeatureCollection col = session.getFeatureCollection(query);
+
+        System.out.println(col);
+
 
     }
 

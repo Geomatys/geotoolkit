@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DefaultJoinFeatureCollection;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
@@ -131,7 +132,7 @@ public class QueryUtilities {
         if(s instanceof Selector){
             return new DefaultSelectorFeatureCollection(id, query);
         }else{
-            throw new UnsupportedOperationException("Not supported yet.");
+            return new DefaultJoinFeatureCollection(id, query);
         }
     }
 
