@@ -235,7 +235,7 @@ public class GridCoverageReadParam {
      *
      * @see ParameterType#RESOLUTION
      */
-    public void setResolution(double[] resolution) throws MismatchedDimensionException {
+    public void setResolution(double... resolution) throws MismatchedDimensionException {
         if (resolution != null) {
             final int dimension = resolution.length;
             ensureCompatibleDimension("resolution", dimension);

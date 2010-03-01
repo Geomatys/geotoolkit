@@ -53,6 +53,7 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
@@ -766,7 +767,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             final int ymin = image.getMinY();
             final int xi = gridGeometry.gridDimensionX;
             final int yi = gridGeometry.gridDimensionY;
-            final MathTransform gridToCRS = gridGeometry.getGridToCRS();
+            final MathTransform gridToCRS = gridGeometry.getGridToCRS(PixelInCell.CELL_CORNER);
             MathTransform newGridToCRS = gridToCRS;
             if (!change.isIdentity()) {
                 final int gridDimension = gridToCRS.getSourceDimensions();
@@ -784,8 +785,8 @@ public class ImageCoverageReader extends GridCoverageReader {
             low[yi] = ymin; high[yi] = ymin + image.getHeight();
             final GridEnvelope newGridRange = new GeneralGridEnvelope(low, high, false);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridRange)) {
-                gridGeometry = new GridGeometry2D(newGridRange, newGridToCRS,
-                        gridGeometry.getCoordinateReferenceSystem());
+                gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
+                        newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
             }
         }
         return factory.create(name, image, gridGeometry,
@@ -883,32 +884,39 @@ public class ImageCoverageReader extends GridCoverageReader {
             ySubsampling = 1;
         }
         /*
-         * Cast the imageRegion in a Rectangle and make sure that it is contained inside the
-         * RenderedImage valid bounds. We need to ensure that in order to prevent ImageReader
-         * to do its own clipping (at least for the minimal X and Y values), which would cause
-         * the 'gridToCRS' transform to be wrong.
+         * Makes sure that the image region is contained inside the RenderedImage valid bounds.
+         * We need to ensure that in order to prevent Image Reader to perform its own clipping
+         * (at least for the minimal X and Y values), which would cause the gridToCRS transform
+         * to be wrong. In addition we also ensure that the resulting image has the minimal size.
+         * If the subsampling will cause an expansion of the envelope, we distribute the expansion
+         * on each side of the envelope rather than expanding only the bottom and right side (this
+         * is the purpose of the (delta % subsampling) - 1 part).
          */
-        final double xmin = Math.floor(imageRegion.getMinX() + EPS);
-        final double ymin = Math.floor(imageRegion.getMinY() + EPS);
-        final double xmax = Math.ceil (imageRegion.getMaxX() - EPS);
-        final double ymax = Math.ceil (imageRegion.getMaxY() - EPS);
-        final Rectangle imageBounds = new Rectangle();
-        imageBounds.setRect(xmin, ymin, xmax - xmin, ymax - ymin);
-        if (imageBounds.width <  MIN_SIZE) {
-            imageBounds.x    -= (MIN_SIZE - imageBounds.width)/2;
-            imageBounds.width =  MIN_SIZE;
+        int xmin = (int) Math.floor(imageRegion.getMinX() + EPS);
+        int ymin = (int) Math.floor(imageRegion.getMinY() + EPS);
+        int xmax = (int) Math.ceil (imageRegion.getMaxX() - EPS);
+        int ymax = (int) Math.ceil (imageRegion.getMaxY() - EPS);
+        int delta = xmax - xmin;
+        delta = Math.max(MIN_SIZE * xSubsampling - delta, (delta % xSubsampling) - 1);
+        if (delta > 0) {
+            final int r = delta & 1;
+            delta >>>= 1;
+            xmin -= delta;
+            xmax += delta + r;
         }
-        if (imageBounds.height < MIN_SIZE) {
-            imageBounds.y     -= (MIN_SIZE - imageBounds.height)/2;
-            imageBounds.height = MIN_SIZE;
+        delta = ymax - ymin;
+        delta = Math.max(MIN_SIZE * ySubsampling - delta, (delta % ySubsampling) - 1);
+        if (delta > 0) {
+            final int r = delta & 1;
+            delta >>>= 1;
+            ymin -= delta;
+            ymax += delta + r;
         }
-        final int maxX = Math.min(width,  imageBounds.width  + imageBounds.x);
-        final int maxY = Math.min(height, imageBounds.height + imageBounds.y);
-        if (imageBounds.x < 0) imageBounds.x = 0;
-        if (imageBounds.y < 0) imageBounds.y = 0;
-        imageBounds.width  = maxX - imageBounds.x;
-        imageBounds.height = maxY - imageBounds.y;
-        return imageBounds;
+        if (xmin < 0)      xmin = 0;
+        if (ymin < 0)      ymin = 0;
+        if (xmax > width)  xmax = width;
+        if (ymax > height) ymax = height;
+        return new Rectangle(xmin, ymin, xmax - xmin, ymax - ymin);
     }
 
     /**
