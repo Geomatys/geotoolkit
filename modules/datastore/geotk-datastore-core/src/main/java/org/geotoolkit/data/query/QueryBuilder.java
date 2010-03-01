@@ -98,7 +98,11 @@ public class QueryBuilder {
     }
 
     public Source getSource(){
-        return source;
+        if(source == null){
+            return new DefaultSelector(null, typeName, "s1");
+        }else{
+            return source;
+        }
     }
 
     public Filter getFilter() {

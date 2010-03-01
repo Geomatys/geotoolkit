@@ -36,10 +36,6 @@ public class DefaultFeatureCollectionRow implements FeatureCollectionRow{
     public DefaultFeatureCollectionRow(){
     }
 
-    public Map<String,Feature> getSelectorFeatureMap(){
-        return selectorFeatures;
-    }
-
     /**
      * {@inheritDoc }
      */
@@ -58,6 +54,14 @@ public class DefaultFeatureCollectionRow implements FeatureCollectionRow{
     @Override
     public Feature getFeature(String selector) throws DataStoreException {
         return selectorFeatures.get(selector);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String, Feature> getFeatures() throws DataStoreException {
+        return selectorFeatures;
     }
 
 }

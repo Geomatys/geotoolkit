@@ -306,7 +306,7 @@ public class DataUtilities {
 
         @Override
         public CloseableIterator getRows() throws DataStoreException {
-            return new DefaultRowIterator(iterator());
+            return new DefaultRowIterator(getID(),iterator());
         }
 
         @Override

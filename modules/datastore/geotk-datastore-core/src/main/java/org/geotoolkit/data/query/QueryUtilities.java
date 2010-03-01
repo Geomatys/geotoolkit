@@ -216,7 +216,8 @@ public class QueryUtilities {
             throw new NullPointerException("Both query must not be null.");
         }
 
-        final QueryBuilder qb = new QueryBuilder(original.getTypeName());
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setSource(original.getSource());
 
         //use the more restrictive max features field---------------------------
         Integer max = original.getMaxFeatures();

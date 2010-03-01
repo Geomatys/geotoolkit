@@ -69,6 +69,11 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
 
     }
 
+    @Override
+    public Selector getSource() {
+        return (Selector) super.getSource();
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -121,7 +126,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      */
     @Override
     public CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException {
-        return new DefaultRowIterator(iterator());
+        return new DefaultRowIterator(getSource().getSelectorName(),iterator());
     }
 
     /**

@@ -21,6 +21,7 @@ package org.geotoolkit.data.query;
 import junit.framework.TestCase;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.session.Session;
@@ -96,23 +97,19 @@ public class QueryTest extends TestCase{
         fw = store.getFeatureWriterAppend(name2);
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 1);
-        sf.setAttribute("att4", 40);
+        sf.setAttribute("att4", 10);
         fw.write();
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 2);
-        sf.setAttribute("att4", 50);
+        sf.setAttribute("att4", 20);
         fw.write();
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 2);
-        sf.setAttribute("att4", 60);
-        fw.write();
-        sf = (SimpleFeature) fw.next();
-        sf.setAttribute("att3", 2);
-        sf.setAttribute("att4", 70);
+        sf.setAttribute("att4", 30);
         fw.write();
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 3);
-        sf.setAttribute("att4", 80);
+        sf.setAttribute("att4", 40);
         fw.write();
 
         fw.close();
@@ -315,7 +312,10 @@ public class QueryTest extends TestCase{
 
         final FeatureCollection col = session.getFeatureCollection(query);
 
-        System.out.println(col);
+        FeatureIterator ite = col.iterator();
+        while(ite.hasNext()){
+            System.out.println(ite.next());
+        }
 
 
     }

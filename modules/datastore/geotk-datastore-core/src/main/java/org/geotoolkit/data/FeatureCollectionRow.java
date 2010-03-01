@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data;
 
+import java.util.Map;
 import org.opengis.feature.Feature;
 
 /**
@@ -44,5 +45,13 @@ public interface FeatureCollectionRow {
      * @exception DataStoreException.
      */
     Feature getFeature(String selector) throws DataStoreException;
+
+    /**
+     * Map of all features and selectors in the row.
+     * 
+     * @return map feature and selectors
+     * @throws DataStoreException
+     */
+    Map<String,Feature> getFeatures() throws DataStoreException;
 
 }

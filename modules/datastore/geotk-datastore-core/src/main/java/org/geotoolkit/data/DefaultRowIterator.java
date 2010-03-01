@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.util.collection.CloseableIterator;
 
 /**
@@ -28,11 +30,12 @@ import org.geotoolkit.util.collection.CloseableIterator;
  */
 public class DefaultRowIterator implements CloseableIterator<FeatureCollectionRow>{
 
-
+    private final String selectorName;
     private final FeatureIterator ite;
     private final DefaultFeatureCollectionRow row = new DefaultFeatureCollectionRow();
 
-    public DefaultRowIterator(FeatureIterator ite){
+    public DefaultRowIterator(String selectorName, FeatureIterator ite){
+        this.selectorName = selectorName;
         this.ite = ite;
     }
 
@@ -57,7 +60,11 @@ public class DefaultRowIterator implements CloseableIterator<FeatureCollectionRo
      */
     @Override
     public FeatureCollectionRow next() {
-        row.getSelectorFeatureMap().put("s1", ite.next());
+        try {
+            row.getFeatures().put(selectorName, ite.next());
+        } catch (DataStoreException ex) {
+            Logger.getLogger(DefaultRowIterator.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return row;
     }
 
