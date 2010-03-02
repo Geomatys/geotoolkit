@@ -115,7 +115,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         if(jt == JoinType.INNER){
             return new JoinInnerRowIterator(null);
         }else if(jt == JoinType.LEFT_OUTER){
-            throw new UnsupportedOperationException("Not supported yet.");
+            return new JoinOuterLeftRowIterator(null);
         }else if(jt == JoinType.RIGHT_OUTER){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{
@@ -254,6 +254,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         private final CloseableIterator<FeatureCollectionRow> leftIterator;
         private CloseableIterator<FeatureCollectionRow> rightIterator;
+        private boolean foundLeft = false;
         private FeatureCollectionRow leftRow;
         private FeatureCollectionRow nextRow;
 
@@ -307,6 +308,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             }
 
             while(nextRow==null && leftIterator.hasNext()){
+                foundLeft = false;
                 rightIterator = null;
                 leftRow = leftIterator.next();
 
@@ -324,6 +326,15 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                 while(nextRow== null && rightIterator.hasNext()){
                     final FeatureCollectionRow rightRow = rightIterator.next();
                     nextRow = checkValid(leftRow, rightRow);
+
+                    if(nextRow != null){
+                        foundLeft = true;
+                    }
+                }
+
+                if(!foundLeft){
+                    //outer left effect, no right match but still we must return the left side
+                    nextRow = leftRow;
                 }
 
             }
@@ -391,7 +402,12 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         if(rows.length == 1 && rows[0].getFeatures().size() == 1){
             //avoid creating a new feature
-            return rows[0].getFeatures().values().iterator().next();
+            Feature f = rows[0].getFeatures().values().iterator().next();
+
+            if(f.getType().equals(f)){
+                //same type we can safely retuen it.
+                return f;
+            }
         }
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) getFeatureType());
