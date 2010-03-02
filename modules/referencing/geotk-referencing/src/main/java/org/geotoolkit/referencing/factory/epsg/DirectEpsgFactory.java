@@ -895,7 +895,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         if (oldValue.equals(newValue)) {
             return oldValue;
         }
-        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, code));
+        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, code));
     }
 
     /**
@@ -1086,7 +1086,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 result.close();
                 if (present) {
                     if (index >= 0) {
-                        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, code));
+                        throw new FactoryException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, code));
                     }
                     index = (i < 0) ? lastObjectType : i;
                     if (isPrimaryKey) {

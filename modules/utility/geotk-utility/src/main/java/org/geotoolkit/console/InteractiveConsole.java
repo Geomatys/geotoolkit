@@ -282,7 +282,8 @@ public abstract class InteractiveConsole implements Runnable {
         ensureNonNull("openingBrackets", openingBrackets);
         ensureNonNull("closingBrackets", closingBrackets);
         if (openingBrackets.length != closingBrackets.length) {
-            throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new MismatchedSizeException(Errors.format(
+                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "openingBrackets", "closingBrackets"));
         }
         this.openingBrackets = openingBrackets.clone();
         this.closingBrackets = closingBrackets.clone();

@@ -320,14 +320,19 @@ public final class Errors extends IndexedResourceBundle {
         public static final int DUPLICATED_RECORD_$1 = 232;
 
         /**
-         * Duplicated values for key "{0}".
-         */
-        public static final int DUPLICATED_VALUES_$1 = 46;
-
-        /**
          * Found {0} duplicated values.
          */
         public static final int DUPLICATED_VALUES_COUNT_$1 = 47;
+
+        /**
+         * Duplicated values for key "{0}".
+         */
+        public static final int DUPLICATED_VALUES_FOR_KEY_$1 = 46;
+
+        /**
+         * The {0} value is specified more than once.
+         */
+        public static final int DUPLICATED_VALUE_$1 = 242;
 
         /**
          * Elliptical projection not supported.
@@ -480,6 +485,12 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1 = 77;
 
         /**
+         * The dimension of the "{0}" image is ({1}×{2}) pixels, while the expected dimension was
+         * ({3}×{4}) pixels.
+         */
+        public static final int IMAGE_SIZE_MISMATCH_$5 = 243;
+
+        /**
          * Incompatible coordinate system type.
          */
         public static final int INCOMPATIBLE_COORDINATE_SYSTEM_TYPE = 78;
@@ -584,6 +595,11 @@ public final class Errors extends IndexedResourceBundle {
          * Mismatched array length.
          */
         public static final int MISMATCHED_ARRAY_LENGTH = 98;
+
+        /**
+         * Array length of parameters "{0}" and "{1}" do not match.
+         */
+        public static final int MISMATCHED_ARRAY_LENGTH_$2 = 244;
 
         /**
          * The coordinate reference system must be the same for all objects.

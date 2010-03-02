@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -30,7 +29,6 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -70,11 +68,6 @@ import org.geotoolkit.internal.io.IOUtilities;
  */
 public abstract class GridCoverageReader implements Localized {
     /**
-     * The logger, mostly for use by the {@link #read(int, GridCoverageReadParam)} method.
-     */
-    static Logger LOGGER = Logging.getLogger("org.geotoolkit.coverage.io");
-
-    /**
      * The input (typically a {@link java.io.File}, {@link java.net.URL} or {@link String}),
      * or {@code null} if input is not set.
      */
@@ -84,6 +77,17 @@ public abstract class GridCoverageReader implements Localized {
      * The locale to use for formatting messages, or {@code null} for a default locale.
      */
     Locale locale;
+
+    /**
+     * {@code true} if a request to abort the current read operation has been made. Subclasses
+     * should set this field to {@code false} at the begining of each read operation, and pool
+     * the value regularly during the read.
+     *
+     * @see #abort()
+     *
+     * @since 3.10
+     */
+    protected volatile boolean abortRequested;
 
     /**
      * Creates a new instance.
@@ -122,7 +126,7 @@ public abstract class GridCoverageReader implements Localized {
      *
      * @param key One of the constants declared in the {@link Errors.Keys} inner class.
      */
-    final String error(final int key) {
+    final String formatErrorMessage(final int key) {
         return Errors.getResources(locale).getString(key);
     }
 
@@ -140,6 +144,7 @@ public abstract class GridCoverageReader implements Localized {
      */
     public void setInput(Object input) throws CoverageStoreException {
         this.input = input;
+        abortRequested = false;
     }
 
     /**
@@ -226,18 +231,19 @@ public abstract class GridCoverageReader implements Localized {
      *
      * @since 3.10
      */
-    public List<MeasurementRange<Double>> getSampleValueRanges(int index) throws CoverageStoreException {
+    public List<MeasurementRange<?>> getSampleValueRanges(int index) throws CoverageStoreException {
         final List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
         if (sampleDimensions == null) {
             return null;
         }
         @SuppressWarnings({"unchecked","rawtypes"})  // Generic array creation.
-        final MeasurementRange<Double>[] ranges = new MeasurementRange[sampleDimensions.size()];
+        final MeasurementRange<?>[] ranges = new MeasurementRange[sampleDimensions.size()];
         for (int i=0; i<ranges.length; i++) {
             GridSampleDimension sd = sampleDimensions.get(i);
             if (sd != null) {
                 sd = sd.geophysics(true);
-                ranges[i] = MeasurementRange.create(sd.getMinimumValue(), sd.getMaximumValue(), sd.getUnits());
+                ranges[i] = MeasurementRange.createBestFit(
+                        sd.getMinimumValue(), true, sd.getMaximumValue(), true, sd.getUnits());
             }
         }
         return Arrays.asList(ranges);
@@ -275,6 +281,23 @@ public abstract class GridCoverageReader implements Localized {
     public abstract GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException;
 
     /**
+     * Cancels the read operation. The content of the coverage following the abort will be
+     * undefined.
+     *
+     * {@section Note for implementors}
+     * Subclasses should set the {@link #abortRequested} field to {@code false} at the beginning
+     * of each read operation, and poll the value regularly during the read.
+     *
+     * @see #abortRequested
+     * @see ImageReader#abort()
+     *
+     * @since 3.10
+     */
+    public void abort() {
+        abortRequested = true;
+    }
+
+    /**
      * Restores the {@code GridCoverageReader} to its initial state.
      *
      * @throws CoverageStoreException if an error occurs while disposing resources.
@@ -284,5 +307,6 @@ public abstract class GridCoverageReader implements Localized {
     public void reset() throws CoverageStoreException {
         locale = null;
         input  = null;
+        abortRequested = false;
     }
 }

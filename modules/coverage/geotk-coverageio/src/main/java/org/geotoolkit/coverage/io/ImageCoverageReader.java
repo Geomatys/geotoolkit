@@ -72,6 +72,7 @@ import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -101,7 +102,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * {@section Default metadata value}
  * If no {@linkplain CoordinateReferenceSystem Coordinate Reference System} or no
- * <cite>grid to CRS</cite> {@linkplain MathTransform math transform} can be created
+ * <cite>grid to CRS</cite> {@linkplain MathTransform Math Transform} can be created
  * from the {@link SpatialMetadata}, then the default values listed below are used:
  * <p>
  * <table border="1" cellspacing="0">
@@ -373,7 +374,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 imageReader = newReader;
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(error(input, e), e);
+            throw new CoverageStoreException(formatErrorMessage(input, e), e);
         }
         super.setInput(input);
     }
@@ -424,6 +425,9 @@ public class ImageCoverageReader extends GridCoverageReader {
      *         while creating it.
      */
     protected ImageReader createImageReader(final Object input) throws IOException {
+        if (MosaicImageReader.Spi.DEFAULT.canDecodeInput(input)) {
+            return MosaicImageReader.Spi.DEFAULT.createReaderInstance();
+        }
         return XImageIO.getReaderBySuffix(input, seekForwardOnly, ignoreMetadata);
     }
 
@@ -435,7 +439,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (coverageNames == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
-                throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+                throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
             }
             try {
                 if (imageReader instanceof NamedImageStore) {
@@ -444,7 +448,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     coverageNames = new NameList(getInputName(), imageReader.getNumImages(true));
                 }
             } catch (IOException e) {
-                throw new CoverageStoreException(error(e), e);
+                throw new CoverageStoreException(formatErrorMessage(e), e);
             }
         }
         return coverageNames;
@@ -501,7 +505,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public GridGeometry2D getGridGeometry(final int index) throws CoverageStoreException {
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
-            throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
         }
         /*
          * Get the required information from the SpatialMetadata, if any.
@@ -527,7 +531,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 }
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(error(e), e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         /*
          * If any metadata are still null, replace them by their default values. Those default
@@ -570,7 +574,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         if (gridToCRS instanceof AffineTransform) {
             return (AffineTransform) gridToCRS;
         }
-        throw new InvalidGridGeometryException(error(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+        throw new InvalidGridGeometryException(formatErrorMessage(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
     }
 
     /**
@@ -580,7 +584,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
-            throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
         }
         /*
          * Get the required information from the SpatialMetadata, if any.
@@ -593,7 +597,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                 sampleDimensions = metadata.getListForType(SampleDimension.class);
             }
         } catch (IOException e) {
-            throw new CoverageStoreException(error(e), e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         if (sampleDimensions == null || sampleDimensions.isEmpty()) {
             return null;
@@ -721,16 +725,26 @@ public class ImageCoverageReader extends GridCoverageReader {
     public GridCoverage2D read(final int index, final GridCoverageReadParam param)
             throws CoverageStoreException
     {
+        abortRequested = false;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
-            throw new IllegalStateException(error(Errors.Keys.NO_IMAGE_INPUT));
+            throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
         }
         GridGeometry2D gridGeometry = getGridGeometry(index);
+        if (abortRequested) {
+            return null;
+        }
         final AffineTransform change; // The change in the 'gridToCRS' transform.
         final ImageReadParam imageParam;
-        final int[] srcBands = null; // TODO
-        final int[] dstBands = null;
+        final int[] srcBands;
+        final int[] dstBands;
         if (param != null) {
+            srcBands = param.getSourceBands();
+            dstBands = param.getDestinationBands();
+            if (srcBands != null && dstBands != null && srcBands.length != dstBands.length) {
+                throw new IllegalArgumentException(Errors.getResources(locale).getString(
+                        Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "sourceBands", "destinationBands"));
+            }
             /*
              * Convert geodetic envelope and resolution to pixel coordinates.
              */
@@ -747,10 +761,10 @@ public class ImageCoverageReader extends GridCoverageReader {
             try {
                 imageBounds = computeBounds(gridGeometry, envelope, subsampling);
             } catch (Exception e) { // There is many different exceptions thrown by the above.
-                throw new CoverageStoreException(error(e), e);
+                throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             if (imageBounds == null) {
-                throw new CoverageStoreException(error(Errors.Keys.EMPTY_ENVELOPE));
+                throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
             }
             /*
              * Store the result of the above conversions in the ImageReadParam object.
@@ -766,15 +780,25 @@ public class ImageCoverageReader extends GridCoverageReader {
                 imageParam.setSourceSubsampling((int) sx, (int) sy, 0, 0);
                 change.scale(sx, sy);
             }
+            imageParam.setSourceBands(srcBands);
+            imageParam.setDestinationBands(dstBands);
         } else {
             imageParam = null;
+            srcBands   = null;
+            dstBands   = null;
             change     = null;
         }
         /*
-         * Read the image.
+         * Read the image using the ImageReader.read(...) method.  We could have used
+         * ImageReader.readAsRenderedImage(...) instead in order to give the reader a
+         * chance to return a tiled image,  but experience with some formats suggests
+         * that it requires to keep the ImageReader with its input stream open.
          */
         final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
         final Map<?,?> properties = getProperties(index);
+        if (abortRequested) {
+            return null;
+        }
         final String name;
         final RenderedImage image;
         try {
@@ -783,15 +807,15 @@ public class ImageCoverageReader extends GridCoverageReader {
             } catch (BackingStoreException e) {
                 throw e.unwrapOrRethrow(IOException.class);
             }
-            image = imageReader.readAsRenderedImage(index, imageParam);
+            image = imageReader.read(index, imageParam);
         } catch (IOException e) {
-            throw new CoverageStoreException(error(e), e);
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         /*
          * If the grid geometry changed as a result of subsampling or reading a smaller region,
          * update the grid geometry. The (xmin, ymin) values are usually (0,0), but we take
-         * them in account anyway since we have read an image using 'readAsRenderedImage(...)',
-         * which could have shifted the image.
+         * them in account anyway as a paranoiac safety (a previous version of this code used
+         * the 'readAsRenderedImage(...)' method, which could have shifted the image).
          */
         if (change != null) {
             final int xmin = image.getMinX();
@@ -949,18 +973,32 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Cancels the read operation. The default implementation forward the call to the
+     * {@linkplain #imageReader image reader}, if any. The content of the coverage
+     * following the abort will be undefined.
+     */
+    @Override
+    public void abort() {
+        super.abort();
+        final ImageReader imageReader = this.imageReader; // Protect from changes.
+        if (imageReader != null) {
+            imageReader.abort();
+        }
+    }
+
+    /**
      * Returns an error message for the given exception. If the {@linkplain #input input} is
      * known, this method returns "<cite>Can't read 'the name'</cite>" followed by the cause
      * message. Otherwise it returns the localized message of the given exception.
      */
-    private String error(final Exception e) {
-        return error(input, e);
+    private String formatErrorMessage(final Exception e) {
+        return formatErrorMessage(input, e);
     }
 
     /**
-     * Same than {@link #error(Exception)}, but with an explicitly specified input.
+     * Same than {@link #formatErrorMessage(Exception)}, but with an explicitly specified input.
      */
-    private String error(final Object input, final Exception e) {
+    private String formatErrorMessage(final Object input, final Exception e) {
         String message = e.getLocalizedMessage();
         if (IOUtilities.canProcessAsPath(input)) {
             final String cause = message;

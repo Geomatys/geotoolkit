@@ -224,6 +224,9 @@ attmpt: while (true) {
                             callback.recoverableException(e);
                             ((ImageInputStream) inputOrStream).close();
                             inputOrStream = stream = ImageIO.createImageInputStream(input);
+                            if (stream == null) {
+                                throw e;
+                            }
                         }
                     }
                 }
@@ -246,30 +249,51 @@ attmpt: while (true) {
              * ImageInputStream.
              */
             if (inputOrStream instanceof ImageInputStream) {
+                /*
+                 * If we have run the most extensive case (all available
+                 * ImageReaders with an ImageInputStream input), give up.
+                 */
                 if (!useSuffix) {
-                    // We have run the most extensive case (all ImageReaders
-                    // with an ImageInputStream input). Give up.
                     break;
                 }
-                // Try again using all ImageReaders. Note that when we switched the
-                // 'useSuffix' flag to 'false', we never switch it back to 'true'.
+                /*
+                 * The previous run was using a limited set of ImageReaders. Try again,
+                 * but now using all remaining ImageReaders. Note that when we switched
+                 * the 'useSuffix' flag to 'false', we never switch it back to 'true'.
+                 *
+                 * If we were using an ImageInputStream, try with the original input.
+                 * Note that we keep the ImageInputStream (referenced by the 'stream'
+                 * variable) in order to use it again if the upcomming try fails.
+                 */
                 useSuffix = false;
                 if (inputOrStream != input) {
                     inputOrStream = input;
-                    // If we were using an ImageInputStream, try with the original
-                    // input before to try again with the ImageInputStream.
                 }
-            } else if (useSuffix && nextProviderForSuffix == 0) {
-                // They were no ImageReader for the suffix, so do not
-                // create the stream yet. Let try every ImageReaders first.
-                useSuffix = false;
             } else {
-                // Failed to read the image using the caller input.
-                // Wraps it in an ImageInputStream and try again.
-                if (stream == null) {
-                    stream = ImageIO.createImageInputStream(input);
+                /*
+                 * The input can not be used directly. We may need to create an ImageInputStream.
+                 * But before doing so, check if we tried at least one ImageReader. If not, try
+                 * all ImageReaders with the original input before to create an ImageInputStream.
+                 */
+                if (useSuffix && nextProviderForSuffix == 0) {
+                    useSuffix = false;
+                } else {
+                    /*
+                     * Failed to read the image using the caller input.
+                     * Wraps it in an ImageInputStream and try again.
+                     */
+                    if (stream == null) {
+                        stream = ImageIO.createImageInputStream(input);
+                        if (stream == null) {
+                            if (!useSuffix) {
+                                break;
+                            }
+                            useSuffix = false;
+                            inputOrStream = input;
+                        }
+                    }
+                    inputOrStream = stream;
                 }
-                inputOrStream = stream;
             }
             useProvidersList = true;
         }

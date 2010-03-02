@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.awt.Dimension;
 import java.util.Set;
 import java.util.List;
 import java.util.TreeSet;
@@ -28,9 +29,14 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.io.mosaic.MosaicImageReader;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -51,6 +57,11 @@ final class ImageCoverageReaderSQL extends ImageCoverageReader {
     private final FormatEntry format;
 
     /**
+     * The expected image size. It must be defined by the caller before to read an image.
+     */
+    Dimension expectedSize;
+
+    /**
      * Creates a new reader for the given format.
      */
     ImageCoverageReaderSQL(final FormatEntry format) {
@@ -66,6 +77,9 @@ final class ImageCoverageReaderSQL extends ImageCoverageReader {
      */
     @Override
     protected ImageReader createImageReader(final Object input) throws IOException {
+        if (MosaicImageReader.Spi.DEFAULT.canDecodeInput(input)) {
+            return MosaicImageReader.Spi.DEFAULT.createReaderInstance();
+        }
         final String imageFormat = format.imageFormat;
         final boolean isMIME = imageFormat.indexOf('/') >= 0;
         try {
@@ -115,5 +129,52 @@ final class ImageCoverageReaderSQL extends ImageCoverageReader {
         } catch (SQLException e) {
             throw new CatalogException(e);
         }
+    }
+
+    /**
+     * Reads the grid coverage. This method checks that the size of the image is the same as
+     * the size declared in the database. This check is only used to catch possible errors that
+     * would otherwise slip into the database and/or the copy of the image on disk.
+     */
+    @Override
+    public GridCoverage2D read(final int index, final GridCoverageReadParam param)
+            throws CoverageStoreException
+    {
+        final int expectedWidth  = expectedSize.width;
+        final int expectedHeight = expectedSize.height;
+        final int imageWidth, imageHeight;
+        final ImageReader imageReader = this.imageReader; // Protect from changes.
+        try {
+            imageWidth  = imageReader.getWidth (index);
+            imageHeight = imageReader.getHeight(index);
+        } catch (IOException e) {
+            throw new CoverageStoreException(formatErrorMessage(e), e);
+        }
+        if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
+            throw new CatalogException(Errors.getResources(getLocale()).getString(Errors.Keys.IMAGE_SIZE_MISMATCH_$5,
+                    IOUtilities.name(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
+        }
+        return super.read(index, param);
+    }
+
+    /**
+     * Returns the name of the input.
+     */
+    private String getInputName() throws CoverageStoreException {
+        return IOUtilities.name(getInput());
+    }
+
+    /**
+     * Returns an error message for the given exception. If the {@linkplain #input input} is
+     * known, this method returns "<cite>Can't read 'the name'</cite>" followed by the cause
+     * message. Otherwise it returns the localized message of the given exception.
+     */
+    private String formatErrorMessage(final Exception e) throws CoverageStoreException {
+        final String cause = e.getLocalizedMessage();
+        String message = Errors.getResources(getLocale()).getString(Errors.Keys.CANT_READ_$1, getInputName());
+        if (cause != null && cause.indexOf(' ') > 0) { // Append only if we have a sentence.
+            message = message + '\n' + cause;
+        }
+        return message;
     }
 }

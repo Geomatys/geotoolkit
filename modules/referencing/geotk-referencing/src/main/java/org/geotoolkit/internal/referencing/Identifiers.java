@@ -306,7 +306,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         this.identifiers = new LinkedHashMap<String,NamedIdentifier>(hashMapCapacity(identifiers.length));
         for (final NamedIdentifier id : identifiers) {
             if (this.identifiers.put(id.getCode(), id) != null) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, id));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, id));
             }
         }
     }

@@ -255,6 +255,7 @@ public final class MosaicReadWriteTest {
             final File file = new File(targetDirectory, filename);
             assertTrue(filename, file.isFile());
             final ImageInputStream in = ImageIO.createImageInputStream(file);
+            assertNotNull("File not found", in);
             reader.setInput(in);
             final RenderedImage image = reader.read(0);
             in.close();

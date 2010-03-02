@@ -188,7 +188,8 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
                     share(sharedTypes, ImageTypeSpecifier.createFromRenderedImage(image)),
                     share(sharedSizes, new Dimension(image.getWidth(), image.getHeight())));
             if (temporaryFiles.put(tile, entry) != null) {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, tile));
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, tile));
             }
             /*
              * Writes the temporary file.

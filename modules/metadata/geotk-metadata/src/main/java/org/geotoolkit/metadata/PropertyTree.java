@@ -194,7 +194,7 @@ final class PropertyTree {
                  * that are not properly formatted, but still understandable in some way.
                  */
                 if (addTo == null) {
-                    throw new ParseException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, name), 0);
+                    throw new ParseException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, name), 0);
                 }
                 // Something would be wrong with the 'done' map if the following assertion fails.
                 assert (metadata != null) : done;

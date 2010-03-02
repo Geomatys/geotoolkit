@@ -395,7 +395,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
                 final String name = d.getName().getCode().trim().toLowerCase();
                 if (replacements.put(name, d) != null) {
                     throw new InvalidParameterNameException(Errors.format(
-                            Errors.Keys.DUPLICATED_VALUES_$1, name), name);
+                            Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, name), name);
                 }
             }
         }

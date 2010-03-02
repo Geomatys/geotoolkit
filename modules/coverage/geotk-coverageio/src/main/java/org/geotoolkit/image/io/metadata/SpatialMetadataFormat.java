@@ -882,7 +882,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         final String old = map.put(methodName, elementName);
         if (old != null && !old.equals(elementName)) {
             map.put(methodName, old); // Preserve the previous value.
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1, methodName));
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, methodName));
         }
     }
 

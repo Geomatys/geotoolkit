@@ -1036,7 +1036,7 @@ public class Plot2D extends ZoomPane {
             this.color = color;
             final int length = x.size();
             if (length != y.size()) {
-                throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+                throw new MismatchedSizeException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "x", "y"));
             }
             /*
              * Creates a Path2D of Float type if it is suffisient

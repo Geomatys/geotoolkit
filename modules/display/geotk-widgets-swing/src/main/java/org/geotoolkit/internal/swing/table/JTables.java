@@ -146,7 +146,7 @@ public final class JTables {
             final int position = target.getColumnIndex(identifier);
             if (position < i) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.DUPLICATED_VALUES_$1, identifier));
+                        Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, identifier));
             }
             target.moveColumn(position, i);
         }

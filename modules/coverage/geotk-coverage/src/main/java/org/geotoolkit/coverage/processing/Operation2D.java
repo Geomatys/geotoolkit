@@ -239,7 +239,8 @@ public abstract class Operation2D extends AbstractOperation {
         ensureNonNull("sourceNames", sourceNames);
         ensureNonNull("sources",     sources);
         if (sources.length != sourceNames.length) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "sources", "sourceNames"));
         }
         final ViewType computationView = getComputationView(parameters);
         ensureNonNull("computationView", computationView);

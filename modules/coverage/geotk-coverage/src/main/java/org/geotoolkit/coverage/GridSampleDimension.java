@@ -239,7 +239,8 @@ public class GridSampleDimension implements SampleDimension, Serializable {
     /** Constructs a list of categories. Used by constructors only. */
     private static CategoryList list(final CharSequence[] names, final Color[] colors) {
         if (names.length != colors.length) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.MISMATCHED_ARRAY_LENGTH_$2, "names", "colors"));
         }
         final int length = names.length;
         final Category[] categories = new Category[length];

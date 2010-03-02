@@ -388,7 +388,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @return An exception formatted for a duplicated tile at the given coordinate.
      */
     private static IllegalArgumentException duplicatedTile(final Point pt) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_$1,
+        return new IllegalArgumentException(Errors.format(Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1,
                 "location=" + pt.x + ',' + pt.y));
     }
 

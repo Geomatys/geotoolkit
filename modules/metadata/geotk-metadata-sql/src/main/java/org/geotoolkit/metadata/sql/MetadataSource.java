@@ -400,7 +400,7 @@ public class MetadataSource {
                     identifier = candidate;
                 } else if (!identifier.equals(candidate)) {
                     final LogRecord record = Errors.getResources(null).getLogRecord(
-                            Level.WARNING, Errors.Keys.DUPLICATED_VALUES_$1, candidate);
+                            Level.WARNING, Errors.Keys.DUPLICATED_VALUES_FOR_KEY_$1, candidate);
                     record.setSourceClassName(getClass().getCanonicalName());
                     record.setSourceMethodName("search");
                     Logging.log(MetadataSource.class, record);

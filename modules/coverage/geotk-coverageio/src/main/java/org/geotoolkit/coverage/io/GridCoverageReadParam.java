@@ -31,13 +31,15 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * Describes how a stream is to be decoded. Instances of this class are used to supply
- * information to instances of {@link GridCoverageReader}. The relationship between this
- * class and {@code GridCoverageReader} is similar to the relationship that exists in the
- * standard Java library between {@link ImageReadParam} and {@link javax.imageio.ImageReader}.
+ * information to instances of {@link GridCoverageReader}.
+ * <p>
+ * The relationship between this class and {@code GridCoverageReader} is similar to the
+ * relationship that exists in the standard Java library between {@link ImageReadParam}
+ * and {@link javax.imageio.ImageReader}.
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09
  * @module
@@ -59,6 +61,17 @@ public class GridCoverageReadParam {
      * The resolution, or {@code null} if unspecified.
      */
     private double[] resolution;
+
+    /**
+     * The set of source bands to read, or {@code null} for all of them.
+     */
+    private int[] sourceBands;
+
+    /**
+     * The set of destination bands where data will be placed. By default, the value is
+     * {@code null}, indicating that all destination bands should be written in order.
+     */
+    private int[] destinationBands;
 
     /**
      * The set of parameters which should be used strictly as defined. By default, no parameter
@@ -248,5 +261,96 @@ public class GridCoverageReadParam {
             resolution = resolution.clone();
         }
         this.resolution = resolution;
+    }
+
+    /**
+     * Returns the set of source bands to read, or {@code null} for all of them.
+     *
+     * @return The set of source bands to read, or {@code null} for all of them.
+     *
+     * @since 3.10
+     */
+    public int[] getSourceBands() {
+        final int[] bands = sourceBands;
+        return (bands != null) ? bands.clone() : null;
+    }
+
+    /**
+     * Sets the indices of the source bands to read. A {@code null} value indicates
+     * that all source bands will be read.
+     * <p>
+     * At the time of reading, an {@link IllegalArgumentException} will be thrown by the reader
+     * if a value larger than the largest available source band index has been specified or if
+     * the number of source bands and destination bands to be used differ.
+     *
+     * @param  bands The source bands to read, or {@code null}.
+     * @throws IllegalArgumentException If the given array is empty,
+     *         or if it contains duplicated or negative values.
+     *
+     * @since 3.10
+     */
+    public void setSourceBands(final int... bands) throws IllegalArgumentException {
+        sourceBands = checkAndClone(bands);
+    }
+
+    /**
+     * Returns the set of destination bands where data will be placed. By default, the value
+     * is {@code null}, indicating that all destination bands should be written in order.
+     *
+     * @return The set of destination bands where data will be placed, or {@code null}.
+     *
+     * @since 3.10
+     */
+    public int[] getDestinationBands() {
+        final int[] bands = destinationBands;
+        return (bands != null) ? bands.clone() : null;
+    }
+
+    /**
+     * Sets the indices of the destination bands where data will be placed. A null value
+     * indicates that all destination bands will be used.
+     * <p>
+     * At the time of reading, an {@link IllegalArgumentException} will be thrown by the reader
+     * if a value larger than the largest destination band index has been specified or if the
+     * number of source bands and destination bands to be used differ.
+     *
+     * @param  bands The destination bands, or {@code null}.
+     * @throws IllegalArgumentException If the given array is empty,
+     *         or if it contains duplicated or negative values.
+     *
+     * @since 3.10
+     */
+    public void setDestinationBands(final int... bands) throws IllegalArgumentException {
+        destinationBands = checkAndClone(bands);
+    }
+
+    /**
+     * Clones the given array and ensures that all numbers are positive and non-duplicated.
+     *
+     * @param  bands The array to check and clone, or {@code null}.
+     * @return A clone of the given array, or {@code null}.
+     * @throws IllegalArgumentException If the given array is empty,
+     *         or if it contains duplicated or negative values.
+     */
+    private static int[] checkAndClone(int[] bands) throws IllegalArgumentException {
+        if (bands != null) {
+            if (bands.length == 0) {
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.EMPTY_ARRAY));
+            }
+            bands = bands.clone();
+            for (int i=0; i<bands.length; i++) {
+                final int band = bands[i];
+                if (band < 0) {
+                    throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_BAND_NUMBER_$1, band));
+                }
+                for (int j=i; --j>=0;) {
+                    if (band == bands[j]) {
+                        throw new IllegalArgumentException(Errors.format(
+                                Errors.Keys.DUPLICATED_VALUE_$1, band));
+                    }
+                }
+            }
+        }
+        return bands;
     }
 }
