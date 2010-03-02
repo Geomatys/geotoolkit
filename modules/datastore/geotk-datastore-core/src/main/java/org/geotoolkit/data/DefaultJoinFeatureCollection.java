@@ -105,7 +105,9 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
     @Override
     public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        final Query combine = QueryUtilities.subQuery(this.query, query);
+        //the result should be an absolute query too.
+        return QueryUtilities.evaluate("sub-"+getID(), combine);
     }
 
     @Override
@@ -134,12 +136,20 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
     @Override
     public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(isWritable()){
+            throw new UnsupportedOperationException("Not supported yet.");
+        }else{
+            throw new DataStoreException("Collection is not writable.");
+        }
     }
 
     @Override
     public void remove(Filter filter) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if(isWritable()){
+            throw new UnsupportedOperationException("Not supported yet.");
+        }else{
+            throw new DataStoreException("Collection is not writable.");
+        }
     }
 
     /**
