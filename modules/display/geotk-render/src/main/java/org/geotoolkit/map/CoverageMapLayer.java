@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.map;
 
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.opengis.feature.type.Name;
 
 /**
@@ -33,6 +33,6 @@ public interface CoverageMapLayer extends MapLayer{
     /**
      * CoverageReader used to obtain GridCoverages.
      */
-    CoverageReader getCoverageReader();
+    GridCoverageReader getCoverageReader();
         
 }

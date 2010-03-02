@@ -18,7 +18,10 @@
 package org.geotoolkit.map;
 
 
-import org.geotoolkit.coverage.io.CoverageReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -31,10 +34,10 @@ import org.opengis.geometry.Envelope;
  */
 final class DefaultCoverageMapLayer extends AbstractMapLayer implements CoverageMapLayer {
 
-    private final CoverageReader reader;
+    private final GridCoverageReader reader;
     private final Name coverageName;
     
-    DefaultCoverageMapLayer(CoverageReader reader, MutableStyle style, Name name){
+    DefaultCoverageMapLayer(GridCoverageReader reader, MutableStyle style, Name name){
         super(style);
         if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
             throw new NullPointerException("Coverage Reader and name can not be null");
@@ -55,7 +58,7 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
      * {@inheritDoc }
      */
     @Override
-    public CoverageReader getCoverageReader(){
+    public GridCoverageReader getCoverageReader(){
         return reader;
     }
         
@@ -64,7 +67,12 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
      */
     @Override
     public Envelope getBounds() {        
-        return reader.getCoverageBounds();
+        try {
+            return reader.getGridGeometry(0).getEnvelope();
+        } catch (CoverageStoreException ex) {
+            Logger.getLogger(DefaultCoverageMapLayer.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
 }

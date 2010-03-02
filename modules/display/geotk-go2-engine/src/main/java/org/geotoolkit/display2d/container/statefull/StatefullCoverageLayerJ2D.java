@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
@@ -56,13 +58,17 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
 
     //compare values to update caches if necessary
     private final StatefullContextParams params;
-    private final CoordinateReferenceSystem dataCRS;
+    private CoordinateReferenceSystem dataCRS;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(ReferencedCanvas2D canvas, CoverageMapLayer layer){
         super(canvas, layer, true);
 
-        this.dataCRS = layer.getCoverageReader().getCoverageBounds().getCoordinateReferenceSystem();
+        try {
+            this.dataCRS = layer.getCoverageReader().getGridGeometry(0).getCoordinateReferenceSystem();
+        } catch (CoverageStoreException ex) {
+            Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
 
         params = new StatefullContextParams(canvas,null);

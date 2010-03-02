@@ -19,8 +19,8 @@ package org.geotoolkit.map;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 
-import org.geotoolkit.coverage.io.CoverageReader;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 
@@ -39,6 +39,6 @@ public interface ElevationModel {
 
     double getModelHeight(DirectPosition position, Unit<Length> lenght);
 
-    CoverageReader getCoverageReader();
+    GridCoverageReader getCoverageReader();
     
 }

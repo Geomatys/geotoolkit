@@ -30,8 +30,10 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -130,7 +132,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         }
         
         if(layer.getCoverageReader() != null){
-            CoverageReader reader = layer.getCoverageReader();
+            GridCoverageReader reader = layer.getCoverageReader();
             final Rectangle2D displayRect = canvas.getDisplayBounds().getBounds2D();
             final Rectangle2D objectiveRect;
             final double[] resolution = new double[2];
@@ -148,17 +150,13 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             GeneralEnvelope env = new GeneralEnvelope(objectiveRect);
             env.setCoordinateReferenceSystem(canvas.getObjectiveCRS2D());
 
-            CoverageReadParam param = new CoverageReadParam(env, resolution);
+            GridCoverageReadParam param = new GridCoverageReadParam();
+            param.setEnvelope(env);
+            param.setResolution(resolution);
 
             try{
-                coverage = reader.read(param);
-            }catch(FactoryException ex){
-                ex.printStackTrace();
-                return null;
-            }catch(TransformException ex){
-                ex.printStackTrace();
-                return null;
-            }catch(IOException ex){
+                coverage = (GridCoverage2D) reader.read(0,param);
+            }catch(CoverageStoreException ex){
                 ex.printStackTrace();
                 return null;
             }

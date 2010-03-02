@@ -21,15 +21,14 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.data.DataUtilities;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.style.MutableStyle;
-
 import org.geotoolkit.style.MutableStyleFactory;
+
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -78,13 +77,16 @@ public final class MapBuilder {
         if(name == null){
             throw new NullPointerException("Name can not be null");
         }
-        return new DefaultCoverageMapLayer(new SimpleCoverageReader(grid), style, new DefaultName(name) );
+
+        return null;
+
+//        return new DefaultCoverageMapLayer(new ImageCoverageReader(grid), style, new DefaultName(name) );
     }
 
     /**
      * Create a default coverage maplayer with a coverageReader, a style and the grid name.
      */
-    public static CoverageMapLayer createCoverageLayer(final CoverageReader reader, final MutableStyle style, final String name){
+    public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, final MutableStyle style, final String name){
          if(name == null){
             throw new NullPointerException("Name can not be null");
         }
@@ -97,7 +99,7 @@ public final class MapBuilder {
      * @param grid : Coverage reader holding elevation values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageReader grid){
+    public static ElevationModel createElevationModel(final GridCoverageReader grid){
         FilterFactory FF = FactoryFinder.getFilterFactory(null);
         return new DefaultElevationModel(grid, FF.literal(0),FF.literal(1));
     }
@@ -110,7 +112,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final CoverageReader grid, Expression offset, Expression scale){
+    public static ElevationModel createElevationModel(final GridCoverageReader grid, Expression offset, Expression scale){
         return new DefaultElevationModel(grid, offset,scale);
     }
 

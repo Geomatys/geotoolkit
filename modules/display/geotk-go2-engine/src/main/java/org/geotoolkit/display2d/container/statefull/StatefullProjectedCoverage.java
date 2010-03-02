@@ -22,15 +22,18 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.util.collection.Cache;
-import org.geotoolkit.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.FactoryException;
@@ -45,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class StatefullProjectedCoverage implements ProjectedCoverage {
 
-    private final Cache<CoverageReadParam,GridCoverage2D> cache = new Cache<CoverageReadParam,GridCoverage2D>(1,0,false);
+    private final Cache<GridCoverageReadParam,GridCoverage2D> cache = new Cache<GridCoverageReadParam,GridCoverage2D>(1,0,false);
 
     private final StatefullContextParams params;
     private final CoverageMapLayer layer;
@@ -69,14 +72,14 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public GridCoverage2D getCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException{
+    public GridCoverage2D getCoverage(GridCoverageReadParam param) throws CoverageStoreException{
         GridCoverage2D value = cache.peek(param);
         if (value == null) {
             Cache.Handler<GridCoverage2D> handler = cache.lock(param);
             try {
                 value = handler.peek();
                 if (value == null) {
-                    value = layer.getCoverageReader().read(param);
+                    value = (GridCoverage2D) layer.getCoverageReader().read(0,param);
                 }
             } finally {
                 handler.putAndUnlock(value);
@@ -86,12 +89,12 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public GridCoverage2D getElevationCoverage(CoverageReadParam param)
-        throws FactoryException,IOException,TransformException{
+    public GridCoverage2D getElevationCoverage(GridCoverageReadParam param)
+        throws CoverageStoreException{
         final ElevationModel elevationModel = layer.getElevationModel();
 
         if(elevationModel != null){
-            return elevationModel.getCoverageReader().read(param);
+            return (GridCoverage2D) elevationModel.getCoverageReader().read(0,param);
         }else{
             return null;
         }

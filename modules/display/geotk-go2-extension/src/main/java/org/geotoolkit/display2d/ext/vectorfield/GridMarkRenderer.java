@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.display2d.ext.vectorfield;
 
-import java.io.IOException;
 
-import org.geotoolkit.coverage.io.CoverageReadParam;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -31,8 +31,6 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Renderer for vector field arrows.
@@ -63,16 +61,14 @@ public class GridMarkRenderer extends AbstractSymbolizerRenderer<CachedVectorFie
         final GeneralEnvelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         bounds.setCoordinateReferenceSystem(renderingContext.getObjectiveCRS());
         final double[] resolution = renderingContext.getResolution();
-        final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(bounds);
+        param.setResolution(resolution);
 
         GridCoverage2D coverage;
         try {
             coverage = graphic.getCoverage(param);
-        } catch (FactoryException ex) {
-            throw new PortrayalException(ex);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
+        } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
 

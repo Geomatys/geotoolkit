@@ -29,8 +29,9 @@ import javax.imageio.ImageReader;
 
 import org.geotoolkit.coverage.PrjFileReader;
 import org.geotoolkit.coverage.WorldFileReader;
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.DefaultCoverageReader;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageReader;
 
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
@@ -59,11 +60,10 @@ public class WorldImageFactory {
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
      * Use this reader if you know you have a small image.
      */
-    public CoverageReader createSimpleReader(File input) throws IOException, NoninvertibleTransformException{
-        final MathTransform trs = readTransform(input);
-        final CoordinateReferenceSystem crs = readCRS(input);
-        final ImageReader reader = buildSimpleReader(input);
-        return new DefaultCoverageReader(reader,trs,crs);
+    public GridCoverageReader createSimpleReader(File input) throws IOException, CoverageStoreException{
+        final ImageCoverageReader ic = new ImageCoverageReader();
+        ic.setInput(input);
+        return ic;
     }
     
     /**
@@ -72,7 +72,7 @@ public class WorldImageFactory {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public CoverageReader createMosaicReader(File input) throws IOException, NoninvertibleTransformException{
+    public GridCoverageReader createMosaicReader(File input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -84,7 +84,7 @@ public class WorldImageFactory {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public CoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException{
+    public GridCoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -98,11 +98,13 @@ public class WorldImageFactory {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public CoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException{
+    public GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final MathTransform trs = readTransform(input);
         final CoordinateReferenceSystem crs = readCRS(input);                
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
-        return new DefaultCoverageReader(reader,trs,crs);
+        final ImageCoverageReader ic = new ImageCoverageReader();
+        ic.setInput(reader);
+        return ic;
     }
 
     /**
@@ -112,11 +114,13 @@ public class WorldImageFactory {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public CoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException{
+    public GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final MathTransform trs = readTransform(input);
         final CoordinateReferenceSystem crs = readCRS(input);
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
-        return new DefaultCoverageReader(reader,trs,crs);
+        final ImageCoverageReader ic = new ImageCoverageReader();
+        ic.setInput(reader);
+        return ic;
     }
 
     

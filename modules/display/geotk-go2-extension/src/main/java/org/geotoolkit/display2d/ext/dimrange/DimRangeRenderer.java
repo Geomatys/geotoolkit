@@ -23,13 +23,13 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.util.logging.Level;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
@@ -49,7 +49,6 @@ import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -109,16 +108,14 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
 
         }
 
-        final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(bounds);
+        param.setResolution(resolution);
 
         GridCoverage2D dataCoverage;
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
-        } catch (FactoryException ex) {
-            throw new PortrayalException(ex);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
+        } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
 

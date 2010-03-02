@@ -26,7 +26,8 @@ import java.util.logging.Level;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -84,16 +85,14 @@ public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSym
         double[] resolution = renderingContext.getResolution();
         final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
         resolution = checkResolution(resolution,bounds);
-        final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        param.setEnvelope(bounds);
+        param.setResolution(resolution);
 
         GridCoverage2D dataCoverage;
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
-        } catch (FactoryException ex) {
-            throw new PortrayalException(ex);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
+        } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
 

@@ -45,6 +45,9 @@ import javax.media.jai.RenderedOp;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageReadParam;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -109,20 +112,21 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
     public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException{
 
         double[] resolution = renderingContext.getResolution();
-        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());
+        final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds2D());
         resolution = checkResolution(resolution,bounds);
-        final CoverageReadParam param = new CoverageReadParam(bounds, resolution);
+        final GridCoverageReadParam param = new GridCoverageReadParam();
+        
+        //System.out.println(bounds);
+
+        param.setEnvelope(bounds);
+        param.setResolution(resolution);
 
         GridCoverage2D dataCoverage;
         GridCoverage2D elevationCoverage;
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
             elevationCoverage = projectedCoverage.getElevationCoverage(param);
-        } catch (FactoryException ex) {
-            throw new PortrayalException(ex);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
-        } catch (TransformException ex) {
+        } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
 
@@ -130,8 +134,11 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
             LOGGER.log(Level.WARNING, "Requested an area where no coverage where found.");
         }
 
-
         if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),renderingContext.getObjectiveCRS())){
+            dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), bounds.getCoordinateReferenceSystem());
+            dataCoverage = dataCoverage.view(ViewType.RENDERED);
+            dataCoverage.show();
+
             //todo : we should raise an ERROR exception, not just an info
 //            monitor.exceptionOccured(
 //                    new IllegalStateException("Coverage is not in the requested CRS, found : " +

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.ext.vectorfield;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,16 +24,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.canvas.Canvas;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Graphic builder for Coverages to be displayed with
@@ -74,12 +72,8 @@ public class GridMarkGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             GridCoverage2D coverage = null;
             try {
                 //get the default gridcoverage
-                coverage = coverageLayer.getCoverageReader().read(null);
-            } catch (FactoryException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            } catch (TransformException ex) {
-                LOGGER.log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+                coverage = (GridCoverage2D) coverageLayer.getCoverageReader().read(0,null);
+            } catch (CoverageStoreException ex) {
                 LOGGER.log(Level.SEVERE, null, ex);
             }
             

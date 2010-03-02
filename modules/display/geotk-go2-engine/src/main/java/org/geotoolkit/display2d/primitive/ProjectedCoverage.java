@@ -19,9 +19,10 @@ package org.geotoolkit.display2d.primitive;
 import java.io.IOException;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.coverage.io.CoverageReadParam;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.referencing.FactoryException;
@@ -53,7 +54,7 @@ public interface ProjectedCoverage extends Graphic {
      * @throws IOException
      * @throws TransformException
      */
-    GridCoverage2D getCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException;
+    GridCoverage2D getCoverage(GridCoverageReadParam param) throws CoverageStoreException;
 
     /**
      * Get the projecte geometry representation of the coverage border.
@@ -72,7 +73,7 @@ public interface ProjectedCoverage extends Graphic {
      * @throws IOException
      * @throws TransformException
      */
-    GridCoverage2D getElevationCoverage(CoverageReadParam param) throws FactoryException,IOException,TransformException;
+    GridCoverage2D getElevationCoverage(GridCoverageReadParam param) throws CoverageStoreException;
 
     /**
      * @return original canvas of this graphic

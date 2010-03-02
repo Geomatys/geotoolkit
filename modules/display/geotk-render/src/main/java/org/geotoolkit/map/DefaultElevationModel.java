@@ -20,7 +20,7 @@ package org.geotoolkit.map;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.coverage.io.CoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageReader;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -34,12 +34,12 @@ import org.opengis.geometry.DirectPosition;
 final class DefaultElevationModel implements ElevationModel{
 
 
-    private final CoverageReader coverage;
+    private final GridCoverageReader coverage;
     private final Expression offset;
     private final Expression scale;
 
 
-    DefaultElevationModel(CoverageReader coverage, Expression offset, Expression scale){
+    DefaultElevationModel(GridCoverageReader coverage, Expression offset, Expression scale){
         this.coverage = coverage;
         this.offset = offset;
         this.scale = scale;
@@ -58,7 +58,7 @@ final class DefaultElevationModel implements ElevationModel{
      * {@inheritDoc }
      */
     @Override
-    public CoverageReader getCoverageReader() {
+    public GridCoverageReader getCoverageReader() {
         return coverage;
     }
 
