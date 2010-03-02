@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.wi;
+package org.geotoolkit.coverage;
 
 import java.awt.Dimension;
 import java.io.File;
@@ -34,19 +34,22 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 /**
+ * Utility class to aquiere a coverage reader from a file.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class WorldImageFactory {
+public class WorldImageReaderUtilities {
     
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
-    
+
+    private WorldImageReaderUtilities(){}
+
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
      * Use this reader if you know you have a small image.
      */
-    public GridCoverageReader createSimpleReader(File input) throws IOException, CoverageStoreException{
+    public static GridCoverageReader createSimpleReader(File input) throws IOException, CoverageStoreException{
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(input);
         return ic;
@@ -58,7 +61,7 @@ public class WorldImageFactory {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public GridCoverageReader createMosaicReader(File input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(File input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -70,7 +73,7 @@ public class WorldImageFactory {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public GridCoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -83,7 +86,7 @@ public class WorldImageFactory {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
@@ -97,7 +100,7 @@ public class WorldImageFactory {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
