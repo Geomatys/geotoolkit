@@ -256,7 +256,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                         throw new IllegalArgumentException("unexpected attribute:" + q.getLocalPart() + '\n' + exp.toString());
                     }
 
-                    if (pdesc instanceof GeometryDescriptor){
+                    if (pdesc instanceof GeometryDescriptor) {
                         event = streamReader.next();
                         while (event != XMLEvent.START_ELEMENT) {
                             event = streamReader.next();
@@ -288,7 +288,7 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
                             throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg);
                         }
 
-                    }else{
+                    } else {
                         if (streamReader.next() != XMLEvent.CHARACTERS){
                             LOGGER.severe("unexpected event, was waiting for CHARACTERS event.");
                         } else {
@@ -299,20 +299,25 @@ public class JAXPStreamFeatureReader extends JAXPFeatureReader {
 
                             if (previous == null && nameAttribute != null) {
                                 Map<String, Object> map = new HashMap<String, Object>();
-                                map.put(nameAttribute, Converters.convert(content, propertyType));
+                                map.put(nameAttribute, content);
                                 values.put(q, map);
+
+                            } else if (previous == null && List.class.equals(propertyType)) {
+                                List<String> list = new ArrayList<String>();
+                                list.add(content);
+                                values.put(q, list);
 
                             } else if (previous == null) {
                                 values.put(q, Converters.convert(content, propertyType));
 
                             } else if (previous instanceof Map && nameAttribute != null) {
-                                ((Map) previous).put(nameAttribute, Converters.convert(content, propertyType));
+                                ((Map) previous).put(nameAttribute, content);
 
                             } else if (previous instanceof Map && nameAttribute == null) {
                                 LOGGER.severe("unable to reader a composite attribute no name has been found");
 
                             } else if (previous instanceof Collection) {
-                                ((Collection) previous).add(Converters.convert(content, propertyType));
+                                ((Collection) previous).add(content);
 
                             } else {
                                 List multipleValue = new ArrayList();
