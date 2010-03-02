@@ -206,7 +206,7 @@ public class SMLDataStore extends AbstractDataStore {
         
         // sml:keywords
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(List.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(KEYWORDS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
@@ -228,7 +228,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         // sml:phenomenons
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(List.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(PHENOMENONS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
@@ -261,7 +261,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         // sml:inputs
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(INPUTS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
@@ -272,7 +272,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         // sml:outputs
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(OUTPUTS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
@@ -303,7 +303,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         // sml:producer
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(PRODUCER);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
@@ -314,7 +314,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         // sml:component
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(COMPONENTS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);
@@ -399,7 +399,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         // sml:characteristics
         attributeTypeBuilder.reset();
-        attributeTypeBuilder.setBinding(String.class);
+        attributeTypeBuilder.setBinding(Map.class);
         attributeDescBuilder.reset();
         attributeDescBuilder.setName(CHARACTERISTICS);
         attributeDescBuilder.setMaxOccurs(Integer.MAX_VALUE);

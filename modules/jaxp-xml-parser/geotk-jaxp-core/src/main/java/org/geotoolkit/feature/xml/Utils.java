@@ -32,6 +32,8 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
 import javax.xml.stream.events.XMLEvent;
@@ -146,7 +148,11 @@ public class Utils {
      */
     public static QName getQNameFromType(Class binding) {
         if (binding != null) {
-            if (Long.class.equals(binding)) {
+
+            // Special case when we get a List or Map we return String => TODO
+            if (List.class.equals(binding) || Map.class.equals(binding)) {
+                return new QName("http://www.w3.org/2001/XMLSchema", "string");
+            } else if (Long.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "long");
             } else if (Integer.class.equals(binding)) {
                 return new QName("http://www.w3.org/2001/XMLSchema", "integer");
