@@ -27,7 +27,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.util.collection.CloseableIterator;
@@ -247,6 +246,112 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         }
 
     }
+
+    /**
+     * Iterate on both collections with an outer left join condition.
+     */
+    private class JoinOuterLeftRowIterator implements CloseableIterator<FeatureCollectionRow>{
+
+        private final CloseableIterator<FeatureCollectionRow> leftIterator;
+        private CloseableIterator<FeatureCollectionRow> rightIterator;
+        private FeatureCollectionRow leftRow;
+        private FeatureCollectionRow nextRow;
+
+        JoinOuterLeftRowIterator(Hints hints) throws DataStoreException{
+            leftIterator = leftCollection.getRows();
+        }
+
+        @Override
+        public FeatureCollectionRow next() {
+            try {
+                searchNext();
+            } catch (DataStoreException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            FeatureCollectionRow f = nextRow;
+            nextRow = null;
+            return f;
+        }
+
+        @Override
+        public void close() {
+            leftIterator.close();
+            if(rightIterator != null){
+                rightIterator.close();
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            try {
+                searchNext();
+            } catch (DataStoreException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            return nextRow != null;
+        }
+
+        private void searchNext() throws DataStoreException{
+            if(nextRow != null) return;
+
+            final PropertyIsEqualTo equal = getSource().getJoinCondition();
+            final PropertyName leftProperty = (PropertyName) equal.getExpression1();
+            final PropertyName rightProperty = (PropertyName) equal.getExpression2();
+
+            //we might have several right features for one left
+            if(leftRow != null && rightIterator != null){
+                while(nextRow== null && rightIterator.hasNext()){
+                    final FeatureCollectionRow rightRow = rightIterator.next();
+                    nextRow = checkValid(leftRow, rightRow);
+                }
+            }
+
+            while(nextRow==null && leftIterator.hasNext()){
+                rightIterator = null;
+                leftRow = leftIterator.next();
+
+                final Feature leftFeature = toFeature(leftRow);
+                final Object leftValue = leftProperty.evaluate(leftFeature);
+
+                if(rightIterator == null){
+                    QueryBuilder qb = new QueryBuilder();
+                    qb.setSource(getSource().getRight());
+                    qb.setFilter(FF.equals(rightProperty, FF.literal(leftValue)));
+                    Query rightQuery = qb.buildQuery();
+                    rightIterator = rightCollection.subCollection(rightQuery).getRows();
+                }
+
+                while(nextRow== null && rightIterator.hasNext()){
+                    final FeatureCollectionRow rightRow = rightIterator.next();
+                    nextRow = checkValid(leftRow, rightRow);
+                }
+
+            }
+
+        }
+
+        private FeatureCollectionRow checkValid(FeatureCollectionRow left, FeatureCollectionRow right) throws DataStoreException{
+            final Feature candidate = toFeature(left,right);
+
+            if(query.getFilter().evaluate(candidate)){
+                //combine both rows
+                final FeatureCollectionRow row = new DefaultFeatureCollectionRow();
+                row.getFeatures().putAll(left.getFeatures());
+                row.getFeatures().putAll(right.getFeatures());
+                return row;
+            }else{
+                //not a valid combinaison
+                return null;
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported yet on join queries.");
+        }
+
+    }
+
 
     private class RowToFeatureIterator implements FeatureIterator<Feature>{
 

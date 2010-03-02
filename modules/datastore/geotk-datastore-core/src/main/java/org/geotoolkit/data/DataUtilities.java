@@ -86,7 +86,11 @@ public class DataUtilities {
 
         final MemoryDataStore ds = new MemoryDataStore(type, true);
         final Session session = ds.createSession(false);
-        return session.getFeatureCollection(QueryBuilder.all(type.getName()));
+
+        FeatureCollection col = session.getFeatureCollection(QueryBuilder.all(type.getName()));
+        ((AbstractFeatureCollection)col).setId(id);
+
+        return col;
     }
 
 

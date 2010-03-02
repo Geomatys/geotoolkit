@@ -46,7 +46,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     //@todo not thread safe, I dont think it's important
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
 
-    protected final String id;
+    protected String id;
     protected final Source source;
 
     public AbstractFeatureCollection(String id, Source source){
@@ -71,6 +71,9 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         }
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * {@inheritDoc }

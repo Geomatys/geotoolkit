@@ -19,26 +19,25 @@
 package org.geotoolkit.data.query;
 
 import junit.framework.TestCase;
-import org.geotoolkit.data.DataStoreException;
+
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.session.Session;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
+
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
@@ -81,6 +80,14 @@ public class QueryTest extends TestCase{
         sf.setAttribute("att1", "str3");
         sf.setAttribute("att2", 3);
         fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att1", "str50");
+        sf.setAttribute("att2", 50);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att1", "str51");
+        sf.setAttribute("att2", 51);
+        fw.write();
 
         fw.close();
 
@@ -110,6 +117,14 @@ public class QueryTest extends TestCase{
         sf = (SimpleFeature) fw.next();
         sf.setAttribute("att3", 3);
         sf.setAttribute("att4", 40);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 60);
+        sf.setAttribute("att4", 60);
+        fw.write();
+        sf = (SimpleFeature) fw.next();
+        sf.setAttribute("att3", 61);
+        sf.setAttribute("att4", 61);
         fw.write();
 
         fw.close();
@@ -297,7 +312,7 @@ public class QueryTest extends TestCase{
      * Test that cross datastore queries works correctly.
      */
     @Test
-    public void testCrossQuery() throws Exception{
+    public void testInnerJoinQuery() throws Exception{
         final Session session = store.createSession(false);
 
         final QueryBuilder qb = new QueryBuilder();
@@ -313,11 +328,82 @@ public class QueryTest extends TestCase{
         final FeatureCollection col = session.getFeatureCollection(query);
 
         FeatureIterator ite = col.iterator();
-        while(ite.hasNext()){
-            System.out.println(ite.next());
-        }
+        Feature f = null;
 
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str1");
+        assertEquals(f.getProperty("att2").getValue(), 1);
+        assertEquals(f.getProperty("att3").getValue(), 1);
+        assertEquals(f.getProperty("att4").getValue(), 10d);
 
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str2");
+        assertEquals(f.getProperty("att2").getValue(), 2);
+        assertEquals(f.getProperty("att3").getValue(), 2);
+        assertEquals(f.getProperty("att4").getValue(), 20d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str2");
+        assertEquals(f.getProperty("att2").getValue(), 2);
+        assertEquals(f.getProperty("att3").getValue(), 2);
+        assertEquals(f.getProperty("att4").getValue(), 30d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str3");
+        assertEquals(f.getProperty("att2").getValue(), 3);
+        assertEquals(f.getProperty("att3").getValue(), 3);
+        assertEquals(f.getProperty("att4").getValue(), 40d);
+
+        assertFalse(ite.hasNext());
+    }
+
+    /**
+     * Test that cross datastore queries works correctly.
+     */
+    @Test
+    public void testOuterLeftQuery() throws Exception{
+//        final Session session = store.createSession(false);
+//
+//        final QueryBuilder qb = new QueryBuilder();
+//        final Join join = new DefaultJoin(
+//                new DefaultSelector(session, name1, "s1"),
+//                new DefaultSelector(session, name2, "s2"),
+//                JoinType.INNER,
+//                FF.equals(FF.property("att2"), FF.property("att3")));
+//        qb.setSource(join);
+//
+//        final Query query = qb.buildQuery();
+//
+//        final FeatureCollection col = session.getFeatureCollection(query);
+//
+//        FeatureIterator ite = col.iterator();
+//        Feature f = null;
+//
+//        f = ite.next();
+//        assertEquals(f.getProperty("att1").getValue(), "str1");
+//        assertEquals(f.getProperty("att2").getValue(), 1);
+//        assertEquals(f.getProperty("att3").getValue(), 1);
+//        assertEquals(f.getProperty("att4").getValue(), 10d);
+//
+//        f = ite.next();
+//        assertEquals(f.getProperty("att1").getValue(), "str2");
+//        assertEquals(f.getProperty("att2").getValue(), 2);
+//        assertEquals(f.getProperty("att3").getValue(), 2);
+//        assertEquals(f.getProperty("att4").getValue(), 20d);
+//
+//        f = ite.next();
+//        assertEquals(f.getProperty("att1").getValue(), "str2");
+//        assertEquals(f.getProperty("att2").getValue(), 2);
+//        assertEquals(f.getProperty("att3").getValue(), 2);
+//        assertEquals(f.getProperty("att4").getValue(), 30d);
+//
+//        f = ite.next();
+//        assertEquals(f.getProperty("att1").getValue(), "str3");
+//        assertEquals(f.getProperty("att2").getValue(), 3);
+//        assertEquals(f.getProperty("att3").getValue(), 3);
+//        assertEquals(f.getProperty("att4").getValue(), 40d);
+//
+//        assertFalse(ite.hasNext());
     }
 
 }
