@@ -417,7 +417,68 @@ public class QueryTest extends TestCase{
 
         assertFalse(ite.hasNext());
 
-        System.out.println(col);
+    }
+
+    /**
+     * Test that cross datastore queries works correctly.
+     */
+    @Test
+    public void testOuterRightQuery() throws Exception{
+        final Session session = store.createSession(false);
+
+        final QueryBuilder qb = new QueryBuilder();
+        final Join join = new DefaultJoin(
+                new DefaultSelector(session, name1, "s1"),
+                new DefaultSelector(session, name2, "s2"),
+                JoinType.RIGHT_OUTER,
+                FF.equals(FF.property("att2"), FF.property("att3")));
+        qb.setSource(join);
+
+        final Query query = qb.buildQuery();
+
+        final FeatureCollection col = session.getFeatureCollection(query);
+
+        FeatureIterator ite = col.iterator();
+        Feature f = null;
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str1");
+        assertEquals(f.getProperty("att2").getValue(), 1);
+        assertEquals(f.getProperty("att3").getValue(), 1);
+        assertEquals(f.getProperty("att4").getValue(), 10d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str2");
+        assertEquals(f.getProperty("att2").getValue(), 2);
+        assertEquals(f.getProperty("att3").getValue(), 2);
+        assertEquals(f.getProperty("att4").getValue(), 20d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str2");
+        assertEquals(f.getProperty("att2").getValue(), 2);
+        assertEquals(f.getProperty("att3").getValue(), 2);
+        assertEquals(f.getProperty("att4").getValue(), 30d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), "str3");
+        assertEquals(f.getProperty("att2").getValue(), 3);
+        assertEquals(f.getProperty("att3").getValue(), 3);
+        assertEquals(f.getProperty("att4").getValue(), 40d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), null);
+        assertEquals(f.getProperty("att2").getValue(), null);
+        assertEquals(f.getProperty("att3").getValue(), 60);
+        assertEquals(f.getProperty("att4").getValue(), 60d);
+
+        f = ite.next();
+        assertEquals(f.getProperty("att1").getValue(), null);
+        assertEquals(f.getProperty("att2").getValue(), null);
+        assertEquals(f.getProperty("att3").getValue(), 61);
+        assertEquals(f.getProperty("att4").getValue(), 61d);
+
+        assertFalse(ite.hasNext());
+
     }
 
 }

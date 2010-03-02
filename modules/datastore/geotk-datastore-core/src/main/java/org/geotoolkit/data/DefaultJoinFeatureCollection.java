@@ -115,9 +115,9 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         if(jt == JoinType.INNER){
             return new JoinInnerRowIterator(null);
         }else if(jt == JoinType.LEFT_OUTER){
-            return new JoinOuterLeftRowIterator(null);
+            return new JoinOuterRowIterator(true,null);
         }else if(jt == JoinType.RIGHT_OUTER){
-            throw new UnsupportedOperationException("Not supported yet.");
+            return new JoinOuterRowIterator(false,null);
         }else{
             throw new IllegalArgumentException("Unknowned Join type : " + jt);
         }
@@ -248,18 +248,25 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     /**
-     * Iterate on both collections with an outer left join condition.
+     * Iterate on both collections with an outer join condition.
      */
-    private class JoinOuterLeftRowIterator implements CloseableIterator<FeatureCollectionRow>{
+    private class JoinOuterRowIterator implements CloseableIterator<FeatureCollectionRow>{
 
-        private final CloseableIterator<FeatureCollectionRow> leftIterator;
-        private CloseableIterator<FeatureCollectionRow> rightIterator;
-        private boolean foundLeft = false;
-        private FeatureCollectionRow leftRow;
+        private final CloseableIterator<FeatureCollectionRow> primeIterator;
+        private CloseableIterator<FeatureCollectionRow> secondIterator;
+        private final boolean left;
+        private boolean foundPrime = false;
+        private FeatureCollectionRow primeRow;
         private FeatureCollectionRow nextRow;
 
-        JoinOuterLeftRowIterator(Hints hints) throws DataStoreException{
-            leftIterator = leftCollection.getRows();
+        JoinOuterRowIterator(boolean left, Hints hints) throws DataStoreException{
+            this.left = left;
+            if(left){
+                primeIterator = leftCollection.getRows();
+            }else{
+                primeIterator = rightCollection.getRows();
+            }
+            
         }
 
         @Override
@@ -276,9 +283,9 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         @Override
         public void close() {
-            leftIterator.close();
-            if(rightIterator != null){
-                rightIterator.close();
+            primeIterator.close();
+            if(secondIterator != null){
+                secondIterator.close();
             }
         }
 
@@ -300,41 +307,53 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             final PropertyName rightProperty = (PropertyName) equal.getExpression2();
 
             //we might have several right features for one left
-            if(leftRow != null && rightIterator != null){
-                while(nextRow== null && rightIterator.hasNext()){
-                    final FeatureCollectionRow rightRow = rightIterator.next();
-                    nextRow = checkValid(leftRow, rightRow);
+            if(primeRow != null && secondIterator != null){
+                while(nextRow== null && secondIterator.hasNext()){
+                    final FeatureCollectionRow secondRow = secondIterator.next();
+                    nextRow = checkValid(primeRow, secondRow);
                 }
             }
 
-            while(nextRow==null && leftIterator.hasNext()){
-                foundLeft = false;
-                rightIterator = null;
-                leftRow = leftIterator.next();
+            while(nextRow==null && primeIterator.hasNext()){
+                foundPrime = false;
+                secondIterator = null;
+                primeRow = primeIterator.next();
 
-                final Feature leftFeature = toFeature(leftRow);
-                final Object leftValue = leftProperty.evaluate(leftFeature);
-
-                if(rightIterator == null){
-                    QueryBuilder qb = new QueryBuilder();
-                    qb.setSource(getSource().getRight());
-                    qb.setFilter(FF.equals(rightProperty, FF.literal(leftValue)));
-                    Query rightQuery = qb.buildQuery();
-                    rightIterator = rightCollection.subCollection(rightQuery).getRows();
+                final Feature primeFeature = toFeature(primeRow);
+                final Object primeValue;
+                if(left){
+                    primeValue = leftProperty.evaluate(primeFeature);
+                }else{
+                    primeValue = rightProperty.evaluate(primeFeature);
                 }
 
-                while(nextRow== null && rightIterator.hasNext()){
-                    final FeatureCollectionRow rightRow = rightIterator.next();
-                    nextRow = checkValid(leftRow, rightRow);
-
-                    if(nextRow != null){
-                        foundLeft = true;
+                if(secondIterator == null){
+                    final QueryBuilder qb = new QueryBuilder();
+                    if(left){
+                        qb.setSource(getSource().getRight());
+                        qb.setFilter(FF.equals(rightProperty, FF.literal(primeValue)));
+                        Query secondQuery = qb.buildQuery();
+                        secondIterator = rightCollection.subCollection(secondQuery).getRows();
+                    }else{
+                        qb.setSource(getSource().getLeft());
+                        qb.setFilter(FF.equals(leftProperty, FF.literal(primeValue)));
+                        Query secondQuery = qb.buildQuery();
+                        secondIterator = leftCollection.subCollection(secondQuery).getRows();
                     }
                 }
 
-                if(!foundLeft){
+                while(nextRow== null && secondIterator.hasNext()){
+                    final FeatureCollectionRow rightRow = secondIterator.next();
+                    nextRow = checkValid(primeRow, rightRow);
+
+                    if(nextRow != null){
+                        foundPrime = true;
+                    }
+                }
+
+                if(!foundPrime){
                     //outer left effect, no right match but still we must return the left side
-                    nextRow = leftRow;
+                    nextRow = primeRow;
                 }
 
             }
