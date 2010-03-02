@@ -23,8 +23,12 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
 
@@ -704,6 +708,89 @@ public class MemoryDatastoreTest extends TestCase{
         assertEquals("myId2", f.getIdentifier().getID());
 
         assertFalse(reader.hasNext());
+
+    }
+
+    @Test
+    public void testCollectionAttributs() throws Exception{
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final MemoryDataStore store = new MemoryDataStore();
+        Set<Name> names;
+
+        names = store.getNames();
+        assertEquals(0,names.size());
+
+        //test creation of one schema ------------------------------------------
+        Name name = new DefaultName("http://test.com", "TestSchema1");
+        builder.reset();
+        builder.setName(name);
+        builder.add("ListAtt", List.class);
+        builder.add("MapAtt", Map.class);
+        builder.add("SetAtt", Set.class);
+        final SimpleFeatureType type1 = builder.buildFeatureType();
+
+        store.createSchema(name,type1);
+
+        names = store.getNames();
+        assertEquals(1,names.size());
+        Name n = names.iterator().next();
+
+        assertEquals(n.getLocalPart(), "TestSchema1");
+        assertEquals(n.getNamespaceURI(), "http://test.com");
+
+        //try to insert features -----------------------------------------------
+        Collection<Feature> features = new ArrayList<Feature>();
+        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type1);
+        sfb.set("ListAtt", Collections.singletonList("aListValue"));
+        sfb.set("MapAtt", Collections.singletonMap("aMapKey", "aMapValue"));
+        sfb.set("SetAtt", Collections.singleton("aSetValue"));
+        features.add(sfb.buildFeature("myId1"));
+
+        sfb.set("ListAtt", Collections.singletonList("aListValue2"));
+        sfb.set("MapAtt", Collections.singletonMap("aMapKey2", "aMapValue2"));
+        sfb.set("SetAtt", Collections.singleton("aSetValue2"));
+        features.add(sfb.buildFeature("myId2"));
+
+        store.addFeatures(name, features);
+
+        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name));
+        Feature f = reader.next();
+        assertEquals("myId1", f.getIdentifier().getID());
+
+        assertTrue(f.getProperty("ListAtt").getValue() instanceof List);
+        List lst = (List) f.getProperty("ListAtt").getValue();
+        assertEquals("aListValue",lst.get(0));
+
+        assertTrue(f.getProperty("MapAtt").getValue() instanceof Map);
+        Map map = (Map) f.getProperty("MapAtt").getValue();
+        assertEquals("aMapKey",map.keySet().iterator().next());
+        assertEquals("aMapValue",map.values().iterator().next());
+
+        assertTrue(f.getProperty("SetAtt").getValue() instanceof Set);
+        Set set = (Set) f.getProperty("SetAtt").getValue();
+        assertEquals("aSetValue",set.iterator().next());
+
+
+        f = reader.next();
+        assertEquals("myId2", f.getIdentifier().getID());
+
+        assertTrue(f.getProperty("ListAtt").getValue() instanceof List);
+        lst = (List) f.getProperty("ListAtt").getValue();
+        assertEquals("aListValue2",lst.get(0));
+
+        assertTrue(f.getProperty("MapAtt").getValue() instanceof Map);
+        map = (Map) f.getProperty("MapAtt").getValue();
+        assertEquals("aMapKey2",map.keySet().iterator().next());
+        assertEquals("aMapValue2",map.values().iterator().next());
+
+        assertTrue(f.getProperty("SetAtt").getValue() instanceof Set);
+        set = (Set) f.getProperty("SetAtt").getValue();
+        assertEquals("aSetValue2",set.iterator().next());
+
+
+
+        assertFalse(reader.hasNext());
+
 
     }
 
