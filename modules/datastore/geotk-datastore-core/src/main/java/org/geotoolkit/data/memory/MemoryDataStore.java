@@ -39,9 +39,11 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
@@ -227,8 +229,45 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
-        return handleAddWithFeatureWriter(groupName, newFeatures);
+    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> collection) throws DataStoreException {
+        final MemoryFeatureWriter writer = (MemoryFeatureWriter)getFeatureWriterAppend(groupName);
+        final PropertyDescriptor[] descs = writer.properties.getPropertyDescriptors();
+
+        final List<FeatureId> ids = new ArrayList<FeatureId>();
+
+        try{
+            for(final Feature f : collection){
+                final Feature candidate = writer.next();
+                for(Property property : f.getProperties()){
+                    candidate.getProperty(property.getName()).setValue(property.getValue());
+                }
+
+                //we are in append mode
+                final Object[] vals = new Object[writer.properties.getPropertyCount()+1];
+
+                //use the original id if possible
+                vals[0] = f.getIdentifier().getID();
+                if(vals[0] == null || vals[0].toString().isEmpty() || containId(writer.grp.datas, vals[0].toString())){
+                    vals[0] = writer.modified.getIdentifier();
+                }
+
+                for(int i=0; i<descs.length; i++){
+                    vals[i+1] = Converters.convert(
+                            writer.modified.getProperty(descs[i].getName()).getValue(),
+                            descs[i].getType().getBinding());
+                }
+                writer.grp.datas.add(vals);
+
+                //fire add event
+                fireFeaturesAdded(writer.grp.type.getName());
+
+                ids.add(new DefaultFeatureId(vals[0].toString()));
+            }
+        }finally{
+            writer.close();
+        }
+
+        return ids;
     }
 
     /**
@@ -294,6 +333,12 @@ public class MemoryDataStore extends AbstractDataStore{
         groups.clear();
     }
 
+    private static boolean containId(List<Object[]> datas, String id){
+        for(Object[] objs : datas){
+            if(objs[0].toString().equals(id)) return true;
+        }
+        return false;
+    }
 
     private class MemoryFeatureWriter<T extends FeatureType, F extends Feature> implements FeatureWriter<T,F>{
 

@@ -21,6 +21,8 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import java.util.Date;
 import java.util.Set;
@@ -32,6 +34,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 
@@ -40,6 +43,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -656,5 +660,51 @@ public class MemoryDatastoreTest extends TestCase{
         }
 
      }
+
+    @Test
+    public void testPreserveId() throws Exception{
+        final SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        final MemoryDataStore store = new MemoryDataStore();
+        Set<Name> names;
+
+        names = store.getNames();
+        assertEquals(0,names.size());
+
+        //test creation of one schema ------------------------------------------
+        Name name = new DefaultName("http://test.com", "TestSchema1");
+        builder.reset();
+        builder.setName(name);
+        builder.add("att1", String.class);
+        final SimpleFeatureType type1 = builder.buildFeatureType();
+
+        store.createSchema(name,type1);
+
+        names = store.getNames();
+        assertEquals(1,names.size());
+        Name n = names.iterator().next();
+
+        assertEquals(n.getLocalPart(), "TestSchema1");
+        assertEquals(n.getNamespaceURI(), "http://test.com");
+
+
+        //try to insert features -----------------------------------------------
+        Collection<Feature> features = new ArrayList<Feature>();
+        SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(type1);
+        sfb.set("att1", "hophop1");
+        features.add(sfb.buildFeature("myId1"));
+        sfb.set("att1", "hophop2");
+        features.add(sfb.buildFeature("myId2"));
+
+        store.addFeatures(name, features);
+
+        FeatureReader reader = store.getFeatureReader(QueryBuilder.all(name));
+        Feature f = reader.next();
+        assertEquals("myId1", f.getIdentifier().getID());
+        f = reader.next();
+        assertEquals("myId2", f.getIdentifier().getID());
+
+        assertFalse(reader.hasNext());
+
+    }
 
 }

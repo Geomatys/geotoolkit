@@ -94,7 +94,7 @@ public class VisitorTest {
          Polygon pol = gf.createPolygon(ring, new LinearRing[0]);
          sfb.set("geom", pol);
 
-         collection.add( sfb.buildFeature("id.1"));
+         collection.add( sfb.buildFeature(""));
 
          assertTrue(collection.size() == 1);
 

@@ -77,19 +77,19 @@ public class GenericIteratorTest extends TestCase{
 
         collection = DataUtilities.collection("id", type);
 
-        SimpleFeature sf = SimpleFeatureBuilder.template(type, "-");
+        SimpleFeature sf = SimpleFeatureBuilder.template(type, "");
         sf.setAttribute("att_string", "bbb");
         sf.setAttribute("att_double", 3d);
         collection.add(sf);
         id1 = name.getLocalPart()+"."+0;
 
-        sf = SimpleFeatureBuilder.template(type, "-");
+        sf = SimpleFeatureBuilder.template(type, "");
         sf.setAttribute("att_string", "ccc");
         sf.setAttribute("att_double", 1d);
         collection.add(sf);
         id2 = name.getLocalPart()+"."+1;
 
-        sf = SimpleFeatureBuilder.template(type, "-");
+        sf = SimpleFeatureBuilder.template(type, "");
         sf.setAttribute("att_string", "aaa");
         sf.setAttribute("att_double", 2d);
         collection.add(sf);
