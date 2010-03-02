@@ -17,33 +17,20 @@
 package org.geotoolkit.coverage.wi;
 
 import java.awt.Dimension;
-import java.awt.geom.AffineTransform;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 
-import org.geotoolkit.coverage.PrjFileReader;
-import org.geotoolkit.coverage.WorldFileReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
-
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 /**
@@ -54,7 +41,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 public class WorldImageFactory {
     
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.coverage.wi");
     
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
@@ -90,7 +76,6 @@ public class WorldImageFactory {
         return createMosaicReader(input, tileSize, tileFolder);
     }
 
-    
     /**
      * Create a mosaic reader which will create a cache of tiles at different
      * resolutions.
@@ -99,8 +84,6 @@ public class WorldImageFactory {
      * @param tileFolder : cache directory where tiles will be stored
      */
     public GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
-        final MathTransform trs = readTransform(input);
-        final CoordinateReferenceSystem crs = readCRS(input);                
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
@@ -115,20 +98,10 @@ public class WorldImageFactory {
      * @param tileFolder : cache directory where tiles will be stored
      */
     public GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException, CoverageStoreException{
-        final MathTransform trs = readTransform(input);
-        final CoordinateReferenceSystem crs = readCRS(input);
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
         return ic;
-    }
-
-    
-    /**
-     * Create a simple reader.
-     */
-    private static ImageReader buildSimpleReader(File input){
-        throw new UnsupportedOperationException("Simple reader not implemented yet");
     }
     
     /**
@@ -201,130 +174,6 @@ public class WorldImageFactory {
         cacheFolder.mkdirs();
 
         return cacheFolder;
-    }
-
-    
-    /**
-     * read the transform provided in the world image file.
-     * 
-     */
-    private static MathTransform readTransform(File input) throws IOException{
-        MathTransform transform = null;
-        
-        final Set<String> possibleExtensions = WorldImageConstants.getWorldExtension(input.getName());
-        
-        final int stop = input.getAbsolutePath().lastIndexOf(".");
-        final String worldFilePath;
-        if(stop > 0){
-            //remove the extension part
-            worldFilePath = input.getAbsolutePath().substring(0, stop);
-        }else{
-            //no extension? use the full name
-            worldFilePath = input.getAbsolutePath();
-        }
-        
-        for(String ext : possibleExtensions){
-            File candidate = new File(worldFilePath + ext);
-            if(candidate.exists()){
-                transform = new AffineTransform2D(WorldFileReader.parse(new FileInputStream(candidate)));
-                break;
-            }
-        }
-        
-        return transform;
-    }
-
-    /**
-     * read the transform provided in the world image file.
-     *
-     */
-    private static MathTransform readTransform(URL input) throws IOException{
-        MathTransform transform = null;
-
-        final Set<String> possibleExtensions = WorldImageConstants.getWorldExtension(input.toString());
-
-        final int stop = input.toString().lastIndexOf(".");
-        final String worldFilePath;
-        if(stop > 0){
-            //remove the extension part
-            worldFilePath = input.toString().substring(0, stop);
-        }else{
-            //no extension? use the full name
-            worldFilePath = input.toString();
-        }
-
-        for(String ext : possibleExtensions){
-            URL candidate = new URL(worldFilePath + ext);
-            try{
-                AffineTransform trs = WorldFileReader.parse(candidate.openStream());
-
-                if(trs != null){
-                    transform = new AffineTransform2D(trs);
-                    break;
-                }
-
-            }catch(IOException io){
-                continue;
-            }
-        }
-
-        return transform;
-    }
-
-    
-    /**
-     * Extract the src of the given file by using the .prj file.
-     * if the file could not be find or parsed, return WGS:84.
-     */
-    private static CoordinateReferenceSystem readCRS(File source) throws IOException{
-        CoordinateReferenceSystem crs = null;
-        
-        final String filePath = source.getAbsolutePath();
-        final int index = filePath.lastIndexOf(".");
-        final String prjFilePath = filePath.substring(0, index) + ".prj";
-        final File prjFile = new File(prjFilePath);
-
-        if (prjFile.exists()) {            
-            try {
-                crs = PrjFileReader.parse(new FileInputStream(prjFile));
-            } catch (FactoryException e) {
-                LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
-            }
-        }
-
-        if (crs == null) {
-            //we could not read the CRS, we assume it is WGS84
-            crs = DefaultGeographicCRS.WGS84;
-            LOGGER.info("Unable to find crs, continu with WGS4 CRS");
-        }
-        
-        return crs;
-    }
-
-    /**
-     * Extract the src of the given file by using the .prj file.
-     * if the file could not be find or parsed, return WGS:84.
-     */
-    private static CoordinateReferenceSystem readCRS(URL source) throws IOException{
-        CoordinateReferenceSystem crs = null;
-
-        final String filePath = source.toString();
-        final int index = filePath.lastIndexOf(".");
-        final String prjFilePath = filePath.substring(0, index) + ".prj";
-
-        try {
-            crs = PrjFileReader.parse(new URL(prjFilePath).openStream());
-        } catch (Exception e) {
-            LOGGER.log(Level.INFO, e.getLocalizedMessage(), e);
-        }
-
-        if (crs == null) {
-            //we could not read the CRS, we assume it is WGS84
-            crs = DefaultGeographicCRS.WGS84;
-            LOGGER.info("Unable to find crs, continu with WGS4 CRS");
-        }
-
-        return crs;
     }
     
 }

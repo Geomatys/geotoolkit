@@ -33,8 +33,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageInputStream;
 
-import org.geotoolkit.coverage.io.CoverageReader;
-import org.geotoolkit.coverage.io.DefaultCoverageReader;
 import org.geotoolkit.coverage.geotiff.IIOMetadataAdpaters.GeoTiffIIOMetadataDecoder;
 import org.geotoolkit.coverage.geotiff.crs_adapters.GeoTiffMetadata2CRSAdapter;
 import org.geotoolkit.factory.Hints;
@@ -51,7 +49,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 
 
@@ -67,73 +64,6 @@ public class GeoTIFFactory {
 
     /** SPI for creating tiff readers in ImageIO tools */
     private static final TIFFImageReaderSpi READER_SPI = new TIFFImageReaderSpi();
-
-    /**
-     * Create a simple reader which doesnt use any pyramid or mosaic tiling.
-     * Use this reader if you know you have a small image.
-     */
-    public CoverageReader createSimpleReader(File input) throws IOException, NoninvertibleTransformException{
-        final Object[] metadatas = read(input);
-        final MathTransform trs = (MathTransform) metadatas[1];
-        final CoordinateReferenceSystem crs = ((GeneralEnvelope)metadatas[0]).getCoordinateReferenceSystem();
-        final ImageReader reader = buildSimpleReader(input);
-        return new DefaultCoverageReader(reader,trs,crs);
-    }
-    
-    /**
-     * Create a mosaic reader which will create a cache of tiles at different
-     * resolutions. Tiles creation time depends on the available memory, the image
-     * size and it's format. The creation time can go from a few seconds to several
-     * minuts or even hours if you give him an image like the full resolution BlueMarble.
-     */
-    public CoverageReader createMosaicReader(File input) throws IOException, NoninvertibleTransformException{
-        final int tileSize = 512;
-        final File tileFolder = getTempFolder(input,tileSize);
-        return createMosaicReader(input, tileSize, tileFolder);
-    }
-
-    /**
-     * Create a mosaic reader which will create a cache of tiles at different
-     * resolutions. Tiles creation time depends on the available memory, the image
-     * size and it's format. The creation time can go from a few seconds to several
-     * minuts or even hours if you give him an image like the full resolution BlueMarble.
-     */
-    public CoverageReader createMosaicReader(URL input) throws IOException, NoninvertibleTransformException{
-        final int tileSize = 512;
-        final File tileFolder = getTempFolder(input,tileSize);
-        return createMosaicReader(input, tileSize, tileFolder);
-    }
-
-    
-    /**
-     * Create a mosaic reader which will create a cache of tiles at different
-     * resolutions.
-     * 
-     * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
-     * @param tileFolder : cache directory where tiles will be stored
-     */
-    public CoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException{
-        final Object[] metadatas = read(input);
-        final MathTransform trs = (MathTransform) metadatas[1];
-        final CoordinateReferenceSystem crs = ((GeneralEnvelope)metadatas[0]).getCoordinateReferenceSystem();
-        final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
-        return new DefaultCoverageReader(reader,trs,crs);
-    }
-
-    /**
-     * Create a mosaic reader which will create a cache of tiles at different
-     * resolutions.
-     *
-     * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
-     * @param tileFolder : cache directory where tiles will be stored
-     */
-    public CoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, NoninvertibleTransformException{
-        final Object[] metadatas = read(input);
-        final MathTransform trs = (MathTransform) metadatas[1];
-        final CoordinateReferenceSystem crs = ((GeneralEnvelope)metadatas[0]).getCoordinateReferenceSystem();
-        final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
-        return new DefaultCoverageReader(reader,trs,crs);
-    }
 
     
     /**
