@@ -134,7 +134,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
         if(!CRS.equalsIgnoreMetadata(dataCoverage.getCoordinateReferenceSystem(),renderingContext.getObjectiveCRS())){
             dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), bounds.getCoordinateReferenceSystem());
             dataCoverage = dataCoverage.view(ViewType.RENDERED);
-            dataCoverage.show();
 
             //todo : we should raise an ERROR exception, not just an info
 //            monitor.exceptionOccured(
