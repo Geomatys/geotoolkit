@@ -186,7 +186,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                 objects.put(code, object);
             } catch (FactoryException exception) {
                 if (!isRecoverableFailure(exception)) {
-                    throw new org.geotoolkit.referencing.factory.BackingStoreException(exception);
+                    throw new BackingStoreException(exception);
                 }
                 log(exception, code);
                 objects.remove(code);
@@ -451,7 +451,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
                         element = createObject(code);
                     } catch (FactoryException exception) {
                         if (!isRecoverableFailure(exception)) {
-                            throw new org.geotoolkit.referencing.factory.BackingStoreException(exception);
+                            throw new BackingStoreException(exception);
                         }
                         log(exception, code);
                         iterator.remove();

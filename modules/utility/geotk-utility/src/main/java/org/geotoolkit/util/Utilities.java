@@ -616,38 +616,4 @@ public final class Utilities {
         }
         return elements + r;
     }
-
-    /**
-     * Returns a string with leading and trailing whitespaces omitted. This method is similar
-     * in purpose to {@link String#trim}, except that the {@link Character#isWhitespace(char)}
-     * method is used in order to determine if a character is a whitespace. This is in contrast
-     * with the {@code String.trim()} method, which consider every ASCII control code below 32
-     * to be a whitespace. The later has the effect of removing {@linkplain org.geotoolkit.io.X364
-     * X3.64} escape sequences as well. The method defined here will preserve them.
-     *
-     * @param text The string from which to remove leading and trailing whitespaces.
-     * @return A string with leading and trailing whitespaces removed.
-     *
-     * @since 3.00
-     *
-     * @deprecated Moved into the {@link Strings} class.
-     */
-    @Deprecated
-    public static String trim(String text) {
-        return Strings.trim(text);
-    }
-
-    /**
-     * Returns a string of the specified length filled with white spaces.
-     * This method tries to return a pre-allocated string if possible.
-     *
-     * @param  length The string length. Negative values are clamped to 0.
-     * @return A string of length {@code length} filled with white spaces.
-     *
-     * @deprecated Moved into the {@link Strings} class.
-     */
-    @Deprecated
-    public static String spaces(int length) {
-        return Strings.spaces(length);
-    }
 }

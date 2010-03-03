@@ -23,7 +23,7 @@ import java.text.MessageFormat;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.console.Option;
 import org.geotoolkit.console.CommandLine;
 import org.geotoolkit.io.ExpandedTabWriter;
@@ -515,7 +515,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
          * Writes the constructor, then write keys values.
          * We stopped reading the file for now (will continue later).
          */
-        final String margin = Utilities.spaces(8);
+        final String margin = Strings.spaces(8);
         buffer.append(margin).append("private ").append(KEYS_INNER_CLASS).append("() {").append(lineSeparator)
               .append(margin).append('}').append(lineSeparator);
         final Map.Entry<?,?>[] entries = allocatedIDs.entrySet().toArray(new Map.Entry<?,?>[allocatedIDs.size()]);

@@ -27,7 +27,8 @@ import static org.geotoolkit.util.Strings.*;
  * Tests {@link Strings} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @author Johann Sorel (Geomatys)
+ * @version 3.10
  *
  * @since 3.09 (derived from 3.00).
  */
@@ -40,6 +41,15 @@ public final class StringsTest {
         assertEquals("",         spaces(0));
         assertEquals(" ",        spaces(1));
         assertEquals("        ", spaces(8));
+    }
+
+    /**
+     * Tests {@link Strings#count}.
+     */
+    @Test
+    public void testCount(){
+        assertEquals(0, count("gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj",      '-'));
+        assertEquals(5, count("-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-", '-'));
     }
 
     /**
