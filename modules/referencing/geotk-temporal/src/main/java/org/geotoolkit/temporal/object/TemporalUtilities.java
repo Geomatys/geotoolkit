@@ -80,8 +80,18 @@ public final class TemporalUtilities {
      * handle the current local ? 
      * If the server has a different local then the client ? won't work
      */
-    private static final List<String> FR_POOL = new ArrayList<String>();
-    private static final List<String> FR_POOL_CASE = new ArrayList<String>();
+    private static final List<String> FR_POOL = new ArrayList<String>(){
+        @Override
+        public int indexOf(Object o) {
+            final String candidate = (String) o;
+            for(int i=0,n=FR_POOL.size(); i<n;i++){
+                if(FR_POOL.get(i).equalsIgnoreCase(candidate)){
+                    return i;
+                }
+            }
+            return -1;
+        }
+    };
 
     /**
      * Caution : those objects are not thread safe, take care to synchronize when you use them.
@@ -117,19 +127,6 @@ public final class TemporalUtilities {
         FR_POOL.add("octobre");
         FR_POOL.add("novembre");
         FR_POOL.add("décembre");
-
-        FR_POOL_CASE.add("Janvier");
-        FR_POOL_CASE.add("Février");
-        FR_POOL_CASE.add("Mars");
-        FR_POOL_CASE.add("Avril");
-        FR_POOL_CASE.add("Mai");
-        FR_POOL_CASE.add("Juin");
-        FR_POOL_CASE.add("Juillet");
-        FR_POOL_CASE.add("Août");
-        FR_POOL_CASE.add("Septembre");
-        FR_POOL_CASE.add("Octobre");
-        FR_POOL_CASE.add("Novembre");
-        FR_POOL_CASE.add("Décembre");
     }
 
     private TemporalUtilities(){}
@@ -492,22 +489,25 @@ public final class TemporalUtilities {
     }
 
     /**
-     * this method creates a date from a string, support for many formats.
-     * @param date string to parse
-     * @return Date
+     * Try to parse a date from different well knowed writing types.
+     * 
+     * @param date String to parse
+     * @return resulting parsed Date.
+     * @throws ParseException if String is not valid.
+     * @throws NullPointerException if String is null.
      */
-    public static Date createDate(String date) {
-        if (date == null || date.isEmpty() || date.endsWith("BC")) {
-            return new Date();
+    public static Date parseDate(String date) throws ParseException, NullPointerException{
+
+        if(date.endsWith("BC")){
+            throw new ParseException("Date is marked as Before Christ, not possible to parse it", date.length());
         }
 
-
         final int[] slashOccurences = StringUtilities.getIndexes(date, '/');
-        
+
         if(slashOccurences.length == 1){
             // date is like : 11/2050
-            final int month = Integer.parseInt(date.substring(0, slashOccurences[0])) -1;
-            final int year = Integer.parseInt(date.substring(slashOccurences[0]+1, date.length()));
+            final int month = parseInt(date.substring(0, slashOccurences[0])) -1;
+            final int year = parseInt(date.substring(slashOccurences[0]+1, date.length()));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,1,0,0,0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -515,9 +515,9 @@ public final class TemporalUtilities {
 
         }else if(slashOccurences.length == 2){
             // date is like : 23/11/2050
-            final int day = Integer.parseInt(date.substring(0, slashOccurences[0]));
-            final int month = Integer.parseInt(date.substring(slashOccurences[0]+1, slashOccurences[1])) -1;
-            final int year = Integer.parseInt(date.substring(slashOccurences[1]+1));
+            final int day = parseInt(date.substring(0, slashOccurences[0]));
+            final int month = parseInt(date.substring(slashOccurences[0]+1, slashOccurences[1])) -1;
+            final int year = parseInt(date.substring(slashOccurences[1]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,day,0,0,0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -529,9 +529,9 @@ public final class TemporalUtilities {
 
         if(spaceOccurences.length == 2){
             //date is like : 18 janvier 2050
-            final int day = Integer.parseInt(date.substring(0, spaceOccurences[0]));
+            final int day = parseInt(date.substring(0, spaceOccurences[0]));
             final int month = FR_POOL.indexOf(date.substring(spaceOccurences[0]+1, spaceOccurences[1]));
-            final int year = Integer.parseInt(date.substring(spaceOccurences[1]+1));
+            final int year = parseInt(date.substring(spaceOccurences[1]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,day,0,0,0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -546,8 +546,8 @@ public final class TemporalUtilities {
             }
 
             //date is like : Janvier 2050
-            final int month = FR_POOL_CASE.indexOf(date.substring(0,spaceOccurences[0]));
-            final int year = Integer.parseInt(date.substring(spaceOccurences[0]+1));
+            final int month = FR_POOL.indexOf(date.substring(0,spaceOccurences[0]));
+            final int year = parseInt(date.substring(spaceOccurences[0]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,1,0,0,0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -555,8 +555,8 @@ public final class TemporalUtilities {
 
         }else if(dashOccurences.length == 1) {
             //date is like : 05-2050
-            final int month = Integer.parseInt(date.substring(0,dashOccurences[0])) -1;
-            final int year = Integer.parseInt(date.substring(dashOccurences[0]+1));
+            final int month = parseInt(date.substring(0,dashOccurences[0])) -1;
+            final int year = parseInt(date.substring(dashOccurences[0]+1));
             final Calendar cal = Calendar.getInstance();
             cal.set(year,month,1,0,0,0);
             cal.set(Calendar.MILLISECOND, 0);
@@ -575,14 +575,14 @@ public final class TemporalUtilities {
 
             if(dashOccurences[0] == 4) {
                 //date is like 2010-11-23Z
-                final int year = Integer.parseInt(date.substring(0,dashOccurences[0]));
-                final int month = Integer.parseInt(date.substring(dashOccurences[0]+1, dashOccurences[1])) -1;
+                final int year = parseInt(date.substring(0,dashOccurences[0]));
+                final int month = parseInt(date.substring(dashOccurences[0]+1, dashOccurences[1])) -1;
 
                 final int day;
                 if (date.endsWith("Z")) {
-                    day = Integer.parseInt(date.substring(dashOccurences[1]+1,date.length()-1));
+                    day = parseInt(date.substring(dashOccurences[1]+1,date.length()-1));
                 }else{
-                    day = Integer.parseInt(date.substring(dashOccurences[1]+1));
+                    day = parseInt(date.substring(dashOccurences[1]+1));
                 }
 
                 final Calendar cal = Calendar.getInstance();
@@ -591,9 +591,9 @@ public final class TemporalUtilities {
                 return cal.getTime();
             }else{
                 //date is like 23-11-2010
-                final int day = Integer.parseInt(date.substring(0, dashOccurences[0]));
-                final int month = Integer.parseInt(date.substring(dashOccurences[0]+1, dashOccurences[1])) -1;
-                final int year = Integer.parseInt(date.substring(dashOccurences[1]+1));
+                final int day = parseInt(date.substring(0, dashOccurences[0]));
+                final int month = parseInt(date.substring(dashOccurences[0]+1, dashOccurences[1])) -1;
+                final int year = parseInt(date.substring(dashOccurences[1]+1));
                 final Calendar cal = Calendar.getInstance();
                 cal.set(year,month,day,0,0,0);
                 cal.set(Calendar.MILLISECOND, 0);
@@ -602,14 +602,58 @@ public final class TemporalUtilities {
 
         }else if(dashOccurences.length == 0) {
             //date is like 2010
-            final int year = Integer.parseInt(date);
+            final int year = parseInt(date);
             final Calendar cal = Calendar.getInstance();
             cal.set(year,0,1,0,0,0);
             cal.set(Calendar.MILLISECOND, 0);
             return cal.getTime();
         }
 
-        return new Date();
+        throw new ParseException("Invalid date format : " + date, 0);
+    }
+
+    /**
+     * @see TemporalUtilities#parseDate(java.lang.String)
+     * 
+     * @param date : string to parse.
+     * @param neverNull : will return today's date if parsing fail, otherwise return null if
+     * parsing fails.
+     * @return result of the parsed string or today's date or null if neverNull is false.
+     */
+    public static Date parseDateSafe(String date, boolean neverNull){
+        if(date != null){
+            try {
+                return parseDate(date);
+            } catch (ParseException ex) {
+                //do nothing
+            }
+        }
+        return (neverNull) ? new Date() : null;
+    }
+
+    private static int parseInt(String candidate) throws ParseException{
+        try{
+            return Integer.parseInt(candidate);
+        }catch(NumberFormatException ex){
+            ParseException pex = new ParseException(ex.getLocalizedMessage(), 0);
+            pex.initCause(ex);
+            throw pex;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // deprecated , @todo delete at next release ///////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * this method creates a date from a string, support for many formats.
+     * @param date string to parse
+     * @return Date
+     * @deprecated use parseDateSafe(date,true) instead.
+     */
+    @Deprecated
+    public static Date createDate(String date) {
+        return parseDateSafe(date, true);
     }
 
     /**
