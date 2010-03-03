@@ -204,7 +204,10 @@ public final class StringUtilities {
      * @param s : String to search in
      * @param occ : Occurence to search
      * @return number of occurence
+     *
+     * @deprecated Moved to {@link org.geotoolkit.util.Strings#count(String)}.
      */
+    @Deprecated
     public static int getOccurence(String s, char occ) {
         int cnt = 0;
         int pos = s.indexOf(occ);

@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Strings;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.ProgressListener;
 
@@ -208,7 +208,7 @@ final class PolygonInclusion {
      */
     private void toString(StringBuffer buffer, int indentation) {
         
-        buffer.append(Utilities.spaces(indentation));
+        buffer.append(Strings.spaces(indentation));
         buffer.append(polygon);
         buffer.append('\n');
         if (childs != null) {

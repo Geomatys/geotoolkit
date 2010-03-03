@@ -54,6 +54,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.FactoryException;
@@ -2005,11 +2006,11 @@ public class Polyline extends Geometry {
             if (titles[i] != null) {
                 length=titles[i].length();
                 final int spaces = Math.max(width-length/2, 0);
-                out.write(Utilities.spaces(spaces));
+                out.write(Strings.spaces(spaces));
                 out.write(titles[i]);
                 length += spaces;
             }
-            out.write(Utilities.spaces(1+2*width-length));
+            out.write(Strings.spaces(1+2*width-length));
             iterators[i]=points[i].iterator();
         }
         out.write(lineSeparator);
@@ -2026,7 +2027,7 @@ public class Polyline extends Geometry {
                     if (point != null) {
                         format.format(xy ? point.getX() : point.getY(), buffer, dummy);
                     }
-                    buffer.insert(start, Utilities.spaces(width-(buffer.length()-start)));
+                    buffer.insert(start, Strings.spaces(width-(buffer.length()-start)));
                     if (xy) {
                         buffer.append('\u00A0'); // No-break space
                     }
