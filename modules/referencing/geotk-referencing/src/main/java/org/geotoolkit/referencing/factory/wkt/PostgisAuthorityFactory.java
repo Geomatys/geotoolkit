@@ -33,7 +33,9 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -89,14 +91,22 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
     private transient Map<String,Boolean> authorityUsePK;
 
     /**
-     * Creates a factory using the given connection.
+     * Creates a factory using the given connection. The connection is
+     * {@linkplain Connection#close() closed} when this factory is
+     * {@linkplain #dispose(boolean) disposed}.
+     * <p>
+     * <b>Note:</b> we recommand to avoid keeping the connection open for a long time. An easy
+     * way to get the connection created only when first needed and closed automatically after
+     * a short timeout is to instantiate this {@code PostgisAuthorityFactory} class only in a
+     * {@link org.geotoolkit.referencing.factory.ThreadedAuthorityFactory}. This approach also
+     * gives concurrency and caching services in bonus.
      *
      * @param hints The hints, or {@code null} if none.
      * @param connection The connection to the database.
+     * @throws SQLException If an error occured while fetching metadata from the database.
      */
-    public PostgisAuthorityFactory(final Hints hints, final Connection connection) {
-        super(hints, new SpatialRefSysMap(connection, null));
-        // TODO: fetch the schema from the hints.
+    public PostgisAuthorityFactory(final Hints hints, final Connection connection) throws SQLException {
+        super(hints, new SpatialRefSysMap(connection));
     }
 
     /**
@@ -150,18 +160,29 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
      */
     @Override
     final synchronized Citation[] getAuthorities() {
+        Citation[] authorities = this.authorities;
         if (authorities == null) {
             try {
                 final Set<String> names = getAuthorityNames().keySet();
-                final Citation[] authorities = new Citation[names.size()];
+                authorities = new Citation[names.size()];
                 int i = 0;
                 for (final String name : names) {
-                    authorities[i++] = (name != null) ? Citations.fromName(name) : Citations.POSTGIS;
+                    final Citation authority = (name != null) ? Citations.fromName(name) : Citations.POSTGIS;
+                    /*
+                     * If the authority is not one of the predefined constants (in which case the
+                     * class would have been CitationConstant), then add the name to the list of
+                     * identifiers.
+                     */
+                    if (authority.getClass().equals(DefaultCitation.class)) {
+                        ((DefaultCitation) authority).getIdentifiers().add(new DefaultIdentifier(name));
+                    }
+                    authorities[i++] = authority;
                 }
             } catch (FactoryException exception) {
                 Logging.unexpectedException(LOGGER, PostgisAuthorityFactory.class, "getAuthority", exception);
                 authorities = new Citation[] {Citations.POSTGIS};
             }
+            this.authorities = authorities;
         }
         return authorities;
     }
@@ -259,7 +280,7 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
     }
 
     /**
-     * Releases resources immediately instead of waiting for the garbage collector.
+     * Closes the JDBC connection used by this factory.
      */
     @Override
     protected synchronized void dispose(final boolean shutdown) {

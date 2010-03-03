@@ -61,7 +61,7 @@ public class CatalogTestBase {
      */
     protected static synchronized Database getDatabase() {
         if (database == null) {
-            final File pf = new File(Installation.root(), "Tests/coverage-sql.properties");
+            final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
             final Properties properties = new Properties();
             try {

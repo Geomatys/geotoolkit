@@ -71,13 +71,20 @@ final class SpatialRefSysMap extends AbstractMap<String,String> {
     private transient PreparedStatement select;
 
     /**
-     * Creates a map.
+     * Creates a map. This constructor auto-detects the schema where
+     * the {@code "spatial_ref_sys"} table is declared.
      *
      * @param connection The connection to the database.
-     * @param schema The schema, or {@code null} if none.
+     * @throws SQLException If an error occured while fetching metadata from the database.
      */
-    public SpatialRefSysMap(final Connection connection, final String schema) {
+    public SpatialRefSysMap(final Connection connection) throws SQLException {
         this.connection = connection;
+        final ResultSet result = connection.getMetaData().getTables(null, null, TABLE, new String[] {"TABLE"});
+        String schema = null;
+        if (result.next()) {
+            schema = result.getString("TABLE_SCHEM");
+        }
+        result.close();
         this.schema = schema;
     }
 

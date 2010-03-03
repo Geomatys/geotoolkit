@@ -37,7 +37,7 @@ import org.geotoolkit.util.logging.Logging;
  * shift over United States.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.10
  *
  * @since 3.00
  * @module
@@ -47,6 +47,15 @@ public enum Installation {
      * The root directory of Geotoolkit.org installation.
      */
     ROOT_DIRECTORY("org/geotoolkit", "Root directory", null),
+
+    /**
+     * The directory where to put configuration files for the tests.
+     * This is used only during Maven builds, for example in order to
+     * fetch connection parameters to a database.
+     *
+     * @since 3.10
+     */
+    TESTS(null, null, "Tests"),
 
     /**
      * The grid shift file location, used for datum shift like NADCOM.
@@ -60,6 +69,7 @@ public enum Installation {
 
     /**
      * The preference node and key for storing the value of this configuration option.
+     * May be {@code null} if the value should not be stored in any preference node.
      */
     private final String node, key;
 
@@ -123,7 +133,7 @@ public enum Installation {
      * @return The preference value, or {@code null} if none.
      */
     public final String get(final boolean userSpecific) {
-        return preference(userSpecific).get(key, null);
+        return (key != null) ? preference(userSpecific).get(key, null) : null;
     }
 
     /**
@@ -131,7 +141,7 @@ public enum Installation {
      *
      * @return The default installation root directory.
      */
-    public static File root() {
+    private static File root() {
         try {
             final String directory = System.getProperty("user.home");
             if (directory != null) {

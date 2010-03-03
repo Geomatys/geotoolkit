@@ -387,7 +387,15 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     protected final Connection connection;
 
     /**
-     * Constructs an authority factory using the specified connection.
+     * Creates a factory using the given connection. The connection is
+     * {@linkplain Connection#close() closed} when this factory is
+     * {@linkplain #dispose(boolean) disposed}.
+     * <p>
+     * <b>Note:</b> we recommand to avoid keeping the connection open for a long time. An easy
+     * way to get the connection created only when first needed and closed automatically after
+     * a short timeout is to instantiate this {@code PostgisAuthorityFactory} class only in a
+     * {@link org.geotoolkit.referencing.factory.ThreadedAuthorityFactory}. This approach also
+     * gives concurrency and caching services in bonus.
      *
      * @param userHints The underlying factories used for objects creation,
      *        or {@code null} for the default ones.

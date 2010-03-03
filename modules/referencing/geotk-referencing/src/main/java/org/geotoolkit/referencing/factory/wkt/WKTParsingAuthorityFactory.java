@@ -321,7 +321,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         protected String baseToDerived(final String key) {
             final String wkt;
             try {
-                wkt = definitions.get(getPrimaryKey(type, trimAuthority(key)));
+                wkt = definitions.get(getPrimaryKey(type, key));
             } catch (FactoryException e) {
                 throw new BackingStoreException(e);
             }
@@ -358,7 +358,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         ensureNonNull("code", code);
         final String wkt;
         try {
-            wkt = definitions.get(getPrimaryKey(type, trimAuthority(code)));
+            wkt = definitions.get(getPrimaryKey(type, code));
         } catch (BackingStoreException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof FactoryException) {
@@ -504,8 +504,10 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     }
 
     /**
-     * Returns the primary key for the specified authority code. The default implementation returns
-     * the given code with no change. This method is overriden by {@link PostgisAuthorityFactory}.
+     * Returns the primary key for the specified authority code. The default implementation
+     * returns the given code with the "authority" part trimmed. This method is overriden by
+     * {@link PostgisAuthorityFactory}. Note that {@code PostgisAuthorityFactory} will trim
+     * the authority itself, because it needs the authority part of the code.
      *
      * @param  type The type of the object being created.
      * @param  code The authority code to convert to primary key value.
@@ -513,7 +515,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * @throws FactoryException if an error occured while querying the database.
      */
     Object getPrimaryKey(Class<? extends IdentifiedObject> type, String code) throws FactoryException {
-        return code;
+        return trimAuthority(code);
     }
 
     /**
