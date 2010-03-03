@@ -111,13 +111,12 @@ public class FunctionType extends ExpressionType implements Function {
      
     /**
      * Gets the value of the expression property.
-     * (unmodifiable)
      */
     public List<JAXBElement<?>> getExpression() {
         if (expression == null) {
             expression = new ArrayList<JAXBElement<?>>();
         }
-        return Collections.unmodifiableList(expression);
+        return expression;
     }
 
     /**

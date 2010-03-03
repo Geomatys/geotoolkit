@@ -1437,11 +1437,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      */
     public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnlineResource onlineResource, Object data) {
         final OnlineResourceType ort = se_factory.createOnlineResourceType();
-        try {
-            ort.setHref(onlineResource.getLinkage().toURL().toString());
-        } catch (MalformedURLException ex) {
-            Logging.getLogger(GTtoSE110Transformer.class).log(Level.SEVERE, null, ex);
-        }
+        ort.setHref(onlineResource.getLinkage().toString());
         return ort;
     }
 
