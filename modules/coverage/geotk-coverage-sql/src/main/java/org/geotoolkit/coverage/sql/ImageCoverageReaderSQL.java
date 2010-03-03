@@ -39,6 +39,8 @@ import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
+import org.geotoolkit.internal.sql.table.CatalogException;
+
 
 /**
  * An implementation of {@link ImageCoverageReader} when the {@link GridGeometry2D} and the
@@ -123,11 +125,13 @@ final class ImageCoverageReaderSQL extends ImageCoverageReader {
      * them from the image metadata.
      */
     @Override
-    public List<GridSampleDimension> getSampleDimensions(final int index) throws CatalogException {
+    public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
         try {
             return format.getSampleDimensions();
         } catch (SQLException e) {
-            throw new CatalogException(e);
+            throw new CoverageStoreException(e);
+        } catch (CatalogException e) {
+            throw new CoverageStoreException(e);
         }
     }
 
@@ -151,7 +155,7 @@ final class ImageCoverageReaderSQL extends ImageCoverageReader {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
-            throw new CatalogException(Errors.getResources(getLocale()).getString(Errors.Keys.IMAGE_SIZE_MISMATCH_$5,
+            throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.IMAGE_SIZE_MISMATCH_$5,
                     IOUtilities.name(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
         }
         return super.read(index, param);

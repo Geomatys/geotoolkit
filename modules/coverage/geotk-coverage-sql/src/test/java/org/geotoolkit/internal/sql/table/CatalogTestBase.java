@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -32,6 +32,7 @@ import java.util.Properties;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -58,7 +59,7 @@ public class CatalogTestBase {
      *
      * @return The database.
      */
-    static synchronized Database getDatabase() {
+    protected static synchronized Database getDatabase() {
         if (database == null) {
             final File pf = new File(Installation.root(), "Tests/coverage-sql.properties");
             assumeTrue(pf.isFile()); // All tests will be skipped if the above resources is not found.
@@ -73,7 +74,7 @@ public class CatalogTestBase {
             final PGSimpleDataSource ds = new PGSimpleDataSource();
             ds.setServerName(properties.getProperty("server"));
             ds.setDatabaseName(properties.getProperty("database"));
-            database = new Database(ds, properties);
+            database = new Database(ds, DefaultGeographicCRS.WGS84, properties);
         }
         return database;
     }

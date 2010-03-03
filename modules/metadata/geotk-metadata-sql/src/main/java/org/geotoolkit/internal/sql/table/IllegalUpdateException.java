@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.util.Locale;
 import org.geotoolkit.resources.Errors;
@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class IllegalUpdateException extends CatalogException {
+public class IllegalUpdateException extends CatalogException {
     /**
      * For cross-version compatibility.
      */

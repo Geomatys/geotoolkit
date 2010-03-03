@@ -32,6 +32,10 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.Utilities;
 
+import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.CatalogException;
+
 
 /**
  * Information about an image format.

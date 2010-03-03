@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class Query {
+public class Query {
     /**
      * The SQL statement used for table join, spaces included. Some database
      * implementations require {@code "INNER JOIN"} instead of {@code "JOIN"}.

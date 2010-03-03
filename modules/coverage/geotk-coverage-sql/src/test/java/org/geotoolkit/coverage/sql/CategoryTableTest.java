@@ -17,10 +17,12 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.sql.SQLException;
 import java.util.Map;
+import java.sql.SQLException;
 
 import org.geotoolkit.coverage.Category;
+import org.geotoolkit.internal.sql.table.CatalogTestBase;
+import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;

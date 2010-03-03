@@ -39,6 +39,13 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
 
+import org.geotoolkit.internal.sql.table.Table;
+import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.QueryType;
+import org.geotoolkit.internal.sql.table.LocalCache;
+import org.geotoolkit.internal.sql.table.CatalogException;
+import org.geotoolkit.internal.sql.table.IllegalRecordException;
+
 
 /**
  * Connection to a table of {@linkplain Category categories}. This table creates a list of

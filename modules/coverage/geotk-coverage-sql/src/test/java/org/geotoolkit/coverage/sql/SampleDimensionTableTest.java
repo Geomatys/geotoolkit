@@ -19,9 +19,12 @@ package org.geotoolkit.coverage.sql;
 
 import java.sql.SQLException;
 import javax.measure.unit.SI;
+
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.test.Depend;
+import org.geotoolkit.internal.sql.table.CatalogTestBase;
+import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;

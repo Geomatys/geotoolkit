@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.util.AbstractSequentialList;
 import java.util.ListIterator;

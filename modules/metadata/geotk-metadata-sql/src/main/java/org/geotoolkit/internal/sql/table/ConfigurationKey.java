@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 
 /**
@@ -31,7 +31,7 @@ package org.geotoolkit.coverage.sql;
  *
  * @see Database#getProperty
  */
-enum ConfigurationKey {
+public enum ConfigurationKey {
     /**
      * Key for the local data directory root. The value may be {@code null} if data are
      * not accessible locally. In such case, data may be accessible remotely from the

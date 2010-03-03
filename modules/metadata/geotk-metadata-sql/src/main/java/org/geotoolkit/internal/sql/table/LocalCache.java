@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -58,7 +58,7 @@ import org.geotoolkit.internal.sql.StatementEntry;
  * @since 3.09
  * @module
  */
-interface LocalCache {
+public interface LocalCache {
     /**
      * Returns the connection to the database. Use as below:
      *
@@ -70,6 +70,7 @@ interface LocalCache {
      *     }
      * }
      *
+     * @return The connection to the database.
      * @throws SQLException if an error occured while fetching the connection.
      */
     Connection connection() throws SQLException;
@@ -129,6 +130,9 @@ interface LocalCache {
 
         /**
          * Returns {@code true} if this key is equals to the given object.
+         *
+         * @param  other The object to compare with this key.
+         * @return {@code true} if the given object is equals to this key.
          */
         @Override
         public boolean equals(final Object other) {
@@ -180,7 +184,6 @@ interface LocalCache {
          * Puts the statement back in the pool. Every call to this method shall be performed
          * inside a synchronized block as documented in the {@link LocalCache} class javadoc.
          *
-         * @param  entry The statement to release.
          * @throws SQLException if an error occured while releasing the statement.
          */
         public void release() throws SQLException {

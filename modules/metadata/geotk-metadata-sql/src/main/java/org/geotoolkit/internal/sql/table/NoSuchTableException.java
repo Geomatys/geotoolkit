@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 
 /**
@@ -27,7 +27,7 @@ package org.geotoolkit.coverage.sql;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class NoSuchTableException extends CatalogException {
+public class NoSuchTableException extends CatalogException {
     /**
      * For cross-version compatibility.
      */

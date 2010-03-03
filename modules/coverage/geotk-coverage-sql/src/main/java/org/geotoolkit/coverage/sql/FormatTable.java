@@ -19,7 +19,12 @@ package org.geotoolkit.coverage.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.SingletonTable;
+import org.geotoolkit.internal.sql.table.CatalogException;
+import org.geotoolkit.internal.sql.table.IllegalRecordException;
 
 
 /**

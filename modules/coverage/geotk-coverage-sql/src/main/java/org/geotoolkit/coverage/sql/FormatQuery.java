@@ -18,7 +18,13 @@
 package org.geotoolkit.coverage.sql;
 
 import org.geotoolkit.internal.sql.Ordering;
-import static org.geotoolkit.coverage.sql.QueryType.*;
+import org.geotoolkit.internal.sql.table.Column;
+import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.Parameter;
+import org.geotoolkit.internal.sql.table.Query;
+import org.geotoolkit.internal.sql.table.QueryType;
+
+import static org.geotoolkit.internal.sql.table.QueryType.*;
 
 
 /**

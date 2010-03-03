@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class IllegalRecordException extends CatalogException {
+public class IllegalRecordException extends CatalogException {
     /**
      * For cross-version compatibility.
      */
@@ -77,8 +77,8 @@ class IllegalRecordException extends CatalogException {
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    IllegalRecordException(final String message, final Table table, final ResultSet results,
-                           final int column, final Comparable<?> key) throws SQLException
+    public IllegalRecordException(final String message, final Table table, final ResultSet results,
+                                  final int column, final Comparable<?> key) throws SQLException
     {
         super(message);
         setMetadata(table, results, column, key);
@@ -98,8 +98,8 @@ class IllegalRecordException extends CatalogException {
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    IllegalRecordException(final Exception cause, final Table table, final ResultSet results,
-                           final int column, final Comparable<?> key) throws SQLException
+    public IllegalRecordException(final Exception cause, final Table table, final ResultSet results,
+                                  final int column, final Comparable<?> key) throws SQLException
     {
         super(cause);
         setMetadata(table, results, column, key);

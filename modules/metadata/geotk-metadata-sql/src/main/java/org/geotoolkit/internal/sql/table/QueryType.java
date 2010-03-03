@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.util.logging.Level;
 
@@ -29,7 +29,7 @@ import java.util.logging.Level;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-enum QueryType {
+public enum QueryType {
     /**
      * Only one entry will be selected using a name. This is the kind of query executed by
      * {@link SingletonTable#getEntry(String)} or {@link SingletonTable#getEntry(int)},

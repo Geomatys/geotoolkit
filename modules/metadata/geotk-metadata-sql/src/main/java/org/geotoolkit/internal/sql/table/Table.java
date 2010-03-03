@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.SQLException;
 import java.sql.SQLDataException;
@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @ThreadSafe(concurrent=true)
-class Table implements Localized {
+public class Table implements Localized {
     /**
      * The logger for table-related events.
      */
@@ -56,7 +56,7 @@ class Table implements Localized {
      *
      * @see #getStatement(QueryType)
      */
-    final Query query;
+    protected final Query query;
 
     /**
      * Information about a query being executed.
@@ -122,7 +122,7 @@ class Table implements Localized {
      *
      * @param query The query to use for this table.
      */
-    Table(final Query query) {
+    protected Table(final Query query) {
         ensureNonNull("query", query);
         this.query = query;
     }
@@ -134,7 +134,7 @@ class Table implements Localized {
      *
      * @param table The table to use as a template.
      */
-    Table(final Table table) {
+    protected Table(final Table table) {
         query = table.query;
     }
 
@@ -145,7 +145,7 @@ class Table implements Localized {
      * @return The database (never {@code null}).
      * @throws IllegalStateException If this table is not connected to a database.
      */
-    final Database getDatabase() throws IllegalStateException {
+    protected final Database getDatabase() throws IllegalStateException {
         final Database database = query.database;
         if (database == null) {
             throw new IllegalStateException(errors().getString(Errors.Keys.NO_DATA_SOURCE));
@@ -173,7 +173,7 @@ class Table implements Localized {
      *
      * @return The lock to use in a {@code synchronized} statement.
      */
-    final Object getLock() {
+    protected final Object getLock() {
         return session.get().cache;
     }
 
@@ -244,7 +244,7 @@ class Table implements Localized {
      * @throws CatalogException if the statement can not be configured.
      * @throws SQLException if a SQL error occured while configuring the statement.
      */
-    final LocalCache.Stmt getStatement(final QueryType type) throws CatalogException, SQLException {
+    protected final LocalCache.Stmt getStatement(final QueryType type) throws CatalogException, SQLException {
         final String sql;
         switch (type) {
             default:     sql = query.select(type); break;
@@ -461,8 +461,10 @@ class Table implements Localized {
 
     /**
      * Returns the resources to use for formatting error messages.
+     *
+     * @return The {@link Errors} resource bundle.
      */
-    final IndexedResourceBundle errors() {
+    protected final IndexedResourceBundle errors() {
         return Errors.getResources(getLocale());
     }
 

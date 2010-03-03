@@ -20,8 +20,11 @@ package org.geotoolkit.coverage.sql;
 import java.util.Set;
 import java.util.List;
 import java.sql.SQLException;
-import org.geotoolkit.coverage.GridSampleDimension;
+
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.internal.sql.table.CatalogTestBase;
+import org.geotoolkit.internal.sql.table.CatalogException;
 
 import org.junit.*;
 import static org.junit.Assert.*;

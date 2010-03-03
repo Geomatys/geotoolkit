@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ import java.util.ListIterator;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.coverage.sql.QueryType.*;
+import static org.geotoolkit.internal.sql.table.QueryType.*;
 
 
 /**

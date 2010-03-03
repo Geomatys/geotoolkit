@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +23,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * Thrown when more than one value were found for a given key.
+ * Throws when a record was not found for the specified key.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.09
@@ -31,18 +31,18 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class DuplicatedRecordException extends IllegalRecordException {
+public class NoSuchRecordException extends CatalogException {
     /**
      * For cross-version compatibility.
      */
-    private static final long serialVersionUID = 8782377096878595182L;
+    private static final long serialVersionUID = -3105861955682823122L;
 
     /**
-     * Creates an exception with the specified details message.
+     * Creates an exception with the given message.
      *
      * @param message The detail message.
      */
-    public DuplicatedRecordException(final String message) {
+    public NoSuchRecordException(final String message) {
         super(message);
     }
 
@@ -53,13 +53,13 @@ class DuplicatedRecordException extends IllegalRecordException {
      * occured while reading this result set.
      *
      * @param table   The table that produced the result set, or {@code null} if unknown.
-     * @param results The result set which contains duplicated values.
+     * @param results The result set used in order to look for a record.
      * @param column  The column index of the primary key (first column index is 1).
-     * @param key     The key value for the record that was duplicated, or {@code null} if none.
+     * @param key     The key value for the record that was not found, or {@code null} if none.
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
      */
-    DuplicatedRecordException(final Table table, final ResultSet results, final int column, final Comparable<?> key)
+    NoSuchRecordException(final Table table, final ResultSet results, final int column, final Comparable<?> key)
             throws SQLException
     {
         setMetadata(table, results, column, key);
@@ -70,6 +70,12 @@ class DuplicatedRecordException extends IllegalRecordException {
      */
     @Override
     public String getLocalizedMessage() {
-        return errors().getString(Errors.Keys.DUPLICATED_RECORD_$1, getPrimaryKey());
+        // Do not invoke super.getLocalizedMessage() because
+        // the super-class implementation never returns null.
+        String message = getMessage();
+        if (message == null) {
+            message = errors().getString(Errors.Keys.NO_SUCH_RECORD_IN_TABLE_$2, getTableName(), getPrimaryKey());
+        }
+        return message;
     }
 }

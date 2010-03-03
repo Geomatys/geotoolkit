@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -38,7 +37,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-class CatalogException extends CoverageStoreException {
+public class CatalogException extends Exception {
     /**
      * For cross-version compatibility.
      */

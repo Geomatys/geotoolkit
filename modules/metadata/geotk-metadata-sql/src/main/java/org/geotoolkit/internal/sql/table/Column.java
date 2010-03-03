@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.util.Map;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ import org.geotoolkit.internal.sql.Ordering;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-final class Column extends ColumnOrParameter {
+public final class Column extends ColumnOrParameter {
     /**
      * The name of the table in which this column is declared. This is usually the same
      * than {@link Query#table}, except if we are building a more complex query with

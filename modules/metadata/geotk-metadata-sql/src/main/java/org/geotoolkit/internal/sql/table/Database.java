@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -37,10 +37,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.resources.Errors;
@@ -64,22 +60,7 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * @module
  */
 @ThreadSafe(concurrent=true)
-class Database implements Localized {
-    /**
-     * The default 4-dimensional Coordinate Reference System used for queries in database.
-     * This is a compound of {@link DefaultGeographicCRS#WGS84_3D WGS84_3D} with
-     * {@link DefaultTemporalCRS#TRUNCATED_JULIAN TRUNCATED_JULIAN}.
-     */
-    static CoordinateReferenceSystem DEFAULT_CRS;
-    static {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
-        properties.put(CoordinateReferenceSystem.NAME_KEY, "WGS84");
-        properties.put(CoordinateReferenceSystem.DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
-        DEFAULT_CRS = new DefaultCompoundCRS(properties,
-                DefaultGeographicCRS.WGS84_3D,
-                DefaultTemporalCRS.TRUNCATED_JULIAN);
-    }
-
+public class Database implements Localized {
     /**
      * The data source, which is mandatory. It is recommanded to provide a data source that
      * create pooled connections, because connections may be created and closed often.
@@ -109,7 +90,7 @@ class Database implements Localized {
     /**
      * The hints to use for fetching factories. Shall be considered read-only.
      */
-    final Hints hints;
+    public final Hints hints;
 
     /**
      * Provides information for SQL statements being executed.
@@ -236,18 +217,6 @@ class Database implements Localized {
     }
 
     /**
-     * Creates a new instance using the provided data source and configuration properties.
-     * If a properties map is specified, then the keys enumerated in {@link ConfigurationKey}
-     * will be used.
-     *
-     * @param  source The data source.
-     * @param  properties The configuration properties, or {@code null} if none.
-     */
-    public Database(final DataSource source, final Properties properties) {
-        this(source, DEFAULT_CRS, properties);
-    }
-
-    /**
      * Creates a new instance using the provided data source, CRS and configuration properties.
      * If a properties map is specified, then the keys enumerated in {@link ConfigurationKey}
      * will be used.
@@ -255,11 +224,8 @@ class Database implements Localized {
      * @param  datasource The data source.
      * @param  crs The coordinate reference system used in PostGIS tables.
      * @param  properties The configuration properties, or {@code null} if none.
-     *
-     * @todo This constructor is not yet public because we need to be more explicit on the CRS
-     *       constraints (basically (x,y,z,t) axes order) and test that it really works.
      */
-    private Database(final DataSource datasource, final CoordinateReferenceSystem crs,
+    public Database(final DataSource datasource, final CoordinateReferenceSystem crs,
             final Properties properties)
     {
         Table.ensureNonNull("datasource", datasource);
@@ -378,7 +344,7 @@ class Database implements Localized {
      * @return An instance of a table of the specified type.
      * @throws NoSuchTableException if the specified type is unknown to this database.
      */
-    final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
+    public final <T extends Table> T getTable(final Class<T> type) throws NoSuchTableException {
         synchronized (tables) {
             T table = type.cast(tables.get(type));
             if (table == null) {

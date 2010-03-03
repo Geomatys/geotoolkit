@@ -15,14 +15,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 import java.io.Serializable;
-import java.util.logging.Logger;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -36,16 +34,11 @@ import org.geotoolkit.util.logging.Logging;
  * @module
  */
 @ThreadSafe
-class Entry implements Serializable {
+public class Entry implements Serializable {
     /**
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = -7119518186999674633L;
-
-    /**
-     * The logger for events related to entries.
-     */
-    static final Logger LOGGER = Logging.getLogger(Entry.class);
 
     /**
      * The textual or numeric identifier for this entry. It is often (but not always) the primary

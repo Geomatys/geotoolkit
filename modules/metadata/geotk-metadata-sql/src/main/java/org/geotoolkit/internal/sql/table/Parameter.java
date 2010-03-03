@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage.sql;
+package org.geotoolkit.internal.sql.table;
 
 
 /**
@@ -36,7 +36,7 @@ package org.geotoolkit.coverage.sql;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-final class Parameter extends ColumnOrParameter {
+public final class Parameter extends ColumnOrParameter {
     /**
      * Binary operators to be processed in a special way if present in the comparator.
      */
