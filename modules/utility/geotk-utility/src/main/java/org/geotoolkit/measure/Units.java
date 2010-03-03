@@ -374,6 +374,40 @@ public final class Units {
      * found in the EPSG database. This method is also used by other code not directly related
      * to the EPSG database, like {@link org.geotoolkit.referencing.factory.web.AutoCRSFactory}
      * which uses EPSG code for identifying units.
+     * <p>
+     * The values currently recognized are:
+     * <table border="1">
+     * <tr bgcolor="lightblue">
+     * <th width="33%">Linear units</th>
+     * <th width="33%">Angular units</th>
+     * <th width="33%">Scale units</th>
+     * </tr><tr>
+     * <td valign="top"><table width="100%" border="0" cellspacing="0">
+     * <tr bgcolor="lightblue"><th>Code</th><th>Unit</th></tr>
+     * <tr><td>&nbsp;9001&nbsp;</td><td nowrap>&nbsp;metre&nbsp;</td></tr>
+     * <tr><td>&nbsp;9002&nbsp;</td><td nowrap>&nbsp;foot&nbsp;</td></tr>
+     * <tr><td>&nbsp;9030&nbsp;</td><td nowrap>&nbsp;nautical mile&nbsp;</td></tr>
+     * <tr><td>&nbsp;9036&nbsp;</td><td nowrap>&nbsp;kilometre&nbsp;</td></tr>
+     * </table></td>
+     * <td valign="top"><table width="100%" border="0" cellspacing="0">
+     * <tr bgcolor="lightblue"><th>Code</th><th>Unit</th></tr>
+     * <tr><td>&nbsp;9101&nbsp;</td><td nowrap>&nbsp;radian&nbsp;</td></tr>
+     * <tr><td>&nbsp;9102&nbsp;</td><td nowrap>&nbsp;decimal degree&nbsp;</td></tr>
+     * <tr><td>&nbsp;9103&nbsp;</td><td nowrap>&nbsp;minute&nbsp;</td></tr>
+     * <tr><td>&nbsp;9104&nbsp;</td><td nowrap>&nbsp;second&nbsp;</td></tr>
+     * <tr><td>&nbsp;9105&nbsp;</td><td nowrap>&nbsp;grade&nbsp;</td></tr>
+     * <tr><td>&nbsp;9107&nbsp;</td><td nowrap>&nbsp;degree-minute-second&nbsp;</td></tr>
+     * <tr><td>&nbsp;9108&nbsp;</td><td nowrap>&nbsp;degree-minute-second&nbsp;</td></tr>
+     * <tr><td>&nbsp;9109&nbsp;</td><td nowrap>&nbsp;microradian&nbsp;</td></tr>
+     * <tr><td>&nbsp;9110&nbsp;</td><td nowrap>&nbsp;sexagesimal degree-minute-second&nbsp;</td></tr>
+     * <tr><td>&nbsp;9122&nbsp;</td><td nowrap>&nbsp;decimal degree&nbsp;</td></tr>
+     * </table></td>
+     * <td valign="top"><table width="100%" border="0" cellspacing="0">
+     * <tr bgcolor="lightblue"><th>Code</th><th>Unit</th></tr>
+     * <tr><td>&nbsp;9201&nbsp;</td><td nowrap>&nbsp;one&nbsp;</td></tr>
+     * <tr><td>&nbsp;9202&nbsp;</td><td nowrap>&nbsp;part per million&nbsp;</td></tr>
+     * <tr><td>&nbsp;9203&nbsp;</td><td nowrap>&nbsp;one&nbsp;</td></tr>
+     * </table></td></tr></table>
      *
      * @param  code The EPSG code for a unit of measurement.
      * @return The unit, or {@code null} if the code is unrecognized.

@@ -1302,7 +1302,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
          * @throws FactoryException if an error occured while creating the object.
          */
         @Override
-        final IdentifiedObject create(final String code, final int attempt) throws FactoryException {
+        protected final IdentifiedObject create(final String code, final int attempt) throws FactoryException {
             IdentifiedObject original = this.original;
             switch (attempt) {
                 /*

@@ -17,6 +17,48 @@
 
   <part id="crs">
     <title>Coordinate Reference Systems</title>
+    <faq id="UTM">
+      <question>
+        How do I instantiate a <cite>Universal Transverse Mercator</cite> (UTM) projection?
+      </question>
+      <answer>
+        <p>The easiest way is to use the "<code>EPSG</code>" or "<code>AUTO</code>" authority factory.
+        The EPSG code of some UTM projections can be determined as below, where <var>zone</var> is a
+        number from 1 to 60 inclusive (unless otherwise specified):</p>
+        <ul>
+          <li>WGS 84 (northern hemisphere): 32600 + <var>zone</var></li>
+          <li>WGS 84 (southern hemisphere): 32700 + <var>zone</var></li>
+          <li>WGS 72 (northern hemisphere): 32200 + <var>zone</var></li>
+          <li>WGS 72 (southern hemisphere): 32300 + <var>zone</var></li>
+          <li>NAD 83 (northern hemisphere): 26900 + <var>zone</var> (zone 1 to 23 only)</li>
+          <li>NAD 27 (northern hemisphere): 26700 + <var>zone</var> (zone 1 to 22 only)</li>
+        </ul>
+        <p>Note that the above list is incomplete. See the EPSG database for additional UTM
+        definitions (WGS 72BE, SIRGAS 2000, SIRGAS 1995, SAD 69, ETRS 89, <i>etc.</i>, most
+        of them defined only for a few zones).</p>
+
+        <p>Once the EPSG code of the UTM projection has been determined, the CRS can be obtained
+        as in the example below:</p>
+
+<blockquote><pre>int code = 32600 + zone;
+CoordinateReferenceSystem crs = CRS.decode("EPSG:" + code);</pre></blockquote>
+
+        <p>The above approach requires the EPSG database to be installed. If installing the EPSG
+        database is considered too heavy, a lighther approach is to use the "<code>AUTO</code>"
+        authority factory as below (see the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/web/AutoCRSFactory.html">AutoCRSFactory</a></code>
+        javadoc for more details):</p>
+
+<blockquote><pre>int centralMeridian = <var>zone</var> * 6 - 183;
+int latitudeOfOrigin = 0;
+CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + "," + latitudeOfOrigin);</pre></blockquote>
+
+        <p>Finally the most powerful (but also the most difficult) way is to instantiate directly
+        a <code>MathTransform</code> using the parameters documented in the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/operation/provider/TransverseMercator.html">TransverseMercator</a></code>
+        class, and build a <code>DefaultProjectedCRS</code> instance using it.</p>
+      </answer>
+    </faq>
     <faq id="Google">
       <question>
         How do I instantiate a Google projection?

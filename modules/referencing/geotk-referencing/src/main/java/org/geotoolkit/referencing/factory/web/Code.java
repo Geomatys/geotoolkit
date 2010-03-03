@@ -31,7 +31,7 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * A code parsed by the {@link AutoCRSFactory} methods.
- * The expected format is {@code AUTO:code,lon0,lat0} where {@code AUTO} is optional.
+ * See the {@link AutoCRSFactory} javadoc for a description of the expected syntax.
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)

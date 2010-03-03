@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.ReferencingTestCase;
-import org.geotoolkit.referencing.factory.PropertyAuthorityFactoryTest;
+import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
 import org.geotoolkit.test.Depend;
 

@@ -66,7 +66,7 @@ import org.geotoolkit.util.logging.Logging;
  * then a new instance should be created for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.06
+ * @version 3.10
  *
  * @see AbstractAuthorityFactory#getIdentifiedObjectFinder(Class)
  * @see CRS#lookupIdentifier(IdentifiedObject, boolean)
@@ -427,21 +427,37 @@ public class IdentifiedObjectFinder {
     }
 
     /**
-     * Creates an object from the given code. This method may be invoked many time if we want
-     * to attempt creating many flavors of the same object (for example with "longitude first"
-     * axis order forced or not). The {@code attempt} argument gives the number of attempts prior
-     * this one. This method shall return {@code null} if no more attempt should be done.
+     * Creates an object for the given code. This method is invoked by the default implementation
+     * of the {@link #find(IdentifiedObject)} and {@link #findIdentifier(IdentifiedObject)} methods.
+     * The method is invoked at least once for each code returned by the
+     * {@link #getCodeCandidates(IdentifiedObject)} method, in iteration order, until an object
+     * {@linkplain CRS#equalsIgnoreMetadata equals (ignoring metadata)} to the requested object
+     * is found.
      * <p>
-     * The default implementation delegates to the factory only for the first attempt, and returns
-     * {@code null} in all other cases. This method is aimed to be overriden, but do NOT override
-     * it with caching service. See {@link CachingAuthorityFactory#Finder} for details.
+     * This method may be invoked more than once for the same code. On the first invocation, the
+     * {@code attempt} argument is 0. If the returned object is not equals (ignoring metadata)
+     * to the requested object, then this method is invoked again with increasing values of the
+     * {@code attempt} argument until this method returns {@code null}, which means that every
+     * possible objects for the given code has been created. The purpose is to test various flavor
+     * of the same object (for example with the axis order forced to "<cite>longitude first</cite>"
+     * or not).
+     * <p>
+     * The default implementation delegates to the factory given at construction time only for
+     * the first attempt {@code (attempt == 0)}, and returns {@code null} in all other cases.
+     *
+     * {@section Overriding}
+     * This method is aimed to be overriden, but subclasses shall <strong>not</strong>
+     * override it with caching service. For example do not delegate the creation to a
+     * {@link CachingAuthorityFactory} instance.
      *
      * @param  code The authority code for which to create an object.
-     * @param  count The number of previous attempt before this one.
+     * @param  attempt The number of previous attempt before this one.
      * @return The identified object for the given code, or {@code null} to stop attempts.
      * @throws FactoryException if an error occured while creating the object.
+     *
+     * @since 3.10
      */
-    IdentifiedObject create(final String code, final int attempt) throws FactoryException {
+    protected IdentifiedObject create(final String code, final int attempt) throws FactoryException {
         return (attempt == 0) ? proxy.create(code) : null;
     }
 

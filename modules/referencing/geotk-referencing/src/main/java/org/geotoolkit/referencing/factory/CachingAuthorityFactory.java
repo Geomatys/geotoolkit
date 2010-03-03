@@ -1088,7 +1088,9 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
          * (longitude,latitude) order and miss an opportunity to identify the user's CRS.
          */
         @Override
-        final synchronized IdentifiedObject create(final String code, final int attempt) throws FactoryException {
+        protected final synchronized IdentifiedObject create(final String code, final int attempt)
+                throws FactoryException
+        {
             try {
                 acquire();
                 return finder.create(code, attempt);

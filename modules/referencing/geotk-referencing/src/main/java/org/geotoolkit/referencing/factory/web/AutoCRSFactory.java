@@ -39,15 +39,46 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 
+// Following are for Javadoc only.
+import org.geotoolkit.measure.Units;
+import org.geotoolkit.referencing.operation.projection.Orthographic;
+import org.geotoolkit.referencing.operation.projection.Equirectangular;
+import org.geotoolkit.referencing.operation.projection.TransverseMercator;
+
 
 /**
  * The factory for {@linkplain ProjectedCRS projected CRS} in the {@code AUTO} and {@code AUTO2}
- * space.
+ * space. The expected format is {@code AUTO:code,<unit>,lon0,lat0} where the {@code AUTO} prefix
+ * is optional. The {@code <unit> parameter is also optional, since it was not present in the WMS
+ * 1.0 specification (it has been added later).
+ * <p>
+ * The parameters are as below:
+ * <ul>
+ *   <li><p>{@code code} - the projection code, as one of the following values:</p>
+ *     <ul>
+ *       <li>42001 for the {@linkplain TransverseMercator Universal Transverse Mercator} projection.</li>
+ *       <li>42002 for the {@linkplain TransverseMercator Transverse Mercator} projection.</li>
+ *       <li>42003 for the {@linkplain Orthographic Orthographic} projection.</li>
+ *       <li>42004 for the {@linkplain Equirectangular Equirectangular} projection.</li>
+ *       <li>42005 for the Mollweide projection.</li>
+ *     </ul>
+ *   </li><li><p>
+ *     {@code unit} - the unit of measurement code, as one of the codes documented
+ *     in the {@link Units#valueOfEPSG(int)} method. This code is optional. If not
+ *     provided, then the default value is 9001 (<cite>metre</cite>).</p>
+ *   </li><li><p>
+ *     {@code long0} - the central meridian. For UTM projections (42001), it can be computed as
+ *     (<var>zone</var>*6 - 183) where <var>zone</var> is the UTM zone in the range 1 to 60
+ *     inclusive.</p>
+ *   </li><li><p>
+ *     {@code lat0} - the latitude of origin.</p>
+ *   </li>
+ * </ul>
  *
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.09
  *
  * @since 2.0
  * @module
