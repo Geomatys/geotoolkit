@@ -19,23 +19,31 @@ package org.geotoolkit.image.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import javax.imageio.ImageReader;
 import java.awt.image.RenderedImage;
+import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
+import javax.imageio.spi.IIORegistry;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.internal.io.TemporaryFile;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
+import org.geotoolkit.image.jai.Registry;
+import org.geotoolkit.util.converter.Classes;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link XImageIO}.
+ * Tests {@link XImageIO}. Also ensure that every plugins are correctly registered.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.10
  *
  * @since 3.07
  */
@@ -69,6 +77,37 @@ public final class XImageIOTest {
             assertTrue("The created file should not be empty.", tmp.length() > 0);
         } finally {
             assertTrue(TemporaryFile.delete(tmp));
+        }
+    }
+
+    /**
+     * Tests that every plugins are correctly registered. In particular,
+     * we need to ensure that the MIME type is declared for each plugin.
+     *
+     * @since 3.10
+     */
+    @Test
+    public void testPluginsRegistration() {
+        Registry.setDefaultCodecPreferences();
+        final IIORegistry registry = IIORegistry.getDefaultInstance();
+        WorldFileImageReader.Spi.registerDefaults(registry);
+        WorldFileImageWriter.Spi.registerDefaults(registry);
+        try {
+            final Iterator<ImageReaderSpi> it = registry.getServiceProviders(ImageReaderSpi.class, false);
+            while (it.hasNext()) {
+                final ImageReaderSpi spi = it.next();
+                final String name = Classes.getShortClassName(spi);
+                assertNotNull(name, spi.getFormatNames());
+                assertNotNull(name, spi.getInputTypes());
+                assertNotNull(name, spi.getMIMETypes());
+            }
+            // Following line was used to throw a NullPointerException
+            // if a plugin declare a null array of MIME types.
+            final String[] types = ImageIO.getReaderMIMETypes();
+            assertTrue(types.length > 16); // Arbitrary threshold.
+        } finally {
+            WorldFileImageReader.Spi.unregisterDefaults(registry);
+            WorldFileImageWriter.Spi.unregisterDefaults(registry);
         }
     }
 }

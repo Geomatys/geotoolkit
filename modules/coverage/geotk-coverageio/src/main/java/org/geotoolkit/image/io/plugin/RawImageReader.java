@@ -465,6 +465,11 @@ public class RawImageReader extends SpatialImageReader {
         private static final String[] SUFFIXES = new String[] {"raw"};
 
         /**
+         * The mime types for the {@link RawImageReader}.
+         */
+        private static final String[] MIME_TYPES = {"image/x-raw"};
+
+        /**
          * The list of valid input types.
          */
         private static final Class<?>[] INPUT_TYPES = new Class<?>[] {
@@ -483,6 +488,7 @@ public class RawImageReader extends SpatialImageReader {
             names           = SUFFIXES;
             suffixes        = SUFFIXES;
             inputTypes      = INPUT_TYPES;
+            MIMETypes       = MIME_TYPES;
             pluginClassName = "org.geotoolkit.image.io.plugin.RawImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
