@@ -43,8 +43,9 @@ public class WeakStorageListener implements StorageListener {
         final StorageListener session = ref.get();
         if (session == null) {
             removeListener();
+        }else {
+            session.structureChanged(event);
         }
-        session.structureChanged(event);
     }
 
     /**
@@ -55,8 +56,9 @@ public class WeakStorageListener implements StorageListener {
         final StorageListener session = ref.get();
         if (session == null) {
             removeListener();
+        }else {
+            session.contentChanged(event);
         }
-        session.contentChanged(event);
     }
 
     private void removeListener() {

@@ -61,14 +61,13 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         this.id = id;
         this.source = source;
 
-        if(source != null){
-            final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
-            for(Session s : sessions){
-                //register a weak listener, to memory leak since we don't know when to remove the listener.
-                //@todo should we have a dispose method on the session ? I dont think so
-                s.addStorageListener(new WeakStorageListener(source, this));
-            }
+        final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
+        for (Session s : sessions) {
+            //register a weak listener, to memory leak since we don't know when to remove the listener.
+            //@todo should we have a dispose method on the session ? I dont think so
+            s.addStorageListener(new WeakStorageListener(s, this));
         }
+
     }
 
     public void setId(String id) {

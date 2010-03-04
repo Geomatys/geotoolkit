@@ -145,8 +145,8 @@ public abstract class AbstractSession implements Session, StorageListener{
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(StorageContentEvent event){
-        for(final StorageListener listener : listeners){
+    protected synchronized void sendEvent(StorageContentEvent event){
+        for(final StorageListener listener : listeners.toArray(new StorageListener[listeners.size()])){
             listener.contentChanged(event);
         }
     }
