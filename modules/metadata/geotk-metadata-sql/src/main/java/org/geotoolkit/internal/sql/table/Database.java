@@ -33,7 +33,7 @@ import java.util.GregorianCalendar;
 import java.util.concurrent.locks.ReentrantLock;
 import java.lang.reflect.Constructor;
 
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
@@ -54,7 +54,7 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * and to recycle those threads, because this class uses a new connection for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -190,10 +190,10 @@ public class Database implements Localized {
     private final Map<Class<? extends Table>, Table> tables = new HashMap<Class<? extends Table>, Table>();
 
     /**
-     * The coordinate reference system used for performing the search in the database.
+     * The horizontal coordinate reference system used for performing the search in the database.
      * It must match the CRS used in the geometry columns indexed by PostGIS.
      */
-    final CoordinateReferenceSystem crs;
+    final SingleCRS horizontalCRS;
 
     /**
      * The properties given at construction time, or {@code null} if none.
@@ -207,13 +207,13 @@ public class Database implements Localized {
      * @param toCopy The existing instance to copy.
      */
     public Database(final Database toCopy) {
-        this.crs        = toCopy.crs;
-        this.source     = toCopy.source;
-        this.properties = toCopy.properties;
-        this.timezone   = toCopy.timezone;
-        this.catalog    = toCopy.catalog;
-        this.schema     = toCopy.schema;
-        this.hints      = toCopy.hints;
+        this.source        = toCopy.source;
+        this.catalog       = toCopy.catalog;
+        this.schema        = toCopy.schema;
+        this.timezone      = toCopy.timezone;
+        this.hints         = toCopy.hints;
+        this.horizontalCRS = toCopy.horizontalCRS;
+        this.properties    = toCopy.properties;
     }
 
     /**
@@ -222,16 +222,14 @@ public class Database implements Localized {
      * will be used.
      *
      * @param  datasource The data source.
-     * @param  crs The coordinate reference system used in PostGIS tables.
+     * @param  horizontalCRS The horizontal coordinate reference system used in PostGIS tables.
      * @param  properties The configuration properties, or {@code null} if none.
      */
-    public Database(final DataSource datasource, final CoordinateReferenceSystem crs,
-            final Properties properties)
-    {
+    public Database(final DataSource datasource, final SingleCRS horizontalCRS, final Properties properties) {
         Table.ensureNonNull("datasource", datasource);
-        Table.ensureNonNull("crs", crs);
+        Table.ensureNonNull("horizontalCRS", horizontalCRS);
         final String username, password, tz;
-        this.crs        = crs;
+        this.horizontalCRS = horizontalCRS;
         this.properties = properties; // Must be set before to ask for properties.
         username = getProperty(ConfigurationKey.USER);
         password = getProperty(ConfigurationKey.PASSWORD);

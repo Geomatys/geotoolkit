@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.MissingResourceException;
+import java.util.concurrent.CancellationException;
 import java.io.Closeable;
 import java.io.IOException;
 import java.awt.Rectangle;
@@ -723,7 +724,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public GridCoverage2D read(final int index, final GridCoverageReadParam param)
-            throws CoverageStoreException
+            throws CoverageStoreException, CancellationException
     {
         abortRequested = false;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
@@ -731,9 +732,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
         }
         GridGeometry2D gridGeometry = getGridGeometry(index);
-        if (abortRequested) {
-            return null;
-        }
+        checkAbortState();
         final AffineTransform change; // The change in the 'gridToCRS' transform.
         final ImageReadParam imageParam;
         final int[] srcBands;
@@ -796,9 +795,7 @@ public class ImageCoverageReader extends GridCoverageReader {
          */
         final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
         final Map<?,?> properties = getProperties(index);
-        if (abortRequested) {
-            return null;
-        }
+        checkAbortState();
         final String name;
         final RenderedImage image;
         try {

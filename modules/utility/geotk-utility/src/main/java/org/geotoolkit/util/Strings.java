@@ -146,6 +146,7 @@ public final class Strings {
      * @throws NullPointerException if any of the arguments is null.
      *
      * @see String#replace(char, char)
+     * @see String#replace(CharSequence, CharSequence)
      * @see StringBuilder#replace(int, int, String)
      */
     public static void replace(final StringBuilder buffer, final String search, final String replacement) {

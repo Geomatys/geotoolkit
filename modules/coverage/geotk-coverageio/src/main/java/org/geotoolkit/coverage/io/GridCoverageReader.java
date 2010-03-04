@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -186,10 +187,13 @@ public abstract class GridCoverageReader implements Localized {
      * @return The names of the coverages.
      * @throws IllegalStateException If the input source has not been set.
      * @throws CoverageStoreException If an error occurs reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      *
      * @see ImageReader#getNumImages(boolean)
      */
-    public abstract List<String> getCoverageNames() throws CoverageStoreException;
+    public abstract List<String> getCoverageNames()
+            throws CoverageStoreException, CancellationException;
 
     /**
      * Returns the grid geometry for the {@link GridCoverage} to be read at the given index.
@@ -199,11 +203,14 @@ public abstract class GridCoverageReader implements Localized {
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      *
      * @see ImageReader#getWidth(int)
      * @see ImageReader#getHeight(int)
      */
-    public abstract GeneralGridGeometry getGridGeometry(int index) throws CoverageStoreException;
+    public abstract GeneralGridGeometry getGridGeometry(int index)
+            throws CoverageStoreException, CancellationException;
 
     /**
      * Returns the sample dimensions for each band of the {@link GridCoverage} to be read.
@@ -215,8 +222,11 @@ public abstract class GridCoverageReader implements Localized {
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      */
-    public abstract List<GridSampleDimension> getSampleDimensions(int index) throws CoverageStoreException;
+    public abstract List<GridSampleDimension> getSampleDimensions(int index)
+            throws CoverageStoreException, CancellationException;
 
     /**
      * Returns the ranges of valid sample values for each band in this format.
@@ -228,10 +238,14 @@ public abstract class GridCoverageReader implements Localized {
      * @param  index The index of the coverage to be queried.
      * @return The ranges of values for each band, or {@code null} if none.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      *
      * @since 3.10
      */
-    public List<MeasurementRange<?>> getSampleValueRanges(int index) throws CoverageStoreException {
+    public List<MeasurementRange<?>> getSampleValueRanges(final int index)
+            throws CoverageStoreException, CancellationException
+    {
         final List<GridSampleDimension> sampleDimensions = getSampleDimensions(index);
         if (sampleDimensions == null) {
             return null;
@@ -261,8 +275,10 @@ public abstract class GridCoverageReader implements Localized {
      * @param  index The index of the coverage to be queried.
      * @return The properties, or {@code null} if none.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      */
-    public Map<?,?> getProperties(int index) throws CoverageStoreException {
+    public Map<?,?> getProperties(int index) throws CoverageStoreException, CancellationException {
         return null;
     }
 
@@ -275,18 +291,22 @@ public abstract class GridCoverageReader implements Localized {
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     * @throws CancellationException If {@link #abort()} has been invoked in an other thread during
+     *         the execution of this method.
      *
      * @see ImageReader#read(int)
      */
-    public abstract GridCoverage read(int index, GridCoverageReadParam param) throws CoverageStoreException;
+    public abstract GridCoverage read(int index, GridCoverageReadParam param)
+            throws CoverageStoreException, CancellationException;
 
     /**
-     * Cancels the read operation. The content of the coverage following the abort will be
-     * undefined.
+     * Cancels the read operation which is currently under progress in an other thread.
+     * The read operation will throw a {@link CancellationException}, unless it had the
+     * time to complete.
      *
      * {@section Note for implementors}
-     * Subclasses should set the {@link #abortRequested} field to {@code false} at the beginning
-     * of each read operation, and poll the value regularly during the read.
+     * Subclasses should set the {@link #abortRequested} field to {@code false} at the
+     * beginning of each read operation, and poll the value regularly during the read.
      *
      * @see #abortRequested
      * @see ImageReader#abort()
@@ -298,9 +318,24 @@ public abstract class GridCoverageReader implements Localized {
     }
 
     /**
+     * Throws {@link CancellationException} if a request to abort the current read operation
+     * has been made since the reader was instantiated or {@link #clearAbortRequest()} was
+     * called.
+     *
+     * @throws CancellationException If the {@link #abort()} method has been invoked.
+     *
+     * @see ImageReader#abortRequested()
+     */
+    final void checkAbortState() throws CancellationException {
+        if (abortRequested) {
+            throw new CancellationException(formatErrorMessage(Errors.Keys.CANCELED_OPERATION));
+        }
+    }
+
+    /**
      * Restores the {@code GridCoverageReader} to its initial state.
      *
-     * @throws CoverageStoreException if an error occurs while disposing resources.
+     * @throws CoverageStoreException if an error occurs while restoring to the initial state.
      *
      * @see ImageReader#reset()
      */
@@ -308,5 +343,22 @@ public abstract class GridCoverageReader implements Localized {
         locale = null;
         input  = null;
         abortRequested = false;
+    }
+
+    /**
+     * Allows any resources held by this reader to be released. The result of calling any other
+     * method subsequent to a call to this method is undefined.
+     * <p>
+     * The default implementation invokes {@link #reset()}. Subclass implementations
+     * should ensure that all resources, especially JCBC connections, are released.
+     *
+     * @throws CoverageStoreException if an error occurs while disposing resources.
+     *
+     * @see ImageReader#dispose()
+     *
+     * @since 3.10
+     */
+    public void dispose() throws CoverageStoreException {
+        reset();
     }
 }
