@@ -18,7 +18,6 @@
 package org.geotoolkit.jdbc;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
@@ -144,7 +142,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
     @Override
     public boolean isWritable(Name typeName) throws DataStoreException {
-        PrimaryKey key = getPrimaryKey(getFeatureType(typeName));
+        final PrimaryKey key = getPrimaryKey(getFeatureType(typeName));
         return key != null && !(key instanceof NullPrimaryKey);
     }
 
@@ -152,7 +150,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public Set<Name> getNames() throws DataStoreException {
+    public synchronized Set<Name> getNames() throws DataStoreException {
         Set<Name> ref = nameCache;
         if(ref == null){
             visitTables();
@@ -175,7 +173,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * Explore the available tables and generate schemas and primary keys.
      * @throws DataStoreException
      */
-    private void visitTables() throws DataStoreException{
+    private synchronized void visitTables() throws DataStoreException{
 
         //clear previous schemas, this might be called after an update schema
         nameCache = null;
@@ -279,40 +277,33 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             final ResultSet columns = metaData.getColumns(null, databaseSchema, tableName, "%");
 
             try {
+                columnIte :
                 while (columns.next()) {
                     adb.reset();
                     atb.reset();
 
-                    String name = columns.getString(MD_COLUMN_NAME);
+                    final String name = columns.getString(MD_COLUMN_NAME);
 
-                    //do not include primary key in the type
-                    /*
-                     *        <LI><B>TABLE_CAT</B> String => table catalog (may be <code>null</code>)
-                     *        <LI><B>TABLE_SCHEM</B> String => table schema (may be <code>null</code>)
-                     *        <LI><B>TABLE_NAME</B> String => table name
-                     *        <LI><B>COLUMN_NAME</B> String => column name
-                     *        <LI><B>KEY_SEQ</B> short => sequence number within primary key
-                     *        <LI><B>PK_NAME</B> String => primary key name (may be <code>null</code>)
-                     */
-                    final ResultSet primaryKeys = metaData.getPrimaryKeys(null, databaseSchema, tableName);
-
-                    try {
-                        while (primaryKeys.next()) {
-                            final String keyName = primaryKeys.getString(MD_COLUMN_NAME);
-
-                            if (name.equals(keyName)) {
-                                name = null;
-
-                                break;
-                            }
-                        }
-                    } finally {
-                        closeSafe(primaryKeys);
-                    }
-
-                    if (name == null) {
-                        continue;
-                    }
+                    //we need the primary keys as fields since join query rely on them.
+//                    //encomment to not include primary key in the type
+//                    /*
+//                     *        <LI><B>TABLE_CAT</B> String => table catalog (may be <code>null</code>)
+//                     *        <LI><B>TABLE_SCHEM</B> String => table schema (may be <code>null</code>)
+//                     *        <LI><B>TABLE_NAME</B> String => table name
+//                     *        <LI><B>COLUMN_NAME</B> String => column name
+//                     *        <LI><B>KEY_SEQ</B> short => sequence number within primary key
+//                     *        <LI><B>PK_NAME</B> String => primary key name (may be <code>null</code>)
+//                     */
+//                    final ResultSet primaryKeys = metaData.getPrimaryKeys(null, databaseSchema, tableName);
+//                    try {
+//                        while (primaryKeys.next()) {
+//                            if (name.equals(primaryKeys.getString(MD_COLUMN_NAME))) {
+//                                continue columnIte;
+//                            }
+//                        }
+//                    } finally {
+//                        closeSafe(primaryKeys);
+//                    }
 
                     //figure out the type mapping
 
@@ -345,6 +336,21 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                         adb.setNillable(true);
                         adb.setMinOccurs(0);
                     }
+
+                    //primary key never null, min one
+                    final ResultSet primaryKeys = metaData.getPrimaryKeys(null, databaseSchema, tableName);
+                    try {
+                        while (primaryKeys.next()) {
+                            if (name.equals(primaryKeys.getString(MD_COLUMN_NAME))) {
+                                adb.setNillable(false);
+                                adb.setMinOccurs(1);
+                                break;
+                            }
+                        }
+                    } finally {
+                        closeSafe(primaryKeys);
+                    }
+
 
                     //determine if this attribute is a geometry or not
                     if (Geometry.class.isAssignableFrom(binding)) {
@@ -544,9 +550,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
         // split the filter
-        Filter[] split = splitFilter(query.getFilter(),type);
-        Filter preFilter = split[0];
-        Filter postFilter = split[1];
+        final Filter[] split = splitFilter(query.getFilter(),type);
+        final Filter preFilter = split[0];
+        final Filter postFilter = split[1];
 
         // rebuild a new query with the same params, but just the pre-filter
         final QueryBuilder builder = new QueryBuilder(query);
@@ -637,7 +643,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
 
         return reader;
-
     }
 
     /**
@@ -1426,16 +1431,22 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     protected String createTableSQL(final SimpleFeatureType featureType, final Connection cx) throws SQLException {
         //figure out the names and types of the columns
+        final String tableName = featureType.getTypeName();
         final int size = featureType.getAttributeCount();
         final String[] columnNames = new String[size];
         final Class[] classes = new Class[size];
         final boolean[] nillable = new boolean[size];
+        final List<String> pkeyColumn = new ArrayList<String>();
 
         for (int i=0; i<size; i++) {
-            final AttributeDescriptor attributeType = featureType.getDescriptor(i);
-            columnNames[i] = attributeType.getLocalName();
-            classes[i] = attributeType.getType().getBinding();
-            nillable[i] = attributeType.getMinOccurs() <= 0 || attributeType.isNillable();
+            final AttributeDescriptor desc = featureType.getDescriptor(i);
+            columnNames[i] = desc.getLocalName();
+            classes[i] = desc.getType().getBinding();
+            nillable[i] = desc.getMinOccurs() <= 0 || desc.isNillable();
+
+            if(isPrimaryKey(desc.getUserData())){
+                pkeyColumn.add(desc.getLocalName());
+            }
         }
 
         final String[] sqlTypeNames = getSQLTypeNames(classes, cx);
@@ -1446,46 +1457,39 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             }
         }
 
-        return createTableSQL(featureType.getTypeName(), columnNames, sqlTypeNames, nillable, "fid", featureType);
-    }
-
-    /**
-     * Helper method for building a 'CREATE TABLE' sql statement.
-     */
-    private String createTableSQL(final String tableName, final String[] columnNames, final String[] sqlTypeNames,
-            boolean[] nillable, String pkeyColumn, SimpleFeatureType featureType) {
-        //build the create table sql
+        //build the create table sql -------------------------------------------
         final StringBuilder sql = new StringBuilder();
         sql.append("CREATE TABLE ");
-
         encodeTableName(tableName, sql);
         sql.append(" ( ");
 
-        //primary key column
-        if (pkeyColumn != null) {
-            dialect.encodePrimaryKey(pkeyColumn, sql);
+        if(pkeyColumn.isEmpty()){
+            //we create a primary key, this will modify the geature type but
+            //we don't have any other solution
+            dialect.encodeColumnName("fid", sql);
+            dialect.encodePrimaryKey(Integer.class,"INTEGER", sql);
             sql.append(", ");
         }
 
         //normal attributes
         for (int i = 0; i < columnNames.length; i++) {
+            final AttributeDescriptor att = featureType.getDescriptor(columnNames[i]);
+
             //the column name
             dialect.encodeColumnName(columnNames[i], sql);
             sql.append(' ');
 
-            //sql type name
-            //JD: some sql dialects require strings / varchars to have an
-            // associated size with them
-            if (sqlTypeNames[i].toUpperCase().startsWith("VARCHAR")) {
-                Integer length = null;
-                if (featureType != null) {
-                    AttributeDescriptor att = featureType.getDescriptor(columnNames[i]);
-                    length = findVarcharColumnLength(att);
-                }
+            if(pkeyColumn.contains(columnNames[i])){
+                dialect.encodePrimaryKey(att.getType().getBinding(), sqlTypeNames[i], sql);
+
+            }else if (sqlTypeNames[i].toUpperCase().startsWith("VARCHAR")) {
+                //sql type name
+                //JD: some sql dialects require strings / varchars to have an
+                // associated size with them
+                Integer length = findVarcharColumnLength(att);
                 if (length == null || length < 0) {
                     length = 255;
                 }
-
                 dialect.encodeColumnType(sqlTypeNames[i] + '(' + length + ')', sql);
             } else {
                 dialect.encodeColumnType(sqlTypeNames[i], sql);
@@ -1497,10 +1501,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             }
 
             //delegate to dialect to encode column postamble
-            if (featureType != null) {
-                AttributeDescriptor att = featureType.getDescriptor(columnNames[i]);
-                dialect.encodePostColumnCreateTable(att, sql);
-            }
+            dialect.encodePostColumnCreateTable(att, sql);
 
             //sql.append(sqlTypeNames[i]);
             if (i < (sqlTypeNames.length - 1)) {
@@ -1544,17 +1545,9 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     protected String selectSQL(final SimpleFeatureType featureType, final Query query) throws IOException,DataStoreException {
         final StringBuilder sql = new StringBuilder("SELECT ");
 
-        //column names
-
-        //primary key
         final PrimaryKey key = getPrimaryKey(featureType);
 
-        for (PrimaryKeyColumn col : key.getColumns()) {
-            dialect.encodeColumnName(col.getName(), sql);
-            sql.append(',');
-        }
-
-        //other columns
+        //column names
         for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
             if (att instanceof GeometryDescriptor) {
                 //encode as geometry
@@ -1745,11 +1738,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         // primary key
         final PrimaryKey key = getPrimaryKey(featureType);
-
-        for (PrimaryKeyColumn col : key.getColumns()) {
-            dialect.encodeColumnName(col.getName(), sql);
-            sql.append(',');
-        }
 
         //other columns
         for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
@@ -2174,77 +2162,79 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     protected String insertSQL(final SimpleFeatureType featureType, final SimpleFeature feature,
                                final List keyValues, final Connection cx) throws DataStoreException{
         final BasicSQLDialect dialect = (BasicSQLDialect) getDialect();
-
-        final StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO ");
-        encodeTableName(featureType.getTypeName(), sql);
-
-        //column names
-        sql.append(" ( ");
-
-        for (int i = 0; i < featureType.getAttributeCount(); i++) {
-            dialect.encodeColumnName(featureType.getDescriptor(i).getLocalName(), sql);
-            sql.append(",");
-        }
-
-        //primary key values
         final PrimaryKey key = getPrimaryKey(featureType);
+        final List<PrimaryKeyColumn> keyColumns = key.getColumns();
 
-        for (PrimaryKeyColumn col : key.getColumns()) {
-            //only include if its non auto generating
-            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
-                dialect.encodeColumnName(col.getName(), sql);
-                sql.append(",");
+        final StringBuilder sqlType = new StringBuilder();
+        sqlType.append("INSERT INTO ");
+        encodeTableName(featureType.getTypeName(), sqlType);
+        sqlType.append(" ( ");
+
+        final StringBuilder sqlValues = new StringBuilder();
+        sqlValues.append(" ) VALUES ( ");
+
+        //add all fields
+        fields :
+        for(int i=0,n=featureType.getAttributeCount(); i<n; i++){
+            final AttributeDescriptor desc = featureType.getDescriptor(i);
+            final String attName = desc.getLocalName();
+            final Class binding = desc.getType().getBinding();
+            final Object value = feature.getAttribute(attName);
+
+            //remove the primary key attribut that wil be auto-generated and null
+            for (PrimaryKeyColumn col : keyColumns) {
+                if(col.getName().equals(attName)){
+                    //only include if its non auto generating and not null
+                    if (col instanceof AutoGeneratedPrimaryKeyColumn && value == null) {
+                        continue fields;
+                    }
+                }
             }
-        }
-        sql.setLength(sql.length() - 1);
 
-        //values
-        sql.append(" ) VALUES ( ");
+            //the column
+            dialect.encodeColumnName(attName, sqlType);
 
-        for (int i = 0; i < featureType.getAttributeCount(); i++) {
-            final AttributeDescriptor att = featureType.getDescriptor(i);
-            final Class binding = att.getType().getBinding();
-
-            final Object value = feature.getAttribute(att.getLocalName());
-
+            //the value
             if (value == null) {
-                if (!att.isNillable()) {
-                    //TODO: throw an exception
+                //maybe it's an auto generated value from a sequence
+                boolean found = false;
+                for (int k=0; k<keyColumns.size(); k++) {
+                    if(keyColumns.get(k).getName().equals(attName)){
+                        dialect.encodeValue(keyValues.get(k), keyColumns.get(k).getType(), sqlValues);
+                        found = true;
+                        break;
+                    }
                 }
 
-                sql.append("null");
+                if(!found){
+                    if (!desc.isNillable()) {
+                        //TODO: throw an exception
+                    }
+                    sqlValues.append("null");
+                }
             } else {
                 if (Geometry.class.isAssignableFrom(binding)) {
                     final Geometry g = (Geometry) value;
-                    final int srid = getGeometrySRID(g, att);
+                    final int srid = getGeometrySRID(g, desc);
                     try {
-                        dialect.encodeGeometryValue(g, srid, sql);
+                        dialect.encodeGeometryValue(g, srid, sqlValues);
                     } catch (IOException ex) {
                         throw new DataStoreException(ex);
                     }
                 } else {
-                    dialect.encodeValue(value, binding, sql);
+                    dialect.encodeValue(value, binding, sqlValues);
                 }
             }
 
-            sql.append(",");
+            sqlType.append(',');
+            sqlValues.append(',');
         }
-        for (int i = 0; i < key.getColumns().size(); i++) {
-            final PrimaryKeyColumn col = key.getColumns().get(i);
 
-            //only include if its non auto generating
-            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
-                    final Object value = keyValues.get(i);
-                    dialect.encodeValue(value, col.getType(), sql);
-                    sql.append(",");
-            }
-        }
-        sql.setLength(sql.length() - 1);
+        sqlType.setLength(sqlType.length() - 1);
+        sqlValues.setLength(sqlValues.length() - 1);
+        sqlValues.append(")");
 
-        sql.append(")");
-
-        return sql.toString();
+        return sqlType.toString() + sqlValues.toString();
     }
 
     /**
@@ -2253,96 +2243,118 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     protected PreparedStatement insertSQLPS(final SimpleFeatureType featureType, final SimpleFeature feature,
             final List keyValues, final Connection cx) throws IOException, SQLException, DataStoreException{
         final PreparedStatementSQLDialect dialect = (PreparedStatementSQLDialect) getDialect();
-
-        final StringBuilder sql = new StringBuilder();
-        sql.append("INSERT INTO ");
-        encodeTableName(featureType.getTypeName(), sql);
-
-        // column names
-        sql.append(" ( ");
-
-        for (int i = 0; i < featureType.getAttributeCount(); i++) {
-            dialect.encodeColumnName(featureType.getDescriptor(i).getLocalName(), sql);
-            sql.append(",");
-        }
-
-        // primary key values
         final PrimaryKey key = getPrimaryKey(featureType);
+        final List<PrimaryKeyColumn> keyColumns = key.getColumns();
 
-        for (PrimaryKeyColumn col : key.getColumns()) {
-            //only include if its non auto generating
-            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
-                dialect.encodeColumnName(col.getName(), sql);
-                sql.append(",");
+        final StringBuilder sqlType = new StringBuilder();
+        sqlType.append("INSERT INTO ");
+        encodeTableName(featureType.getTypeName(), sqlType);
+        sqlType.append(" ( ");
+
+        final StringBuilder sqlValues = new StringBuilder();
+        sqlValues.append(" ) VALUES ( ");
+
+        //add all fields
+        fields :
+        for(int i=0,n=featureType.getAttributeCount(); i<n; i++){
+            final AttributeDescriptor desc = featureType.getDescriptor(i);
+            final String attName = desc.getLocalName();
+            final Class binding = desc.getType().getBinding();
+            final Object value = feature.getAttribute(attName);
+
+            //remove the primary key attribut that wil be auto-generated and null
+            for (PrimaryKeyColumn col : keyColumns) {
+                if(col.getName().equals(attName)){
+                    //only include if its non auto generating and not null
+                    if (col instanceof AutoGeneratedPrimaryKeyColumn && value == null) {
+                        continue fields;
+                    }
+                }
             }
-        }
-        sql.setLength(sql.length() - 1);
 
-        // values
-        sql.append(" ) VALUES ( ");
-        for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
-            // geometries might need special treatment, delegate to the dialect
-            if (att instanceof GeometryDescriptor) {
-                final Geometry geometry = (Geometry) feature.getAttribute(att.getName());
-                dialect.prepareGeometryValue(geometry, getDescriptorSRID(att), att.getType().getBinding(), sql);
-            } else {
-                sql.append("?");
-            }
-            sql.append(",");
-        }
-        for (PrimaryKeyColumn col : key.getColumns()) {
-            //only include if its non auto generating
-            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
-                sql.append("?").append(",");
-            }
-        }
+            //the column
+            dialect.encodeColumnName(attName, sqlType);
 
-        sql.setLength(sql.length() - 1);
-        sql.append(")");
-        getLogger().log(Level.FINE, "Inserting new feature with ps: {0}", sql);
-
-        //create the prepared statement
-        final PreparedStatement ps = cx.prepareStatement(sql.toString());
-
-        //set the attribute values
-        for (int i = 0; i < featureType.getAttributeCount(); i++) {
-            final AttributeDescriptor att = featureType.getDescriptor(i);
-            final Class binding = att.getType().getBinding();
-
-            final Object value = feature.getAttribute(att.getLocalName());
+            //the value
             if (value == null) {
-                if (!att.isNillable()) {
-                    //TODO: throw an exception
-                }
-            }
-
-            if (Geometry.class.isAssignableFrom(binding)) {
-                final Geometry g = (Geometry) value;
-                final int srid = getGeometrySRID(g, att);
-                dialect.setGeometryValue(g, srid, binding, ps, i + 1);
+                sqlValues.append("?");
             } else {
-                dialect.setValue(value, binding, ps, i + 1, cx);
-            }
-            if (getLogger().isLoggable(Level.FINE)) {
-                getLogger().fine((i + 1) + " = " + value);
-            }
-        }
-
-        //set the key values
-        int i = featureType.getAttributeCount();
-        for (int j = 0; j < key.getColumns().size(); j++) {
-            final PrimaryKeyColumn col = key.getColumns().get(j);
-            //only include if its non auto generating
-            if (!(col instanceof AutoGeneratedPrimaryKeyColumn)) {
-                //get the next value for the column
-                //Object value = getNextValue( col, key, cx );
-                final Object value = keyValues.get(j);
-                dialect.setValue(value, col.getType(), ps, i + 1, cx);
-                i++;
-                if (getLogger().isLoggable(Level.FINE)) {
-                    getLogger().fine((i) + " = " + value);
+                if (Geometry.class.isAssignableFrom(binding)) {
+                    final Geometry g = (Geometry) value;
+                    final int srid = getGeometrySRID(g, desc);
+                    dialect.prepareGeometryValue(g, srid, binding, sqlValues);
+                } else {
+                    sqlValues.append("?");
                 }
             }
+
+            sqlType.append(',');
+            sqlValues.append(',');
+        }
+        
+        sqlType.setLength(sqlType.length() - 1);
+        sqlValues.setLength(sqlValues.length() - 1);
+        sqlValues.append(")");
+        final String request = sqlType.toString() + sqlValues.toString();
+
+
+        //create the prepared statement-----------------------------------------
+        final PreparedStatement ps = cx.prepareStatement(request);
+
+        //fill the prepared statement
+        int attIdx = 0;
+        fields :
+        for(int i=0,n=featureType.getAttributeCount(); i<n; i++){
+            final AttributeDescriptor desc = featureType.getDescriptor(i);
+            final String attName = desc.getLocalName();
+            final Class binding = desc.getType().getBinding();
+            final Object value = feature.getAttribute(attName);
+
+            //remove the primary key attribut that wil be auto-generated and null
+            for (PrimaryKeyColumn col : keyColumns) {
+                if(col.getName().equals(attName)){
+                    //only include if its non auto generating and not null
+                    if (col instanceof AutoGeneratedPrimaryKeyColumn && value == null) {
+                        continue fields;
+                    }
+                }
+            }
+
+            attIdx++;
+
+            //the column
+            dialect.encodeColumnName(attName, sqlType);
+
+            //the value
+            if (value == null) {
+                //maybe it's an auto generated value from a sequence
+                boolean found = false;
+                for (int k=0; k<keyColumns.size(); k++) {
+                    if(keyColumns.get(k).getName().equals(attName)){
+                        dialect.setValue(keyValues.get(k), keyColumns.get(k).getType(), ps, attIdx, cx);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(!found){
+                    if (!desc.isNillable()) {
+                        //TODO: throw an exception
+                    }
+                    dialect.setValue(value, binding, ps, attIdx, cx);
+                }
+            } else {
+                if (Geometry.class.isAssignableFrom(binding)) {
+                    final Geometry g = (Geometry) value;
+                    final int srid = getGeometrySRID(g, desc);
+                    dialect.setGeometryValue(g, srid, binding, ps, attIdx);
+                } else {
+                    dialect.setValue(value, binding, ps, attIdx, cx);
+                }
+            }
+
+            sqlType.append(',');
+            sqlValues.append(',');
         }
 
         return ps;
@@ -2639,48 +2651,19 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     /**
-     * Checks if geometry generalization required and makes sense
-     *
-     * @param hints 	hints hints passed in
-     * @param gatt 		Geometry attribute descriptor
-     * @return			true to indicate generalization
+     * Check if the property descriptor is defined as a primary key.
+     * @param params
+     * @return
      */
-    protected boolean isGeneralizationRequired(final Hints hints, final GeometryDescriptor gatt) {
-        return isGeometryReduceRequired(hints, gatt, HintsPending.GEOMETRY_GENERALIZATION);
-    }
+    protected boolean isPrimaryKey(final Map<Object,Object> params){
+        if(params == null){
+            return false;
+        }
+        
+        final Boolean primary = (Boolean) params.get(HintsPending.PROPERTY_IS_IDENTIFIER);
+        if(primary != null) return primary;
 
-    /**
-     * Checks if geometry simplification required and makes sense
-     *
-     * @param hints 	hints hints passed in
-     * @param gatt 		Geometry attribute descriptor
-     * @return			true to indicate simplification
-     */
-    protected boolean isSimplificationRequired(final Hints hints, final GeometryDescriptor gatt) {
-        return isGeometryReduceRequired(hints, gatt, HintsPending.GEOMETRY_SIMPLIFICATION);
-    }
-
-    /**
-     * Checks if reduction required and makes sense
-     *
-     * @param hints	  hints passed in
-     * @param gatt   Geometry attribute descriptor
-     * @param param  {@link HintsPending#GEOMETRY_GENERALIZATION} or {@link HintsPending#GEOMETRY_SIMPLIFICATION}
-     * @return true to indicate reducing the geometry, false otherwise
-     */
-    protected boolean isGeometryReduceRequired(final Hints hints, final GeometryDescriptor gatt,
-                                               final HintsPending.Key param)
-    {
-        if (hints == null) {
-            return false;
-        }
-        if (hints.containsKey(param) == false) {
-            return false;
-        }
-        if (gatt.getType().getBinding() == Point.class) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     /**
@@ -2693,20 +2676,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     protected void encodeGeometryColumn(final GeometryDescriptor gatt, final StringBuilder sql,
                                         final Hints hints){
-
         final int srid = getDescriptorSRID(gatt);
-        if (isGeneralizationRequired(hints, gatt)) {
-            final Double distance = (Double) hints.get(HintsPending.GEOMETRY_GENERALIZATION);
-            dialect.encodeGeometryColumnGeneralized(gatt, srid, sql, distance);
-            return;
-        }
-
-        if (isSimplificationRequired(hints, gatt)) {
-            final Double distance = (Double) hints.get(HintsPending.GEOMETRY_SIMPLIFICATION);
-            dialect.encodeGeometryColumnSimplified(gatt, srid, sql, distance);
-            return;
-        }
-
         dialect.encodeGeometryColumn(gatt, srid, sql);
     }
 

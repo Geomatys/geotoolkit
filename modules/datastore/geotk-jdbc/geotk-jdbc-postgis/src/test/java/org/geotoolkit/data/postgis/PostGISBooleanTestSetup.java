@@ -35,7 +35,7 @@ public class PostGISBooleanTestSetup extends JDBCBooleanTestSetup {
 
     @Override
     protected void dropBooleanTable() throws Exception {
-        run( "DROP TABLE \"b\"");
+        run( "DROP TABLE IF EXISTS \"b\"");
     }
     
 

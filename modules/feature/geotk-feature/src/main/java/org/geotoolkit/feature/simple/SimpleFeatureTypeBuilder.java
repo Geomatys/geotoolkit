@@ -44,6 +44,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.Collections;
+import org.geotoolkit.factory.HintsPending;
 
 
 /**
@@ -105,6 +107,13 @@ import com.vividsolutions.jts.geom.Geometry;
  * @module pending
  */
 public class SimpleFeatureTypeBuilder {
+
+    /**
+     * Map of user data that can be used when creating a property descriptor
+     * to notify that the field should be used as a primary key. not all datastore
+     * can handle this.
+     */
+    public static final Map PRIMARY_KEY = Collections.singletonMap(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
 
     /*
      * Factories an builders.
@@ -406,6 +415,10 @@ public class SimpleFeatureTypeBuilder {
         add(new DefaultName(name),binding);
     }
 
+    public void add(final String name, final Class binding, int min, int max, boolean nillable, Map<Object,Object> userData) {
+        add(new DefaultName(name),binding,min,max,nillable,userData);
+    }
+
     /**
      * Adds a new attribute w/ provided name and class.
      *
@@ -421,7 +434,11 @@ public class SimpleFeatureTypeBuilder {
      * @param binding The class the attribute is bound to.
      */
     public void add(final Name name, final Class binding) {
-        
+        add(name,binding,0,1,true,null);
+    }
+
+    public void add(final Name name, final Class binding, int min, int max, boolean nillable, Map<Object,Object> userData) {
+
         if(Geometry.class.isAssignableFrom(binding) ||
                 org.opengis.geometry.Geometry.class.isAssignableFrom(binding)){
             throw new IllegalArgumentException("Use add(Name,Class,CRS) method to add geometric fields.");
@@ -435,10 +452,14 @@ public class SimpleFeatureTypeBuilder {
         attributeDescriptorBuilder.reset();
         attributeDescriptorBuilder.setName(name);
         attributeDescriptorBuilder.setType(type);
-        attributeDescriptorBuilder.setMinOccurs(0);
-        attributeDescriptorBuilder.setMinOccurs(1);
-        attributeDescriptorBuilder.setNillable(true);
+        attributeDescriptorBuilder.setMinOccurs(min);
+        attributeDescriptorBuilder.setMaxOccurs(max);
+        attributeDescriptorBuilder.setNillable(nillable);
         final AttributeDescriptor descriptor = attributeDescriptorBuilder.buildDescriptor();
+
+        if(userData != null){
+            descriptor.getUserData().putAll(userData);
+        }
 
         add(descriptor);
     }
@@ -549,6 +570,9 @@ public class SimpleFeatureTypeBuilder {
 
         attributeDescriptorBuilder.reset();
         attributeDescriptorBuilder.setName(name);
+        attributeDescriptorBuilder.setMinOccurs(0);
+        attributeDescriptorBuilder.setMaxOccurs(1);
+        attributeDescriptorBuilder.setNillable(true);
         attributeDescriptorBuilder.setType(type);
         final AttributeDescriptor descriptor = attributeDescriptorBuilder.buildDescriptor();
 

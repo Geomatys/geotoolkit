@@ -43,6 +43,7 @@ import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.referencing.CRS;
@@ -74,6 +75,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
     public void testCreateSchema() throws Exception {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName(dataStore.getNamespaceURI(), tname("ft2"));
+        builder.add(aname("id"), Integer.class,1,1,false,SimpleFeatureTypeBuilder.PRIMARY_KEY);
         builder.add(aname("geometry"), Geometry.class, CRS.decode("EPSG:4326"));
         builder.add(aname("intProperty"), Integer.class);
         builder.add(aname("dateProperty"), Date.class);
@@ -151,15 +153,16 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         //grab a writer
         FeatureWriter w = dataStore.getFeatureWriter( nsname("ft2"), Filter.INCLUDE);
         w.hasNext();
-        
+
+        //a generic id should have been added, offset index by one
         SimpleFeature f = (SimpleFeature) w.next();
-        f.setAttribute( 1, new Integer(0));
-        f.setAttribute( 2, "hello");
+        f.setAttribute( 2, new Integer(0));
+        f.setAttribute( 3, "hello");
         w.write();
         
         w.hasNext();
         f = (SimpleFeature) w.next();
-        f.setAttribute( 1, null );
+        f.setAttribute( 2, null );
         try {
             w.write();
             fail( "null value for intProperty should have failed");
@@ -167,8 +170,8 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         catch( Exception e ) {
         }
         
-        f.setAttribute( 1, new Integer(1) );
-        f.setAttribute( 2, "hello!");
+        f.setAttribute( 2, new Integer(1) );
+        f.setAttribute( 3, "hello!");
         try {
             w.write();
             fail( "string greather than 5 chars should have failed");
@@ -233,7 +236,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
 
             SimpleFeature feature = reader.next();
             assertNotNull(feature);
-            assertEquals(4, feature.getAttributeCount());
+            assertEquals(5, feature.getAttributeCount());
 
             Point p = gf.createPoint(new Coordinate(i, i));
             assertTrue(p.equals((Geometry) feature.getAttribute(aname("geometry"))));

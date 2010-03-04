@@ -86,7 +86,7 @@ public class AttributeDescriptorBuilder {
     private final FeatureTypeFactory factory;
 
     private Name name = null;
-    private Integer minOccurs = null;
+    private int minOccurs = 1;
     private int maxOccurs = 1;
     /**
      * True if value is allowed to be null.
@@ -120,7 +120,7 @@ public class AttributeDescriptorBuilder {
     }
 
     public void reset(){
-        minOccurs = null;
+        minOccurs = 1;
         maxOccurs = 1;
         isNillable = true;
         userData.clear();
@@ -180,9 +180,6 @@ public class AttributeDescriptorBuilder {
     }
 
     public int getMinOccurs() {
-        if (minOccurs == null) {
-            return isNillable ? 0 : 1;
-        }
         return minOccurs;
     }
 

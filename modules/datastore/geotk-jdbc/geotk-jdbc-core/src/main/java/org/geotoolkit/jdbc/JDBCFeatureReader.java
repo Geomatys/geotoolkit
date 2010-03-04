@@ -250,8 +250,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             }
 
             // round up attributes
-            // List attributes = new ArrayList();
-            final int pkeyCols = pkey.getColumns().size();
             final int attributeCount = featureType.getAttributeCount();
             for(int i = 0; i < attributeCount; i++) {
                 final AttributeDescriptor type = featureType.getDescriptor(i);
@@ -266,7 +264,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                         //read the geometry
                         try {
                             value = dataStore.getDialect().decodeGeometryValue(
-                                    gatt, rs, i + pkeyCols + 1, geometryFactory, cx);
+                                    gatt, rs, i + 1, geometryFactory, cx);
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
@@ -280,7 +278,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
                             }
                         }
                     } else {
-                        value = rs.getObject(i + pkeyCols + 1);
+                        value = rs.getObject(i + 1);
                     }
 
                     // they value may need conversion. We let converters chew the initial
@@ -423,22 +421,10 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             //get the result set metadata
             final ResultSetMetaData md = rs.getMetaData();
 
-            //get the primary key, ensure its not contained in the values
+            //get the primary key
             key = dataStore.getPrimaryKey(featureType);
             int count = md.getColumnCount();
-            columnNames=new String[count];
-
-            for (int i = 0; i < md.getColumnCount(); i++) {
-            	String columnName =md.getColumnName(i + 1);
-            	columnNames[i]=columnName;
-                for ( PrimaryKeyColumn col : key.getColumns() ) {
-                    if (col.getName().equals(columnName)) {
-                        count--;
-                        break;
-                    }
-                }
-
-            }
+            columnNames = new String[count];
 
             //set up values
             values = new Object[count];
@@ -447,21 +433,13 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             //set up name lookup
             index = new HashMap<String, Integer>();
 
-            int offset = 0;
-
             loop:
-            for (int i = 0; i < md.getColumnCount(); i++) {
-                for (PrimaryKeyColumn col : key.getColumns()) {
-                    if (col.getName().equals(md.getColumnName(i + 1))) {
-                        offset++;
-                        continue loop;
-                    }
-                }
+            for (int i = 0; i < count; i++) {
 
                 //must store all possible name writing combinaison
                 final String localpart = md.getColumnName(i + 1);
                 final Name name = featureType.getDescriptor(localpart).getName();
-                final int attIndex = i - offset;
+                final int attIndex = i;
                 index.put(name.getLocalPart(), attIndex);
                 index.put(DefaultName.toJCRExtendedForm(name), attIndex);
                 index.put(DefaultName.toExtendedForm(name), attIndex);
@@ -520,19 +498,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
         private int mapToResultSetIndex(final int index) {
             //map the index to result set
-            int rsindex = index;
-
-            for ( int i = 0; i <= index; i++ ) {
-                for( PrimaryKeyColumn col : key.getColumns() ) {
-                    if ( col.getName().equals( columnNames[i])) {
-                        rsindex++;
-                        break;
-                    }
-                }
-            }
-
-            rsindex++;
-            return rsindex;
+            return index+1;
         }
 
         private Object getAttributeInternal(final int index, final int rsindex) {

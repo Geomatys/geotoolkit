@@ -459,39 +459,6 @@ public interface SQLDialect {
     void encodeGeometryColumn(final GeometryDescriptor gatt, final int srid, final StringBuilder sql);
 
     /**
-     * Encodes a generalized geometry using a DB provided SQL function if available
-     * If not supported, subclasses should not implement
-     * Only called if {@link HintsPending#GEOMETRY_GENERALIZATION is supported}
-     *
-     * Example:
-     * </p>
-     * <pre>
-     *   <code>
-     *   sql.append( "asText(generalize(" );
-     *   column( gatt.getLocalName(), sql );
-     *   sql.append( "," );
-	 *   sql.append(distance);
-     *   sql.append( "))" );
-     *   </code>
-     * </pre>
-     * </p>
-     * <p>
-     *
-     */
-    void encodeGeometryColumnGeneralized(final GeometryDescriptor gatt, final int srid,
-                                                final StringBuilder sql, final Double distance);
-
-    /**
-     *
-     * Encodes a simplified geometry using a DB provided SQL function if available
-     * If not supported, subclasses should not implement
-     * Only called if {@link HintsPending#GEOMETRY_SIMPLIFICATION is supported}
-     * @see #encodeGeometryColumnGeneralized(org.opengis.feature.type.GeometryDescriptor, int, java.lang.StringBuilder, java.lang.Double)
-     */
-    void encodeGeometryColumnSimplified(final GeometryDescriptor gatt, final int srid,
-                                               final StringBuilder sql, final Double distance);
-
-    /**
      * Decodes a geometry value from the result of a query.
      * <p>
      * This method is given direct access to a result set. The <tt>column</tt>
@@ -537,19 +504,8 @@ public interface SQLDialect {
 
     /**
      * Encodes the primary key definition in a CREATE TABLE statement.
-     * <p>
-     * Subclasses should override this method if need be, the default implementation does the
-     * following:
-     * <pre>
-     *   <code>
-     *   encodeColumnName( column, sql );
-     *   sql.append( " int PRIMARY KEY" );
-     *   </code>
-     * </pre>
-     * </p>
-     *
      */
-    void encodePrimaryKey(final String column, final StringBuilder sql);
+    void encodePrimaryKey(Class binding, String sqlType, final StringBuilder sql);
 
     /**
      * Encodes anything post a column in a CREATE TABLE statement.

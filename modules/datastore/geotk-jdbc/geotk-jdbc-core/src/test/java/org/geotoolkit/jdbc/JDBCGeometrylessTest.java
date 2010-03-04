@@ -20,6 +20,8 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -48,9 +50,19 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+
+        SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+        sftb.setName(dataStore.getNamespaceURI(), PERSON);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), ID), Integer.class,1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), NAME), String.class,0,1,true,null);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), AGE), Integer.class,0,1,true,null);
+        personSchema = sftb.buildFeatureType();
         
-        personSchema = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + PERSON, ID + ":0," + NAME+":String," + AGE + ":0");
-        zipCodeSchema = FeatureTypeUtilities.createType(dataStore.getNamespaceURI() + "." + ZIPCODE, ID + ":0," + CODE + ":String");
+        sftb.reset();
+        sftb.setName(dataStore.getNamespaceURI(), ZIPCODE);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), ID), Integer.class,1,1,false, SimpleFeatureTypeBuilder.PRIMARY_KEY);
+        sftb.add(new DefaultName(dataStore.getNamespaceURI(), CODE), String.class,0,1,true,null);
+        zipCodeSchema = sftb.buildFeatureType();
     }
 
     public void testPersonSchema() throws Exception {
@@ -77,6 +89,7 @@ public abstract class JDBCGeometrylessTest extends JDBCTestSupport {
     
     public void testCreate() throws Exception {
         dataStore.createSchema(zipCodeSchema.getName(),zipCodeSchema);
-        assertFeatureTypesEqual(zipCodeSchema, (SimpleFeatureType)dataStore.getFeatureType(tname(ZIPCODE)));
+        SimpleFeatureType result = (SimpleFeatureType)dataStore.getFeatureType(tname(ZIPCODE));
+        assertFeatureTypesEqual(zipCodeSchema, result);
     }
 }

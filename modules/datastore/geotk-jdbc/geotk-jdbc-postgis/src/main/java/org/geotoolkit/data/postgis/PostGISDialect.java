@@ -434,9 +434,15 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public void encodePrimaryKey(final String column, final StringBuilder sql) {
-        encodeColumnName(column, sql);
-        sql.append(" SERIAL PRIMARY KEY");
+    public void encodePrimaryKey(final Class binding, final String sqlType, final StringBuilder sql) {
+        if(Integer.class.isAssignableFrom(binding) || Short.class.isAssignableFrom(binding)){
+            sql.append(" SERIAL ");
+        }else if(Long.class.isAssignableFrom(binding)){
+            sql.append(" BIGSERIAL ");
+        }else{
+             sql.append(' ').append(sqlType).append(' ');
+        }
+        sql.append("PRIMARY KEY");
     }
 
     /**

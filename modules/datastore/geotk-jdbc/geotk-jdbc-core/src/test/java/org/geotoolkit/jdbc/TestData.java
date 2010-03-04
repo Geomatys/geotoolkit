@@ -16,29 +16,31 @@
  */
 package org.geotoolkit.jdbc;
 
-import java.util.Collections;
-import java.util.HashSet;
-
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.Filter;
-import org.opengis.filter.FilterFactory;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
-import org.geotoolkit.data.AbstractDataStore;
 
-import org.geotoolkit.feature.FeatureTypeUtilities;
+import java.util.Collections;
+import java.util.HashSet;
+
+import org.geotoolkit.data.AbstractDataStore;
+import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.referencing.CRS;
+
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+
 import org.junit.Ignore;
+import static org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder.*;
 
 
 @Ignore
@@ -60,7 +62,6 @@ public class TestData {
     public FilterFactory ff;
     public String namespace = "http://www.geotoolkit.org/test";
     public SimpleFeatureType roadType;
-    public SimpleFeatureType subRoadType;
     public SimpleFeature[] roadFeatures;
     public JTSEnvelope2D roadBounds;
     public JTSEnvelope2D rd12Bounds;
@@ -69,7 +70,6 @@ public class TestData {
     public Filter rd12Filter;
     public SimpleFeature newRoad;
     public SimpleFeatureType riverType;
-    public SimpleFeatureType subRiverType;
     public SimpleFeature[] riverFeatures;
     public JTSEnvelope2D riverBounds;
     public Filter rv1Filter;
@@ -88,8 +88,16 @@ public class TestData {
     }
     
     void createRoadData() throws Exception {
-        roadType = AbstractDataStore.ensureGMLNS(FeatureTypeUtilities.createType(namespace + "." + ROAD, ROAD_ID+":0," + ROAD_GEOM+":LineString," + ROAD_NAME+":String"));
-        subRoadType = AbstractDataStore.ensureGMLNS(FeatureTypeUtilities.createType(namespace + ROAD, ROAD_ID+":0,"+ ROAD_GEOM+":LineString"));
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+
+        sftb.reset();
+        sftb.setName(namespace, ROAD);
+        sftb.add(new DefaultName(namespace, ROAD_ID),Integer.class,1,1,false,PRIMARY_KEY);
+        sftb.add(new DefaultName(namespace, ROAD_GEOM),LineString.class,"EPSG:4326");
+        sftb.add(new DefaultName(namespace, ROAD_NAME),String.class,0,1,true,null);
+
+        roadType = AbstractDataStore.ensureGMLNS(sftb.buildFeatureType());
+
         gf = new GeometryFactory();
 
         roadFeatures = new SimpleFeature[3];
@@ -142,9 +150,16 @@ public class TestData {
     }
 
     void createRiverData() throws Exception {
-        riverType = FeatureTypeUtilities.createType(namespace + "." + RIVER,
-                RIVER_ID + ":0," + RIVER_GEOM + ":MultiLineString," + RIVER_RIVER + ":String," + RIVER_FLOW + ":0.0");
-        subRiverType = FeatureTypeUtilities.createType(namespace + "." + RIVER, RIVER_RIVER + ":String," + RIVER_FLOW + ":0.0");
+        final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
+
+        sftb.reset();
+        sftb.setName(namespace, RIVER);
+        sftb.add(new DefaultName(namespace, RIVER_ID),Integer.class,1,1,false,PRIMARY_KEY);
+        sftb.add(new DefaultName(namespace, RIVER_GEOM),MultiLineString.class,"EPSG:4326");
+        sftb.add(new DefaultName(namespace, RIVER_RIVER),String.class,0,1,true,null);
+        sftb.add(new DefaultName(namespace, RIVER_FLOW),Integer.class,0,1,true,null);
+        riverType = AbstractDataStore.ensureGMLNS(sftb.buildFeatureType());
+
         gf = new GeometryFactory();
         riverFeatures = new SimpleFeature[2];
 

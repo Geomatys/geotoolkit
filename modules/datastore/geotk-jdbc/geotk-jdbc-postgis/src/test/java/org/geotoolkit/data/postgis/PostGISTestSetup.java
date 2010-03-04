@@ -37,8 +37,8 @@ public class PostGISTestSetup extends JDBCTestSetup {
     @Override
     protected void setUpData() throws Exception {
         runSafe("DELETE FROM GEOMETRY_COLUMNS WHERE F_TABLE_NAME = 'ft1'");
-        runSafe("DROP TABLE \"ft1\"");
-        runSafe("DROP TABLE \"ft2\"");
+        runSafe("DROP TABLE IF EXISTS \"ft1\"");
+        runSafe("DROP TABLE IF EXISTS \"ft2\"");
         
         run("CREATE TABLE \"ft1\"(" //
                 + "\"id\" serial primary key, " //

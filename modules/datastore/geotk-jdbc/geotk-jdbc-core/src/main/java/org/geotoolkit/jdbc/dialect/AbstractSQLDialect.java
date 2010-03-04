@@ -496,25 +496,6 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public void encodeGeometryColumnGeneralized(final GeometryDescriptor gatt, final int srid,
-                                                final StringBuilder sql, final Double distance){
-        throw new UnsupportedOperationException("Geometry generalization not supported");
-    }
-
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void encodeGeometryColumnSimplified(final GeometryDescriptor gatt, final int srid,
-                                               final StringBuilder sql, final Double distance){
-        throw new UnsupportedOperationException("Geometry simplification not supported");
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public abstract Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
         final String column, final GeometryFactory factory, final Connection cx) throws IOException, SQLException;
 
@@ -533,8 +514,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public void encodePrimaryKey(final String column, final StringBuilder sql) {
-        encodeColumnName( column, sql );
+    public void encodePrimaryKey(Class binding, String sqlType, final StringBuilder sql) {
         sql.append( " INTEGER PRIMARY KEY" );
     }
 

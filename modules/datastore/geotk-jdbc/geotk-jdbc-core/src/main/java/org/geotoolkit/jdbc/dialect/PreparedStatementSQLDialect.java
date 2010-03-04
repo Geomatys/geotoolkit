@@ -59,8 +59,7 @@ public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
      * @param sql The prepared sql statement buffer. 
      */
     public void prepareGeometryValue(final Geometry g, final int srid, final Class binding,
-                                     final StringBuilder sql)
-    {
+                                     final StringBuilder sql){
         sql.append( "?" );
     }
     

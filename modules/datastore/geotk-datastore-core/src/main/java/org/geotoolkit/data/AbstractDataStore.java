@@ -556,7 +556,6 @@ public abstract class AbstractDataStore implements DataStore{
     public static SimpleFeatureType ensureGMLNS(SimpleFeatureType type){
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
         sftb.setName(type.getName());
 
         for(AttributeDescriptor desc : type.getAttributeDescriptors()){

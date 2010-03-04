@@ -211,6 +211,11 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                 }
             }
 
+            if(nextRow==null && rightIterator != null){
+                rightIterator.close();
+                rightIterator = null;
+            }
+
             while(nextRow==null && leftIterator.hasNext()){
                 rightIterator = null;
                 leftRow = leftIterator.next();
@@ -231,6 +236,10 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                     nextRow = checkValid(leftRow, rightRow);
                 }
 
+                if(nextRow==null){
+                    rightIterator.close();
+                    rightIterator = null;
+                }
             }
 
         }
@@ -441,13 +450,13 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) getFeatureType());
         //build the id with all features
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder cid = new StringBuilder();
 
         for(FeatureCollectionRow row : rows){
             for(Entry<String,Feature> entry : row.getFeatures().entrySet()){
                 final Feature feature = entry.getValue();
-                if(sb.length()>0) sb.append(" / ");
-                sb.append(feature.getIdentifier().getID());
+                if(cid.length()>0) cid.append(" / ");
+                cid.append(feature.getIdentifier().getID());
 
                 //configure the properties
                 for(Property prop : feature.getProperties()){
@@ -455,8 +464,8 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                 }
             }
         }
-        final String id = sb.toString();
-        return sfb.buildFeature(id);
+
+        return sfb.buildFeature(cid.toString());
     }
 
 }

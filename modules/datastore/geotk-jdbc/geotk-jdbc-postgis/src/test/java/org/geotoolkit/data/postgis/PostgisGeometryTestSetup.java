@@ -29,7 +29,7 @@ public class PostgisGeometryTestSetup extends JDBCGeometryTestSetup {
     @Override
     protected void dropSpatialTable(String tableName) throws Exception {
         runSafe("DELETE FROM GEOMETRY_COLUMNS WHERE F_TABLE_NAME = '" + tableName + "'");
-        runSafe("DROP TABLE \"" + tableName + "\"");
+        runSafe("DROP TABLE IF EXISTS \"" + tableName + "\"");
         
     }
 

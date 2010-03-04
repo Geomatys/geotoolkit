@@ -141,7 +141,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
         ftb.setName(featureTypeName);
-        ftb.add(aname("id"), Integer.class);
+        ftb.add(aname("id"), Integer.class,1,1,false,SimpleFeatureTypeBuilder.PRIMARY_KEY);
         ftb.add(aname("name"), String.class);
         ftb.add(aname("the_geom"), Point.class, crs);
 
@@ -908,18 +908,15 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         Session session = dataStore.createSession(false);
         Name typename = nsname("road");
         
-        // FilterFactory factory = FilterFactoryFinder.createFilterFactory();
-        // rd1Filter = factory.createFidFilter( roadFeatures[0].getID() );
         Object changed = new Integer(5);
         AttributeDescriptor name = td.roadType.getDescriptor(aname("id"));
-        session.updateFeatures(typename, td.rd1Filter, name, changed);
 
-        FeatureCollection<SimpleFeature> results = session.getFeatureCollection(QueryBuilder.filtered(typename, td.rd1Filter));
-        FeatureIterator<SimpleFeature> features = results.iterator();
-        assertTrue(features.hasNext());
-        Number n = (Number)features.next().getAttribute(aname("id"));
-        assertEquals(5, n.intValue());
-        features.close();
+        assertEquals(1, session.getCount(QueryBuilder.filtered(typename, td.rd1Filter)));
+
+        session.updateFeatures(typename, td.rd1Filter, name, changed);
+        
+        //the id is based on the field we changed so there should be no result.
+        assertEquals(0, session.getCount(QueryBuilder.filtered(typename, td.rd1Filter)));
     }
 
     public void testGetFeatureStoreModifyFeatures2() throws DataStoreException {

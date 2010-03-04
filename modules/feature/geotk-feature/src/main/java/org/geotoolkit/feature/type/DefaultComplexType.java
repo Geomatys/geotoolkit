@@ -192,7 +192,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final StringWriter writer = new StringWriter();
         final TableWriter tablewriter = new TableWriter(writer);
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        tablewriter.write("name\t min\t max\t nillable\t type\t CRS\n");
+        tablewriter.write("name\t min\t max\t nillable\t type\t CRS\t UserData\n");
         tablewriter.nextLine('-');
 
         for (PropertyDescriptor property : getDescriptors()) {
@@ -216,6 +216,17 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
                 }
             }else{
                 tablewriter.write("");
+            }
+            tablewriter.write("\t");
+
+            final Map<Object,Object> userDatas = property.getUserData();
+            if(userDatas != null && !userDatas.isEmpty()){
+                for(Map.Entry<Object,Object> param : userDatas.entrySet()){
+                    tablewriter.write(param.getKey().toString());
+                    tablewriter.write("=");
+                    tablewriter.write(param.getValue().toString());
+                    tablewriter.write("  ");
+                }
             }
 
             tablewriter.write("\n");

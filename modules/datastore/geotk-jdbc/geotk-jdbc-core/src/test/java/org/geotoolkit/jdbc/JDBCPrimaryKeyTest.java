@@ -58,8 +58,8 @@ public abstract class JDBCPrimaryKeyTest extends JDBCTestSupport {
         assertPrimaryKeyValues(features, 3);
         
         SimpleFeatureBuilder b = new SimpleFeatureBuilder( (SimpleFeatureType) features.getFeatureType() );
-        b.add("four");
-        b.add(new GeometryFactory().createPoint( new Coordinate(4,4) ));
+        b.set(1,"four");
+        b.set(2,new GeometryFactory().createPoint( new Coordinate(4,4) ));
         features.add( b.buildFeature(null) );
         
         assertPrimaryKeyValues(features,4);
@@ -75,8 +75,8 @@ public abstract class JDBCPrimaryKeyTest extends JDBCTestSupport {
         assertPrimaryKeyValues(features, 3);
         
         SimpleFeatureBuilder b = new SimpleFeatureBuilder( (SimpleFeatureType) features.getFeatureType() );
-        b.add("four");
-        b.add(new GeometryFactory().createPoint( new Coordinate(4,4) ));
+        b.set(1,"four");
+        b.set(2,new GeometryFactory().createPoint( new Coordinate(4,4) ));
         features.add( b.buildFeature(null) );
         
         assertPrimaryKeyValues(features,4);
@@ -92,8 +92,8 @@ public abstract class JDBCPrimaryKeyTest extends JDBCTestSupport {
         assertPrimaryKeyValues(features, 3);
         
         SimpleFeatureBuilder b = new SimpleFeatureBuilder( (SimpleFeatureType) features.getFeatureType() );
-        b.add("four");
-        b.add( new GeometryFactory().createPoint( new Coordinate(4,4) ) );
+        b.set(1,"four");
+        b.set(2, new GeometryFactory().createPoint( new Coordinate(4,4) ) );
         features.add( b.buildFeature(null) );
         
         assertPrimaryKeyValues(features,4);
@@ -130,8 +130,8 @@ public abstract class JDBCPrimaryKeyTest extends JDBCTestSupport {
         i.close();
         
         SimpleFeatureBuilder b = new SimpleFeatureBuilder( (SimpleFeatureType) features.getFeatureType() );
-        b.add("four");
-        b.add(new GeometryFactory().createPoint(new Coordinate(4,4)));
+        b.set("name", "four");
+        b.set("geom", new GeometryFactory().createPoint(new Coordinate(4,4)));
         features.add( b.buildFeature(null) );
         
         i = features.iterator();

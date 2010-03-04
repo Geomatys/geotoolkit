@@ -20,6 +20,7 @@ package org.geotoolkit.jdbc;
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public class MetaDataConstants {
 

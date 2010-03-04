@@ -90,7 +90,7 @@ public abstract class JDBCGeometryTest extends JDBCTestSupport {
 
         SimpleFeatureTypeBuilder ftb = new SimpleFeatureTypeBuilder();
         ftb.setName(featureTypeName);
-        ftb.add(aname("id"), Integer.class);
+        ftb.add(aname("id"), Integer.class,1,1,false,SimpleFeatureTypeBuilder.PRIMARY_KEY);
         ftb.add(aname("name"), String.class);
         ftb.add(aname("geom"), geomClass, crs);
 

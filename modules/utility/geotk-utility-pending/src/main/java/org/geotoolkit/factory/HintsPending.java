@@ -66,19 +66,9 @@ public final class HintsPending extends Hints {
     public static final Key FEATURE_DETACHED = new Key(Boolean.class);
 
     /**
-     * Asks a datastore to perform a topology preserving on the fly
-     * generalization of the geometries. The datastore will return
-     * geometries generalized at the specified distance.
+     * Used to identify a PropertyDescriptor if he is part of the FeatureID.
      */
-    public static final Key GEOMETRY_GENERALIZATION = new Key(Double.class);
-
-    /**
-     * Asks a datastore to perform a non topology preserving on the fly
-     * generalization of the geometries (e.g., returning self crossing
-     * polygons as a result of the geoneralization is considered valid).
-
-     */
-    public static final Key GEOMETRY_SIMPLIFICATION = new Key(Double.class);
+    public static final Key PROPERTY_IS_IDENTIFIER = new Key(Boolean.class);
 
     private HintsPending(){}
 
