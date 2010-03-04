@@ -52,7 +52,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *     GridCoverage coverage = reader.read(0, null);
  * }
  *
- * {@note This class is conceptually equivalent to the <code>ImageReader</code> class in
+ * {@note This class is conceptually equivalent to the <code>ImageReader</code> class provided in
  * the standard Java library. Implementations of this class are often wrappers around a Java
  * <code>ImageReader</code>, converting geodetic coordinates to pixel coordinates before to
  * delegate the reading of pixel values.}

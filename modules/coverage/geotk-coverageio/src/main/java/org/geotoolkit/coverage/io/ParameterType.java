@@ -36,7 +36,12 @@ package org.geotoolkit.coverage.io;
  *
  * @since 3.09
  * @module
+ *
+ * @deprecated The choice to perform resampling or not is left to caller. Doing resampling
+ *             in {@link GridCoverageReader} would be arbitrary (what to do if the envelope
+ *             is offseted by only half a pixe?).
  */
+@Deprecated
 public enum ParameterType {
     /**
      * The {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate

@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.coverage.io;
 
-import java.util.Set;
-import java.util.EnumSet;
 import javax.imageio.ImageReadParam;
 
 import org.opengis.geometry.Envelope;
@@ -32,10 +30,10 @@ import org.geotoolkit.resources.Errors;
 /**
  * Describes how a stream is to be decoded. Instances of this class are used to supply
  * information to instances of {@link GridCoverageReader}.
- * <p>
- * The relationship between this class and {@code GridCoverageReader} is similar to the
- * relationship that exists in the standard Java library between {@link ImageReadParam}
- * and {@link javax.imageio.ImageReader}.
+ *
+ * {@note This class is conceptually equivalent to the <code>ImageReadParam</code> class provided
+ * in the standard Java library. The main difference is that <code>GridCoverageReadParam</code>
+ * works with geodetic coordinates while <code>ImageReadParam</code> works with pixel coordinates.}
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
@@ -50,6 +48,7 @@ public class GridCoverageReadParam {
      * If the {@linkplain #envelope} is non-null, then it shall be the same CRS than the envelope
      * CRS.
      */
+    @Deprecated
     private CoordinateReferenceSystem crs;
 
     /**
@@ -74,23 +73,6 @@ public class GridCoverageReadParam {
     private int[] destinationBands;
 
     /**
-     * The set of parameters which should be used strictly as defined. By default, no parameter
-     * is strict (i.e. this set is empty), which allow the {@link GridCoverageReader} to use more
-     * efficient parameter values when possible. However users can add elements to this set for
-     * forcing the {@code GridCoverageReader} to return a coverage matching exactly the parameters.
-     * <p>
-     * For example if the {@linkplain #getEnvelope() envelope} is not strict, then the reader
-     * may use the intersection of the coverage envelope (as available in the store) with the
-     * requested envelope. If the {@linkplain #getResolution() resolution} is not strict, then
-     * the reader may use a finer resolution if it avoid the need for a resampling operation.
-     * <p>
-     * See {@link ParameterType} for a list of parameters that can be set to strict or not-strict
-     * mode, and and explanation of what "non-strict" means for each parameter.
-     */
-    // TODO: Not yet public because not yet implemented.
-    final Set<ParameterType> strictParameters = EnumSet.noneOf(ParameterType.class);
-
-    /**
      * Creates a new {@code GridCoverageReadParam} instance. All properties are
      * initialized to {@code null}. Callers must invoke setter methods in order
      * to provide information about the way to decode the stream.
@@ -113,8 +95,10 @@ public class GridCoverageReadParam {
      *
      * @return The CRS in which to resample the coverage, or {@code null}.
      *
-     * @see ParameterType#CRS
+     * @deprecated {@link GridCoverageReader} returns the coverage in its native CRS
+     *             (or one of its native CRS) in all cases.
      */
+    @Deprecated
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
         return crs;
     }
@@ -128,7 +112,8 @@ public class GridCoverageReadParam {
      *         greater than the {@linkplain #getEnvelope() envelope} dimension
      *         or the {@linkplain #getResolution() resolution} dimension.
      *
-     * @see ParameterType#CRS
+     * @deprecated {@link GridCoverageReader} returns the coverage in its native CRS
+     *             (or one of its native CRS) in all cases.
      */
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException
@@ -173,34 +158,33 @@ public class GridCoverageReadParam {
     }
 
     /**
-     * Returns the region to read from the stream, or {@code null} if unspecified.
-     * If the {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} is
-     * not the same one than the CRS returned by {@link #getCoordinateReferenceSystem()},
-     * then the envelope will be transformed to the later CRS at reading time.
+     * Returns the maximal extent of the region to read from the stream, or {@code null} if
+     * unspecified. If the {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS}
+     * is not equals to the native CRS of the grid coverage to be read, then the envelope
+     * will be transformed to the later CRS at reading time.
      *
      * @return The region to read from the stream, or {@code null} if unspecified.
-     *
-     * @see ParameterType#ENVELOPE
      */
     public Envelope getEnvelope() {
         return (envelope != null) ? envelope.clone() : null;
     }
 
     /**
-     * Sets the region to read from the stream. The envelope can be specified in any
-     * {@linkplain CoordinateReferenceSystem Coordinate Reference System}; the envelope will
-     * be transformed to the {@linkplain #getCoordinateReferenceSystem() requested CRS}
-     * at reading time.
+     * Sets the maximal extent of the region to read from the stream. The actual envelope of
+     * the coverage returned by {@link GridCoverageReader} may be smaller if the coverage
+     * available in the stream does not fill completly the given envelope.
      * <p>
-     * If the envelope is set to {@code null}, then {@link GridCoverageReader} will read
+     * The envelope can be specified in any {@linkplain CoordinateReferenceSystem Coordinate
+     * Reference System}. The {@code GridCoverageReader} may return a coverage in that CRS if
+     * it can do that cheaply (for example if the backing store already contains the same
+     * coverage in different CRS), or return the coverage in its native CRS otherwise.
+     * <p>
+     * If the envelope is set to {@code null}, then {@code GridCoverageReader} will read
      * the full coverage extent in its native CRS.
      *
      * @param envelope The region to read from the stream, or {@code null}.
-     * @throws MismatchedDimensionException If the dimension of the given envelope is smaller
-     *         than the {@linkplain #getCoordinateReferenceSystem() CRS} dimension, or not
+     * @throws MismatchedDimensionException If the dimension of the given envelope is not
      *         equal to the {@linkplain #getResolution() resolution} dimension.
-     *
-     * @see ParameterType#ENVELOPE
      */
     public void setEnvelope(final Envelope envelope) throws MismatchedDimensionException {
         if (envelope != null) {
@@ -226,8 +210,6 @@ public class GridCoverageReadParam {
      * {@linkplain Envelope#getDimension() envelope dimension}.
      *
      * @return The resolution to read from the stream, or {@code null} if unspecified.
-     *
-     * @see ParameterType#RESOLUTION
      */
     public double[] getResolution() {
         return (resolution != null) ? resolution.clone() : null;
@@ -238,15 +220,18 @@ public class GridCoverageReadParam {
      * same {@linkplain CoordinateReferenceSystem Coordinate Reference System} than the
      * {@linkplain #getEnvelope() envelope} CRS.
      * <p>
+     * If the given resolution does not match a resolution that {@link GridCoverageReader}
+     * can read, then {@code GridCoverageReader} while use the largest {@code resolution}
+     * values which are equal or smaller (finer) than the given arguments. If no available
+     * resolutions are equal or finer than the given ones, then {@code GridCoverageReader}
+     * will use the finest resolution available.
+     * <p>
      * If the dimension is set to {@code null}, then {@link GridCoverageReader} will read
      * the coverage with the best resolution available.
      *
      * @param resolution The new resolution to read from the stream, or {@code null}.
-     * @throws MismatchedDimensionException If the dimension of the given resolution is smaller
-     *         than the {@linkplain #getCoordinateReferenceSystem() CRS} dimension, or not
+     * @throws MismatchedDimensionException If the dimension of the given resolution is not
      *         equal to the {@linkplain #getEnvelope() envelope} dimension.
-     *
-     * @see ParameterType#RESOLUTION
      */
     public void setResolution(double... resolution) throws MismatchedDimensionException {
         if (resolution != null) {
@@ -259,6 +244,12 @@ public class GridCoverageReadParam {
                 }
             }
             resolution = resolution.clone();
+            for (final double r : resolution) {
+                if (!(r > 0)) {
+                    throw new IllegalArgumentException(Errors.format(
+                            Errors.Keys.NOT_GREATER_THAN_ZERO_$1, r));
+                }
+            }
         }
         this.resolution = resolution;
     }
