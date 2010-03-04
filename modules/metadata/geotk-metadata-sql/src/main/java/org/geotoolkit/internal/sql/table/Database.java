@@ -34,6 +34,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.lang.reflect.Constructor;
 
 import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
@@ -42,6 +43,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
 
 
 /**
@@ -90,7 +92,7 @@ public class Database implements Localized {
     /**
      * The hints to use for fetching factories. Shall be considered read-only.
      */
-    public final Hints hints;
+    private final Hints hints;
 
     /**
      * Provides information for SQL statements being executed.
@@ -196,6 +198,11 @@ public class Database implements Localized {
     final SingleCRS horizontalCRS;
 
     /**
+     * The math transform factory, created only when first needed.
+     */
+    private transient MathTransformFactory mtFactory;
+
+    /**
      * The properties given at construction time, or {@code null} if none.
      */
     private final Properties properties;
@@ -250,6 +257,23 @@ public class Database implements Localized {
     final String getProperty(final ConfigurationKey key) {
         // No need to synchronize since 'Properties' is already synchronized.
         return (properties != null) ? properties.getProperty(key.key, key.defaultValue) : key.defaultValue;
+    }
+
+    /**
+     * Returns the math transform factory. The factory is determined by the hints
+     * given at construction time.
+     *
+     * @return The math transform factory.
+     *
+     * @since 3.10
+     */
+    public final MathTransformFactory getMathTransformFactory() {
+        MathTransformFactory mtFactory = this.mtFactory;
+        if (mtFactory == null) {
+            // Not a big deal if invoked concurrently in 2 threads.
+            this.mtFactory = mtFactory = AuthorityFactoryFinder.getMathTransformFactory(hints);
+        }
+        return mtFactory;
     }
 
     /**

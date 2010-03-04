@@ -34,7 +34,6 @@ import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Errors;
@@ -71,11 +70,6 @@ final class CategoryTable extends Table {
     private static final Color[] TRANSPARENT = new Color[] {
         new Color(0,0,0,0)
     };
-
-    /**
-     * The math transform factory, created only when first needed.
-     */
-    private transient volatile MathTransformFactory mtFactory;
 
     /**
      * Creates a category table.
@@ -161,12 +155,7 @@ final class CategoryTable extends Table {
                 } else {
                     // Quantitative category.
                     if (mtFactory == null) {
-                        mtFactory = this.mtFactory;
-                        if (mtFactory == null) {
-                            // Not a big deal if invoked concurrently in 2 threads.
-                            this.mtFactory = mtFactory = AuthorityFactoryFinder
-                                    .getMathTransformFactory(getDatabase().hints);
-                        }
+                        mtFactory = getDatabase().getMathTransformFactory();
                     }
                     MathTransform tr;
                     try {
