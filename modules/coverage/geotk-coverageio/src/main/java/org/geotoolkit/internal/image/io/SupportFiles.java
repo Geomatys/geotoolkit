@@ -30,13 +30,12 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.ContentFormatException;
 
 
-
 /**
  * Utility methods related to the additional files that come with some image formats.
  * Those additional files have the {@code ".tfw"} or {@code ".prj"} suffixes.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.10
  *
  * @since 3.00
  * @module
@@ -47,6 +46,23 @@ public final class SupportFiles {
      * The encoding of TFW files.
      */
     private static final String ENCODING = "ISO-8859-1";
+
+    /**
+     * Sequences of TFW suffixes which don't follow the usual rules. The usual rule is to either
+     * append {@code 'w'} to the suffix, or to keep only the first and the last letter of the
+     * suffix and append {@code 'w'} to that.
+     * <p>
+     * In the list of arrays below, the first element of each array is the suffix for wich a
+     * special case is needed, and the following elements are the special cases.
+     *
+     * @since 3.10
+     */
+    private static final String[][] SPECIAL_CASES = {
+        new String[] {"jpg",  "jpw", "jpegw"},  // No need to declare "jgw" and "jpgw".
+        new String[] {"jpeg", "jpw", "jpgw"},   // No need to declare "jgw" and "jpegw".
+        new String[] {"tif",  "tiffw"},
+        new String[] {"bmp",  "bmw"}
+    };
 
     /**
      * Do not allow instantiation of this class.
@@ -72,10 +88,11 @@ public final class SupportFiles {
      *
      * @param  file The image file.
      * @param  extension The wanted extension in lower cases and without the dot separator.
-     * @param  tfw {@code true} if this method is invoked for the TFW file.
+     * @param  isTFW {@code true} if this method is invoked for the TFW file.
      * @return the file with the given extension.
      */
-    private static File toSupportFile(final File file, final String extension, final boolean tfw) {
+    @SuppressWarnings("fallthrough")
+    private static File toSupportFile(final File file, final String extension, final boolean isTFW) {
         final File parent = file.getParentFile();
         final StringBuilder buffer = new StringBuilder(file.getName());
         int base = buffer.lastIndexOf(".");
@@ -87,35 +104,99 @@ public final class SupportFiles {
             currentExtension = "";
             base = buffer.append('.').length();
         }
-        File fallback = file;
-        final int stop = tfw ? 6 : 2;
-        for (int i=0; i<stop; i++) {
-            switch (i) {
-                case 0: buffer.append(extension); break;
-                case 1: buffer.append(extension.toUpperCase()); break;
+        File fallback = file;           // To be used only if no existing file is found.
+        String[] specialCases = null;   // To be used only if the standard cases didn't worked.
+        int specialCaseIndex = 0;
+attmpt: for (int caseNumber=0; ; caseNumber++) {
+            switch (caseNumber) {
+                /*
+                 * Try with the preferred extension given in argument. For TFW files, this is
+                 * the first letter, the last letter and 'w'. Example: "pgw" for "png" files.
+                 */
+                case 0: {
+                    buffer.append(extension);
+                    break;
+                }
+                /*
+                 * Same extension than above, but with upper cases. Exemple: "PGW" for "png"
+                 * files. This is the last attempt made for files that are not TFW files.
+                 */
+                case 1: {
+                    buffer.append(extension.toUpperCase());
+                    break;
+                }
+                /*
+                 * If we are looking for a TFW file, try the extension of the existing file
+                 * with the 'w' letter appended. Exemple: "pngw" for "png" files.
+                 */
                 case 2: {
+                    if (!isTFW) {
+                        break attmpt; // Every cases below this point are for TFW files only.
+                    }
                     buffer.append(currentExtension).append('w');
                     break;
                 }
+                /*
+                 * Same than above, but in upper cases. Example: "PNGW" for "png" files.
+                 */
                 case 3: {
                     buffer.append(currentExtension.toUpperCase()).append('W');
                     break;
                 }
+                /*
+                 * Get the list of special cases, which will be tested in the next block.
+                 * If no special cases are found, we will skip the next two switch cases.
+                 */
                 case 4: {
+                    for (final String[] candidate : SPECIAL_CASES) {
+                        if (currentExtension.equalsIgnoreCase(candidate[0])) {
+                            specialCases = candidate;
+                            break;
+                        }
+                    }
+                    if (specialCases == null) {
+                        caseNumber += 2; // Skip the next 2 switch cases.
+                        continue;
+                    }
+                    // fall through
+                }
+                /*
+                 * Try the special case in lower cases. Example: "bmw" for "bmp" files.
+                 */
+                case 5: {
+                    buffer.append(specialCases[++specialCaseIndex]);
+                    break;
+                }
+                /*
+                 * Same than above, but in upper case. Example: "BMW" for "bmp" files. If there
+                 * is more special cases, we will redo this block and the previous one.
+                 */
+                case 6: {
+                    buffer.append(specialCases[specialCaseIndex].toUpperCase());
+                    if (specialCaseIndex + 1 != specialCases.length) {
+                        caseNumber -= 2; // Go back 2 switch cases.
+                    }
+                    break;
+                }
+                /*
+                 * Check the "tfw" extension, if it was not already done. Note that the
+                 * 'extension' argument is always in lower cases, so it can not be equal
+                 * to "TFW". If those two last attempts didn't worked, we are done.
+                 */
+                case 7: {
                     if (extension.equals("tfw")) {
                         continue;
                     }
                     buffer.append("tfw");
                     break;
                 }
-                case 5: {
-                    if (extension.equals("TFW")) {
-                        continue;
-                    }
+                case 8: {
                     buffer.append("TFW");
                     break;
                 }
-                default: throw new AssertionError(i);
+                default: {
+                    break attmpt;
+                }
             }
             final File candidate = new File(parent, buffer.toString());
             if (candidate.isFile()) {
@@ -124,7 +205,7 @@ public final class SupportFiles {
             buffer.setLength(base);
             // Retain the first attempt, which will be
             // used as a fallback if no file was found.
-            if (i == 0) {
+            if (caseNumber == 0) {
                 fallback = candidate;
             }
         }
