@@ -78,7 +78,7 @@ public final class SampleDimensionTest {
     private static final double offset = 5.0;
 
     /**
-     * Small number for comparaison.
+     * Small number for comparison.
      */
     private static final double EPS = 1E-7;
 

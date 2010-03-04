@@ -1216,7 +1216,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
      * <ul>
      *   <li>First, the object created by the factory is compared without modification.</li>
      *   <li>If the previous comparison failed, then the object created by the factory is
-     *       {@linkplain AuthorityFactoryAdapter#replaceObject modified} and the comparaison
+     *       {@linkplain AuthorityFactoryAdapter#replaceObject modified} and the comparison
      *       is performed again.</li>
      * </ul>
      *

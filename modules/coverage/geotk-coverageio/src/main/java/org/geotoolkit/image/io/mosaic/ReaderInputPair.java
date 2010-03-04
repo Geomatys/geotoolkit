@@ -99,7 +99,7 @@ class ReaderInputPair {
     /**
      * A {@link ReaderInputPair} associated with an {@link ImageWriter} to be set by the caller.
      * This is for internal use by {@link MosaicImageWriter} only. The writer is not used in hash
-     * code value or comparaisons.
+     * code value or comparisons.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.04

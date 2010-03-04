@@ -74,7 +74,7 @@ public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
     private static final boolean METADATA_ERASED = false;
 
     /**
-     * Small number for floating points comparaisons.
+     * Small number for floating points comparisons.
      */
     private static final double EPS = 1E-8;
 

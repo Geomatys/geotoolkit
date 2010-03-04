@@ -102,7 +102,7 @@ public class Entry implements Serializable {
      * compares the {@linkplain #getClass class}, {@linkplain #identifier} and {@linkplain
      * #description}. If should be suffisient when every entries have a unique name, for
      * example when the name is the primary key in a database table. Subclasses may compare
-     * other attributes as a safety when affordable, but should avoid any comparaison that may
+     * other attributes as a safety when affordable, but should avoid any comparison that may
      * force the loading of a large amount of data.
      *
      * @param  object The object to compare with this entry.

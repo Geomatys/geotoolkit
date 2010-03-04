@@ -48,7 +48,7 @@ public final class Parameter extends ColumnOrParameter {
     final Column column;
 
     /**
-     * The comparaison operator to put in the prepared statement.
+     * The comparison operator to put in the prepared statement.
      */
     private String comparator = "=";
 
@@ -86,7 +86,7 @@ public final class Parameter extends ColumnOrParameter {
     }
 
     /**
-     * Sets the comparaison operator to put in the prepared statement. This method
+     * Sets the comparison operator to put in the prepared statement. This method
      * is typically invoked for setting the comparison operator to {@code "LIKE"}.
      * If this method is never invoked, then the default value is {@code "="}.
      * <p>

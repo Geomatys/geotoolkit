@@ -56,7 +56,7 @@ public abstract class CoverageTestCase {
     protected boolean show = false;
 
     /**
-     * Small value for comparaison of sample values. Since most grid coverage implementations in
+     * Small value for comparison of sample values. Since most grid coverage implementations in
      * Geotk 2 store geophysics values as {@code float} numbers, this {@code EPS} value must
      * be of the order of {@code float} relative precision, not {@code double}.
      */

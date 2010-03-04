@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  */
 public final class SouthOrientatedTest {
     /**
-     * Small number for matrix element comparaisons.
+     * Small number for matrix element comparisons.
      */
     private static final double EPS = 1E-10;
 

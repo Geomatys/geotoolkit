@@ -176,12 +176,13 @@ public final class Strings {
     }
 
     /**
-     * Returns a string with leading and trailing whitespaces omitted. This method is similar
-     * in purpose to {@link String#trim()}, except that the {@link Character#isWhitespace(char)}
-     * method is used in order to determine if a character is a whitespace. This is in contrast
-     * with the {@code String.trim()} method, which consider every ASCII control code below 32
-     * to be a whitespace. The later has the effect of removing {@linkplain org.geotoolkit.io.X364
-     * X3.64} escape sequences as well. The method defined here will preserve them.
+     * Returns a string with leading and trailing whitespaces omitted. Whitespaces are identified
+     * by the {@link Character#isWhitespace(char)} method.
+     * <p>
+     * This method is similar in purpose to {@link String#trim()}, except that the later considers
+     * every ASCII control codes below 32 to be a whitespace. This have the effect of removing
+     * {@linkplain org.geotoolkit.io.X364 X3.64} escape sequences as well. Users should invoke
+     * this {@code Strings.trim} method instead if they need to preserve X3.64 escape sequences.
      *
      * @param text The string from which to remove leading and trailing whitespaces.
      * @return A string with leading and trailing whitespaces removed.
@@ -206,7 +207,7 @@ public final class Strings {
      * <p>
      * More specifically if the given string ends with a {@code '.'} character followed by a
      * sequence of {@code '0'} characters, then those characters are omitted. Otherwise this
-     * method returns the string unchanged. This is a "<cite>all or nothing<cite>" method:
+     * method returns the string unchanged. This is a "<cite>all or nothing</cite>" method:
      * either the fractional part is completly removed, or either it is left unchanged.
      *
      * {@section Examples}
@@ -368,11 +369,11 @@ public final class Strings {
      * An acronym is a sequence of {@linkplain Character#isLetterOrDigit letters or digits}
      * built from at least one character of each word in the {@code words} string. More than
      * one character from the same word may appear in the acronym, but they must always
-     * be the first consecutive characters.
+     * be the first consecutive characters. The comparison is case-insensitive.
      * <p>
      * <b>Example:</b> given the string {@code "Open Geospatial Consortium"}, the following
-     * strings are recognized as acronyms: {@code "OGC"}, {@code "O.G.C."}, {@code "OpGeoCon"}.
-     * The comparison is case-insensitive.
+     * strings are recognized as acronyms: {@code "OGC"}, {@code "ogc"}, {@code "O.G.C."},
+     * {@code "OpGeoCon"}.
      *
      * @param  acronym A possible acronym of the sequence of words.
      * @param  words The sequence of words.
@@ -445,8 +446,8 @@ cmp:    while (ia < lga) {
     /**
      * Returns {@code true} if the two given strings are equal, ignoring case. This method assumes
      * an ASCII character set, which is okay for simple needs like checking for a SQL keyword. For
-     * comparaison that are valide in a wider range of Unicode character set, use the Java {@link
-     * String#equalsIgnoreCase} method instead.
+     * comparisons which need to be valid in a wider range of Unicode character set, use the Java
+     * {@link String#equalsIgnoreCase(String)} method instead.
      *
      * @param  s1 The first string to compare.
      * @param  s2 The second string to compare.
@@ -471,6 +472,9 @@ cmp:    while (ia < lga) {
     /**
      * Returns {@code true} if the given string at the given offset contains the given part.
      * The comparison is case-sensitive.
+     * <p>
+     * This method is similar in purpose to {@link String#regionMatches(int, String, int, int)},
+     * but works on arbitrary {@link CharSequence} objects instead than {@link String} objects.
      *
      * @param string The string for which to tests for the presense of {@code part}.
      * @param offset The offset at which {@code part} is to be tested.

@@ -81,7 +81,7 @@ import static java.lang.Double.doubleToRawLongBits;
  */
 final class ViewsManager {
     /**
-     * Slight number for rounding errors in floating point comparaison.
+     * Slight number for rounding errors in floating point comparison.
      */
     private static final float EPS = 1E-5f;
 

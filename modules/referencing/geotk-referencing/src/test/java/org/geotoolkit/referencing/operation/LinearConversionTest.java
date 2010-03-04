@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
  */
 public final class LinearConversionTest {
     /**
-     * Small tolerance value for floating point comparaisons.
+     * Small tolerance value for floating point comparisons.
      */
     private static final double EPS = 1E-12;
 

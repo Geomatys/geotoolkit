@@ -461,7 +461,7 @@ public class Category implements Serializable {
             return;
         }
         /*
-         * Checks the arguments. Use '!' in comparaison in order to reject NaN values,
+         * Checks the arguments. Use '!' in comparison in order to reject NaN values,
          * except for the legal case catched by the "if" block just above.
          */
         if (!(minimum <= maximum) || Double.isInfinite(minimum) || Double.isInfinite(maximum)) {

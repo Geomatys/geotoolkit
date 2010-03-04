@@ -40,7 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * the set, so this class behaves somewhat differently than other {@link java.util.Set} implementations.
  * <p>
  * If the elements stored in this set are arrays like {@code int[]}, {@code float[]} or
- * {@code Object[]}, then the hash code computations and the comparaisons are performed using
+ * {@code Object[]}, then the hash code computations and the comparisons are performed using
  * the static {@code hashCode(a)} and {@code equals(a1, a2)} methods defined in the {@link Arrays}
  * class.
  *

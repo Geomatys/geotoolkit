@@ -53,9 +53,9 @@ import static org.junit.Assert.*;
 @Depend(SampleDimensionTest.class)
 public final class SampleTranscoderTest {
     /**
-     * Small value for comparaisons. Remind: transformed values are stored in a new image
-     * using the 'float' data type. So we can't expected as much precision than with a
-     * 'double' data type.
+     * Small value for comparisons. Remind: transformed values are stored in a new image
+     * using the {@code float} data type. So we can't expected as much precision than with
+     * a {@code double} data type.
      */
     private static final double EPS = 1E-5;
 

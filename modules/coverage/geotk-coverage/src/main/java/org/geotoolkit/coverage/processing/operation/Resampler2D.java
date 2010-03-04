@@ -114,7 +114,7 @@ final class Resampler2D extends GridCoverage2D {
     private static final int EMPIRICAL_ADJUSTMENT_STEPS = 16;
 
     /**
-     * Small tolerance threshold for floating point number comparaisons.
+     * Small tolerance threshold for floating point number comparisons.
      */
     private static final double EPS = 1E-6;
 

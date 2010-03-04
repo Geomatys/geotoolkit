@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  */
 public final class MosaicProfilerTest extends TestBase {
     /**
-     * Small value for floating point comparaisons.
+     * Small value for floating point comparisons.
      */
     private static final double EPS = 1E-10;
 

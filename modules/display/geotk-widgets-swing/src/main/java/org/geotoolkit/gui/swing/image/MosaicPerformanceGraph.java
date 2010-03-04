@@ -65,7 +65,7 @@ import org.geotoolkit.util.logging.Logging;
 @SuppressWarnings("serial")
 public class MosaicPerformanceGraph extends Plot2D implements Dialog {
     /**
-     * Small tolerance factor for the comparaison of floating point numbers.
+     * Small tolerance factor for the comparison of floating point numbers.
      */
     private static final double EPS = 1E-6;
 

@@ -45,7 +45,7 @@ public final class CategoryListTest {
     private static final boolean VERBOSE = false;
 
     /**
-     * Small value for comparaisons.
+     * Small value for comparisons.
      */
     private static final double EPS = 1E-9;
 
@@ -258,7 +258,7 @@ public final class CategoryListTest {
     }
 
     /**
-     * Compares two arrays. Special comparaison is performed for NaN values.
+     * Compares two arrays. Special comparison is performed for NaN values.
      */
     static void compare(final double[] output0, final double[] output1, final double eps) {
         assertEquals("length", output0.length, output1.length);

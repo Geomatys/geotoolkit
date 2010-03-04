@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  */
 public final class GridToEnvelopeMapperTest {
     /**
-     * Tolerance factor for the comparaison of floating point numbers.
+     * Tolerance factor for the comparison of floating point numbers.
      */
     private static final double EPS = 1E-10;
 
