@@ -158,17 +158,24 @@ public class OSMPostgresQueries {
             "GROUP BY \"wayId\",\"nodeId\",index " +
             "HAVING count(\"wayId\") > 1)";
 
+    //we use LINESTRING but we verify that we really generate only line with at least 2 points.
     public static final String CREATE_WAY_GEOMETRY_FIELD =
             "SELECT AddGeometryColumn('public', 'Way', 'geometry', 4326, 'LINESTRING', 2)";
 
     public static final String GENERATE_WAY_GEOMETRY =
 		"UPDATE \"Way\" w SET geometry = ( " +
-                "SELECT makeline(c.geom) AS way_line FROM ( " +
-                "SELECT n.geometry AS geom " +
-                "FROM \"Node\" n INNER JOIN \"WayMember\" wn ON n.id = wn.\"nodeId\" " +
-                "WHERE (wn.\"wayId\" = w.id) ORDER BY wn.index " +
-                ") c " +
-                ") ";
+                    "SELECT makeline(c.geom) AS way_line FROM ( " +
+                        "SELECT n.geometry AS geom " +
+                        "FROM \"Node\" n INNER JOIN \"WayMember\" wn ON n.id = wn.\"nodeId\" " +
+                        "WHERE (wn.\"wayId\" = w.id) ORDER BY wn.index " +
+                    ") c " +
+                ") " +
+                "WHERE w.id NOT IN ( " +
+                    "SELECT id FROM \"Way\",\"WayMember\" " +
+                    "WHERE \"Way\".id = \"WayMember\".\"wayId\" " +
+                    "GROUP BY \"Way\".id " +
+                    "HAVING count(\"Way\".id)<=1   " +
+                ")";
 
     public static final String CREATE_WAY_GEOMETRY_INDEX =
             "CREATE INDEX idx_way_geom ON \"Way\" USING gist (geometry)";
