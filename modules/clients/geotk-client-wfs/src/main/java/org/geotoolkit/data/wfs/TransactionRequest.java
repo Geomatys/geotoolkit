@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,9 +16,8 @@
  */
 package org.geotoolkit.data.wfs;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
+import org.geotoolkit.client.Request;
 
 
 /**
@@ -28,7 +27,7 @@ import java.util.List;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface TransactionRequest {
+public interface TransactionRequest extends Request {
 
 
     /**
@@ -85,7 +84,5 @@ public interface TransactionRequest {
      * Sets the value of the releaseAction property.
      */
     public void setReleaseAction(ReleaseAction value);
-
-    InputStream getResponse() throws IOException;
 
 }

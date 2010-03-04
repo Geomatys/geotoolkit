@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,23 +25,25 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.data.wfs.xml.JAXPStreamTransactionWriter;
+
 
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class AbstractTransactionRequest implements TransactionRequest{
+public class AbstractTransactionRequest extends AbstractRequest implements TransactionRequest{
 
     protected final List<TransactionElement> elements = new ArrayList<TransactionElement>();
-    protected final String serverURL;
     protected final String version;
     protected String lockId = null;
     protected ReleaseAction release = null;
 
     protected AbstractTransactionRequest(String serverURL, String version){
-        this.serverURL = serverURL;
+        super(serverURL);
         this.version = version;
     }
 
@@ -89,7 +91,7 @@ public class AbstractTransactionRequest implements TransactionRequest{
      * {@inheritDoc }
      */
     @Override
-    public InputStream getResponse() throws IOException{
+    public InputStream getSOAPResponse() throws IOException {
 
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();

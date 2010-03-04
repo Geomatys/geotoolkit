@@ -18,6 +18,7 @@ package org.geotoolkit.data.wfs;
 
 import java.util.List;
 import javax.xml.namespace.QName;
+import org.geotoolkit.client.Request;
 
 /**
  * WFS DescribeFeature mutable request interface.

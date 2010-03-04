@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.client;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import org.geotoolkit.util.StringUtilities;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class AbstractRequest implements Request {
+public abstract class AbstractRequest implements Request {
     /**
      * The address of the web service.
      */
@@ -82,5 +84,26 @@ public class AbstractRequest implements Request {
         }
 
         return new URL(sb.toString());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public abstract InputStream getSOAPResponse() throws IOException;
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public boolean equals(Object candidate) {
+        if (!(candidate instanceof Request)) {
+            return false;
+        }
+        try {
+            return getURL().equals(((Request) candidate).getURL());
+        } catch (MalformedURLException ex) {
+            return false;
+        }
     }
 }

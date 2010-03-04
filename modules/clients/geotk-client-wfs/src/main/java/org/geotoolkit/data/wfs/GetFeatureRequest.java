@@ -17,6 +17,7 @@
 package org.geotoolkit.data.wfs;
 
 import javax.xml.namespace.QName;
+import org.geotoolkit.client.Request;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 

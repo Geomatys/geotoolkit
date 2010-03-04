@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
+import org.geotoolkit.client.Request;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreException;
@@ -315,7 +316,7 @@ public class WFSDataStore extends AbstractDataStore{
         request.elements().add(insert);
 
         try {
-            final InputStream response = request.getResponse();
+            final InputStream response = request.getSOAPResponse();
             response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -345,7 +346,7 @@ public class WFSDataStore extends AbstractDataStore{
         request.elements().add(update);
 
         try {
-            final InputStream response = request.getResponse();
+            final InputStream response = request.getSOAPResponse();
             response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);
@@ -368,7 +369,7 @@ public class WFSDataStore extends AbstractDataStore{
         request.elements().add(delete);
 
         try {
-            final InputStream response = request.getResponse();
+            final InputStream response = request.getSOAPResponse();
             response.close();
         } catch (IOException ex) {
             throw new DataStoreException(ex);

@@ -16,10 +16,14 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import javax.xml.namespace.QName;
+import org.geotoolkit.client.AbstractRequest;
+
 
 /**
  * Abstract describe feature request.
@@ -88,5 +92,9 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
         return super.getURL();
     }
 
+    @Override
+    public InputStream getSOAPResponse() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.client;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -36,5 +38,11 @@ public interface Request {
      *                               specification.
      */
     URL getURL() throws MalformedURLException;
-    
+
+    /**
+     * Returns the stream of the SOAP response.
+     *
+     * @throws IOException if an exception occurs while getting the output stream.
+     */
+    InputStream getSOAPResponse() throws IOException;
 }

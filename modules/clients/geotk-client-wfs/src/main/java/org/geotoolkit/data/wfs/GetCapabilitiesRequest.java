@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.wfs;
 
+import org.geotoolkit.client.Request;
+
 
 /**
  * WFS GetCapabilities mutable request interface.

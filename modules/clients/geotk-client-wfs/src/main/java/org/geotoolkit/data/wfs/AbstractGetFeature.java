@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,10 +26,12 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 
+import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.sld.xml.XMLUtilities;
-import org.opengis.feature.type.Name;
 
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+
 
 /**
  * Abstract Get feature request.
@@ -178,6 +182,11 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
 
 
         return super.getURL();
+    }
+
+    @Override
+    public InputStream getSOAPResponse() throws IOException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

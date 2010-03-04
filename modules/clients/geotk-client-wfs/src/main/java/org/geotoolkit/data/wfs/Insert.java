@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,17 +16,35 @@
  */
 package org.geotoolkit.data.wfs;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.geotoolkit.data.FeatureCollection;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 
 /**
- * Simple request.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface Request {
+public interface Insert extends TransactionElement {
 
-    URL getURL() throws MalformedURLException;
+    String getHandle();
+
+    void setHandle(String handle);
+
+    CoordinateReferenceSystem getCoordinateReferenceSystem();
     
+    void setCoordinateReferenceSystem(CoordinateReferenceSystem crs);
+    
+    String getInputFormat();
+    
+    void setInputFormat(String format);
+    
+    IdentifierGenerationOption getIdentifierGenerationOption();
+    
+    void setIdentifierGenerationOption(IdentifierGenerationOption type);
+
+    FeatureCollection getFeatures();
+
+    void setFeatures(FeatureCollection fc);
+
 }

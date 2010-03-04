@@ -95,6 +95,7 @@
   <!-- =========================================================== -->
   <modules>
     <module>geotk-clients-core</module>
+    <module>geotk-client-wfs</module>
     <module>geotk-client-wms</module>
   </modules>
 
