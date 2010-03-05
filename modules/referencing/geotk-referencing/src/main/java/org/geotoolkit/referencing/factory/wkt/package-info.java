@@ -25,7 +25,15 @@
  *   <li>{@link org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactory} (and its
  *       {@link org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory} specialization)
  *       for parsing CRS from a {@linkplain java.util.Properties property file}.</li>
+ *   <li>{@link org.geotoolkit.referencing.factory.wkt.PostgisAuthorityFactory} for parsing CRS
+ *       from the {@value org.geotoolkit.referencing.factory.wkt.PostgisAuthorityFactory#TABLE}
+ *       table of a PostGIS database:.</li>
  * </ul>
+ * <p>
+ * The public implementations provided in this package does not cache the CRS - each call to a
+ * {@code createFoo} method will trig a new WKT parsing. In order to get implementations that
+ * cache the CRS, the {@link org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider}
+ * convenience class can be used.
  * <p>
  * By default, the classes defined in this package are <strong>not</strong> registered for use
  * though the {@link org.geotoolkit.factory.FactoryFinder}. The only subclass automatically

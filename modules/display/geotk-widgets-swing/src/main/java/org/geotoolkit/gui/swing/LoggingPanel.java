@@ -46,6 +46,7 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.SwingUtilities;
@@ -75,7 +76,7 @@ import org.geotoolkit.internal.SwingUtilities;
  * @module
  */
 @SuppressWarnings("serial")
-public class LoggingPanel extends JPanel {
+public class LoggingPanel extends JPanel implements Disposable {
     /**
      * Enumeration class for columns to be shown in a {@link LoggingPanel}.
      *
@@ -442,6 +443,7 @@ public class LoggingPanel extends JPanel {
      * (for example if it has been added into a {@link JPanel}), then this {@code dispose()}
      * method must be invoked explicitly when the container is being discarted.
      */
+    @Override
     public void dispose() {
         model.removeTableModelListener(scrollControl);
         scrollControl.dispose();

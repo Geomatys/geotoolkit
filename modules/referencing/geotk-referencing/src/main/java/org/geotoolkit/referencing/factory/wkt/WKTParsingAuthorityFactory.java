@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.text.ParseException;
+import java.awt.RenderingHints;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
@@ -159,6 +160,13 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         super(userHints);
         ensureNonNull("definitions", definitions);
         this.definitions = definitions;
+        copyRelevantHints(userHints, hints);
+    }
+
+    /**
+     * Copies only the relevant hints from {@code userHints} into the given {@code hints} map.
+     */
+    static void copyRelevantHints(final Hints userHints, final Map<RenderingHints.Key, Object> hints) {
         Boolean forceXY = Boolean.FALSE;
         if (userHints != null) {
             forceXY = (Boolean) userHints.get(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER);

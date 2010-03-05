@@ -38,6 +38,7 @@ import org.geotoolkit.image.ImageDimension;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
@@ -65,7 +66,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * @since 3.05 (derived from 2.4)
  * @module
  */
-public abstract class SpatialImageWriter extends ImageWriter implements WarningProducer {
+public abstract class SpatialImageWriter extends ImageWriter implements WarningProducer, Disposable {
     /**
      * Index of the image in process of being written. This convenience index is reset to 0
      * by {@link #close} method.

@@ -53,8 +53,10 @@ import org.geotoolkit.lang.ThreadSafe;
  * specialized for the EPSG authority.
  * <p>
  * This factory doesn't cache any result. Any call to a {@code createFoo} method
- * will trig a new WKT parsing. For adding caching service, this factory should
+ * will trig a new WKT parsing. For adding caching service, this factory needs to
  * be wrapped in {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory}.
+ * The {@link AuthorityFactoryProvider#createFromProperties AuthorityFactoryProvider}
+ * convenience class can be used for that purpose.
  *
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)

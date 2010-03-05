@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -90,7 +91,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
      * A weak reference to an element. This is an element in a linked list.
      * When the reference is disposed, it is removed from the enclosing set.
      */
-    private final class Entry extends WeakReference<E> implements WeakCollectionCleaner.Disposeable {
+    private final class Entry extends WeakReference<E> implements Disposable {
         /**
          * The next entry, or {@code null} if there is none.
          */

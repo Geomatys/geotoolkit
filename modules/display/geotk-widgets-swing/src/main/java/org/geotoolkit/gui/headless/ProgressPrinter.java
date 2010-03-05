@@ -29,6 +29,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.Disposable;
 
 
 /**
@@ -42,7 +43,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 1.0
  * @module
  */
-public class ProgressPrinter implements ProgressListener {
+public class ProgressPrinter implements ProgressListener, Disposable {
     /**
      * Nom de l'opération en cours. Le pourcentage sera écris à la droite de ce nom.
      */

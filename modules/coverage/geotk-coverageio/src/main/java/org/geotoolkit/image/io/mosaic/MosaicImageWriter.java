@@ -53,6 +53,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -102,7 +103,7 @@ import org.geotoolkit.internal.rmi.RMI;
  * @since 2.5
  * @module
  */
-public class MosaicImageWriter extends ImageWriter {
+public class MosaicImageWriter extends ImageWriter implements Disposable {
     /**
      * The value for filling empty images. The value is fixed to 0 in current implementation
      * because this is the value of newly created image, and we do not fill them at this time.

@@ -47,9 +47,11 @@ import org.geotoolkit.resources.Vocabulary;
  * authority} if none were explicitly defined. But this class should be usable with other OGC
  * compliant spatial database as well.
  * <p>
- * This factory doesn't cache any result. Any call to a {@code createFoo} method
- * will trig a new WKT parsing. For adding caching service, this factory should
- * be wrapped in {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory}.
+ * This factory doesn't cache any result. Any call to a {@code createFoo} method will
+ * trig a new WKT parsing. For adding caching service, this factory needs to be wrapped
+ * in a {@link org.geotoolkit.referencing.factory.CachingAuthorityFactory} instance. The
+ * {@link AuthorityFactoryProvider#createFromPostGIS AuthorityFactoryProvider}
+ * convenience class can be used for that purpose.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10

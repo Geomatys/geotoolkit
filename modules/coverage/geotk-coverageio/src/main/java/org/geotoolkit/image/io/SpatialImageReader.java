@@ -40,6 +40,7 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Locales;
@@ -119,7 +120,7 @@ import org.geotoolkit.internal.image.io.Warnings;
  * @since 3.06 (derived from 1.2)
  * @module
  */
-public abstract class SpatialImageReader extends ImageReader implements WarningProducer {
+public abstract class SpatialImageReader extends ImageReader implements WarningProducer, Disposable {
     /**
      * Stream and image metadata for each images, or {@code null} if not yet created.
      * The element at index 0 is the stream metadata, and next elements are image metadata

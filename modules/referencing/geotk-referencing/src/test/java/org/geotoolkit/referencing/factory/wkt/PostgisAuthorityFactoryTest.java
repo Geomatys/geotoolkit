@@ -21,7 +21,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
@@ -56,18 +58,9 @@ import static org.junit.Assume.*;
 @Depend(WKTFormatTest.class)
 public class PostgisAuthorityFactoryTest {
     /**
-     * Tests a few CRS using the test database of the {@code geotk-coverage-sql} module,
-     * if this database is found.
-     *
-     * @throws FactoryException Should not happen.
-     * @throws IOException If an error occured while reading the properties file.
-     * @throws SQLException If an error occured while reading the PostGIS tables.
+     * Gets the connection parameters to the coverage database.
      */
-    @Test
-    public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
-        /*
-         * Get the connection parameter.
-         */
+    private static DataSource getCoverageDataSource() throws IOException {
         final File pf = new File(Installation.TESTS.directory(true), "coverage-sql.properties");
         assumeTrue(pf.isFile()); // The test will be skipped if the above resource is not found.
         final Properties properties = new Properties();
@@ -79,10 +72,21 @@ public class PostgisAuthorityFactoryTest {
         ds.setDatabaseName(properties.getProperty("database"));
         ds.setUser        (properties.getProperty("user"));
         ds.setPassword    (properties.getProperty("password"));
-        /*
-         * Now test the factory.
-         */
-        final PostgisAuthorityFactory factory = new PostgisAuthorityFactory(null, ds.getConnection());
+        return ds;
+    }
+
+    /**
+     * Tests a few CRS using the test database of the {@code geotk-coverage-sql} module,
+     * if this database is found.
+     *
+     * @throws FactoryException Should not happen.
+     * @throws IOException If an error occured while reading the properties file.
+     * @throws SQLException If an error occured while reading the PostGIS tables.
+     */
+    @Test
+    public void testUsingCoverageSQL() throws FactoryException, IOException, SQLException {
+        final Connection connection = getCoverageDataSource().getConnection();
+        final PostgisAuthorityFactory factory = new PostgisAuthorityFactory(null, connection);
         try {
             /*
              * Test general information.
@@ -114,6 +118,40 @@ public class PostgisAuthorityFactoryTest {
             assertTrue(Collections.disjoint(geographic, projected));
         } finally {
             factory.dispose(false);
+        }
+        assertTrue("Connection should be closed.", connection.isClosed());
+    }
+
+    /**
+     * Tests the wrapping of {@link PostgisAuthorityFactory} in {@link PostgisCachingFactory}.
+     *
+     * @throws FactoryException Should not happen.
+     * @throws IOException If an error occured while reading the properties file.
+     */
+    @Test
+    public void testCaching() throws FactoryException, IOException {
+        final PostgisCachingFactory factory = new PostgisCachingFactory(null, getCoverageDataSource());
+        try {
+            /*
+             * Test general information.
+             */
+            assertEquals("EPSG", Citations.getIdentifier(factory.getAuthority()));
+            assertTrue(factory.getBackingStoreDescription().contains("PostgreSQL"));
+            /*
+             * Test fetching a few CRS.
+             */
+            assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
+            final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
+            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
+            final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
+            assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
+            /*
+             * Test the cache.
+             */
+            assertSame(geoCRS,  factory.createGeographicCRS("EPSG:4326"));
+            assertSame(projCRS, factory.createProjectedCRS ("EPSG:3395"));
+        } finally {
+            factory.dispose();
         }
     }
 }

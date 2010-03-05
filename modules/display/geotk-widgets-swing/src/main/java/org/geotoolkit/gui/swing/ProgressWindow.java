@@ -32,6 +32,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.SwingUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.Disposable;
 
 
 /**
@@ -50,7 +51,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 1.0
  * @module
  */
-public class ProgressWindow implements ProgressListener {
+public class ProgressWindow implements ProgressListener, Disposable {
     /**
      * Initial width for the progress window, in pixels.
      */

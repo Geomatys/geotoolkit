@@ -31,6 +31,7 @@ import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 
@@ -828,9 +829,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * A soft reference which remove itself from the concurrent map when the reference
      * is garbage-collected.
      */
-    private static final class Soft<K> extends SoftReference<Object>
-            implements WeakCollectionCleaner.Disposeable
-    {
+    private static final class Soft<K> extends SoftReference<Object> implements Disposable {
         /** The key of the referenced value.      */ private final K key;
         /** The map which contains the reference. */ private final ConcurrentMap<K,Object> map;
 
@@ -851,9 +850,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * A weak reference which remove itself from the concurrent map when the reference
      * is garbage-collected.
      */
-    private static final class Weak<K> extends WeakReference<Object>
-            implements WeakCollectionCleaner.Disposeable
-    {
+    private static final class Weak<K> extends WeakReference<Object> implements Disposable {
         /** The key of the referenced value.      */ private final K key;
         /** The map which contains the reference. */ private final ConcurrentMap<K,Object> map;
 

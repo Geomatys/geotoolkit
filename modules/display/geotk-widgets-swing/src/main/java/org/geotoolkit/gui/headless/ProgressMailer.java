@@ -41,6 +41,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.Disposable;
 
 
 /**
@@ -52,7 +53,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.0
  * @module
  */
-public class ProgressMailer implements ProgressListener {
+public class ProgressMailer implements ProgressListener, Disposable {
     /**
      * Nom de l'opération en cours. Le pourcentage sera écris à la droite de ce nom.
      */

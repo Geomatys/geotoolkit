@@ -18,6 +18,7 @@
 package org.geotoolkit.util.collection;
 
 import java.lang.ref.Reference;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 
@@ -25,6 +26,9 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * A thread invoking {@link Disposeable#dispose} on each enqueded {@linkplain Reference reference}.
  * This thread is used by {@link WeakHashSet} and {@link WeakValueHashMap}, which remove their
  * entry from the collection when the entry is garbage-collected.
+ * <p>
+ * Every {@link Reference} implementations to be enqueued in {@link ReferenceQueueConsumer#queue}
+ * <strong>must</strong> implement the {@link Disposable} interface
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.00
@@ -33,19 +37,6 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @module
  */
 final class WeakCollectionCleaner extends ReferenceQueueConsumer<Object> {
-    /**
-     * Interface to be implemented by references that can be disposed. Every references to
-     * be enqueued in {@link WeakCollectionCleaner#queue} <strong>must</strong> implement
-     * this interface.
-     */
-    static interface Disposeable {
-        /**
-         * Invoked from the {@link WeakCollectionCleaner} thread after the reference has
-         * garbage collected.
-         */
-        void dispose();
-    }
-
     /**
      * The default thread.
      */
@@ -75,6 +66,6 @@ final class WeakCollectionCleaner extends ReferenceQueueConsumer<Object> {
          * the ClassCastException to be logged in the "catch" block of the super
          * class since it would be a programming error that we want to know about.
          */
-        ((Disposeable) reference).dispose();
+        ((Disposable) reference).dispose();
     }
 }

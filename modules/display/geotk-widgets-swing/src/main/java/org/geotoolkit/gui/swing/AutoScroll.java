@@ -76,7 +76,7 @@ class AutoScroll implements ChangeListener, Serializable {
      * Disposes any resources hold by this object.
      * This method deregisters any listeners.
      */
-    public void dispose() {
+    final void dispose() {
         model.removeChangeListener(this);
     }
 

@@ -41,6 +41,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -63,7 +64,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.5
  * @module
  */
-public class MosaicImageReader extends ImageReader {
+public class MosaicImageReader extends ImageReader implements Disposable {
     /**
      * {@code true} for disabling operations that may corrupt data values,
      * or {@code false} if only the visual effect matter.

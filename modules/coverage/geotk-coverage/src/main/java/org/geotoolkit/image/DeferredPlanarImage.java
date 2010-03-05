@@ -34,6 +34,7 @@ import javax.media.jai.TileScheduler;
 import javax.media.jai.TileComputationListener;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakValueHashMap;
@@ -83,7 +84,7 @@ import static java.awt.image.DataBuffer.*;
  * @module
  */
 public final class DeferredPlanarImage extends PlanarImage
-        implements WritableRenderedImage, TileObserver, TileComputationListener
+        implements WritableRenderedImage, TileObserver, TileComputationListener, Disposable
 {
     /**
      * The logger for information messages.

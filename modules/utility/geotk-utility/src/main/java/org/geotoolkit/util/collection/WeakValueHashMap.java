@@ -28,6 +28,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.lang.ThreadSafe;
@@ -99,9 +100,7 @@ public class WeakValueHashMap<K,V> extends AbstractMap<K,V> {
      * An entry in the {@link WeakValueHashMap}. This is a weak reference
      * to a value together with a strong reference to a key.
      */
-    private final class Entry extends WeakReference<V> implements Map.Entry<K,V>,
-            WeakCollectionCleaner.Disposeable
-    {
+    private final class Entry extends WeakReference<V> implements Map.Entry<K,V>, Disposable {
         /**
          * The key.
          */
