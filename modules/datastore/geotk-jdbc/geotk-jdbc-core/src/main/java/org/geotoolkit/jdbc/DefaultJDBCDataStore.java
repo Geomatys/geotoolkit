@@ -106,7 +106,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.jdbc.MetaDataConstants.*;
 
-
 /**
  * @author Johann Sorel (Geomatys)
  *
@@ -651,7 +650,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
         try {
-            return getFeatureWriterInternal(QueryBuilder.filtered(typeName, filter), WRITER_ADD | WRITER_UPDATE);
+            return getFeatureWriterInternal(typeName, filter, WRITER_ADD | WRITER_UPDATE);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -660,78 +659,68 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     @Override
     public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
         try {
-            return getFeatureWriterInternal(QueryBuilder.filtered(typeName, Filter.EXCLUDE), WRITER_ADD);
+            return getFeatureWriterInternal(typeName, Filter.EXCLUDE, WRITER_ADD);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
     }
 
-    private FeatureWriter getFeatureWriterInternal(Query query, int flags) throws DataStoreException, IOException {
-        
-        if(!isWritable(query.getTypeName())){
-            throw new DataStoreException("Type "+ query.getTypeName() + " is not writeable.");
+    private FeatureWriter getFeatureWriterInternal(final Name typeName, final Filter filter, final int flags)
+            throws DataStoreException, IOException {
+
+        if(!isWritable(typeName)){
+            throw new DataStoreException("Type "+ typeName + " is not writeable.");
         }
-
-        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
-
         if (flags == 0) {
             throw new IllegalArgumentException( "no write flags set" );
         }
 
-        //get connection from current state
-        Connection cx = null;
+        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(typeName);
 
-        Filter postFilter;
-        //check for update only case
+        //split the filter
+        final Filter[] split = splitFilter(filter,type);
+
+
+        Connection cx = null;
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
         try {
             cx = createConnection();
             //check for insert only
             if ( (flags | WRITER_ADD) == WRITER_ADD ) {
-                final QueryBuilder builder = new QueryBuilder(query);
-                builder.setFilter(Filter.EXCLUDE);
-                Query queryNone = builder.buildQuery();
+                //build up a statement for the content, inserting only so we dont want
+                //the query to return any data ==> Filter.EXCLUDE
+                final Query queryNone = QueryBuilder.filtered(typeName, Filter.EXCLUDE);
                 if ( getDialect() instanceof PreparedStatementSQLDialect ) {
-                    PreparedStatement ps = selectSQLPS(type, queryNone, cx);
-                    return new JDBCInsertFeatureWriter( ps, cx, this, query.getTypeName(), type, query.getHints() );
-                }
-                else {
-                    //build up a statement for the content, inserting only so we dont want
-                    // the query to return any data ==> Filter.EXCLUDE
-                    String sql = selectSQL(type, queryNone);
+                    final PreparedStatement ps = selectSQLPS(type, queryNone, cx);
+                    return new JDBCInsertFeatureWriter( ps, cx, this, typeName, type, null );
+                }else{
+                    final String sql = selectSQL(type, queryNone);
                     getLogger().fine(sql);
-
-                    return new JDBCInsertFeatureWriter( sql, cx, this, query.getTypeName(), type, query.getHints() );
+                    return new JDBCInsertFeatureWriter( sql, cx, this, typeName, type, null );
                 }
             }
 
-            //split the filter
-            Filter[] split = splitFilter(query.getFilter(),type);
-            Filter preFilter = split[0];
-            postFilter = split[1];
 
             // build up a statement for the content
-            final QueryBuilder builder = new QueryBuilder(query);
-            builder.setFilter(preFilter);
-            final Query preQuery = builder.buildQuery();
+            final Query preQuery = QueryBuilder.filtered(typeName, split[0]);
 
             if(getDialect() instanceof PreparedStatementSQLDialect) {
-                PreparedStatement ps = selectSQLPS(type, preQuery, cx);
+                final PreparedStatement ps = selectSQLPS(type, preQuery, cx);
                 if ( (flags | WRITER_UPDATE) == WRITER_UPDATE ) {
-                    writer = new JDBCUpdateFeatureWriter(ps, cx, this, query.getTypeName(), type, query.getHints() );
+                    writer = new JDBCUpdateFeatureWriter(ps, cx, this, typeName, type, null );
                 } else {
                     //update insert case
-                    writer = new JDBCUpdateInsertFeatureWriter(ps, cx, this, query.getTypeName(), type, query.getPropertyNames(), query.getHints() );
+                    writer = new JDBCUpdateInsertFeatureWriter(ps, cx, this, typeName, type, null, null );
                 }
             } else {
-                String sql = selectSQL(type, preQuery);
+                final String sql = selectSQL(type, preQuery);
                 getLogger().fine(sql);
 
                 if ( (flags | WRITER_UPDATE) == WRITER_UPDATE ) {
-                    writer = new JDBCUpdateFeatureWriter( sql, cx, this, query.getTypeName(), type, query.getHints() );
+                    writer = new JDBCUpdateFeatureWriter( sql, cx, this, typeName, type, null );
                 } else {
                     //update insert case
-                    writer = new JDBCUpdateInsertFeatureWriter( sql, cx, this, query.getTypeName(), type, query.getHints() );
+                    writer = new JDBCUpdateInsertFeatureWriter( sql, cx, this, typeName, type, null );
                 }
             }
 
@@ -743,8 +732,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
 
         //check for post filter and wrap accordingly
-        if ( postFilter != null && postFilter != Filter.INCLUDE ) {
-            writer = GenericFilterFeatureIterator.wrap(writer, postFilter);
+        if ( split[1] != null && split[1] != Filter.INCLUDE ) {
+            writer = GenericFilterFeatureIterator.wrap(writer, split[1]);
         }
         return writer;
     }
@@ -1540,7 +1529,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      *            supposed to have been already embedded into the provided feature type
      * @return String
      */
-    protected String selectSQL(final SimpleFeatureType featureType, final Query query) throws IOException,DataStoreException {
+    protected String selectSQL(final SimpleFeatureType featureType, final Query query) throws SQLException,DataStoreException {
         final StringBuilder sql = new StringBuilder("SELECT ");
 
         final PrimaryKey key = getPrimaryKey(featureType);
@@ -1576,7 +1565,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 final FilterToSQL toSQL = createFilterToSQL(fullSchema);
                 sql.append(' ').append(toSQL.encodeToString(filter));
             } catch (FilterToSQLException e) {
-                throw new IOException(e);
+                throw new SQLException(e);
             }
         }
 
@@ -1682,7 +1671,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * @throws IOException
      */
     void sort(final SimpleFeatureType featureType, final SortBy[] sort, final PrimaryKey key,
-            final StringBuilder sql) throws IOException {
+            final StringBuilder sql) throws DataStoreException {
         if ((sort != null) && (sort.length > 0)) {
             sql.append(" ORDER BY ");
 
@@ -1696,7 +1685,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
                 if (SortBy.NATURAL_ORDER.equals(sortBy) || SortBy.REVERSE_ORDER.equals(sortBy)) {
                     if (key instanceof NullPrimaryKey) {
-                        throw new IOException("Cannot do natural order without a primary key");
+                        throw new DataStoreException("Cannot do natural order without a primary key");
                     }
 
                     for (PrimaryKeyColumn col : key.getColumns()) {
@@ -1729,7 +1718,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      *            statement
      */
     protected PreparedStatement selectSQLPS(final SimpleFeatureType featureType, final Query query,
-                                            final Connection cx) throws SQLException, IOException, DataStoreException{
+                                            final Connection cx) throws SQLException, DataStoreException{
 
         final StringBuilder sql = new StringBuilder("SELECT ");
 
@@ -2721,14 +2710,12 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * @param descriptor
      */
     protected static int getDescriptorSRID(final AttributeDescriptor descriptor) {
-        int srid = -1;
-
         // check if we have stored the native srid in the descriptor (we should)
         if (descriptor.getUserData().get(JDBCDataStore.JDBC_NATIVE_SRID) != null) {
-            srid = (Integer) descriptor.getUserData().get(JDBCDataStore.JDBC_NATIVE_SRID);
+            return (Integer) descriptor.getUserData().get(JDBCDataStore.JDBC_NATIVE_SRID);
+        }else{
+            return -1;
         }
-
-        return srid;
     }
 
     /**
@@ -2747,7 +2734,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         return propertyName.getPropertyName();
     }
-
 
     /**
      * Encodes a feature id from a primary key and result set values.
@@ -2776,7 +2762,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     public String encodeFID(final List<Object> keyValues) {
         final StringBuilder fid = new StringBuilder();
         for (Object o : keyValues) {
-            fid.append(o).append(".");
+            fid.append(o).append('.');
         }
         fid.setLength(fid.length() - 1);
         return fid.toString();
@@ -2790,7 +2776,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     public List<Object> decodeFID(final PrimaryKey key, String FID, final boolean strict) {
         //strip off the feature type name
-        if (FID.startsWith(key.getTableName() + ".")) {
+        if (FID.startsWith(key.getTableName() + '.')) {
             FID = FID.substring(key.getTableName().length() + 1);
         }
 

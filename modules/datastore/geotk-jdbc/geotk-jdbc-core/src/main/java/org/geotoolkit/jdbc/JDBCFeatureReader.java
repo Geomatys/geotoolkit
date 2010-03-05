@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -41,7 +42,6 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
-import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.logging.Logging;
 
@@ -141,7 +141,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     }
 
     protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType,
-                        final Hints hints) throws IOException, DataStoreException{
+                        final Hints chints) throws IOException, DataStoreException{
         // init the tracer if we need to debug a connection leak
         if (TRACE_ENABLED) {
             tracer = new Exception();
@@ -152,7 +152,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         this.groupName = typeName;
         this.dataStore = (DefaultJDBCDataStore) store;
         this.featureType = featureType;
-        this.hints = hints;
+        this.hints = (chints == null) ? new Hints() : chints;
 
         //grab a geometry factory... check for a special hint
         geometryFactory = (GeometryFactory) hints.get(HintsPending.JTS_GEOMETRY_FACTORY);
