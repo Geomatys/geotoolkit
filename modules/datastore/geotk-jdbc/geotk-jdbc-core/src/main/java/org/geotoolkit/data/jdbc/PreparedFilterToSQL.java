@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.jdbc;
+package org.geotoolkit.data.jdbc;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
@@ -40,6 +40,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.jdbc.JDBCDataStore;
 import org.opengis.geometry.Envelope;
 
 /**

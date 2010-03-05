@@ -2,7 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2008-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2020, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,11 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.postgis;
-
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.io.WKBWriter;
+package org.geotoolkit.jdbc.dialect;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -29,43 +26,60 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+import org.geotoolkit.util.Converters;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
-import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
-import org.geotoolkit.util.Converters;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 
-public class PostGISPSDialect extends PostGISDialect implements PreparedStatementSQLDialect {
+/**
+ * SQL dialect which uses prepared statements for database interaction.
+ * 
+ * @author Justin Deoliveira, OpenGEO
+ * @module pending
+ */
+public abstract class AbstractPreparedStatementSQLDialect extends AbstractSQLDialect implements PreparedStatementSQLDialect{
 
+    protected static final char CHAR_INTEROGATION = '?';
 
-    public PostGISPSDialect(final JDBCDataStore store) {
-        super(store);
+    protected AbstractPreparedStatementSQLDialect(JDBCDataStore dataStore) {
+        super(dataStore);
     }
-
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void prepareGeometryValue(final Geometry g, final int srid, final Class binding,
+                                     final StringBuilder sql){
+        sql.append(CHAR_INTEROGATION);
+    }
+    
     /**
      * {@inheritDoc }
      */
     @Override
     public void prepareFunctionArgument(final Class clazz, final StringBuilder sql) {
-        sql.append('?');
+        sql.append(CHAR_INTEROGATION);
     }
-
+    
     /**
      * {@inheritDoc }
      */
     @Override
     public void setValue(Object value, final Class binding, final PreparedStatement ps,
             final int column, final Connection cx) throws SQLException{
-
+        
         //get the sql type
         final Integer sqlType = getMapping( binding );
-
+        
         //handl null case
         if ( value == null ) {
             ps.setNull( column, sqlType );
             return;
         }
-
+        
         //convert the value if necessary
         if ( ! binding.isInstance( value ) ) {
             final Object converted = Converters.convert(value, binding);
@@ -75,7 +89,7 @@ public class PostGISPSDialect extends PostGISDialect implements PreparedStatemen
                 dataStore.getLogger().warning( "Unable to convert " + value + " to " + binding.getName() );
             }
         }
-
+        
         switch( sqlType ) {
             case Types.VARCHAR:
                 ps.setString( column, (String) value );
@@ -113,39 +127,7 @@ public class PostGISPSDialect extends PostGISDialect implements PreparedStatemen
             default:
                 ps.setObject( column, value );
         }
-
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void prepareGeometryValue(final Geometry g, final int srid, final Class binding,
-            final StringBuilder sql){
-        if (g != null) {
-            sql.append("GeomFromWKB(?, " + srid + ")");
-        } else {
-            sql.append("?");
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setGeometryValue(Geometry g, final int srid, final Class binding,
-            final PreparedStatement ps, final int column) throws SQLException{
-        if (g != null) {
-            if (g instanceof LinearRing) {
-                //postgis does not handle linear rings, convert to just a line string
-                g = g.getFactory().createLineString(((LinearRing) g).getCoordinateSequence());
-            }
-
-            final byte[] bytes = new WKBWriter().write(g);
-            ps.setBytes(column, bytes);
-        } else {
-            ps.setNull(column, Types.OTHER, "Geometry");
-        }
+        
     }
 
     /**
@@ -153,9 +135,9 @@ public class PostGISPSDialect extends PostGISDialect implements PreparedStatemen
      */
     @Override
     public PreparedFilterToSQL createPreparedFilterToSQL() {
-        final PostgisPSFilterToSql fts = new PostgisPSFilterToSql(this);
-        fts.setLooseBBOXEnabled(isLooseBBOXEnabled());
-        return fts;
+        final PreparedFilterToSQL f2s = new PreparedFilterToSQL(this);
+        f2s.setCapabilities(BASE_DBMS_CAPABILITIES);
+        return f2s;
     }
 
 }

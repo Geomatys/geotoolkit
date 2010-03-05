@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.jdbc.dialect;
 
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import java.io.IOException;
+import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
@@ -26,10 +30,12 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -37,14 +43,8 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.filter.capability.GeometryOperand;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import java.util.HashMap;
-
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
 import org.geotoolkit.filter.capability.DefaultComparisonOperators;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -57,6 +57,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialCapabilities;
 import org.geotoolkit.filter.capability.DefaultSpatialOperator;
 import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.jdbc.JDBCDataStore;
+import org.opengis.filter.expression.Literal;
 
 
 /**
@@ -167,32 +168,22 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         this.dataStore = dataStore;
     }
 
-
-
-
-
     /**
      * sql type to java class mappings
      */
-    private HashMap<Integer, Class<?>> sqlTypeToClassMappings;
+    protected final Map<Integer, Class> sqlTypeToClassMappings = new HashMap<Integer, Class>();
     /**
      * sql type name to java class mappings
      */
-    private HashMap<String, Class<?>> sqlTypeNameToClassMappings;
+    protected final Map<String, Class> sqlTypeNameToClassMappings = new HashMap<String, Class>();
     /**
      * java class to sql type mappings;
      */
-    private HashMap<Class<?>, Integer> classToSqlTypeMappings;
+    protected final Map<Class, Integer> classToSqlTypeMappings = new HashMap<Class, Integer>();
     /**
      * sql type to sql type name overrides
      */
-    private HashMap<Integer, String> sqlTypeToSqlTypeNameOverrides;
-
-
-
-
-
-
+    protected final Map<Integer, String> sqlTypeToSqlTypeNameOverrides = new HashMap<Integer, String>();
 
 
 
@@ -200,12 +191,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Map<Integer, Class<?>> getSqlTypeToClassMappings() {
-        if (sqlTypeToClassMappings == null) {
-            sqlTypeToClassMappings = new HashMap<Integer, Class<?>>();
-            registerSqlTypeToClassMappings(sqlTypeToClassMappings);
-        }
-
+    public final Map<Integer, Class> getSqlTypeToClassMappings() {
         return sqlTypeToClassMappings;
     }
 
@@ -213,12 +199,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Map<String, Class<?>> getSqlTypeNameToClassMappings() {
-        if (sqlTypeNameToClassMappings == null) {
-            sqlTypeNameToClassMappings = new HashMap<String, Class<?>>();
-            registerSqlTypeNameToClassMappings(sqlTypeNameToClassMappings);
-        }
-
+    public final Map<String, Class> getSqlTypeNameToClassMappings() {
         return sqlTypeNameToClassMappings;
     }
 
@@ -226,12 +207,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Map<Class<?>, Integer> getClassToSqlTypeMappings() {
-        if (classToSqlTypeMappings == null) {
-            classToSqlTypeMappings = new HashMap<Class<?>, Integer>();
-            registerClassToSqlMappings(classToSqlTypeMappings);
-        }
-
+    public final Map<Class, Integer> getClassToSqlTypeMappings() {
         return classToSqlTypeMappings;
     }
 
@@ -239,12 +215,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Map<Integer, String> getSqlTypeToSqlTypeNameOverrides() {
-        if (sqlTypeToSqlTypeNameOverrides == null) {
-            sqlTypeToSqlTypeNameOverrides = new HashMap<Integer, String>();
-            registerSqlTypeToSqlTypeNameOverrides(sqlTypeToSqlTypeNameOverrides);
-        }
-
+    public final Map<Integer, String> getSqlTypeToSqlTypeNameOverrides() {
         return sqlTypeToSqlTypeNameOverrides;
     }
 
@@ -252,7 +223,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Class<?> getMapping(final int sqlType) {
+    public final Class<?> getMapping(final int sqlType) {
         return getSqlTypeToClassMappings().get(sqlType);
     }
 
@@ -260,7 +231,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Class<?> getMapping(final String sqlTypeName) {
+    public final Class<?> getMapping(final String sqlTypeName) {
         return getSqlTypeNameToClassMappings().get(sqlTypeName);
     }
 
@@ -268,14 +239,28 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Integer getMapping(final Class<?> clazz) {
+    public final Integer getMapping(final Class<?> clazz) {
         Integer mapping = getClassToSqlTypeMappings().get(clazz);
 
         if (mapping == null) {
-            mapping = Types.OTHER;
-            LOGGER.warning("No mapping for " + clazz.getName());
-        }
 
+            //maybe a parent interface might be found
+            for(Entry<Class,Integer> entry : classToSqlTypeMappings.entrySet()){
+                if(entry.getKey().isAssignableFrom(clazz)){
+                    mapping = entry.getValue();
+                    //learn it for faster acces next time
+                    //@todo not thread safe
+                    classToSqlTypeMappings.put(clazz, mapping);
+                    break;
+                }
+            }
+
+            if(mapping == null){
+                mapping = Types.OTHER;
+                LOGGER.warning("No mapping for " + clazz.getName());
+            }
+        }
+        
         return mapping;
     }
 
@@ -285,6 +270,32 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void encodeValue(final Object value, final Class type, final StringBuilder sql) {
+
+        //turn the value into a literal and use FilterToSQL to encode it
+        final Literal literal = dataStore.getFilterFactory().literal(value);
+        final FilterToSQL filterToSQL = dataStore.createFilterToSQL(null);
+
+        final StringWriter w = new StringWriter();
+        filterToSQL.setWriter(w);
+        filterToSQL.visit(literal,type);
+
+        sql.append(w.getBuffer().toString());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FilterToSQL createFilterToSQL() {
+        final FilterToSQL f2s = new FilterToSQL();
+        f2s.setCapabilities(BASE_DBMS_CAPABILITIES);
+        return f2s;
+    }
 
     /**
      * {@inheritDoc }
@@ -299,17 +310,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
-            throws SQLException
-    {
+            throws SQLException {
         return true;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void registerSqlTypeNameToClassMappings(final Map<String, Class<?>> mappings) {
-        //TODO: do the normal types
     }
 
     /**
@@ -318,72 +320,6 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     @Override
     public Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException {
         return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void registerSqlTypeToClassMappings(final Map<Integer, Class<?>> mappings) {
-        mappings.put(Types.VARCHAR, String.class);
-        mappings.put(Types.CHAR, String.class);
-        mappings.put(Types.LONGVARCHAR, String.class);
-
-        mappings.put(Types.BIT, Boolean.class);
-        mappings.put(Types.BOOLEAN, Boolean.class);
-
-        mappings.put(Types.TINYINT, Short.class);
-        mappings.put(Types.SMALLINT, Short.class);
-
-        mappings.put(Types.INTEGER, Integer.class);
-        mappings.put(Types.BIGINT, Long.class);
-
-        mappings.put(Types.REAL, Float.class);
-        mappings.put(Types.FLOAT, Double.class);
-        mappings.put(Types.DOUBLE, Double.class);
-
-        mappings.put(Types.DECIMAL, BigDecimal.class);
-        mappings.put(Types.NUMERIC, BigDecimal.class);
-
-        mappings.put(Types.DATE, Date.class);
-        mappings.put(Types.TIME, Time.class);
-        mappings.put(Types.TIMESTAMP, Timestamp.class);
-
-        //subclasses should extend to provide additional
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void registerClassToSqlMappings(final Map<Class<?>, Integer> mappings) {
-        mappings.put(String.class, Types.VARCHAR);
-
-        mappings.put(Boolean.class, Types.BOOLEAN);
-
-        mappings.put(Short.class, Types.SMALLINT);
-
-        mappings.put(Integer.class, Types.INTEGER);
-        mappings.put(Long.class, Types.BIGINT);
-
-        mappings.put(Float.class, Types.REAL);
-        mappings.put(Double.class, Types.DOUBLE);
-
-        mappings.put(BigDecimal.class, Types.NUMERIC);
-
-        mappings.put(Date.class, Types.DATE);
-        mappings.put(Time.class, Types.TIME);
-        mappings.put(java.util.Date.class, Types.TIMESTAMP);
-        mappings.put(Timestamp.class, Types.TIMESTAMP);
-
-        //subclasses should extend and provide additional
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void registerSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
     }
 
     /**
@@ -464,8 +400,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public Integer getGeometrySRID(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException
-    {
+            final String columnName, final Connection cx) throws SQLException {
         return null;
     }
 
@@ -538,7 +473,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public void postCreateTable(final String schemaName, final SimpleFeatureType featureType,
-                                final Connection cx) throws SQLException{
+                                final Connection cx) throws SQLException {
     }
 
     /**
@@ -546,7 +481,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public Object getNextAutoGeneratedValue(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException{
+            final String columnName, final Connection cx) throws SQLException {
         return null;
     }
 
@@ -564,7 +499,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public Object getNextSequenceValue(final String schemaName, final String sequenceName, final Connection cx)
-            throws SQLException{
+            throws SQLException {
         return null;
     }
 
@@ -583,18 +518,97 @@ public abstract class AbstractSQLDialect implements SQLDialect{
     public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
         throw new UnsupportedOperationException("Override this method when isLimitOffsetSupported returns true");
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Static //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+
     /**
-     * Add hints to the JDBC Feature Source. A subclass
-     * can override
-     *
-     * possible hints (but not limited to)
-     *
-     * {@link HintsPending#GEOMETRY_GENERALIZATION}
-     * {@link HintsPending#GEOMETRY_SIMPLIFICATION}
-     *
-     * @param hints
+     * Registers the sql type name to java type mappings that the dialect uses when
+     * reading and writing objects to and from the database.
+     * <p>
+     * This method register the basic type.
+     * </p>
      */
-    protected void addSupportedHints(final Set<Hints.Key> hints) {
+    protected static final void initBaseSqlTypeNameToClassMappings(final Map<String, Class> mappings) {
+        //TODO: do the normal types
+    }
+
+    /**
+     * Registers the sql type to java type mappings that the dialect uses when
+     * reading and writing objects to and from the database.
+     * <p>
+     * This method register the basic type.
+     * </p>
+     */
+    protected static final void initBaseSqlTypeToClassMappings(final Map<Integer, Class> mappings) {
+        mappings.put(Types.VARCHAR, String.class);
+        mappings.put(Types.CHAR, String.class);
+        mappings.put(Types.LONGVARCHAR, String.class);
+
+        mappings.put(Types.BIT, Boolean.class);
+        mappings.put(Types.BOOLEAN, Boolean.class);
+
+        mappings.put(Types.TINYINT, Short.class);
+        mappings.put(Types.SMALLINT, Short.class);
+
+        mappings.put(Types.INTEGER, Integer.class);
+        mappings.put(Types.BIGINT, Long.class);
+
+        mappings.put(Types.REAL, Float.class);
+        mappings.put(Types.FLOAT, Double.class);
+        mappings.put(Types.DOUBLE, Double.class);
+
+        mappings.put(Types.DECIMAL, BigDecimal.class);
+        mappings.put(Types.NUMERIC, BigDecimal.class);
+
+        mappings.put(Types.DATE, Date.class);
+        mappings.put(Types.TIME, Time.class);
+        mappings.put(Types.TIMESTAMP, Timestamp.class);
+    }
+
+    /**
+     * Registers the java type to sql type mappings that the datastore uses when
+     * reading and writing objects to and from the database.
+     * * <p>
+     * This method register the basic type.
+     * </p>
+     */
+    protected static final void initBaseClassToSqlMappings(final Map<Class, Integer> mappings) {
+        mappings.put(String.class, Types.VARCHAR);
+
+        mappings.put(Boolean.class, Types.BOOLEAN);
+
+        mappings.put(Short.class, Types.SMALLINT);
+
+        mappings.put(Integer.class, Types.INTEGER);
+        mappings.put(Long.class, Types.BIGINT);
+
+        mappings.put(Float.class, Types.REAL);
+        mappings.put(Double.class, Types.DOUBLE);
+
+        mappings.put(BigDecimal.class, Types.NUMERIC);
+
+        mappings.put(Date.class, Types.DATE);
+        mappings.put(Time.class, Types.TIME);
+        mappings.put(java.util.Date.class, Types.TIMESTAMP);
+        mappings.put(Timestamp.class, Types.TIMESTAMP);
+    }
+
+    /**
+     * Registers any overrides that should occur when mapping an integer sql type
+     * value to an underlying sql type name.
+     * <p>
+     * The default implementation of this method does nothing. Subclasses should override
+     * in cases where:
+     * <ul>
+     * <li>database type metadata does not provide enough information to properly map
+     * <li>to support custom types (those not in {@link Types})
+     * </ul>
+     * </p>
+     */
+    protected static final void initBaseSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
     }
 
 }

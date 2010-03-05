@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.jdbc;
 
+import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.IOException;
@@ -50,7 +51,6 @@ import org.geotoolkit.jdbc.fid.PrimaryKeyFIDValidator;
 import org.geotoolkit.jdbc.fid.NullPrimaryKey;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
-import org.geotoolkit.jdbc.dialect.BasicSQLDialect;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
@@ -491,7 +491,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 }
 
                 if (cols.isEmpty()) {
-                    getLogger().warning("No primary key found for " + tableName + ".");
+                    getLogger().info("No primary key found for " + tableName + ".");
                     pkey = new NullPrimaryKey(tableName);
                 } else {
                     pkey = new PrimaryKey(tableName, cols);
@@ -1077,8 +1077,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * Updates an existing feature(s) in the database for a particular feature type / table.
      */
     protected void update(final SimpleFeatureType featureType, final AttributeDescriptor[] attributes,
-            final Object[] values, final Filter filter, final Connection cx) throws DataStoreException
-    {
+            final Object[] values, final Filter filter, final Connection cx) throws DataStoreException{
         if ((attributes == null) || (attributes.length == 0)) {
             getLogger().warning("Update called with no attributes, doing nothing.");
 
@@ -1123,8 +1122,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * Deletes an existing feature in the database for a particular feature type / fid.
      */
     protected void delete(final SimpleFeatureType featureType, final String fid,
-            final Connection cx) throws IOException
-    {
+            final Connection cx) throws IOException{
         final Filter filter = filterFactory.id(Collections.singleton(filterFactory.featureId(fid)));
         delete(featureType, filter, cx);
     }
@@ -1319,7 +1317,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     @Override
     public FilterToSQL createFilterToSQL(final FeatureType featureType) {
-        return initializeFilterToSQL(((BasicSQLDialect) dialect).createFilterToSQL(), (SimpleFeatureType)featureType);
+        return initializeFilterToSQL(dialect.createFilterToSQL(), (SimpleFeatureType)featureType);
     }
 
     /**
@@ -1731,8 +1729,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      *            statement
      */
     protected PreparedStatement selectSQLPS(final SimpleFeatureType featureType, final Query query,
-                                            final Connection cx) throws SQLException, IOException, DataStoreException
-    {
+                                            final Connection cx) throws SQLException, IOException, DataStoreException{
 
         final StringBuilder sql = new StringBuilder("SELECT ");
 
@@ -2161,7 +2158,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     protected String insertSQL(final SimpleFeatureType featureType, final SimpleFeature feature,
                                final List keyValues, final Connection cx) throws DataStoreException{
-        final BasicSQLDialect dialect = (BasicSQLDialect) getDialect();
+        final SQLDialect dialect = getDialect();
         final PrimaryKey key = getPrimaryKey(featureType);
         final List<PrimaryKeyColumn> keyColumns = key.getColumns();
 
@@ -2365,7 +2362,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     protected String updateSQL(final SimpleFeatureType featureType, final AttributeDescriptor[] attributes,
             final Object[] values, final Filter filter) throws IOException, SQLException{
-        final BasicSQLDialect dialect = (BasicSQLDialect) getDialect();
+        final SQLDialect dialect = getDialect();
 
         final StringBuilder sql = new StringBuilder();
         sql.append("UPDATE ");
@@ -2409,8 +2406,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     protected PreparedStatement updateSQLPS(final SimpleFeatureType featureType,
             final AttributeDescriptor[] attributes, final Object[] values, final Filter filter,
-            final Connection cx) throws IOException, SQLException
-    {
+            final Connection cx) throws IOException, SQLException{
         final PreparedStatementSQLDialect dialect = (PreparedStatementSQLDialect) getDialect();
 
         final StringBuilder sql = new StringBuilder();
@@ -2484,7 +2480,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     /**
      * Gets the next value of a primary key.
      */
-    protected List<Object> getNextValues(final PrimaryKey pkey, final Connection cx) throws SQLException, IOException {
+    protected List<Object> getNextValues(final PrimaryKey pkey, final Connection cx)
+            throws SQLException, IOException {
         final ArrayList<Object> next = new ArrayList<Object>();
         for (PrimaryKeyColumn col : pkey.getColumns()) {
             next.add(getNextValue(col, pkey, cx));
@@ -2495,7 +2492,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     /**
      * Gets the next value for the column of a primary key.
      */
-    protected Object getNextValue(final PrimaryKeyColumn col, final PrimaryKey pkey, final Connection cx) throws SQLException, IOException {
+    protected Object getNextValue(final PrimaryKeyColumn col, final PrimaryKey pkey, final Connection cx)
+            throws SQLException, IOException {
         Object next = null;
 
         if (col instanceof AutoGeneratedPrimaryKeyColumn) {
@@ -2572,7 +2570,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         if (dialect instanceof PreparedStatementSQLDialect) {
             return ((PreparedStatementSQLDialect) dialect).createPreparedFilterToSQL().getCapabilities();
         } else {
-            return ((BasicSQLDialect) dialect).createFilterToSQL().getCapabilities();
+            return dialect.createFilterToSQL().getCapabilities();
         }
     }
 

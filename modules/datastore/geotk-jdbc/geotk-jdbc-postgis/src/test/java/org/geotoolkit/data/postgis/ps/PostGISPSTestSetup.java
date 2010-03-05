@@ -19,7 +19,6 @@ package org.geotoolkit.data.postgis.ps;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.geotoolkit.data.postgis.PostGISDialect;
 import org.geotoolkit.data.postgis.PostGISPSDialect;
 import org.geotoolkit.data.postgis.PostGISTestSetup;
 import org.geotoolkit.jdbc.JDBCDataStore;
@@ -32,7 +31,7 @@ public class PostGISPSTestSetup extends PostGISTestSetup {
         super.setUpDataStore(dataStore);
         
         // for this test we need a PS based dialect
-        PostGISPSDialect dialect = new PostGISPSDialect(dataStore, (PostGISDialect) dataStore.getDialect());
+        PostGISPSDialect dialect = new PostGISPSDialect(dataStore);
         dialect.setLooseBBOXEnabled(false);
         dataStore.setDialect(dialect);
     }

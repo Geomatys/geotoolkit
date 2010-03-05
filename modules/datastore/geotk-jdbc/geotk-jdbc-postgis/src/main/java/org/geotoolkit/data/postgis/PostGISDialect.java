@@ -16,27 +16,6 @@
  */
 package org.geotoolkit.data.postgis;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-
-import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotoolkit.jdbc.JDBCDataStore;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -50,42 +29,60 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
-import org.geotoolkit.jdbc.dialect.BasicSQLDialect;
 
-public class PostGISDialect extends BasicSQLDialect {
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
 
-    private static final Map<String, Class> TYPE_TO_CLASS_MAP = new HashMap<String, Class>() {
-        {
-            put("GEOMETRY", Geometry.class);
-            put("POINT", Point.class);
-            put("POINTM", Point.class);
-            put("LINESTRING", LineString.class);
-            put("LINESTRINGM", LineString.class);
-            put("POLYGON", Polygon.class);
-            put("POLYGONM", Polygon.class);
-            put("MULTIPOINT", MultiPoint.class);
-            put("MULTIPOINTM", MultiPoint.class);
-            put("MULTILINESTRING", MultiLineString.class);
-            put("MULTILINESTRINGM", MultiLineString.class);
-            put("MULTIPOLYGON", MultiPolygon.class);
-            put("MULTIPOLYGONM", MultiPolygon.class);
-            put("GEOMETRYCOLLECTION", GeometryCollection.class);
-            put("GEOMETRYCOLLECTIONM", GeometryCollection.class);
-        }
-    };
+import org.geotoolkit.data.jdbc.FilterToSQL;
+import org.geotoolkit.jdbc.JDBCDataStore;
+import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
+import org.geotoolkit.referencing.CRS;
 
-    private static final Map<Class, String> CLASS_TO_TYPE_MAP = new HashMap<Class, String>() {
-        {
-            put(Geometry.class, "GEOMETRY");
-            put(Point.class, "POINT");
-            put(LineString.class, "LINESTRING");
-            put(Polygon.class, "POLYGON");
-            put(MultiPoint.class, "MULTIPOINT");
-            put(MultiLineString.class, "MULTILINESTRING");
-            put(MultiPolygon.class, "MULTIPOLYGON");
-            put(GeometryCollection.class, "GEOMETRYCOLLECTION");
-        }
-    };
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+
+public class PostGISDialect extends AbstractSQLDialect {
+
+    private static final Map<String, Class> TYPE_TO_CLASS_MAP = new HashMap<String, Class>();
+    private static final Map<Class, String> CLASS_TO_TYPE_MAP = new HashMap<Class, String>();
+
+    static{
+        TYPE_TO_CLASS_MAP.put("GEOMETRY", Geometry.class);
+        TYPE_TO_CLASS_MAP.put("POINT", Point.class);
+        TYPE_TO_CLASS_MAP.put("POINTM", Point.class);
+        TYPE_TO_CLASS_MAP.put("LINESTRING", LineString.class);
+        TYPE_TO_CLASS_MAP.put("LINESTRINGM", LineString.class);
+        TYPE_TO_CLASS_MAP.put("POLYGON", Polygon.class);
+        TYPE_TO_CLASS_MAP.put("POLYGONM", Polygon.class);
+        TYPE_TO_CLASS_MAP.put("MULTIPOINT", MultiPoint.class);
+        TYPE_TO_CLASS_MAP.put("MULTIPOINTM", MultiPoint.class);
+        TYPE_TO_CLASS_MAP.put("MULTILINESTRING", MultiLineString.class);
+        TYPE_TO_CLASS_MAP.put("MULTILINESTRINGM", MultiLineString.class);
+        TYPE_TO_CLASS_MAP.put("MULTIPOLYGON", MultiPolygon.class);
+        TYPE_TO_CLASS_MAP.put("MULTIPOLYGONM", MultiPolygon.class);
+        TYPE_TO_CLASS_MAP.put("GEOMETRYCOLLECTION", GeometryCollection.class);
+        TYPE_TO_CLASS_MAP.put("GEOMETRYCOLLECTIONM", GeometryCollection.class);
+
+        CLASS_TO_TYPE_MAP.put(Geometry.class, "GEOMETRY");
+        CLASS_TO_TYPE_MAP.put(Point.class, "POINT");
+        CLASS_TO_TYPE_MAP.put(LineString.class, "LINESTRING");
+        CLASS_TO_TYPE_MAP.put(Polygon.class, "POLYGON");
+        CLASS_TO_TYPE_MAP.put(MultiPoint.class, "MULTIPOINT");
+        CLASS_TO_TYPE_MAP.put(MultiLineString.class, "MULTILINESTRING");
+        CLASS_TO_TYPE_MAP.put(MultiPolygon.class, "MULTIPOLYGON");
+        CLASS_TO_TYPE_MAP.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
+    }
 
     private static final int SCHEMA_NAME = 2;
     private static final int TABLE_NAME = 3;
@@ -94,24 +91,37 @@ public class PostGISDialect extends BasicSQLDialect {
 
     public PostGISDialect(final JDBCDataStore dataStore) {
         super(dataStore);
+        //register the base mapping
+        initBaseClassToSqlMappings(classToSqlTypeMappings);
+        initBaseSqlTypeNameToClassMappings(sqlTypeNameToClassMappings);
+        initBaseSqlTypeToClassMappings(sqlTypeToClassMappings);
+        initBaseSqlTypeToSqlTypeNameOverrides(sqlTypeToSqlTypeNameOverrides);
+
+        // jdbc metadata for geom columns reports DATA_TYPE=1111=Types.OTHER
+        classToSqlTypeMappings.put(Geometry.class, Types.OTHER);
+
+        sqlTypeNameToClassMappings.put("geometry", Geometry.class);
+
+        sqlTypeToSqlTypeNameOverrides.put(Types.VARCHAR, "VARCHAR");
+        sqlTypeToSqlTypeNameOverrides.put(Types.BOOLEAN, "BOOL");
+
     }
 
     boolean looseBBOXEnabled = false;
 
     boolean estimatedExtentsEnabled = false;
 
-    public boolean isLooseBBOXEnabled() {
+    public boolean isLooseBBOXEnabled(){
         return looseBBOXEnabled;
     }
 
-    public void setLooseBBOXEnabled(final boolean looseBBOXEnabled) {
+    public void setLooseBBOXEnabled(final boolean looseBBOXEnabled){
         this.looseBBOXEnabled = looseBBOXEnabled;
     }
 
     @Override
     public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
-                                throws SQLException
-    {
+                                throws SQLException{
         if (tableName.equals("geometry_columns")) {
             return false;
         } else if (tableName.startsWith("spatial_ref_sys")) {
@@ -123,12 +133,11 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
-//    WKBAttributeIO reader;
+
     @Override
     public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
             final String column, final GeometryFactory factory, final Connection cx)
-            throws IOException, SQLException
-    {
+            throws IOException, SQLException{
         WKBAttributeIO reader = wkbReader.get();
         if (reader == null) {
             reader = new WKBAttributeIO(factory);
@@ -325,8 +334,7 @@ public class PostGISDialect extends BasicSQLDialect {
 
     @Override
     public String getSequenceForColumn(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException
-    {
+            final String columnName, final Connection cx) throws SQLException{
         final Statement st = cx.createStatement();
         try {
             // pg_get_serial_sequence oddity: table name needs to be
@@ -354,8 +362,7 @@ public class PostGISDialect extends BasicSQLDialect {
 
     @Override
     public Object getNextSequenceValue(final String schemaName, final String sequenceName,
-            final Connection cx) throws SQLException
-    {
+            final Connection cx) throws SQLException{
         final Statement st = cx.createStatement();
         try {
             final String sql = "SELECT nextval('" + sequenceName + "')";
@@ -378,8 +385,7 @@ public class PostGISDialect extends BasicSQLDialect {
 
     @Override
     public Object getNextAutoGeneratedValue(final String schemaName, final String tableName,
-            final String columnName, final Connection cx) throws SQLException
-    {
+            final String columnName, final Connection cx) throws SQLException{
         return null;
 
         // the code to grab the current sequence value is here,
@@ -408,27 +414,6 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public void registerClassToSqlMappings(final Map<Class<?>, Integer> mappings) {
-        super.registerClassToSqlMappings(mappings);
-
-        // jdbc metadata for geom columns reports DATA_TYPE=1111=Types.OTHER
-        mappings.put(Geometry.class, Types.OTHER);
-    }
-
-    @Override
-    public void registerSqlTypeNameToClassMappings(final Map<String, Class<?>> mappings) {
-        super.registerSqlTypeNameToClassMappings(mappings);
-
-        mappings.put("geometry", Geometry.class);
-    }
-
-    @Override
-    public void registerSqlTypeToSqlTypeNameOverrides(final Map<Integer, String> overrides) {
-        overrides.put(Types.VARCHAR, "VARCHAR");
-        overrides.put(Types.BOOLEAN, "BOOL");
-    }
-
-    @Override
     public String getGeometryTypeName(final Integer type) {
         return "geometry";
     }
@@ -451,8 +436,7 @@ public class PostGISDialect extends BasicSQLDialect {
      */
     @Override
     public void postCreateTable(String schemaName, final SimpleFeatureType featureType,
-            final Connection cx) throws SQLException
-    {
+            final Connection cx) throws SQLException{
         if (schemaName == null) {
             schemaName = "public";
         }
@@ -573,7 +557,7 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public void encodeGeometryValue(Geometry value, final int srid, final StringBuilder sql) throws IOException {
+    public void encodeGeometryValue(Geometry value, final int srid, final StringBuilder sql) throws IOException{
         if (value == null) {
             sql.append("NULL");
         } else {
@@ -587,19 +571,19 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public FilterToSQL createFilterToSQL() {
+    public FilterToSQL createFilterToSQL(){
         final PostgisFilterToSQL sql = new PostgisFilterToSQL(this);
         sql.setLooseBBOXEnabled(looseBBOXEnabled);
         return sql;
     }
 
     @Override
-    public boolean isLimitOffsetSupported() {
+    public boolean isLimitOffsetSupported(){
         return true;
     }
 
     @Override
-    public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset) {
+    public void applyLimitOffset(final StringBuilder sql, final int limit, final int offset){
         if (limit > 0 && limit < Integer.MAX_VALUE) {
             sql.append(" LIMIT ").append(limit);
             if (offset > 0) {
@@ -611,7 +595,7 @@ public class PostGISDialect extends BasicSQLDialect {
     }
 
     @Override
-    public CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException {
+    public CoordinateReferenceSystem createCRS(final int srid, final Connection cx) throws SQLException{
         try {
             return CRS.decode("EPSG:" + srid,true);
         } catch(Exception e) {
@@ -621,7 +605,5 @@ public class PostGISDialect extends BasicSQLDialect {
             return null;
         }
     }
-
-
 
 }

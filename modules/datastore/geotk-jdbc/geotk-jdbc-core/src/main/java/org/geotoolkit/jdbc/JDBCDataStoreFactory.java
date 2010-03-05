@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
-import org.geotoolkit.jdbc.dialect.SQLDialect;
+import com.vividsolutions.jts.geom.GeometryFactory;
+
 import java.io.IOException;
 import javax.sql.DataSource;
 
@@ -29,11 +29,10 @@ import org.geotoolkit.data.jdbc.datasource.DBCPDataSource;
 import org.geotoolkit.data.AbstractDataStoreFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
+import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
+import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
-
-import com.vividsolutions.jts.geom.GeometryFactory;
-import org.geotoolkit.feature.type.BasicFeatureTypes;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -124,7 +123,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public final JDBCDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
+    public JDBCDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
         // namespace
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
 
@@ -166,33 +165,9 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
         dataStore.setFeatureTypeFactory(new DefaultFeatureTypeFactory());
         dataStore.setFeatureFactory(FactoryFinder.getFeatureFactory(null));
 
-        //call subclass hook and return
-        return createDataStoreInternal(dataStore, params);
-    }
-
-    /**
-     * Subclass hook to do additional initialization of a newly created datastore.
-     * <p>
-     * Typically subclasses will want to override this method in the case where
-     * they provide additional datastore parameters, those should be processed
-     * here.
-     * </p>
-     * <p>
-     * This method is provided with an instance of the datastore. In some cases
-     * subclasses may wish to create a new instance of the datastore, for instance
-     * in order to wrap the original instance. This is supported but the new
-     * datastore must be returned from this method. If not is such the case this
-     * method should still return the original passed in.
-     *
-     * </p>
-     * @param dataStore The newly created datastore.
-     * @param params THe datastore parameters.
-     *
-     */
-    protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, ParameterValueGroup params)
-        throws DataStoreException{
         return dataStore;
     }
+
 
     @Override
     public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {

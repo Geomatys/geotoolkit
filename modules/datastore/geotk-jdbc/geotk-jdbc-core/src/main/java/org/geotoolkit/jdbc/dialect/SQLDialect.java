@@ -32,9 +32,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import org.geotoolkit.data.jdbc.FilterToSQL;
 
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.factory.HintsPending;
 
 
 /**
@@ -99,7 +99,7 @@ public interface SQLDialect {
      * </p>
      * @return The mappings, never <code>null</code>.
      */
-    Map<Integer, Class<?>> getSqlTypeToClassMappings();
+    Map<Integer, Class> getSqlTypeToClassMappings();
 
     /**
      * The sql type name to java type mappings that the dialect uses when
@@ -110,7 +110,7 @@ public interface SQLDialect {
      *
      * @return The mappings, never <code>null<code>.
      */
-    Map<String, Class<?>> getSqlTypeNameToClassMappings();
+    Map<String, Class> getSqlTypeNameToClassMappings();
 
     /**
      * The java type to sql type mappings that the datastore uses when reading
@@ -120,7 +120,7 @@ public interface SQLDialect {
      * </p>
      * @return The mappings, never <code>null</code>.
      */
-    Map<Class<?>, Integer> getClassToSqlTypeMappings();
+    Map<Class, Integer> getClassToSqlTypeMappings();
 
     /**
      * Returns any ovverides which map integer constants for database types (from {@link Types})
@@ -208,17 +208,6 @@ public interface SQLDialect {
             throws SQLException;
 
     /**
-     * Registers the sql type name to java type mappings that the dialect uses when
-     * reading and writing objects to and from the database.
-     * <p>
-     * Subclasses should extend (not override) this method to provide additional
-     * mappings, or to override mappings provided by this implementation. This
-     * implementation provides the following mappings:
-     * </p>
-     */
-    void registerSqlTypeNameToClassMappings(final Map<String, Class<?>> mappings);
-
-    /**
      * Determines the class mapping for a particular column of a table.
      * <p>
      * Implementing this method is optional. It is used to allow database to
@@ -237,43 +226,6 @@ public interface SQLDialect {
      * @return The class mapped to the to column, or <code>null</code>.
      */
     Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException;
-
-    /**
-     * Registers the sql type to java type mappings that the dialect uses when
-     * reading and writing objects to and from the database.
-     * <p>
-     * Subclasses should extend (not override) this method to provide additional
-     * mappings, or to override mappings provided by this implementation. This
-     * implementation provides the following mappings:
-     * </p>
-     *
-     */
-    void registerSqlTypeToClassMappings(final Map<Integer, Class<?>> mappings);
-
-    /**
-     * Registers the java type to sql type mappings that the datastore uses when
-     * reading and writing objects to and from the database.
-     * * <p>
-     * Subclasses should extend (not override) this method to provide additional
-     * mappings, or to override mappings provided by this implementation. This
-     * implementation provides the following mappings:
-     * </p>
-     */
-    void registerClassToSqlMappings(final Map<Class<?>, Integer> mappings);
-
-    /**
-     * Registers any overrides that should occur when mapping an integer sql type
-     * value to an underlying sql type name.
-     * <p>
-     * The default implementation of this method does nothing. Subclasses should override
-     * in cases where:
-     * <ul>
-     * <li>database type metadata does not provide enough information to properly map
-     * <li>to support custom types (those not in {@link Types})
-     * </ul>
-     * </p>
-     */
-    void registerSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides);
 
     /**
      * Returns the string used to escape names.
@@ -352,6 +304,54 @@ public interface SQLDialect {
      * </p>
      */
     void encodeSchemaName(final String raw, final StringBuilder sql);
+
+    /**
+     * Encodes a value in an sql statement.
+     * <p>
+     * Subclasses may wish to override or extend this method to handle specific
+     * types. This default implementation does the following:
+     * <ol>
+     *   <li>The <tt>value</tt> is encoded via its {@link #toString()} representation.
+     *   <li>If <tt>type</tt> is a character type (extends {@link CharSequence}),
+     *   it is wrapped in single quotes (').
+     * </ol>
+     * </p>
+     *
+     */
+    void encodeValue(final Object value, final Class type, final StringBuilder sql);
+
+    /**
+     * Encodes a geometry value in an sql statement.
+     * <p>
+     * An implementations should serialize <tt>value</tt> into some exchange
+     * format which will then be transported to the underlying database. For
+     * example, consider an implementation which converts a geometry into its
+     * well known text representation:
+     * <pre>
+     *   <code>
+     *   sql.append( "GeomFromText('" );
+     *   sql.append( new WKTWriter().write( value ) );
+     *   sql.append( ")" );
+     *   </code>
+     *  </pre>
+     * </p>
+     * <p>
+     *  The <tt>srid</tt> parameter is the spatial reference system identifier
+     *  of the geometry, or 0 if not known.
+     * </p>
+     */
+    void encodeGeometryValue(final Geometry value, final int srid, final StringBuilder sql)
+        throws IOException;
+
+    /**
+     * Creates the filter encoder to be used by the datastore when encoding
+     * query predicates.
+     * <p>
+     * Sublcasses can override this method to return a subclass of {@link FilterToSQL}
+     * if need be.
+     * </p>
+     */
+    FilterToSQL createFilterToSQL();
 
     /**
      * Returns the name of a geometric type based on its integer constant.

@@ -88,19 +88,24 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     }
 
     @Override
-    protected JDBCDataStore createDataStoreInternal(final JDBCDataStore dataStore, final ParameterValueGroup params)
+    public JDBCDataStore createDataStore(final ParameterValueGroup params)
         throws DataStoreException {
+        JDBCDataStore dataStore = super.createDataStore(params);
 
-        // setup loose bbox
-        final PostGISDialect dialect = (PostGISDialect) dataStore.getDialect();
-        final Boolean loose = (Boolean) params.parameter(LOOSEBBOX.getName().toString()).getValue();
-        dialect.setLooseBBOXEnabled(loose == null || Boolean.TRUE.equals(loose));
+        final PostGISDialect dialect;
 
         // setup the ps dialect if need be
         final Boolean usePs = (Boolean) params.parameter(PREPARED_STATEMENTS.getName().toString()).getValue();
         if(Boolean.TRUE.equals(usePs)) {
-            dataStore.setDialect(new PostGISPSDialect(dataStore, dialect));
+            dialect = new PostGISPSDialect(dataStore);
+            dataStore.setDialect(dialect);
+        }else{
+            dialect = (PostGISDialect) dataStore.getDialect();
         }
+
+        // setup loose bbox
+        final Boolean loose = (Boolean) params.parameter(LOOSEBBOX.getName().toString()).getValue();
+        dialect.setLooseBBOXEnabled(loose == null || Boolean.TRUE.equals(loose));
 
         return dataStore;
     }
@@ -115,7 +120,7 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
         final String host = (String) params.parameter(HOST.getName().toString()).getValue();
         final Integer port = (Integer) params.parameter(PORT.getName().toString()).getValue();
         final String db = (String) params.parameter(DATABASE.getName().toString()).getValue();
-        return "jdbc:postgresql" + "://" + host + ":" + port + "/" + db;
+        return "jdbc:postgresql://" + host + ":" + port + "/" + db;
     }
 
 }

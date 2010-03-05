@@ -17,7 +17,7 @@
 package org.geotoolkit.data.postgis;
 
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
-import org.geotoolkit.jdbc.PreparedFilterToSQL;
+import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BinarySpatialOperator;

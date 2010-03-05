@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008-2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,18 +17,11 @@
  */
 package org.geotoolkit.jdbc.dialect;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.sql.Types;
 
-import org.geotoolkit.util.Converters;
-import org.geotoolkit.jdbc.JDBCDataStore;
-import org.geotoolkit.jdbc.PreparedFilterToSQL;
+import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -39,12 +33,7 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @module pending
  */
-public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
-
-    protected PreparedStatementSQLDialect(JDBCDataStore dataStore) {
-        super(dataStore);
-        
-    }
+public interface PreparedStatementSQLDialect extends SQLDialect {
     
     /**
      * Prepares the geometry value for a prepared statement.
@@ -58,10 +47,8 @@ public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
      * @param binding The class of the geometry.
      * @param sql The prepared sql statement buffer. 
      */
-    public void prepareGeometryValue(final Geometry g, final int srid, final Class binding,
-                                     final StringBuilder sql){
-        sql.append( "?" );
-    }
+    void prepareGeometryValue(final Geometry g, final int srid, final Class binding,
+                                     final StringBuilder sql);
     
     /**
      * Prepares a function argument for a prepared statement.
@@ -69,9 +56,7 @@ public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
      * @param clazz The mapped class of the argument.
      * @param sql The prepared sql statement buffer
      */
-    public void prepareFunctionArgument(final Class clazz, final StringBuilder sql) {
-        sql.append("?");
-    }
+    void prepareFunctionArgument(final Class clazz, final StringBuilder sql);
     
     /**
      * Sets the geometry value into the prepared statement. 
@@ -82,7 +67,7 @@ public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
      * @param column the column index where the geometry is to be set
      * @throws SQLException
      */
-    public abstract void setGeometryValue(final Geometry g, final int srid, final Class binding,
+    void setGeometryValue(final Geometry g, final int srid, final Class binding,
             final PreparedStatement ps, final int column) throws SQLException;
 
     /**
@@ -98,71 +83,9 @@ public abstract class PreparedStatementSQLDialect extends AbstractSQLDialect {
      * @param cx The database connection.
      * @throws SQLException
      */
-    public void setValue(Object value, final Class binding, final PreparedStatement ps,
-            final int column, final Connection cx) throws SQLException{
-        
-        //get the sql type
-        final Integer sqlType = getMapping( binding );
-        
-        //handl null case
-        if ( value == null ) {
-            ps.setNull( column, sqlType );
-            return;
-        }
-        
-        //convert the value if necessary
-        if ( ! binding.isInstance( value ) ) {
-            final Object converted = Converters.convert(value, binding);
-            if ( converted != null ) {
-                value = converted;
-            } else {
-                dataStore.getLogger().warning( "Unable to convert " + value + " to " + binding.getName() );
-            }
-        }
-        
-        switch( sqlType ) {
-            case Types.VARCHAR:
-                ps.setString( column, (String) value );
-                break;
-            case Types.BOOLEAN:
-                ps.setBoolean( column, (Boolean) value );
-                break;
-            case Types.SMALLINT:
-                ps.setShort( column, (Short) value );
-                break;
-            case Types.INTEGER:
-                ps.setInt( column, (Integer) value );
-                break;
-            case Types.BIGINT:
-                ps.setLong( column, (Long) value );
-                break;
-            case Types.REAL:
-                ps.setFloat( column, (Float) value );
-                break;
-            case Types.DOUBLE:
-                ps.setDouble( column, (Double) value );
-                break;
-            case Types.NUMERIC:
-                ps.setBigDecimal( column, (BigDecimal) value );
-                break;
-            case Types.DATE:
-                ps.setDate( column, (Date) value );
-                break;
-            case Types.TIME:
-                ps.setTime( column, (Time) value );
-                break;
-            case Types.TIMESTAMP:
-                ps.setTimestamp( column, (Timestamp) value );
-                break;
-            default:
-                ps.setObject( column, value );
-        }
-        
-    }
+    void setValue(Object value, final Class binding, final PreparedStatement ps,
+            final int column, final Connection cx) throws SQLException;
     
-    public PreparedFilterToSQL createPreparedFilterToSQL() {
-        final PreparedFilterToSQL f2s = new PreparedFilterToSQL(this);
-        f2s.setCapabilities(BASE_DBMS_CAPABILITIES);
-        return f2s;
-    }
+    PreparedFilterToSQL createPreparedFilterToSQL();
+
 }
