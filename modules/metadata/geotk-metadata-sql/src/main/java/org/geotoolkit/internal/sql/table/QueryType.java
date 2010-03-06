@@ -75,7 +75,7 @@ public enum QueryType {
     /**
      * Many entries to be deleted from a table.
      */
-    CLEAR(true);
+    DELETE_ALL(true);
 
     /**
      * {@code true} if this is a query which modify the database.

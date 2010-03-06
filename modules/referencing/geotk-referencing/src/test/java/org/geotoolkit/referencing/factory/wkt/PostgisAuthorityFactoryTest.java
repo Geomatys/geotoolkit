@@ -31,12 +31,14 @@ import java.util.Set;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.crs.VerticalCRS;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
@@ -97,16 +99,27 @@ public class PostgisAuthorityFactoryTest {
              * Test fetching a few CRS.
              */
             assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
+
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
+            assertEquals("EPSG:4326",    AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:4326", AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
+
             final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
+            assertEquals("EPSG:3395",    AbstractIdentifiedObject.getIdentifier(projCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:3395", AbstractIdentifiedObject.getIdentifier(projCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
+
+            final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
+            assertEquals("EPSG:57150",   AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:6000", AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.POSTGIS).toString());
             /*
              * Test the list of authority codes.
              */
             final Set<String> all        = factory.getAuthorityCodes(null);
             final Set<String> geographic = factory.getAuthorityCodes(GeographicCRS.class);
             final Set<String> projected  = factory.getAuthorityCodes(ProjectedCRS.class);
+            final Set<String> vertical   = factory.getAuthorityCodes(VerticalCRS .class);
             assertTrue (all       .contains("4326"));
             assertTrue (all       .contains("3395"));
             assertTrue (geographic.contains("4326"));
@@ -115,7 +128,10 @@ public class PostgisAuthorityFactoryTest {
             assertFalse(geographic.contains("3395"));
             assertTrue(all.containsAll(geographic));
             assertTrue(all.containsAll(projected));
+            assertTrue(all.containsAll(vertical));
             assertTrue(Collections.disjoint(geographic, projected));
+            assertTrue(Collections.disjoint(geographic, vertical));
+            assertTrue(Collections.disjoint(projected,  vertical));
         } finally {
             factory.dispose(false);
         }
@@ -141,15 +157,26 @@ public class PostgisAuthorityFactoryTest {
              * Test fetching a few CRS.
              */
             assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
+
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
+            assertEquals("EPSG:4326",    AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:4326", AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
+
             final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
+            assertEquals("EPSG:3395",    AbstractIdentifiedObject.getIdentifier(projCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:3395", AbstractIdentifiedObject.getIdentifier(projCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
+
+            final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
+            assertEquals("EPSG:57150",   AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:6000", AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.POSTGIS).toString());
             /*
              * Test the cache.
              */
             assertSame(geoCRS,  factory.createGeographicCRS("EPSG:4326"));
             assertSame(projCRS, factory.createProjectedCRS ("EPSG:3395"));
+            assertSame(vertCRS, factory.createVerticalCRS  ("EPSG:57150"));
         } finally {
             factory.dispose();
         }

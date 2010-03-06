@@ -154,22 +154,41 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
     }
 
     /**
+     * Returns the authority which is responsible for the maintenance of the primary keys.
+     * Note that <cite>primary keys</cite> are not necessarly the same than authority codes.
+     * The primary keys are stored in the {@value #PRIMARY_KEY} column, while the authority
+     * codes are defined by the {@value #AUTHORITY_COLUMN} : {@value #CODE_COLUMN} tupples.
+     * <p>
+     * The default implementation returns {@link Citations#POSTGIS} in all cases.
+     *
+     * @return The authority which is reponsible for the maintenance of primary keys.
+     *
+     * @see #getPrimaryKey(Class, String)
+     */
+    @Override
+    public Citation getPrimaryKeyAuthority() {
+        return Citations.POSTGIS;
+    }
+
+    /**
      * Returns all authority names declared in the CRS table. If some authorities use the same
      * codes than the primary key, then those authorities are returned first, ordered by the
-     * most common ones.
+     * most common ones. The last element in the array is the authority returned by
+     * {@link #getPrimaryKeyAuthority()}.
      *
-     * @return All authority found in the database.
+     * @return All authorities found in the database.
      */
     @Override
     final synchronized Citation[] getAuthorities() {
         Citation[] authorities = this.authorities;
         if (authorities == null) {
+            final Citation pkAuthority = getPrimaryKeyAuthority();
+            int count = 0;
             try {
                 final Set<String> names = getAuthorityNames().keySet();
-                authorities = new Citation[names.size()];
-                int i = 0;
+                authorities = new Citation[names.size() + 1];
                 for (final String name : names) {
-                    final Citation authority = (name != null) ? Citations.fromName(name) : Citations.POSTGIS;
+                    final Citation authority = (name != null) ? Citations.fromName(name) : pkAuthority;
                     /*
                      * If the authority is not one of the predefined constants (in which case the
                      * class would have been CitationConstant), then add the name to the list of
@@ -178,12 +197,13 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
                     if (authority.getClass().equals(DefaultCitation.class)) {
                         ((DefaultCitation) authority).getIdentifiers().add(new DefaultIdentifier(name));
                     }
-                    authorities[i++] = authority;
+                    authorities[count++] = authority;
                 }
             } catch (FactoryException exception) {
                 Logging.unexpectedException(LOGGER, PostgisAuthorityFactory.class, "getAuthority", exception);
-                authorities = new Citation[] {Citations.POSTGIS};
+                authorities = new Citation[] {getPrimaryKeyAuthority()};
             }
+            authorities[count] = pkAuthority;
             this.authorities = authorities;
         }
         return authorities;
@@ -248,6 +268,8 @@ public class PostgisAuthorityFactory extends WKTParsingAuthorityFactory implemen
      * @throws NoSuchAuthorityCodeException if a code can't be parsed as an integer or can't
      *         be found in the database.
      * @throws FactoryException if an error occured while querying the database.
+     *
+     * @see #getPrimaryKeyAuthority()
      */
     @Override
     public synchronized Integer getPrimaryKey(final Class<? extends IdentifiedObject> type, String code)

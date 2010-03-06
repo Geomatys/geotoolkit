@@ -33,6 +33,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -52,6 +53,7 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -211,8 +213,12 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * to the constructor. This method <strong>must</strong> be overriden if the subclass
      * used the constructor without authority list. This method is not allowed to return
      * {@code null}.
+     * <p>
+     * The returned array shall contain the value returned by
+     * {@linkplain #getPrimaryKeyAuthority()}, if non-null.
      *
-     * @return All authorities known to this factory.
+     * @return All authorities known to this factory. <strong>Do not modify</strong>,
+     *         since this method returns a direct reference to the internal array.
      */
     Citation[] getAuthorities() {
         if (authorities == null) {
@@ -231,9 +237,18 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     @Override
     public synchronized Citation getAuthority() {
         if (authority == null) {
-            final Citation[] authorities = getAuthorities();
+            Citation[] authorities = getAuthorities();
+            final Citation pkAuthority = getPrimaryKeyAuthority();
+            if (pkAuthority != null) {
+                for (int i=0; i<authorities.length; i++) {
+                    if (pkAuthority.equals(authorities[i])) {
+                        authorities = XArrays.remove(authorities, i, 1);
+                        break;
+                    }
+                }
+            }
             switch (authorities.length) {
-                case 0: authority = Citations.EPSG; break;
+                case 0: authority = Citations.UNKNOWN; break;
                 case 1: authority = authorities[0]; break;
                 default: {
                     final DefaultCitation c = new DefaultCitation(authorities[0]);
@@ -248,6 +263,25 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             }
         }
         return authority;
+    }
+
+    /**
+     * Returns the authority which is responsible for the maintenance of the primary keys,
+     * or {@code null} if none. The returned value (if non-null) shall also be one of the
+     * elements returned by {@link #getAuthorities()}.
+     * <p>
+     * The default implementation returns {@code null} in all cases. This method is overriden
+     * and made public by implementations that are backed by a SQL database. For example the
+     * {@link PostgisAuthorityFactory} overrides this method in order to return
+     * {@link Citations#POSTGIS}.
+     *
+     * @return The authority which is reponsible for the maintenance of primary keys,
+     *         or {@code null} if none.
+     *
+     * @see #getPrimaryKey(Class, String)
+     */
+    Citation getPrimaryKeyAuthority() {
+        return null;
     }
 
     /**
@@ -356,17 +390,20 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      *
      * @param  type The type of the object to be created.
      * @param  code Value allocated by authority.
+     * @param  parser If non-null, code and primary key will be stored in this parser.
      * @return The Well Know Text (WKT) for the specified code.
      * @throws NoSuchAuthorityCodeException if the specified {@code code} was not found.
      */
-    private String getWKT(final Class<? extends IdentifiedObject> type, final String code)
+    private String getWKT(final Class<? extends IdentifiedObject> type, final String code, final Parser parser)
             throws FactoryException
     {
         assert Thread.holdsLock(this);
         ensureNonNull("code", code);
+        final Comparable<?> pk;
         final String wkt;
         try {
-            wkt = definitions.get(getPrimaryKey(type, code));
+            pk = getPrimaryKey(type, code);
+            wkt = definitions.get(pk);
         } catch (BackingStoreException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof FactoryException) {
@@ -376,6 +413,10 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         }
         if (wkt == null) {
             throw noSuchAuthorityCode(type, code);
+        }
+        if (parser != null) {
+            parser.code = code;
+            parser.primaryKey = pk;
         }
         return wkt.trim();
     }
@@ -418,7 +459,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     {
         final String wkt;
         synchronized (this) {
-            wkt = getWKT(IdentifiedObject.class, code);
+            wkt = getWKT(IdentifiedObject.class, code, null);
         }
         int start = wkt.indexOf('"');
         if (start >= 0) {
@@ -453,10 +494,9 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     public synchronized IdentifiedObject createObject(final String code)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        final String wkt = getWKT(IdentifiedObject.class, code);
         final Parser parser = getParser();
+        final String wkt = getWKT(IdentifiedObject.class, code, parser);
         try {
-            parser.code = code;
             return (IdentifiedObject) parser.parseObject(wkt);
         } catch (ParseException exception) {
             throw new FactoryException(exception);
@@ -475,10 +515,9 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     public synchronized CoordinateReferenceSystem createCoordinateReferenceSystem(final String code)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        final String wkt = getWKT(CoordinateReferenceSystem.class, code);
         final Parser parser = getParser();
+        final String wkt = getWKT(CoordinateReferenceSystem.class, code, parser);
         try {
-            parser.code = code;
             // parseCoordinateReferenceSystem provides a slightly faster path than parseObject.
             return parser.parseCoordinateReferenceSystem(wkt);
         } catch (ParseException exception) {
@@ -521,8 +560,10 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
      * @param  code The authority code to convert to primary key value.
      * @return The primary key for the supplied code.
      * @throws FactoryException if an error occured while querying the database.
+     *
+     * @see #getPrimaryKeyAuthority()
      */
-    Object getPrimaryKey(Class<? extends IdentifiedObject> type, String code) throws FactoryException {
+    Comparable<?> getPrimaryKey(Class<? extends IdentifiedObject> type, String code) throws FactoryException {
         return trimAuthority(code);
     }
 
@@ -596,9 +637,17 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
         private static final long serialVersionUID = -5910561042299146066L;
 
         /**
-         * The authority code for the WKT to be parsed.
+         * The authority code for the WKT to be parsed. This is the code provided by the user to
+         * the {@link WKTParsingAuthorityFactory#createCoordinateReferenceSystem(String)} metohd.
          */
         String code;
+
+        /**
+         * The primary key corresponding to the code. For {@link PropertyAuthorityFactory},
+         * this is equals to {@link #code}. For {@link PostgisAuthorityFactory}, this is an
+         * {@link Integer} obtained from the {@code srid} column.
+         */
+        Comparable<?> primaryKey;
 
         /**
          * Creates the parser.
@@ -609,24 +658,57 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
 
         /**
          * Adds the authority code to the specified properties, if not already present.
+         * In addition, if a primary key was used for fetching the CRS, adds also that
+         * primary key to the list of identifiers.
          */
         @Override
         protected Map<String,Object> alterProperties(Map<String,Object> properties) {
-            Object candidate = properties.get(IdentifiedObject.IDENTIFIERS_KEY);
-            if (candidate == null && code != null) {
-                properties = new HashMap<String,Object>(properties);
-                code = trimAuthority(code);
-                final Object identifiers;
-                final Citation[] authorities = getAuthorities();
-                if (authorities.length == 1) {
-                    identifiers = new NamedIdentifier(authorities[0], code);
-                } else {
-                    final NamedIdentifier[] ids = new NamedIdentifier[authorities.length];
-                    for (int i=0; i<ids.length; i++) {
-                        ids[i] = new NamedIdentifier(authorities[i], code);
+            final Citation pkAuthority = getPrimaryKeyAuthority();
+            final Citation[] authorities;
+            final ReferenceIdentifier[] identifiers;
+            final ReferenceIdentifier declaredIdentifier =
+                    (ReferenceIdentifier) properties.get(IdentifiedObject.IDENTIFIERS_KEY);
+            /*
+             * If the WKT does not declare explicitly an authority code, we will adds an
+             * identifier for all authorities given at construction time. Otherwise we
+             * will add an identifier only for the primary key (if there is one).
+             */
+            if (declaredIdentifier == null) {
+                authorities = getAuthorities();
+                identifiers = new NamedIdentifier[authorities.length];
+            } else if (pkAuthority != null) {
+                authorities = new Citation[] {pkAuthority};
+                identifiers = new ReferenceIdentifier[2];
+                identifiers[0] = declaredIdentifier;
+            } else {
+                authorities = null;
+                identifiers = null;
+            }
+            /*
+             * Now create an identifier for each authority in the 'authorities' array.
+             * Note that the 'identifiers' array may be longer, in which case the first
+             * elements are assumed already initialized.
+             */
+            if (authorities != null) {
+                String trimmedCode = null, pkCode = null;
+                final int offset = identifiers.length - authorities.length;
+                for (int i=0; i<authorities.length; i++) {
+                    final String ci;
+                    final Citation authority = authorities[i];
+                    if (pkAuthority == null || pkAuthority.equals(authority)) {
+                        if (pkCode == null) {
+                            pkCode = primaryKey.toString();
+                        }
+                        ci = pkCode;
+                    } else {
+                        if (trimmedCode == null) {
+                            trimmedCode = trimAuthority(code);
+                        }
+                        ci = trimmedCode;
                     }
-                    identifiers = ids;
+                    identifiers[i + offset] = new NamedIdentifier(authority, ci);
                 }
+                properties = new HashMap<String,Object>(properties);
                 properties.put(IdentifiedObject.IDENTIFIERS_KEY, identifiers);
             }
             return super.alterProperties(properties);

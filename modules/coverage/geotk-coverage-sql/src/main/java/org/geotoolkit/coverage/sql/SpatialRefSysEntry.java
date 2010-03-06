@@ -19,7 +19,6 @@ package org.geotoolkit.coverage.sql;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.sql.SQLException;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 
@@ -29,18 +28,20 @@ import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -115,33 +116,45 @@ final class SpatialRefSysEntry {
     }
 
     /**
-     * Creates the horizontal and vertical CRS from the factory bundled in the given table.
-     *
-     * @param  table The table to use for creating a CRS from a SRID.
-     * @throws SQLException if an error occured while reading the database.
-     * @throws FactoryException if an error occured while creating the CRS.
-     * @throws ClassCastException if the CRS is not of expected type.
+     * If all CRS are initialized, returns 0. Otherwise returns the code of the first
+     * unitialized CRS: 1 for horizontal, 2 for vertical, 3 for temporal or 4 for the
+     * 4D CRS. This method is used only for checking error conditions.
      */
-//    final void createSpatialCRS(final GridGeometryTable table,
-//            final boolean hasHorizontal, final boolean hasVertical)
-//            throws SQLException, FactoryException, ClassCastException
-//    {
-//        if (hasHorizontal && horizontalSRID != 0) {
-//            horizontalCRS = (SingleCRS) table.getSpatialReferenceSystem(horizontalSRID);
-//        }
-//        if (hasVertical && verticalSRID != 0) {
-//            verticalCRS = (VerticalCRS) table.getSpatialReferenceSystem(verticalSRID);
-//        }
-//    }
+    final int uninitialized() {
+        if (horizontalCRS     == null && horizontalSRID != 0) return 1;
+        if (verticalCRS       == null && verticalSRID   != 0) return 2;
+        if (temporalCRS       == null)                        return 3;
+        if (spatioTemporalCRS == null)                        return 4;
+        return 0;
+    }
 
     /**
-     * Creates the compound CRS from the single CRS created by {@link #createSpatialCRS}.
-     * The result is stored in {@link #spatioTemporalCRS}.
+     * Creates the horizontal and vertical CRS from the factory bundled in the given table.
+     * The CRS are fetched only after the {@code SpatialRefSysEntry} creation (instead than
+     * at creation time) in order to have a chance to search for an existing entry in the
+     * cache before to create the CRS.
      *
-     * @param  factory The factory to use for creating the compound CRS.
+     * @param  factory The factory used for creating the CRS.
      * @throws FactoryException if an error occured while creating the CRS.
      */
-    final void createSpatioTemporalCRS(final CRSFactory factory) throws FactoryException {
+    final void createSpatioTemporalCRS(final CRSAuthorityFactory factory) throws FactoryException {
+        if (horizontalSRID != 0) {
+            final CoordinateReferenceSystem crs =
+                    factory.createCoordinateReferenceSystem(String.valueOf(horizontalSRID));
+            try {
+                horizontalCRS = (SingleCRS) crs;
+            } catch (ClassCastException e) {
+                throw new FactoryException(Errors.format(
+                        Errors.Keys.ILLEGAL_CLASS_$2, crs.getClass(), SingleCRS.class), e);
+            }
+        }
+        if (verticalSRID != 0) {
+            verticalCRS = factory.createVerticalCRS(String.valueOf(verticalSRID));
+        }
+        /*
+         * Now create the spatio-temporal compound CRS. We try to use the same CRSFactory
+         * than the one used by the CRSAuthorityFactory.
+         */
         int count = 0;
         SingleCRS[] elements = new SingleCRS[3];
         if (horizontalCRS != null) elements[count++] = horizontalCRS;
@@ -166,7 +179,8 @@ final class SpatialRefSysEntry {
             copy.put(CoordinateReferenceSystem.NAME_KEY, name);
             properties = copy;
         }
-        spatioTemporalCRS = factory.createCompoundCRS(properties, elements);
+        final CRSFactory crsFactory = CRSUtilities.getCRSFactory(factory);
+        spatioTemporalCRS = crsFactory.createCompoundCRS(properties, elements);
         if (temporalCRS == null) {
             spatialCRS = spatioTemporalCRS;
         } else {
@@ -174,7 +188,7 @@ final class SpatialRefSysEntry {
                 spatialCRS = elements[0];
             } else {
                 elements = XArrays.resize(elements, count);
-                spatialCRS = factory.createCompoundCRS(properties, elements);
+                spatialCRS = crsFactory.createCompoundCRS(properties, elements);
             }
         }
         assert CRS.getHorizontalCRS(spatioTemporalCRS) == CRS.getHorizontalCRS(spatialCRS);
@@ -189,6 +203,7 @@ final class SpatialRefSysEntry {
      *        or {@code false} for a spatial-only CRS.
      */
     final CoordinateReferenceSystem getCoordinateReferenceSystem(final boolean includeTime) {
+        assert uninitialized() == 0 : this;
         return includeTime ? spatioTemporalCRS : spatialCRS;
     }
 
@@ -210,6 +225,7 @@ final class SpatialRefSysEntry {
     final GeneralGridGeometry getGridGeometry(final Dimension size, final AffineTransform gridToCRS,
             final double[] altitudes, final MathTransformFactory mtFactory) throws FactoryException
     {
+        assert uninitialized() == 0 : this;
         final int dim = spatioTemporalCRS.getCoordinateSystem().getDimension();
         final int[] lower = new int[dim];
         final int[] upper = new int[dim];
@@ -255,6 +271,7 @@ final class SpatialRefSysEntry {
      * The {@code #createSpatialCRS} method must have been invoked before this method.
      */
     final MathTransform2D toDatabaseHorizontalCRS() throws FactoryException {
+        assert uninitialized() == 0 : this;
         // No need to synhronize - this is not a big deal if the transform is searched twice.
         MathTransform2D tr = toDatabaseHorizontalCRS;
         if (tr == null) {
@@ -270,6 +287,7 @@ final class SpatialRefSysEntry {
      * this method is invoked.
      */
     final int zDimension() {
+        assert uninitialized() == 0 : this;
         return (verticalCRS == null) ? -1 : (horizontalCRS == null) ? 0 :
                 horizontalCRS.getCoordinateSystem().getDimension();
     }

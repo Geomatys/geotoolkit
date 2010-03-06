@@ -247,10 +247,10 @@ public class Table implements Localized {
     protected final LocalCache.Stmt getStatement(final QueryType type) throws CatalogException, SQLException {
         final String sql;
         switch (type) {
-            default:     sql = query.select(type); break;
-            case INSERT: sql = query.insert(type); break;
-            case DELETE: sql = query.delete(type); break;
-            case CLEAR:  sql = query.delete(type); break;
+            default:         sql = query.select(type); break;
+            case INSERT:     sql = query.insert(type); break;
+            case DELETE:     sql = query.delete(type); break;
+            case DELETE_ALL: sql = query.delete(type); break;
         }
         session.get().type = type;
         return getStatement(sql);

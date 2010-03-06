@@ -73,6 +73,8 @@ public final class AuthenticatedDataSource implements DataSource {
     /**
      * Delegates to the wrapped data source. If the username and password
      * given to the constructor are non-null, then they will be used.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public Connection getConnection() throws SQLException {
@@ -90,6 +92,8 @@ public final class AuthenticatedDataSource implements DataSource {
 
     /**
      * Delegates to the wrapped data source using the given username and password.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
@@ -102,6 +106,8 @@ public final class AuthenticatedDataSource implements DataSource {
 
     /**
      * Delegates to the wrapped data source.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public PrintWriter getLogWriter() throws SQLException {
@@ -110,6 +116,8 @@ public final class AuthenticatedDataSource implements DataSource {
 
     /**
      * Delegates to the wrapped data source.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public void setLogWriter(final PrintWriter out) throws SQLException {
@@ -118,6 +126,8 @@ public final class AuthenticatedDataSource implements DataSource {
 
     /**
      * Delegates to the wrapped data source.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public int getLoginTimeout() throws SQLException {
@@ -126,6 +136,8 @@ public final class AuthenticatedDataSource implements DataSource {
 
     /**
      * Delegates to the wrapped data source.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public void setLoginTimeout(final int seconds) throws SQLException {
@@ -134,6 +146,8 @@ public final class AuthenticatedDataSource implements DataSource {
 
     /**
      * Delegates to the wrapped data source.
+     *
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
@@ -144,6 +158,7 @@ public final class AuthenticatedDataSource implements DataSource {
      * Delegates to the wrapped data source.
      *
      * @param <T> The type of the wrapped object.
+     * @throws SQLException If a database access error occurs.
      */
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {

@@ -92,7 +92,7 @@ public class Database implements Localized {
     /**
      * The hints to use for fetching factories. Shall be considered read-only.
      */
-    private final Hints hints;
+    public final Hints hints;
 
     /**
      * Provides information for SQL statements being executed.
@@ -333,10 +333,13 @@ public class Database implements Localized {
     /**
      * Returns the data source which has been specified to the constructor.
      *
+     * @param  wrap {@code true} for returning the data source in a wrapper which provide the
+     *         username, password and set the connection to read-only mode, or {@code false}
+     *         for returning directly the data source given to the constructor.
      * @return The data source.
      */
-    public DataSource getDataSource() {
-        return source.wrapped;
+    public DataSource getDataSource(final boolean wrap) {
+        return wrap ? source : source.wrapped;
     }
 
     /**

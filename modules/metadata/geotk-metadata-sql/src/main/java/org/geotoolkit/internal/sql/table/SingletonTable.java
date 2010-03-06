@@ -373,13 +373,13 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occured will reading from or writting to the database.
      */
-    public int clear() throws CatalogException, SQLException {
+    public int deleteAll() throws CatalogException, SQLException {
         final int count;
         boolean success = false;
         synchronized (getLock()) {
             transactionBegin();
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.CLEAR);
+                final LocalCache.Stmt ce = getStatement(QueryType.DELETE_ALL);
                 count = update(ce.statement);
                 ce.release();
                 success = true;

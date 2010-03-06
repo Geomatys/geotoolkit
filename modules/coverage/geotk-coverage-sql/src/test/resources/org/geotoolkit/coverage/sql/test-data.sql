@@ -10,6 +10,15 @@ SET search_path = coverages, postgis;
 
 
 --------------------------------------------------------------------------------------------------
+-- Additional Coordinate Reference Systems                                                      --
+--------------------------------------------------------------------------------------------------
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext) VALUES
+ (6000, 'EPSG', 57150, 'VERT_CS["mean sea level depth",VERT_DATUM["Mean Sea Level",2005],UNIT["m",1.0],AXIS["Gravity-related depth",DOWN]]');
+-- Intentionally different SRID.
+
+
+
+--------------------------------------------------------------------------------------------------
 -- Temperature data                                                                             --
 --------------------------------------------------------------------------------------------------
 INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES

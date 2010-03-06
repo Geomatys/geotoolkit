@@ -29,8 +29,8 @@ import org.geotoolkit.lang.Static;
  * elements in an array, as well as resizing the array.
  * <p>
  * The {@code resize} methods provided in this class are very similar to the {@code copyOf}
- * methods provided in {@link Arrays} since Java 6, except that they do not copy anything if
- * the given array already has the requested length.
+ * methods provided in {@link Arrays} since Java 6, except that they accept {@code null}
+ * arrays and do not copy anything if the given array already has the requested length.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.07
@@ -66,10 +66,10 @@ public final class XArrays {
      *       This behavior is what make this method different than {@link Arrays#copyOf}.</p></li>
      *
      * @param  <E> The array elements.
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(Object[],int)
      */
@@ -81,10 +81,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(double[],int)
      */
@@ -96,10 +96,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(float[],int)
      */
@@ -111,10 +111,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(long[],int)
      */
@@ -126,10 +126,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(int[],int)
      */
@@ -141,10 +141,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(short[],int)
      */
@@ -156,10 +156,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(byte[],int)
      */
@@ -171,10 +171,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with zeros if necessary.
      *
-     * @param  array  Array to copy.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(char[],int)
     */
@@ -186,10 +186,10 @@ public final class XArrays {
      * Returns an array containing the same elements as the given {@code array} but
      * specified {@code length}, truncating or padding with {@code false} if necessary.
      *
-     * @param  array  Array to resize.
+     * @param  array  Array to resize, or {@code null}.
      * @param  length Length of the desired array.
-     * @return A new array of the requested length, or {@code array} if the original
-     *         array already have the requested length.
+     * @return A new array of the requested length, or {@code array} if the given
+     *         array is {@code null} or already have the requested length.
      *
      * @see Arrays#copyOf(boolean[],int)
      */
@@ -198,7 +198,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method creates
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param <E>     The type of array elements.
      * @param array   Array from which to remove elements.
@@ -220,7 +223,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param <E>     The type of array elements.
      * @param array   Array from which to remove elements.
@@ -234,7 +240,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -247,7 +256,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -260,7 +272,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -273,7 +288,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -286,7 +304,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -299,7 +320,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -312,7 +336,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -325,7 +352,10 @@ public final class XArrays {
     }
 
     /**
-     * Removes elements from the middle of an array.
+     * Returns an array containing the same elements than the given array except for
+     * the given range. If the {@code length} argument is 0, then this method returns
+     * the {@code array} reference unchanged. Otherwise this method creates a new array.
+     * In every cases, the given array is never modified.
      *
      * @param array   Array from which to remove elements.
      * @param first   Index of the first element to remove from the given {@code array}.
@@ -338,8 +368,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made
-     * up of {@code null} elements.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of {@code null} elements.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param <E>     The type of array elements.
      * @param array   Array in which to insert spaces.
@@ -362,8 +396,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made
-     * up of {@code null} elements.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of {@code null} elements.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param <E>     The type of array elements.
      * @param array   Array in which to insert spaces.
@@ -378,8 +416,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -393,8 +436,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -408,8 +456,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -423,8 +476,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -438,8 +496,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -453,8 +516,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -468,8 +536,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to zero.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to zero.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -483,8 +556,13 @@ public final class XArrays {
     }
 
     /**
-     * Inserts spaces into the middle of an array. These "spaces" will be made up of elements
-     * initialized to {@code false}.
+     * Returns an array containing the same elements than the given array, with additional
+     * "spaces" in the given range. These "spaces" will be made up of elements initialized
+     * to {@code false}.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code array}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given array is never modified.
      *
      * @param array   Array in which to insert spaces.
      * @param first   Index where the first space should be inserted. All {@code array} elements
@@ -498,7 +576,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param <E>     The type of array elements.
      * @param src     Array to entirely or partially insert into {@code dst}.
@@ -528,7 +611,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param <E>     The type of array elements.
      * @param src     Array to entirely or partially insert into {@code dst}.
@@ -549,7 +637,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -569,7 +662,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -589,7 +687,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -609,7 +712,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -629,7 +737,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -649,7 +762,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -669,7 +787,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.
@@ -689,7 +812,12 @@ public final class XArrays {
     }
 
     /**
-     * Inserts an array part into another array.
+     * Returns an array containing the same elements than the given array, with the content
+     * of an other array inserted at the given index.
+     * <p>
+     * If the {@code length} argument is 0, then this method returns the {@code dst}
+     * reference unchanged. Otherwise this method creates a new array. In every cases,
+     * the given arrays are never modified.
      *
      * @param src     Array to entirely or partially insert into {@code dst}.
      * @param srcOff  Index of the first element of {@code src} to insert into {@code dst}.

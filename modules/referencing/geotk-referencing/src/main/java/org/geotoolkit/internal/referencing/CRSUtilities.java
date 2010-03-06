@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Collections;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
 
 import org.opengis.referencing.*;
@@ -39,6 +40,8 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 
 
@@ -51,8 +54,8 @@ import org.geotoolkit.resources.Errors;
  * <strong>Do not rely on this API!</strong> It may change in incompatible way
  * in any future release.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.10
  *
  * @since 2.0
  * @module
@@ -63,6 +66,34 @@ public final class CRSUtilities {
      * Do not allow creation of instances of this class.
      */
     private CRSUtilities() {
+    }
+
+    /**
+     * Derives a {@link CRSFactory} for the given factory. If the given factory is already
+     * a {@code CRSFactory} instance, then it is returned. Otherwise the implementation hints
+     * are inspected. If no {@code CRSFactory} is found, then the default instance is fetched
+     * from the {@link FactoryFinder}.
+     *
+     * @param  factory The factory from which to infer a {@link CRSFactory}.
+     * @return The CRS factory.
+     *
+     * @since 3.10
+     */
+    public static CRSFactory getCRSFactory(final Factory factory) {
+        if (factory instanceof CRSFactory) {
+            return (CRSFactory) factory;
+        }
+        Hints hints = null;
+        if (factory instanceof org.geotoolkit.factory.Factory) {
+            final Map<RenderingHints.Key,?> impl =
+                    ((org.geotoolkit.factory.Factory) factory).getImplementationHints();
+            final Object candidate = impl.get(Hints.CRS_FACTORY);
+            if (candidate instanceof CRSFactory) {
+                return (CRSFactory) candidate;
+            }
+            hints = new Hints(impl);
+        }
+        return FactoryFinder.getCRSFactory(hints);
     }
 
     /**
