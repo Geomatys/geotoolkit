@@ -313,7 +313,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 677, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiCommit)
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -373,7 +373,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                     guiRollback.setEnabled(false);
                     candidate.getCollection().getSession().rollback();
                     lockableUI.setLocked(false);
-                    checkChanges();
                     reset();
                 }
 
@@ -420,6 +419,8 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             layer.addLayerListener(weakListener);
         }
 
+        revalidate();
+        repaint();
         checkChanges();
 
     }

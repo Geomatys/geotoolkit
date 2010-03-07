@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import javax.measure.unit.NonSI;
+import javax.measure.unit.SI;
 import javax.swing.SwingConstants;
 import org.geotoolkit.display.axis.Graduation;
 import org.geotoolkit.display.axis.NumberGraduation;
@@ -36,7 +37,7 @@ public class DoubleRenderer implements NavigatorRenderer<Double>{
 
     @Override
     public int getGraduationHeight() {
-        return 20;
+        return 60;
     }
 
     @Override
@@ -61,20 +62,35 @@ public class DoubleRenderer implements NavigatorRenderer<Double>{
         }
 
 
-        final RenderingHints tickHint = new RenderingHints(null);
-        tickHint.put(Graduation.VISUAL_AXIS_LENGTH, extent);
-        tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
+        System.out.println("extent = " + extent);
 
         double start = model.getValueAt(0);
         double end = model.getValueAt(extent);
 
+        final RenderingHints tickHint = new RenderingHints(null);
+        tickHint.put(Graduation.VISUAL_AXIS_LENGTH, extent);
+        tickHint.put(Graduation.VISUAL_TICK_SPACING, 200);
+
+
+        System.out.println(""+start+"   "+end);
+
         final NumberGraduation graduationX = new NumberGraduation(null);
-        graduationX.setRange(start, end, NonSI.PIXEL);
+        graduationX.setRange(start, end, null);
         TickIterator tickIte = graduationX.getTickIterator(tickHint, null);
 
         if(orientation == SwingConstants.NORTH){
 
         }else if(orientation == SwingConstants.SOUTH){
+            while(!tickIte.isDone()){
+                tickIte.next();
+                final String label = tickIte.currentLabel();
+                final int d = (int)tickIte.currentPosition();
+
+                g.drawLine(d, 0, d,getGraduationHeight());
+                g.drawString(label, d, area.height-2);
+
+            }
+
 
         }else if(orientation == SwingConstants.WEST){
             while(!tickIte.isDone()){
