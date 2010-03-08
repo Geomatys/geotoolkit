@@ -17,8 +17,10 @@
 
 package org.geotoolkit.data.session;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -84,13 +86,22 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public FeatureIterator getFeatureIterator(Query original) throws DataStoreException {
+        final List<Delta> deltas = diff.getDeltas();
+
+        //we must store the modified queries to iterate on them in reverse order.
+        final List<Query> modifieds = new ArrayList<Query>(deltas.size());
         Query modified = original;
-        for(final Delta alt : diff.getDeltas()){
-            modified = alt.modify(modified);
+        for(int i=0,n=deltas.size(); i<n; i++){
+            final Delta delta = deltas.get(i);
+            modifieds.add(modified); //store before modification
+            modified = delta.modify(modified);
         }
+
         FeatureIterator reader = store.getFeatureReader(modified);
-        for(final Delta alt : diff.getDeltas()){
-            reader = alt.modify(original,reader);
+
+        for(int i=deltas.size()-1; i>=0; i--){
+            final Delta delta = deltas.get(i);
+            reader = delta.modify(modifieds.get(i),reader);
         }
         return reader;
     }
@@ -224,13 +235,23 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public long getCount(Query query) throws DataStoreException {
-        for(final Delta alt : diff.getDeltas()){
-            query = alt.modify(query);
+    public long getCount(Query original) throws DataStoreException {
+        final List<Delta> deltas = diff.getDeltas();
+
+        //we must store the modified queries to iterate on them in reverse order.
+        final List<Query> modifieds = new ArrayList<Query>(deltas.size());
+        Query modified = original;
+        for(int i=0,n=deltas.size(); i<n; i++){
+            final Delta delta = deltas.get(i);
+            modifieds.add(modified); //store before modification
+            modified = delta.modify(modified);
         }
-        long count = store.getCount(query);
-        for(final Delta alt : diff.getDeltas()){
-            count = alt.modify(query,count);
+
+        long count = store.getCount(modified);
+
+        for(int i=deltas.size()-1; i>=0; i--){
+            final Delta delta = deltas.get(i);
+            count = delta.modify(modifieds.get(i),count);
         }
         return count;
     }
@@ -239,13 +260,23 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException {
-        for(final Delta alt : diff.getDeltas()){
-            query = alt.modify(query);
+    public Envelope getEnvelope(Query original) throws DataStoreException {
+        final List<Delta> deltas = diff.getDeltas();
+
+        //we must store the modified queries to iterate on them in reverse order.
+        final List<Query> modifieds = new ArrayList<Query>(deltas.size());
+        Query modified = original;
+        for(int i=0,n=deltas.size(); i<n; i++){
+            final Delta delta = deltas.get(i);
+            modifieds.add(modified); //store before modification
+            modified = delta.modify(modified);
         }
-        Envelope env = store.getEnvelope(query);
-        for(final Delta alt : diff.getDeltas()){
-            env = alt.modify(query,env);
+
+        Envelope env = store.getEnvelope(modified);
+
+        for(int i=deltas.size()-1; i>=0; i--){
+            final Delta delta = deltas.get(i);
+            env = delta.modify(modifieds.get(i),env);
         }
         return env;
     }

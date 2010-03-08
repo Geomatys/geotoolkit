@@ -559,10 +559,16 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
     }
 
+    /**
+     * Generate a reader from a join query.
+     *
+     * @param query
+     * @return FeatureReader
+     * @throws DataStoreException
+     */
     private FeatureReader getCrossFeatureReader(Query query) throws DataStoreException {
         /*
          * Query should look like :
-         * 
           SELECT * FROM
           (SELECT * FROM (SELECT "id","version","userId","timestamp","changeset",encode(asBinary(force_2d("geometry"),'XDR'),'base64') as "geometry" FROM "Way") as l
           INNER JOIN
@@ -571,14 +577,13 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
           (SELECT "wayId","nodeId","index" FROM "WayMember") as r ON l."id" = r."wayId"
          */
 
-
-        final SQLDialect dialect = getDialect();
-
         final LinkedHashMap<String, List<AttributeDescriptor>> atts = new LinkedHashMap<String, List<AttributeDescriptor>>();
         final List<PrimaryKey> pkeys = new ArrayList<PrimaryKey>();
         final StringBuilder querySQL = new StringBuilder();
         prepareSelect(query.getSource(), querySQL, atts, pkeys, query.getHints());
         final String sql = querySQL.toString();
+
+        System.out.println(sql);
 
         //build the new feature type
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
@@ -646,7 +651,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }else{
             throw new IllegalArgumentException("Unknowned source type : "+ source);
         }
-
     }
 
     private void prepareSelect(Join source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
