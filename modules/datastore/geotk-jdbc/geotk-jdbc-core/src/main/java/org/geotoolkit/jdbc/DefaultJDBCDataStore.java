@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.jdbc;
 
-import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.IOException;
@@ -55,6 +54,7 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.jdbc.FilterToSQLException;
+import org.geotoolkit.data.jdbc.PreparedFilterToSQL;
 import org.geotoolkit.data.jdbc.datasource.ManageableDataSource;
 import org.geotoolkit.data.jdbc.fidmapper.FIDMapper;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
@@ -667,9 +667,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     private FeatureReader getSimpleFeatureReader(Query query) throws DataStoreException {
-
-        typeCheck(query.getTypeName());
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
+        final PrimaryKey pkey = getPrimaryKey(query.getTypeName());
 
         // split the filter
         final Filter[] split = splitFilter(query.getFilter(),type);
@@ -689,21 +688,31 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             returnedSchema = querySchema = type;
         } else {
             returnedSchema = SimpleFeatureTypeBuilder.retype(type, query.getPropertyNames());
-            FilterAttributeExtractor extractor = new FilterAttributeExtractor(type);
+            final FilterAttributeExtractor extractor = new FilterAttributeExtractor(type);
             postFilter.accept(extractor, null);
-            Name[] extraAttributes = extractor.getAttributeNames();
-            if(extraAttributes == null || extraAttributes.length == 0) {
-                querySchema = returnedSchema;
-            } else {
-                List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
-                for (Name extraAttribute : extraAttributes) {
-                    if(!allAttributes.contains(extraAttribute)) {
-                        allAttributes.add(extraAttribute);
-                    }
+            final Name[] extraAttributes = extractor.getAttributeNames();
+            final List<Name> allAttributes = new ArrayList<Name>(Arrays.asList(query.getPropertyNames()));
+            for (Name extraAttribute : extraAttributes) {
+                if(!allAttributes.contains(extraAttribute)) {
+                    allAttributes.add(extraAttribute);
                 }
-                Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
-                querySchema = SimpleFeatureTypeBuilder.retype(type, allAttributeArray);
             }
+
+            //ensure we have the primarykeys
+            pkLoop :
+            for(PrimaryKeyColumn pkc : pkey.getColumns()){
+                final String pkcName = pkc.getName();
+                for(Name n : allAttributes){
+                    if(n.getLocalPart().equals(pkcName)){
+                        continue pkLoop;
+                     }
+                 }
+                //add the pk attribut
+                allAttributes.add(type.getDescriptor(pkcName).getName());
+             }
+
+            final Name[] allAttributeArray = allAttributes.toArray(new Name[allAttributes.size()]);
+            querySchema = SimpleFeatureTypeBuilder.retype(type, allAttributeArray);
         }
 
         //grab connection
@@ -722,7 +731,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             // if (getState().getTransaction() == Transaction.AUTO_COMMIT)
             cx.setAutoCommit(false);
 
-            final PrimaryKey pkey = getPrimaryKey(query.getTypeName());
             final SQLDialect dialect = getDialect();
             if (dialect instanceof PreparedStatementSQLDialect) {
                 final PreparedStatement ps = selectSQLPS(querySchema, preQuery, cx);
@@ -754,6 +762,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 reader = GenericRetypeFeatureIterator.wrap(reader, returnedSchema,query.getHints());
         }
 
+        //if we need to reproject data
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,type.getCoordinateReferenceSystem())){
             try {
@@ -763,6 +772,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
+        }
+
+        //if we need to constraint type
+        if(!returnedSchema.equals(querySchema)){
+            reader = GenericRetypeFeatureIterator.wrap(reader, returnedSchema, query.getHints());
         }
 
         return reader;

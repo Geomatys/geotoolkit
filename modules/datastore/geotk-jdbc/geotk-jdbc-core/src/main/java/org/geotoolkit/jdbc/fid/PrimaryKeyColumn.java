@@ -25,9 +25,8 @@ package org.geotoolkit.jdbc.fid;
  */
 public abstract class PrimaryKeyColumn {
 
-    final String name;
-
-    final Class type;
+    private final String name;
+    private final Class type;
 
     protected PrimaryKeyColumn(final String name, final Class type) {
         this.name = name;
