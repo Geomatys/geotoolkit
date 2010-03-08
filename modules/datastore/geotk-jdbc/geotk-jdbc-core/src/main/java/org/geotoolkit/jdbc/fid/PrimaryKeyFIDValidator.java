@@ -39,7 +39,7 @@ public class PrimaryKeyFIDValidator implements FIDValidator {
     @Override
     public boolean isValid(final String fid) {
         try {
-            store.decodeFID(key, fid, true);
+            PrimaryKey.decodeFID(key, fid, true);
             return true;
         }
         catch(IllegalArgumentException e) {

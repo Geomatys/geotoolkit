@@ -88,7 +88,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
         try {
             //figure out what the fid is
             PrimaryKey key = dataStore.getPrimaryKey(featureType);
-            String fid = dataStore.encodeFID(key, rs);
+            String fid = PrimaryKey.encodeFID(key, rs);
 
             Id filter = dataStore.getFilterFactory()
                                  .id(Collections.singleton(dataStore.getFilterFactory()

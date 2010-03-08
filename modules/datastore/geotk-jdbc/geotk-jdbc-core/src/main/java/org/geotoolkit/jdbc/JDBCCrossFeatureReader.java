@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -62,19 +61,13 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 /**
  * Reader for jdbc datastore
  *
- * @author Justin Deoliveira, The Open Plannign Project.
+ * @author Johann Sorel (Geomatys)
  *
  * @module pending
  */
-public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
+public class JDBCCrossFeatureReader implements  FeatureReader<SimpleFeatureType, SimpleFeature> {
 
     protected static final Logger LOGGER = Logging.getLogger(JDBCFeatureReader.class);
-
-    /**
-     * When true, the stack trace that created a reader that wasn't closed is recorded and then
-     * printed out when warning the user about this.
-     */
-    protected static final Boolean TRACE_ENABLED = "true".equalsIgnoreCase(System.getProperty("gt2.jdbc.trace"));
 
     /**
      * the feature source the reader originated from.
@@ -118,7 +111,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected Exception tracer;
     protected String[] columnNames;
 
-    public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, final Name groupName,
+    public JDBCCrossFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, final Name groupName,
                              final SimpleFeatureType featureType, final Hints hints ) throws SQLException, IOException, DataStoreException{
         init( store, groupName, featureType, hints );
 
@@ -129,7 +122,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         rs = st.executeQuery(sql);
     }
 
-    public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, final Name groupName,
+    public JDBCCrossFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, final Name groupName,
                              final SimpleFeatureType featureType, final Hints hints) throws SQLException, IOException, DataStoreException{
 
         init( store, groupName, featureType, hints );
@@ -142,11 +135,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
 
     protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType,
                         final Hints chints) throws IOException, DataStoreException{
-        // init the tracer if we need to debug a connection leak
-        if (TRACE_ENABLED) {
-            tracer = new Exception();
-            tracer.fillInStackTrace();
-        }
 
         // init base fields
         this.groupName = typeName;
@@ -183,7 +171,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         pkey = dataStore.getPrimaryKey(featureType);
     }
 
-    public JDBCFeatureReader(final JDBCFeatureReader other) {
+    public JDBCCrossFeatureReader(final JDBCFeatureReader other) {
         this.featureType = other.featureType;
         this.dataStore = other.dataStore;
         this.groupName = other.groupName;
@@ -351,9 +339,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected void finalize() throws Throwable {
         if (dataStore != null) {
             LOGGER.warning("There is code leaving feature readers/iterators open, this is leaking statements and connections!");
-            if(TRACE_ENABLED) {
-                LOGGER.log(Level.WARNING, "The unclosed reader originated on this stack trace", tracer);
-            }
             close();
         }
     }
