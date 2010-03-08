@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.jdbc.fid.PrimaryKey;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -34,17 +35,15 @@ public class JDBCUpdateInsertFeatureWriter extends JDBCUpdateFeatureWriter {
     JDBCInsertFeatureWriter inserter;
     
     public JDBCUpdateInsertFeatureWriter(final String sql, final Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, final Hints hints)
-            throws SQLException, IOException, DataStoreException
-    {
-        super(sql, cx, store, groupName, type, hints);
+            final Name groupName, SimpleFeatureType type, PrimaryKey pkey, final Hints hints)
+            throws SQLException, IOException, DataStoreException{
+        super(sql, cx, store, groupName, type, pkey,hints);
     }
     
     public JDBCUpdateInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, final Name[] attributeNames, final Hints hints)
-            throws SQLException, IOException, DataStoreException
-    {
-        super(ps, cx, store, groupName, type, hints);
+            final Name groupName, SimpleFeatureType type, PrimaryKey pkey, final Name[] attributeNames, final Hints hints)
+            throws SQLException, IOException, DataStoreException{
+        super(ps, cx, store, groupName, type, pkey, hints);
     }
     
     @Override

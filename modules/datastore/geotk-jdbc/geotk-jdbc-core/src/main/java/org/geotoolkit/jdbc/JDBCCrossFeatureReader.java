@@ -171,7 +171,7 @@ public class JDBCCrossFeatureReader implements  FeatureReader<SimpleFeatureType,
         pkey = dataStore.getPrimaryKey(featureType);
     }
 
-    public JDBCCrossFeatureReader(final JDBCFeatureReader other) {
+    public JDBCCrossFeatureReader(final JDBCCrossFeatureReader other) {
         this.featureType = other.featureType;
         this.dataStore = other.dataStore;
         this.groupName = other.groupName;

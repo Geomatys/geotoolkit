@@ -25,6 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.geotoolkit.data.DataStoreException;
+import org.geotoolkit.data.DataStoreJoinFeatureCollection;
 import org.geotoolkit.data.DefaultJoinFeatureCollection;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
@@ -120,10 +121,21 @@ public class QueryUtilities {
         return qb.buildQuery();
     }
 
-    public static FeatureCollection evaluate(String id,Query query){
+    public static FeatureCollection evaluate(String id, Query query){
         return evaluate(id,query, null);
     }
 
+    /**
+     * Create a feature collection for the given query.
+     * This method will try to use the datastore query capabilities if several
+     * selector/join source use the same Session.
+     * Otherwise a generic (slower) implementation will be returned.
+     *
+     * @param id : feature collection id.
+     * @param query : query
+     * @param session : use this session if the query is not absolute
+     * @return feature collection
+     */
     public static FeatureCollection evaluate(String id, Query query, Session session){
         query = QueryUtilities.makeAbsolute(query, session);
 
@@ -131,8 +143,18 @@ public class QueryUtilities {
 
         if(s instanceof Selector){
             return new DefaultSelectorFeatureCollection(id, query);
+        }else if(s instanceof Join){
+            final Collection<Session> sessions = getSessions(s, null);
+
+            if(sessions.size() == 1 && sessions.iterator().next().getDataStore().getQueryCapabilities().handleCrossQuery()){
+                //the datastore can handle our join query, it will be much more efficient then a generic implementation
+                return new DataStoreJoinFeatureCollection(id, query);
+            }else{
+                //can't optimize it, use the generic implementation
+                return new DefaultJoinFeatureCollection(id, query);
+            }
         }else{
-            return new DefaultJoinFeatureCollection(id, query);
+            throw new IllegalArgumentException("Query source is an unknowned type : " + s);
         }
     }
 

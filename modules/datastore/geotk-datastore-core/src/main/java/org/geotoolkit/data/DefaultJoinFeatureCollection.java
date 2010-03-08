@@ -25,6 +25,7 @@ import org.geotoolkit.data.query.JoinType;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
@@ -60,11 +61,12 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     public DefaultJoinFeatureCollection(String id, Query query){
         super(id,query.getSource());
 
-        if(!(query.getSource() instanceof Join)){
+        final Source source = query.getSource();
+        if(!(source instanceof Join)){
             throw new IllegalArgumentException("Query must have a join source.");
         }
 
-        if(!QueryUtilities.isAbsolute(getSource())){
+        if(!QueryUtilities.isAbsolute(source)){
             throw new IllegalArgumentException("Query source must be absolute.");
         }
 
@@ -73,7 +75,6 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         //todo must parse the filter on each selector
         leftCollection = QueryUtilities.evaluate("left", QueryBuilder.all(getSource().getLeft()));
         rightCollection = QueryUtilities.evaluate("right", QueryBuilder.all(getSource().getRight()));
-
     }
 
     @Override

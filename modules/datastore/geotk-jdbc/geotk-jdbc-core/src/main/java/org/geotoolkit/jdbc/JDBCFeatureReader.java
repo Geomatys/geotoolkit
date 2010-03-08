@@ -77,10 +77,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected static final Boolean TRACE_ENABLED = "true".equalsIgnoreCase(System.getProperty("gt2.jdbc.trace"));
 
     /**
-     * the feature source the reader originated from.
-     */
-    protected Name groupName;
-    /**
      * the datastore
      */
     protected DefaultJDBCDataStore dataStore;
@@ -118,9 +114,10 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     protected Exception tracer;
     protected String[] columnNames;
 
-    public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, final Name groupName,
-                             final SimpleFeatureType featureType, final Hints hints ) throws SQLException, IOException, DataStoreException{
-        init( store, groupName, featureType, hints );
+    public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, 
+            final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints )
+            throws SQLException, IOException, DataStoreException{
+        init( store, groupName, featureType, pkey, hints );
 
         //create the result set
         this.cx = cx;
@@ -129,10 +126,11 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         rs = st.executeQuery(sql);
     }
 
-    public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, final Name groupName,
-                             final SimpleFeatureType featureType, final Hints hints) throws SQLException, IOException, DataStoreException{
+    public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, 
+            final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints)
+            throws SQLException, IOException, DataStoreException{
 
-        init( store, groupName, featureType, hints );
+        init( store, groupName, featureType, pkey, hints );
 
         //create the result set
         this.cx = cx;
@@ -140,7 +138,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         rs = st.executeQuery();
     }
 
-    protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType,
+    protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType, final PrimaryKey pkey,
                         final Hints chints) throws IOException, DataStoreException{
         // init the tracer if we need to debug a connection leak
         if (TRACE_ENABLED) {
@@ -149,7 +147,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         }
 
         // init base fields
-        this.groupName = typeName;
         this.dataStore = (DefaultJDBCDataStore) store;
         this.featureType = featureType;
         this.hints = (chints == null) ? new Hints() : chints;
@@ -180,18 +177,18 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         builder = new SimpleFeatureBuilder(featureType, ff);
 
         // find the primary key
-        pkey = dataStore.getPrimaryKey(featureType);
+        this.pkey = pkey;
     }
 
     public JDBCFeatureReader(final JDBCFeatureReader other) {
         this.featureType = other.featureType;
         this.dataStore = other.dataStore;
-        this.groupName = other.groupName;
         this.hints = other.hints;
         this.geometryFactory = other.geometryFactory;
         this.builder = other.builder;
         this.st = other.st;
         this.rs = other.rs;
+        this.pkey = other.pkey;
     }
 
     @Override

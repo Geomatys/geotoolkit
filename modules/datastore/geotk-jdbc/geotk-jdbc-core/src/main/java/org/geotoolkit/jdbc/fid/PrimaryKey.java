@@ -61,21 +61,23 @@ public class PrimaryKey {
      */
     public static String encodeFID(final PrimaryKey pkey, final ResultSet rs)
             throws SQLException{
+
+        final List<PrimaryKeyColumn> columns = pkey.getColumns();
+
         // no pk columns
-        if (pkey.getColumns().isEmpty()) {
+        if (columns.isEmpty()) {
             return SimpleFeatureBuilder.createDefaultFeatureId();
         }
 
         // just one, no need to build support structures
-        if (pkey.getColumns().size() == 1) {
-            return rs.getString(1);
+        if (columns.size() == 1) {
+            return rs.getString(columns.get(0).getName());
         }
 
         // more than one
         final List<Object> keyValues = new ArrayList<Object>();
-        for (int i = 0; i < pkey.getColumns().size(); i++) {
-            String o = rs.getString(i + 1);
-            keyValues.add(o);
+        for (PrimaryKeyColumn pc : columns) {
+            keyValues.add(rs.getString(pc.getName()));
         }
         return encodeFID(keyValues);
     }

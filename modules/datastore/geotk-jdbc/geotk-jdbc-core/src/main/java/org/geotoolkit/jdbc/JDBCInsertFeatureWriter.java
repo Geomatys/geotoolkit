@@ -25,6 +25,7 @@ import org.geotoolkit.data.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.jdbc.fid.PrimaryKey;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -35,16 +36,16 @@ public class JDBCInsertFeatureWriter extends JDBCFeatureReader implements Featur
     ResultSetFeature last;
 
     public JDBCInsertFeatureWriter(final String sql, final Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, final Hints hints)
+            final Name groupName, SimpleFeatureType type, PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
-        super(sql, cx, store, groupName, type, hints);
+        super(sql, cx, store, groupName, type, pkey, hints);
         last = new ResultSetFeature( rs, cx );
     }
 
     public JDBCInsertFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, final Hints hints)
+            final Name groupName, SimpleFeatureType type, PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
-        super( ps, cx, store, groupName, type, hints );
+        super( ps, cx, store, groupName, type, pkey, hints );
         last = new ResultSetFeature( rs, ps.getConnection() );
     }
 
