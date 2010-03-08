@@ -36,8 +36,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -558,80 +560,49 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     private FeatureReader getCrossFeatureReader(Query query) throws DataStoreException {
+        /*
+         * Query should look like :
+         * 
+          SELECT * FROM
+          (SELECT * FROM (SELECT "id","version","userId","timestamp","changeset",encode(asBinary(force_2d("geometry"),'XDR'),'base64') as "geometry" FROM "Way") as l
+          INNER JOIN
+          (SELECT "wayId","k","v" FROM "WayTag") as r ON l."id" = r."wayId") as l
+          LEFT JOIN
+          (SELECT "wayId","nodeId","index" FROM "WayMember") as r ON l."id" = r."wayId"
+         */
+
+
         final SQLDialect dialect = getDialect();
 
-        final Join j = (Join) query.getSource();
-        final PropertyName leftProp = (PropertyName) j.getJoinCondition().getExpression1();
-        final PropertyName rightProp = (PropertyName) j.getJoinCondition().getExpression2();
-        final Selector s1 = (Selector) j.getLeft();
-        final Selector s2 = (Selector) j.getRight();
+        final LinkedHashMap<String, List<AttributeDescriptor>> atts = new LinkedHashMap<String, List<AttributeDescriptor>>();
+        final List<PrimaryKey> pkeys = new ArrayList<PrimaryKey>();
+        final StringBuilder querySQL = new StringBuilder();
+        prepareSelect(query.getSource(), querySQL, atts, pkeys, query.getHints());
+        final String sql = querySQL.toString();
 
-        final StringBuilder selectSQL = new StringBuilder();
-        final StringBuilder fromSQL = new StringBuilder();
-        final StringBuilder whereSQL = new StringBuilder();
-
-        selectSQL.append("SELECT ");
-
-        final List<AttributeDescriptor> combine = new ArrayList<AttributeDescriptor>();
-        final SimpleFeatureType type1 = (SimpleFeatureType) getFeatureType(s1.getFeatureTypeName());
-        final SimpleFeatureType type2 = (SimpleFeatureType) getFeatureType(s2.getFeatureTypeName());
-
-        for(AttributeDescriptor att : type1.getAttributeDescriptors()){
-            if (att instanceof GeometryDescriptor) {
-                encodeGeometryColumn((GeometryDescriptor) att, selectSQL, query.getHints());
-                dialect.encodeColumnAlias(att.getLocalName(), selectSQL);
-            }else{
-                dialect.encodeColumnName(att.getLocalName(), selectSQL);
-            }
-            selectSQL.append(',');            
-            combine.add(att);
-        }
-
-        for(AttributeDescriptor att : type2.getAttributeDescriptors()){
-            if (att instanceof GeometryDescriptor) {
-                encodeGeometryColumn((GeometryDescriptor) att, selectSQL, query.getHints());
-                dialect.encodeColumnAlias(att.getLocalName(), selectSQL);
-            }else{
-                dialect.encodeColumnName(att.getLocalName(), selectSQL);
-            }
-            selectSQL.append(',');
-            combine.add(att);
-        }
-
-        selectSQL.setLength(selectSQL.length()-1);
-
-        fromSQL.append(" FROM ");
-        dialect.encodeTableName(type1.getTypeName(), fromSQL);
-        dialect.encodeTableAlias(s1.getSelectorName(), fromSQL);
-        fromSQL.append(" INNER JOIN ");
-        dialect.encodeTableName(type2.getTypeName(), fromSQL);
-        dialect.encodeTableAlias(s2.getSelectorName(), fromSQL);
-        fromSQL.append(" ON ");
-        fromSQL.append(s1.getSelectorName()).append('.');
-        dialect.encodeColumnName(DefaultName.valueOf(leftProp.getPropertyName()).getLocalPart(), fromSQL);
-        fromSQL.append(" = ");
-        fromSQL.append(s2.getSelectorName()).append('.');
-        dialect.encodeColumnName(DefaultName.valueOf(rightProp.getPropertyName()).getLocalPart(), fromSQL);
-
-
-
-        final String sql = selectSQL.toString() + fromSQL.toString() + whereSQL.toString();
-
+        //build the new feature type
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
-        sftb.setName(getNamespaceURI(),s1.getSelectorName()+" / "+s2.getSelectorName());
-        for(AttributeDescriptor att : combine){
-            sftb.add(att);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+        sftb.setName(getNamespaceURI(),"crossQuery");
+
+        for(Entry<String,List<AttributeDescriptor>> entry : atts.entrySet()){
+            final String selectorName = entry.getKey();
+            for(AttributeDescriptor desc : entry.getValue()){
+                adb.reset();
+                adb.copy(desc);
+                final Name oldName = adb.getName();
+                adb.setName(new DefaultName(oldName.getNamespaceURI()+"-"+selectorName, oldName.getLocalPart()));
+                sftb.add(adb.buildDescriptor());
+            }
         }
         final SimpleFeatureType querySchema = sftb.buildFeatureType();
 
-        final PrimaryKey pk1 = getPrimaryKey(s1.getFeatureTypeName());
-        final PrimaryKey pk2 = getPrimaryKey(s2.getFeatureTypeName());
         final List<PrimaryKeyColumn> columns = new ArrayList<PrimaryKeyColumn>();
-        columns.addAll(pk1.getColumns());
-        columns.addAll(pk2.getColumns());
-        final PrimaryKey pkCombine = new PrimaryKey(s1.getSelectorName()+"/"+s2.getSelectorName(), columns);
+        for(PrimaryKey pkey : pkeys){
+            columns.addAll(pkey.getColumns());
+        }
+        final PrimaryKey pkCombine = new PrimaryKey("crossKey", columns);
 
-        //----------------------------------------------------------------------
         //grab connection
         final Connection cx;
         try {
@@ -665,6 +636,63 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         return reader;
     }
+
+    private void prepareSelect(Source source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
+            List<PrimaryKey> pkeys, Hints hints) throws DataStoreException{
+        if(source instanceof Join){
+            prepareSelect((Join)source, sql, att, pkeys, hints);
+        }else if(source instanceof Selector){
+            prepareSelect((Selector)source, sql, att, pkeys, hints);
+        }else{
+            throw new IllegalArgumentException("Unknowned source type : "+ source);
+        }
+
+    }
+
+    private void prepareSelect(Join source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
+            List<PrimaryKey> pkeys, Hints hints) throws DataStoreException{
+
+        final Source leftSource = source.getLeft();
+        final Source rightSource = source.getRight();
+        final PropertyName leftProp = (PropertyName) source.getJoinCondition().getExpression1();
+        final PropertyName rightProp = (PropertyName) source.getJoinCondition().getExpression2();
+
+        sql.append("SELECT * FROM (");
+        prepareSelect(leftSource, sql, att, pkeys, hints);
+        sql.append(") as l INNER JOIN (");
+        prepareSelect(rightSource, sql, att, pkeys, hints);
+        sql.append(") as r ON l.");
+        dialect.encodeColumnName(DefaultName.valueOf(leftProp.getPropertyName()).getLocalPart(), sql);
+        sql.append(" = r.");
+        dialect.encodeColumnName(DefaultName.valueOf(rightProp.getPropertyName()).getLocalPart(), sql);
+    }
+
+    private void prepareSelect(Selector source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
+            List<PrimaryKey> pkeys, Hints hints) throws DataStoreException{
+        final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(source.getFeatureTypeName());
+        final PrimaryKey pk = getPrimaryKey(type.getName());
+
+        sql.append("SELECT ");
+
+        final List<AttributeDescriptor> descs = type.getAttributeDescriptors();
+        for(AttributeDescriptor desc : descs){
+            if (desc instanceof GeometryDescriptor) {
+                encodeGeometryColumn((GeometryDescriptor) desc, sql, hints);
+                dialect.encodeColumnAlias(desc.getLocalName(), sql);
+            }else{
+                dialect.encodeColumnName(desc.getLocalName(), sql);
+            }
+            sql.append(',');
+        }
+
+        sql.setLength(sql.length()-1);
+        sql.append(" FROM ");
+        dialect.encodeTableName(type.getTypeName(), sql);
+
+        att.put(source.getSelectorName(), descs);
+        pkeys.add(pk);
+    }
+
 
     private FeatureReader getSimpleFeatureReader(Query query) throws DataStoreException {
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
