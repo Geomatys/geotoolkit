@@ -579,11 +579,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         final LinkedHashMap<String, List<AttributeDescriptor>> atts = new LinkedHashMap<String, List<AttributeDescriptor>>();
         final List<PrimaryKey> pkeys = new ArrayList<PrimaryKey>();
+
+        //build the sql query
         final StringBuilder querySQL = new StringBuilder();
         prepareSelect(query.getSource(), querySQL, atts, pkeys, query.getHints());
         final String sql = querySQL.toString();
-
-        System.out.println(sql);
 
         //build the new feature type
         final SimpleFeatureTypeBuilder sftb = new SimpleFeatureTypeBuilder();
@@ -637,6 +637,11 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             closeSafe(cx);
             // safely rethrow
             throw (DataStoreException) new DataStoreException().initCause(e);
+        }
+
+        final Filter filter = query.getFilter();
+        if(filter != Filter.INCLUDE){
+            reader = GenericFilterFeatureIterator.wrap(reader, filter);
         }
 
         return reader;
