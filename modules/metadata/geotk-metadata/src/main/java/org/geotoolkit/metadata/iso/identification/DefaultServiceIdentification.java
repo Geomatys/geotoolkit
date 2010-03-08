@@ -41,8 +41,8 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_ServiceIdentification")
-@XmlRootElement(name = "MD_ServiceIdentification")
+@XmlType(name = "SV_ServiceIdentification")
+@XmlRootElement(name = "SV_ServiceIdentification")
 public class DefaultServiceIdentification extends AbstractIdentification implements ServiceIdentification {
     /**
      * Serial number for compatibility with different versions.
