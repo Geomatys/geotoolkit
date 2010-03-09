@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
@@ -48,5 +49,12 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class FeatureCollectionType extends AbstractFeatureCollectionType {
 
+    public FeatureCollectionType() {
+        super();
+    }
+
+    public FeatureCollectionType(String id, String name, String description, List<FeaturePropertyType> featureMember) {
+        super(id, name, description, featureMember);
+    }
 
 }
