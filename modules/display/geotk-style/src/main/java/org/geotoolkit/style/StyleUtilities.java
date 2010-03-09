@@ -17,9 +17,15 @@
 
 package org.geotoolkit.style;
 
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.lang.Static;
+import org.opengis.filter.Filter;
+import org.opengis.style.FeatureTypeStyle;
+import org.opengis.style.Rule;
+import org.opengis.style.Style;
 
 import org.opengis.style.Symbolizer;
 
@@ -32,7 +38,53 @@ import org.opengis.style.Symbolizer;
 @Static
 public final class StyleUtilities {
 
+    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
+                                            new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
+
     private StyleUtilities(){}
+
+    public static MutableStyle copy(Style style){
+        final MutableStyle copy = SF.style();
+        copy.setDefault(style.isDefault());
+        copy.setDefaultSpecification(style.getDefaultSpecification());
+        copy.setDescription(style.getDescription());
+        copy.setName(style.getName());
+
+        for(FeatureTypeStyle fts : style.featureTypeStyles()){
+            copy.featureTypeStyles().add(copy(fts));
+        }
+
+        return copy;
+    }
+
+    public static MutableFeatureTypeStyle copy(FeatureTypeStyle fts){
+        final MutableFeatureTypeStyle copy = SF.featureTypeStyle();
+        copy.semanticTypeIdentifiers().addAll(fts.semanticTypeIdentifiers());
+        copy.setDescription(fts.getDescription());
+        copy.setFeatureInstanceIDs(fts.getFeatureInstanceIDs());
+        copy.setName(fts.getName());
+        copy.setOnlineResource(fts.getOnlineResource());
+
+        for(Rule r : fts.rules()){
+            copy.rules().add(copy(r));
+        }
+
+        return copy;
+    }
+
+    public static MutableRule copy(Rule rule){
+        final MutableRule copy = SF.rule();
+        copy.setDescription(rule.getDescription());
+        copy.setElseFilter(rule.isElseFilter());
+        copy.setFilter(rule.getFilter());
+        copy.setLegendGraphic(rule.getLegend());
+        copy.setMaxScaleDenominator(rule.getMaxScaleDenominator());
+        copy.setMinScaleDenominator(rule.getMinScaleDenominator());
+        copy.setName(rule.getName());
+        copy.setOnlineResource(rule.getOnlineResource());
+        copy.symbolizers().addAll(rule.symbolizers());
+        return copy;
+    }
 
     public static MutableTreeNode asTreeNode(MutableStyle element){
         return new StyleNode(element);

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,15 +18,10 @@
 package org.geotoolkit.gui.swing.crschooser;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Ellipse2D;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -41,14 +36,14 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 
+import org.geotoolkit.gui.swing.misc.LoadingLockableUI;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
+
 import org.jdesktop.swingx.JXBusyLabel;
-import org.jdesktop.swingx.painter.BusyPainter;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -84,12 +79,12 @@ public class JCRSChooser extends javax.swing.JDialog {
         lbl.setVerticalAlignment(SwingConstants.CENTER);
         lbl.setHorizontalTextPosition(SwingConstants.CENTER);
         lbl.setBusyPainter(LoadingLockableUI.createDefaultBusyPainter());
-        lbl.setBusy(true);
         pan_list.add(BorderLayout.CENTER,lbl);
 
         new Thread(){
             @Override
             public void run() {
+                lbl.setBusy(true);
                 liste = new JCRSList();
 
                 liste.addListSelectionListener(new ListSelectionListener() {

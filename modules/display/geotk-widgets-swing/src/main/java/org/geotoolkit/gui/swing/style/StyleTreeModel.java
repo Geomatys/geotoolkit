@@ -17,17 +17,28 @@
  */
 package org.geotoolkit.gui.swing.style;
 
+import java.beans.PropertyChangeEvent;
+import java.util.Collection;
+import java.util.EventObject;
 import java.util.List;
+import java.util.logging.Level;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.map.WeakStyleListener;
+import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleListener;
+import org.geotoolkit.style.StyleUtilities;
+import org.geotoolkit.util.NumberRange;
 
 import org.geotoolkit.util.RandomStyleFactory;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.style.Symbolizer;
 
@@ -36,15 +47,17 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class StyleTreeModel extends DefaultTreeModel {
+public class StyleTreeModel extends DefaultTreeModel implements StyleListener {
 
-    
+    private static final MutableStyleFactory SF = new DefaultStyleFactory();
+
+    private WeakStyleListener weakListener = null;
+    private MutableStyle style = null;
+
     public StyleTreeModel(){
         super(null);
     }
     
-    private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private MutableStyle style = null;
 
     /**
      * create a StyleTreeModel
@@ -52,12 +65,10 @@ public class StyleTreeModel extends DefaultTreeModel {
      */
     public StyleTreeModel(MutableStyle style) {
         super(new DefaultMutableTreeNode());
-
         if (style == null) {
             throw new NullPointerException("Style can't be null");
         }
-        this.style = style;
-        setRoot(parse(style));
+        setStyle(style);
     }
 
     /**
@@ -68,10 +79,21 @@ public class StyleTreeModel extends DefaultTreeModel {
         if (style == null) {
             throw new NullPointerException("Style can't be null");
         }
+
+        if(this.style != null){
+            this.style.removeListener(weakListener);
+        }
+        
         this.style = style;
+
+        if(this.style != null){
+            weakListener = new WeakStyleListener(this, this.style);
+            this.style.addListener(weakListener);
+        }
 
         setRoot(parse(style));
     }
+    
     /**
      * 
      * @return Style
@@ -80,98 +102,126 @@ public class StyleTreeModel extends DefaultTreeModel {
         return style;
     }
 
-    //---------------------using nodes------------------------------------------
-    
-    
-    public boolean isDeletable(DefaultMutableTreeNode node){
-        
-        boolean deletable = false;        
-        Object removeObject = node.getUserObject();
-        
-        if(removeObject instanceof MutableStyle){
-            
-        }else if(removeObject instanceof MutableFeatureTypeStyle){
-            if(!style.featureTypeStyles().isEmpty()){
-                deletable = true;
+
+    //--------------- style events ---------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+    }
+
+    @Override
+    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        styleElementChange(event);
+    }
+
+    private void styleElementChange(CollectionChangeEvent event) {
+        final int type = event.getType();
+        final DefaultMutableTreeNode parent = search(event.getSource());
+
+        if(type == CollectionChangeEvent.ITEM_ADDED){
+            final NumberRange range = event.getRange();
+            int index = (int) range.getMinimum();
+            for(Object added : event.getItems()){
+                final DefaultMutableTreeNode child;
+                if(added instanceof MutableFeatureTypeStyle){
+                    child = parse((MutableFeatureTypeStyle)added);
+                }else if(added instanceof MutableRule){
+                    child = parse((MutableRule)added);
+                }else if(added instanceof Symbolizer){
+                    child = parse((Symbolizer)added);
+                }else{
+                    Logging.getLogger(StyleTreeModel.class).log(Level.WARNING, "Unexpected type : " + added);
+                    child = null;
+                }
+
+                if(child != null){
+                    insertNodeInto(child, parent, index);
+                    index++;
+                }
             }
-        }else if (removeObject instanceof MutableRule){
-            DefaultMutableTreeNode ftsnode = (DefaultMutableTreeNode)node.getParent();
-            MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) ftsnode.getUserObject();
-            if(!fts.rules().isEmpty()){
-                deletable = true;
+        }else if(type == CollectionChangeEvent.ITEM_REMOVED){
+            for(Object ele : event.getItems()){
+                final DefaultMutableTreeNode child = search(ele);
+                if(child != null){
+                    removeNodeFromParent(child);
+                }
             }
-            
-        }else if (removeObject instanceof Symbolizer){
-            DefaultMutableTreeNode rulenode = (DefaultMutableTreeNode)node.getParent();
-            MutableRule rule = (MutableRule) rulenode.getUserObject();
-            if(!rule.symbolizers().isEmpty()){
-                deletable = true;
+        }else if(type == CollectionChangeEvent.ITEM_CHANGED){
+            for(Object ele : event.getItems()){
+                final DefaultMutableTreeNode child = search(ele);
+                final EventObject subEvent = event.getChangeEvent();
+                if(subEvent instanceof CollectionChangeEvent){
+                    styleElementChange((CollectionChangeEvent) subEvent);
+                }else{
+                    nodeChanged(child);
+                }
             }
         }
-        
-        return deletable;        
     }
+
+
+    //---------------------using nodes------------------------------------------
     
+
+    public boolean isDeletable(DefaultMutableTreeNode node){
+        final Object removeObject = node.getUserObject();
+
+        return     removeObject instanceof MutableFeatureTypeStyle
+                || removeObject instanceof MutableRule
+                || removeObject instanceof Symbolizer;
+    }
+
     /**
      * delete a node and his related style object
      * @param node
      * @return false if not removed
      */
     public boolean deleteNode(DefaultMutableTreeNode node) {
-        
-        boolean removed = false;        
-        Object removeObject = node.getUserObject();
-        
+        final Object removeObject = node.getUserObject();
+
+        final boolean removed;
         if(removeObject instanceof MutableStyle){
-            
+            removed = false;
         }else if(removeObject instanceof MutableFeatureTypeStyle){
-            if(!style.featureTypeStyles().isEmpty()){
-                remove((MutableFeatureTypeStyle)removeObject);
-                removed = true;
-            }
+            removed = getStyle().featureTypeStyles().remove((MutableFeatureTypeStyle)removeObject);
         }else if (removeObject instanceof MutableRule){
-            DefaultMutableTreeNode ftsnode = (DefaultMutableTreeNode)node.getParent();
-            MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) ftsnode.getUserObject();
-            if(!fts.rules().isEmpty()){
-                remove(ftsnode,(MutableRule)removeObject);
-                removed = true;
-            }
-            
+            final DefaultMutableTreeNode ftsnode = (DefaultMutableTreeNode)node.getParent();
+            final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) ftsnode.getUserObject();
+            removed = fts.rules().remove((MutableRule)removeObject);
         }else if (removeObject instanceof Symbolizer){
-            DefaultMutableTreeNode rulenode = (DefaultMutableTreeNode)node.getParent();
-            MutableRule rule = (MutableRule) rulenode.getUserObject();
-            if(!rule.symbolizers().isEmpty()){
-                remove(rulenode,(Symbolizer)removeObject);
-                removed = true;
-            }
+            final DefaultMutableTreeNode rulenode = (DefaultMutableTreeNode)node.getParent();
+            final MutableRule rule = (MutableRule) rulenode.getUserObject();
+            removed = rule.symbolizers().remove((Symbolizer)removeObject);
+        }else{
+            removed = false;
         }
-        
+
         return removed;
     }
     /**
      * move an existing node
      * @param movedNode :node to move
-     * @param targetNode 
+     * @param targetNode
      * @return DefaultMutableTreeNode or null if node could not be moved
      */
     public DefaultMutableTreeNode moveNode(DefaultMutableTreeNode movedNode, DefaultMutableTreeNode targetNode) {
         Object movedObj = movedNode.getUserObject();
         DefaultMutableTreeNode parentMovedNode = (DefaultMutableTreeNode) movedNode.getParent();
         Object parentMovedObj = parentMovedNode.getUserObject();
-        
+
         Object targetObj = targetNode.getUserObject();
-        
+
 
         DefaultMutableTreeNode copy = null;
 
-        
+
 
         if (targetObj instanceof MutableFeatureTypeStyle && movedObj instanceof MutableFeatureTypeStyle) {
             copy = moveAt(movedNode,(MutableFeatureTypeStyle) movedObj, indexof(style, (MutableFeatureTypeStyle) targetObj));
-            
+
         } else if (targetObj instanceof MutableFeatureTypeStyle && movedObj instanceof MutableRule) {
-                        
-            if (parentMovedNode == targetNode) {                
+
+            if (parentMovedNode == targetNode) {
             } else if(parentMovedNode.getChildCount() == 1){
                 MutableRule rule = (MutableRule) movedObj;
                 copy = insert(targetNode, rule);
@@ -182,25 +232,25 @@ public class StyleTreeModel extends DefaultTreeModel {
 
 
         } else if (targetObj instanceof MutableRule && movedObj instanceof MutableRule) {
-            
+
             DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode)targetNode.getParent();
             MutableRule targetRule = (MutableRule) targetObj;
             int targetIndex = indexof((MutableFeatureTypeStyle)targetParentNode.getUserObject(),targetRule);
-            
-            if (parentMovedNode == targetParentNode) {          
+
+            if (parentMovedNode == targetParentNode) {
                 copy = moveAt(movedNode, (MutableRule)movedObj, targetIndex);
             } else if(parentMovedNode.getChildCount() == 1){
-                MutableRule rule = (MutableRule) movedObj;                                
-                MutableFeatureTypeStyle parentfts = (MutableFeatureTypeStyle) targetParentNode.getUserObject();                
+                MutableRule rule = (MutableRule) movedObj;
+                MutableFeatureTypeStyle parentfts = (MutableFeatureTypeStyle) targetParentNode.getUserObject();
                 copy = insertAt(targetParentNode, rule, targetIndex );
             } else{
                 remove(parentMovedNode, (MutableRule) movedObj);
                 copy = insertAt(targetParentNode, (MutableRule) movedObj,targetIndex);
             }
-                        
+
         } else if (targetObj instanceof MutableRule && movedObj instanceof Symbolizer) {
-            
-            if (parentMovedNode == targetNode) {                
+
+            if (parentMovedNode == targetNode) {
             } else if(parentMovedNode.getChildCount() == 1){
                 Symbolizer symbol = (Symbolizer) movedObj;
                 copy = insert(targetNode, symbol);
@@ -208,24 +258,24 @@ public class StyleTreeModel extends DefaultTreeModel {
                 remove(parentMovedNode, (Symbolizer) movedObj);
                 copy = insert(targetNode, (Symbolizer) movedObj);
             }
-            
+
         } else if (targetObj instanceof Symbolizer && movedObj instanceof Symbolizer) {
-            
+
             DefaultMutableTreeNode targetParentNode = (DefaultMutableTreeNode)targetNode.getParent();
             Symbolizer targetSymbol = (Symbolizer) targetObj;
             int targetIndex = indexof((MutableRule)targetParentNode.getUserObject(),targetSymbol);
-            
-            if (parentMovedNode == targetParentNode) {          
+
+            if (parentMovedNode == targetParentNode) {
                 copy = moveAt(movedNode, (Symbolizer)movedObj, targetIndex);
             } else if(parentMovedNode.getChildCount() == 1){
-                Symbolizer symbol = (Symbolizer) movedObj;                                
-                MutableRule parentRule = (MutableRule) targetParentNode.getUserObject();                
+                Symbolizer symbol = (Symbolizer) movedObj;
+                MutableRule parentRule = (MutableRule) targetParentNode.getUserObject();
                 copy = insertAt(targetParentNode, symbol, targetIndex );
             } else{
                 remove(parentMovedNode, (Symbolizer) movedObj);
                 copy = insertAt(targetParentNode, (Symbolizer) movedObj,targetIndex);
             }
-            
+
         }
 
         return copy;
@@ -235,96 +285,112 @@ public class StyleTreeModel extends DefaultTreeModel {
      * @param node
      * @return DefaultMutableTreeNode or null if node could not be duplicate
      */
-    public DefaultMutableTreeNode duplicateNode(DefaultMutableTreeNode node) {
-        Object obj = node.getUserObject();
-        DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode) node.getParent();
-        Object parentobj = parentnode.getUserObject();
-
-        DefaultMutableTreeNode copy = null;
+    public void duplicateNode(DefaultMutableTreeNode node) {
+        final Object obj = node.getUserObject();
+        final DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode) node.getParent();
+        final Object parentobj = parentnode.getUserObject();
 
         if (obj instanceof MutableFeatureTypeStyle) {
-            MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) obj;
-            int index = indexof(style, (MutableFeatureTypeStyle) obj) + 1;
-            copy = insertAt(fts, index);
+            final MutableFeatureTypeStyle fts = StyleUtilities.copy((MutableFeatureTypeStyle) obj);
+            final int index = indexof(style, (MutableFeatureTypeStyle) obj) + 1;
+            getStyle().featureTypeStyles().add(index, fts);
         } else if (obj instanceof MutableRule) {
-            MutableRule rule = (MutableRule) obj;
-            int index = indexof((MutableFeatureTypeStyle) parentobj, (MutableRule) obj) + 1;
-            copy = insertAt(parentnode, rule, index);
+            final MutableRule rule = StyleUtilities.copy((MutableRule) obj);
+            final int index = indexof((MutableFeatureTypeStyle) parentobj, (MutableRule) obj) + 1;
+            ((MutableFeatureTypeStyle) parentobj).rules().add(index, rule);
         } else if (obj instanceof Symbolizer) {
-            Symbolizer symbol = (Symbolizer) obj;
-            int index = indexof((MutableRule) parentobj, (Symbolizer) obj) + 1;
-            copy = insertAt(parentnode, symbol, index);
+            //no need to copy symbolizer, they are immutable
+            final Symbolizer symbol = (Symbolizer) obj;
+            final int index = indexof((MutableRule) parentobj, (Symbolizer) obj) + 1;
+            ((MutableRule) parentobj).symbolizers().add(index, symbol);
         }
 
-        return copy;
     }
-    
+
     /**
      * add a new FeatureTypeStyle
-     * @return created node
      */
-    public DefaultMutableTreeNode newFeatureTypeStyle() {
-        MutableFeatureTypeStyle fts = SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer());
-        return insert(fts);
+    public void newFeatureTypeStyle() {
+        final MutableFeatureTypeStyle fts = SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer());
+        getStyle().featureTypeStyles().add(fts);
     }
     /**
      * add a new rule
-     * @param ftsnode 
-     * @return created node
+     * @param ftsnode
      */
-    public DefaultMutableTreeNode newRule(DefaultMutableTreeNode ftsnode) {
-        MutableRule rule = SF.rule(RandomStyleFactory.createPointSymbolizer());
-        return insert(ftsnode, rule);
+    public void newRule(DefaultMutableTreeNode ftsnode) {
+        final MutableRule rule = SF.rule(RandomStyleFactory.createPointSymbolizer());
+        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) ftsnode.getUserObject();
+        fts.rules().add(rule);
     }
     /**
      * add a new symbolizer
-     * @param rulenode 
-     * @return created node
+     * @param rulenode
      */
-    public DefaultMutableTreeNode newPointSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RandomStyleFactory.createPointSymbolizer();
-        return insert(rulenode, symbol);
+    public void newPointSymbolizer(DefaultMutableTreeNode rulenode) {
+        final Symbolizer symbol = RandomStyleFactory.createPointSymbolizer();
+        final MutableRule rule = (MutableRule) rulenode.getUserObject();
+        rule.symbolizers().add(symbol);
     }
     /**
      * add a new symbolizer
-     * @param rulenode 
-     * @return created node
+     * @param rulenode
      */
-    public DefaultMutableTreeNode newLineSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RandomStyleFactory.createLineSymbolizer();
-        return insert(rulenode, symbol);
+    public void newLineSymbolizer(DefaultMutableTreeNode rulenode) {
+        final Symbolizer symbol = RandomStyleFactory.createLineSymbolizer();
+        final MutableRule rule = (MutableRule) rulenode.getUserObject();
+        rule.symbolizers().add(symbol);
     }
     /**
      * add a new symbolizer
-     * @param rulenode 
-     * @return created node
+     * @param rulenode
      */
-    public DefaultMutableTreeNode newPolygonSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RandomStyleFactory.createPolygonSymbolizer();
-        return insert(rulenode, symbol);
+    public void newPolygonSymbolizer(DefaultMutableTreeNode rulenode) {
+        final Symbolizer symbol = RandomStyleFactory.createPolygonSymbolizer();
+        final MutableRule rule = (MutableRule) rulenode.getUserObject();
+        rule.symbolizers().add(symbol);
     }
     /**
      * add a new symbolizer
-     * @param rulenode 
-     * @return created node
+     * @param rulenode
      */
-    public DefaultMutableTreeNode newRasterSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = RandomStyleFactory.createRasterSymbolizer();
-        return insert(rulenode, symbol);
-    }
-    
-    /**
-     * add a new symbolizer
-     * @param rulenode 
-     * @return created node
-     */
-    public DefaultMutableTreeNode newTextSymbolizer(DefaultMutableTreeNode rulenode) {
-        Symbolizer symbol = SF.textSymbolizer();
-        return insert(rulenode, symbol);
+    public void newRasterSymbolizer(DefaultMutableTreeNode rulenode) {
+        final Symbolizer symbol = RandomStyleFactory.createRasterSymbolizer();
+        final MutableRule rule = (MutableRule) rulenode.getUserObject();
+        rule.symbolizers().add(symbol);
     }
 
-    
+    /**
+     * add a new symbolizer
+     * @param rulenode
+     */
+    public void newTextSymbolizer(DefaultMutableTreeNode rulenode) {
+        final Symbolizer symbol = SF.textSymbolizer();
+        final MutableRule rule = (MutableRule) rulenode.getUserObject();
+        rule.symbolizers().add(symbol);
+    }
+
+
     //-------------------utilities----------------------------------------------
+    private DefaultMutableTreeNode search(Object userObject){
+        return search(getRoot(), userObject);
+    }
+
+    private DefaultMutableTreeNode search(DefaultMutableTreeNode node, Object userObject){
+        if(node.getUserObject() == userObject){
+            //we are searching for the exact same object. more than just equal
+            return node;
+        }
+        for(int i=0,n=node.getChildCount();i<n;i++){
+            final DefaultMutableTreeNode candidate = search((DefaultMutableTreeNode) node.getChildAt(i), userObject);
+            if(candidate != null){
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+
     private int indexof(MutableStyle style, MutableFeatureTypeStyle fts) {
         return style.featureTypeStyles().indexOf(fts);
     }
@@ -337,64 +403,43 @@ public class StyleTreeModel extends DefaultTreeModel {
         return rule.symbolizers().indexOf(symbol);
     }
 
-    private DefaultMutableTreeNode insert(MutableFeatureTypeStyle fts) {
-        style.featureTypeStyles().add(fts);
-        DefaultMutableTreeNode node = parse(fts);
-        insertNodeInto(node, getRoot(), indexof(style, fts));
-        return node;
-    }
-
     private DefaultMutableTreeNode insert(DefaultMutableTreeNode parentNode, MutableRule rule) {
-        DefaultMutableTreeNode rulenode = parse(rule);
-
-        MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
+        final DefaultMutableTreeNode rulenode = parse(rule);
+        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
         fts.rules().add(rule);
-
         insertNodeInto(rulenode, parentNode, indexof(fts, rule));
-
         return rulenode;
     }
 
     private DefaultMutableTreeNode insert(DefaultMutableTreeNode parentNode, Symbolizer symbol) {
-        DefaultMutableTreeNode symbolNode = new DefaultMutableTreeNode(symbol);
-
-        MutableRule rule = (MutableRule) parentNode.getUserObject();
+        final DefaultMutableTreeNode symbolNode = new DefaultMutableTreeNode(symbol);
+        final MutableRule rule = (MutableRule) parentNode.getUserObject();
         rule.symbolizers().add(symbol);
-
         insertNodeInto(symbolNode, parentNode, indexof(rule, symbol));
-
         return symbolNode;
     }
 
-    private DefaultMutableTreeNode insertAt(MutableFeatureTypeStyle fts, int index) {
-        style.featureTypeStyles().add(index, fts);
-        DefaultMutableTreeNode node = parse(fts);
-        insertNodeInto(node, getRoot(), index);
-        return node;
-    }
-
     private DefaultMutableTreeNode insertAt(DefaultMutableTreeNode parentNode, MutableRule rule, int index) {
-        MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
+        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
         fts.rules().add(index, rule);
-        DefaultMutableTreeNode node = parse(rule);
+        final DefaultMutableTreeNode node = parse(rule);
         insertNodeInto(node, parentNode, index);
         return node;
     }
 
     private DefaultMutableTreeNode insertAt(DefaultMutableTreeNode parentNode, Symbolizer symbol, int index) {
-        MutableRule rule = (MutableRule) parentNode.getUserObject();
+        final MutableRule rule = (MutableRule) parentNode.getUserObject();
         rule.symbolizers().add(index, symbol);
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(symbol);
+        final DefaultMutableTreeNode node = new DefaultMutableTreeNode(symbol);
         insertNodeInto(node, parentNode, index);
         return node;
     }
 
     private DefaultMutableTreeNode moveAt(DefaultMutableTreeNode ftsnode, MutableFeatureTypeStyle fts, int target) {
-
-        int origine = indexof(style, fts);
+        final int origine = indexof(style, fts);
 
         if (origine != target) {
-            List<MutableFeatureTypeStyle> ntypes = style.featureTypeStyles();
+            final List<MutableFeatureTypeStyle> ntypes = style.featureTypeStyles();
 
             ntypes.remove(fts);
             removeNodeFromParent(ftsnode);
@@ -404,18 +449,15 @@ public class StyleTreeModel extends DefaultTreeModel {
         }
 
         return ftsnode;
-        
     }
     
     private DefaultMutableTreeNode moveAt(DefaultMutableTreeNode rulenode, MutableRule rule, int target) {
-
-        DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)rulenode.getParent();
-        MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentnode.getUserObject();
-        
-        int origine = indexof(fts,rule);
+        final DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)rulenode.getParent();
+        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentnode.getUserObject();
+        final int origine = indexof(fts,rule);
 
         if (origine != target) {
-            List<MutableRule> nrules = fts.rules();
+            final List<MutableRule> nrules = fts.rules();
 
             nrules.remove(rule);
             removeNodeFromParent(rulenode);
@@ -425,18 +467,15 @@ public class StyleTreeModel extends DefaultTreeModel {
         }
 
         return rulenode;
-        
     }
     
     private DefaultMutableTreeNode moveAt(DefaultMutableTreeNode symbolnode, Symbolizer symbol, int target) {
-
-        DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)symbolnode.getParent();
-        MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)symbolnode.getParent()).getUserObject();
-        
-        int origine = indexof(rule,symbol);
+        final DefaultMutableTreeNode parentnode = (DefaultMutableTreeNode)symbolnode.getParent();
+        final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)symbolnode.getParent()).getUserObject();
+        final int origine = indexof(rule,symbol);
 
         if (origine != target) {
-            List<Symbolizer> nsymbols = rule.symbolizers();
+            final List<Symbolizer> nsymbols = rule.symbolizers();
 
             nsymbols.remove(symbol);
             removeNodeFromParent(symbolnode);
@@ -449,57 +488,62 @@ public class StyleTreeModel extends DefaultTreeModel {
     }
     
     private void remove(final MutableFeatureTypeStyle fts){
-        DefaultMutableTreeNode ftsNode = (DefaultMutableTreeNode) getRoot().getChildAt(indexof(style, fts));
+        final DefaultMutableTreeNode ftsNode = (DefaultMutableTreeNode) getRoot().getChildAt(indexof(style, fts));
         style.featureTypeStyles().remove(fts);
         removeNodeFromParent(ftsNode);        
     }
     
     private void remove(DefaultMutableTreeNode parentNode, MutableRule rule){
-        MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
-        DefaultMutableTreeNode ruleNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(fts, rule));
+        final MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) parentNode.getUserObject();
+        final DefaultMutableTreeNode ruleNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(fts, rule));
         fts.rules().remove(rule);
         removeNodeFromParent(ruleNode);        
     }
     
     private void remove(DefaultMutableTreeNode parentNode, Symbolizer symbol){
-        MutableRule rule = (MutableRule) parentNode.getUserObject();
-        DefaultMutableTreeNode symbolNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(rule, symbol));
+        final MutableRule rule = (MutableRule) parentNode.getUserObject();
+        final DefaultMutableTreeNode symbolNode = (DefaultMutableTreeNode) parentNode.getChildAt(indexof(rule, symbol));
         rule.symbolizers().remove(symbol);
         removeNodeFromParent(symbolNode);        
     }
     
-    private DefaultMutableTreeNode parse(MutableStyle style) {
-        DefaultMutableTreeNode node = new DefaultMutableTreeNode(style);
+    //--------------------override----------------------------------------------
+    @Override
+    public DefaultMutableTreeNode getRoot() {
+        return (DefaultMutableTreeNode) super.getRoot();
+    }
 
+
+    ////////////////////////////////////////////////////////////////////////////
+    // STYLE PARSING ///////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    private static DefaultMutableTreeNode parse(MutableStyle style) {
+        final DefaultMutableTreeNode node = new DefaultMutableTreeNode(style);
         for (MutableFeatureTypeStyle fts : style.featureTypeStyles()) {
             node.add(parse(fts));
         }
         return node;
     }
 
-    private DefaultMutableTreeNode parse(MutableFeatureTypeStyle fts) {
-        DefaultMutableTreeNode ftsnode = new DefaultMutableTreeNode(fts);
-
+    private static DefaultMutableTreeNode parse(MutableFeatureTypeStyle fts) {
+        final DefaultMutableTreeNode ftsnode = new DefaultMutableTreeNode(fts);
         for (MutableRule rule : fts.rules()) {
             ftsnode.add(parse(rule));
         }
         return ftsnode;
     }
 
-    private DefaultMutableTreeNode parse(MutableRule rule) {
-        DefaultMutableTreeNode rulenode = new DefaultMutableTreeNode(rule);
-
+    private static DefaultMutableTreeNode parse(MutableRule rule) {
+        final DefaultMutableTreeNode rulenode = new DefaultMutableTreeNode(rule);
         for (Symbolizer symb : rule.symbolizers()) {
-            DefaultMutableTreeNode symbnode = new DefaultMutableTreeNode(symb);
-            rulenode.add(symbnode);
+            rulenode.add(parse(symb));
         }
         return rulenode;
     }
 
-    //--------------------override----------------------------------------------
-    @Override
-    public DefaultMutableTreeNode getRoot() {
-        return (DefaultMutableTreeNode) super.getRoot();
+    private static DefaultMutableTreeNode parse(Symbolizer symbolizer) {
+        return new DefaultMutableTreeNode(symbolizer);
     }
-    
+
 }

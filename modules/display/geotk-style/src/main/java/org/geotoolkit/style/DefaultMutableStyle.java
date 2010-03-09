@@ -21,9 +21,8 @@ import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
-import javax.swing.tree.TreeNode;
-import org.geotoolkit.gui.swing.tree.Trees;
 
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -85,22 +84,30 @@ public class DefaultMutableStyle implements MutableStyle{
 
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableFeatureTypeStyle)event.getSource(), null, event);
+            final int index = fts.indexOf(event.getSource());
+            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
+                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
         }
 
         @Override
         public void ruleChange(CollectionChangeEvent<MutableRule> event) {
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableFeatureTypeStyle)event.getSource(), null, event);
+            final int index = fts.indexOf(event.getSource());
+            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
+                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
         }
 
         @Override
         public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableFeatureTypeStyle)event.getSource(), null, event);
+            final int index = fts.indexOf(event.getSource());
+            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
+                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
         }
 
         @Override
         public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableFeatureTypeStyle)event.getSource(), null, event);
+            final int index = fts.indexOf(event.getSource());
+            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
+                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
         }
     };
    

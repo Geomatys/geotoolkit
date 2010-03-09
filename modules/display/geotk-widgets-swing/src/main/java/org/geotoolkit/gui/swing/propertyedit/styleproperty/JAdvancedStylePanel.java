@@ -19,6 +19,10 @@ package org.geotoolkit.gui.swing.propertyedit.styleproperty;
 
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
@@ -62,6 +66,8 @@ import org.opengis.style.TextSymbolizer;
  */
 public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implements PropertyPane {
 
+    private final WeakHashMap<Class,StyleElementEditor> guiPanels = new WeakHashMap<Class, StyleElementEditor>();
+
     private MapLayer layer = null;
     private MutableStyle style = null;
     private StyleElementEditor editor = null;
@@ -69,92 +75,61 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
 
         @Override
         public void valueChanged(TreeSelectionEvent e) {
-            TreePath path = tree.getSelectionModel().getSelectionPath();
+            final TreePath path = e.getNewLeadSelectionPath();
 
             //we validate the previous edition pane
             if (editor != null) {
-
                 Object obj = editor.create();
                 if(obj instanceof Symbolizer){
-                    TreePath oldPath = e.getOldLeadSelectionPath();
-                    Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
-                    MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
+                    final TreePath oldPath = e.getOldLeadSelectionPath();
+                    if(oldPath != null && oldPath.getLastPathComponent() != null){
+                        final Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
+                        final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
 
-                    int index =rule.symbolizers().indexOf(symbol);
-                    if(index >=0){
-                        ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).setUserObject(obj);
-                        rule.symbolizers().remove(symbol);
-                        rule.symbolizers().add((Symbolizer) obj);
+                        final int index =rule.symbolizers().indexOf(symbol);
+                        if(index >=0){
+                            rule.symbolizers().remove(symbol);
+                            rule.symbolizers().add(index,(Symbolizer) obj);
+                        }
                     }
 
                 }else{
                     editor.apply();
                 }
-                
+
             }
            
             if (path != null) {
-                Object val = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
-
+                final Object val = ((DefaultMutableTreeNode) path.getLastPathComponent()).getUserObject();
                 pan_info.removeAll();
 
                 if (val instanceof MutableStyle) {
-                    MutableStyle style = (MutableStyle) val;
-                    JStylePane pan = new JStylePane();
-                    pan.parse(style);
-                    editor = pan;
-                    pan_info.add(pan);
+                    editor = getPanel(JStylePane.class);
                 } else if (val instanceof MutableFeatureTypeStyle) {
-                    MutableFeatureTypeStyle fts = (MutableFeatureTypeStyle) val;
-                    JFeatureTypeStylePane pan = new JFeatureTypeStylePane();
-                    pan.parse(fts);
-                    editor = pan;
-                    pan_info.add(pan);
+                    editor = getPanel(JFeatureTypeStylePane.class);
                 } else if (val instanceof MutableRule) {
-                    MutableRule rule = (MutableRule) val;
-                    JRulePane pan = new JRulePane();
-                    pan.parse(rule);
-                    editor = pan;
-                    pan_info.add(pan);
-                } else if (val instanceof Symbolizer) {
-                    Symbolizer symb = (Symbolizer) val;
+                    editor = getPanel(JRulePane.class);
+                } else if (val instanceof RasterSymbolizer) {
+                    editor = getPanel(JRasterSymbolizerPane.class);
+                } else if (val instanceof PolygonSymbolizer) {
+                    editor = getPanel(JPolygonSymbolizerPane.class);
+                } else if (val instanceof LineSymbolizer) {
+                    editor = getPanel(JLineSymbolizerPane.class);
+                } else if (val instanceof PointSymbolizer) {
+                    editor = getPanel(JPointSymbolizerPane.class);
+                } else if (val instanceof TextSymbolizer) {
+                    editor = getPanel(JTextSymbolizerPane.class);
+                } else {
+                    editor = null;
+                }
 
-                    if (symb instanceof RasterSymbolizer) {
-                        JRasterSymbolizerPane p = new JRasterSymbolizerPane();
-                        p.setLayer(layer);
-                        p.parse((RasterSymbolizer) symb);
-                        editor = p;
-                    } else if (symb instanceof PolygonSymbolizer) {
-                        JPolygonSymbolizerPane p = new JPolygonSymbolizerPane();
-                        p.setLayer(layer);
-                        p.parse((PolygonSymbolizer) symb);
-                        editor = p;
-                    } else if (symb instanceof LineSymbolizer) {
-                        JLineSymbolizerPane p = new JLineSymbolizerPane();
-                        p.setLayer(layer);
-                        p.parse((LineSymbolizer) symb);
-                        editor = p;
-                    } else if (symb instanceof PointSymbolizer) {
-                        JPointSymbolizerPane p = new JPointSymbolizerPane();
-                        p.setLayer(layer);
-                        p.parse((PointSymbolizer) symb);
-                        editor = p;
-                    } else if (symb instanceof TextSymbolizer) {
-                        JTextSymbolizerPane p = new JTextSymbolizerPane();
-                        p.setLayer(layer);
-                        p.parse((TextSymbolizer) symb);
-                        editor = p;
-                    } else {
-                        editor = null;
-                    }
-
-                    if(editor != null){
-                        pan_info.add(editor);
-                    }
+                if(editor != null){
+                    editor.parse(val);
+                    pan_info.add(editor);
                 }
 
                 pan_info.revalidate();
-
+                pan_info.repaint();
             }
         }
     };
@@ -162,11 +137,23 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
     /** Creates new form JAdvancedStylePanel */
     public JAdvancedStylePanel() {
         initComponents();
-        init();
-    }
-    
-    private void init(){
         tree.addTreeSelectionListener(listener);
+    }
+
+    private StyleElementEditor getPanel(Class clazz){
+        StyleElementEditor val = guiPanels.get(clazz);
+        if(val == null){
+            try {
+                val = (StyleElementEditor) clazz.newInstance();
+            } catch (InstantiationException ex) {
+                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            guiPanels.put(clazz, val);
+        }
+        val.setLayer(getLayer());
+        return val;
     }
 
     /** This method is called from within the constructor to
@@ -207,18 +194,16 @@ public class JAdvancedStylePanel extends StyleElementEditor<MutableStyle> implem
     public void apply() {
         
         if (editor != null) {
-
-            Object obj = editor.create();
+            final Object obj = editor.create();
             if(obj instanceof Symbolizer){
-                TreePath oldPath = tree.getLeadSelectionPath();
-                Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
-                MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
+                final TreePath oldPath = tree.getSelectionModel().getSelectionPath();
+                final Symbolizer symbol = (Symbolizer) ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).getUserObject();
+                final MutableRule rule = (MutableRule) ((DefaultMutableTreeNode)oldPath.getParentPath().getLastPathComponent()).getUserObject();
 
-                int index =rule.symbolizers().indexOf(symbol);
+                final int index =rule.symbolizers().indexOf(symbol);
                 if(index >=0){
-                    ((DefaultMutableTreeNode)oldPath.getLastPathComponent()).setUserObject(obj);
                     rule.symbolizers().remove(symbol);
-                    rule.symbolizers().add((Symbolizer) obj);
+                    rule.symbolizers().add(index,(Symbolizer) obj);
                 }
 
             }else{

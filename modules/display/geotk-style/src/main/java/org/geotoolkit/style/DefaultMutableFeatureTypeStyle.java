@@ -132,12 +132,16 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
 
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(), null, event);
+            final int index = rules.indexOf(event.getSource());
+            fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(), 
+                    NumberRange.create(index, index), event);
         }
 
         @Override
         public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
-            fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(), null, event);
+            final int index = rules.indexOf(event.getSource());
+            fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(),
+                    NumberRange.create(index, index), event);
         }
     };
         
