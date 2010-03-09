@@ -55,7 +55,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     private final Map<PropertyDescriptor,Object> defaults;
     private final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping;
 
-    private GenericMappingFeatureCollection(FeatureCollection original, FeatureType newType, 
+    public GenericMappingFeatureCollection(FeatureCollection original, FeatureType newType,
             Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
             Map<PropertyDescriptor,Object> defaults){
         this.original = original;

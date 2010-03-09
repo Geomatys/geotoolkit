@@ -83,7 +83,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
 
         for (final PropertyDescriptor sourceDesc : mapping.keySet()) {
-            final Object value = feature.getProperty(sourceDesc.getName());
+            final Object value = feature.getProperty(sourceDesc.getName()).getValue();
 
             final List<PropertyDescriptor> links = mapping.get(sourceDesc);
             if (links == null || links.isEmpty()) {
