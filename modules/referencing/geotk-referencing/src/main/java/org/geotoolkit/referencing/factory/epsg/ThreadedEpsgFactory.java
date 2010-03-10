@@ -314,25 +314,6 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     }
 
     /**
-     * Shutdowns the given database. This is specific to the Derby embedded database.
-     * For all other kind of connection, this method does nothing.
-     */
-    static void shutdown(String databaseUrl) {
-        if (databaseUrl.startsWith("jdbc:derby:")) {
-            final int param = databaseUrl.indexOf(';');
-            if (param >= 0) {
-                databaseUrl = databaseUrl.substring(0, param);
-            }
-            databaseUrl += ";shutdown=true";
-            try {
-                DriverManager.getConnection(databaseUrl).close();
-            } catch (SQLException e) {
-                // This is the expected exception.
-            }
-        }
-    }
-
-    /**
      * Loads the {@linkplain #CONFIGURATION_FILE configuration file}, or returns {@code null} if
      * no configuration file can be found. The search path is documented in {@link #getDataSource}.
      *
@@ -572,6 +553,13 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 factory = new AnsiDialectEpsgFactory(hints, connection);
                 break;
             }
+            case HSQL: {
+                if (toANSI != null) {
+                    return new HsqlDialectEpsgFactory(hints, connection, toANSI);
+                }
+                factory = new HsqlDialectEpsgFactory(hints, connection);
+                break;
+            }
         }
         if (schema != null) {
             factory.setSchema(schema, metadata.getIdentifierQuoteString(), true);
@@ -695,7 +683,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     protected synchronized void dispose(final boolean shutdown) {
         super.dispose(shutdown); // Close the connections first.
         if (shutdown && (datasource instanceof DefaultDataSource)) {
-            shutdown(((DefaultDataSource) datasource).url);
+            ((DefaultDataSource) datasource).shutdown();
         }
         schema = user = password = null;
         datasource = null;

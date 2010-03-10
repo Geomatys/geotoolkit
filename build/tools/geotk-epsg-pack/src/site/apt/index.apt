@@ -30,9 +30,10 @@ cp $EPSG_SCRIPTS/EPSG.mdb_Tables_MySQL.sql Tables.sql
 cp $EPSG_SCRIPTS/EPSG.mdb_FKeys_MySQL.sql  FKeys.sql
 -----------------------------------------------------
 
-  [[5]] Open the <<<Tables.sql>>> file for edition. In the statement creating <<<epsg_datum>>> table,
-        change the type of <<<realization_epoch>>> column to <<<SMALLINT>>>. Suppress trailing spaces
-        and save.
+  [[5]] Open the <<<Tables.sql>>> file for edition. In the statement creating the <<<epsg_datum>>> table,
+        change the type of the <<<realization_epoch>>> column to <<<SMALLINT>>>. In the statement creating
+        the <<<change>>> table, remove the <<<UNIQUE>>> constraint on the <<<change_id>>> column and add a
+        <<<CONSTRAINT pk_change PRIMARY KEY (change_id)>>> line instead. Suppress trailing spaces and save.
 
   [[6]] Open the <<<FKeys.sql>>> file for edition, suppress trailing spaces and save. In most cases
         this result in unmodified <<<Tables.sql>>> and <<<FKeys.sql>>> files compared to the previous

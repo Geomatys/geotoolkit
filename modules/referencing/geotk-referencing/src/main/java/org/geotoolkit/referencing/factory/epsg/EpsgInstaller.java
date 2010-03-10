@@ -2,6 +2,7 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
+ *    (C) 2009-2010, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -37,6 +38,8 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
+import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.internal.sql.HSQL;
 
 
 /**
@@ -212,6 +215,10 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @since 3.05
      */
     private String getSchema(final DatabaseMetaData md) throws SQLException {
+        // Note: the same condition is coded in EpsgScriptRunner constructor.
+        if (!md.supportsSchemasInTableDefinitions() || !md.supportsSchemasInDataManipulation()) {
+            return null;
+        }
         String sc = schema;
         if (sc == null) {
             sc = "";
@@ -248,6 +255,20 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     }
 
     /**
+     * Closes the given connection and shutdowns the given database.
+     * The shutdown process is specific to the Derby and HSQL databases.
+     *
+     * @see org.geotoolkit.internal.sql.DefaultDataSource#shutdown()
+     */
+    private static void shutdown(final Connection connection, final String databaseUrl) throws SQLException {
+        if (databaseUrl.startsWith(HSQL.PROTOCOL)) {
+            HSQL.shutdown(connection);
+        }
+        connection.close();
+        DefaultDataSource.shutdown(databaseUrl);
+    }
+
+    /**
      * Verifies if the database exists. This method does not verify if the database content
      * is consistent. It merely tests if the database contains at least one table in the
      * EPSG schema.
@@ -269,8 +290,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                 r.close();
                 return exists;
             } finally {
-                connection.close();
-                ThreadedEpsgFactory.shutdown(databaseUrl);
+                shutdown(connection, databaseUrl);
             }
         } catch (IOException e) {
             failure = e;
@@ -311,8 +331,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                 runner = new EpsgScriptRunner(connection);
                 return call(runner);
             } finally {
-                connection.close();
-                ThreadedEpsgFactory.shutdown(databaseUrl);
+                shutdown(connection, databaseUrl);
             }
         } catch (SQLException e) {
             failure = e;
@@ -348,7 +367,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             numRows += runner.run(scriptsDirectory);
         } else {
             /*
-             * Use the scripts embedded in the JAR file. We log this operarion only (not
+             * Use the scripts embedded in the JAR file. We log this operation only (not
              * the other case where scripts are read from a directory) because this case
              * occurs typically implicitly, the first time a CRS has been requested. This
              * is the opposite of the other case which occurs as a result of explicit call.
@@ -359,7 +378,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             log.setSourceClassName(EpsgInstaller.class.getName());
             log.setLoggerName(ThreadedEpsgFactory.LOGGER.getName());
             ThreadedEpsgFactory.LOGGER.log(log);
-            runner.maxRowsPerInsert = 100;
+            runner.setMaxRowsPerInsert(100);
             for (String script : EpsgScriptRunner.SCRIPTS) {
                 script += ".sql";
                 final InputStream in = EpsgScriptRunner.class.getResourceAsStream(script);

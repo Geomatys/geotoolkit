@@ -38,7 +38,7 @@ import org.geotoolkit.util.converter.Classes;
  * A data source which get the connection from a {@link DriverManager}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.10
  *
  * @since 3.00
  * @module
@@ -173,7 +173,25 @@ public class DefaultDataSource implements DataSource {
      * @since 3.03
      */
     public void shutdown() {
-        String url = this.url;
+        if (url.startsWith(HSQL.PROTOCOL)) try {
+            final Connection c = getConnection();
+            HSQL.shutdown(c);
+            c.close();
+        } catch (SQLException e) {
+            Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
+        }
+        shutdown(url);
+    }
+
+    /**
+     * Shutdown the database represented by the given URL. The current implementation
+     * shutdown Derby database, and does nothing for all other kind of connection.
+     *
+     * @param url The URL of the database to shutdown.
+     *
+     * @since 3.10
+     */
+    public static void shutdown(String url) {
         if (url.startsWith("jdbc:derby:")) {
             final int p = url.indexOf(';');
             if (p >= 0) {
@@ -182,7 +200,7 @@ public class DefaultDataSource implements DataSource {
             }
             url += ";shutdown=true";
             try {
-                DriverManager.getConnection(url);
+                DriverManager.getConnection(url).close();
             } catch (SQLException e) {
                 // This is the expected exception.
             }

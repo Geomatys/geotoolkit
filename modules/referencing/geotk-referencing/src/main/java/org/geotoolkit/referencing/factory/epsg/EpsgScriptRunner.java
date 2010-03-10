@@ -77,7 +77,7 @@ final class EpsgScriptRunner extends ScriptRunner {
      * that the user know what he is doing. This is used because attempts to insert too many
      * rows with a single statement on Derby database cause a {@link StackTraceOverflow}.
      */
-    int maxRowsPerInsert;
+    private int maxRowsPerInsert;
 
     /**
      * {@code true} if the Pilcrow character (¶ - decimal code 182) should be replaced by
@@ -161,6 +161,18 @@ final class EpsgScriptRunner extends ScriptRunner {
                 break;
             }
             /*
+             * HSQLDB doesn't seem to support the {@code UNIQUE} keyword in {@code CREATE TABLE}
+             * statements. In addition, we must declare explicitly that we want the tables to be
+             * cached on disk.
+             */
+            case HSQL: {
+                replacements.put("CREATE TABLE", "CREATE CACHED TABLE");
+                replacements.put("UNIQUE", "");
+                supportsCommit = true;
+                maxRowsPerInsert = 1;
+                break;
+            }
+            /*
              * JavaDB requires that every columns with the "UNIQUE" constraint are explicitly
              * declared as "NOT NULL". Most columns are declared that way in the EPSG scripts
              * except the "coord_axis_code" column in the "epsg_coordinateaxis" table  (as of
@@ -180,6 +192,7 @@ final class EpsgScriptRunner extends ScriptRunner {
                 break;
             }
         }
+        // Note: the same condition is also coded in EpsgInstaller.getSchema(...).
         supportsSchemas = metadata.supportsSchemasInTableDefinitions() &&
                           metadata.supportsSchemasInDataManipulation();
     }
@@ -241,6 +254,17 @@ final class EpsgScriptRunner extends ScriptRunner {
             if (replacements.put(ansi, replacement) != null) {
                 throw new AssertionError(ansi);
             }
+        }
+    }
+
+    /**
+     * Set the maximum number of rows per {@code INSERT} statement, provided that it was
+     * not already set. This method can be invoked only once. It does nothing if the value
+     * has already been set (for example by the constructor).
+     */
+    final void setMaxRowsPerInsert(final int max) {
+        if (maxRowsPerInsert == 0) {
+            maxRowsPerInsert = max;
         }
     }
 

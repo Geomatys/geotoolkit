@@ -26,7 +26,7 @@ import java.util.Locale;
  * The SQL dialect used by a connection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.10
  *
  * @since 3.00
  * @module
@@ -43,6 +43,15 @@ public enum Dialect {
      * specified as {@code NOT NULL}).
      */
     DERBY,
+
+    /**
+     * The database uses HSQL syntax. This is ANSI, but does not allow {@code INSERT}
+     * statements inserting many lines. It also have a {@code SHUTDOWN} command which
+     * is specific to HSQLDB.
+     *
+     * @since 3.10
+     */
+    HSQL,
 
     /**
      * The database uses PostgreSQL syntax. This is ANSI, but provided an a separated
@@ -75,6 +84,9 @@ public enum Dialect {
             }
             if (product.contains("DERBY")) {
                 return DERBY;
+            }
+            if (product.contains("HSQL")) {
+                return HSQL;
             }
         }
         return ANSI;

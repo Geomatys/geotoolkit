@@ -28,7 +28,7 @@ deprecated                                         SMALLINT NOT NULL,
 CONSTRAINT pk_area PRIMARY KEY ( area_code ) );
 
 CREATE TABLE epsg_change (
-change_id                                          DOUBLE PRECISION NOT NULL UNIQUE,
+change_id                                          DOUBLE PRECISION NOT NULL,
 report_date                                        DATE NOT NULL,
 date_closed                                        DATE,
 reporter                                           VARCHAR(254) NOT NULL,
@@ -36,7 +36,8 @@ request                                            VARCHAR(254) NOT NULL,
 tables_affected                                    VARCHAR(254),
 codes_affected                                     VARCHAR(254),
 change_comment                                     VARCHAR(254),
-action                                             TEXT );
+action                                             TEXT,
+CONSTRAINT pk_change PRIMARY KEY ( change_id ) );
 
 CREATE TABLE epsg_coordinateaxis (
 coord_axis_code                                    INTEGER UNIQUE,

@@ -17,12 +17,19 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.GeographicCRS;
+
+import org.geotoolkit.test.TestData;
+import org.geotoolkit.internal.sql.HSQL;
+import org.geotoolkit.internal.io.Installation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -33,19 +40,32 @@ import static org.junit.Assert.*;
  * that the operation success without any exception being thrown.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.10
  *
  * @since 3.05
  */
 public final class EpsgInstallerTest {
     /**
-     * Tests the creation of an EPSG database.
+     * Returns {@code true} if expensive tests shall be run.
+     *
+     * @throws IOException If an error occured while reading the {@code tests.properties} file.
+     */
+    private static boolean runExpensiveTests() throws IOException {
+        final File file = new File(Installation.TESTS.directory(true), "tests.properties");
+        if (!file.exists()) {
+            return false;
+        }
+        return Boolean.valueOf(TestData.readProperties(file).getProperty("extensive", "false"));
+    }
+
+    /**
+     * Tests the creation of an EPSG database on Derby.
      *
      * @throws FactoryException Should never happen.
      * @throws SQLException Should never happen.
      */
     @Test
-    public void testCreation() throws FactoryException, SQLException {
+    public void testCreationOnDerby() throws FactoryException, SQLException {
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase("jdbc:derby:memory:EPSG;create=true");
         try {
@@ -71,6 +91,65 @@ public final class EpsgInstallerTest {
             } catch (SQLException e) {
                 // This is the expected exception.
                 assertEquals("08006", e.getSQLState());
+            }
+        }
+    }
+
+    /**
+     * Tests the creation of an EPSG database on HSQL. The test is available in two modes:
+     * the database can be created in memory only, or it can be created on disk. We perform
+     * the test on disk only occasionally.
+     *
+     * @throws FactoryException Should never happen.
+     * @throws SQLException If an error occured while accessing the database.
+     * @throws IOException If an error occured while reading or writing to disk.
+     *
+     * @since 3.10
+     */
+    @Test
+    public void testCreationOnHSQL() throws FactoryException, SQLException, IOException {
+        try {
+            // Need explicit registration as of HSQL 1.8.0.7.
+            Class.forName("org.hsqldb.jdbcDriver");
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e);
+        }
+        final EpsgInstaller installer = new EpsgInstaller();
+        if (!runExpensiveTests()) {
+            installer.setDatabase("jdbc:hsqldb:mem:EPSG");
+            final EpsgInstaller.Result result = installer.call();
+            assertTrue(result.numRows > 0);
+        } else {
+            final File directory = new File(Installation.TESTS.validDirectory(true), "CRS");
+            try {
+                final File dbpath = new File(directory, "EPSG");
+                final String databaseURL = HSQL.createURL(dbpath);
+                installer.setDatabase(databaseURL);
+                assertFalse("Database exists?", installer.exists());
+                final EpsgInstaller.Result result = installer.call();
+                assertTrue(result.numRows > 0);
+                HSQL.setReadOnly(dbpath);
+                /*
+                 * Following test is costly because it reloads the database, and shutdowns it
+                 * immediately. For the purpose of a test suite executed only occasionally,
+                 * we ignore that issue for now.
+                 */
+                assertTrue("Database exists?", installer.exists());
+                /*
+                 * At this point the EPSG database has been fully created. Now tests the creation
+                 * of a few CRS objects from it. Note that at the opposite of the test performed
+                 * for the Derby database, we don't invoke 'useOriginalTableNames()' because the
+                 * database that we just created has no schema.
+                 */
+                final Connection connection = DriverManager.getConnection(databaseURL);
+                final HsqlDialectEpsgFactory factory = new HsqlDialectEpsgFactory(null, connection);
+                assertTrue(factory.createCoordinateReferenceSystem("4326") instanceof GeographicCRS);
+                assertTrue(factory.createCoordinateReferenceSystem("7402") instanceof CompoundCRS);
+                HSQL.shutdown(connection);
+                factory.dispose(false);
+                connection.close();
+            } finally {
+                TestData.deleteRecursively(directory);
             }
         }
     }

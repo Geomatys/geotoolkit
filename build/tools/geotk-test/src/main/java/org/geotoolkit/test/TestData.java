@@ -25,6 +25,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -61,7 +62,7 @@ import java.util.zip.ZipFile;
  * @author James McGill (Leeds)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.07
+ * @version 3.10
  *
  * @since 2.4
  */
@@ -266,7 +267,7 @@ public class TestData implements Runnable {
      * Reads the given file as a text file, assuming a UTF-8 encoding.
      * The returned text uses always the Unix style of EOL.
      *
-     * @param  file of test data to load.
+     * @param  file The file of test data to load.
      * @return The loaded test data as a text.
      * @throws IOException if an error occurs during an input operation.
      *
@@ -280,7 +281,7 @@ public class TestData implements Runnable {
      * Reads the given file as a text file, assuming a ISO-LATIN-1 encoding.
      * The returned text uses always the Unix style of EOL.
      *
-     * @param  file of test data to load.
+     * @param  file The file of test data to load.
      * @return The loaded test data as a text.
      * @throws IOException if an error occurs during an input operation.
      *
@@ -310,6 +311,23 @@ public class TestData implements Runnable {
         }
         in.close();
         return buffer.toString();
+    }
+
+    /**
+     * Reads the given file as a properties file.
+     *
+     * @param  file The file of test properties to load.
+     * @return The loaded test data as a properties file.
+     * @throws IOException if an error occurs during an input operation.
+     *
+     * @since 3.10
+     */
+    public static Properties readProperties(final File file) throws IOException {
+        final InputStream in = new FileInputStream(file);
+        final Properties properties = new Properties();
+        properties.load(in);
+        in.close();
+        return properties;
     }
 
     /**

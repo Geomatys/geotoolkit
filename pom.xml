@@ -222,6 +222,11 @@
         <scope>provided</scope> <!-- Already included in JDK as JavaDB -->
       </dependency>
       <dependency>
+        <groupId>hsqldb</groupId>
+        <artifactId>hsqldb</artifactId>
+        <version>1.8.0.7</version>
+      </dependency>
+      <dependency>
         <groupId>postgresql</groupId>
         <artifactId>postgresql</artifactId>
         <version>8.4-701.jdbc4</version>
