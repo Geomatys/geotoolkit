@@ -18,10 +18,18 @@
 package org.geotoolkit.gui.swing.navigator;
 
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.JComponent;
@@ -33,7 +41,7 @@ import javax.swing.SwingConstants;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JNavigator<T extends Comparable> extends JPanel {
+public class JNavigator<T extends Comparable> extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 
     private final NavigatorModel<T> model;
     private NavigatorRenderer<T> renderer;
@@ -77,6 +85,16 @@ public class JNavigator<T extends Comparable> extends JPanel {
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
         add(BorderLayout.SOUTH,graduation);
+
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        addMouseWheelListener(this);
+        addKeyListener(this);
+        graduation.addMouseListener(this);
+        graduation.addMouseMotionListener(this);
+        graduation.addMouseWheelListener(this);
+        graduation.addKeyListener(this);
+
     }
 
     public NavigatorModel<T> getModel() {
@@ -112,6 +130,101 @@ public class JNavigator<T extends Comparable> extends JPanel {
         if(renderer != null){
             renderer.render(model, g, new Rectangle(getWidth(), getHeight()));
         }
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // navigation events ///////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    private int lastMouseX = 0;
+    private int lastMouseY = 0;
+    private int newMouseX = 0;
+    private int newMouseY = 0;
+    private boolean flagMove = false;
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        flagMove = (e.getButton() == MouseEvent.BUTTON1);
+
+        newMouseX = e.getX();
+        newMouseY = e.getY();
+
+        lastMouseX = newMouseX;
+        lastMouseY = newMouseY;
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        flagMove = false;
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        requestFocus();
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+        if(!flagMove) return;
+
+        newMouseX = e.getX();
+        newMouseY = e.getY();
+
+        double diff = getModel().getScale() * (lastMouseX-newMouseX);
+        getModel().setTranslation(getModel().getTranslation() + diff);
+        
+        lastMouseX = newMouseX;
+        lastMouseY = newMouseY;
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        setToolTipText(null);
+    }
+
+    @Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        System.out.println("hereeee");
+        if (e.getWheelRotation() > 0) {
+            getModel().setScale(getModel().getScale() * 1.1f);
+        } else {
+            getModel().setScale(getModel().getScale() * 0.9f);
+        }
+        System.out.println("scale :" + getModel().getScale());
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            getModel().setTranslation(getModel().getTranslation() + getModel().getScale()/20d);
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            getModel().setTranslation(getModel().getTranslation() - getModel().getScale()/20d);
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            getModel().setScale(getModel().getScale() * 0.9f);
+        } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            getModel().setScale(getModel().getScale() * 1.1f);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 
 }

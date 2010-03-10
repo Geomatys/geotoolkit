@@ -33,7 +33,7 @@ public abstract class AbstractNavigatorModel<T extends Comparable> implements Na
      */
     protected final PropertyChangeSupport propertyListeners;
 
-    private int orientation = SwingConstants.HORIZONTAL;
+    private int orientation = SwingConstants.SOUTH;
     private double scale = 1;
     private double translate = 0;
 

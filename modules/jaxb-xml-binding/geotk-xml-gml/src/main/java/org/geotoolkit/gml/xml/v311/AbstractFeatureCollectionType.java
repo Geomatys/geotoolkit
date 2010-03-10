@@ -60,6 +60,15 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
     private List<FeaturePropertyType> featureMember;
     private FeatureArrayPropertyType featureMembers;
 
+    public AbstractFeatureCollectionType() {
+
+    }
+
+    public AbstractFeatureCollectionType(String id, String name, String description, List<FeaturePropertyType> featureMember) {
+        super(id, name, description);
+        this.featureMember = featureMember;
+    }
+
     /**
      * Gets the value of the featureMember property.
      */

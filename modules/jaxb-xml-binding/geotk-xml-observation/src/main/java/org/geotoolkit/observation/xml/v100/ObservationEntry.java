@@ -28,8 +28,18 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-// Constellation dependencies 
+// openGis dependencies
+import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.opengis.observation.Process;
+import org.opengis.metadata.quality.Element;
+import org.opengis.metadata.Metadata;
+import org.opengis.observation.Observation;
+import org.opengis.observation.Phenomenon;
+import org.opengis.observation.sampling.SamplingFeature;
+
+// GeotoolKit dependencies
 import org.geotoolkit.gml.xml.v311.AbstractTimeGeometricPrimitiveType;
+import org.geotoolkit.gml.xml.v311.FeatureCollectionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.ReferenceEntry;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
@@ -42,22 +52,13 @@ import org.geotoolkit.swe.xml.v101.DataArrayPropertyType;
 import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
-
-// openGis dependencies
-import org.opengis.observation.Process;
-import org.opengis.metadata.quality.Element;
-import org.opengis.metadata.Metadata;
-
-// GeotoolKit dependencies
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.sampling.xml.v100.SamplingCurveType;
 import org.geotoolkit.sampling.xml.v100.SamplingSolidType;
 import org.geotoolkit.sampling.xml.v100.SamplingSurfaceType;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.observation.Observation;
-import org.opengis.observation.Phenomenon;
-import org.opengis.observation.sampling.SamplingFeature;
+
 
 /**
  * Implémentation d'une entrée représentant une {@linkplain Observation observation}.
@@ -89,6 +90,9 @@ public class ObservationEntry implements Observation {
 
     @XmlTransient
     protected org.geotoolkit.sampling.xml.v100.ObjectFactory factory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
+
+    @XmlTransient
+    protected org.geotoolkit.gml.xml.v311.ObjectFactory gmlfactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
 
     @XmlTransient
     protected ObjectFactory omfactory = new ObjectFactory();
@@ -242,20 +246,18 @@ public class ObservationEntry implements Observation {
     }
     
     /**
-     * Construit une observation reduite adapté a BRGM.
+     * Build a new observation.
      * 
      * 
-     * @param featureOfInterest La station d'observation (par exemple une position de pêche).
-     * @param observedProperty  Le phénomène observé.
-     * @param procedure         La procédure associée.
-     * @param resultQuality    La qualité de la donnée, ou {@code null} si inconnue.
+     * @param featureOfInterest The observation station.
+     * @param observedProperty  The observed phenomenon.
+     * @param procedure         The associated procedure.
      */
     public ObservationEntry(final String                name,
                             final String                definition,
                             final SamplingFeatureEntry  featureOfInterest, 
                             final PhenomenonEntry       observedProperty,
                             final ProcessEntry          procedure,
-                         // final ElementEntry          resultQuality,
                             final Object                result,
                             final AbstractTimeGeometricPrimitiveType   samplingTime)
     {
@@ -272,7 +274,36 @@ public class ObservationEntry implements Observation {
         }
         this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         this.procedure           = procedure;
-        this.resultQuality       = null;       //= resultQuality;
+        this.resultQuality       = null;      
+        this.result              = omfactory.createResult(result);
+        this.observationMetadata = null;
+        this.procedureTime       = null;
+        this.procedureParameter  = null;
+        this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
+    }
+
+    /**
+     * Build a new observation.
+     *
+     *
+     * @param featureOfInterest The observation station.
+     * @param observedProperty  The observed phenomenon.
+     * @param procedure         The associated procedure.
+     */
+    public ObservationEntry(final String                name,
+                            final String                definition,
+                            final FeaturePropertyType   featureOfInterest,
+                            final PhenomenonEntry       observedProperty,
+                            final ProcessEntry          procedure,
+                            final Object                result,
+                            final AbstractTimeGeometricPrimitiveType   samplingTime)
+    {
+        this.name                = name;
+        this.definition          = definition;
+        this.featureOfInterest   = featureOfInterest;
+        this.observedProperty    = new PhenomenonPropertyType(observedProperty);
+        this.procedure           = procedure;
+        this.resultQuality       = null;
         this.result              = omfactory.createResult(result);
         this.observationMetadata = null;
         this.procedureTime       = null;
@@ -293,10 +324,6 @@ public class ObservationEntry implements Observation {
         if (this.observedProperty != null) {
             pheno = this.observedProperty.getPhenomenon();
         }
-        SamplingFeatureEntry foi = null;
-        if (this.featureOfInterest != null) {
-            foi = (SamplingFeatureEntry) this.featureOfInterest.getAbstractFeature();
-        }
         //debugging purpose
         Object res = null;
 
@@ -310,7 +337,7 @@ public class ObservationEntry implements Observation {
         }
         return new ObservationEntry(temporaryName,
                                     this.definition,
-                                    foi, 
+                                    this.featureOfInterest,
                                     pheno,
                                     this.procedure,
                                     res,
@@ -333,15 +360,40 @@ public class ObservationEntry implements Observation {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public SamplingFeature getFeatureOfInterest() {
         if (featureOfInterest != null) {
-            return (SamplingFeature)featureOfInterest.getAbstractFeature();
+            if (featureOfInterest.getAbstractFeature() instanceof SamplingFeature) {
+                return (SamplingFeature)featureOfInterest.getAbstractFeature();
+            } else {
+                LOGGER.warning("information lost getFeatureOfInterest() is deprecated use getPropertyFeatureOfInterest() instead");
+            }
         }
         return null;
+    }
+
+    public void setFeatureOfInterest(AbstractFeatureEntry featureOfInterest) {
+        if (featureOfInterest != null) {
+            if (featureOfInterest instanceof SamplingPointEntry) {
+                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingPoint((SamplingPointEntry) featureOfInterest));
+            } else if (featureOfInterest instanceof SamplingCurveType) {
+                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingCurve((SamplingCurveType) featureOfInterest));
+            } else if (featureOfInterest instanceof SamplingSolidType) {
+                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingSolid((SamplingSolidType) featureOfInterest));
+            } else if (featureOfInterest instanceof SamplingSurfaceType) {
+                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType) featureOfInterest));
+            } else if (featureOfInterest instanceof FeatureCollectionType) {
+                this.featureOfInterest = new FeaturePropertyType(gmlfactory.createFeatureCollection((FeatureCollectionType) featureOfInterest));
+            }
+        }
     }
     
     public FeaturePropertyType getPropertyFeatureOfInterest(){
         return featureOfInterest;
+    }
+
+    public void setPropertyFeatureOfInterest(FeaturePropertyType featureOfInterest){
+        this.featureOfInterest = featureOfInterest;
     }
 
     /**

@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -109,9 +108,7 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
             final SamplingPointEntry that = (SamplingPointEntry) object;
         
             return  Utilities.equals(this.position, that.position);
-        } else {
-            System.out.println("samplingFeature.equals=false");
-        }
+        } 
         return false;
     }
 

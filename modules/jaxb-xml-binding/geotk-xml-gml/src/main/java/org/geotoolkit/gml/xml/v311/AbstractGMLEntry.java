@@ -112,6 +112,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable {
     /**
      * Sets the value of the description property.    
      */
+    @Override
     public void setDescription(String value) {
         this.description = value;
     }

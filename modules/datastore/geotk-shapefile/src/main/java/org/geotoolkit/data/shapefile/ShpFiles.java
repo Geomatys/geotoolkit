@@ -104,6 +104,7 @@ public class ShpFiles {
         } catch (MalformedURLException e) {
             init(new File(fileName).toURI().toURL());
         }
+        
     }
 
     /**

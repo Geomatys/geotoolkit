@@ -25,17 +25,18 @@ package org.geotoolkit.gui.swing.navigator;
 public class DoubleNavigatorModel extends AbstractNavigatorModel<Double>{
 
     @Override
-    public Double getValueAt(double d) {
+    public Double getValueAt(double candidate) {
         final double scale = getScale();
         final double translate = getTranslation();
-        return scale*d + translate;
+        return ( candidate - translate ) / scale;
     }
 
     @Override
     public double getPosition(Double candidate) {
         final double scale = getScale();
         final double translate = getTranslation();
-        return ( candidate - translate ) / scale;
+        return scale*candidate + translate;
+        
     }
 
 }

@@ -104,6 +104,10 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
         return elementType;
     }
 
+    public void setPropertyElementType(DataComponentPropertyType elementType){
+        this.elementType = elementType;
+    }
+
     /**
      * Gets the value of the encoding property.
      */
