@@ -668,7 +668,13 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         sql.append("SELECT * FROM (");
         prepareSelect(leftSource, sql, att, pkeys, hints);
-        sql.append(") as l INNER JOIN (");
+        sql.append(") as l ");
+        switch(source.getJoinType()){
+            case INNER :        sql.append("INNER");break;
+            case LEFT_OUTER :   sql.append("LEFT");break;
+            case RIGHT_OUTER :  sql.append("RIGHT");break;
+        }
+        sql.append(" JOIN (");
         prepareSelect(rightSource, sql, att, pkeys, hints);
         sql.append(") as r ON l.");
         dialect.encodeColumnName(DefaultName.valueOf(leftProp.getPropertyName()).getLocalPart(), sql);
