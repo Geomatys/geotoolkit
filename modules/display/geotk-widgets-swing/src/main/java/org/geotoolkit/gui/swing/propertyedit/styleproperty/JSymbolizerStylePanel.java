@@ -46,7 +46,7 @@ import org.opengis.style.TextSymbolizer;
 /**
  * Simple style panel
  * 
- * @author  Johann Sorel
+ * @author Johann Sorel
  * @module pending
  */
 public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
@@ -83,6 +83,9 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
 
         if (layer instanceof MapLayer) {
             this.layer = (MapLayer) layer;
+            if(detail != null){
+                detail.setLayer(this.layer);
+            }
         }
     }
 
@@ -96,44 +99,32 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
     }
 
     public void setSymbolizer(Symbolizer symbol){
+        removeAll();
 
         if (symbol instanceof PolygonSymbolizer) {
             detail = new JPolygonSymbolizerPane();
-            detail.setLayer(layer);
             ((StyleElementEditor<PolygonSymbolizer>)detail).parse((PolygonSymbolizer) symbol);
-
-            JScrollPane jsp = new JScrollPane(detail);
-            add(BorderLayout.CENTER, jsp );
         } else if (symbol instanceof LineSymbolizer) {
             detail = new JLineSymbolizerPane();
-            detail.setLayer(layer);
             ((StyleElementEditor<LineSymbolizer>)detail).parse((LineSymbolizer) symbol);
-
-            JScrollPane jsp = new JScrollPane(detail);
-            add(BorderLayout.CENTER, jsp );
         } else if (symbol instanceof PointSymbolizer) {
             detail = new JPointSymbolizerPane();
-            detail.setLayer(layer);
             ((StyleElementEditor<PointSymbolizer>)detail).parse((PointSymbolizer) symbol);
-
-            JScrollPane jsp = new JScrollPane(detail);
-            add(BorderLayout.CENTER, jsp );
         } else if (symbol instanceof RasterSymbolizer) {
             detail = new JRasterSymbolizerPane();
-            detail.setLayer(layer);
             ((StyleElementEditor<RasterSymbolizer>)detail).parse((RasterSymbolizer) symbol);
-
-            JScrollPane jsp = new JScrollPane(detail);
-            add(BorderLayout.CENTER, jsp );
         } else if (symbol instanceof TextSymbolizer) {
             detail = new JTextSymbolizerPane();
-            detail.setLayer(layer);
-            ((StyleElementEditor<TextSymbolizer>)detail).parse((TextSymbolizer) symbol);
-
-            JScrollPane jsp = new JScrollPane(detail);
-            add(BorderLayout.CENTER, jsp );
+            ((StyleElementEditor<TextSymbolizer>)detail).parse((TextSymbolizer) symbol);            
         } else {
             detail = null;
+        }
+
+        if(detail != null){
+            detail.setLayer(layer);
+            final JScrollPane jsp = new JScrollPane(detail);
+            add(BorderLayout.CENTER, jsp );
+        }else{
             add(BorderLayout.CENTER,new JLabel("<b>" + MessageBundle.getString("property_style_unknown_simplestyle") + "</b>"));
         }
 

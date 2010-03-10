@@ -18,15 +18,23 @@
 package org.geotoolkit.gui.swing.propertyedit;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.event.ChangeEvent;
@@ -34,7 +42,13 @@ import javax.swing.event.ChangeListener;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSymbolizerStylePanel;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.util.RandomStyleFactory;
+import org.opengis.style.LineSymbolizer;
+import org.opengis.style.PointSymbolizer;
+import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Symbolizer;
+import org.opengis.style.TextSymbolizer;
 
 
 /**
@@ -148,20 +162,73 @@ public class JPropertyDialog extends JDialog{
 
 
     public static Symbolizer showSymbolizerDialog(Symbolizer symbol, Object target){
+        return showSymbolizerDialog(symbol, false, target);
+    }
 
-        JSymbolizerStylePanel pane = new JSymbolizerStylePanel();
+    public static Symbolizer showSymbolizerDialog(Symbolizer symbol, boolean allowTypeChange, Object target){
+
+        final JPanel container = new JPanel(new BorderLayout());
+        final JSymbolizerStylePanel pane = new JSymbolizerStylePanel();
         pane.setTarget(target);
         pane.setSymbolizer(symbol);
+        container.add(BorderLayout.CENTER,pane);
 
-        JPropertyDialog dia = new JPropertyDialog(true,false,false,true);
+        if(allowTypeChange){
+            final JComboBox box = new JComboBox(
+                    new Object[]{
+                        PointSymbolizer.class,
+                        LineSymbolizer.class,
+                        PolygonSymbolizer.class
+                    });
 
-        dia.addEditPanel(pane);
+            if(symbol instanceof PointSymbolizer){
+                box.setSelectedItem(PointSymbolizer.class);
+            }else if(symbol instanceof LineSymbolizer){
+                box.setSelectedItem(LineSymbolizer.class);
+            }else if(symbol instanceof PolygonSymbolizer){
+                box.setSelectedItem(PolygonSymbolizer.class);
+            }
 
+            box.setRenderer(new DefaultListCellRenderer(){
+                @Override
+                public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
+                    final JLabel lbl = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
+                    if(o == PointSymbolizer.class){
+                        lbl.setText(MessageBundle.getString("symbol_point"));
+                    }else if(o == LineSymbolizer.class){
+                        lbl.setText(MessageBundle.getString("symbol_line"));
+                    }else if(o == PolygonSymbolizer.class){
+                        lbl.setText(MessageBundle.getString("symbol_polygon"));
+                    }
+                    return lbl;
+                }
+            });
+
+            box.addItemListener(new ItemListener() {
+                @Override
+                public void itemStateChanged(ItemEvent ie) {
+                    Object o = box.getSelectedItem();
+                    if(o == PointSymbolizer.class){
+                        pane.setSymbolizer(RandomStyleFactory.createPointSymbolizer());
+                    }else if(o == LineSymbolizer.class){
+                        pane.setSymbolizer(RandomStyleFactory.createLineSymbolizer());
+                    }else if(o == PolygonSymbolizer.class){
+                        pane.setSymbolizer(RandomStyleFactory.createPolygonSymbolizer());
+                    }
+                }
+            });
+
+            container.add(BorderLayout.NORTH,box);
+        }
+
+        final JPropertyDialog dia = new JPropertyDialog(true,false,false,true);
+        dia.setContentPane(container);
         dia.setSize(700,500);
         dia.setLocationRelativeTo(null);
         dia.setVisible(true);
 
         return pane.getSymbolizer();
     }
+
     
 }

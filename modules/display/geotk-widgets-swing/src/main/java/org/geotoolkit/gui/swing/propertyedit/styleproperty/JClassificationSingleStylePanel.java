@@ -318,7 +318,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        builder.setTemplate( JPropertyDialog.showSymbolizerDialog(builder.getTemplate(), layer) );
+        builder.setTemplate( JPropertyDialog.showSymbolizerDialog(builder.getTemplate(), true, layer) );
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 

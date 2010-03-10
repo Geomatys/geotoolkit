@@ -418,7 +418,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }//GEN-LAST:event_guiGenerateActionPerformed
 
     private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
-        analyze.setTemplate(JPropertyDialog.showSymbolizerDialog(analyze.getTemplate(), layer));
+        analyze.setTemplate(JPropertyDialog.showSymbolizerDialog(analyze.getTemplate(), true, layer));
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
