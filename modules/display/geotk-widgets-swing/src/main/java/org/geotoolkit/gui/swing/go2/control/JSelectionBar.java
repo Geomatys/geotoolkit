@@ -25,11 +25,13 @@ import java.awt.event.MouseListener;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
@@ -56,7 +58,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     private final ButtonGroup groupVisit = new ButtonGroup();
 
     private final JButton guiSelect = new JButton(ICON_SELECT);
-    private final JButton guiConfig = new JButton(ICON_CONFIG);
+    private final JLabel guiConfig = new JLabel(" ",ICON_CONFIG, SwingConstants.RIGHT);
     private final JRadioButtonMenuItem guiIntersect = new JRadioButtonMenuItem(MessageBundle.getString("select_intersect"),ICON_INTERSECT);
     private final JRadioButtonMenuItem guiWithin = new JRadioButtonMenuItem(MessageBundle.getString("select_within"),ICON_WITHIN);
     private final JRadioButtonMenuItem guiLasso = new JRadioButtonMenuItem(MessageBundle.getString("select_lasso"),ICON_LASSO);
@@ -116,7 +118,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
             @Override
             public void mouseClicked(MouseEvent event) {
                 if(event.getButton() == MouseEvent.BUTTON1){
-                    menu.show(guiConfig, event.getX(), event.getY());
+                    menu.show(guiConfig.getParent(), guiConfig.getX(), guiConfig.getY()+guiConfig.getHeight());
                 }
             }
             @Override

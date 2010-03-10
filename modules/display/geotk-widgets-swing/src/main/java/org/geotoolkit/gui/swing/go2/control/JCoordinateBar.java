@@ -25,6 +25,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -33,22 +34,21 @@ import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.navigator.DoubleNavigatorModel;
-import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
-import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -64,10 +64,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JCoordinateBar extends JToolBar {
 
-    private static final ImageIcon ICON_XY = IconBundle.getInstance().getIcon("16_xy");
-    private static final ImageIcon ICON_XY_DISABLE = IconBundle.getInstance().getIcon("16_xy_disable");
-    private static final ImageIcon ICON_STATEFULL = IconBundle.getInstance().getIcon("16_statefull");
-    private static final ImageIcon ICON_STATEFULL_DISABLE = IconBundle.getInstance().getIcon("16_statefull_disable");
+    private static final ImageIcon ICON_HINT = IconBundle.getInstance().getIcon("16_hint");
     private static final ImageIcon ICON_TEMPORAL = IconBundle.getInstance().getIcon("16_temporal");
     private static final ImageIcon ICON_ELEVATION = IconBundle.getInstance().getIcon("16_elevation");
 
@@ -77,10 +74,9 @@ public class JCoordinateBar extends JToolBar {
     private Map2D map = null;
     private String error = MessageBundle.getString("map_control_coord_error");
 
-    private final JCheckBox guiAxis = new JCheckBox();
+    private final JLabel guiHint = new JLabel(" ", ICON_HINT, SwingConstants.RIGHT);
     private final JScaleCombo guiCombo = new JScaleCombo();
     private final JTextField guiCoord = new JTextField();
-    private final JCheckBox guiStatefull = new JCheckBox();
     private final JCRSButton guiCRS = new JCRSButton();
     private final JProgressBar guiPainting = new JProgressBar();
     private final JToggleButton guiElevation = new JToggleButton(ICON_ELEVATION);
@@ -109,6 +105,8 @@ public class JCoordinateBar extends JToolBar {
         paneElev.add(BorderLayout.CENTER,panenav);
 
 
+        //the hints menu -------------------------------------------------------
+        final JCheckBoxMenuItem guiAxis = new JCheckBoxMenuItem(MessageBundle.getString("map_xy_ratio"));
         guiAxis.setSelected(true);
         guiAxis.addActionListener(new ActionListener() {
             @Override
@@ -118,8 +116,9 @@ public class JCoordinateBar extends JToolBar {
                 }
             }
         });
-        guiAxis.setToolTipText(MessageBundle.getString("map_xy_ratio"));
 
+        final JCheckBoxMenuItem guiStatefull = new JCheckBoxMenuItem(MessageBundle.getString("map_statefull"));
+        guiStatefull.setSelected(false);
         guiStatefull.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -128,21 +127,46 @@ public class JCoordinateBar extends JToolBar {
                 }
             }
         });
-        guiStatefull.setToolTipText(MessageBundle.getString("map_statefull"));
+
+        final JCheckBoxMenuItem guiStyleOrder = new JCheckBoxMenuItem(MessageBundle.getString("map_style_order"));
+        guiStyleOrder.setSelected(false);
+        guiStyleOrder.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(map != null){
+                    map.getCanvas().setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, guiStyleOrder.isSelected());
+                }
+            }
+        });
+
+        final JPopupMenu guiHintMenu = new JPopupMenu();
+        guiHintMenu.add(guiAxis);
+        guiHintMenu.add(guiStatefull);
+        guiHintMenu.add(guiStyleOrder);
+
+        guiHint.setComponentPopupMenu(guiHintMenu);
+        guiHint.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if(event.getButton() == MouseEvent.BUTTON1){
+                    guiHintMenu.setSize(guiHintMenu.getPreferredSize());
+                    final Dimension dim = guiHintMenu.getSize();
+                    guiHintMenu.show(guiHint.getParent(), guiHint.getX(), guiHint.getY()-dim.height);
+                }
+            }
+            @Override
+            public void mousePressed(MouseEvent arg0) {}
+            @Override
+            public void mouseReleased(MouseEvent arg0) {}
+            @Override
+            public void mouseEntered(MouseEvent arg0) {}
+            @Override
+            public void mouseExited(MouseEvent arg0) {}
+        });
+
 
         guiCRS.setEnabled(false);
-        guiAxis.setPressedIcon(ICON_XY);
-        guiAxis.setSelectedIcon(ICON_XY);
-        guiAxis.setRolloverSelectedIcon(ICON_XY);
-        guiAxis.setIcon(ICON_XY_DISABLE);
-        guiAxis.setRolloverIcon(ICON_XY_DISABLE);
         guiAxis.setOpaque(false);
-        guiStatefull.setPressedIcon(ICON_STATEFULL);
-        guiStatefull.setSelectedIcon(ICON_STATEFULL);
-        guiStatefull.setRolloverSelectedIcon(ICON_STATEFULL);
-        guiStatefull.setIcon(ICON_STATEFULL_DISABLE);
-        guiStatefull.setRolloverIcon(ICON_STATEFULL_DISABLE);
-        guiStatefull.setOpaque(false);
 
         guiCombo.setOpaque(false);
 
@@ -183,11 +207,10 @@ public class JCoordinateBar extends JToolBar {
         constraints.weightx = 0.0;
         constraints.weighty = 1.0;
 
+        bottom.add(guiHint,constraints);
         bottom.add(guiElevation);
         bottom.add(guiTemporal);
         bottom.add(guiPainting);
-        bottom.add(guiStatefull,constraints);
-        bottom.add(guiAxis,constraints);
 
 
         constraints.fill = GridBagConstraints.BOTH;
