@@ -39,9 +39,17 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
+import java.util.List;
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.FeatureReader;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.referencing.CRS;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 
 
 /**
@@ -271,7 +279,7 @@ public abstract class JDBCTestSupport extends TestCase {
     	return false;
    	}
 
-	protected boolean areReferencedEnvelopesEuqal(JTSEnvelope2D e1, JTSEnvelope2D e2) {
+    protected boolean areReferencedEnvelopesEuqal(JTSEnvelope2D e1, JTSEnvelope2D e2) {
 		
 		if (e1==null && e2 ==null) return true;
 		if (e1==null || e2 == null) return false;
@@ -285,5 +293,56 @@ public abstract class JDBCTestSupport extends TestCase {
 		if (!equal) return false;
 		return areCRSEqual(e1.getCoordinateReferenceSystem(), e2.getCoordinateReferenceSystem());
 	}
+
+    protected void assertPrimaryKeyAreDefined(SimpleFeatureType type, String ... fields){
+        final List<String> pkeyFields = new ArrayList<String>();
+        for(String field : fields){
+            pkeyFields.add(field);
+        }
+
+        for(AttributeDescriptor att : type.getAttributeDescriptors()){
+            pkeyFields.remove(att.getLocalName());
+        }
+
+        //all fields must have been found
+        assertEquals(0, pkeyFields.size());
+    }
+
+    protected void assertPrimaryKeyCanBeHidden(DataStore store, SimpleFeatureType sft){
+        final List<String> pkeyFields = new ArrayList<String>();
+        for(AttributeDescriptor att : sft.getAttributeDescriptors()){
+            pkeyFields.remove(att.getLocalName());
+        }
+
+        final QueryBuilder qb = new QueryBuilder(sft.getName());
+        qb.setHints(new Hints(HintsPending.FEATURE_HIDE_ID_PROPERTY, Boolean.TRUE));
+
+        FeatureReader reader = null;
+        try {
+            reader = store.getFeatureReader(qb.buildQuery());
+
+            SimpleFeatureType limited = (SimpleFeatureType) reader.getFeatureType();
+            for(AttributeDescriptor att : limited.getAttributeDescriptors()){
+                //we must not found any of the pkey properties in the type
+                assertFalse(pkeyFields.contains(att.getLocalName()));
+            }
+
+            while(reader.hasNext()){
+                Feature f = reader.next();
+                for(String str : pkeyFields){
+                    //we must not found any of the pkey properties in the feature
+                    assertEquals(0, f.getProperties(str));
+                }
+            }
+
+        } catch (Exception ex) {            
+            Logger.getLogger(JDBCTestSupport.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        } finally{
+            if(reader != null){
+                reader.close();
+            }
+        }
+    }
 
 }

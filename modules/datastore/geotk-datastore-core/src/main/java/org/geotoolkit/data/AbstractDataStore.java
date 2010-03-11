@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
@@ -41,7 +42,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
@@ -406,14 +406,26 @@ public abstract class AbstractDataStore implements DataStore{
             }
         }
 
-        //wrap properties ------------------------------------------------------
+        //wrap properties, remove primary keys if necessary --------------------
+        final Boolean hide = (Boolean) hints.get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
+        final FeatureType original = reader.getFeatureType();
+        FeatureType mask = original;
         if(properties != null){
-            final FeatureType mask;
             try {
-                mask = FeatureTypeUtilities.createSubType((SimpleFeatureType) reader.getFeatureType(), properties);
+                mask = FeatureTypeUtilities.createSubType((SimpleFeatureType) mask, properties);
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
+        }
+        if(hide != null && hide){
+            try {
+                //remove primary key properties
+                mask = FeatureTypeUtilities.excludePrimaryKeyFields((SimpleFeatureType) mask);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+        if(mask != original){
             reader = GenericRetypeFeatureIterator.wrap(reader, mask, hints);
         }
 

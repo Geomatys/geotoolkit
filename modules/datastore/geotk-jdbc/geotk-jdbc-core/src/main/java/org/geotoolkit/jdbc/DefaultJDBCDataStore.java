@@ -74,6 +74,7 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
@@ -345,6 +346,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                             if (name.equals(primaryKeys.getString(MD_COLUMN_NAME))) {
                                 adb.setNillable(false);
                                 adb.setMinOccurs(1);
+                                adb.addUserData(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
                                 break;
                             }
                         }
@@ -550,13 +552,20 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
         final Source source = query.getSource();
 
+        final FeatureReader reader;
         if(source instanceof Join){
-            return getCrossFeatureReader(query);
+            reader = getCrossFeatureReader(query);
         }else if(source instanceof Selector){
-            return getSimpleFeatureReader(query);
+            reader = getSimpleFeatureReader(query);
         }else{
             throw new DataStoreException("Unexpected source type : " + source);
         }
+
+        //take care of potential hints, like removing primary keys
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(new DefaultName("remaining"));
+        qb.setHints(query.getHints());
+        return handleRemaining(reader, qb.buildQuery());
     }
 
     /**
@@ -1613,7 +1622,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             classes[i] = desc.getType().getBinding();
             nillable[i] = desc.getMinOccurs() <= 0 || desc.isNillable();
 
-            if(isPrimaryKey(desc.getUserData())){
+            if(FeatureTypeUtilities.isPartOfPrimaryKey(desc)){
                 pkeyColumn.add(desc.getLocalName());
             }
         }
@@ -2821,22 +2830,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
                 getLogger().log(Level.FINE, "Could not close dataSource", e);
             }
         }
-    }
-
-    /**
-     * Check if the property descriptor is defined as a primary key.
-     * @param params
-     * @return
-     */
-    protected boolean isPrimaryKey(final Map<Object,Object> params){
-        if(params == null){
-            return false;
-        }
-        
-        final Boolean primary = (Boolean) params.get(HintsPending.PROPERTY_IS_IDENTIFIER);
-        if(primary != null) return primary;
-
-        return false;
     }
 
     /**

@@ -72,7 +72,9 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.factory.HintsPending;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -186,6 +188,23 @@ public class FeatureTypeUtilities {
 
 
     private FeatureTypeUtilities() {}
+
+    /**
+     * Remove properties that are used for generating the primary key.
+     */
+    public static SimpleFeatureType excludePrimaryKeyFields(SimpleFeatureType sft) throws SchemaException{
+        final List<Name> pkeys = new ArrayList<Name>();
+        for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
+            if(isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
+        }
+
+        if(pkeys.isEmpty()){
+            return sft;
+        }else{
+            return createSubType(sft, pkeys.toArray(new Name[pkeys.size()]));
+        }
+
+    }
 
     /**
      * Create a derived FeatureType
@@ -1274,6 +1293,23 @@ public class FeatureTypeUtilities {
         if (a.getLocalName().equals(b.getLocalName()) && a.getClass().equals(b.getClass())) {
             return true;
         }
+
+        return false;
+    }
+
+   /**
+     * Check if the property descriptor is defined as a primary key.
+     * @param desc PropertyDescriptor
+     * @return true if the descriptor is part of the primary key.
+     */
+    public static boolean isPartOfPrimaryKey(PropertyDescriptor desc){
+        Map params = desc.getUserData();
+        if(params == null){
+            return false;
+        }
+
+        final Boolean primary = (Boolean) params.get(HintsPending.PROPERTY_IS_IDENTIFIER);
+        if(primary != null) return primary;
 
         return false;
     }

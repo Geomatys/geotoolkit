@@ -66,6 +66,13 @@ public final class HintsPending extends Hints {
     public static final Key FEATURE_DETACHED = new Key(Boolean.class);
 
     /**
+     * An implementation of datastore might use some properties of the feature type
+     * to generate the feature id. To avoid some unexpected modification it
+     * might be usefull to hide thoses fields.
+     */
+    public static final Key FEATURE_HIDE_ID_PROPERTY = new Key(Boolean.class);
+
+    /**
      * Used to identify a PropertyDescriptor if he is part of the FeatureID.
      */
     public static final Key PROPERTY_IS_IDENTIFIER = new Key(Boolean.class);
