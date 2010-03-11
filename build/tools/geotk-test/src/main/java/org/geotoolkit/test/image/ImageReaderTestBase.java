@@ -216,6 +216,6 @@ public abstract class ImageReaderTestBase {
                 dest.setSample(x, y, 0, Math.round((value - min) * scale));
             }
         }
-        ImageIO.write(image, "png", file);
+        assertTrue(ImageIO.write(image, "png", file));
     }
 }

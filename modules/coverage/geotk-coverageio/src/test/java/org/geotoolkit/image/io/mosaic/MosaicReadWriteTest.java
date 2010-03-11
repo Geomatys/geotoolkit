@@ -318,7 +318,7 @@ public final class MosaicReadWriteTest {
          * If a visual test is wanted, enable the block below.
          */
         if (false) {
-            ImageIO.write(image, "png", new File("testTransparency.png"));
+            assertTrue(ImageIO.write(image, "png", new File("testTransparency.png")));
         }
     }
 }

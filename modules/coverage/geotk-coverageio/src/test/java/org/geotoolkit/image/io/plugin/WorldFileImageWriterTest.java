@@ -21,11 +21,17 @@ import java.util.Locale;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.RenderedImage;
 
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.image.io.TextImageWriterTestBase;
+import org.geotoolkit.image.io.mosaic.TileTest;
+import org.geotoolkit.image.io.XImageIO;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -37,7 +43,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WorldFileImageWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.10
  *
  * @since 3.07
  */
@@ -90,7 +96,7 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
     /**
      * Tests the write operation.
      *
-     * @throws IOException Should never happen.
+     * @throws IOException If an error occured while writing to the temporary file.
      */
     @Test
     public void testWrite() throws IOException {
@@ -147,5 +153,50 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
             }
         }
         writer.dispose();
+    }
+
+    /**
+     * Tests writing an image though the standard {@link ImageIO} API and
+     * the {@link XImageIO} extension.
+     *
+     * @throws IOException If an error occured while reading the test image or
+     *         writing it to the temporary file.
+     *
+     * @since 3.10
+     */
+    @Test
+    public void testImageIO() throws IOException {
+        final RenderedImage image = ImageIO.read(TestData.file(TileTest.class, "A1.png"));
+        final File file = TemporaryFile.createTempFile("TEST", ".png", null);
+        WorldFileImageWriter.Spi.registerDefaults(null);
+        try {
+            assertTrue("Should use the standard image writer.", ImageIO.write(image, "png", file));
+            assertTrue(file.length() != 0);
+            /*
+             * When using the XImageIO methods, the WorldFileImageWriter plugin
+             * should be selected in the input is a file.
+             */
+            ImageWriter writer = XImageIO.getWriterBySuffix(file, image);
+            assertTrue(writer instanceof WorldFileImageWriter);
+            writer.write(image);
+            writer.dispose();
+            assertTrue(file.length() != 0);
+            /*
+             * If the input is a stream, then the standard writer should be selected.
+             */
+            final ImageOutputStream out = ImageIO.createImageOutputStream(file);
+            try {
+                writer = XImageIO.getWriterByFormatName("png", out, image);
+                assertFalse(writer instanceof WorldFileImageWriter);
+                // Don't botter to write the image. The purpose of
+                // this test is not to test the JDK PNG ImageWriter.
+                writer.dispose();
+            } finally {
+                out.close();
+            }
+        } finally {
+            WorldFileImageWriter.Spi.unregisterDefaults(null);
+            assertTrue(TemporaryFile.delete(file));
+        }
     }
 }

@@ -142,7 +142,7 @@ public abstract class SwingBase<T extends JComponent> {
              */
             if (false) {
                 final File file = new File(DesktopPane.getTitle(component.getClass()) + ".png");
-                ImageIO.write(image, "png", file);
+                assertTrue(ImageIO.write(image, "png", file));
                 System.out.println("Image saved in " + file.getAbsolutePath());
             }
         } else {

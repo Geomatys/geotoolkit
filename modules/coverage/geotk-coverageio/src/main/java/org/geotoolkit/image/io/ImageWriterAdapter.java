@@ -22,6 +22,7 @@ import java.net.URL;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Locale;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -644,7 +645,8 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      *     <td>&nbsp;Same values than the {@linkplain #main} provider.&nbsp;</td>
      *   </tr><tr>
      *     <td>&nbsp;{@link #outputTypes}&nbsp;</td>
-     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL}&nbsp;</td>
+     *     <td>&nbsp;{@link String}, {@link File}, {@link URI}, {@link URL},
+     *         {@link ImageOutputStream}&nbsp;</td>
      * </tr>
      * </table>
      * <p>
@@ -652,7 +654,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.10
      *
      * @see ImageReaderAdapter.Spi
      *
@@ -660,6 +662,20 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * @module
      */
     protected static abstract class Spi extends SpatialImageWriter.Spi {
+        /**
+         * List of legal input and output types for {@link ImageWriterAdapter}.
+         * The {@link ImageOutputStream} type is mandatory even if the adapter
+         * can't use it, because this type is created by {@link javax.imageio}
+         * package and we have no way to filter {@code ImageWriter} by output
+         * stream.
+         */
+        private static final Class<?>[] TYPES;
+        static {
+            final int n = ImageReaderAdapter.Spi.TYPES.length;
+            TYPES = Arrays.copyOf(ImageReaderAdapter.Spi.TYPES, n + 1);
+            TYPES[n] = ImageOutputStream.class;
+        }
+
         /**
          * The provider of the writers to use for writing the pixel values.
          * This is the provider specified at the construction time.
@@ -670,12 +686,6 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * {@code true} if the {@link #main} provider accepts outputs of kind {@link ImageOutputStream}.
          */
         final boolean acceptStream;
-
-        /**
-         * {@code true} if the {@link #main} provider accepts other kind of outputs than
-         * {@link ImageOutputStream}.
-         */
-        private final boolean acceptOther;
 
         /**
          * Creates an {@code ImageWriterAdapter.Spi} wrapping the given provider. The fields are
@@ -694,7 +704,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             names       = main.getFormatNames();
             suffixes    = main.getFileSuffixes();
             MIMETypes   = main.getMIMETypes();
-            outputTypes = ImageReaderAdapter.Spi.TYPES;
+            outputTypes = TYPES;
             supportsStandardStreamMetadataFormat = main.isStandardStreamMetadataFormatSupported();
             supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
             nativeStreamMetadataFormatClassName  = main.getNativeStreamMetadataFormatName();
@@ -704,16 +714,13 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             extraImageMetadataFormatClassNames  = XArrays.concatenate(
                     main.getExtraImageMetadataFormatNames(), ImageReaderAdapter.Spi.EXTRA_METADATA);
             boolean acceptStream = false;
-            boolean acceptOther  = false;
             for (final Class<?> type : main.getOutputTypes()) {
                 if (type.isAssignableFrom(ImageOutputStream.class)) {
                     acceptStream = true;
-                } else {
-                    acceptOther = true;
+                    break;
                 }
             }
             this.acceptStream = acceptStream;
-            this.acceptOther  = acceptOther;
         }
 
         /**

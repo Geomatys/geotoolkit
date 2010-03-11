@@ -299,7 +299,15 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                     continue;
                 }
                 registry.registerServiceProvider(provider, ImageWriterSpi.class);
-                registry.setOrdering(ImageWriterSpi.class, provider, provider.main);
+                registry.setOrdering(ImageWriterSpi.class, provider.main, provider);
+                /*
+                 * We give precedence to the standard writer. Note that this is the opposite
+                 * of what WorldFileImageReader.Spi does.  We do that way because the writer
+                 * is required to accept ImageOutputStream - at the opposite of ImageReaders,
+                 * we have no way to filter writers according their output type. The standard
+                 * writer should be preferred when the output is a stream, because the adapter
+                 * would not be able to write the .prj and .tfw files anyway.
+                 */
             }
         }
 

@@ -46,6 +46,8 @@ import javax.imageio.ImageIO;
 import java.util.prefs.Preferences;
 import java.util.Locale;
 
+import static org.junit.Assert.*;
+
 
 /**
  * The desktop pane where to put the widgets to be tested.
@@ -283,7 +285,7 @@ final class DesktopPane extends JDesktopPane {
             File file = new File(Preferences.userNodeForPackage(DesktopPane.class).get(SCREENSHOT_DIRECTORY_PREFS, "."));
             file = new File(file, getTitle(active.getClass()) + ".png");
             try {
-                ImageIO.write(image, "png", file);
+                assertTrue(ImageIO.write(image, "png", file));
                 file = file.getParentFile();
                 Desktop.getDesktop().open(file);
             } catch (IOException e) {

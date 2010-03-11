@@ -183,7 +183,7 @@ public abstract class ImageTestCase {
                             JOptionPane.YES_NO_OPTION, type) == JOptionPane.OK_OPTION)
                     {
                         try {
-                            ImageIO.write(image, "png", file);
+                            assertTrue(ImageIO.write(image, "png", file));
                         } catch (IOException e) {
                             JOptionPane.showMessageDialog(panel, e.toString(), "Error",
                                     JOptionPane.WARNING_MESSAGE);
