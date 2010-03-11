@@ -162,6 +162,23 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     }
 
     /**
+     * Returns {@code true} if the EPSG database seems to exists. This method
+     * looks for the sentinal table documented in the {@link #autoconfig} method.
+     */
+    static boolean exists(final DatabaseMetaData metadata, final String schema) throws SQLException {
+        final ResultSet result = metadata.getTables(null, schema, null, new String[] {"TABLE"});
+        while (result.next()) {
+            final String table = result.getString("TABLE_NAME");
+            for (final String candidate : SENTINAL) {
+                if (candidate.equalsIgnoreCase(table)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Invokes {@link #setSchema setSchema(...)} and {@link #useOriginalTableNames useOriginalTableNames(...)}
      * automatically according the {@linkplain DatabaseMetaData database metadata}. The default
      * implementation searchs for a schema containing one of the following table:

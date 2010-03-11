@@ -42,9 +42,14 @@ import java.util.regex.Pattern;
  */
 public final class HSQL {
     /**
+     * The classname of the driver.
+     */
+    public static final String DRIVER_CLASS = "org.hsqldb.jdbcDriver";
+
+    /**
      * The prefix of URL for HSQL databases.
      */
-    public static final String PROTOCOL = "jdbc:hsqldb:";
+    static final String PROTOCOL = "jdbc:hsqldb:";
 
     /**
      * The regular expression pattern for searching the "FROM (" clause.
@@ -79,6 +84,31 @@ public final class HSQL {
             url.append('/');
         }
         return url.append(p).toString();
+    }
+
+    /**
+     * Given a database URL, gets the path to the database.
+     * This is the converse of {@link #createURL(File)}.
+     *
+     * @param  databaseURL The database URL.
+     * @return The path, or {@code null} if the given URL is not a HSQL URL.
+     */
+    public static File getFile(final String databaseURL) {
+        int offset = PROTOCOL.length();
+        if (databaseURL != null && databaseURL.regionMatches(true, 0, PROTOCOL, 0, offset)) {
+            final int s = databaseURL.indexOf(':', offset);
+            if (s >= 0) {
+                final String p = databaseURL.substring(offset, s);
+                if (p.equalsIgnoreCase("mem")) {
+                    return null;
+                }
+                if (p.equalsIgnoreCase("file")) {
+                    offset = s + 1;
+                }
+            }
+            return new File(databaseURL.substring(offset));
+        }
+        return null;
     }
 
     /**

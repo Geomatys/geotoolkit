@@ -173,37 +173,43 @@ public class DefaultDataSource implements DataSource {
      * @since 3.03
      */
     public void shutdown() {
-        if (url.startsWith(HSQL.PROTOCOL)) try {
-            final Connection c = getConnection();
-            HSQL.shutdown(c);
-            c.close();
-        } catch (SQLException e) {
-            Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
+        final Dialect dialect = Dialect.forURL(url);
+        if (dialect != null) switch (dialect) {
+            case HSQL: {
+                try {
+                    final Connection c = getConnection();
+                    HSQL.shutdown(c);
+                    c.close();
+                } catch (SQLException e) {
+                    Logging.unexpectedException(LOGGER, DefaultDataSource.class, "shutdown", e);
+                }
+                break;
+            }
+            case DERBY: {
+                shutdownDerby(url);
+                break;
+            }
         }
-        shutdown(url);
     }
 
     /**
-     * Shutdown the database represented by the given URL. The current implementation
-     * shutdown Derby database, and does nothing for all other kind of connection.
+     * Shutdowns the Derby database represented by the given URL.
      *
-     * @param url The URL of the database to shutdown.
+     * @param url The URL of the Derby database to shutdown.
      *
      * @since 3.10
      */
-    public static void shutdown(String url) {
-        if (url.startsWith("jdbc:derby:")) {
-            final int p = url.indexOf(';');
-            if (p >= 0) {
-                // Trim the parameters, especially ";create=true".
-                url = url.substring(0, p);
-            }
-            url += ";shutdown=true";
-            try {
-                DriverManager.getConnection(url).close();
-            } catch (SQLException e) {
-                // This is the expected exception.
-            }
+    public static void shutdownDerby(String url) {
+        final int p = url.indexOf(';');
+        if (p >= 0) {
+            // Trim the parameters, especially ";create=true".
+            url = url.substring(0, p);
+        }
+        url += ";shutdown=true";
+        try {
+            DriverManager.getConnection(url).close();
+        } catch (SQLException e) {
+            // This is the expected exception.
         }
     }
 

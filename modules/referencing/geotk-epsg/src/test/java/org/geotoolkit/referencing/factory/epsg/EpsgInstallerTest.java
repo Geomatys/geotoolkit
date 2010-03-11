@@ -46,19 +46,6 @@ import static org.junit.Assert.*;
  */
 public final class EpsgInstallerTest {
     /**
-     * Returns {@code true} if expensive tests shall be run.
-     *
-     * @throws IOException If an error occured while reading the {@code tests.properties} file.
-     */
-    private static boolean runExpensiveTests() throws IOException {
-        final File file = new File(Installation.TESTS.directory(true), "tests.properties");
-        if (!file.exists()) {
-            return false;
-        }
-        return Boolean.valueOf(TestData.readProperties(file).getProperty("extensive", "false"));
-    }
-
-    /**
      * Tests the creation of an EPSG database on Derby.
      *
      * @throws FactoryException Should never happen.
@@ -88,6 +75,7 @@ public final class EpsgInstallerTest {
         } finally {
             try {
                 DriverManager.getConnection("jdbc:derby:memory:EPSG;shutdown=true");
+                fail("Expected a SQLException.");
             } catch (SQLException e) {
                 // This is the expected exception.
                 assertEquals("08006", e.getSQLState());
@@ -110,12 +98,12 @@ public final class EpsgInstallerTest {
     public void testCreationOnHSQL() throws FactoryException, SQLException, IOException {
         try {
             // Need explicit registration as of HSQL 1.8.0.7.
-            Class.forName("org.hsqldb.jdbcDriver");
+            Class.forName(HSQL.DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
             throw new SQLException(e);
         }
         final EpsgInstaller installer = new EpsgInstaller();
-        if (!runExpensiveTests()) {
+        if (true) {
             installer.setDatabase("jdbc:hsqldb:mem:EPSG");
             final EpsgInstaller.Result result = installer.call();
             assertTrue(result.numRows > 0);
@@ -128,7 +116,6 @@ public final class EpsgInstallerTest {
                 assertFalse("Database exists?", installer.exists());
                 final EpsgInstaller.Result result = installer.call();
                 assertTrue(result.numRows > 0);
-                HSQL.setReadOnly(dbpath);
                 /*
                  * Following test is costly because it reloads the database, and shutdowns it
                  * immediately. For the purpose of a test suite executed only occasionally,

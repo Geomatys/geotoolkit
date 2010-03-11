@@ -18,14 +18,13 @@ package org.geotoolkit.referencing.factory.epsg;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Locale;
+import java.io.File;
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
 
+import org.geotoolkit.internal.sql.HSQL;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 
 
@@ -84,8 +83,10 @@ final class EmbeddedDataSource extends DefaultDataSource {
      */
     @Override
     public Connection getConnection() throws SQLException {
-        final Connection connection = super.getConnection();
-        createIfEmpty(connection);
+        Connection connection;
+        do {
+            connection = super.getConnection();
+        } while (!createIfEmpty(connection));
         return connection;
     }
 
@@ -94,8 +95,10 @@ final class EmbeddedDataSource extends DefaultDataSource {
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        final Connection connection = super.getConnection(username, password);
-        createIfEmpty(connection);
+        Connection connection;
+        do {
+            connection = super.getConnection(username, password);
+        } while (!createIfEmpty(connection));
         return connection;
     }
 
@@ -104,34 +107,29 @@ final class EmbeddedDataSource extends DefaultDataSource {
      * <p>
      * This method must be synchronized - we must disallow concurrent execution of
      * this method for the same database.
+     *
+     * @return {@code true} if the connection still valid after this method call,
+     *         or {@code false} if it has been closed and needs to be recreated.
      */
-    private synchronized void createIfEmpty(final Connection connection) throws SQLException {
-        if (tested) {
-            return;
-        }
-        tested = true; // Set first - if we fail, the failure will be considered definitive.
-        final DatabaseMetaData metadata = connection.getMetaData();
-        /*
-         * In current implementation, EpsgScriptRunner.setSchema(String) does not quote
-         * the schema name. So we need to change the case before to check for the schema.
-         */
-        String schema = EpsgInstaller.DEFAULT_SCHEMA;
-        if (metadata.storesLowerCaseIdentifiers()) {
-            schema = schema.toLowerCase(Locale.US);
-        } else if (metadata.storesUpperCaseIdentifiers()) {
-            schema = schema.toUpperCase(Locale.US);
-        }
-        final ResultSet result = metadata.getSchemas(null, schema);
-        final boolean exists = result.next();
-        assert !exists || schema.equals(result.getString("TABLE_SCHEM"));
-        result.close();
-        if (!exists) {
-            final EpsgInstaller installer = new EpsgInstaller();
-            try {
-                installer.call(new EpsgScriptRunner(connection));
-            } catch (IOException exception) {
-                throw new SQLNonTransientException(exception);
+    private synchronized boolean createIfEmpty(final Connection connection) throws SQLException {
+        if (!tested) {
+            tested = true; // Set first - if we fail, the failure will be considered definitive.
+            if (!AnsiDialectEpsgFactory.exists(connection.getMetaData(), null)) {
+                final EpsgInstaller installer = new EpsgInstaller();
+                try {
+                    installer.call(new EpsgScriptRunner(connection));
+                    final File hsqldb = HSQL.getFile(url);
+                    if (hsqldb != null) {
+                        HSQL.shutdown(connection);
+                        connection.close();
+                        HSQL.setReadOnly(hsqldb);
+                        return false;
+                    }
+                } catch (IOException exception) {
+                    throw new SQLNonTransientException(exception);
+                }
             }
         }
+        return true;
     }
 }

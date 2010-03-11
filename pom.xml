@@ -302,6 +302,7 @@
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
           <showWarnings>true</showWarnings>
+          <maxmem>512M</maxmem>
         </configuration>
       </plugin>
 
@@ -337,6 +338,17 @@
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
+        </configuration>
+      </plugin>
+
+      <!-- ======================================================= -->
+      <!--     Tests.                                              -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-Xmx512M</argLine>
         </configuration>
       </plugin>
 

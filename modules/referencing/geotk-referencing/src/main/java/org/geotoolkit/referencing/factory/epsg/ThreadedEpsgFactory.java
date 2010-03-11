@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import java.util.Map;
@@ -53,6 +52,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.JNDI;
+import org.geotoolkit.internal.sql.HSQL;
 import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.io.Installation;
@@ -288,22 +288,39 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     }
 
     /**
-     * Returns the default JDBC URL to use for connection to the EPSG embedded database,
-     * creating it if needed.
+     * Returns the default JDBC URL to use for connection to the EPSG embedded database.
+     * The returned URL expects an existing database, unless the {@code create} parameter
+     * is {@code true} in which case the URL allows database creation.
      *
      * @param  create {@code true} if this method should create the database directory if
      *         it does not already exist, or {@code false} otherwise.
      * @return The default JDBC URL to use for the connection to the EPSG database.
      * @throws IOException If the database directory can not be created.
      */
-    static String getDefaultURL(final boolean create) throws IOException {
-        final File directory;
+    static String getDefaultURL(boolean create) throws IOException {
+        File directory;
         if (create) {
             directory = Installation.EPSG.validDirectory(true);
         } else {
             directory = Installation.EPSG.directory(true);
         }
-        final StringBuilder buffer = new StringBuilder("jdbc:derby:")
+        String driver  = "derby";
+        if (!Dialect.DERBY.isDriverRegistered()) {
+            /*
+             * If the Dervy driver is not found, looks for the HSQL driver.
+             * If it is not found neither, we will keep the Derby driver as
+             * the default one.
+             */
+            try {
+                Class.forName(HSQL.DRIVER_CLASS);
+                directory = new File(directory, "HSQL");
+                driver = "hsqldb";
+                create = false;
+            } catch (ClassNotFoundException e) {
+                // Ignore - we will stay with the Derby driver.
+            }
+        }
+        final StringBuilder buffer = new StringBuilder("jdbc:").append(driver).append(':')
                 .append(directory.getPath().replace(File.pathSeparatorChar, '/'))
                 .append('/').append(VERSION);
         if (create) {

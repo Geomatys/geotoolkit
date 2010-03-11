@@ -24,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLTransientException;
 import java.util.Locale;
@@ -39,6 +38,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.sql.DefaultDataSource;
+import org.geotoolkit.internal.sql.Dialect;
 import org.geotoolkit.internal.sql.HSQL;
 
 
@@ -64,7 +64,7 @@ import org.geotoolkit.internal.sql.HSQL;
  * {@linkplain java.util.concurrent.ExecutorService executor service}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.10
  *
  * @since 3.00
  * @module
@@ -99,7 +99,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * local machine will be used. This default URL will point toward the Geotk configuration
      * directory, which is platform-dependent ({@code ".geotoolkit"} on Linux).
      */
-    private String databaseUrl;
+    private String databaseURL;
 
     /**
      * The user for the database connection (optional).
@@ -168,7 +168,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @param url The URL to the database, or {@code null} for JavaDB on the local machine.
      */
     public synchronized void setDatabase(final String url) {
-        databaseUrl = url;
+        databaseURL = url;
     }
 
     /**
@@ -180,7 +180,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @param password The password, or {@code null} if none.
      */
     public synchronized void setDatabase(final String url, final String user, final String password) {
-        this.databaseUrl = url;
+        this.databaseURL = url;
         this.user        = user;
         this.password    = password;
     }
@@ -242,30 +242,39 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * @since 3.05
      */
     private Connection getConnection(final boolean create) throws IOException, SQLException {
-        if (databaseUrl == null) {
-            databaseUrl = ThreadedEpsgFactory.getDefaultURL(create);
+        if (databaseURL == null) {
+            databaseURL = ThreadedEpsgFactory.getDefaultURL(create);
         }
         final Connection connection;
         if (user == null) {
-            connection = DriverManager.getConnection(databaseUrl);
+            connection = DriverManager.getConnection(databaseURL);
         } else {
-            connection = DriverManager.getConnection(databaseUrl, user, password);
+            connection = DriverManager.getConnection(databaseURL, user, password);
         }
         return connection;
     }
 
     /**
-     * Closes the given connection and shutdowns the given database.
-     * The shutdown process is specific to the Derby and HSQL databases.
+     * Closes the given connection and shutdowns the given database. The shutdown process is
+     * specific to the Derby and HSQL databases. In the particular case of HSQL, the database
+     * is set to "read only" mode (this setting can be applied only after shutdown).
      *
      * @see org.geotoolkit.internal.sql.DefaultDataSource#shutdown()
      */
-    private static void shutdown(final Connection connection, final String databaseUrl) throws SQLException {
-        if (databaseUrl.startsWith(HSQL.PROTOCOL)) {
+    private static void shutdown(final Connection connection, final String databaseURL)
+            throws SQLException, IOException
+    {
+        final File hsqldb = HSQL.getFile(databaseURL);
+        if (hsqldb != null) {
             HSQL.shutdown(connection);
         }
         connection.close();
-        DefaultDataSource.shutdown(databaseUrl);
+        if (Dialect.DERBY.equals(Dialect.forURL(databaseURL))) {
+            DefaultDataSource.shutdownDerby(databaseURL);
+        }
+        if (hsqldb != null) {
+            HSQL.setReadOnly(hsqldb);
+        }
     }
 
     /**
@@ -285,12 +294,9 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
             connection = getConnection(false);
             try {
                 final DatabaseMetaData md = connection.getMetaData();
-                final ResultSet r = md.getTables(null, getSchema(md), null, new String[] {"TABLE"});
-                final boolean exists = r.next(); // 'true' if at least one table exists in the schema.
-                r.close();
-                return exists;
+                return AnsiDialectEpsgFactory.exists(md, getSchema(md));
             } finally {
-                shutdown(connection, databaseUrl);
+                connection.close();
             }
         } catch (IOException e) {
             failure = e;
@@ -331,7 +337,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                 runner = new EpsgScriptRunner(connection);
                 return call(runner);
             } finally {
-                shutdown(connection, databaseUrl);
+                shutdown(connection, databaseURL);
             }
         } catch (SQLException e) {
             failure = e;
